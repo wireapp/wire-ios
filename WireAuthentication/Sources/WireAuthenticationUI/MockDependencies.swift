@@ -41,7 +41,7 @@ final class MockDependencies {
     var rootView: RootView {
         RootView(
             viewModel: rootViewModel,
-            builder: self
+            factory: self
         )
     }
 
@@ -59,8 +59,7 @@ final class MockDependencies {
                 isLoading: isLoading,
                 alert: alert
             ),
-            loginViaEmailBuilder: self,
-            loginViaSSOBuilder: self
+            factory: self
         )
     }
 
@@ -115,8 +114,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
-            loginViaEmailBuilder: self,
-            loginViaSSOBuilder: self
+            factory: self
         )
     }
 

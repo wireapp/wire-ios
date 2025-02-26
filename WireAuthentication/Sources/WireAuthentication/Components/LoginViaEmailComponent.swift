@@ -33,14 +33,22 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 }
 
-class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, LoginViaEmailBuilder {
+class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
-    private var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
+    // MARK: - View
+
+    @MainActor
+    func view(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+        LoginViaEmailView(
+            viewModel: viewModel(email: email, canCreateAccount: canCreateAccount)
+        )
     }
 
     @MainActor
-    private func loginViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailViewModel {
+    private func viewModel(
+        email: String,
+        canCreateAccount: Bool
+    ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
             loginViaEmailUseCase: loginViaEmailUseCase,
@@ -51,11 +59,10 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, Login
         )
     }
 
-    @MainActor
-    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
-        LoginViaEmailView(
-            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
-        )
+    // MARK: - Private dependencies
+
+    private var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
+        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
     }
 
 }
