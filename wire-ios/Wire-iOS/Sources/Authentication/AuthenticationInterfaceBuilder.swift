@@ -99,10 +99,17 @@ final class AuthenticationInterfaceBuilder {
                 accountsURL: environment.accountsURL,
                 passwordValidator: AuthenticationPasswordValidator(),
                 callbackScheme: Bundle.ssoURLScheme,
-                defaults: .shared()
-            ) {
-                authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
-            }
+                defaults: .shared(),
+                onFlowCompletion: { _ in
+                    // TODO: [WPB-16044] Pass the cookies and token
+                    authenticationCoordinator?.eventResponderChain.handleEvent(
+                        ofType: .wireAuthenticationModuleComplete
+                    )
+                },
+                onRegisterAccount: {
+                    // TODO: [WPB-16279] Navigate to the account registration flow
+                }
+            )
 
             authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
                 bridge.completeSSOSuccess(userID: userID, cookies: cookieData)

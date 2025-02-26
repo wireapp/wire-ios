@@ -69,6 +69,7 @@ package struct DetermineAuthMethodView: View {
                         title: L10n.Authentication.Identity.Input.Field.title,
                         string: $viewModel.emailOrSSOCode
                     )
+                    .autocapitalization(.none)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -91,24 +92,24 @@ package struct DetermineAuthMethodView: View {
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
         }
-        .alert(item: $viewModel.alert) { alert in
-            Alert(
-                title: titleForAlert(alert),
-                message: messageForAlert(alert),
-                dismissButton: .default(
-                    Text(L10n.Authentication.Error.confirm),
-                    action: { viewModel.didDismissAlert(alert: alert) }
-                )
-            )
-        }
+        .alert(
+            item: $viewModel.alert,
+            title: titleForAlert,
+            message: messageForAlert,
+            actions: { alert in
+                Button {
+                    viewModel.didDismissAlert(alert: alert)
+                } label: {
+                    Text(L10n.Authentication.Error.confirm)
+                }
+            }
+        )
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
                 factory.loginViaEmailView(email: email, canCreateAccount: false)
-            case .loginOrRegister:
-                Color.red
-            case .noHistory:
-                Color.blue
+            case let .loginOrRegister(email):
+                factory.loginViaEmailView(email: email, canCreateAccount: true)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .ssoLoginDidFinishNotification)) { _ in
@@ -131,7 +132,7 @@ package struct DetermineAuthMethodView: View {
 
         case login(email: String)
         case loginOrRegister(email: String)
-        case noHistory(userID: UUID, cookieData: Data)
+        //case noHistory(userID: UUID, cookieData: Data)
 
     }
 

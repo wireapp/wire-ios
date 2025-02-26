@@ -42,7 +42,8 @@ public struct WireAuthenticationAssembly {
         passwordValidator: any PasswordValidator,
         callbackScheme: String?,
         defaults: UserDefaults,
-        onFlowCompletion: @escaping () -> Void
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
+        onRegisterAccount: @escaping () -> Void
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
             defaultBackendEnvironment: defaultBackendEnvironment,
@@ -52,6 +53,7 @@ public struct WireAuthenticationAssembly {
             passwordValidator: passwordValidator,
             callbackScheme: callbackScheme ?? fallbackURLScheme,
             defaults: defaults,
+            onRegisterAccount: onRegisterAccount,
             onFlowCompletion: onFlowCompletion
         )
 

@@ -16,7 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"exportBackup.cancel.label" = "Backup abbrechen";
-"importBackup.cancel.label" = "Cancel restore";
-"backup.password.show.label" = "Passwort anzeigen";
-"backup.password.hide.label" = "Passwort ausblenden";
+import Combine
+import Foundation
+import SwiftUI
+import WireAuthenticationAPI
+
+@MainActor
+public final class VerificationCodeViewModel: ObservableObject {
+
+    @Published var code: [String]
+    let email: String
+    let password: String
+
+    package init(
+        email: String,
+        password: String,
+        code: [String] = ["", "", "", "", "", ""]
+    ) {
+        self.email = email
+        self.password = password
+        self.code = code
+    }
+
+    func confirm() async {}
+
+    func resend() async {
+        // TODO: [WPB-15950] Implement
+    }
+
+}

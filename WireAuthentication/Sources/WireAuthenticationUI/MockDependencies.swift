@@ -87,8 +87,8 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], String) {
-        ([], "")
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken) {
+        ([], AccessToken(userID: UUID(), token: "", type: "", expirationDate: Date()))
     }
 
 }
@@ -144,13 +144,25 @@ extension MockDependencies: LoginViaEmailBuilder {
             email: email,
             accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: canCreateAccount
+            canCreateAccount: canCreateAccount,
+            onCreateAccount: {}
         )
     }
 
     func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
+            factory: self
+        )
+    }
+
+}
+
+extension MockDependencies: VerificationCodeBuilder {
+
+    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+        VerificationCodeView(
+            viewModel: VerificationCodeViewModel(email: email, password: password)
         )
     }
 

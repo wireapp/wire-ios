@@ -57,11 +57,17 @@
 "authentication.error.title.on_prem_not_possible" = "On prem not possible";
 "authentication.error.title.invalid_sso_link" = "Error";
 "authentication.error.title.sso_login_failed" = "Something went wrong";
+"authentication.error.title.invalid_credentials" = "Invalid Information";
+"authentication.error.title.account_pending_activation" = "Account Pending Activation";
+"authentication.error.title.account_suspended" = "Unauthorized";
 
 "authentication.error.message.no_internet" = "You are not connected to the internet.";
 "authentication.error.message.general" = "Something went wrong";
 "authentication.error.message.email_is_already_registered" = "Email is already registered on Wire Cloud.";
 "authentication.error.message.invalid_sso_link" = "Invalid company login url.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
+"authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
+"authentication.error.message.account_pending_activation" = "The account you are trying access is pending activation. Please verify your details.";
+"authentication.error.message.account_suspended" = "This account is no longer authorized to log in.";
 
 "authentication.error.confirm" = "OK";

@@ -44,7 +44,7 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
 
     func testInvoke_whenSuccess() async throws {
         // given
-        let accessToken = AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
+        let accessToken = WireAPI.AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
         let cookie = HTTPCookie(properties: [
             .name: "some name",
             .path: "some path",
@@ -59,7 +59,15 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
 
         // then
         XCTAssertEqual(result.0, [cookie])
-        XCTAssertEqual(result.1, accessToken)
+        XCTAssertEqual(
+            result.1,
+            AccessToken(
+                userID: accessToken.userID,
+                token: accessToken.token,
+                type: accessToken.type,
+                expirationDate: accessToken.expirationDate
+            )
+        )
         let invocations = mockAuthenticationAPI.loginEmailPasswordVerificationCodeLabel_Invocations
         try XCTAssertCount(invocations, count: 1)
         XCTAssertEqual(invocations[0].email, "email")

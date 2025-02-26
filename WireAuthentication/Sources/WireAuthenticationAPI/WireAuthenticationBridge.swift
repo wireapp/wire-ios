@@ -24,23 +24,29 @@ import Foundation
 
 public struct WireAuthenticationBridge {
 
-    public let onFlowCompletion: () -> Void
+    public let onFlowCompletion: (AuthenticationResult) -> Void
+    private let onRegisterAccount: () -> Void
     private let onSuccessSSOFlowCompletion: (UUID, [HTTPCookie]) -> Void
     private let onFailureSSOFlowCompletion: () -> Void
 
     public init(
-        onFlowCompletion: @escaping () -> Void,
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
+        onRegisterAccount: @escaping () -> Void,
         onSuccessSSOFlowCompletion: @escaping (UUID, [HTTPCookie]) -> Void,
         onFailureSSOFlowCompletion: @escaping () -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
+        self.onRegisterAccount = onRegisterAccount
         self.onSuccessSSOFlowCompletion = onSuccessSSOFlowCompletion
         self.onFailureSSOFlowCompletion = onFailureSSOFlowCompletion
-
     }
 
-    public func completeFlow() {
-        onFlowCompletion()
+    public func completeFlow(_ result: AuthenticationResult) {
+        onFlowCompletion(result)
+    }
+
+    public func registerAccount() {
+        onRegisterAccount()
     }
 
     @MainActor
@@ -50,6 +56,30 @@ public struct WireAuthenticationBridge {
 
     public func completeSSOFailure() {
         onFailureSSOFlowCompletion()
+    }
+
+}
+
+/// The result of an authentication flow.
+
+public struct AuthenticationResult: Equatable {
+
+    /// The user id of whom the token belongs.
+
+    let userID: UUID
+
+    /// The authentication cookies.
+
+    let cookies: [HTTPCookie]
+
+    /// A token used to make authenticated requests to the backend if available.
+
+    let accessToken: AccessToken?
+
+    public init(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) {
+        self.userID = userID
+        self.cookies = cookies
+        self.accessToken = accessToken
     }
 
 }
