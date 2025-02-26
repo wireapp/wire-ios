@@ -107,9 +107,9 @@ files: [
     "multilingual": true,
   },
   {
-    "source" : "/WireUI/Sources/WireReusableUIComponents/Resources/en.lproj/Localizable.strings",
+    "source" : "/WireUI/Sources/WireReusableUIComponents/Resources/Localization/en.lproj/Localizable.strings",
     "dest" : "/App/WireReusableUIComponents/Resources/Localizable.strings",
-    "translation" : "/WireUI/Sources/WireReusableUIComponents/Resources/%osx_code%/%original_file_name%",
+    "translation" : "/WireUI/Sources/WireReusableUIComponents/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
     "source" : "/WireUI/Sources/WireSettingsUI/Resources/en.lproj/Accessibility.strings",
