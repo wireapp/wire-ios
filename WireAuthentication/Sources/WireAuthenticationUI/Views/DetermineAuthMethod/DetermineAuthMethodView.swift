@@ -112,11 +112,6 @@ package struct DetermineAuthMethodView: View {
                 factory.loginViaEmailView(email: email, canCreateAccount: true)
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .ssoLoginDidFinishNotification)) { _ in
-            Task {
-                viewModel.dismissmodalView()
-            }
-        }
         .sheet(item: $viewModel.modalDestination, content: {
             switch $0 {
             case let .ssoLogin(url: ssoURL):

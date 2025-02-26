@@ -28,16 +28,7 @@ package struct SSOSuccessHandler {
 
     @MainActor
     package func handleSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        notifySSOLoginCompletion()
         router.presentSheet(RootView.ModalDestination.noHistory(userID: userID, cookies: cookies))
     }
 
-    private func notifySSOLoginCompletion() {
-        NotificationCenter.default.post(name: .ssoLoginDidFinishNotification, object: self)
-    }
-
-}
-
-extension Notification.Name {
-    static let ssoLoginDidFinishNotification = Notification.Name("SSOLoginDidFinish")
 }
