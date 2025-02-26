@@ -33,12 +33,18 @@ protocol PullEventsSyncProvider {
 /// Provides sync objects.
 final class SyncComponent: Component<PullEventsSyncDependency>, PullEventsSyncProvider {
     private let context: NSManagedObjectContext
+    private let proteusService: any ProteusServiceInterface
+    private let mlsDecryptionService: any MLSDecryptionServiceInterface
 
     init(
         parent: any Scope,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        proteusService: any ProteusServiceInterface,
+        mlsDecryptionService: any MLSDecryptionServiceInterface
     ) {
         self.context = context
+        self.proteusService = proteusService
+        self.mlsDecryptionService = mlsDecryptionService
         super.init(parent: parent)
     }
 
@@ -70,7 +76,7 @@ final class SyncComponent: Component<PullEventsSyncDependency>, PullEventsSyncPr
 
     private var proteusMessageDecryptor: any ProteusMessageDecryptorProtocol {
         ProteusMessageDecryptor(
-            proteusService: context.proteusService!,
+            proteusService: proteusService,
             userClientsLocalStore: localStoreComponent.userClientsLocalStore,
             userLocalStore: localStoreComponent.userLocalStore
         )
@@ -78,7 +84,7 @@ final class SyncComponent: Component<PullEventsSyncDependency>, PullEventsSyncPr
 
     private var mlsMessageDecryptor: any MLSMessageDecryptorProtocol {
         MLSMessageDecryptor(
-            mlsDecryptionService: context.mlsDecryptionService!,
+            mlsDecryptionService: mlsDecryptionService,
             conversationLocalStore: localStoreComponent.conversationLocalStore
         )
     }
