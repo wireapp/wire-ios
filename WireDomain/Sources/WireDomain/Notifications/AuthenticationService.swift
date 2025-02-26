@@ -18,12 +18,12 @@
 
 // sourcery: AutoMockable
 protocol AuthenticationServiceProtocol {
-    func authenticated() async throws -> AuthenticatedSessionProtocol
+    func authenticated() async throws -> LoggedInSessionProtocol
 }
 
 struct AuthenticationService: AuthenticationServiceProtocol {
     private let cookieStorageProvider: CookieStorageProvider
-    private let authenticatedSessionProvider: AuthenticatedSessionProvider
+    private let loggedInSessionProvider: LoggedInSessionProvider
 
     private enum Constants {
         static let cookieName = "zuid"
@@ -35,15 +35,15 @@ struct AuthenticationService: AuthenticationServiceProtocol {
 
     init(
         cookieStorageProvider: CookieStorageProvider,
-        authenticatedSessionProvider: AuthenticatedSessionProvider
+        loggedInSessionProvider: LoggedInSessionProvider
     ) {
         self.cookieStorageProvider = cookieStorageProvider
-        self.authenticatedSessionProvider = authenticatedSessionProvider
+        self.loggedInSessionProvider = loggedInSessionProvider
     }
 
     /// Checks whether user is authenticated.
-    /// - returns: An`AuthenticatedSession` when user is authenticated.
-    func authenticated() async throws -> AuthenticatedSessionProtocol {
+    /// - returns: A`LoggedInSession` when user is authenticated.
+    func authenticated() async throws -> LoggedInSessionProtocol {
         let cookieStorage = cookieStorageProvider.cookieStorage
         let cookies = try await cookieStorage.fetchCookies()
         var hasExpirationDate = false
@@ -58,7 +58,7 @@ struct AuthenticationService: AuthenticationServiceProtocol {
             throw Failure.unauthenticated
         }
 
-        return authenticatedSessionProvider.authenticatedSession
+        return loggedInSessionProvider.loggedInSession
     }
 
 }

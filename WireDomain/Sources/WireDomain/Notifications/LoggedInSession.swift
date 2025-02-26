@@ -21,7 +21,7 @@ import WireDataModel
 import WireLogging
 
 // sourcery: AutoMockable
-protocol AuthenticatedSessionProtocol {
+protocol LoggedInSessionProtocol {
     func setup() throws
 
     func startSync(
@@ -29,7 +29,7 @@ protocol AuthenticatedSessionProtocol {
     ) async throws -> AsyncStream<[UpdateEvent]>
 }
 
-struct AuthenticatedSession: AuthenticatedSessionProtocol {
+struct LoggedInSession: LoggedInSessionProtocol {
     private let coreDataProvider: any CoreDataProvider
     private let coreServiceProvider: any CoreServiceProvider
     private let localStoresProvider: any UserClientsLocalStoreProvider & UpdateEventsLocalStoreProvider
@@ -67,18 +67,6 @@ struct AuthenticatedSession: AuthenticatedSessionProtocol {
 
         if let loadStoresError {
             throw Failure.unableToLoadStores(loadStoresError)
-        }
-
-        coreData.syncContext.performAndWait {
-            if DeveloperFlag.proteusViaCoreCrypto.isOn { // do we still need this ?
-                coreData.syncContext.proteusService = proteusService
-            }
-
-            let mlsFeature = featureRepository.fetchMLS()
-
-            if mlsFeature.isEnabled {
-                coreData.syncContext.mlsDecryptionService = mlsDecryptionService
-            }
         }
     }
 

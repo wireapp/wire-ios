@@ -19,15 +19,15 @@
 import Foundation
 import NeedleFoundation
 
-protocol AuthenticatedSessionProvider {
-    var authenticatedSession: AuthenticatedSessionProtocol { get }
+protocol LoggedInSessionProvider {
+    var loggedInSession: LoggedInSessionProtocol { get }
 }
 
 /// Provides an authenticated session with injected components.
-final class AuthenticatedComponent: Component<EmptyDependency>, AuthenticatedSessionProvider {
+final class LoggedInComponent: Component<EmptyDependency>, LoggedInSessionProvider {
 
-    var authenticatedSession: AuthenticatedSessionProtocol {
-        AuthenticatedSession(
+    var loggedInSession: LoggedInSessionProtocol {
+        LoggedInSession(
             coreDataProvider: coreStorageComponent,
             coreServiceProvider: coreServiceComponent,
             localStoresProvider: localStoreComponent,
@@ -40,7 +40,9 @@ final class AuthenticatedComponent: Component<EmptyDependency>, AuthenticatedSes
     var syncComponent: SyncComponent {
         SyncComponent(
             parent: self,
-            context: coreStorageComponent.coreData.syncContext
+            context: coreStorageComponent.coreData.syncContext,
+            proteusService: coreServiceComponent.proteusService,
+            mlsDecryptionService: coreServiceComponent.mlsDecryptionService
         )
     }
 
