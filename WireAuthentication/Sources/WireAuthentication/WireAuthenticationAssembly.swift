@@ -38,9 +38,13 @@ public struct WireAuthenticationAssembly {
         defaultAPIVersion: APIVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        onFlowCompletion: @escaping () -> Void
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
+        onRegisterAccount: @escaping () -> Void
     ) -> some View {
-        let bridge = WireAuthenticationBridge(onFlowCompletion: onFlowCompletion)
+        let bridge = WireAuthenticationBridge(
+            onFlowCompletion: onFlowCompletion,
+            onRegisterAccount: onRegisterAccount
+        )
         let rootComponent = RootComponent(
             bridge: bridge,
             defaultBackendEnvironment: defaultBackendEnvironment,

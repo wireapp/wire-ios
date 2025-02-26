@@ -97,10 +97,17 @@ final class AuthenticationInterfaceBuilder {
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 defaultAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
-                passwordValidator: AuthenticationPasswordValidator()
-            ) {
-                authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
-            }
+                passwordValidator: AuthenticationPasswordValidator(),
+                onFlowCompletion: { _ in
+                    // TODO: [WPB-16044] Pass the cookies and token
+                    authenticationCoordinator?.eventResponderChain.handleEvent(
+                        ofType: .wireAuthenticationModuleComplete
+                    )
+                },
+                onRegisterAccount: {
+                    // TODO: [WPB-16279] Navigate to the account registration flow
+                }
+            )
 
             return AuthenticationHostingController(rootView: rootView)
 
