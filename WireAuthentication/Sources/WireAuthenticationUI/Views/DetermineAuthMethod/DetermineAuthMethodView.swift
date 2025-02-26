@@ -28,19 +28,18 @@ package protocol DetermineAuthMethodBuilder {
 
 package struct DetermineAuthMethodView: View {
 
+    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder
+
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
-    let loginViaEmailBuilder: any LoginViaEmailBuilder
-    let loginViaSSOBuilder: any LoginViaSSOBuilder
+    let factory: any Factory
 
     package init(
         viewModel: DetermineAuthMethodViewModel,
-        loginViaEmailBuilder: any LoginViaEmailBuilder,
-        loginViaSSOBuilder: any LoginViaSSOBuilder
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.loginViaEmailBuilder = loginViaEmailBuilder
-        self.loginViaSSOBuilder = loginViaSSOBuilder
+        self.factory = factory
     }
 
     package var body: some View {
@@ -70,6 +69,7 @@ package struct DetermineAuthMethodView: View {
                         title: L10n.Authentication.Identity.Input.Field.title,
                         string: $viewModel.emailOrSSOCode
                     )
+                    .autocapitalization(.none)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -92,28 +92,30 @@ package struct DetermineAuthMethodView: View {
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
         }
-        .alert(item: $viewModel.alert) { alert in
-            Alert(
-                title: titleForAlert(alert),
-                message: messageForAlert(alert),
-                dismissButton: .default(
-                    Text(L10n.Authentication.Error.confirm),
-                    action: { viewModel.didDismissAlert(alert: alert) }
-                )
-            )
-        }
+        .alert(
+            item: $viewModel.alert,
+            title: titleForAlert,
+            message: messageForAlert,
+            actions: { alert in
+                Button {
+                    viewModel.didDismissAlert(alert: alert)
+                } label: {
+                    Text(L10n.Authentication.Error.confirm)
+                }
+            }
+        )
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
-                loginViaEmailBuilder.loginViaEmailView(email: email, canCreateAccount: false)
-            case .loginOrRegister:
-                Color.red
+                factory.loginViaEmailView(email: email, canCreateAccount: false)
+            case let .loginOrRegister(email):
+                factory.loginViaEmailView(email: email, canCreateAccount: true)
             }
         }
         .sheet(item: $viewModel.modalDestination, content: {
             switch $0 {
             case let .ssoLogin(url: ssoURL):
-                loginViaSSOBuilder.loginViaSSOView(ssoURL: ssoURL)
+                factory.loginViaSSOView(ssoURL: ssoURL)
             }
         })
         .presentationDetents([.medium, .large])

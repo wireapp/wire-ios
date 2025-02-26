@@ -19,11 +19,11 @@
 import UIKit
 import WireDataModel
 
-final class ConversationButtonMessageCell: UIView, ConversationMessageContentView {
+final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     var isSelected: Bool = false
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
 
     var errorMessage: String? {
         didSet {
@@ -137,12 +137,12 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageContentVie
 
         NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: topAnchor),
-            button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
-            trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: margins.trailing),
+            button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: margins.right),
 
             errorLabelTopConstraint,
-            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
-            trailingAnchor.constraint(lessThanOrEqualTo: errorLabel.trailingAnchor, constant: margins.trailing),
+            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
             bottomAnchor.constraint(equalTo: errorLabel.bottomAnchor)
         ])
 
@@ -150,7 +150,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageContentVie
     }
 }
 
-final class ConversationButtonMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -165,7 +165,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageContent
 
     var message: ZMConversationMessage?
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
 
     var actionController: ConversationMessageActionController?
 

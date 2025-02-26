@@ -276,14 +276,14 @@ final class ConversationReplyContentView: UIView {
 
 }
 
-final class ConversationReplyCell: UIView, ConversationMessageContentView {
+final class ConversationReplyCell: UIView, ConversationMessageCell {
     typealias Configuration = ConversationReplyContentView.Configuration
     var isSelected: Bool = false
 
     let contentView: ConversationReplyContentView
     var container: ReplyRoundCornersView
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     override init(frame: CGRect) {
@@ -307,7 +307,7 @@ final class ConversationReplyCell: UIView, ConversationMessageContentView {
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         container.fitIn(view: self, insets: insets)
     }
 
@@ -322,7 +322,7 @@ final class ConversationReplyCell: UIView, ConversationMessageContentView {
 
 }
 
-final class ConversationReplyCellDescription: ConversationMessageContentViewDescription {
+final class ConversationReplyCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationReplyCell
     let configuration: View.Configuration
 
@@ -334,7 +334,7 @@ final class ConversationReplyCellDescription: ConversationMessageContentViewDesc
     let containsHighlightableContent: Bool = true
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel

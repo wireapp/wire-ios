@@ -19,14 +19,14 @@
 import UIKit
 import WireDataModel
 
-final class StackViewCellDescription: ConversationMessageContentViewDescription {
+final class StackViewCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationStackMessageContentView
 
-    private var cellDescriptions: [AnyConversationMessageContentViewDescription] { configuration }
+    private var cellDescriptions: [AnyConversationMessageCellDescription] { configuration }
 
     var canBeCombinedWithOtherCells: Bool { false }
 
-    var topMargin: Float {
+    var topMargin: CGFloat {
         get { cellDescriptions.first?.topMargin ?? 0 }
         set { fatalError() }
     }
@@ -62,7 +62,7 @@ final class StackViewCellDescription: ConversationMessageContentViewDescription 
         }
     }
 
-    var delegate: (any ConversationMessageContentViewDelegate)? {
+    var delegate: (any ConversationMessageCellDelegate)? {
         get {
             for cellDescription in cellDescriptions {
                 if let delegate = cellDescription.delegate {
@@ -104,7 +104,7 @@ final class StackViewCellDescription: ConversationMessageContentViewDescription 
         nil // TODO: fix!
     }
 
-    init(cellDescriptions: [AnyConversationMessageContentViewDescription]) {
+    init(cellDescriptions: [AnyConversationMessageCellDescription]) {
         configuration = cellDescriptions
     }
 

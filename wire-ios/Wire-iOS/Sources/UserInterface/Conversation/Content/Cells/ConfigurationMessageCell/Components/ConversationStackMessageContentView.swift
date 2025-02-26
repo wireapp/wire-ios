@@ -19,8 +19,8 @@
 import UIKit
 import WireDataModel
 
-final class ConversationStackMessageContentView: UIView, ConversationMessageContentView {
-    typealias Configuration = [AnyConversationMessageContentViewDescription]
+final class ConversationStackMessageContentView: UIView, ConversationMessageCell {
+    typealias Configuration = [AnyConversationMessageCellDescription]
 
     private let stackView = UIStackView()
 
@@ -28,7 +28,7 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCont
 
     var message: (any ZMConversationMessage)?
 
-    var delegate: (any ConversationMessageContentViewDelegate)?
+    var delegate: (any ConversationMessageCellDelegate)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)

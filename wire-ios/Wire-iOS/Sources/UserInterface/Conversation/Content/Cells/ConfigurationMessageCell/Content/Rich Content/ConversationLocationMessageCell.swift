@@ -21,7 +21,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationLocationMessageCell: UIView, ConversationMessageContentView, ContextMenuDelegate {
+final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let location: LocationMessageData
@@ -41,7 +41,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageContentV
     private var recognizer: UITapGestureRecognizer?
     private weak var locationAnnotation: MKPointAnnotation?
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var labelFont: UIFont? = .normalFont
@@ -104,7 +104,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageContentV
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let margins = conversationHorizontalMargins
-        let containerInsets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        let containerInsets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         containerView.fitIn(view: self, insets: containerInsets)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)
@@ -185,12 +185,12 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageContentV
     }
 }
 
-final class ConversationLocationMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLocationMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined

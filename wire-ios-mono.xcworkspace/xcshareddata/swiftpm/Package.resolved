@@ -21,19 +21,19 @@
       },
       {
         "package": "aws-sdk-swift",
-        "repositoryURL": "https://github.com/awslabs/aws-sdk-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "e587d4f4dd0290f188023a393f3a78f4d9522be2",
-          "version": "1.2.5"
+          "revision": "13fd05c74d7d1c421707ef5b738a5b18d5fa347a",
+          "version": "1.2.17"
         }
       },
       {
         "package": "CellsSDK",
         "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
         "state": {
-          "branch": "v5-dev",
-          "revision": "04297886acc07d15862f6b94e61e4318dc25f3b7",
+          "branch": "v0.1.1-alpha02",
+          "revision": "88654ec1adf7395a3aaa841f1f313bc110665fb9",
           "version": null
         }
       },
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
         "state": {
           "branch": null,
-          "revision": "0eda9f03e78dac2fbe516e09ca0ae96d72879c56",
-          "version": "0.111.0"
+          "revision": "edfc55c48a3d8c17720780872d94c17449241d88",
+          "version": "0.115.0"
         }
       },
       {

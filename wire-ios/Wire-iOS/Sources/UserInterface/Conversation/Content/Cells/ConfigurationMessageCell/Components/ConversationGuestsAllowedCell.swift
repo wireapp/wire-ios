@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class GuestsAllowedCellDescription: ConversationMessageContentViewDescription {
+final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
     // MARK: Properties
 
@@ -29,7 +29,7 @@ final class GuestsAllowedCellDescription: ConversationMessageContentViewDescript
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
@@ -58,13 +58,13 @@ final class GuestsAllowedCellDescription: ConversationMessageContentViewDescript
 
 // MARK: GuestAllowedCell
 
-final class GuestsAllowedCell: UIView, ConversationMessageContentView {
+final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     // MARK: Properties
 
     typealias Configuration = Void
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     private let stackView = UIStackView()
@@ -107,9 +107,9 @@ final class GuestsAllowedCell: UIView, ConversationMessageContentView {
         let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: margins.trailing),
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
         ])
     }

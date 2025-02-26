@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationAudioMessageCell: RoundedView, ConversationMessageContentView {
+final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -34,7 +34,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageConten
     private let obfuscationView = ObfuscationView(icon: .microphone)
     private let restrictionView = AudioMessageRestrictionView()
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -69,9 +69,9 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageConten
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.trailing),
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
@@ -120,7 +120,7 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
     }
 }
 
-final class ConversationAudioMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationAudioMessageCell
     let configuration: View.Configuration
 
@@ -133,7 +133,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageContentV
     let containsHighlightableContent: Bool = true
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {

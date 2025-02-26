@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationCannotDecryptSystemMessageCell
     typealias IconColors = SemanticColors.Icon
@@ -32,7 +32,7 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     private static let resetSessionURL: URL = .init(string: "action://reset-session")!
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined

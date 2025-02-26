@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationImageMessageCell: UIView, ConversationMessageContentView, ContextMenuDelegate {
+final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let image: ZMImageMessageData
@@ -48,7 +48,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageContentView
     private var heightConstraint: NSLayoutConstraint?
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
 
     var isSelected: Bool = false
 
@@ -81,11 +81,11 @@ final class ConversationImageMessageCell: UIView, ConversationMessageContentView
     private func createConstraints() {
         let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading)
+        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let trailing = trailingAnchor.constraint(
-            lessThanOrEqualTo: containerView.trailingAnchor,
-            constant: margins.trailing
+        let trailing = containerView.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: -margins.right
         )
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
@@ -165,13 +165,13 @@ final class ConversationImageMessageCell: UIView, ConversationMessageContentView
     }
 }
 
-final class ConversationImageMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationImageMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined

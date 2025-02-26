@@ -21,9 +21,9 @@ import WireLinkPreview
 import XCTest
 @testable import Wire
 
-// MARK: - MockConversationMessageContentViewDelegate
+// MARK: - MockConversationMessageCellDelegate
 
-final class MockConversationMessageContentViewDelegate: ConversationMessageContentViewDelegate {
+final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
 
     func conversationMessageWantsToShowActionsController(
         _ cell: UIView,
@@ -80,13 +80,13 @@ final class MockConversationMessageContentViewDelegate: ConversationMessageConte
 final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
     var url: URL?
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     var message: ZMConversationMessage?
 
-    let mockConversationMessageContentViewDelegate = MockConversationMessageContentViewDelegate()
+    let mockConversationMessageCellDelegate = MockConversationMessageCellDelegate()
 
     init() {
-        self.delegate = mockConversationMessageContentViewDelegate
+        self.delegate = mockConversationMessageCellDelegate
         self.message = MockMessage()
     }
 }

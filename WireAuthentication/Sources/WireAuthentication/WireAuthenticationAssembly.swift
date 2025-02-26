@@ -38,9 +38,13 @@ public struct WireAuthenticationAssembly {
         defaultAPIVersion: APIVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        onFlowCompletion: @escaping () -> Void
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
+        onRegisterAccount: @escaping () -> Void
     ) -> some View {
-        let bridge = WireAuthenticationBridge(onFlowCompletion: onFlowCompletion)
+        let bridge = WireAuthenticationBridge(
+            onFlowCompletion: onFlowCompletion,
+            onRegisterAccount: onRegisterAccount
+        )
         let rootComponent = RootComponent(
             bridge: bridge,
             defaultBackendEnvironment: defaultBackendEnvironment,
@@ -49,7 +53,7 @@ public struct WireAuthenticationAssembly {
             accountsURL: accountsURL, // this is temp
             passwordValidator: passwordValidator
         )
-        return rootComponent.rootView
+        return rootComponent.view
     }
 
 }

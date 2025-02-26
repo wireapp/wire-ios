@@ -18,7 +18,7 @@
 
 import UIKit
 
-final class ConversationCannotDecryptSystemMessageCell: ConversationIconBasedCell, ConversationMessageContentView {
+final class ConversationCannotDecryptSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     struct Configuration {
         let icon: UIImage?

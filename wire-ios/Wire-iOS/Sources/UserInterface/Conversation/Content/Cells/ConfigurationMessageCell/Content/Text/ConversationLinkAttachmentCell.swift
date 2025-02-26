@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentView, HighlightableView,
+final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView,
     ContextMenuDelegate {
 
     struct Configuration {
@@ -38,7 +38,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentVi
         return view
     }()
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -78,9 +78,9 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageContentVi
         let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(lessThanOrEqualTo: attachmentView.trailingAnchor, constant: margins.trailing),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
             bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
@@ -143,12 +143,12 @@ extension ConversationLinkAttachmentCell: LinkViewDelegate {
     }
 }
 
-final class ConversationLinkAttachmentCellDescription: ConversationMessageContentViewDescription {
+final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkAttachmentCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined

@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class FailedUsersSystemMessageCell: UIView, ConversationMessageContentView {
+final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
@@ -35,7 +35,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageContentView
 
     // MARK: - Properties
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     var isSelected: Bool = true
 

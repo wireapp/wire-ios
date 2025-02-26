@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationFileMessageCell: RoundedView, ConversationMessageContentView {
+final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -34,7 +34,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageContent
     private let obfuscationView = ObfuscationView(icon: .paperclip)
     private let restrictionView = FileMessageRestrictionView()
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
@@ -71,9 +71,9 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageContent
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
 
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.leading),
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.left),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
@@ -122,7 +122,7 @@ extension ConversationFileMessageCell: TransferViewDelegate {
     }
 }
 
-final class ConversationFileMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
     let configuration: View.Configuration
 
@@ -135,7 +135,7 @@ final class ConversationFileMessageCellDescription: ConversationMessageContentVi
     let containsHighlightableContent: Bool = true
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {

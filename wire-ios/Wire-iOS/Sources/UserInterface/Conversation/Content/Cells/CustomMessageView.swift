@@ -24,7 +24,7 @@ import WireDesign
 final class CustomMessageView: UIView {
     var isSelected: Bool = false
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var messageLabel = WebLinkTextView()
@@ -64,9 +64,9 @@ final class CustomMessageView: UIView {
         let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
-            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             messageLabel.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: margins.trailing),
+            trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor)
         ])
     }
