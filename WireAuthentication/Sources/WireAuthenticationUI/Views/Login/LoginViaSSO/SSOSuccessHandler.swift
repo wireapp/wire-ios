@@ -20,16 +20,16 @@ import Foundation
 
 package struct SSOSuccessHandler {
 
-    private let viewModel: RootViewModel
+    private let router: any Router
 
-    package init(viewModel: RootViewModel) {
-        self.viewModel = viewModel
+    package init(router: Router) {
+        self.router = router
     }
 
     @MainActor
     package func handleSuccess(userID: UUID, cookies: [HTTPCookie]) {
         notifySSOLoginCompletion()
-        viewModel.presentNoHistorySheet(userID: userID, cookies: cookies)
+        router.presentSheet(RootView.ModalDestination.noHistory(userID: userID, cookies: cookies))
     }
 
     private func notifySSOLoginCompletion() {

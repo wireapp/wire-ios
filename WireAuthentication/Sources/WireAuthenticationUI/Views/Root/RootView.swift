@@ -36,7 +36,7 @@ package struct RootView: View {
 
     package var body: some View {
         BackgroundView()
-            .sheet(item: $viewModel.activeSheet) { sheet in
+            .sheet(item: $viewModel.modalDestination) { sheet in
                 switch sheet {
                 case .authFlow:
                     NavigationStack(path: $viewModel.path) {
@@ -58,6 +58,14 @@ package struct RootView: View {
 
             }
     }
+
+    package enum ModalDestination: Identifiable, Hashable {
+        public var id: Self { self }
+
+        case authFlow
+        case noHistory(userID: UUID, cookies: [HTTPCookie])
+    }
+
 }
 
 #Preview {

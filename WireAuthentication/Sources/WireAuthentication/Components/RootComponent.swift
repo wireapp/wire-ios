@@ -75,7 +75,7 @@ class RootComponent: BootstrapComponent {
             onFlowCompletion: onFlowCompletion,
             onRegisterAccount: onRegisterAccount,
             onSSOSuccess: { userID, cookies in
-                SSOSuccessHandler(viewModel: self.viewModel).handleSuccess(userID: userID, cookies: cookies)
+                SSOSuccessHandler(router: self.router).handleSuccess(userID: userID, cookies: cookies)
             },
             onSSOFailure: {
                 SSOFailureHandler(viewModel: self.viewModel).handleFailure()

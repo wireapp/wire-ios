@@ -27,6 +27,13 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
     private let callbackScheme: String
     private let defaults: UserDefaults
 
+
+    /// `SSOLinkGenerator` initializer with given parameters.
+    /// - Parameters:
+    ///   - authenticationAPI: `AuthenticationAPI` instance.
+    ///   - baseURL: Backend URL.
+    ///   - callbackScheme: The URL scheme that where the callback will be provided.
+    ///   - defaults: The user defaults for storing temporary token.
     package init(
         authenticationAPI: AuthenticationAPI,
         baseURL: URL,
@@ -48,12 +55,10 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
         SSOLoginVerificationToken.flush(in: defaults)
     }
 
-    /// Generate the link to the SSO authentication screen
+    /// Generates the URL for the SSO authentication screen
     ///
     /// - Parameters:
-    ///   - baseURL: Backend URL.
     ///   - ssoCode: SSO code
-    ///   - callbackScheme: The URL scheme that where the callback will be provided.
     /// - Returns: URL to the SSO authentication screen
     @MainActor
     func buildSSOLink(ssoCode: UUID) async throws -> URL {

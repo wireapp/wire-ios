@@ -18,10 +18,20 @@
 
 import Foundation
 
+/// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
+
 public protocol SSOLinkGeneratorProtocol {
+
+    /// Generates the URL for the SSO authentication screen.
+    ///
+    /// - Parameters:
+    ///   - ssoCode: SSO code.
+    /// - Returns: URL to the SSO authentication screen.
 
     @MainActor
     func generateSSOLink(ssoCode: UUID) async throws -> URL
+
+    /// Flushes the temporary SSO login token stored in the user defaults.
 
     @MainActor
     func flushToken()
