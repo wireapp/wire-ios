@@ -19,16 +19,18 @@
 import Foundation
 internal import WireAuthenticationUI
 
-class LoginViaSSOComponent: LoginViaSSOBuilder {
+class LoginViaSSOComponent {
+
+    // MARK: - View
 
     @MainActor
-    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoURL: ssoURL)
+    func view(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: viewModel(ssoURL: ssoURL))
     }
 
     @MainActor
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
+    private func viewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
     }
 
 }
