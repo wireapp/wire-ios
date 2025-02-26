@@ -28,4 +28,4 @@ Feature: Account Management
 
     Examples:
       | Member1   | TeamOwner | TeamName  | Member2   | ConversationTitle | Member2UniqueUsername | Device  | LockPasscode | NewUsername |
-      | user1Name | user3Name | SuperTeam | user2Name | The Official Chat | user2UniqueUsername   | device1 | Aqa123456!   |   NewName   |
+      | user1Name | user3Name | SuperTeam | user2Name | The Official Chat | user2UniqueUsername   | device1 | Aqa123456!   |   user2Name |
