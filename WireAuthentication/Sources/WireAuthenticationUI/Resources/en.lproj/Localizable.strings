@@ -30,6 +30,19 @@
 "create_personal_account.title" = "Don’t have a Wire account?";
 "create_personal_account.button" = "Create Personal Account";
 
+"on_prem_user_login.title" = "Welcome to Wire Enterprise for %@!";
+"on_prem_user_login.message" = "Enter your password to log in";
+"on_prem_user_login.alert.title" = "On-premises Backend";
+"on_prem_user_login.alert.message.backend-name" = "Backend name:";
+"on_prem_user_login.alert.message.backend-url" = "Backend URL:";
+"on_prem_user_login.alert.button" = "OK";
+
+"proxy_credentials.title" = "Proxy Credentials";
+"proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
+"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_password.title" = "Password";
+"proxy_credentials.input_password.placeholder" = "Enter password";
+
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
 "switch_backend_confirmation.backend_name" = "Backend name:";
