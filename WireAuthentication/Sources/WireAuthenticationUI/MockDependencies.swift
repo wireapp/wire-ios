@@ -27,11 +27,23 @@ final class MockDependencies {
         RootViewModel()
     }
 
+    private var backendEnvironment: LocalBackendEnvironment {
+        _backendEnvironment
+    }
+
+    var _backendEnvironment = LocalBackendEnvironment(
+        title: "backen name",
+        url: URL(string: "https://example.com")!,
+        accountsURL: URL(string: "https://example.com")!,
+        proxySettings: nil
+    )
+
     var rootView: RootView {
         RootView(
             viewModel: rootViewModel,
-            determineAuthMethodBuilder: self,
-            noHistoryViewBuilder: self
+//            determineAuthMethodBuilder: self,
+//            noHistoryViewBuilder: self
+            factory: self
         )
     }
 
@@ -50,8 +62,7 @@ final class MockDependencies {
                 isLoading: isLoading,
                 alert: alert
             ),
-            loginViaEmailBuilder: self,
-            loginViaSSOBuilder: self
+            factory: self
         )
     }
 
@@ -87,8 +98,8 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], String) {
-        ([], "")
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken) {
+        ([], AccessToken(userID: UUID(), token: "", type: "", expirationDate: Date()))
     }
 
 }
@@ -107,8 +118,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     var determineAuthMethodView: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
-            loginViaEmailBuilder: self,
-            loginViaSSOBuilder: self
+            factory: self
         )
     }
 
@@ -117,10 +127,10 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
-        NoHistoryViewModel(userID: UUID(), cookieData: Data(), onFlowCompletion: {})
+        NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
     }
 
-    func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView {
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 
@@ -145,16 +155,48 @@ extension MockDependencies: LoginViaEmailBuilder {
             email: email,
             accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: canCreateAccount
+            canCreateAccount: canCreateAccount,
+            onCreateAccount: {}
         )
     }
 
     func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
+            factory: self
         )
     }
 
+}
+
+extension MockDependencies: VerificationCodeBuilder {
+
+    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+        VerificationCodeView(
+            viewModel: VerificationCodeViewModel(email: email, password: password)
+        )
+    }
+
+}
+
+extension MockDependencies: LoginViaEmailOnPremViewBuilder {
+
+    private func loginViaEmailOnPremViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremViewModel {
+        LoginViaEmailOnPremViewModel(
+            router: rootViewModel,
+            loginViaEmailUseCase: self,
+            email: email,
+            backendEnvironment: backendEnvironment,
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            canCreateAccount: canCreateAccount
+        )
+    }
+
+    func loginViaEmailOnPremView(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremView {
+        LoginViaEmailOnPremView(
+            viewModel: loginViaEmailOnPremViewModel(email: email, canCreateAccount: canCreateAccount)
+        )
+    }
 }
 
 extension MockDependencies: LoginViaSSOBuilder {

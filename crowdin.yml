@@ -14,29 +14,29 @@
 
 files: [
   {
-    "source" : "/wire-ios/Wire-iOS/Resources/Base.lproj/Localizable.strings",
-    "dest" : "/App/Wire-iOS/Resources/Localizable.strings",
-    "translation" : "/wire-ios/Wire-iOS/Resources/%osx_code%/%original_file_name%",
-  },
-  {
-    "source" : "/wire-ios/Wire-iOS/Resources/Base.lproj/Accessibility.strings",
+    "source" : "/wire-ios/Wire-iOS/Resources/Localization/Base.lproj/Accessibility.strings",
     "dest" : "/App/Wire-iOS/Resources/Accessibility.strings",
-    "translation" : "/wire-ios/Wire-iOS/Resources/%osx_code%/%original_file_name%",
+    "translation" : "/wire-ios/Wire-iOS/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
-    "source" : "/wire-ios/Wire-iOS/Resources/Base.lproj/Localizable.stringsdict",
+    "source" : "/wire-ios/Wire-iOS/Resources/Localization/Base.lproj/Localizable.stringsdict",
     "dest" : "/App/Wire-iOS/Resources/Localizable.stringsdict",
-    "translation" : "/wire-ios/Wire-iOS/Resources/%osx_code%/%original_file_name%",
+    "translation" : "/wire-ios/Wire-iOS/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
-    "source" : "/wire-ios/Wire-iOS/Resources/Base.lproj/InfoPlist.strings",
+    "source" : "/wire-ios/Wire-iOS/Resources/Localization/Base.lproj/Localizable.strings",
+    "dest" : "/App/Wire-iOS/Resources/Localizable.strings",
+    "translation" : "/wire-ios/Wire-iOS/Resources/Localization/%osx_code%/%original_file_name%",
+  },
+  {
+    "source" : "/wire-ios/Wire-iOS/Resources/Localization/Base.lproj/InfoPlist.strings",
     "dest" : "/App/Wire-iOS/Resources/InfoPlist.strings",
-    "translation" : "/wire-ios/Wire-iOS/Resources/%osx_code%/%original_file_name%",
+    "translation" : "/wire-ios/Wire-iOS/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
-    "source" : "/wire-ios/Wire-iOS Share Extension/Resources/Base.lproj/Localizable.strings",
+    "source" : "/wire-ios/Wire-iOS Share Extension/Resources/Localization/Base.lproj/Localizable.strings",
     "dest" : "/App/Wire-iOS Share Extension/Localizable.strings",
-    "translation" : "/wire-ios/Wire-iOS Share Extension/%osx_code%/%original_file_name%",
+    "translation" : "/wire-ios/Wire-iOS Share Extension/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
     "source" : "/WireUI/Sources/WireSidebarUI/Resources/en.lproj/Localizable.strings",

@@ -31,15 +31,19 @@ package protocol LoginViaEmailBuilder {
 }
 
 package struct LoginViaEmailView: View {
-    @ObservedObject var viewModel: LoginViaEmailViewModel
 
-    @State private var password: String = ""
-    @State private var showPasswordRules: Bool = false
+    package typealias Factory = VerificationCodeBuilder
+
+    @StateObject var viewModel: LoginViaEmailViewModel
+
+    let factory: any VerificationCodeBuilder
 
     package init(
-        viewModel: LoginViaEmailViewModel
+        viewModel: LoginViaEmailViewModel,
+        factory: any Factory
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.factory = factory
     }
 
     package var body: some View {
@@ -63,12 +67,23 @@ package struct LoginViaEmailView: View {
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
         }
+        .alert(
+            item: $viewModel.alert,
+            title: titleForAlert,
+            message: messageForAlert,
+            actions: { _ in
+                Button(L10n.Authentication.Error.confirm, action: {})
+            }
+        )
+        .navigationDestination(for: Destination.self) { destination in
+            switch destination {
+            case let .verifyLogin(email, password):
+                factory.verificationCodeView(email: email, password: password)
+            }
+        }
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
-        .onChange(of: password) { newPassword in
-            showPasswordRules = !viewModel.isValidPassword(newPassword)
-        }
     }
 
     @ViewBuilder private var emailField: some View {
@@ -82,24 +97,31 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var passwordField: some View {
         PasswordField(
-            password: $password,
+            password: $viewModel.password,
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
             passwordRules: viewModel.localizedPasswordRules,
-            isValidPassword: viewModel.isValidPassword
+            isValidPassword: { _ in viewModel.isPasswordValid }
         )
     }
 
     @ViewBuilder private var submitButton: some View {
-        Button(action: {
-            viewModel.submitPassword(password)
-        }, label: {
-            Text(L10n.CloudUserLogin.submit)
-                .lineLimit(nil)
-        })
+        Button(
+            action: { Task { await viewModel.submitPassword() } },
+            label: {
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+
+                    Text(L10n.CloudUserLogin.submit)
+                        .lineLimit(nil)
+                }
+            }
+        )
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password))
+        .disabled(!viewModel.isPasswordValid || viewModel.isLoading)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -146,6 +168,42 @@ package struct LoginViaEmailView: View {
                     .background(ColorTheme.Backgrounds.backgroundVariant.color)
                     .cornerRadius(12)
             }
+        }
+    }
+
+    enum Destination: Hashable {
+
+        case verifyLogin(email: String, password: String)
+
+    }
+
+    private func titleForAlert(_ alert: LoginViaEmailViewModel.Alert) -> Text {
+        switch alert {
+        case .noInternet:
+            Text(L10n.Authentication.Error.Title.noInternet)
+        case .unknownError:
+            Text(L10n.Authentication.Error.Title.general)
+        case .invalidCredentials:
+            Text(L10n.Authentication.Error.Title.invalidCredentials)
+        case .accountPendingActivation:
+            Text(L10n.Authentication.Error.Title.accountPendingActivation)
+        case .accountSuspended:
+            Text(L10n.Authentication.Error.Title.accountSuspended)
+        }
+    }
+
+    private func messageForAlert(_ alert: LoginViaEmailViewModel.Alert) -> Text {
+        switch alert {
+        case .noInternet:
+            Text(L10n.Authentication.Error.Message.noInternet)
+        case .unknownError:
+            Text(L10n.Authentication.Error.Message.general)
+        case .invalidCredentials:
+            Text(L10n.Authentication.Error.Message.invalidCredentials)
+        case .accountPendingActivation:
+            Text(L10n.Authentication.Error.Message.accountPendingActivation)
+        case .accountSuspended:
+            Text(L10n.Authentication.Error.Message.accountSuspended)
         }
     }
 

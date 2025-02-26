@@ -29,12 +29,12 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var defaultBackendEnvironment: BackendEnvironment { get }
     var defaultAPIVersion: APIVersion { get }
     var minTLSVersion: TLSVersion { get }
-    var callbackScheme: String { get }
-    var defaults: UserDefaults { get }
+    var ssoCallbackURLScheme: String { get }
+    var userDefaults: UserDefaults { get }
 
 }
 
-class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency>, DetermineAuthMethodBuilder {
+class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
     private var validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase {
         ValidateEmailOrSSOCodeUseCase()
@@ -51,8 +51,8 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
             baseURL: dependency.defaultBackendEnvironment.url,
-            callbackScheme: dependency.callbackScheme,
-            defaults: dependency.defaults
+            callbackScheme: dependency.ssoCallbackURLScheme,
+            defaults: dependency.userDefaults
         )
     }
 
@@ -65,11 +65,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+    @MainActor var view: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: viewModel,
-            loginViaEmailBuilder: loginViaEmailComponent,
-            loginViaSSOBuilder: loginViaSSOComponent
+            factory: self
         )
     }
 
@@ -142,5 +141,20 @@ package protocol OnPremLoginBuilder {
 
     @MainActor
     func someView(overriddenBackendEnvironment: BackendEnvironment?) -> AnyView
+
+}
+
+extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
+
+    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+        loginViaEmailComponent.view(
+            email: email,
+            canCreateAccount: canCreateAccount
+        )
+    }
+
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent.view(ssoURL: ssoURL)
+    }
 
 }

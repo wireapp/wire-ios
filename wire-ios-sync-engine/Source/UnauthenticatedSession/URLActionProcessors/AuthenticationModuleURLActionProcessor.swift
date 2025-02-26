@@ -20,16 +20,16 @@ import Foundation
 
 class AuthenticationModuleURLActionProcessor: URLActionProcessor {
 
-    let action: (UUID, Data) -> Void
+    let action: (UUID, [HTTPCookie]) -> Void
 
-    init(action: @escaping (UUID, Data) -> Void) {
+    init(action: @escaping (UUID, [HTTPCookie]) -> Void) {
         self.action = action
     }
 
     func process(urlAction: URLAction, delegate: (any PresentationDelegate)?) {
         switch urlAction {
         case let .companyLoginSuccess(userInfo):
-            action(userInfo.identifier, userInfo.cookieData)
+            action(userInfo.identifier, userInfo.cookies)
         default:
             break
         }

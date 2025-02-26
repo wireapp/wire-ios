@@ -147,6 +147,16 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
         }
     }
 
+    func testThatItDoesNotCreateANotificationForText_FromSelf() {
+        // given
+        syncMOC.performGroupedAndWait {
+            let note = self.textNotification(self.oneOnOneConversation, sender: self.selfUser, isEphemeral: false)
+
+            // then
+            XCTAssertNil(note)
+        }
+    }
+
     func testItCreatesMessageNotificationsCorrectly() {
 
         //    "push.notification.add.message.oneonone" = "%1$@";

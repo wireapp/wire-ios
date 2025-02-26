@@ -25,6 +25,6 @@ protocol SyncAgentDelegate: AnyObject {
     func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent)
     func syncAgentDidFinishLegacyInitialSync(_ syncAgent: SyncAgent)
     func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent)
+    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool)
 
 }

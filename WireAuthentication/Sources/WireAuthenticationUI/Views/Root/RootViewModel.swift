@@ -24,15 +24,8 @@ import WireAuthenticationAPI
 @MainActor
 public final class RootViewModel: ObservableObject, Router {
 
-    enum ActiveSheet: Identifiable, Hashable {
-        var id: Self { self }
-
-        case authFlow
-        case noHistory(userID: UUID, cookieData: Data)
-    }
-
     @Published var path = NavigationPath()
-    @Published var activeSheet: ActiveSheet? = .authFlow
+    @Published var modalDestination: RootView.ModalDestination? = .authFlow
     @Published var showSSOFailureAlert: Bool = false
 
     public init() {}
@@ -45,8 +38,8 @@ public final class RootViewModel: ObservableObject, Router {
         path.append(destination)
     }
 
-    func presentNoHistorySheet(userID: UUID, cookieData: Data) {
-        activeSheet = .noHistory(userID: userID, cookieData: cookieData)
+    public func presentSheet(_ modalDestination: some Hashable) {
+        self.modalDestination = modalDestination as? RootView.ModalDestination
     }
 
 }

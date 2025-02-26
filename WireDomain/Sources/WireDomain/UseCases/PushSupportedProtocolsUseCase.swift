@@ -39,6 +39,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
     let featureConfigRepository: any FeatureConfigRepositoryProtocol
     let pushSupportedProtocolsSync: any PushSupportedProtocolsSyncProtocol
     let userClientsLocalStore: any UserClientsLocalStoreProtocol
+    let userLocalStore: any UserLocalStoreProtocol
 
     private let logger = WireLogger(tag: "supported-protocols")
 
@@ -53,6 +54,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
         let remoteProtocols = await remotelySupportedProtocols()
         let migrationState = await currentMigrationState()
         let allClientsMLSReady = await userClientsLocalStore.allSelfUserClientsAreActiveMLSClients()
+        let currentSelfUserSupportedProtocols = await userLocalStore.fetchSelfUserSupportedProtocols()
 
         logger.debug(
             "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
@@ -63,6 +65,11 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
         /// All clients are proteus ready so we support it if the backend does.
         if remoteProtocols.contains(.proteus) {
             result.insert(.proteus)
+        }
+
+        // SelfUser supports mls (other client) at the moment, so we should not remove it
+        if currentSelfUserSupportedProtocols.contains(.mls) {
+            result.insert(.mls)
         }
 
         /// We support mls if the backend does and all MLS clients are ready.

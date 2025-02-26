@@ -21,18 +21,18 @@ import SwiftUI
 package protocol NoHistoryViewBuilder {
 
     @MainActor
-    func noHistoryView(userID: UUID, cookieData: Data) -> NoHistoryView
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView
 
 }
 
 package struct NoHistoryView: View {
 
-    @ObservedObject var viewModel: NoHistoryViewModel
+    @StateObject var viewModel: NoHistoryViewModel
 
     package init(
         viewModel: NoHistoryViewModel
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     package var body: some View {
@@ -62,8 +62,8 @@ package struct NoHistoryView: View {
 #Preview {
     let viewModel = NoHistoryViewModel(
         userID: UUID(),
-        cookieData: Data(),
-        onFlowCompletion: {}
+        cookies: [],
+        onFlowCompletion: { _ in }
     )
     NoHistoryView(viewModel: viewModel)
 }
@@ -73,8 +73,8 @@ package struct NoHistoryView: View {
         .sheet(isPresented: .constant(true)) {
             let viewModel = NoHistoryViewModel(
                 userID: UUID(),
-                cookieData: Data(),
-                onFlowCompletion: {}
+                cookies: [],
+                onFlowCompletion: { _ in }
             )
             NoHistoryView(viewModel: viewModel)
         }

@@ -136,4 +136,8 @@ public protocol UserLocalStoreProtocol {
     /// - returns: A list of users' qualified IDs.
 
     func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+
+    /// Fetch the self user Supported Protocols
+
+    func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol>
 }

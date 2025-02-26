@@ -24,32 +24,73 @@ import Foundation
 
 public struct WireAuthenticationBridge {
 
-    public let onFlowCompletion: () -> Void
-    private let onSuccessSSOFlowCompletion: (UUID, Data) -> Void
-    private let onFailureSSOFlowCompletion: () -> Void
+    public let onFlowCompletion: (AuthenticationResult) -> Void
+    private let onRegisterAccount: () -> Void
+    private let onSSOSuccess: (UUID, [HTTPCookie]) -> Void
+    private let onSSOFailure: () -> Void
 
     public init(
-        onFlowCompletion: @escaping () -> Void,
-        onSuccessSSOFlowCompletion: @escaping (UUID, Data) -> Void,
-        onFailureSSOFlowCompletion: @escaping () -> Void
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
+        onRegisterAccount: @escaping () -> Void,
+        onSSOSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
+        onSSOFailure: @escaping () -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
-        self.onSuccessSSOFlowCompletion = onSuccessSSOFlowCompletion
-        self.onFailureSSOFlowCompletion = onFailureSSOFlowCompletion
-
+        self.onRegisterAccount = onRegisterAccount
+        self.onSSOSuccess = onSSOSuccess
+        self.onSSOFailure = onSSOFailure
     }
 
-    public func completeFlow() {
-        onFlowCompletion()
+    // MARK: - Methods are called within the module, but their implementations exist outside of it.
+
+    /// Completes the authentication flow with the given result.
+
+    public func completeFlow(_ result: AuthenticationResult) {
+        onFlowCompletion(result)
     }
 
-    @MainActor
-    public func completeSSOSuccess(userID: UUID, cookieData: Data) {
-        onSuccessSSOFlowCompletion(userID, cookieData)
+    /// Initiates the account registration process.
+
+    public func registerAccount() {
+        onRegisterAccount()
     }
+
+    // MARK: - Methods are implemented inside the module and are meant to be invoked externally.
+
+    /// Completes the SSO process successfully.
+
+    public func completeSSOSuccess(userID: UUID, cookies: [HTTPCookie]) {
+        onSSOSuccess(userID, cookies)
+    }
+
+    /// Handles the failure of the SSO process.
 
     public func completeSSOFailure() {
-        onFailureSSOFlowCompletion()
+        onSSOFailure()
+    }
+
+}
+
+/// The result of an authentication flow.
+
+public struct AuthenticationResult: Equatable {
+
+    /// The user id of whom the token belongs.
+
+    let userID: UUID
+
+    /// The authentication cookies.
+
+    let cookies: [HTTPCookie]
+
+    /// A token used to make authenticated requests to the backend if available.
+
+    let accessToken: AccessToken?
+
+    public init(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) {
+        self.userID = userID
+        self.cookies = cookies
+        self.accessToken = accessToken
     }
 
 }

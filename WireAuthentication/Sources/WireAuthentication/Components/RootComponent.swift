@@ -30,9 +30,10 @@ class RootComponent: BootstrapComponent {
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let passwordValidator: any PasswordValidator
-    public let callbackScheme: String
-    public let defaults: UserDefaults
-    let onFlowCompletion: () -> Void
+    public let ssoCallbackURLScheme: String
+    public let userDefaults: UserDefaults
+    public let onRegisterAccount: () -> Void
+    let onFlowCompletion: (AuthenticationResult) -> Void
 
     init(
         defaultBackendEnvironment: BackendEnvironment,
@@ -40,46 +41,52 @@ class RootComponent: BootstrapComponent {
         minTLSVersion: TLSVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        callbackScheme: String,
-        defaults: UserDefaults,
-        onFlowCompletion: @escaping () -> Void
+        ssoCallbackURLScheme: String,
+        userDefaults: UserDefaults,
+        onRegisterAccount: @escaping () -> Void,
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
         self.defaultBackendEnvironment = defaultBackendEnvironment
         self.defaultAPIVersion = defaultAPIVersion
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.passwordValidator = passwordValidator
-        self.callbackScheme = callbackScheme
-        self.defaults = defaults
+        self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.userDefaults = userDefaults
+        self.onRegisterAccount = onRegisterAccount
         self.onFlowCompletion = onFlowCompletion
     }
 
-    @MainActor public var router: any Router {
-        rootViewModel
+    // MARK: - View
+
+    @MainActor var view: some View {
+        RootView(
+            viewModel: viewModel,
+            factory: self
+        )
     }
 
-    @MainActor private var rootViewModel: RootViewModel {
+    @MainActor private var viewModel: RootViewModel {
         shared { RootViewModel() }
     }
 
-    @MainActor var rootView: some View {
-        RootView(
-            viewModel: rootViewModel,
-            determineAuthMethodBuilder: determineAuthMethodComponent,
-            noHistoryViewBuilder: noHistoryComponent
+    @MainActor public var bridge: WireAuthenticationBridge {
+        WireAuthenticationBridge(
+            onFlowCompletion: onFlowCompletion,
+            onRegisterAccount: onRegisterAccount,
+            onSSOSuccess: { userID, cookies in
+                SSOSuccessHandler(router: self.router).handleSuccess(userID: userID, cookies: cookies)
+            },
+            onSSOFailure: {
+                SSOFailureHandler(viewModel: self.viewModel).handleFailure()
+            }
         )
     }
 
-    @MainActor var bridge: WireAuthenticationBridge {
-        WireAuthenticationBridge(
-            onFlowCompletion: onFlowCompletion,
-            onSuccessSSOFlowCompletion: { userID, cookieData in
-                SSOSuccessHandler(viewModel: self.rootViewModel).handleSuccess(userID: userID, cookieData: cookieData)
-            },
-            onFailureSSOFlowCompletion: {
-                SSOFailureHandler(viewModel: self.rootViewModel).handleFailure()
-            }
-        )
+    // MARK: - Public dependencies
+
+    @MainActor public var router: any Router {
+        viewModel
     }
 
     // MARK: - Children
@@ -90,6 +97,19 @@ class RootComponent: BootstrapComponent {
 
     @MainActor var noHistoryComponent: NoHistoryComponent {
         NoHistoryComponent(onFlowCompletion: bridge.onFlowCompletion)
+    }
+
+}
+
+extension RootComponent: RootView.Factory {
+
+    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+        determineAuthMethodComponent.view
+    }
+
+    @MainActor
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+        noHistoryComponent.view(userID: userID, cookies: cookies)
     }
 
 }

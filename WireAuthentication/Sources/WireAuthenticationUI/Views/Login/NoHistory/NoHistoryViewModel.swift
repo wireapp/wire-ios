@@ -25,20 +25,20 @@ import WireAuthenticationAPI
 package final class NoHistoryViewModel: ObservableObject {
 
     private let userID: UUID
-    private let cookieData: Data
-    private let onFlowCompletion: () -> Void
+    private let cookies: [HTTPCookie]
+    private let onFlowCompletion: (AuthenticationResult) -> Void
 
     package init(
         userID: UUID,
-        cookieData: Data,
-        onFlowCompletion: @escaping () -> Void
+        cookies: [HTTPCookie],
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
         self.userID = userID
-        self.cookieData = cookieData
+        self.cookies = cookies
         self.onFlowCompletion = onFlowCompletion
     }
 
     func confirm() {
-        onFlowCompletion()
+        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: nil))
     }
 }
