@@ -117,7 +117,7 @@ package struct VerificationCodeView: View {
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
                     .onChange(of: viewModel.code[index]) { newValue in
-                        focusedIndex = viewModel.handleInput(newValue, at: index, currentFocus: focusedIndex)
+                        focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
                     }
             }
         }

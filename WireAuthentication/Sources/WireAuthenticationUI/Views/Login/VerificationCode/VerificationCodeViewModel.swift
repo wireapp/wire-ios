@@ -60,6 +60,8 @@ public final class VerificationCodeViewModel: ObservableObject {
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         code: [String] = ["", "", "", "", "", ""]
     ) {
+        precondition(code.count > 0)
+
         self.email = email
         self.password = password
         self.loginViaEmailUseCase = loginViaEmailUseCase
@@ -71,24 +73,24 @@ public final class VerificationCodeViewModel: ObservableObject {
         code.contains { $0.isEmpty }
     }
 
-    func handleInput(_ newValue: String, at index: Int, currentFocus: Int?) -> Int? {
+    func handleInputReturningFocus(_ newValue: String, at index: Int) -> Int? {
         if let intValue = Int(newValue.prefix(1)), (0 ... 9).contains(intValue) {
             code[index] = String(intValue)
         } else {
             code[index] = ""
         }
 
-        var focusedIndex = currentFocus
-        if !code[index].isEmpty {
+        var focusedIndex: Int?
+        if !code[index].isEmpty{
             if index < numberOfDigits - 1 {
                 focusedIndex = index + 1
             } else {
                 focusedIndex = nil
             }
+        } else if index > 0 {
+            focusedIndex = index - 1
         } else {
-            if index > 0 {
-                focusedIndex = index - 1
-            }
+            focusedIndex = 0
         }
 
         return focusedIndex
