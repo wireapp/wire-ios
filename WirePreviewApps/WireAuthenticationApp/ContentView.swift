@@ -34,7 +34,7 @@ struct ContentView: View {
             accountsURL: configuration.accountsURL,
             passwordValidator: configuration.passwordValidator,
             onFlowCompletion: { _ in },
-            onCreateAccount: {}
+            onRegisterAccount: {}
         )
     }
 
