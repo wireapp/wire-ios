@@ -78,7 +78,7 @@ class RootComponent: BootstrapComponent {
                 SSOSuccessHandler(router: self.router).handleSuccess(userID: userID, cookies: cookies)
             },
             onSSOFailure: {
-                SSOFailureHandler(viewModel: self.viewModel).handleFailure()
+                SSOFailureHandler(router: self.router).handleFailure()
             }
         )
     }

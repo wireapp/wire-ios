@@ -59,7 +59,6 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
     /// - Parameters:
     ///   - ssoCode: SSO code
     /// - Returns: URL to the SSO authentication screen
-    @MainActor
     func buildSSOLink(ssoCode: UUID) async throws -> URL {
         let validationToken = SSOLoginVerificationToken()
         var components = URLComponents()
