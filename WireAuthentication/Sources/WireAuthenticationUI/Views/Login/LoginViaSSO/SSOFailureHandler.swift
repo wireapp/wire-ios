@@ -20,14 +20,14 @@ import Foundation
 
 package struct SSOFailureHandler {
 
-    private let viewModel: RootViewModel
+    private let router: any Router
 
-    package init(viewModel: RootViewModel) {
-        self.viewModel = viewModel
+    package init(router: Router) {
+        self.router = router
     }
 
     @MainActor
     package func handleFailure() {
-        viewModel.showSSOFailureAlert = true
+        router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
     }
 }

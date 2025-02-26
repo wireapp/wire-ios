@@ -24,9 +24,15 @@ import WireAuthenticationAPI
 @MainActor
 public final class RootViewModel: ObservableObject, Router {
 
+    public enum Alert: Hashable, Identifiable, Sendable {
+        public var id: Self { self }
+
+        case ssoLoginFailed
+    }
+
     @Published var path = NavigationPath()
     @Published var modalDestination: RootView.ModalDestination? = .authFlow
-    @Published var showSSOFailureAlert: Bool = false
+    @Published var alert: Alert?
 
     public init() {}
 
@@ -40,6 +46,10 @@ public final class RootViewModel: ObservableObject, Router {
 
     public func presentSheet(_ modalDestination: some Hashable) {
         self.modalDestination = modalDestination as? RootView.ModalDestination
+    }
+
+    public func presentAlert(_ alert: some Hashable) {
+        self.alert = alert as? RootViewModel.Alert
     }
 
 }

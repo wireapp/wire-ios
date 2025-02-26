@@ -42,21 +42,33 @@ package struct RootView: View {
                     NavigationStack(path: $viewModel.path) {
                         factory.determineAuthMethodView
                             .alert(
-                                L10n.Authentication.Error.Title.ssoLoginFailed,
-                                isPresented: $viewModel.showSSOFailureAlert
-                            ) {
-                                Button(L10n.Authentication.Error.confirm, role: .cancel) {
-                                    viewModel.showSSOFailureAlert = false
+                                item: $viewModel.alert,
+                                title: titleForAlert,
+                                message: messageForAlert,
+                                actions: { _ in
+                                    Button(L10n.Authentication.Error.confirm, action: {})
                                 }
-                            } message: {
-                                Text(L10n.Authentication.Error.Message.ssoLoginFailed)
-                            }
+                            )
                     }
                 case let .noHistory(userID, cookies):
                     factory.noHistoryView(userID: userID, cookies: cookies)
                 }
 
             }
+    }
+
+    private func titleForAlert(_ alert: RootViewModel.Alert) -> Text {
+        switch alert {
+        case .ssoLoginFailed:
+            Text(L10n.Authentication.Error.Title.ssoLoginFailed)
+        }
+    }
+
+    private func messageForAlert(_ alert: RootViewModel.Alert) -> Text {
+        switch alert {
+        case .ssoLoginFailed:
+            Text(L10n.Authentication.Error.Message.ssoLoginFailed)
+        }
     }
 
     package enum ModalDestination: Identifiable, Hashable {

@@ -107,9 +107,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func didDismissAlert(alert: Alert) {
         switch alert {
         case let .onPremLoginNotPossible(method):
-            Task.detached {
-                await self.handleAuthenticationMethod(method)
-            }
+            handleAuthenticationMethod(method)
         default:
             break
         }
@@ -122,7 +120,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func handleAuthenticationMethod(_ method: AuthenticationMethod) async {
+    private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
         switch method {
         case let .loginViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
@@ -131,11 +129,17 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            do {
-                let url = try await ssoLinkGenerator.generateSSOLink(ssoCode: code)
-                modalDestination = .ssoLogin(url: url)
-            } catch {
-                alert = .invalidSSOLink
+            Task.detached {
+                do {
+                    let url = try await self.ssoLinkGenerator.generateSSOLink(ssoCode: code)
+                    await MainActor.run {
+                        self.modalDestination = .ssoLogin(url: url)
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.alert = .invalidSSOLink
+                    }
+                }
             }
 
         case let .onPremLogin(email, backendConfig):
