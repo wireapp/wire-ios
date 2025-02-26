@@ -117,32 +117,12 @@ package struct VerificationCodeView: View {
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
                     .onChange(of: viewModel.code[index]) { newValue in
-                        handleInput(newValue, index: index)
+                        focusedIndex = viewModel.handleInput(newValue, at: index, currentFocus: focusedIndex)
                     }
             }
         }
         .onAppear {
             focusedIndex = 0
-        }
-    }
-
-    private func handleInput(_ newValue: String, index: Int) {
-        if let intValue = Int(newValue.prefix(1)), (0 ... 9).contains(intValue) {
-            viewModel.code[index] = String(intValue)
-        } else {
-            viewModel.code[index] = ""
-        }
-
-        if !viewModel.code[index].isEmpty {
-            if index < viewModel.numberOfDigits - 1 {
-                focusedIndex = index + 1
-            } else {
-                focusedIndex = nil
-            }
-        } else {
-            if index > 0 {
-                focusedIndex = index - 1
-            }
         }
     }
 
