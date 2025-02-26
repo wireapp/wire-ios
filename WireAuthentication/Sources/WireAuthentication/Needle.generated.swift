@@ -101,16 +101,6 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
     }
 }
-extension LoginViaEmailComponent: NeedleFoundation.Registration {
-    public func registerItems() {
-        keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
-        keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
-        keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
-        keyPathToName[\LoginViaEmailComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
-        keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
-
-    }
-}
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
@@ -121,6 +111,16 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
+    }
+}
+extension LoginViaEmailComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
+        keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
+        keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
+        keyPathToName[\LoginViaEmailComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
+        keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
+
     }
 }
 
@@ -141,8 +141,8 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe623e3b0c44298fc1c149afb)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent", factory9bda312c16141c932061c770221f242f9204cf85)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent", factory9bda312c16141c932061c770221f242f9204cf85)
 }
 #endif
 

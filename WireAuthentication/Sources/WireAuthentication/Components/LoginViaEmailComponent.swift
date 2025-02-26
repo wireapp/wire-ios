@@ -42,7 +42,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     func view(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: viewModel(email: email, canCreateAccount: canCreateAccount),
-            verificationCodeBuilder: verificationCodeComponent
+            factory: self
         )
     }
 
@@ -74,6 +74,19 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     var verificationCodeComponent: VerificationCodeComponent {
         VerificationCodeComponent(parent: self)
+    }
+
+}
+
+extension LoginViaEmailComponent: LoginViaEmailView.Factory {
+
+    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+        VerificationCodeView(
+            viewModel: VerificationCodeViewModel(
+                email: email,
+                password: password
+            )
+        )
     }
 
 }

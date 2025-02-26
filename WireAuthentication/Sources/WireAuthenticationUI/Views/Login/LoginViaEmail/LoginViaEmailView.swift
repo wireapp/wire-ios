@@ -32,16 +32,18 @@ package protocol LoginViaEmailBuilder {
 
 package struct LoginViaEmailView: View {
 
+    package typealias Factory = VerificationCodeBuilder
+
     @StateObject var viewModel: LoginViaEmailViewModel
 
-    let verificationCodeBuilder: any VerificationCodeBuilder
+    let factory: any VerificationCodeBuilder
 
     package init(
         viewModel: LoginViaEmailViewModel,
-        verificationCodeBuilder: any VerificationCodeBuilder
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.verificationCodeBuilder = verificationCodeBuilder
+        self.factory = factory
     }
 
     package var body: some View {
@@ -76,7 +78,7 @@ package struct LoginViaEmailView: View {
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
             case let .verifyLogin(email, password):
-                verificationCodeBuilder.verificationCodeView(email: email, password: password)
+                factory.verificationCodeView(email: email, password: password)
             }
         }
         .presentationDetents([.medium, .large])
