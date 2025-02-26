@@ -41,10 +41,6 @@ package struct VerificationCodeView: View {
 
     @FocusState private var focusedIndex: Int?
 
-    private var isConfirmButtonDisabled: Bool {
-        viewModel.code.contains { $0.isEmpty }
-    }
-
     package init(viewModel: VerificationCodeViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -76,7 +72,7 @@ package struct VerificationCodeView: View {
             })
             .wireButtonStyle(.primary)
             .padding(.horizontal)
-            .disabled(isConfirmButtonDisabled)
+            .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
                 Task.detached { await viewModel.resend() }

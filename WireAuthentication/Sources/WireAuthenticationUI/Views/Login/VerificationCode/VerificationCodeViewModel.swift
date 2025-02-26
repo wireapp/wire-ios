@@ -58,6 +58,10 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.numberOfDigits = code.count
     }
 
+    var isConfirmButtonDisabled: Bool {
+        code.contains { $0.isEmpty }
+    }
+
     func confirm() async {
         isLoading = true
 
