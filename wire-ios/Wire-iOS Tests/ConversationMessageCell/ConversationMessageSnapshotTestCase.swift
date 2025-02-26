@@ -192,7 +192,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
 }
 
-private extension ConversationMessageContentViewDescription {
+private extension ConversationMessageCellDescription {
 
     func makeView() -> UIView {
         let view = View()

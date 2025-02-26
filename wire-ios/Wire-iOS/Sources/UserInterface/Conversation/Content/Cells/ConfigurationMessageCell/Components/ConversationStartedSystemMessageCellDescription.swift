@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageContentViewDescription {
+final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
 
     typealias View = ConversationStartedSystemMessageCell
     typealias IconColors = SemanticColors.Icon
@@ -29,7 +29,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

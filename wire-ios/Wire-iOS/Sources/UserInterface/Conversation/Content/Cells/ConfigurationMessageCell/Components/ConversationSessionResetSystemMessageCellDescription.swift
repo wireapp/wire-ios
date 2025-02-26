@@ -21,12 +21,12 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
 
     var message: ZMConversationMessage?
-    var delegate: ConversationMessageContentViewDelegate?
+    var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
 
     var topMargin: CGFloat = 0

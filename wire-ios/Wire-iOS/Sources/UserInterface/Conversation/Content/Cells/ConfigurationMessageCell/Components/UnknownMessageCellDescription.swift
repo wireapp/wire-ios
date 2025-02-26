@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-extension CustomMessageView: ConversationMessageContentView {
+extension CustomMessageView: ConversationMessageCell {
 
     var selectionView: UIView? {
         messageLabel
@@ -32,12 +32,12 @@ extension CustomMessageView: ConversationMessageContentView {
 
 /// A description for a message cell that informs the user a message cannot be rendered.
 
-final class UnknownMessageCellDescription: ConversationMessageContentViewDescription {
+final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     typealias View = CustomMessageView
     let configuration: String
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

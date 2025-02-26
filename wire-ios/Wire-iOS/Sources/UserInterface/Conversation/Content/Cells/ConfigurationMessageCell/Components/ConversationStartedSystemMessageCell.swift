@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, ConversationMessageContentView {
+final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     struct Configuration {
         let title: NSAttributedString?

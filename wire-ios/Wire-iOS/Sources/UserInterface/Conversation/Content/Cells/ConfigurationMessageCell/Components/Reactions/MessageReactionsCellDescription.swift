@@ -21,7 +21,7 @@ import WireDataModel
 
 // MARK: - MessageReactionsCellDescription
 
-final class MessageReactionsCellDescription: ConversationMessageContentViewDescription {
+final class MessageReactionsCellDescription: ConversationMessageCellDescription {
 
     // MARK: - Properties
 
@@ -56,7 +56,7 @@ final class MessageReactionsCellDescription: ConversationMessageContentViewDescr
 
     var message: ZMConversationMessage?
 
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
 
     weak var actionController: ConversationMessageActionController?
 

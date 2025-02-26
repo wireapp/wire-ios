@@ -77,12 +77,12 @@ struct ReadReceiptViewModel {
     }
 }
 
-final class ConversationReadReceiptSettingChangedCellDescription: ConversationMessageContentViewDescription {
+final class ConversationReadReceiptSettingChangedCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationSystemMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

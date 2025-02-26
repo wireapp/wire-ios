@@ -56,17 +56,17 @@ extension ZMConversationMessage {
 final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// The view descriptor of the section.
-    private var cellDescriptions = [AnyConversationMessageContentViewDescription]()
+    private var cellDescriptions = [AnyConversationMessageCellDescription]()
 
     #if DEBUG
-        var cellDescriptionsForTesting: [AnyConversationMessageContentViewDescription] {
+        var cellDescriptionsForTesting: [AnyConversationMessageCellDescription] {
             get { cellDescriptions }
             set { cellDescriptions = newValue }
         }
     #endif
 
     /// The view descriptors in the order in which the tableview displays them.
-    var tableViewCellDescriptions: [AnyConversationMessageContentViewDescription] {
+    var tableViewCellDescriptions: [AnyConversationMessageCellDescription] {
         useInvertedIndices ? cellDescriptions.reversed() : cellDescriptions
     }
 
@@ -86,7 +86,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     /// The delegate for cells injected by the list adapter.
-    weak var cellDelegate: ConversationMessageContentViewDelegate? {
+    weak var cellDelegate: ConversationMessageCellDelegate? {
         didSet { updateDelegates() }
     }
 
@@ -137,28 +137,28 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func addContent(
         context: ConversationMessageContext,
         isSenderVisible: Bool,
-        to cellDescriptions: inout [AnyConversationMessageContentViewDescription]
+        to cellDescriptions: inout [AnyConversationMessageCellDescription]
     ) {
 
-        let contentCellDescriptions: [AnyConversationMessageContentViewDescription] = if message.isKnock {
+        let contentCellDescriptions: [AnyConversationMessageCellDescription] = if message.isKnock {
             addPingMessageCells()
         } else if message.isComposite {
             addCompositeMessageCells
         } else if message.isText {
             ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
         } else if message.isImage {
-            [AnyConversationMessageContentViewDescription(ConversationImageMessageCellDescription(
+            [AnyConversationMessageCellDescription(ConversationImageMessageCellDescription(
                 message: message,
                 image: message.imageMessageData!
             ))]
         } else if message.isLocation {
             addLocationMessageCells()
         } else if message.isAudio {
-            [AnyConversationMessageContentViewDescription(ConversationAudioMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationAudioMessageCellDescription(message: message))]
         } else if message.isVideo {
-            [AnyConversationMessageContentViewDescription(ConversationVideoMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
         } else if message.isFile {
-            [AnyConversationMessageContentViewDescription(ConversationFileMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
         } else if message.isSystem {
             ConversationSystemMessageCellDescription.cells(
                 for: message,
@@ -166,7 +166,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 buttonAction: buttonAction
             )
         } else {
-            [AnyConversationMessageContentViewDescription(UnknownMessageCellDescription())]
+            [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
         }
 
         if let topContentCellDescription = contentCellDescriptions.first {
@@ -188,30 +188,30 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Content Cells
 
-    private func addPingMessageCells() -> [AnyConversationMessageContentViewDescription] {
+    private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {
         guard let sender = message.senderUser else {
             return []
         }
 
-        return [AnyConversationMessageContentViewDescription(ConversationPingCellDescription(
+        return [AnyConversationMessageCellDescription(ConversationPingCellDescription(
             message: message,
             sender: sender
         ))]
     }
 
-    private func addLocationMessageCells() -> [AnyConversationMessageContentViewDescription] {
+    private func addLocationMessageCells() -> [AnyConversationMessageCellDescription] {
         guard let locationMessageData = message.locationMessageData else {
             return []
         }
 
         let locationCell = ConversationLocationMessageCellDescription(message: message, location: locationMessageData)
-        return [AnyConversationMessageContentViewDescription(locationCell)]
+        return [AnyConversationMessageCellDescription(locationCell)]
     }
 
-    private var addCompositeMessageCells: [AnyConversationMessageContentViewDescription] {
+    private var addCompositeMessageCells: [AnyConversationMessageCellDescription] {
         guard let compositeMessage = message as? ConversationCompositeMessage else { return [] }
 
-        var cells: [AnyConversationMessageContentViewDescription] = []
+        var cells: [AnyConversationMessageCellDescription] = []
 
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
@@ -225,7 +225,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 cells += textCells
             case let .button(data):
 
-                let button = AnyConversationMessageContentViewDescription(ConversationButtonMessageCellDescription(
+                let button = AnyConversationMessageCellDescription(ConversationButtonMessageCellDescription(
                     text: data.title,
                     state: data.state,
                     hasError: data.isExpired,
@@ -246,8 +246,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         /// Adds a cell description to the section.
         /// - parameter description: The cell to add to the message section.
 
-        func addForTesting(description: some ConversationMessageContentViewDescription) {
-            cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
+        func addForTesting(description: some ConversationMessageCellDescription) {
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
     #endif
 
@@ -260,7 +260,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func createCellDescriptions(in context: ConversationMessageContext) {
-        var cellDescriptions = [AnyConversationMessageContentViewDescription]()
+        var cellDescriptions = [AnyConversationMessageCellDescription]()
 
         let isSenderVisible = shouldShowSenderDetails(in: context)
 
@@ -270,7 +270,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 context: context,
                 accentColor: userSession.selfUser.accentColor
             )
-            cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
         if isSenderVisible, let sender = message.senderUser, let timestamp = message.formattedReceivedDate() {
@@ -279,7 +279,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 message: message,
                 timestamp: timestamp
             )
-            cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
         addContent(
@@ -290,12 +290,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         if isToolboxVisible(in: context) {
             let description = ConversationMessageToolboxCellDescription(message: message)
-            cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
         if !message.isSystem, !message.isEphemeral, message.hasReactions() {
             let description = MessageReactionsCellDescription(message: message)
-            cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
         if isFailedRecipientsVisible(in: context) {
@@ -304,7 +304,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 isCollapsed: isCollapsed,
                 buttonAction: { self.buttonAction() }
             )
-            cellDescriptions.append(AnyConversationMessageContentViewDescription(description))
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
         if let topCellDescription = cellDescriptions.first {

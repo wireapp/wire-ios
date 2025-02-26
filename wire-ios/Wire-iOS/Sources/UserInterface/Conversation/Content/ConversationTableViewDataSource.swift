@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
-extension AnyConversationMessageContentViewDescription: Differentiable {
+extension AnyConversationMessageCellDescription: Differentiable {
 
     typealias DifferenceIdentifier = String
 
@@ -34,7 +34,7 @@ extension AnyConversationMessageContentViewDescription: Differentiable {
         differenceIdentifier
     }
 
-    func isContentEqual(to source: AnyConversationMessageContentViewDescription) -> Bool {
+    func isContentEqual(to source: AnyConversationMessageCellDescription) -> Bool {
         isConfigurationEqual(with: source)
     }
 
@@ -78,7 +78,7 @@ final class ConversationTableViewDataSource: NSObject {
     var selectedMessage: ZMConversationMessage?
     var editingMessage: ZMConversationMessage?
 
-    weak var conversationCellDelegate: ConversationMessageContentViewDelegate?
+    weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
 
     var searchQueries: [String] = [] {
@@ -101,7 +101,7 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    private(set) var currentSections: [ArraySection<String, AnyConversationMessageContentViewDescription>] = []
+    private(set) var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
 
     /// calculate cell sections
     ///
@@ -110,7 +110,7 @@ final class ConversationTableViewDataSource: NSObject {
     @discardableResult
     func calculateSections(
         forceRecalculate: Bool = false
-    ) -> [ArraySection<String, AnyConversationMessageContentViewDescription>] {
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
         messages.enumerated().map { offset, element in
             let sectionIdentifier = element.objectIdentifier
             let context = context(
@@ -133,7 +133,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
-    ) -> [ArraySection<String, AnyConversationMessageContentViewDescription>] {
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
         let sectionIdentifier = sectionController.message.objectIdentifier
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
@@ -167,7 +167,7 @@ final class ConversationTableViewDataSource: NSObject {
         conversation: ZMConversation,
         tableView: UpsideDownTableView,
         actionResponder: MessageActionResponder,
-        cellDelegate: ConversationMessageContentViewDelegate,
+        cellDelegate: ConversationMessageCellDelegate,
         userSession: UserSession
     ) {
         self.messageActionResponder = actionResponder
@@ -422,7 +422,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         reloadSections(newSections: calculateSections())
     }
 
-    func reloadSections(newSections: [ArraySection<String, AnyConversationMessageContentViewDescription>]) {
+    func reloadSections(newSections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
         tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
     }
@@ -463,7 +463,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func registerCellIfNeeded(
-        with description: AnyConversationMessageContentViewDescription,
+        with description: AnyConversationMessageCellDescription,
         in tableView: UITableView
     ) {
         guard !registeredCells.contains(where: { obj in

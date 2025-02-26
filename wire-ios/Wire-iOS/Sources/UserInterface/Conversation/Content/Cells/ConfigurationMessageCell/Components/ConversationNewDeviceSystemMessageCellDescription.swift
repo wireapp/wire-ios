@@ -22,7 +22,7 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationNewDeviceSystemMessageCell
     typealias LabelColors = SemanticColors.Label
@@ -30,7 +30,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false

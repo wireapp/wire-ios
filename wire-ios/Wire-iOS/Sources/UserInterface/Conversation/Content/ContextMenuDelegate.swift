@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 
 protocol ContextMenuDelegate: AnyObject {
-    var delegate: ConversationMessageContentViewDelegate? { get }
+    var delegate: ConversationMessageCellDelegate? { get }
     var message: ZMConversationMessage? { get }
 
     func makeContextMenu(title: String, view: UIView) -> UIMenu

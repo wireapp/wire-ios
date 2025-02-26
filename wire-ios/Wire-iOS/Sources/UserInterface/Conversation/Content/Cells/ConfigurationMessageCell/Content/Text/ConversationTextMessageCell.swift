@@ -19,7 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView, ConversationMessageContentView, TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -52,8 +52,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageContentView,
     var isSelected = false
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
-    weak var menuPresenter: ConversationMessageContentViewMenuPresenter?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     var ephemeralTimerTopInset: CGFloat {
         guard let font = messageTextView.font else {
@@ -150,12 +150,12 @@ final class ConversationTextMessageCell: UIView, ConversationMessageContentView,
 
 // MARK: - Description
 
-final class ConversationTextMessageCellDescription: ConversationMessageContentViewDescription {
+final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
-    weak var delegate: ConversationMessageContentViewDelegate?
+    weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
@@ -188,7 +188,7 @@ extension ConversationTextMessageCellDescription {
     static func cells(
         for message: ZMConversationMessage,
         searchQueries: [String]
-    ) -> [AnyConversationMessageContentViewDescription] {
+    ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
         }
@@ -200,9 +200,9 @@ extension ConversationTextMessageCellDescription {
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
         searchQueries: [String]
-    ) -> [AnyConversationMessageContentViewDescription] {
+    ) -> [AnyConversationMessageCellDescription] {
 
-        var cells: [AnyConversationMessageContentViewDescription] = []
+        var cells: [AnyConversationMessageCellDescription] = []
 
         // Refetch the link attachments if needed
         if !Settings.disableLinkPreviews {
@@ -229,7 +229,7 @@ extension ConversationTextMessageCellDescription {
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
             let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
-            cells.append(AnyConversationMessageContentViewDescription(quoteCell))
+            cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
 
         // Text
@@ -238,7 +238,7 @@ extension ConversationTextMessageCellDescription {
                 attributedString: messageText,
                 isObfuscated: message.isObfuscated
             )
-            cells.append(AnyConversationMessageContentViewDescription(textCell))
+            cells.append(AnyConversationMessageCellDescription(textCell))
         }
 
         guard !message.isObfuscated else {
@@ -252,11 +252,11 @@ extension ConversationTextMessageCellDescription {
                 attachment: attachment,
                 thumbnailResource: message.linkAttachmentImage
             )
-            cells.append(AnyConversationMessageContentViewDescription(attachmentCell))
+            cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview
             let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(message: message, data: textMessageData)
-            cells.append(AnyConversationMessageContentViewDescription(linkPreviewCell))
+            cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
         }
 
         return cells
