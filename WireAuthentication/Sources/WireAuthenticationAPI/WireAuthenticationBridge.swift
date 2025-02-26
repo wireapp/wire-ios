@@ -22,16 +22,49 @@ import Foundation
 /// (from outside into this module) and **outbound** (from inside this module
 /// to the external world).
 
-public struct WireAuthenticationBridge {
+package struct WireAuthenticationBridge {
 
-    private let onFlowCompletion: () -> Void
+    private let onFlowCompletion: (AuthenticationResult) -> Void
+    private let onRegisterAccount: () -> Void
 
-    public init(onFlowCompletion: @escaping () -> Void) {
+    package init(
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
+        onRegisterAccount: @escaping () -> Void
+    ) {
         self.onFlowCompletion = onFlowCompletion
+        self.onRegisterAccount = onRegisterAccount
     }
 
-    public func completeFlow() {
-        onFlowCompletion()
+    package func completeFlow(_ result: AuthenticationResult) {
+        onFlowCompletion(result)
+    }
+
+    package func registerAccount() {
+        onRegisterAccount()
+    }
+
+}
+
+/// The result of an authentication flow.
+
+public struct AuthenticationResult: Equatable {
+
+    /// The user id of whom the token belongs.
+
+    let userID: UUID
+
+    /// The authentication cookies.
+
+    let cookies: [HTTPCookie]
+
+    /// A token used to make authenticated requests to the backend if available.
+
+    let accessToken: AccessToken?
+
+    public init(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) {
+        self.userID = userID
+        self.cookies = cookies
+        self.accessToken = accessToken
     }
 
 }
