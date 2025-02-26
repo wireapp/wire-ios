@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import WireAuthenticationUI
 
-public struct VerificationCodeView_Previews: View {
+final class MockRouter: Router {
 
-    var code: [String]
+    public var navigate_Invocations: [any Hashable] = []
 
-    public init(code: [String]) {
-        self.code = code
-    }
+    func popToRoot() {}
 
-    public var body: some View {
-        VerificationCodeView(
-            viewModel: VerificationCodeViewModel(
-                email: "name.name@mail.com",
-                password: "password"
-            )
-        )
+    func navigate(to destination: some Hashable) {
+        navigate_Invocations.append(destination)
     }
 
 }

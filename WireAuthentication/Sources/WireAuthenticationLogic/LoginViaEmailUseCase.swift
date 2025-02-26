@@ -32,13 +32,22 @@ public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken) {
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], WireAuthenticationAPI.AccessToken) {
         do {
-            return try await authenticationAPI.login(
+            let (cookies, token) = try await authenticationAPI.login(
                 email: email,
                 password: password,
                 verificationCode: verificationCode,
                 label: nil
+            )
+            return (
+                cookies,
+                AccessToken(
+                    userID: token.userID,
+                    token: token.token,
+                    type: token.type,
+                    expirationDate: token.expirationDate
+                )
             )
         } catch let error as AuthenticationAPIError {
             switch error {

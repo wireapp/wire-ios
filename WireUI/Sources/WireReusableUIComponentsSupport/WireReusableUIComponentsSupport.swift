@@ -16,17 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-
-struct VerifyLoginView: View {
-
-    @ObservedObject var viewModel: VerifyLoginViewModel
-
-    var body: some View {
-        Color.red
-    }
-}
-
-#Preview {
-    VerifyLoginView(viewModel: VerifyLoginViewModel())
-}
+import Foundation

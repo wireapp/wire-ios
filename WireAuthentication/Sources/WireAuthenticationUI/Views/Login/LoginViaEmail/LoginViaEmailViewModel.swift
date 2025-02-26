@@ -19,15 +19,35 @@
 import Foundation
 import UIKit
 import WireAuthenticationAPI
+import WireLogging
 import WireReusableUIComponents
 
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
+    package enum Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        case noInternet
+        case unknownError
+        case invalidCredentials
+        case accountPendingActivation
+        case accountSuspended
+    }
+
+    @Published var password: String = "" {
+        didSet { showPasswordRules = !isPasswordValid }
+    }
+
+    @Published private(set) var showPasswordRules = false
+    @Published private(set) var isLoading = false
+    @Published var alert: Alert?
+
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let forgotPasswordURL: URL
     private let passwordValidator: any PasswordValidator
+    private let onCreateAccount: () -> Void
 
     let email: String
     let canCreateAccount: Bool
@@ -40,7 +60,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
         email: String,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        canCreateAccount: Bool
+        canCreateAccount: Bool,
+        onCreateAccount: @escaping () -> Void
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
@@ -48,36 +69,69 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
+        self.onCreateAccount = onCreateAccount
     }
 
     var localizedPasswordRules: String? {
         passwordValidator.localizedRulesDescription
     }
 
-    func isValidPassword(_ password: String) -> Bool {
-        passwordValidator.isPasswordValid(password)
+    var isPasswordValid: Bool {
+        passwordValidator.isPasswordValid(cleanPassword)
     }
 
-    func submitPassword(_ password: String) {
-        Task.detached {
-            do {
-                // TODO: [WPB-15924] Handle happy path
-                _ = try await self.loginViaEmailUseCase.invoke(
-                    email: self.email,
-                    password: password,
-                    verificationCode: ""
+    func submitPassword() async {
+        isLoading = true
+
+        let loginTask = Task.detached { [loginViaEmailUseCase, email, cleanPassword] in
+            try await loginViaEmailUseCase.invoke(
+                email: email,
+                password: cleanPassword,
+                verificationCode: nil
+            )
+        }
+
+        do {
+            let (cookies, token) = try await loginTask.value
+            // TODO: [WPB-16276] Navigate to the first time login screen
+            WireLogger.authentication.info("login via email succeeded")
+        } catch {
+            WireLogger.authentication.info("login via email returned an error: \(error)")
+
+            switch error {
+            case LoginViaEmailUseCaseFailure.invalidCredentials:
+                alert = .invalidCredentials
+            case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
+                router.navigate(
+                    to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
                 )
-            } catch {
-                // TODO: [WPB-15924] Error handling
-                print("error: \(error)")
+            case LoginViaEmailUseCaseFailure.accountPendingActivation:
+                alert = .accountPendingActivation
+            case LoginViaEmailUseCaseFailure.accountSuspended:
+                alert = .accountSuspended
+            case LoginViaEmailUseCaseFailure.noInternet:
+                alert = .noInternet
+            default:
+                WireLogger.authentication.error("Unexpected error during login via email: \(error)")
+                alert = .unknownError
             }
         }
+
+        isLoading = false
     }
 
     func recoverPassword() {
         UIApplication.shared.open(forgotPasswordURL)
     }
 
-    func createAccount() {}
+    func createAccount() {
+        onCreateAccount()
+    }
+
+    // MARK: - Private
+
+    private var cleanPassword: String {
+        password.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 
 }
