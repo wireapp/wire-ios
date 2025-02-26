@@ -31,7 +31,7 @@ package protocol LoginViaEmailOnPremViewBuilder {
 }
 
 package struct LoginViaEmailOnPremView: View {
-    @ObservedObject var viewModel: LoginViaEmailOnPremViewModel
+    @StateObject var viewModel: LoginViaEmailOnPremViewModel
 
     @State private var password: String = ""
     @State private var proxyPassword: String = ""
@@ -44,7 +44,7 @@ package struct LoginViaEmailOnPremView: View {
     package init(
         viewModel: LoginViaEmailOnPremViewModel
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     package var body: some View {

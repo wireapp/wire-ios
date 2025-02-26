@@ -32,31 +32,4 @@ public enum LocalProxySettings {
 
     case authenticated(host: String, port: Int, username: String, password: String)
 
-    /// Dictionary to be used with `URLSessionConfiguration.connectionProxyDictionary`.
-
-    func proxyDictionary() -> [AnyHashable: Any] {
-        let socksEnable = "SOCKSEnable"
-        let socksProxy = "SOCKSProxy"
-        let socksPort = "SOCKSPort"
-
-        var result: [AnyHashable: Any] = [
-            socksEnable: 1,
-            kCFProxyTypeKey: kCFProxyTypeSOCKS,
-            kCFStreamPropertySOCKSVersion: kCFStreamSocketSOCKSVersion5
-        ]
-
-        switch self {
-        case let .unauthenticated(host, port):
-            result[socksProxy] = host
-            result[socksPort] = port
-        case let .authenticated(host, port, username, password):
-            result[socksProxy] = host
-            result[socksPort] = port
-            result[kCFStreamPropertySOCKSUser] = username
-            result[kCFStreamPropertySOCKSPassword] = password
-        }
-
-        return result
-    }
-
 }

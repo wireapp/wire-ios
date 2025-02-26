@@ -56,14 +56,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testDynamicTypeVariantsWithoutProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let dependencies = MockDependencies()
-        dependencies._backendEnvironment = LocalBackendEnvironment(
-            title: "<backend name>",
-            url: URL(string: "https://example.com")!,
-            accountsURL: URL(string: "https://example.com")!,
-            proxySettings: .unauthenticated(host: "socks-test.net", port: 10)
-        )
-        let view = dependencies.loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
+        let view = MockDependencies().loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
@@ -101,7 +94,14 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testDynamicTypeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
+        let dependencies = MockDependencies()
+        dependencies._backendEnvironment = LocalBackendEnvironment(
+            title: "<backend name>",
+            url: URL(string: "https://example.com")!,
+            accountsURL: URL(string: "https://example.com")!,
+            proxySettings: .unauthenticated(host: "socks-test.net", port: 10)
+        )
+        let view = dependencies.loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
