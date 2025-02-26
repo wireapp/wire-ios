@@ -24,7 +24,7 @@ import WireAuthenticationAPI
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
-    package enum Alert: Hashable, Identifiable {
+    package enum Alert: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
         case noInternet

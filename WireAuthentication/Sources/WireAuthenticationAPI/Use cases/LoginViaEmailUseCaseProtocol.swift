@@ -18,9 +18,7 @@
 
 import Foundation
 
-public protocol LoginViaEmailUseCaseProtocol {
-
-    associatedtype AccessToken
+public protocol LoginViaEmailUseCaseProtocol: Sendable {
 
     func invoke(
         email: String,

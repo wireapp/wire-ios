@@ -30,6 +30,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
     var authenticationAPI: AuthenticationAPI { get }
+    var bridge: WireAuthenticationBridge { get }
 
 }
 
@@ -40,7 +41,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     @MainActor
     func view(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: viewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: viewModel(email: email, canCreateAccount: canCreateAccount),
+            factory: self
         )
     }
 
@@ -55,7 +57,10 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             email: email,
             accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
-            canCreateAccount: canCreateAccount
+            canCreateAccount: canCreateAccount,
+            onCreateAccount: { [weak dependency] in
+                dependency?.bridge.registerAccount()
+            }
         )
     }
 
@@ -63,6 +68,20 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     private var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
         LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
+    }
+
+    // MARK: - Children
+
+    var verificationCodeComponent: VerificationCodeComponent {
+        VerificationCodeComponent(parent: self)
+    }
+
+}
+
+extension LoginViaEmailComponent: LoginViaEmailView.Factory {
+
+    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+        verificationCodeComponent.view(email: email, password: password)
     }
 
 }
