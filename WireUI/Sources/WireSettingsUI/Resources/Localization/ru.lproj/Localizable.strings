@@ -1,0 +1,67 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"backup.export.action" = "Создать резервную копию сейчас";
+"backup.export.description" = "Создайте резервную копию, чтобы сохранить историю бесед. Вы можете использовать ее для восстановления истории в случае потери или замены компьютера. Файл резервной копии не защищен сквозным шифрованием, поэтому храните его в надежном месте.";
+
+"backup.import.action" = "Восстановить из резервной копии";
+"backup.import.description" = "Текущая история на этом устройстве сохранится и будет дополнена новой резервной копией. Вы можете восстановить историю со всех ваших устройств и разных платформ, но не из другого аккаунта.";
+
+"exportBackup.title" = "Установить пароль";
+"exportBackup.description" = "Резервная копия будет сжата. Если вы используете пароль, Wire также зашифрует файл резервной копии. Обязательно храните пароль в надежном месте.";
+"exportBackup.button" = "Создать резервную копию сейчас";
+"exportBackup.setBackupPassword.title" = "Пароль (НЕОБЯЗАТЕЛЬНО)";
+"exportBackup.setBackupPassword.placeholder" = "Введите пароль";
+"exportBackup.setBackupPassword.rules" = "Используйте как минимум 8 символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
+
+"exportBackup.cancel.title" = "Отмена";
+"exportBackup.errorAlert.title" = "Что-то пошло не так";
+"exportBackup.errorAlert.message" = "Не удалось создать резервную копию. Пожалуйста, повторите попытку или обратитесь в службу поддержки Wire.";
+"exportBackup.errorAlert.ok" = "OK";
+
+"exportBackup.creatingBackup.title" = "Создание резервной копии";
+"exportBackup.creatingBackup.saving" = "Сохранение истории бесед…";
+"exportBackup.creatingBackup.success" = "Резервная копия успешно создана.";
+"exportBackup.creatingBackup.saveButton.title" = "Сохранить файл";
+
+"importBackup.cancel.title" = "Отмена";
+
+"importBackup.overwriteConfirmation.title" = "Файл перезаписывает вашу историю";
+"importBackup.overwriteConfirmation.message" = "Содержимое резервной копии заменит текущую историю бесед на этом устройстве.";
+"importBackup.overwriteConfirmation.cancel" = "Отмена";
+"importBackup.overwriteConfirmation.proceed" = "Продолжить";
+
+"importBackup.alert.ok" = "OK";
+"importBackup.alert.success.title" = "Успешно";
+"importBackup.alert.success.message" = "Ваша история восстановлена.";
+"importBackup.alert.genericError.title" = "Что-то пошло не так";
+"importBackup.alert.genericError.message" = "Ваша история не может быть восстановлена. Пожалуйста, попробуйте еще раз или обратитесь в службу поддержки Wire.";
+"importBackup.alert.incompatibleBackupError.title" = "Несовместимая резервная копия";
+"importBackup.alert.incompatibleBackupError.message" = "Эта резервная копия была создана в более новой или устаревшей версии Wire и не может быть восстановлена.";
+"importBackup.alert.wrongFileError.title" = "Несовместимый файл резервной копии";
+"importBackup.alert.wrongFileError.message" = "Вы не можете восстановить историю из другой учетной записи.";
+
+"importBackup.enterPassword.title" = "Введите пароль";
+"importBackup.enterPassword.description" = "Эта резервная копия защищена паролем.";
+"importBackup.enterPassword.textField.title" = "Пароль";
+"importBackup.enterPassword.textField.placeholder" = "Введите пароль";
+"importBackup.enterPassword.wrongPassword" = "Неверный пароль. Пожалуйста, проверьте введенные данные и повторите попытку";
+"importBackup.enterPassword.button.title" = "Продолжить";
+
+"importBackup.restoringHistory.title" = "Восстановление истории…";
+"importBackup.restoringHistory.message" = "Загрузка бесед…";
