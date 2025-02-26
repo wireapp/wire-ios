@@ -1,7 +1,6 @@
 Feature: Personal Account Lifecycle
 
-  #TODO: Change skip to flows once the issue with user manager is fixed
-  @skip @TC-8587
+  @flows @TC-8587
   Scenario Outline: Personal account lifecycle
     When I tap Create An Account button on Welcome page
     And I see registration screen
