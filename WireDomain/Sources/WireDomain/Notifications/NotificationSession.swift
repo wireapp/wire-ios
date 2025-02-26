@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import WireAPI
 import WireDataModel
 import WireLogging
@@ -31,7 +30,6 @@ final class NotificationSession {
     private let authenticationServiceProvider: AuthenticationServiceProvider
     private let notificationHandler: NotificationHandler
     private let eventID: UUID
-    private var subscription: AnyCancellable?
 
     // MARK: - Object lifecycle
 
@@ -43,11 +41,6 @@ final class NotificationSession {
         self.eventID = eventID
         self.authenticationServiceProvider = authenticationServiceProvider
         self.notificationHandler = notificationHandler
-    }
-
-    deinit {
-        subscription?.cancel()
-        subscription = nil
     }
 
     // MARK: - Notifications
@@ -68,33 +61,60 @@ final class NotificationSession {
         )
 
         for await decodedEvents in decodedEventsStream {
-            generateNotificationContent(for: decodedEvents)
+            await generateNotificationContent(for: decodedEvents)
         }
     }
 
     private func generateNotificationContent(
         for events: [UpdateEvent]
-    ) {
+    ) async {
         guard !events.isEmpty else {
             return notificationHandler(UNMutableNotificationContent())
         }
-        // TODO: [WPB-11175] - Generate UNNotificationContent from update events
+
+        var notifications: [UNMutableNotificationContent] = []
+        
         for event in events {
-            let notification = switch event {
+            var notificationBuilder: NotificationBuilder
+            
+            switch event {
             case let .conversation(conversationEvent):
-                UNMutableNotificationContent()
-            case let .featureConfig(featureConfigEvent):
-                UNMutableNotificationContent()
-            case let .federation(federationEvent):
-                UNMutableNotificationContent()
+                notificationBuilder = await ConversationEventNotificationBuilder(
+                    event: conversationEvent
+                )
             case let .user(userEvent):
-                UNMutableNotificationContent()
-            case let .team(teamEvent):
-                UNMutableNotificationContent()
-            case let .unknown(eventType):
-                UNMutableNotificationContent()
+                notificationBuilder = UserNotificationBuilder(
+                    event: userEvent
+                )
+                
+            default:
+                continue
             }
 
+            guard await notificationBuilder.shouldBuildNotification() else {
+                continue
+            }
+            
+            do {
+                let notificationContent = try await notificationBuilder.buildContent()
+                notifications.append(notificationContent)
+            } catch {
+                WireLogger.notifications.error(
+                    "Failed to build notification: \(error.localizedDescription)"
+                )
+                notifications.append(UNMutableNotificationContent())
+            }
+        }
+        
+        switch notifications.count {
+        case 0:
+            notificationHandler(UNMutableNotificationContent())
+        case 1:
+            notificationHandler(notifications[0])
+        default:
+            var notification = UNMutableNotificationContent()
+            let body = NotificationBody.bundled(messagesCount: notifications.count)
+            notification.body = body.make()
             notificationHandler(notification)
         }
     }

@@ -93,7 +93,7 @@ final class NotificationService: UNNotificationServiceExtension {
     }
 
     private func finishWithNotification(content: UNNotificationContent) {
-        // TODO: [WPB-11175]
+        contentHandler?(content)
     }
 
     private func finishWithEmptyNotification() {
