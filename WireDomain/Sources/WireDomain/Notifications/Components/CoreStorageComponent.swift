@@ -75,14 +75,6 @@ final class CoreStorageComponent: Component<CoreStorageDependency>, CookieStorag
             return key
         }
 
-        // On older versions, the key might have been stored in standard user defaults.
-        // Check there first, then migrate it to shared defaults.
-        if let key = UserDefaults.standard.data(forKey: cookieKey) {
-            UserDefaults.standard.removeObject(forKey: cookieKey)
-            sharedDefaults.set(key, forKey: cookieKey)
-            return key
-        }
-
         // Create a new key
         do {
             let newKey = try AES256Crypto.generateRandomEncryptionKey()
