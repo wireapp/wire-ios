@@ -16,4 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class WireCellsAssembly {}
+public enum WireCellsFileUploadError: Error {
+    case fileTooLarge(fileSize: Int, maxSize: Int)
+    case genericError(any Error)
+}

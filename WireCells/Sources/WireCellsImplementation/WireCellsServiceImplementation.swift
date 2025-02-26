@@ -16,14 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+package import Foundation
+package import WireCellsAPI
+package import CellsSDK
+
 import AWSClientRuntime
 @preconcurrency import AWSS3
 import AWSSDKIdentity
-@preconcurrency import CellsSDK
 import ClientRuntime
-import Foundation
 import Smithy
-import WireCellsAPI
 
 package class WireCellsServiceImplementation: WireCellsService {
 
@@ -114,14 +115,14 @@ package class WireCellsServiceImplementation: WireCellsService {
     }
 
     private func _listFiles(atPath path: String) async throws(WireCellsFileQueryError) -> [RestNode] {
-        let request = RestLookupRequest()
+        var request = RestLookupRequest()
         let locator = RestNodeLocator(path: path)
         request.locators = RestNodeLocators(many: [locator])
         let requestBuilder = NodeServiceAPI.lookupWithRequestBuilder(body: request, apiConfiguration: cellsApiConfig)
 
         do {
             let response: Response<RestNodeCollection> = try await requestBuilder.execute()
-            return response.body.nodes
+            return response.body.nodes ?? []
         } catch {
             throw .genericError(error)
         }

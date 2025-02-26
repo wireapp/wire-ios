@@ -16,7 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsFileUploadError: Error {
-    case fileTooLarge(fileSize: Int, maxSize: Int)
-    case genericError(Error)
+public import Foundation
+
+public struct WireCellsFileUploadInfo: Identifiable, Sendable {
+    public let data: Data
+    /// Path that the file should be uploaded to
+    public let uploadPath: String
+
+    public var id: String { uploadPath }
+
+    ///   - Parameters:
+    ///       - data: The file data
+    ///       - uploadPath: Path that the file should be uploaded to
+    public init(data: Data, uploadPath: String) {
+        self.data = data
+        self.uploadPath = uploadPath
+    }
 }
