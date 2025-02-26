@@ -1,0 +1,82 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"authentication.identity.input.body" = "Просто введите свой адрес электронной почты, чтобы начать!";
+"authentication.identity.input.field.placeholder" = "Email или код SSO";
+"authentication.identity.input.field.title" = "Email или код SSO";
+"authentication.identity.input.submit" = "Вперед";
+
+"cloud_user_login.title" = "Введите пароль для входа";
+"cloud_user_login.input_email.title" = "Email";
+"cloud_user_login.input_password.title" = "Пароль";
+"cloud_user_login.input_password.placeholder" = "Введите пароль";
+"cloud_user_login.submit" = "Вперед";
+"cloud_user_login.forgot_password" = "Забыли пароль?";
+"create_personal_account.title" = "У вас нет аккаунта Wire?";
+"create_personal_account.button" = "Создать личный аккаунт";
+
+"on_prem_user_login.title" = "Приветствуем вас в Wire Enterprise для %@!";
+"on_prem_user_login.message" = "Введите пароль для входа";
+"on_prem_user_login.alert.title" = "Внутренний бэкэнд";
+"on_prem_user_login.alert.message.backend-name" = "Название бэкэнда";
+"on_prem_user_login.alert.message.backend-url" = "URL бэкэнда:";
+"on_prem_user_login.alert.button" = "OK";
+
+"proxy_credentials.title" = "Учетные данные прокси";
+"proxy_credentials.message" = "Этот бэкэнд настроен на использование следующего прокси: %@.";
+"proxy_credentials.input_email.title" = "Прокси email";
+"proxy_credentials.input_password.title" = "Пароль";
+"proxy_credentials.input_password.placeholder" = "Введите пароль";
+
+"switch_backend_confirmation.title" = "Перенаправить на локальный бэкэнд?";
+"switch_backend_confirmation.message" = "При продолжении вы будете перенаправлены на следующий локальный бэкэнд для авторизации:";
+"switch_backend_confirmation.backend_name" = "Название бэкэнда";
+"switch_backend_confirmation.backend_url" = "URL бэкэнда:";
+"switch_backend_confirmation.backend_wsurl" = "URL веб-сокета внутреннего сервера:";
+"switch_backend_confirmation.blacklist_url" = "URL черного списка:";
+"switch_backend_confirmation.teams_url" = "URL команды:";
+"switch_backend_confirmation.accounts_url" = "URL аккаунта:";
+"switch_backend_confirmation.website_url" = "URL веб-сайта:";
+"switch_backend_confirmation.proceed" = "Продолжить";
+"switch_backend_confirmation.cancel" = "Отмена";
+"switch_backend_confirmation.show_details" = "Подробнее";
+
+"verification_code.title" = "Вам письмо";
+"verification_code.message" = "Введите код подтверждения, который мы отправили на %@.";
+"verification_code.confirm" = "Подтвердить";
+"verification_code.resend_code" = "Отправить код еще раз";
+
+"authentication.no_history.title" = "Вы впервые используете Wire на этом устройстве.";
+"authentication.no_history.message" = "История бесед не отображается в целях обеспечения конфиденциальности.";
+"authentication.no_history.confirm" = "OK";
+
+"authentication.error.title.no_internet" = "Нет интернета";
+"authentication.error.title.general" = "Ошибка";
+"authentication.error.title.on_prem_not_possible" = "On prem not possible";
+"authentication.error.title.invalid_credentials" = "Неверная информация";
+"authentication.error.title.account_pending_activation" = "Ожидание активации аккаунта";
+"authentication.error.title.account_suspended" = "Неавторизован";
+
+"authentication.error.message.no_internet" = "Вы не подключены к интернету.";
+"authentication.error.message.general" = "Что-то пошло не так";
+"authentication.error.message.email_is_already_registered" = "Email уже зарегистрирован в Wire Cloud.";
+"authentication.error.message.invalid_credentials" = "Эти учетные данные неверны.  Проверьте их и повторите попытку.";
+"authentication.error.message.account_pending_activation" = "Учетная запись, к которой вы пытаетесь получить доступ, ожидает активации. Пожалуйста, проверьте ваши данные.";
+"authentication.error.message.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
+
+"authentication.error.confirm" = "OK";
