@@ -21,23 +21,25 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
+    package typealias Factory = DetermineAuthMethodBuilder
+
     @StateObject var viewModel: RootViewModel
 
-    let builder: any DetermineAuthMethodBuilder
+    let factory: any Factory
 
     package init(
         viewModel: RootViewModel,
-        builder: any DetermineAuthMethodBuilder
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.builder = builder
+        self.factory = factory
     }
 
     package var body: some View {
         BackgroundView()
             .sheet(isPresented: .constant(true)) {
                 NavigationStack(path: $viewModel.path) {
-                    builder.determineAuthMethodView
+                    factory.determineAuthMethodView
                 }
             }
     }
