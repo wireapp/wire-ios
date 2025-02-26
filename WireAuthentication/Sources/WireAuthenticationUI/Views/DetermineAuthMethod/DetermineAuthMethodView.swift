@@ -28,19 +28,18 @@ package protocol DetermineAuthMethodBuilder {
 
 package struct DetermineAuthMethodView: View {
 
+    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder
+
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
-    let loginViaEmailBuilder: any LoginViaEmailBuilder
-    let loginViaSSOBuilder: any LoginViaSSOBuilder
+    let factory: any Factory
 
     package init(
         viewModel: DetermineAuthMethodViewModel,
-        loginViaEmailBuilder: any LoginViaEmailBuilder,
-        loginViaSSOBuilder: any LoginViaSSOBuilder
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.loginViaEmailBuilder = loginViaEmailBuilder
-        self.loginViaSSOBuilder = loginViaSSOBuilder
+        self.factory = factory
     }
 
     package var body: some View {
@@ -108,15 +107,15 @@ package struct DetermineAuthMethodView: View {
         .navigationDestination(for: Destination.self) {
             switch $0 {
             case let .login(email):
-                loginViaEmailBuilder.loginViaEmailView(email: email, canCreateAccount: false)
+                factory.loginViaEmailView(email: email, canCreateAccount: false)
             case let .loginOrRegister(email):
-                loginViaEmailBuilder.loginViaEmailView(email: email, canCreateAccount: true)
+                factory.loginViaEmailView(email: email, canCreateAccount: true)
             }
         }
         .sheet(item: $viewModel.modalDestination, content: {
             switch $0 {
             case let .ssoLogin(url: ssoURL):
-                loginViaSSOBuilder.loginViaSSOView(ssoURL: ssoURL)
+                factory.loginViaSSOView(ssoURL: ssoURL)
             }
         })
         .presentationDetents([.medium, .large])

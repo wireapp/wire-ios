@@ -218,7 +218,7 @@ final class CallViewController: UIViewController {
     }
 
     func reloadGrid() {
-        callGridViewController.reloadGridData()
+        callGridViewController.releadGridData()
     }
 
     override func accessibilityPerformEscape() -> Bool {

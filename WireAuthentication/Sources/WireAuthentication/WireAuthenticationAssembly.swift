@@ -53,7 +53,7 @@ public struct WireAuthenticationAssembly {
             accountsURL: accountsURL, // this is temp
             passwordValidator: passwordValidator
         )
-        return rootComponent.rootView
+        return rootComponent.view
     }
 
 }

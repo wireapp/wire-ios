@@ -157,6 +157,7 @@ struct SyncStatus: SyncStatusProtocol {
     func performQuickSync() async {}
     func resyncResources() {}
     func forceSlowSync() {}
+    func recoverWithQuickSync() async {}
 }
 
 /// A Wire session to share content from a share extension
