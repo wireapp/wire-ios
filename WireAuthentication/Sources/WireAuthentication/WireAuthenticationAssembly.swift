@@ -27,8 +27,6 @@ internal import WireAuthenticationLogic
 
 public struct WireAuthenticationAssembly {
 
-    private let fallbackURLScheme = "wire-sso"
-
     public init() {
         registerProviderFactories()
     }
@@ -40,7 +38,7 @@ public struct WireAuthenticationAssembly {
         defaultAPIVersion: APIVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        ssoCallbackURLScheme: String?,
+        ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         onRegisterAccount: @escaping () -> Void
@@ -49,9 +47,9 @@ public struct WireAuthenticationAssembly {
             defaultBackendEnvironment: defaultBackendEnvironment,
             defaultAPIVersion: defaultAPIVersion,
             minTLSVersion: minTLSVersion,
-            accountsURL: accountsURL, // this is temp
+            accountsURL: accountsURL,
             passwordValidator: passwordValidator,
-            ssoCallbackURLScheme: ssoCallbackURLScheme ?? fallbackURLScheme,
+            ssoCallbackURLScheme: ssoCallbackURLScheme,
             userDefaults: userDefaults,
             onRegisterAccount: onRegisterAccount,
             onFlowCompletion: onFlowCompletion

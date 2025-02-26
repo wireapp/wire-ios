@@ -98,7 +98,7 @@ final class AuthenticationInterfaceBuilder {
                 defaultAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
                 passwordValidator: AuthenticationPasswordValidator(),
-                ssoCallbackURLScheme: Bundle.ssoURLScheme,
+                ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 userDefaults: .shared(),
                 onFlowCompletion: { _ in
                     // TODO: [WPB-16044] Pass the cookies and token

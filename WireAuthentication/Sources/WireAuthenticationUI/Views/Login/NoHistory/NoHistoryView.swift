@@ -27,12 +27,12 @@ package protocol NoHistoryViewBuilder {
 
 package struct NoHistoryView: View {
 
-    @ObservedObject var viewModel: NoHistoryViewModel
+    @StateObject var viewModel: NoHistoryViewModel
 
     package init(
         viewModel: NoHistoryViewModel
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     package var body: some View {

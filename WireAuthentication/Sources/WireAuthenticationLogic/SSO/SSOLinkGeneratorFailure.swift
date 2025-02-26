@@ -18,12 +18,10 @@
 
 import Foundation
 
-public protocol SSOLinkGeneratorProtocol {
+package enum SSOLinkGeneratorFailure: Error, Equatable {
 
-    @MainActor
-    func generateSSOLink(ssoCode: UUID) async throws -> URL
+    case invalidSSOURL
 
-    @MainActor
-    func flushToken()
+    case unknown
 
 }
