@@ -44,19 +44,16 @@ public final class VerificationCodeViewModel: ObservableObject {
     let numberOfDigits: Int
 
     private let loginViaEmailUseCase: LoginViaEmailUseCaseProtocol
-    private let onFlowCompletion: ([HTTPCookie], AccessToken) -> Void
 
     package init(
         email: String,
         password: String,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
-        onFlowCompletion: @escaping ([HTTPCookie], AccessToken) -> Void,
         code: [String] = ["", "", "", "", "", ""]
     ) {
         self.email = email
         self.password = password
         self.loginViaEmailUseCase = loginViaEmailUseCase
-        self.onFlowCompletion = onFlowCompletion
         self.code = code
         self.numberOfDigits = code.count
     }
@@ -74,8 +71,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
         do {
             let (cookies, token) = try await loginTask.value
-
-            onFlowCompletion(cookies, token)
+            // TODO: [WPB-16276] Navigate to the first time login screen
             WireLogger.authentication.info("2FA login via email succeeded")
         } catch {
             WireLogger.authentication.info("2FA login via email failed: \(error)")
