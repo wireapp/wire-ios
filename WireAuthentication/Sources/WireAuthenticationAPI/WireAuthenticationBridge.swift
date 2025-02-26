@@ -41,8 +41,7 @@ public struct WireAuthenticationBridge {
         self.onSSOFailure = onSSOFailure
     }
 
-    // MARK: - Methods called within the module but implemented outside
-    /// These methods are invoked inside the module but their actual implementations exist outside of it.
+    // MARK: - Methods are called within the module, but their implementations exist outside of it.
 
     /// Completes the authentication flow with the given result.
 
@@ -56,8 +55,7 @@ public struct WireAuthenticationBridge {
         onRegisterAccount()
     }
 
-    // MARK: - Methods implemented inside the module but called from outside
-    /// These methods are fully implemented inside the module and are meant to be invoked externally.
+    // MARK: - Methods are implemented inside the module and are meant to be invoked externally.
 
     /// Completes the SSO process successfully.
 
