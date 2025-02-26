@@ -103,4 +103,8 @@ extension RootComponent: RootView.Factory {
         determineAuthMethodComponent.view
     }
 
+    @MainActor func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+        noHistoryComponent.view(userID: userID, cookies: cookies)
+    }
+
 }
