@@ -48,25 +48,37 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
     }
 
-    @MainActor public var router: any Router {
-        rootViewModel
+    // MARK: - View
+
+    @MainActor var view: some View {
+        RootView(
+            viewModel: viewModel,
+            factory: self
+        )
     }
 
-    @MainActor private var rootViewModel: RootViewModel {
+    @MainActor private var viewModel: RootViewModel {
         shared { RootViewModel() }
     }
 
-    @MainActor var rootView: some View {
-        RootView(
-            viewModel: rootViewModel,
-            builder: determineAuthMethodComponent
-        )
+    // MARK: - Public dependencies
+
+    @MainActor public var router: any Router {
+        viewModel
     }
 
     // MARK: - Children
 
     var determineAuthMethodComponent: DetermineAuthMethodComponent {
         DetermineAuthMethodComponent(parent: self)
+    }
+
+}
+
+extension RootComponent: RootView.Factory {
+
+    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+        determineAuthMethodComponent.view
     }
 
 }
