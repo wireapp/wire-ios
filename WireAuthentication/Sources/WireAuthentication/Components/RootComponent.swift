@@ -32,7 +32,8 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let callbackScheme: String
     public let defaults: UserDefaults
-    let onFlowCompletion: () -> Void
+    public let onRegisterAccount: () -> Void
+    let onFlowCompletion: (AuthenticationResult) -> Void
 
     init(
         defaultBackendEnvironment: BackendEnvironment,
@@ -42,7 +43,8 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         callbackScheme: String,
         defaults: UserDefaults,
-        onFlowCompletion: @escaping () -> Void
+        onRegisterAccount: @escaping () -> Void,
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
         self.defaultBackendEnvironment = defaultBackendEnvironment
         self.defaultAPIVersion = defaultAPIVersion
@@ -51,6 +53,7 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
         self.callbackScheme = callbackScheme
         self.defaults = defaults
+        self.onRegisterAccount = onRegisterAccount
         self.onFlowCompletion = onFlowCompletion
     }
 
@@ -67,9 +70,10 @@ class RootComponent: BootstrapComponent {
         shared { RootViewModel() }
     }
 
-    @MainActor var bridge: WireAuthenticationBridge {
+    @MainActor public var bridge: WireAuthenticationBridge {
         WireAuthenticationBridge(
             onFlowCompletion: onFlowCompletion,
+            onRegisterAccount: onRegisterAccount,
             onSuccessSSOFlowCompletion: { userID, cookies in
                 SSOSuccessHandler(viewModel: self.viewModel).handleSuccess(userID: userID, cookies: cookies)
             },

@@ -63,7 +63,7 @@ package struct NoHistoryView: View {
     let viewModel = NoHistoryViewModel(
         userID: UUID(),
         cookies: [],
-        onFlowCompletion: {}
+        onFlowCompletion: {_ in }
     )
     NoHistoryView(viewModel: viewModel)
 }
@@ -74,7 +74,7 @@ package struct NoHistoryView: View {
             let viewModel = NoHistoryViewModel(
                 userID: UUID(),
                 cookies: [],
-                onFlowCompletion: {}
+                onFlowCompletion: {_ in }
             )
             NoHistoryView(viewModel: viewModel)
         }

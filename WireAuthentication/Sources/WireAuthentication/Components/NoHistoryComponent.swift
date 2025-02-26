@@ -17,13 +17,14 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 internal import WireAuthenticationUI
 
 class NoHistoryComponent {
 
-    let onFlowCompletion: () -> Void
+    let onFlowCompletion: (AuthenticationResult) -> Void
 
-    init(onFlowCompletion: @escaping () -> Void) {
+    init(onFlowCompletion: @escaping (AuthenticationResult) -> Void) {
         self.onFlowCompletion = onFlowCompletion
     }
 
@@ -31,7 +32,7 @@ class NoHistoryComponent {
     private func viewModel(
         userID: UUID,
         cookies: [HTTPCookie],
-        onFlowCompletion: @escaping () -> Void
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) -> NoHistoryViewModel {
         NoHistoryViewModel(
             userID: userID,

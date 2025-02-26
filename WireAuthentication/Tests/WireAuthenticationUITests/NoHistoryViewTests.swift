@@ -41,7 +41,7 @@ class NoHistoryViewTests: XCTestCase {
     func testColorSchemeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let viewModel = NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: {})
+        let viewModel = NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
         let view = NoHistoryView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -57,7 +57,7 @@ class NoHistoryViewTests: XCTestCase {
     func testDynamicTypeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let viewModel = NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: {})
+        let viewModel = NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
         let view = NoHistoryView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 

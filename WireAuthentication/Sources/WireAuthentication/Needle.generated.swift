@@ -119,6 +119,8 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["callbackScheme-String"] = { [unowned self] in self.callbackScheme as Any }
         localTable["defaults-UserDefaults"] = { [unowned self] in self.defaults as Any }
+        localTable["onRegisterAccount-() -> Void"] = { [unowned self] in self.onRegisterAccount as Any }
+        localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }
