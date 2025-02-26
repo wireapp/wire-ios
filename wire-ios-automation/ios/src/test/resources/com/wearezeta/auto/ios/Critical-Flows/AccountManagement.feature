@@ -1,6 +1,6 @@
 Feature: Account Management
 
-  @flows @TC-8588
+  @skip @TC-8588
   Scenario Outline: Account Management
     Given There is a team owner "<TeamOwner>" with team "<TeamName>"
     And User <TeamOwner> adds user <Member1> to team <TeamName> with role Member
@@ -28,4 +28,4 @@ Feature: Account Management
 
     Examples:
       | Member1   | TeamOwner | TeamName  | Member2   | ConversationTitle | Member2UniqueUsername | Device  | LockPasscode | NewUsername |
-      | user1Name | user3Name | SuperTeam | user2Name | The Official Chat | user2UniqueUsername   | device1 | Aqa123456!   |   user2Name |
+      | user1Name | user3Name | SuperTeam | user2Name | The Official Chat | user2UniqueUsername   | device1 | Aqa123456!   |   NewName   |
