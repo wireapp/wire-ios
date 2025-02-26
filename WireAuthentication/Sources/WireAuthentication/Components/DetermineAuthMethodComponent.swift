@@ -34,7 +34,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 }
 
-class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency>, DetermineAuthMethodBuilder {
+class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
     private var validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase {
         ValidateEmailOrSSOCodeUseCase()
@@ -65,11 +65,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+    @MainActor var view: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: viewModel,
-            loginViaEmailBuilder: loginViaEmailComponent,
-            loginViaSSOBuilder: loginViaSSOComponent
+            factory: self
         )
     }
 
@@ -90,6 +89,21 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     var loginViaSSOComponent: LoginViaSSOComponent {
         LoginViaSSOComponent()
+    }
+
+}
+
+extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
+
+    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+        loginViaEmailComponent.view(
+            email: email,
+            canCreateAccount: canCreateAccount
+        )
+    }
+
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
 }

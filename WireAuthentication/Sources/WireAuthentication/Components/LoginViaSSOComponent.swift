@@ -17,14 +17,20 @@
 //
 
 import Foundation
+internal import WireAuthenticationUI
 
-public struct WireCellsUploadedFile: Sendable {
-    /// The path of the uploaded file on the server
-    public let path: URL
+class LoginViaSSOComponent {
 
-    ///   - Parameters:
-    ///       - path: The path of the uploaded file on the server
-    public init(path: URL) {
-        self.path = path
+    // MARK: - View
+
+    @MainActor
+    func view(ssoURL: URL) -> LoginViaSSOView {
+        LoginViaSSOView(viewModel: viewModel(ssoURL: ssoURL))
     }
+
+    @MainActor
+    private func viewModel(ssoURL: URL) -> LoginViaSSOViewModel {
+        LoginViaSSOViewModel(ssoURL: ssoURL)
+    }
+
 }

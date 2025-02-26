@@ -21,44 +21,57 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
+    package typealias Factory = DetermineAuthMethodBuilder
+
     @StateObject var viewModel: RootViewModel
 
-    let determineAuthMethodBuilder: any DetermineAuthMethodBuilder
-    let noHistoryViewBuilder: any NoHistoryViewBuilder
+//    let determineAuthMethodBuilder: any DetermineAuthMethodBuilder
+//    let noHistoryViewBuilder: any NoHistoryViewBuilder
+//
+//    package init(
+//        viewModel: RootViewModel,
+//        determineAuthMethodBuilder: any DetermineAuthMethodBuilder,
+//        noHistoryViewBuilder: any NoHistoryViewBuilder
+//    ) {
+//        self._viewModel = StateObject(wrappedValue: viewModel)
+//        self.determineAuthMethodBuilder = determineAuthMethodBuilder
+//        self.noHistoryViewBuilder = noHistoryViewBuilder
+    let factory: any Factory
 
     package init(
         viewModel: RootViewModel,
-        determineAuthMethodBuilder: any DetermineAuthMethodBuilder,
-        noHistoryViewBuilder: any NoHistoryViewBuilder
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.determineAuthMethodBuilder = determineAuthMethodBuilder
-        self.noHistoryViewBuilder = noHistoryViewBuilder
+        self.factory = factory
     }
 
     package var body: some View {
         BackgroundView()
-            .sheet(item: $viewModel.activeSheet) { sheet in
-                switch sheet {
-                case .authFlow:
-                    NavigationStack(path: $viewModel.path) {
-                        determineAuthMethodBuilder.determineAuthMethodView
-                            .alert(
-                                L10n.Authentication.Error.Title.ssoLoginFailed,
-                                isPresented: $viewModel.showSSOFailureAlert
-                            ) {
-                                Button(L10n.Authentication.Error.confirm, role: .cancel) {
-                                    viewModel.showSSOFailureAlert = false
-                                }
-                            } message: {
-                                Text(L10n.Authentication.Error.Message.ssoLoginFailed)
-                            }
-                    }
-                case let .noHistory(userID, cookies):
-                    noHistoryViewBuilder.noHistoryView(
-                        userID: userID,
-                        cookies: cookies
-                    )
+//            .sheet(item: $viewModel.activeSheet) { sheet in
+//                switch sheet {
+//                case .authFlow:
+//                    NavigationStack(path: $viewModel.path) {
+//                        determineAuthMethodBuilder.determineAuthMethodView
+//                            .alert(
+//                                L10n.Authentication.Error.Title.ssoLoginFailed,
+//                                isPresented: $viewModel.showSSOFailureAlert
+//                            ) {
+//                                Button(L10n.Authentication.Error.confirm, role: .cancel) {
+//                                    viewModel.showSSOFailureAlert = false
+//                                }
+//                            } message: {
+//                                Text(L10n.Authentication.Error.Message.ssoLoginFailed)
+//                            }
+//                    }
+//                case let .noHistory(userID, cookies):
+//                    noHistoryViewBuilder.noHistoryView(
+//                        userID: userID,
+//                        cookies: cookies
+//                    )
+            .sheet(isPresented: .constant(true)) {
+                NavigationStack(path: $viewModel.path) {
+                    factory.determineAuthMethodView
                 }
             }
     }

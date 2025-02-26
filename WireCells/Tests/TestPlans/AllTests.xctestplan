@@ -1,0 +1,40 @@
+{
+  "configurations" : [
+    {
+      "id" : "D2ED1AC6-ABF5-4436-A9C0-75AEF129E829",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "WireCellsTests",
+        "WireCellsTests\/testListFilesEmptyFolder()",
+        "WireCellsTests\/testListFilesEmptyFolderTree()",
+        "WireCellsTests\/testListFilesRoot()",
+        "WireCellsTests\/testUploadFile()"
+      ],
+      "target" : {
+        "containerPath" : "container:WireCells",
+        "identifier" : "WireCellsTests",
+        "name" : "WireCellsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireCells",
+        "identifier" : "WireCellsUITests",
+        "name" : "WireCellsUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsFileQueryError: Error {
-    case genericError(Error)
+public class WireCellsAssembly {
+    public init() {
+        print("Init")
+    }
 }

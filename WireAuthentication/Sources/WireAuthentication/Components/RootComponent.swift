@@ -54,32 +54,35 @@ class RootComponent: BootstrapComponent {
         self.onFlowCompletion = onFlowCompletion
     }
 
-    @MainActor public var router: any Router {
-        rootViewModel
-    }
+    // MARK: - View
 
-    @MainActor private var rootViewModel: RootViewModel {
-        shared { RootViewModel() }
-    }
-
-    @MainActor var rootView: some View {
+    @MainActor var view: some View {
         RootView(
-            viewModel: rootViewModel,
-            determineAuthMethodBuilder: determineAuthMethodComponent,
-            noHistoryViewBuilder: noHistoryComponent
+            viewModel: viewModel,
+            factory: self
         )
+    }
+
+    @MainActor private var viewModel: RootViewModel {
+        shared { RootViewModel() }
     }
 
     @MainActor var bridge: WireAuthenticationBridge {
         WireAuthenticationBridge(
             onFlowCompletion: onFlowCompletion,
             onSuccessSSOFlowCompletion: { userID, cookies in
-                SSOSuccessHandler(viewModel: self.rootViewModel).handleSuccess(userID: userID, cookies: cookies)
+                SSOSuccessHandler(viewModel: self.viewModel).handleSuccess(userID: userID, cookies: cookies)
             },
             onFailureSSOFlowCompletion: {
-                SSOFailureHandler(viewModel: self.rootViewModel).handleFailure()
+                SSOFailureHandler(viewModel: self.viewModel).handleFailure()
             }
         )
+    }
+
+    // MARK: - Public dependencies
+
+    @MainActor public var router: any Router {
+        viewModel
     }
 
     // MARK: - Children
@@ -90,6 +93,14 @@ class RootComponent: BootstrapComponent {
 
     @MainActor var noHistoryComponent: NoHistoryComponent {
         NoHistoryComponent(onFlowCompletion: bridge.onFlowCompletion)
+    }
+
+}
+
+extension RootComponent: RootView.Factory {
+
+    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+        determineAuthMethodComponent.view
     }
 
 }

@@ -55,6 +55,9 @@ jobs:
             WireAuthentication:
               - 'WireAuthentication/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAuthenticationAll.xcscheme'
+            WireCells:
+              - 'WireCells/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireCellsAll.xcscheme'
             WireDomain:
               - 'WireDomain/**'
             WireLogging:

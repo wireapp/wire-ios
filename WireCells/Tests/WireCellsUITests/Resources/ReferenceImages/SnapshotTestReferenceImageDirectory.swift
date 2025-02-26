@@ -17,18 +17,7 @@
 //
 
 import Foundation
-internal import WireAuthenticationUI
 
-class LoginViaSSOComponent: LoginViaSSOBuilder {
-
-    @MainActor
-    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoURL: ssoURL)
-    }
-
-    @MainActor
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
-    }
-
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .path

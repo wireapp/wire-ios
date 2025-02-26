@@ -55,7 +55,7 @@ public struct WireAuthenticationAssembly {
             onFlowCompletion: onFlowCompletion
         )
 
-        return (view: rootComponent.rootView, bridge: rootComponent.bridge)
+        return (view: rootComponent.view, bridge: rootComponent.bridge)
     }
 
 }
