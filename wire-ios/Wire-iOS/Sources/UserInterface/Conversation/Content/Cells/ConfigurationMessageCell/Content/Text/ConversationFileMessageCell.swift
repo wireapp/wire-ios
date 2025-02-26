@@ -71,9 +71,9 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
 
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.leading),
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.left),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }

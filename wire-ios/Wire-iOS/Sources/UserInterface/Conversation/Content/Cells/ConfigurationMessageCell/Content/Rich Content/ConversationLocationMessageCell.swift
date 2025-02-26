@@ -104,7 +104,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let margins = conversationHorizontalMargins
-        let containerInsets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        let containerInsets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         containerView.fitIn(view: self, insets: containerInsets)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)

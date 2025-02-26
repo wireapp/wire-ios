@@ -137,12 +137,12 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
         NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: topAnchor),
-            button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
-            trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: margins.trailing),
+            button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: margins.right),
 
             errorLabelTopConstraint,
-            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
-            errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.trailing),
+            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
             bottomAnchor.constraint(equalTo: errorLabel.bottomAnchor)
         ])
 
