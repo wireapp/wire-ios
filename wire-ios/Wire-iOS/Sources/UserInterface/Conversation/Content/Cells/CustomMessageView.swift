@@ -51,18 +51,24 @@ final class CustomMessageView: UIView {
         }
 
         super.init(frame: frame)
-        addSubview(messageLabel)
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            messageLabel.topAnchor.constraint(equalTo: topAnchor),
-            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
 
         messageLabel.font = FontSpec(.small, .light).font
         messageLabel.textColor = SemanticColors.Label.textDefault
+
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(messageLabel)
+        createConstraints()
+    }
+
+    private func createConstraints() {
+        let margins = conversationHorizontalMargins
+
+        NSLayoutConstraint.activate([
+            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
+            messageLabel.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: margins.trailing),
+            bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor)
+        ])
     }
 }
 

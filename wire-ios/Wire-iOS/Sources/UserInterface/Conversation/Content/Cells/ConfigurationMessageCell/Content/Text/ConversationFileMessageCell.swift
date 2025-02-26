@@ -61,19 +61,20 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         fileTransferView.delegate = self
         setup(fileTransferView)
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func configureConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
-            // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.leading),
+            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 
@@ -125,10 +126,9 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     typealias View = ConversationFileMessageCell
     let configuration: View.Configuration
 
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

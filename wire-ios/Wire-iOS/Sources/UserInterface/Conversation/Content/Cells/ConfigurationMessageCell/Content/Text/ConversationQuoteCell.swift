@@ -301,12 +301,14 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     private func configureSubviews() {
         container.addTarget(self, action: #selector(onTap), for: .touchUpInside)
+        container.translatesAutoresizingMaskIntoConstraints = false
         addSubview(container)
     }
 
     private func configureConstraints() {
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        container.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -325,8 +327,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
-    let isFullWidth = false
+    var topMargin: CGFloat = 8
     let supportsActions = false
     let containsHighlightableContent: Bool = true
 

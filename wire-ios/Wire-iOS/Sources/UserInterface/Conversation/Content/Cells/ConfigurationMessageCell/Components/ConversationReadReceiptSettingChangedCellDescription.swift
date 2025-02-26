@@ -86,9 +86,8 @@ final class ConversationReadReceiptSettingChangedCellDescription: ConversationMe
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 0
 
-    let isFullWidth: Bool = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 

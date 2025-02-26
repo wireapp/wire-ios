@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
+final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView,
+    ContextMenuDelegate {
 
     struct Configuration {
         let attachment: LinkAttachment
@@ -62,6 +63,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         shouldGroupAccessibilityChildren = true
         accessibilityIdentifier = "link-attachment"
         accessibilityTraits = [.link]
+        attachmentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(attachmentView)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
@@ -69,16 +71,17 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     }
 
     private func configureConstraints() {
-        attachmentView.translatesAutoresizingMaskIntoConstraints = false
 
         let widthConstraint = attachmentView.widthAnchor.constraint(equalToConstant: 414)
         widthConstraint.priority = .defaultHigh
 
+        let margins = conversationHorizontalMargins
+
         NSLayoutConstraint.activate([
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
-            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            attachmentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.trailing),
+            bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
     }
@@ -149,9 +152,8 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

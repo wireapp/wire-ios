@@ -19,9 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView,
-    ConversationMessageCell,
-    TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -51,7 +49,7 @@ final class ConversationTextMessageCell: UIView,
         return view
     }()
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -85,13 +83,15 @@ final class ConversationTextMessageCell: UIView,
     }
 
     private func setup() {
+        messageTextView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(messageTextView)
         configureConstraints()
     }
 
     private func configureConstraints() {
-        messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        messageTextView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        messageTextView.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -159,9 +159,8 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

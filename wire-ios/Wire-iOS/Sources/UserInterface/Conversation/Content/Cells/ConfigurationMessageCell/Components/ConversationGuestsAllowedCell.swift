@@ -33,9 +33,8 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 16
+    var topMargin: CGFloat = 16
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
@@ -61,9 +60,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     // MARK: Properties
 
-    struct GuestsAllowedCellConfiguration {}
-
-    typealias Configuration = GuestsAllowedCellConfiguration
+    typealias Configuration = Void
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
@@ -92,6 +89,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.alignment = .leading
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         [titleLabel, inviteButton].forEach(stackView.addArrangedSubview)
         titleLabel.numberOfLines = 0
@@ -104,18 +102,19 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
     }
 
     private func createConstraints() {
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
+
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading),
             stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: margins.trailing),
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
         ])
     }
 
     // MARK: Configuration and actions
 
-    func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {}
+    func configure(with object: Configuration, animated: Bool) {}
 
     @objc
     private func inviteButtonTapped(_ sender: UIButton) {
