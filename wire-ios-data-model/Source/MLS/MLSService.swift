@@ -331,7 +331,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/601522340/Use+Case+Committing+pending+proposals+MLS)
 
-    func commitPendingProposalsIfNeeded()
+    func commitPendingProposalsIfNeeded() async
 
     /// Commits pending proposals for a group.
     ///
@@ -1320,7 +1320,7 @@ public final class MLSService: MLSServiceInterface {
 
             // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
             // This ensures we're on the latest state.
-            await syncStatus.performQuickSync()
+            await syncStatus.recoverWithQuickSync()
 
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
@@ -1730,14 +1730,19 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    public func commitPendingProposalsIfNeeded() {
-        guard let context else {
-            return
+    private var lastExecutionTime = Date.distantPast
+    private let throttleInterval: TimeInterval = 2.0 // 2 seconds throttle
+
+    public func commitPendingProposalsIfNeeded() async {
+        let now = Date.now
+
+        guard now.timeIntervalSince(lastExecutionTime) > throttleInterval else {
+            return // Ignore call if within the throttle period
         }
 
-        WaitingGroupTask(context: context) { [self] in
-            await commitPendingProposals()
-        }
+        lastExecutionTime = now
+
+        await commitPendingProposals()
     }
 
     func commitPendingProposals() async {
@@ -1890,13 +1895,13 @@ public final class MLSService: MLSServiceInterface {
 
         } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, _) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
-            await syncStatus.performQuickSync()
+            await syncStatus.recoverWithQuickSync()
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
         } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: let error) {
             logger.warn("failed to send commit, syncing then retrying operation...")
-            await syncStatus.performQuickSync()
+            await syncStatus.recoverWithQuickSync()
             logger.info("sync finished, retying operation...")
 
             guard retryCount <= maxRetryAttempts else {
