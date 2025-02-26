@@ -26,36 +26,49 @@ public struct WireAuthenticationBridge {
 
     public let onFlowCompletion: (AuthenticationResult) -> Void
     private let onRegisterAccount: () -> Void
-    private let onSuccessSSOFlowCompletion: (UUID, [HTTPCookie]) -> Void
-    private let onFailureSSOFlowCompletion: () -> Void
+    private let onSSOSuccess: (UUID, [HTTPCookie]) -> Void
+    private let onSSOFailure: () -> Void
 
     public init(
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         onRegisterAccount: @escaping () -> Void,
-        onSuccessSSOFlowCompletion: @escaping (UUID, [HTTPCookie]) -> Void,
-        onFailureSSOFlowCompletion: @escaping () -> Void
+        onSSOSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
+        onSSOFailure: @escaping () -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
         self.onRegisterAccount = onRegisterAccount
-        self.onSuccessSSOFlowCompletion = onSuccessSSOFlowCompletion
-        self.onFailureSSOFlowCompletion = onFailureSSOFlowCompletion
+        self.onSSOSuccess = onSSOSuccess
+        self.onSSOFailure = onSSOFailure
     }
+
+    // MARK: - Methods called within the module but implemented outside
+    /// These methods are invoked inside the module but their actual implementations exist outside of it.
+
+    /// Completes the authentication flow with the given result.
 
     public func completeFlow(_ result: AuthenticationResult) {
         onFlowCompletion(result)
     }
 
+    /// Initiates the account registration process.
+
     public func registerAccount() {
         onRegisterAccount()
     }
 
-    @MainActor
+    // MARK: - Methods implemented inside the module but called from outside
+    /// These methods are fully implemented inside the module and are meant to be invoked externally.
+
+    /// Completes the SSO process successfully.
+
     public func completeSSOSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        onSuccessSSOFlowCompletion(userID, cookies)
+        onSSOSuccess(userID, cookies)
     }
 
+    /// Handles the failure of the SSO process.
+
     public func completeSSOFailure() {
-        onFailureSSOFlowCompletion()
+        onSSOFailure()
     }
 
 }

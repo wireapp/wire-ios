@@ -98,8 +98,8 @@ final class AuthenticationInterfaceBuilder {
                 defaultAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
                 passwordValidator: AuthenticationPasswordValidator(),
-                callbackScheme: Bundle.ssoURLScheme,
-                defaults: .shared(),
+                ssoCallbackURLScheme: Bundle.ssoURLScheme,
+                userDefaults: .shared(),
                 onFlowCompletion: { _ in
                     // TODO: [WPB-16044] Pass the cookies and token
                     authenticationCoordinator?.eventResponderChain.handleEvent(

@@ -30,8 +30,8 @@ class RootComponent: BootstrapComponent {
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let passwordValidator: any PasswordValidator
-    public let callbackScheme: String
-    public let defaults: UserDefaults
+    public let ssoCallbackURLScheme: String
+    public let userDefaults: UserDefaults
     public let onRegisterAccount: () -> Void
     let onFlowCompletion: (AuthenticationResult) -> Void
 
@@ -41,8 +41,8 @@ class RootComponent: BootstrapComponent {
         minTLSVersion: TLSVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        callbackScheme: String,
-        defaults: UserDefaults,
+        ssoCallbackURLScheme: String,
+        userDefaults: UserDefaults,
         onRegisterAccount: @escaping () -> Void,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
@@ -51,8 +51,8 @@ class RootComponent: BootstrapComponent {
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.passwordValidator = passwordValidator
-        self.callbackScheme = callbackScheme
-        self.defaults = defaults
+        self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.userDefaults = userDefaults
         self.onRegisterAccount = onRegisterAccount
         self.onFlowCompletion = onFlowCompletion
     }
@@ -74,10 +74,10 @@ class RootComponent: BootstrapComponent {
         WireAuthenticationBridge(
             onFlowCompletion: onFlowCompletion,
             onRegisterAccount: onRegisterAccount,
-            onSuccessSSOFlowCompletion: { userID, cookies in
+            onSSOSuccess: { userID, cookies in
                 SSOSuccessHandler(viewModel: self.viewModel).handleSuccess(userID: userID, cookies: cookies)
             },
-            onFailureSSOFlowCompletion: {
+            onSSOFailure: {
                 SSOFailureHandler(viewModel: self.viewModel).handleFailure()
             }
         )
@@ -107,7 +107,8 @@ extension RootComponent: RootView.Factory {
         determineAuthMethodComponent.view
     }
 
-    @MainActor func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+    @MainActor
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
         noHistoryComponent.view(userID: userID, cookies: cookies)
     }
 

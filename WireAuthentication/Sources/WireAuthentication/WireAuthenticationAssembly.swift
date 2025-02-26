@@ -40,8 +40,8 @@ public struct WireAuthenticationAssembly {
         defaultAPIVersion: APIVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
-        callbackScheme: String?,
-        defaults: UserDefaults,
+        ssoCallbackURLScheme: String?,
+        userDefaults: UserDefaults,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         onRegisterAccount: @escaping () -> Void
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
@@ -51,8 +51,8 @@ public struct WireAuthenticationAssembly {
             minTLSVersion: minTLSVersion,
             accountsURL: accountsURL, // this is temp
             passwordValidator: passwordValidator,
-            callbackScheme: callbackScheme ?? fallbackURLScheme,
-            defaults: defaults,
+            ssoCallbackURLScheme: ssoCallbackURLScheme ?? fallbackURLScheme,
+            userDefaults: userDefaults,
             onRegisterAccount: onRegisterAccount,
             onFlowCompletion: onFlowCompletion
         )

@@ -20,12 +20,12 @@ import SwiftUI
 import WireAuthenticationAPI
 
 package struct RootView: View {
-    
+
     package typealias Factory = DetermineAuthMethodBuilder & NoHistoryViewBuilder
-    
+
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
-    
+
     package init(
         viewModel: RootViewModel,
         factory: any Factory
@@ -33,7 +33,7 @@ package struct RootView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.factory = factory
     }
-    
+
     package var body: some View {
         BackgroundView()
             .sheet(item: $viewModel.activeSheet) { sheet in
@@ -55,7 +55,7 @@ package struct RootView: View {
                 case let .noHistory(userID, cookies):
                     factory.noHistoryView(userID: userID, cookies: cookies)
                 }
-                
+
             }
     }
 }
