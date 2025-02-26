@@ -28,12 +28,10 @@ public protocol SSOLinkGeneratorProtocol {
     ///   - ssoCode: SSO code.
     /// - Returns: URL to the SSO authentication screen.
 
-    @MainActor
     func generateSSOLink(ssoCode: UUID) async throws -> URL
 
     /// Flushes the temporary SSO login token stored in the user defaults.
 
-    @MainActor
     func flushToken()
 
 }

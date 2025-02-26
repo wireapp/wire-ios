@@ -27,7 +27,6 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
     private let callbackScheme: String
     private let defaults: UserDefaults
 
-
     /// `SSOLinkGenerator` initializer with given parameters.
     /// - Parameters:
     ///   - authenticationAPI: `AuthenticationAPI` instance.
