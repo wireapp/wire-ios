@@ -326,7 +326,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     typealias View = ConversationReplyCell
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: [WPB-16018] check which ones can be combined
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 8

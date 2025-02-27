@@ -276,16 +276,16 @@ final class AnyConversationMessageCellDescription: NSObject {
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
-        _delegate = AnyMutableProperty(description, keyPath: \.delegate)
-        _message = AnyMutableProperty(description, keyPath: \.message)
-        _actionController = AnyMutableProperty(description, keyPath: \.actionController)
-        _canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
-        _topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
-        _containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
-        _supportsActions = { description.supportsActions }
-        _showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
-        _axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
-        _axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
+        self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
+        self._message = AnyMutableProperty(description, keyPath: \.message)
+        self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
+        self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
+        self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
+        self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
+        self._supportsActions = { description.supportsActions }
+        self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
+        self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
+        self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
 
     var instance: any ConversationMessageCellDescription {

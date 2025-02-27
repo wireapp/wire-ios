@@ -105,7 +105,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     }
 
     init(cellDescriptions: [AnyConversationMessageCellDescription]) {
-        configuration = cellDescriptions
+        self.configuration = cellDescriptions
     }
 
 }
