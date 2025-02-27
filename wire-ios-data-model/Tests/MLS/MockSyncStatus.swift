@@ -47,4 +47,13 @@ class MockSyncStatus: SyncStatusProtocol {
         mock()
     }
 
+    var mockRecoverWithQuickSync: (() -> Void)?
+    func recoverWithQuickSync() {
+        guard let mock = mockRecoverWithQuickSync else {
+            fatalError("no mock for `recoverWithQuickSync`")
+        }
+
+        mock()
+    }
+
 }
