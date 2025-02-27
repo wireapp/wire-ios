@@ -16,19 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 
-@MainActor
-public protocol Router {
+class AuthenticationModuleURLActionProcessor: URLActionProcessor {
 
-    func popToRoot()
+    let action: (UUID, [HTTPCookie]) -> Void
 
-    func navigate<Destination: Hashable>(to destination: Destination)
+    init(action: @escaping (UUID, [HTTPCookie]) -> Void) {
+        self.action = action
+    }
 
-    func presentSheet<ModalDestination: Hashable>(_ modalDestination: ModalDestination)
+    func process(urlAction: URLAction, delegate: (any PresentationDelegate)?) {
+        switch urlAction {
+        case let .companyLoginSuccess(userInfo):
+            action(userInfo.identifier, userInfo.cookies)
+        default:
+            break
+        }
 
-    func presentAlert(_ alert: RootViewModel.Alert)
+    }
 
 }

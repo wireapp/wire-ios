@@ -30,7 +30,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
     var authenticationAPI: AuthenticationAPI { get }
-    var bridge: WireAuthenticationBridge { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
