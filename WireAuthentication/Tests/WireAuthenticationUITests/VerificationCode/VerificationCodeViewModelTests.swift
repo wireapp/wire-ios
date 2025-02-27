@@ -27,6 +27,7 @@ import WireAuthenticationAPISupport
 final class VerificationCodeViewModelTests {
 
     private let loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol
+    private let requestLoginVerificationCodeUseCase: MockRequestLoginVerificationCodeUseCaseProtocol
     private let router: MockRouter
     private let sut: VerificationCodeViewModel
     private var isLoadingCalls: [Bool] = []
@@ -35,11 +36,14 @@ final class VerificationCodeViewModelTests {
     @MainActor
     init() {
         self.loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
+        self.requestLoginVerificationCodeUseCase = MockRequestLoginVerificationCodeUseCaseProtocol()
         self.router = MockRouter()
         self.sut = VerificationCodeViewModel(
             email: "abc@example.com",
             password: "aaaaaa",
             loginViaEmailUseCase: loginViaEmailUseCase,
+            requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
+
             router: router,
             code: ["", "", ""] // Lets use a 3 digit code for simplicity
         )

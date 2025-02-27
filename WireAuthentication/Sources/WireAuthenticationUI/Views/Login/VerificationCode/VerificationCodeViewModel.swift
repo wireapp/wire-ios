@@ -52,13 +52,15 @@ public final class VerificationCodeViewModel: ObservableObject {
     let password: String
     let numberOfDigits: Int
 
-    private let loginViaEmailUseCase: LoginViaEmailUseCaseProtocol
+    private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol
     private let router: any Router
 
     package init(
         email: String,
         password: String,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
+        requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol,
         router: any Router,
         code: [String] = ["", "", "", "", "", ""]
     ) {
@@ -67,6 +69,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.email = email
         self.password = password
         self.loginViaEmailUseCase = loginViaEmailUseCase
+        self.requestLoginVerificationCodeUseCase = requestLoginVerificationCodeUseCase
         self.router = router
         self.code = code
         self.numberOfDigits = code.count
