@@ -61,7 +61,7 @@ extension EventDecoder {
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
     ) async throws -> [ZMUpdateEvent] {
-        WireLogger.mls.info("decrypting mls message")
+        WireLogger.mls.info("decrypting mls message", attributes: updateEvent.logAttributes)
 
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
             WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
