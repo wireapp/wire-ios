@@ -15,23 +15,3 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
-import SwiftUI
-
-public struct MessageViewBuilder {
-
-    public init() {}
-
-    @MainActor
-    public func build(
-        message: Message,
-        layout: MessageLayout
-    ) -> some View {
-        MessageContentView(
-            message: message,
-            layout: layout,
-            accountImageViewContent: { Circle().fill(Color.red).frame(width: 32, height: 32) }
-        )
-    }
-
-}
