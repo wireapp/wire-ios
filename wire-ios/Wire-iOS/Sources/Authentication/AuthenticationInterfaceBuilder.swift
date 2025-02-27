@@ -75,7 +75,7 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
-            let rootView = assembly.assemble(
+            let (rootView, bridge) = assembly.assemble(
                 defaultBackendEnvironment: BackendEnvironment(
                     url: environment.backendURL,
                     webSocketURL: environment.backendWSURL,
@@ -98,6 +98,8 @@ final class AuthenticationInterfaceBuilder {
                 defaultAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
                 passwordValidator: AuthenticationPasswordValidator(),
+                ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
+                userDefaults: .shared(),
                 onFlowCompletion: { _ in
                     // TODO: [WPB-16044] Pass the cookies and token
                     authenticationCoordinator?.eventResponderChain.handleEvent(
@@ -108,6 +110,11 @@ final class AuthenticationInterfaceBuilder {
                     // TODO: [WPB-16279] Navigate to the account registration flow
                 }
             )
+
+            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
+                bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
+            })
+            authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)
 
             return AuthenticationHostingController(rootView: rootView)
 

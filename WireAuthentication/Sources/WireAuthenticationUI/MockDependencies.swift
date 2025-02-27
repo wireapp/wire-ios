@@ -55,6 +55,7 @@ final class MockDependencies {
                 router: rootViewModel,
                 validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
+                ssoLinkGenerator: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
                 alert: alert
@@ -107,7 +108,8 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             validateEmailOrSSOCode: self,
-            determineAuthMethod: self
+            determineAuthMethod: self,
+            ssoLinkGenerator: self
         )
     }
 
@@ -117,6 +119,28 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             factory: self
         )
     }
+
+}
+
+extension MockDependencies: NoHistoryViewBuilder {
+
+    private var noHistoryViewModel: NoHistoryViewModel {
+        NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
+    }
+
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+        NoHistoryView(viewModel: noHistoryViewModel)
+    }
+
+}
+
+extension MockDependencies: SSOLinkGeneratorProtocol {
+
+    func generateSSOLink(ssoCode: UUID) async throws -> URL {
+        URL(string: "https://example.com/login/\(ssoCode)")!
+    }
+
+    func flushToken() {}
 
 }
 

@@ -41,7 +41,8 @@ class NoHistoryViewTests: XCTestCase {
     func testColorSchemeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = NoHistoryView(viewModel: NoHistoryViewModel())
+        let viewModel = NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
+        let view = NoHistoryView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -56,7 +57,8 @@ class NoHistoryViewTests: XCTestCase {
     func testDynamicTypeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = NoHistoryView(viewModel: NoHistoryViewModel())
+        let viewModel = NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
+        let view = NoHistoryView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
