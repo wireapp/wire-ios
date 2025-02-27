@@ -311,10 +311,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             topCellDescription.topMargin = context.spacing
         }
 
-        self.cellDescriptions = Self.combine(cellDescriptions)
+        self.cellDescriptions = Self.combineByStacking(cellDescriptions)
     }
 
-    private static func combine(
+    private static func combineByStacking(
         _ cellDescriptions: [AnyConversationMessageCellDescription]
     ) -> [AnyConversationMessageCellDescription] {
         var result = [AnyConversationMessageCellDescription]()
