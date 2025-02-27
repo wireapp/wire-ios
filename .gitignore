@@ -112,25 +112,27 @@ wire-ios-automation/ios/backendConnections.json
 wire-ios-automation/out/
 
 # Whitelist supported strings
-**/Resources/Localization/*.lproj/
-!**/Resources/Localization/Base.lproj/
-!**/Resources/Localization/ar.lproj/
-!**/Resources/Localization/da.lproj/
-!**/Resources/Localization/de.lproj/
-!**/Resources/Localization/en.lproj/
-!**/Resources/Localization/es.lproj/
-!**/Resources/Localization/et.lproj/
-!**/Resources/Localization/fi.lproj/
-!**/Resources/Localization/fr.lproj/
-!**/Resources/Localization/it.lproj/
-!**/Resources/Localization/ja.lproj/
-!**/Resources/Localization/lt.lproj/
-!**/Resources/Localization/nl.lproj/
-!**/Resources/Localization/pl.lproj/
-!**/Resources/Localization/pt-BR.lproj/
-!**/Resources/Localization/ru.lproj/
-!**/Resources/Localization/sl.lproj/
-!**/Resources/Localization/tr.lproj/
-!**/Resources/Localization/uk.lproj/
-!**/Resources/Localization/zh-Hans.lproj/
-!**/Resources/Localization/zh-Hant.lproj/
+# Actually we adjusted the crowdin action to only download the required language files.
+# Leaving this here commented, in case it could be useful again.
+#**/Resources/Localization/*.lproj/
+#!**/Resources/Localization/Base.lproj/
+#!**/Resources/Localization/ar.lproj/
+#!**/Resources/Localization/da.lproj/
+#!**/Resources/Localization/de.lproj/
+#!**/Resources/Localization/en.lproj/
+#!**/Resources/Localization/es.lproj/
+#!**/Resources/Localization/et.lproj/
+#!**/Resources/Localization/fi.lproj/
+#!**/Resources/Localization/fr.lproj/
+#!**/Resources/Localization/it.lproj/
+#!**/Resources/Localization/ja.lproj/
+#!**/Resources/Localization/lt.lproj/
+#!**/Resources/Localization/nl.lproj/
+#!**/Resources/Localization/pl.lproj/
+#!**/Resources/Localization/pt-BR.lproj/
+#!**/Resources/Localization/ru.lproj/
+#!**/Resources/Localization/sl.lproj/
+#!**/Resources/Localization/tr.lproj/
+#!**/Resources/Localization/uk.lproj/
+#!**/Resources/Localization/zh-Hans.lproj/
+#!**/Resources/Localization/zh-Hant.lproj/
