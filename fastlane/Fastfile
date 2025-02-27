@@ -166,22 +166,17 @@ platform :ios do
         build_and_upload_app(options)
     end
 
-    desc "Build & Upload Adhoc Edge build"
+    desc "Build & Upload Edge build"
     lane :development do |options|
         options[:build_type] = "Development"
-#        options[:upload_app_center] = false
-#        options[:upload_testflight] = true
-        # deliver as adhoc until APPLE_EXPORT_COMPLIANCE_CODE is approved
-        options[:upload_app_center] = true
-        options[:upload_testflight] = false
-        options[:app_center_app_name] = "Wire-iOS-Edge"
+        options[:upload_app_center] = false
+        options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
-        options[:produce_debug_builds] = true
+        options[:produce_debug_builds] = true # check with Sarah if this is needed
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         save_app_name('Edge')
         build_and_upload_app(options)
-        # TODO: uncomment when we go with testflight and also edit env variable
-        # `export TEMP='BUILD_INSTALL_LINK=#{ENV['EDGE_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='BUILD_INSTALL_LINK=#{ENV['EDGE_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Testflight Playground build"
