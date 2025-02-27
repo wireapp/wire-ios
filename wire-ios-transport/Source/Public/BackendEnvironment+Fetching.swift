@@ -24,7 +24,7 @@ public extension BackendEnvironment {
         case invalidResponse
     }
 
-    static func fetchEnvironment(url: URL, onCompletion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
+    static func fetchEnvironment(url: URL, onCompletion: @escaping (Result<BackendEnvironment, Error>) -> Void) {//
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error {
                 Logging.backendEnvironment.error("Error fetching configuration from \(url): \(error)")

@@ -41,8 +41,6 @@ final class MockDependencies {
     var rootView: RootView {
         RootView(
             viewModel: rootViewModel,
-//            determineAuthMethodBuilder: self,
-//            noHistoryViewBuilder: self
             factory: self
         )
     }
@@ -57,6 +55,7 @@ final class MockDependencies {
                 router: rootViewModel,
                 validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
+                fetchBackendEnvironment: self,
                 ssoLinkGenerator: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
@@ -92,6 +91,22 @@ extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
     }
 }
 
+extension MockDependencies: FetchBackendEnvironmentUseCaseProtocol {
+    func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentResponse {
+        BackendEnvironmentResponse(
+            title: "backend name",
+            endpoints: BackendEndpoints(
+                backendURL: URL(string: "example")!,
+                backendWSURL: URL(string: "example")!,
+                blackListURL: URL(string: "example")!,
+                teamsURL: URL(string: "example")!,
+                accountsURL: URL(string: "example")!,
+                websiteURL: URL(string: "example")!
+            )
+        )
+    }
+}
+
 extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
     func invoke(
@@ -111,6 +126,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             validateEmailOrSSOCode: self,
             determineAuthMethod: self,
+            fetchBackendEnvironment: self,
             ssoLinkGenerator: self
         )
     }

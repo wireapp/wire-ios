@@ -19,6 +19,13 @@
 import SwiftUI
 import WireDesign
 
+package protocol SwitchBackendConfirmationBuilder {
+
+    @MainActor
+    func switchBackendView() -> SwitchBackendConfirmationView
+
+}
+
 package struct SwitchBackendConfirmationView: View {
 
     // MARK: - Properties
