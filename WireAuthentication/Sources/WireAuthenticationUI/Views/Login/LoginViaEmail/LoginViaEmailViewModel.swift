@@ -102,7 +102,13 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         do {
             let (cookies, token) = try await loginTask.value
-            // TODO: [WPB-16276] Navigate to the first time login screen
+            router.presentSheet(
+                RootView.ModalDestination.noHistory(
+                    userID: token.userID,
+                    cookies: cookies,
+                    accessToken: token
+                )
+            )
             WireLogger.authentication.info("login via email succeeded")
         } catch {
             WireLogger.authentication.info("login via email returned an error: \(error)")
