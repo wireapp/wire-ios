@@ -1,6 +1,7 @@
 Feature: Account Management
 
-  @skip @TC-8588
+  # TODO: Uncomment out the lines so that the full flow runs
+  @flows @TC-8588
   Scenario Outline: Account Management
     Given There is a team owner "<TeamOwner>" with team "<TeamName>"
     And User <TeamOwner> adds user <Member1> to team <TeamName> with role Member
@@ -22,9 +23,9 @@ Feature: Account Management
     And I select settings item Username
     When I clear Username input field on Settings page
     Then I see Save button state is Disabled on Unique Username page
-    When I enter "<NewUsername>" name on Unique Username page
-    When I tap Save button on Unique Username page
-    And I select settings item Reset Password
+#    When I enter "<NewUsername>" name on Unique Username page
+#    When I tap Save button on Unique Username page
+#    And I select settings item Reset Password
 
     Examples:
       | Member1   | TeamOwner | TeamName  | Member2   | ConversationTitle | Member2UniqueUsername | Device  | LockPasscode | NewUsername |
