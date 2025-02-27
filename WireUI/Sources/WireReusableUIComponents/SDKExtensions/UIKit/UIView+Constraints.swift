@@ -33,14 +33,14 @@ public extension UIView {
             bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -insets.bottom)
         ])
     }
-    
+
     func constraintToSize(_ size: CGSize) {
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: size.width),
             heightAnchor.constraint(equalToConstant: size.height)
         ])
     }
-    
+
     func constraintToSquare(sideLength: CGFloat) {
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: sideLength),

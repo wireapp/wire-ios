@@ -19,7 +19,7 @@
 import UIKit
 
 public extension UIStackView {
-    
+
     convenience init(axis: NSLayoutConstraint.Axis, spacing: CGFloat = 0) {
         self.init(frame: .zero)
         self.axis = axis
@@ -32,9 +32,8 @@ public extension UIStackView {
     static func horizontal(spacing: CGFloat = 0) -> UIStackView {
         UIStackView(axis: .horizontal, spacing: spacing)
     }
-    
+
     static func vertical(spacing: CGFloat = 0) -> UIStackView {
         UIStackView(axis: .vertical, spacing: spacing)
     }
 }
-

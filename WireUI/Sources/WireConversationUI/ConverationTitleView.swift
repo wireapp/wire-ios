@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 import WireAccountImageUI
 import WireDesign
 import WireReusableUIComponents
 
 public class ConversationTitleView: UIView {
-    
+
     private let source: ConversationTitleSource
-    
+
     private let accountImageView = AccountImageView()
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let drowdownImage = UIImageView(image: .dropdown)
-    
+
     init(source: ConversationTitleSource) {
         self.source = source
         super.init(frame: CGRect.zero)
@@ -42,23 +42,23 @@ public class ConversationTitleView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func configureViews() {
-        
+
         nameLabel.font = FontSpec.normalSemiboldFont.font
         nameLabel.textColor = SemanticColors.Label.textDefault
         nameLabel.text = source.title
-        
+
         subtitleLabel.font = FontSpec.smallBoldFont.font
         subtitleLabel.textColor = SemanticColors.Accent.blue
         subtitleLabel.text = source.subtitle
-        
+
         accountImageView.availability = nil
         accountImageView.source = source.accountImageSource
         accountImageView.hideProfileNotificationsBadge = true
-        
+
     }
-    
+
     private func configureLayout() {
         // TODO: add action
         //        titleButton.addTarget(self, action: #selector(titleButtonTapped), for: .touchUpInside)
@@ -74,13 +74,13 @@ public class ConversationTitleView: UIView {
         avatarAndNameStackView.alignment = .center
         [accountImageView, nameLabel, drowdownImage]
             .forEach(avatarAndNameStackView.addArrangedSubview)
-        
+
         var views: [UIView] = [avatarAndNameStackView]
         if source.subtitle != nil {
             views.append(subtitleLabel)
         }
         views.forEach(stackView.addArrangedSubview)
-        
+
         accountImageView.constraintToSquare(sideLength: 32)
         drowdownImage.constraintToSquare(sideLength: 16)
     }
@@ -91,8 +91,9 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .text("DS"),
         title: "Wolfgang Wolf",
-        subtitle: "FEDERATED"))
-    
+        subtitle: "FEDERATED"
+    ))
+
 }
 
 @available(iOS 17, *)
@@ -100,7 +101,8 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel",
-        subtitle: "GUEST"))
+        subtitle: "GUEST"
+    ))
 }
 
 @available(iOS 17, *)
@@ -108,7 +110,8 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel NagelNagelNagelNagelNagelNagel",
-        subtitle: nil))
+        subtitle: nil
+    ))
 }
 
 @MainActor
