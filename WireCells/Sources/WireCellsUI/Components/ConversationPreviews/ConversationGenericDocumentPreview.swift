@@ -19,46 +19,18 @@
 public import SwiftUI
 import WireDesign
 import WireFoundation
-import WireReusableUIComponents
 
-public struct UploadDocumentPreview: View {
+public struct ConversationGenericDocumentPreview: View {
     let headerIcon: Image
     let headerText: String
     let labelText: String
-    let onRemove: @Sendable () -> Void
-
-    @ScaledMetric private var scale: CGFloat = 1
-
-    public init(
-        headerIcon: Image,
-        headerText: String,
-        labelText: String,
-        onRemove: @escaping @Sendable () -> Void
-    ) {
-        self.headerIcon = headerIcon
-        self.headerText = headerText
-        self.labelText = labelText
-        self.onRemove = onRemove
-    }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 4 * floor(scale)) {
-                headerIcon
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 16 * scale, height: 16 * scale)
-                Text(headerText)
-                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                    .wireTextStyle(.body1)
-                    .lineLimit(max(1, Int(round(scale))))
-                Spacer()
-            }
-            Text(labelText)
-                .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
-                .wireTextStyle(.h3)
-                .lineLimit(max(2, 2 * Int(round(scale))), reservesSpace: true)
-        }
+        ConversationDocumentPreviewHeader(
+            headerIcon: headerIcon,
+            headerText: headerText,
+            labelText: labelText
+        )
         .roundedBorderAndBackground(
             backgroundColor: ColorTheme.Backgrounds.surfaceVariant.color,
             borderColor: ColorTheme.Strokes.outline.color,
@@ -66,29 +38,23 @@ public struct UploadDocumentPreview: View {
             cornerRadius: 10,
             padding: 8
         )
-        .deleteItemButton(onRemove: { onRemove() })
     }
 }
 
-package struct UploadDocumentPreview_Preview: View {
-    package init() {}
-
+package struct ConversationGenericDocumentPreview_Preview: View {
     package var body: some View {
-        UploadDocumentPreview(
-            headerIcon: Image(systemName: "text.document"),
+        ConversationGenericDocumentPreview(
+            headerIcon: Image("square-placeholder", bundle: .module),
             headerText: "Document (336 KB)",
             labelText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ipsum purus, scelerisque molestie rutrum vitae, faucibus in velit. Sed eget consectetur elit, in tristique metus."
-        ) {
-            print("remove")
-        }
+        )
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
-
 }
 
 #Preview {
     VStack {
-        UploadDocumentPreview_Preview()
+        ConversationGenericDocumentPreview_Preview()
             .frame(width: 350, height: 200)
     }
     .padding()
