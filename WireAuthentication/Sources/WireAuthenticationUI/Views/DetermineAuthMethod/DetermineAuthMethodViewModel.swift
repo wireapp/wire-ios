@@ -39,7 +39,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL)
-        case switchBackend(email: String)
+        case switchBackend(email: String, environment: BackendEnvironmentResponse)
     }
 
     private let router: any Router
@@ -151,7 +151,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 do {
                     let environmentInfo = try await self.fetchBackendEnvironment.invoke(at: backendConfig)
                     await MainActor.run {
-                        self.modalDestination = .switchBackend(email: email)
+                        print(environmentInfo)
+                        self.modalDestination = .switchBackend(email: email, environment: environmentInfo)
                     }
                 } catch {
                     await MainActor.run {
@@ -159,8 +160,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     }
                 }
             }
-            // TODO: [WPB-15944] Handle on-prem login
-            break
         }
     }
 

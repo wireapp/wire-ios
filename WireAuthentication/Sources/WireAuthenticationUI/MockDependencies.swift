@@ -140,6 +140,27 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 }
 
+extension MockDependencies: SwitchBackendConfirmationBuilder {
+
+    private var switchBackendConfirmationViewModel: SwitchBackendConfirmationViewModel {
+        SwitchBackendConfirmationViewModel(
+            backendName: "backendName",
+            backendURL: "backendURL",
+            backendWSURL: "backendWSURL",
+            blacklistURL: "blacklistURL",
+            teamsURL: "teamsURL",
+            accountsURL: "accountsURL",
+            websiteURL: "websiteURL",
+            action: { _ in }
+        )
+    }
+
+    func switchBackendView(environment: BackendEnvironmentResponse) -> SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(viewModel: switchBackendConfirmationViewModel)
+    }
+
+}
+
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {

@@ -85,3 +85,34 @@ extension LoginViaEmailComponent: LoginViaEmailView.Factory {
     }
 
 }
+
+ 
+//protocol SwitchBackendConfirmationComponentDependency: Dependency {
+//
+//    @MainActor var router: any Router { get }
+//}
+
+class SwitchBackendConfirmationComponent{//: Component<SwitchBackendConfirmationComponentDependency> {
+
+    // MARK: - View
+
+    @MainActor
+    func view(environment: BackendEnvironmentResponse) -> SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(viewModel: viewModel(environment: environment))
+    }
+
+    @MainActor
+    private func viewModel(environment: BackendEnvironmentResponse) -> SwitchBackendConfirmationViewModel {
+        SwitchBackendConfirmationViewModel(
+            backendName: environment.title,
+            backendURL: environment.endpoints.backendURL.absoluteString,
+            backendWSURL: environment.endpoints.backendWSURL.absoluteString,
+            blacklistURL: environment.endpoints.blackListURL.absoluteString,
+            teamsURL: environment.endpoints.teamsURL.absoluteString,
+            accountsURL: environment.endpoints.accountsURL.absoluteString,
+            websiteURL: environment.endpoints.websiteURL.absoluteString,
+            action: { _ in }
+        )
+    }
+
+}

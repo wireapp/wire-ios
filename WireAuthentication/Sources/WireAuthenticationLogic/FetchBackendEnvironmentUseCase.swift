@@ -27,8 +27,7 @@ public struct FetchBackendEnvironmentUseCase: FetchBackendEnvironmentUseCaseProt
 
     public func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentResponse {
         do {
-            let environmentResponse = try await fetchEnvironment(url: configURL)
-            return environmentResponse
+            return try await fetchEnvironment(url: configURL)
         } catch let error as FetchBackendEnvironmentFailure {
             throw error
         } catch {

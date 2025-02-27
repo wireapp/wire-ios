@@ -17,12 +17,13 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 
 package protocol SwitchBackendConfirmationBuilder {
 
     @MainActor
-    func switchBackendView() -> SwitchBackendConfirmationView
+    func switchBackendView(environment: BackendEnvironmentResponse) -> SwitchBackendConfirmationView
 
 }
 

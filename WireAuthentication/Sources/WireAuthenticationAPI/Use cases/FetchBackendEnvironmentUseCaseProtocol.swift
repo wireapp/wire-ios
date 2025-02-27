@@ -33,10 +33,10 @@ public enum FetchBackendEnvironmentFailure: Error, Equatable {
 
 }
 
-public struct BackendEnvironmentResponse: Codable {
+public struct BackendEnvironmentResponse: Codable, Sendable, Hashable {
 
-    let title: String
-    let endpoints: BackendEndpoints
+    public let title: String
+    public let endpoints: BackendEndpoints
 
     public init(title: String, endpoints: BackendEndpoints) {
         self.title = title
@@ -45,14 +45,14 @@ public struct BackendEnvironmentResponse: Codable {
 
 }
 
-public struct BackendEndpoints: Codable, Sendable {
+public struct BackendEndpoints: Codable, Sendable, Hashable {
 
-    let backendURL: URL
-    let backendWSURL: URL
-    let blackListURL: URL
-    let teamsURL: URL
-    let accountsURL: URL
-    let websiteURL: URL
+    public let backendURL: URL
+    public let backendWSURL: URL
+    public let blackListURL: URL
+    public let teamsURL: URL
+    public let accountsURL: URL
+    public let websiteURL: URL
 
     public init(
         backendURL: URL,

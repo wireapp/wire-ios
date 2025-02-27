@@ -28,7 +28,7 @@ package protocol DetermineAuthMethodBuilder {
 
 package struct DetermineAuthMethodView: View {
 
-    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder/* & SwitchBackendConfirmationBuilder*/
+    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
@@ -116,8 +116,8 @@ package struct DetermineAuthMethodView: View {
             switch $0 {
             case let .ssoLogin(url: ssoURL):
                 factory.loginViaSSOView(ssoURL: ssoURL)
-            case .switchBackend(email: let email):
-                Color.red
+            case let .switchBackend(email: email, environment: environment):
+                factory.switchBackendView(environment: environment)
             }
         })
         .presentationDetents([.medium, .large])

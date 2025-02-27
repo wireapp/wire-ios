@@ -96,6 +96,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         LoginViaSSOComponent()
     }
 
+    var switchBackendConfirmationComponent: SwitchBackendConfirmationComponent {
+        SwitchBackendConfirmationComponent()//(parent: self)
+    }
+
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
@@ -109,6 +113,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent.view(ssoURL: ssoURL)
+    }
+
+    func switchBackendView(environment: BackendEnvironmentResponse) -> SwitchBackendConfirmationView {
+        switchBackendConfirmationComponent.view(environment: environment)
     }
 
 }
