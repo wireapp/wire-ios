@@ -27,4 +27,8 @@ public protocol Router {
 
     func navigate<Destination: Hashable>(to destination: Destination)
 
+    func presentSheet<ModalDestination: Hashable>(_ modalDestination: ModalDestination)
+
+    func presentAlert(_ alert: RootViewModel.Alert)
+
 }
