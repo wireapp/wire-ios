@@ -30,6 +30,19 @@
 "create_personal_account.title" = "Don’t have a Wire account?";
 "create_personal_account.button" = "Create Personal Account";
 
+"on_prem_user_login.title" = "Welcome to Wire Enterprise for %@!";
+"on_prem_user_login.message" = "Enter your password to log in";
+"on_prem_user_login.alert.title" = "Serveur dédié";
+"on_prem_user_login.alert.message.backend-name" = "Nom du serveur :";
+"on_prem_user_login.alert.message.backend-url" = "URL du serveur:";
+"on_prem_user_login.alert.button" = "OK";
+
+"proxy_credentials.title" = "Identifiants du proxy";
+"proxy_credentials.message" = "Ce backend est configuré pour utiliser le serveur proxy suivant : %@.";
+"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_password.title" = "Mot de passe";
+"proxy_credentials.input_password.placeholder" = "Enter password";
+
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
 "switch_backend_confirmation.backend_name" = "Nom du serveur :";
@@ -51,3 +64,19 @@
 "authentication.no_history.title" = "C'est la première fois que vous utilisez Wire sur cet appareil.";
 "authentication.no_history.message" = "Pour des raisons de confidentialité, votre historique de conversation n'apparaîtra pas ici.";
 "authentication.no_history.confirm" = "OK";
+
+"authentication.error.title.no_internet" = "No internet";
+"authentication.error.title.general" = "Erreur";
+"authentication.error.title.on_prem_not_possible" = "On prem not possible";
+"authentication.error.title.invalid_credentials" = "Informations non valides";
+"authentication.error.title.account_pending_activation" = "Account Pending Activation";
+"authentication.error.title.account_suspended" = "Unauthorized";
+
+"authentication.error.message.no_internet" = "You are not connected to the internet.";
+"authentication.error.message.general" = "Une erreur est survenue";
+"authentication.error.message.email_is_already_registered" = "Email is already registered on Wire Cloud.";
+"authentication.error.message.invalid_credentials" = "Ces identifiants de compte sont incorrects. Veuillez vérifier vos informations et réessayer.";
+"authentication.error.message.account_pending_activation" = "Le compte auquel vous tentez d’accéder est en attente d’activation. Merci de vérifier vos informations.";
+"authentication.error.message.account_suspended" = "Ce compte n'est plus autorisé à se connecter.";
+
+"authentication.error.confirm" = "OK";

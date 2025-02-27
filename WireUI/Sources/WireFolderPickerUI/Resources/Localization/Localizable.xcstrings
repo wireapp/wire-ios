@@ -10,6 +10,36 @@
             "value" : "Add your conversations to folders to stay organized."
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -20,6 +50,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fügen Sie Ihre Unterhaltungen Ordnern hinzu, um organisiert zu bleiben."
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
           }
         },
         "en" : {
@@ -40,6 +76,18 @@
             "value" : "Add your conversations to folders to stay organized."
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -50,6 +98,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajoutez vos conversations aux dossiers pour rester organisé."
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
           }
         },
         "it" : {
@@ -64,13 +142,49 @@
             "value" : "Add your conversations to folders to stay organized."
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
@@ -88,13 +202,61 @@
             "value" : "Add your conversations to folders to stay organized."
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Добавляйте беседы в папки, чтобы сохранять их упорядоченность."
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
@@ -107,6 +269,18 @@
           }
         },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
@@ -135,6 +309,36 @@
             "value" : "معرفة المزيد"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saber-ne més"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dozvědět se více"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -145,6 +349,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mehr erfahren"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Μάθετε περισσότερα"
           }
         },
         "en" : {
@@ -165,6 +375,18 @@
             "value" : "Loe lähemalt"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "بیشتر بدانید"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -175,6 +397,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En savoir plus"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saznaj više"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "További információ"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pelajari lebih lanjut"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
           }
         },
         "it" : {
@@ -189,16 +441,52 @@
             "value" : "もっと知る"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sužinoti daugiau"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uzzināt vairāk"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Leer meer"
+          }
+        },
+        "no" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lær mer"
           }
         },
         "pl" : {
@@ -213,16 +501,64 @@
             "value" : "Mais informação"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saber mais"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Află mai multe"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Подробнее"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zistiť viac"
+          }
+        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nauči se več"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сазнајте више"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Läs mer"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
           }
         },
         "tr" : {
@@ -235,6 +571,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Дізнатися більше"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Learn more"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tìm hiểu thêm"
           }
         },
         "zh-Hans" : {
@@ -260,6 +608,36 @@
             "value" : "Folders"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -270,6 +648,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ordner"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
           }
         },
         "en" : {
@@ -290,6 +674,18 @@
             "value" : "Folders"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -300,6 +696,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dossiers"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
           }
         },
         "it" : {
@@ -314,13 +740,49 @@
             "value" : "Folders"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
@@ -338,13 +800,61 @@
             "value" : "Folders"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Папки"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mappar"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
@@ -357,6 +867,18 @@
           }
         },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
