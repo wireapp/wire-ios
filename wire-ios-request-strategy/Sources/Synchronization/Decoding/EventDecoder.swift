@@ -205,18 +205,14 @@ extension EventDecoder {
                 proteusService: proteusService
             )
 
-            // MLS message decryption operations, even successful, could result in empty decrypted events.
-            // Adding a condition to skip the guard for that specific usecase.
-            guard !decryptedEvents.isEmpty || event.type == .conversationMLSMessageAdd else {
-                return []
-            }
-
-            await eventMOC.perform {
-                self.storeUpdateEvents(
-                    decryptedEvents,
-                    startingAtIndex: index,
-                    publicKeys: publicKeys
-                )
+            if !decryptedEvents.isEmpty {
+                await eventMOC.perform {
+                    self.storeUpdateEvents(
+                        decryptedEvents,
+                        startingAtIndex: index,
+                        publicKeys: publicKeys
+                    )
+                }
             }
 
             await syncMOC.perform {
