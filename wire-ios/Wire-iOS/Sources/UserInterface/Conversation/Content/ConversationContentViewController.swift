@@ -500,42 +500,6 @@ extension ConversationContentViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         willSelectRow(at: indexPath, tableView: tableView)
     }
-
-    func tableView(
-        _ tableView: UITableView,
-        leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
-    ) -> UISwipeActionsConfiguration? {
-
-        nil // TODO: [WPB-16015] swipe-to-delete
-
-        // let sections = dataSource.currentSections
-        // guard
-        //    sections.indices.contains(indexPath.section),
-        //    sections[indexPath.section].elements.indices.contains(indexPath.row),
-        //    sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-        //    let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
-        //    actionController.canPerformAction(action: .reply)
-        // else { return nil }
-        //
-        // let replyAction = UIContextualAction(style: .normal, title: "") { _, _, completionHandler in
-        //    print("trigger reply")
-        //    completionHandler(true)
-        // }
-        //
-        // let arrowImage = UIImage(systemName: "arrowshape.turn.up.backward.fill")!
-        //    .withTintColor(.white, renderingMode: .alwaysTemplate)
-        // let upsideDownImage = UIGraphicsImageRenderer(size: arrowImage.size).image { rendererContext in
-        //    rendererContext.cgContext.translateBy(x: arrowImage.size.width / 2, y: arrowImage.size.height / 2)
-        //    rendererContext.cgContext.scaleBy(x: 1.0, y: -1.0)
-        //    rendererContext.cgContext.translateBy(x: -arrowImage.size.width / 2, y: -arrowImage.size.height / 2)
-        //    arrowImage.draw(in: CGRect(origin: .zero, size: arrowImage.size))
-        // }
-        //
-        // replyAction.image = upsideDownImage
-        // replyAction.backgroundColor = UIColor.accent()
-        // return UISwipeActionsConfiguration(actions: [replyAction])
-        // 
-    }
 }
 
 extension ConversationContentViewController: UITableViewDataSourcePrefetching {
