@@ -22,7 +22,7 @@ final class MockRouter: Router {
 
     public var navigate_Invocations: [any Hashable] = []
     public var modalPresent_Invocations: [any Hashable] = []
-    public var alert_Invocations: [any Hashable] = []
+    public var alert_Invocations: [RootViewModel.Alert] = []
 
     func popToRoot() {}
 
@@ -34,7 +34,7 @@ final class MockRouter: Router {
         modalPresent_Invocations.append(modalDestination)
     }
 
-    func presentAlert(_ alert: some Hashable) {
+    func presentAlert(_ alert: RootViewModel.Alert) {
         alert_Invocations.append(alert)
     }
 
