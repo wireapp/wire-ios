@@ -64,7 +64,10 @@ extension EventDecoder {
         WireLogger.mls.info("decrypting mls message", attributes: updateEvent.logAttributes)
 
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
-            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing", attributes: updateEvent.logAttributes)
+            WireLogger.mls.critical(
+                "failed to decrypt mls message: mlsDecyptionService is missing",
+                attributes: updateEvent.logAttributes
+            )
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
@@ -79,14 +82,18 @@ extension EventDecoder {
             conversation = ZMConversation.fetch(with: payload.id, domain: payload.qualifiedID?.domain, in: context)
 
             guard let conversation else {
-                WireLogger.mls.error("failed to decrypt mls message: conversation not found in db", attributes: updateEvent.logAttributes))
+                WireLogger.mls.error(
+                    "failed to decrypt mls message: conversation not found in db",
+                    attributes: updateEvent.logAttributes
+                )
                 return nil
             }
 
             guard conversation.mlsStatus == .ready else {
                 WireLogger.mls
                     .warn(
-                        "failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))", attributes: updateEvent.logAttributes
+                        "failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))",
+                        attributes: updateEvent.logAttributes
                     )
                 return nil
             }
@@ -105,7 +112,10 @@ extension EventDecoder {
         )
 
         if results.isEmpty {
-            WireLogger.mls.info("successfully decrypted mls message but no result was returned", attributes: updateEvent.logAttributes)
+            WireLogger.mls.info(
+                "successfully decrypted mls message but no result was returned",
+                attributes: updateEvent.logAttributes
+            )
             return []
         }
 
