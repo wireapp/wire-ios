@@ -16,19 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 
-@MainActor
-public protocol Router {
+/// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
 
-    func popToRoot()
+public protocol SSOLinkGeneratorProtocol {
 
-    func navigate<Destination: Hashable>(to destination: Destination)
+    /// Generates the URL for the SSO authentication screen.
+    ///
+    /// - Parameters:
+    ///   - ssoCode: SSO code.
+    /// - Returns: URL to the SSO authentication screen.
 
-    func presentSheet<ModalDestination: Hashable>(_ modalDestination: ModalDestination)
+    func generateSSOLink(ssoCode: UUID) async throws -> URL
 
-    func presentAlert(_ alert: RootViewModel.Alert)
+    /// Flushes the temporary SSO login token stored in the user defaults.
+
+    func flushToken()
 
 }
