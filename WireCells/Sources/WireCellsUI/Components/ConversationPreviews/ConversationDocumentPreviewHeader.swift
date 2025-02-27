@@ -69,6 +69,7 @@ public struct ConversationDocumentPreviewHeader: View {
                 Text(L10n.Conversation.File.Preview.open)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     .wireTextStyle(.body1)
+                    .lineLimit(scalingHeaderLineLimit)
             }
             Text(labelText)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
