@@ -1,6 +1,6 @@
 Feature: Account Management
 
-  # TODO: Uncomment out the lines so that the full flow runs
+  # TODO: Uncomment out the lines so that the full flow runs once new username generation fixed
   @flows @TC-8588
   Scenario Outline: Account Management
     Given There is a team owner "<TeamOwner>" with team "<TeamName>"
