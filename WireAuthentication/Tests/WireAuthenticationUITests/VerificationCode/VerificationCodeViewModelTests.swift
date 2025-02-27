@@ -27,6 +27,7 @@ import WireAuthenticationAPISupport
 final class VerificationCodeViewModelTests {
 
     private let loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol
+    private let router: MockRouter
     private let sut: VerificationCodeViewModel
     private var isLoadingCalls: [Bool] = []
     private var cancellables: Set<AnyCancellable> = []
@@ -34,10 +35,12 @@ final class VerificationCodeViewModelTests {
     @MainActor
     init() {
         self.loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
+        self.router = MockRouter()
         self.sut = VerificationCodeViewModel(
             email: "abc@example.com",
             password: "aaaaaa",
             loginViaEmailUseCase: loginViaEmailUseCase,
+            router: router,
             code: ["", "", ""] // Lets use a 3 digit code for simplicity
         )
 
@@ -93,7 +96,15 @@ final class VerificationCodeViewModelTests {
         // then
         #expect(sut.alert == nil)
         #expect(isLoadingCalls == [true, false])
-        // TODO: [WPB-16276] Assert it navigates to first time login screen
+        #expect(router.modalPresent_Invocations.count == 1)
+        #expect(
+            router.modalPresent_Invocations.first as? RootView.ModalDestination ==
+            RootView.ModalDestination.noHistory(
+                userID: Scaffolding.someAccessToken.userID,
+                cookies: [Scaffolding.someCookie],
+                accessToken: Scaffolding.someAccessToken
+            )
+        )
     }
 
     @MainActor @Test

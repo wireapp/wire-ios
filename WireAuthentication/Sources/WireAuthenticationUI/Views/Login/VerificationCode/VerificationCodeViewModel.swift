@@ -53,11 +53,13 @@ public final class VerificationCodeViewModel: ObservableObject {
     let numberOfDigits: Int
 
     private let loginViaEmailUseCase: LoginViaEmailUseCaseProtocol
+    private let router: any Router
 
     package init(
         email: String,
         password: String,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
+        router: any Router,
         code: [String] = ["", "", "", "", "", ""]
     ) {
         precondition(!code.isEmpty)
@@ -65,6 +67,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.email = email
         self.password = password
         self.loginViaEmailUseCase = loginViaEmailUseCase
+        self.router = router
         self.code = code
         self.numberOfDigits = code.count
     }
@@ -106,7 +109,13 @@ public final class VerificationCodeViewModel: ObservableObject {
 
         do {
             let (cookies, token) = try await loginTask.value
-            // TODO: [WPB-16276] Navigate to the first time login screen
+            router.presentSheet(
+                RootView.ModalDestination.noHistory(
+                    userID: token.userID,
+                    cookies: cookies,
+                    accessToken: token
+                )
+            )
             WireLogger.authentication.info("2FA login via email succeeded")
         } catch {
             WireLogger.authentication.info("2FA login via email failed: \(error)")

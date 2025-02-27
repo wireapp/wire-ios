@@ -26,6 +26,7 @@ import WireReusableUIComponents
 
 protocol VerificationCodeComponentDependency: Dependency {
 
+    @MainActor var router: any Router { get }
     var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
 
 }
@@ -47,7 +48,8 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         VerificationCodeViewModel(
             email: email,
             password: password,
-            loginViaEmailUseCase: dependency.loginViaEmailUseCase
+            loginViaEmailUseCase: dependency.loginViaEmailUseCase,
+            router: dependency.router
         )
     }
 

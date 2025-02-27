@@ -179,6 +179,7 @@ extension MockDependencies: VerificationCodeBuilder {
                 email: email,
                 password: password,
                 loginViaEmailUseCase: self,
+                router: rootViewModel,
                 code: code
             )
         )
@@ -192,7 +193,8 @@ extension MockDependencies: VerificationCodeBuilder {
             viewModel: VerificationCodeViewModel(
                 email: email,
                 password: password,
-                loginViaEmailUseCase: self
+                loginViaEmailUseCase: self,
+                router: rootViewModel
             )
         )
     }
