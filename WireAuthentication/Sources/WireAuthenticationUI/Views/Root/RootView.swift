@@ -21,10 +21,9 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory = DetermineAuthMethodBuilder
+    package typealias Factory = DetermineAuthMethodBuilder & NoHistoryViewBuilder
 
     @StateObject var viewModel: RootViewModel
-
     let factory: any Factory
 
     package init(
@@ -37,11 +36,46 @@ package struct RootView: View {
 
     package var body: some View {
         BackgroundView()
-            .sheet(isPresented: .constant(true)) {
-                NavigationStack(path: $viewModel.path) {
-                    factory.determineAuthMethodView
+            .sheet(item: $viewModel.modalDestination) { sheet in
+                switch sheet {
+                case .authFlow:
+                    NavigationStack(path: $viewModel.path) {
+                        factory.determineAuthMethodView
+                            .alert(
+                                item: $viewModel.alert,
+                                title: titleForAlert,
+                                message: messageForAlert,
+                                actions: { _ in
+                                    Button(L10n.Authentication.Error.confirm, action: {})
+                                }
+                            )
+                    }
+                case let .noHistory(userID, cookies):
+                    factory.noHistoryView(userID: userID, cookies: cookies)
                 }
+
             }
+    }
+
+    private func titleForAlert(_ alert: RootViewModel.Alert) -> Text {
+        switch alert {
+        case .ssoLoginFailed:
+            Text(L10n.Authentication.Error.Title.ssoLoginFailed)
+        }
+    }
+
+    private func messageForAlert(_ alert: RootViewModel.Alert) -> Text {
+        switch alert {
+        case .ssoLoginFailed:
+            Text(L10n.Authentication.Error.Message.ssoLoginFailed)
+        }
+    }
+
+    package enum ModalDestination: Identifiable, Hashable {
+        public var id: Self { self }
+
+        case authFlow
+        case noHistory(userID: UUID, cookies: [HTTPCookie])
     }
 
 }

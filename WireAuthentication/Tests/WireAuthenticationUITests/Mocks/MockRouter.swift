@@ -21,11 +21,21 @@ import WireAuthenticationUI
 final class MockRouter: Router {
 
     public var navigate_Invocations: [any Hashable] = []
+    public var modalPresent_Invocations: [any Hashable] = []
+    public var alert_Invocations: [RootViewModel.Alert] = []
 
     func popToRoot() {}
 
     func navigate(to destination: some Hashable) {
         navigate_Invocations.append(destination)
+    }
+
+    func presentSheet(_ modalDestination: some Hashable) {
+        modalPresent_Invocations.append(modalDestination)
+    }
+
+    func presentAlert(_ alert: RootViewModel.Alert) {
+        alert_Invocations.append(alert)
     }
 
 }

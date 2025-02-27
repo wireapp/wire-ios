@@ -16,29 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 import WireAuthenticationAPI
+internal import WireAuthenticationUI
 
-@MainActor
-package final class NoHistoryViewModel: ObservableObject {
+class NoHistoryComponent {
 
-    private let userID: UUID
-    private let cookies: [HTTPCookie]
-    private let onFlowCompletion: (AuthenticationResult) -> Void
+    let onFlowCompletion: (AuthenticationResult) -> Void
 
-    package init(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
-    ) {
-        self.userID = userID
-        self.cookies = cookies
+    init(onFlowCompletion: @escaping (AuthenticationResult) -> Void) {
         self.onFlowCompletion = onFlowCompletion
     }
 
-    func confirm() {
-        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: nil))
+    @MainActor
+    private func viewModel(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+    ) -> NoHistoryViewModel {
+        NoHistoryViewModel(
+            userID: userID,
+            cookies: cookies,
+            onFlowCompletion: onFlowCompletion
+        )
     }
+
+    @MainActor
+    func view(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+        NoHistoryView(
+            viewModel: viewModel(userID: userID, cookies: cookies, onFlowCompletion: onFlowCompletion)
+        )
+    }
+
 }

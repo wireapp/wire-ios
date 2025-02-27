@@ -16,36 +16,50 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
+import WireAPISupport
+import WireAuthenticationAPI
 import XCTest
 
-@testable import WireAuthenticationUI
+@testable import WireAuthenticationLogic
 
-class LoginViaSSOViewModelTests: XCTestCase {
+class SSOLinkGeneratorTests: XCTestCase {
 
-    var sut: LoginViaSSOViewModel!
+    private var mockAuthenticationAPI: MockAuthenticationAPI!
+    private var sut: SSOLinkGenerator!
+    private var defaults: UserDefaults!
 
-    override func setUp() async throws {
-        sut = await LoginViaSSOViewModel(ssoURL: URL(string: "https://localhost")!)
+    override func setUp() {
+        defaults = UserDefaults(suiteName: name)
+        mockAuthenticationAPI = MockAuthenticationAPI()
+        sut = SSOLinkGenerator(
+            authenticationAPI: mockAuthenticationAPI,
+            baseURL: URL(string: "https://localhost")!,
+            callbackScheme: "wire",
+            defaults: defaults
+        )
     }
 
     override func tearDown() {
+        defaults = nil
+        mockAuthenticationAPI = nil
         sut = nil
     }
 
+    @MainActor
     func testItBuildsSSOLink() async throws {
         // Given
         let ssoCode = UUID()
         let userID = ssoCode
 
         // When
-        let response = try await sut.buildSSOLink(
-            baseURL: URL(string: "https://localhost")!,
-            ssoCode: ssoCode,
-            callbackScheme: "wire"
-        )
+        let response = try await sut.buildSSOLink(ssoCode: ssoCode)
+
+        guard let validationToken = SSOLoginVerificationToken.current(in: defaults) else {
+            return XCTFail("no token")
+        }
         let ssoURL: String = response.absoluteString.removingPercentEncoding!
-        let ssoCodeString = ssoCode.uuidString
+        let ssoCodeString = validationToken.uuid.uuidString.lowercased()
         let successPart1 = "success_redirect=wire://login/success?"
         let successPart2 = "cookie=$cookie&userid=$userid&validation_token=\(ssoCodeString)"
         let success = successPart1 + successPart2

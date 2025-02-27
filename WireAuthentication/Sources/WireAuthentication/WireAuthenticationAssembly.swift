@@ -38,22 +38,24 @@ public struct WireAuthenticationAssembly {
         defaultAPIVersion: APIVersion,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
+        ssoCallbackURLScheme: String,
+        userDefaults: UserDefaults,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         onRegisterAccount: @escaping () -> Void
-    ) -> some View {
-        let bridge = WireAuthenticationBridge(
-            onFlowCompletion: onFlowCompletion,
-            onRegisterAccount: onRegisterAccount
-        )
+    ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
-            bridge: bridge,
             defaultBackendEnvironment: defaultBackendEnvironment,
             defaultAPIVersion: defaultAPIVersion,
             minTLSVersion: minTLSVersion,
-            accountsURL: accountsURL, // this is temp
-            passwordValidator: passwordValidator
+            accountsURL: accountsURL,
+            passwordValidator: passwordValidator,
+            ssoCallbackURLScheme: ssoCallbackURLScheme,
+            userDefaults: userDefaults,
+            onRegisterAccount: onRegisterAccount,
+            onFlowCompletion: onFlowCompletion
         )
-        return rootComponent.view
+
+        return (view: rootComponent.view, bridge: rootComponent.bridge)
     }
 
 }

@@ -22,25 +22,51 @@ import Foundation
 /// (from outside into this module) and **outbound** (from inside this module
 /// to the external world).
 
-package struct WireAuthenticationBridge {
+public struct WireAuthenticationBridge {
 
-    private let onFlowCompletion: (AuthenticationResult) -> Void
+    public let onFlowCompletion: (AuthenticationResult) -> Void
     private let onRegisterAccount: () -> Void
+    private let onSSOSuccess: (UUID, [HTTPCookie]) -> Void
+    private let onSSOFailure: () -> Void
 
-    package init(
+    public init(
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        onRegisterAccount: @escaping () -> Void
+        onRegisterAccount: @escaping () -> Void,
+        onSSOSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
+        onSSOFailure: @escaping () -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
         self.onRegisterAccount = onRegisterAccount
+        self.onSSOSuccess = onSSOSuccess
+        self.onSSOFailure = onSSOFailure
     }
 
-    package func completeFlow(_ result: AuthenticationResult) {
+    // MARK: - Methods are called within the module, but their implementations exist outside of it.
+
+    /// Completes the authentication flow with the given result.
+
+    public func completeFlow(_ result: AuthenticationResult) {
         onFlowCompletion(result)
     }
 
-    package func registerAccount() {
+    /// Initiates the account registration process.
+
+    public func registerAccount() {
         onRegisterAccount()
+    }
+
+    // MARK: - Methods are implemented inside the module and are meant to be invoked externally.
+
+    /// Completes the SSO process successfully.
+
+    public func completeSSOSuccess(userID: UUID, cookies: [HTTPCookie]) {
+        onSSOSuccess(userID, cookies)
+    }
+
+    /// Handles the failure of the SSO process.
+
+    public func completeSSOFailure() {
+        onSSOFailure()
     }
 
 }

@@ -123,7 +123,7 @@ package struct DetermineAuthMethodView: View {
         .presentationDragIndicator(.hidden)
     }
 
-    enum Destination: Hashable {
+    package enum Destination: Hashable {
 
         case login(email: String)
         case loginOrRegister(email: String)
@@ -142,6 +142,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Title.general)
         case .onPremLoginNotPossible:
             Text(L10n.Authentication.Error.Title.onPremNotPossible)
+        case .invalidSSOLink:
+            Text(L10n.Authentication.Error.Title.invalidSsoLink)
         }
     }
 
@@ -155,6 +157,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Message.general)
         case .onPremLoginNotPossible:
             Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
+        case .invalidSSOLink:
+            Text(L10n.Authentication.Error.Message.invalidSsoLink)
         }
     }
 
