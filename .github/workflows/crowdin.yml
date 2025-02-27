@@ -30,8 +30,9 @@ jobs:
 
           upload_sources: true
           download_translations: true
-          download_language: "de"
-          download_language: "es"
+          download_language: |
+            de
+            es
           upload_translations: false
           create_pull_request: false
           push_translations: true
