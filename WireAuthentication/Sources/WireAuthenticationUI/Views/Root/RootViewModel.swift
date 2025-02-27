@@ -48,8 +48,8 @@ public final class RootViewModel: ObservableObject, Router {
         self.modalDestination = modalDestination as? RootView.ModalDestination
     }
 
-    public func presentAlert(_ alert: some Hashable) {
-        self.alert = alert as? RootViewModel.Alert
+    public func presentAlert(_ alert: RootViewModel.Alert) {
+        self.alert = alert
     }
 
 }
