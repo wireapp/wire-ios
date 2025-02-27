@@ -25,27 +25,36 @@ import WireAuthenticationAPI
 
 class RootComponent: BootstrapComponent {
 
-    public let bridge: WireAuthenticationBridge
     public let defaultBackendEnvironment: BackendEnvironment
     public let defaultAPIVersion: APIVersion
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let passwordValidator: any PasswordValidator
+    public let ssoCallbackURLScheme: String
+    public let userDefaults: UserDefaults
+    public let onRegisterAccount: () -> Void
+    let onFlowCompletion: (AuthenticationResult) -> Void
 
     init(
-        bridge: WireAuthenticationBridge,
         defaultBackendEnvironment: BackendEnvironment,
         defaultAPIVersion: APIVersion,
         minTLSVersion: TLSVersion,
         accountsURL: URL,
-        passwordValidator: any PasswordValidator
+        passwordValidator: any PasswordValidator,
+        ssoCallbackURLScheme: String,
+        userDefaults: UserDefaults,
+        onRegisterAccount: @escaping () -> Void,
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
-        self.bridge = bridge
         self.defaultBackendEnvironment = defaultBackendEnvironment
         self.defaultAPIVersion = defaultAPIVersion
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.passwordValidator = passwordValidator
+        self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.userDefaults = userDefaults
+        self.onRegisterAccount = onRegisterAccount
+        self.onFlowCompletion = onFlowCompletion
     }
 
     // MARK: - View
@@ -61,6 +70,19 @@ class RootComponent: BootstrapComponent {
         shared { RootViewModel() }
     }
 
+    @MainActor public var bridge: WireAuthenticationBridge {
+        WireAuthenticationBridge(
+            onFlowCompletion: onFlowCompletion,
+            onRegisterAccount: onRegisterAccount,
+            onSSOSuccess: { userID, cookies in
+                SSOSuccessHandler(router: self.router).handleSuccess(userID: userID, cookies: cookies)
+            },
+            onSSOFailure: {
+                SSOFailureHandler(router: self.router).handleFailure()
+            }
+        )
+    }
+
     // MARK: - Public dependencies
 
     @MainActor public var router: any Router {
@@ -73,12 +95,21 @@ class RootComponent: BootstrapComponent {
         DetermineAuthMethodComponent(parent: self)
     }
 
+    @MainActor var noHistoryComponent: NoHistoryComponent {
+        NoHistoryComponent(onFlowCompletion: bridge.onFlowCompletion)
+    }
+
 }
 
 extension RootComponent: RootView.Factory {
 
     @MainActor var determineAuthMethodView: DetermineAuthMethodView {
         determineAuthMethodComponent.view
+    }
+
+    @MainActor
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+        noHistoryComponent.view(userID: userID, cookies: cookies)
     }
 
 }

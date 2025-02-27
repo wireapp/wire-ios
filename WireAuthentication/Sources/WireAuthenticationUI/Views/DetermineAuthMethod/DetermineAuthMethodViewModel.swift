@@ -31,6 +31,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case invalidResponse
         case unknownError
         case onPremLoginNotPossible(recovery: AuthenticationMethod)
+        case invalidSSOLink
+
     }
 
     package enum ModalDestination: Hashable, Identifiable {
@@ -42,6 +44,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let router: any Router
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+    private let ssoLinkGenerator: SSOLinkGeneratorProtocol
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -56,6 +59,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         router: any Router,
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
+        ssoLinkGenerator: any SSOLinkGeneratorProtocol,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
         alert: Alert? = nil
@@ -63,6 +67,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.router = router
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.determineAuthMethod = determineAuthMethod
+        self.ssoLinkGenerator = ssoLinkGenerator
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
         self.alert = alert
@@ -108,6 +113,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
+    func dismissmodalView() {
+        ssoLinkGenerator.flushToken()
+        modalDestination = nil
+    }
+
     // MARK: - Private
 
     private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
@@ -119,8 +129,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
 
         case let .loginViaSSO(code):
-            // TODO: [WPB-15946] Genarate URL and handle the error
-            modalDestination = .ssoLogin(url: URL(string: "example")!)
+            Task.detached {
+                do {
+                    let url = try await self.ssoLinkGenerator.generateSSOLink(ssoCode: code)
+                    await MainActor.run {
+                        self.modalDestination = .ssoLogin(url: url)
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.alert = .invalidSSOLink
+                    }
+                }
+            }
 
         case let .onPremLogin(email, backendConfig):
             // TODO: [WPB-15944] Handle on-prem login

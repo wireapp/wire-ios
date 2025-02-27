@@ -27,6 +27,7 @@
 		066A3D6E2CDD27670089C5C2 /* UserType+DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066A3D6D2CDD27600089C5C2 /* UserType+DeepLink.swift */; };
 		0678D9922C2C53D3000DF6E3 /* CRLURLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678D9912C2C53D3000DF6E3 /* CRLURLBuilder.swift */; };
 		0678D9942C2C5B54000DF6E3 /* CRLURLBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678D9932C2C5B54000DF6E3 /* CRLURLBuilderTests.swift */; };
+		0681BA632D6BD9EE004051BA /* AuthenticationModuleURLActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0681BA622D6BD9EE004051BA /* AuthenticationModuleURLActionProcessor.swift */; };
 		06894D92276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06894D91276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift */; };
 		06ADE9E32BBFDF26008BA0B3 /* CertificateRevocationListsChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADE9E22BBFDF26008BA0B3 /* CertificateRevocationListsChecker.swift */; };
 		06ADE9E82BBFE1FA008BA0B3 /* CRLsDistributionPointsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADE9E72BBFE1FA008BA0B3 /* CRLsDistributionPointsObserver.swift */; };
@@ -612,6 +613,7 @@
 		066A3D6D2CDD27600089C5C2 /* UserType+DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserType+DeepLink.swift"; sourceTree = "<group>"; };
 		0678D9912C2C53D3000DF6E3 /* CRLURLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLURLBuilder.swift; sourceTree = "<group>"; };
 		0678D9932C2C5B54000DF6E3 /* CRLURLBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLURLBuilderTests.swift; sourceTree = "<group>"; };
+		0681BA622D6BD9EE004051BA /* AuthenticationModuleURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationModuleURLActionProcessor.swift; sourceTree = "<group>"; };
 		06894D91276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessorTests.swift; sourceTree = "<group>"; };
 		06ADE9E22BBFDF26008BA0B3 /* CertificateRevocationListsChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateRevocationListsChecker.swift; sourceTree = "<group>"; };
 		06ADE9E72BBFE1FA008BA0B3 /* CRLsDistributionPointsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLsDistributionPointsObserver.swift; sourceTree = "<group>"; };
@@ -1386,6 +1388,7 @@
 			children = (
 				161ACB3123F5BBA100ABFF33 /* CompanyLoginURLActionProcessor.swift */,
 				06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */,
+				0681BA622D6BD9EE004051BA /* AuthenticationModuleURLActionProcessor.swift */,
 			);
 			path = URLActionProcessors;
 			sourceTree = "<group>";
@@ -3070,6 +3073,7 @@
 				7C26879D21F7193800570AA9 /* EventProcessingTracker.swift in Sources */,
 				E60579D62C1C3E3D003D4A98 /* ZMNetworkAvailabilityChangeNotification.swift in Sources */,
 				EE5D9B62290A8557007D78D6 /* SessionManager+VoIPPushManagerDelegate.swift in Sources */,
+				0681BA632D6BD9EE004051BA /* AuthenticationModuleURLActionProcessor.swift in Sources */,
 				54A0A6311BCE9864001A3A4C /* ZMHotFix.m in Sources */,
 				F19F4F3C1E604AA700F4D8FF /* UserImageAssetUpdateStrategy.swift in Sources */,
 				EE1108FB23D2087F005DC663 /* Typing.swift in Sources */,
