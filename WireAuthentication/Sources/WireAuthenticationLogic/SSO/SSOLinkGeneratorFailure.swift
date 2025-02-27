@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 
-@MainActor
-public protocol Router {
+package enum SSOLinkGeneratorFailure: Error, Equatable {
 
-    func popToRoot()
+    case invalidSSOURL
 
-    func navigate<Destination: Hashable>(to destination: Destination)
-
-    func presentSheet<ModalDestination: Hashable>(_ modalDestination: ModalDestination)
-
-    func presentAlert(_ alert: RootViewModel.Alert)
+    case unknown
 
 }

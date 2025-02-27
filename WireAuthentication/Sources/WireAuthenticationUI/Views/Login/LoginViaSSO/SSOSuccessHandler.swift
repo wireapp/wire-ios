@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 
-@MainActor
-public protocol Router {
+package struct SSOSuccessHandler {
 
-    func popToRoot()
+    private let router: any Router
 
-    func navigate<Destination: Hashable>(to destination: Destination)
+    package init(router: Router) {
+        self.router = router
+    }
 
-    func presentSheet<ModalDestination: Hashable>(_ modalDestination: ModalDestination)
-
-    func presentAlert(_ alert: RootViewModel.Alert)
+    @MainActor
+    package func handleSuccess(userID: UUID, cookies: [HTTPCookie]) {
+        router.presentSheet(RootView.ModalDestination.noHistory(userID: userID, cookies: cookies))
+    }
 
 }
