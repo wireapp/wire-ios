@@ -32,22 +32,10 @@ final class PullUpdateEventsSync: PullUpdateEventsSyncProtocol {
 
     init(
         selfClientID: String,
-        apiProvider: any UpdateEventsAPIProvider,
-        storeProvider: any UpdateEventsLocalStoreProvider,
-        decryptor: any UpdateEventDecryptorProtocol
-    ) async {
-        self.selfClientID = selfClientID
-        self.api = await apiProvider.updateEventsAPI
-        self.store = storeProvider.updateEventsLocalStore
-        self.decryptor = decryptor
-    }
-
-    init(
-        selfClientID: String,
         api: any UpdateEventsAPI,
         store: any UpdateEventsLocalStoreProtocol,
         decryptor: any UpdateEventDecryptorProtocol
-    ) async {
+    ) {
         self.selfClientID = selfClientID
         self.api = api
         self.store = store

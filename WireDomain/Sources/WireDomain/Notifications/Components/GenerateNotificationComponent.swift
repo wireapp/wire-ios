@@ -17,32 +17,28 @@
 //
 
 import NeedleFoundation
-import WireDataModel
+import UserNotifications
+import WireAPI
 
-/// Root of the dependencies tree graph.
-final class RootComponent: BootstrapComponent {
+protocol GenerateNotificationDependency: Dependency {
+    var contentHandler: (UNNotificationContent) -> Void { get }
+}
 
-    public let userID: UUID
-    public let contentHandler: (UNNotificationContent) -> Void
+protocol GenerateNotificationProvider {
+    func generateNotificationService(
+        eventsStream: AsyncStream<[UpdateEvent]>
+    ) -> GenerateNotificationService
+}
 
-    init(
-        userID: UUID,
-        contentHandler: @escaping (UNNotificationContent) -> Void
-    ) {
-        self.userID = userID
-        self.contentHandler = contentHandler
-
-        super.init()
+final class GenerateNotificationComponent: Component<GenerateNotificationDependency>, GenerateNotificationProvider {
+    
+    func generateNotificationService(
+        eventsStream: AsyncStream<[UpdateEvent]>
+    ) -> GenerateNotificationService {
+        GenerateNotificationService(
+            eventsStream: eventsStream,
+            contentHandler: dependency.contentHandler
+        )
     }
     
-    var verifyUserSession: VerifyUserSession {
-        verifyComponent.verifyUserSession
-    }
-
-    // MARK: - Children
-
-    var verifyComponent: VerifyUserComponent {
-        VerifyUserComponent(parent: self)
-    }
-
 }

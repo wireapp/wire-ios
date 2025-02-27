@@ -22,12 +22,11 @@ import WireLogging
 
 /// Receives push notifications, process the pending events through the `NotificationSession` to generate a notification
 /// content based on these events.
-final class NotificationService: UNNotificationServiceExtension {
+final class NotificationServiceExtension: UNNotificationServiceExtension {
 
     // MARK: - Properties
 
     private let logger = WireLogger.notifications
-    private var notificationSession: NotificationSession!
     private var contentHandler: ((UNNotificationContent) -> Void)?
     private var onGoingTask: Task<Void, Never>?
 
@@ -49,19 +48,28 @@ final class NotificationService: UNNotificationServiceExtension {
 
         onGoingTask = Task {
             do {
-                let notificationUserInfo = request.content.userInfo
-
-                let notification = try NotificationPayload(
-                    userInfo: notificationUserInfo
+                let notificationPayload = try NotificationPayload(
+                    userInfo: request.content.userInfo
                 )
-
-                notificationSession = try await createNotificationSession(
-                    eventID: notification.eventID,
-                    userID: notification.userID
+                
+                let userID = notificationPayload.userID
+                let eventID = notificationPayload.eventID
+                
+                let rootComponent = RootComponent(
+                    userID: userID,
+                    contentHandler: contentHandler
                 )
-
-                try await notificationSession.start()
-
+                
+                let verifyUserSession = rootComponent.verifyUserSession
+                let startSyncingEvents: () async throws -> Void = {
+                    try await verifyUserSession.startSyncingEvents(eventID: eventID)
+                }
+                
+                try await verifyUserSession.verify(
+                    userID: userID,
+                    then: startSyncingEvents
+                )
+                
             } catch {
                 logError(error)
                 finishWithEmptyNotification()
@@ -73,36 +81,11 @@ final class NotificationService: UNNotificationServiceExtension {
         logger.warn("legacy service extension will expire")
         finishWithEmptyNotification()
     }
-
-    private func createNotificationSession(
-        eventID: UUID,
-        userID: UUID
-    ) async throws -> NotificationSession {
-        let rootComponent = try RootComponent(userID: userID)
-        let authenticationComponent = rootComponent.authenticationComponent
-
-        let notificationHandler: NotificationSession.NotificationHandler = { [weak self] in
-            self?.finishWithNotification(content: $0)
-        }
-
-        return NotificationSession(
-            eventID: eventID,
-            authenticationServiceProvider: authenticationComponent,
-            notificationHandler: notificationHandler
-        )
-    }
-
-    private func finishWithNotification(content: UNNotificationContent) {
-        contentHandler?(content)
-    }
-
+    
+    // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
     private func finishWithEmptyNotification() {
         logger.info("finishing without showing notification")
         let emptyNotification = UNNotificationContent()
-
-        // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty content
-        // to the content handler.
-        // See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
         contentHandler?(emptyNotification)
         terminate()
     }
@@ -110,14 +93,13 @@ final class NotificationService: UNNotificationServiceExtension {
     private func terminate() {
         // Content handler should only be consumed once.
         contentHandler = nil
-        notificationSession = nil
         onGoingTask = nil
     }
 }
 
-// MARK: - Error logs
+// MARK: - Error logger
 
-extension NotificationService {
+extension NotificationServiceExtension {
     private func logError(_ error: any Error) {
         switch error {
         case let payloadError as NotificationPayload.Failure:
@@ -131,15 +113,19 @@ extension NotificationService {
                     "failed to decode notification payload: missing event ID"
                 )
             }
-        case let authenticationServiceError as AuthenticationService.Failure:
-            switch authenticationServiceError {
-            case .unauthenticated:
+        case let verifyUserSessionError as VerifyUserSession.Failure:
+            switch verifyUserSessionError {
+            case .userUnauthenticated:
                 WireLogger.notifications.error(
                     "Not displaying notification because app is not authenticated"
                 )
+            case .missingUserClient:
+                WireLogger.notifications.error(
+                    "Not displaying notification because user client is missing"
+                )
             }
-        case let authenticatedSessionError as AuthenticatedSession.Failure:
-            switch authenticatedSessionError {
+        case let pullEventsServiceError as PullEventsService.Failure:
+            switch pullEventsServiceError {
             case let .unableToLoadStores(error):
                 WireLogger.notifications.error(
                     "Loading coreDataStack with error: \(error.localizedDescription)"

@@ -566,6 +566,31 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Life cycle
 
+    @available(*, deprecated, message: "Use other public init for new sync code")
+    public convenience init(
+        context: NSManagedObjectContext,
+        notificationContext: any NotificationContext,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        conversationEventProcessor: ConversationEventProcessorProtocol,
+        featureRepository: FeatureRepositoryInterface,
+        userDefaults: UserDefaults,
+        syncStatus: SyncStatusProtocol,
+        userID: UUID
+    ) {
+        self.init(
+            context: context,
+            notificationContext: notificationContext,
+            coreCryptoProvider: coreCryptoProvider,
+            conversationEventProcessor: conversationEventProcessor,
+            staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
+            userDefaults: userDefaults,
+            actionsProvider: MLSActionsProvider(),
+            syncStatus: syncStatus,
+            userID: userID,
+            featureRepository: featureRepository
+        )
+    }
+    
     public convenience init(
         context: NSManagedObjectContext,
         notificationContext: any NotificationContext,

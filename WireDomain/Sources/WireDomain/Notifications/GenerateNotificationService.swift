@@ -17,61 +17,36 @@
 //
 
 import WireAPI
-import WireDataModel
+import UserNotifications
 import WireLogging
 
-/// Observes pending events, process them and generates new notifications content.
-final class NotificationSession {
-
-    // MARK: - Properties
-
-    typealias NotificationHandler = (UNMutableNotificationContent) -> Void
-
-    private let authenticationServiceProvider: AuthenticationServiceProvider
-    private let notificationHandler: NotificationHandler
-    private let eventID: UUID
-
-    // MARK: - Object lifecycle
-
+struct GenerateNotificationService {
+    
+    private let eventsStream: AsyncStream<[UpdateEvent]>
+    private let contentHandler: (UNNotificationContent) -> Void
+    
     init(
-        eventID: UUID,
-        authenticationServiceProvider: any AuthenticationServiceProvider,
-        notificationHandler: @escaping NotificationHandler
+        eventsStream: AsyncStream<[UpdateEvent]>,
+        contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        self.eventID = eventID
-        self.authenticationServiceProvider = authenticationServiceProvider
-        self.notificationHandler = notificationHandler
+        self.eventsStream = eventsStream
+        self.contentHandler = contentHandler
     }
-
-    // MARK: - Notifications
-
-    func start() async throws {
-        let authenticationService = authenticationServiceProvider.authenticationService
-        let authenticatedSession = try await authenticationService.authenticated()
-        try await process(with: authenticatedSession)
-    }
-
-    private func process(
-        with authenticatedSession: AuthenticatedSessionProtocol
-    ) async throws {
-        try authenticatedSession.setup()
-
-        let decodedEventsStream = try await authenticatedSession.startSync(
-            newEventID: eventID
-        )
-
-        for await decodedEvents in decodedEventsStream {
-            await generateNotificationContent(for: decodedEvents)
+    
+    /// Processes the events stream.
+    func process() async {
+        for await events in eventsStream {
+            await generateNotifications(for: events)
         }
     }
-
-    private func generateNotificationContent(
+    
+    private func generateNotifications(
         for events: [UpdateEvent]
     ) async {
         guard !events.isEmpty else {
-            return notificationHandler(UNMutableNotificationContent())
+            return contentHandler(UNMutableNotificationContent())
         }
-
+        
         var notifications: [UNMutableNotificationContent] = []
         
         for event in events {
@@ -90,7 +65,7 @@ final class NotificationSession {
             default:
                 continue
             }
-
+            
             guard await notificationBuilder.shouldBuildNotification() else {
                 continue
             }
@@ -106,16 +81,25 @@ final class NotificationSession {
             }
         }
         
+        showNotifications(notifications)
+    }
+    
+    private func showNotifications(_ notifications: [UNMutableNotificationContent]) {
+        var notification: UNMutableNotificationContent
+        
         switch notifications.count {
         case 0:
-            notificationHandler(UNMutableNotificationContent())
+            // Nothing to show
+            notification = UNMutableNotificationContent()
         case 1:
-            notificationHandler(notifications[0])
+            notification = notifications[0]
         default:
-            var notification = UNMutableNotificationContent()
+            notification = UNMutableNotificationContent()
             let body = NotificationBody.bundled(messagesCount: notifications.count)
             notification.body = body.make()
-            notificationHandler(notification)
         }
+        
+        // Displays the notification to the user
+        contentHandler(notification)
     }
 }
