@@ -15,3 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import UIKit
+
+public extension UIStackView {
+    
+    convenience init(axis: NSLayoutConstraint.Axis, spacing: CGFloat = 0) {
+        self.init(frame: .zero)
+        self.axis = axis
+        self.spacing = spacing
+        self.alignment = .fill
+        setContentCompressionResistancePriority(.required, for: .vertical)
+        setContentCompressionResistancePriority(.required, for: .horizontal)
+    }
+
+    static func horizontal(spacing: CGFloat = 0) -> UIStackView {
+        UIStackView(axis: .horizontal, spacing: spacing)
+    }
+    
+    static func vertical(spacing: CGFloat = 0) -> UIStackView {
+        UIStackView(axis: .vertical, spacing: spacing)
+    }
+}
+
