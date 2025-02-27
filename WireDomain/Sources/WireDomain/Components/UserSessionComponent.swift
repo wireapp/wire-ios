@@ -103,6 +103,21 @@ public final class UserSessionComponent {
         return networkService
     }()
 
+    private lazy var pushChannelNetworkService: NetworkService = {
+        let networkService = NetworkService(
+            baseURL: backendEnvironment.webSocketURL,
+            serverTrustValidator: serverTrustValidator
+        )
+        let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
+        let session = URLSession(
+            configuration: config,
+            delegate: networkService,
+            delegateQueue: nil
+        )
+        networkService.configure(with: session)
+        return networkService
+    }()
+
     // MARK: - Children
 
     public func clientSessionComponent(clientID: String) -> ClientSessionComponent {
@@ -110,6 +125,7 @@ public final class UserSessionComponent {
             selfUserID: selfUserID,
             selfClientID: clientID,
             networkService: networkService,
+            pushChannelNetworkService: pushChannelNetworkService,
             apiVersion: apiVersion,
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled,

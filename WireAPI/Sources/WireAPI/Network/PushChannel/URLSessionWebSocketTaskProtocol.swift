@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol URLSessionWebSocketTaskProtocol {
+public protocol URLSessionWebSocketTaskProtocol: Sendable {
 
     var isOpen: Bool { get }
 
@@ -30,7 +30,7 @@ protocol URLSessionWebSocketTaskProtocol {
         reason: Data?
     )
 
-    func receive(completionHandler: @escaping (Result<URLSessionWebSocketTask.Message, any Error>) -> Void)
+    func receive(completionHandler: @escaping @Sendable (Result<URLSessionWebSocketTask.Message, any Error>) -> Void)
 
     func receive() async throws -> URLSessionWebSocketTask.Message
 
@@ -38,7 +38,7 @@ protocol URLSessionWebSocketTaskProtocol {
 
 extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
 
-    var isOpen: Bool {
+    public var isOpen: Bool {
         closeCode == .invalid
     }
 
