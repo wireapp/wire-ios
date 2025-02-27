@@ -18,10 +18,9 @@
 
 import Foundation
 
-extension ClientSessionComponent: InitialSyncBuilderProtocol {
+/// An object that provides an instance of `InitialSync`.
+public protocol InitialSyncProvider {
 
-    public func buildInitialSync() throws -> any InitialSyncProtocol {
-        initialSync
-    }
+    func provideInitialSync() throws -> any InitialSyncProtocol
 
 }

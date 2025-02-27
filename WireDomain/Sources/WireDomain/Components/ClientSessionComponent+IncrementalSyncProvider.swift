@@ -18,20 +18,10 @@
 
 import Foundation
 
-/// Describes the apps synchronization state.
+extension ClientSessionComponent: IncrementalSyncProvider {
 
-enum SyncState {
-
-    /// The app is fetching and processing all pending events.
-
-    case quickSync(Task<Void, Error>)
-
-    /// The app is processing live events via the push channel.
-
-    case live(Task<Void, Error>)
-
-    /// The app is neither receiving nor processing any events.
-
-    case suspended
+    public func provideIncrementalSync() throws -> any IncrementalSyncProtocol {
+        incrementalSync
+    }
 
 }

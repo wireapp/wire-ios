@@ -18,7 +18,7 @@
 
 import WireAPI
 
-struct ConversationEventProcessor {
+struct ConversationEventProcessor: ConversationEventProcessorProtocol {
 
     let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol
     let createEventProcessor: any ConversationCreateEventProcessorProtocol
