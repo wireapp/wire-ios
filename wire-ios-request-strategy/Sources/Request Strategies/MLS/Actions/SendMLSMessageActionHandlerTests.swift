@@ -94,23 +94,43 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
 
     func test_itHandlesFailures() {
         test_itHandlesFailures([
-            .failure(status: 400, error: .mlsGroupConversationMismatch, label: "mls-group-conversation-mismatch"),
-            .failure(status: 400, error: .mlsClientSenderUserMismatch, label: "mls-client-sender-user-mismatch"),
-            .failure(status: 400, error: .mlsSelfRemovalNotAllowed, label: "mls-self-removal-not-allowed"),
-            .failure(status: 400, error: .mlsCommitMissingReferences, label: "mls-commit-missing-references"),
-            .failure(status: 400, error: .mlsProtocolError, label: "mls-protocol-error"),
-            .failure(status: 400, error: .invalidRequestBody),
-            .failure(status: 403, error: .missingLegalHoldConsent, label: "missing-legalhold-consent"),
-            .failure(status: 403, error: .legalHoldNotEnabled, label: "legalhold-not-enabled"),
-            .failure(status: 403, error: .accessDenied, label: "access-denied"),
-            .failure(status: 404, error: .mlsProposalNotFound, label: "mls-proposal-not-found"),
-            .failure(status: 404, error: .mlsKeyPackageRefNotFound, label: "mls-key-package-ref-not-found"),
-            .failure(status: 404, error: .noConversation, label: "no-conversation"),
-            .failure(status: 404, error: .noConversationMember, label: "no-conversation-member"),
+            .failure(
+                status: 400,
+                error: .mlsGroupConversationMismatch(message: "test"),
+                label: "mls-group-conversation-mismatch"
+            ),
+            .failure(
+                status: 400,
+                error: .mlsClientSenderUserMismatch(message: "test"),
+                label: "mls-client-sender-user-mismatch"
+            ),
+            .failure(
+                status: 400,
+                error: .mlsSelfRemovalNotAllowed(message: "test"),
+                label: "mls-self-removal-not-allowed"
+            ),
+            .failure(
+                status: 400,
+                error: .mlsCommitMissingReferences(message: "test"),
+                label: "mls-commit-missing-references"
+            ),
+            .failure(status: 400, error: .mlsProtocolError(message: "test"), label: "mls-protocol-error"),
+            .failure(status: 400, error: .invalidRequestBody(message: "test")),
+            .failure(status: 403, error: .missingLegalHoldConsent(message: "test"), label: "missing-legalhold-consent"),
+            .failure(status: 403, error: .legalHoldNotEnabled(message: "test"), label: "legalhold-not-enabled"),
+            .failure(status: 403, error: .accessDenied(message: "test"), label: "access-denied"),
+            .failure(status: 404, error: .mlsProposalNotFound(message: "test"), label: "mls-proposal-not-found"),
+            .failure(
+                status: 404,
+                error: .mlsKeyPackageRefNotFound(message: "test"),
+                label: "mls-key-package-ref-not-found"
+            ),
+            .failure(status: 404, error: .noConversation(message: "test"), label: "no-conversation"),
+            .failure(status: 404, error: .noConversationMember(message: "test"), label: "no-conversation-member"),
             .failure(status: 409, error: .mlsStaleMessage, label: "mls-stale-message"),
             .failure(status: 409, error: .mlsClientMismatch, label: "mls-client-mismatch"),
-            .failure(status: 422, error: .mlsUnsupportedProposal, label: "mls-unsupported-proposal"),
-            .failure(status: 422, error: .mlsUnsupportedMessage, label: "mls-unsupported-message"),
+            .failure(status: 422, error: .mlsUnsupportedProposal(message: "test"), label: "mls-unsupported-proposal"),
+            .failure(status: 422, error: .mlsUnsupportedMessage(message: "test"), label: "mls-unsupported-message"),
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
         ])
     }
