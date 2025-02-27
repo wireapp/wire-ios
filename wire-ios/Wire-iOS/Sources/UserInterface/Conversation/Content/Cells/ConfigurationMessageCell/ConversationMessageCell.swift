@@ -205,10 +205,6 @@ extension ConversationMessageCellDescription {
         type(of: self) == type(of: other)
     }
 
-    var debugDescription: String {
-        String(describing: type(of: self).self)
-    }
-
 }
 
 extension ConversationMessageCellDescription where View.Configuration: Equatable {

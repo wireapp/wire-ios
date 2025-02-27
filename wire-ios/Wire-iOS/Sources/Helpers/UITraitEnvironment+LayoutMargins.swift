@@ -19,28 +19,22 @@
 import UIKit
 
 struct HorizontalMargins {
+    var left: CGFloat
+    var right: CGFloat
 
-    var leading: CGFloat
-    var trailing: CGFloat
-
-    @available(*, deprecated, renamed: "leading")
-    var left: CGFloat { leading }
-    @available(*, deprecated, renamed: "trailing")
-    var right: CGFloat { trailing }
-
-    fileprivate init(leading: CGFloat, trailing: CGFloat) {
-        self.leading = leading
-        self.trailing = trailing
+    init(left: CGFloat, right: CGFloat) {
+        self.left = left
+        self.right = right
     }
 
     init(userInterfaceSizeClass: UIUserInterfaceSizeClass) {
         switch userInterfaceSizeClass {
         case .regular:
-            self.leading = 96
-            self.trailing = 96
+            self.left = 96
+            self.right = 96
         default:
-            self.leading = 56
-            self.trailing = 16
+            self.left = 56
+            self.right = 16
         }
     }
 }
@@ -70,7 +64,7 @@ extension UITraitEnvironment {
         let margins = conversationHorizontalMargins
 
         if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-            return HorizontalMargins(leading: margins.trailing, trailing: margins.leading)
+            return HorizontalMargins(left: margins.right, right: margins.left)
         } else {
             return margins
         }
