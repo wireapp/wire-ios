@@ -62,7 +62,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         articleView.fitIn(view: self, insets: insets)
     }
 

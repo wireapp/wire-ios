@@ -81,11 +81,11 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private func createConstraints() {
         let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.leading)
+        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
         let trailing = containerView.trailingAnchor.constraint(
             lessThanOrEqualTo: trailingAnchor,
-            constant: -margins.trailing
+            constant: -margins.right
         )
         let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 

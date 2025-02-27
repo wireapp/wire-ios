@@ -90,7 +90,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     private func configureConstraints() {
         let margins = conversationHorizontalMargins
-        let insets = UIEdgeInsets(top: 0, left: margins.leading, bottom: 0, right: margins.trailing)
+        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
         messageTextView.fitIn(view: self, insets: insets)
     }
 
