@@ -114,7 +114,14 @@ public protocol MLSActionExecutorProtocol {
 
 /// An actor responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
 
+let coreCryptoCommitForMissingProposalError =
+    "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
+
 public actor MLSActionExecutor: MLSActionExecutorProtocol {
+
+    enum Failure: Error {
+        case bufferedDecryptedMessage
+    }
 
     // MARK: - Types
 
@@ -318,7 +325,27 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
         try await performNonReentrant(groupID: groupID) {
             try await coreCrypto.perform {
-                try await $0.decryptMessage(conversationId: groupID.data, payload: message)
+                let result: DecryptedMessage? = try await $0.transaction { context in
+
+                    do {
+                        return try await context.decryptMessage(conversationId: groupID.data, payload: message)
+                    } catch let CoreCryptoError.Mls(error) {
+                        switch error {
+                        case .BufferedFutureMessage, .Other(coreCryptoCommitForMissingProposalError):
+                            // ignore error so transaction is saved and message is saved too.
+                            return nil
+                        default:
+                            throw error
+                        }
+                    } catch {
+                        throw error
+                    }
+                }
+                if let result {
+                    return result
+                } else {
+                    throw Failure.bufferedDecryptedMessage
+                }
             }
         }
     }

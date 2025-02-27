@@ -123,19 +123,26 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             return []
         }
 
-        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
+        // Mock decrypt message
+        let decryptedMessage = DecryptedMessage(
+            message: nil,
+            proposals: [],
+            isActive: false,
+            commitDelay: 0,
+            senderClientId: nil,
+            hasEpochChanged: false,
+            identity: .withBasicCredentials(),
+            bufferedMessages: nil,
+            crlNewDistributionPoints: nil
+        )
+
+        let fakeCoreCryptoContext = FakeCoreCryptoContext(noPointer: .init())
+        mockCoreCrypto.transactionCommand_MockMethod = { command in
+
+            fakeCoreCryptoContext.decryptMessage = (decryptedMessage, nil)
+
+            try await command.execute(context: fakeCoreCryptoContext)
             insideDecryptMessageInvertedExpectation.fulfill()
-            return DecryptedMessage(
-                message: nil,
-                proposals: [],
-                isActive: false,
-                commitDelay: 0,
-                senderClientId: nil,
-                hasEpochChanged: false,
-                identity: .withBasicCredentials(),
-                bufferedMessages: nil,
-                crlNewDistributionPoints: nil
-            )
         }
 
         // When
@@ -167,7 +174,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // allow update key material to finish
         sendCommitContinuation?.resume()
         await fulfillment(of: [afterDecryptMessageExpectation], timeout: 0.5)
-        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
+        XCTAssertEqual(fakeCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
     }
 
     // maybe it makes sense to test performNonReentrant directly instead
@@ -208,19 +215,24 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // Mock decrypt message
-        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
+        let decryptedMessage = DecryptedMessage(
+            message: nil,
+            proposals: [],
+            isActive: false,
+            commitDelay: 0,
+            senderClientId: nil,
+            hasEpochChanged: false,
+            identity: .withBasicCredentials(),
+            bufferedMessages: nil,
+            crlNewDistributionPoints: nil
+        )
+        let fakeCoreCryptoContext = FakeCoreCryptoContext(noPointer: .init())
+        mockCoreCrypto.transactionCommand_MockMethod = { command in
+
+            fakeCoreCryptoContext.decryptMessage = (decryptedMessage, nil)
+
+            try await command.execute(context: fakeCoreCryptoContext)
             decryptMessageExpectation.fulfill()
-            return DecryptedMessage(
-                message: nil,
-                proposals: [],
-                isActive: false,
-                commitDelay: 0,
-                senderClientId: nil,
-                hasEpochChanged: false,
-                identity: .withBasicCredentials(),
-                bufferedMessages: nil,
-                crlNewDistributionPoints: nil
-            )
         }
 
         // When
@@ -246,7 +258,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // the update key material operation shouldn't block the decrypt message
         await fulfillment(of: [decryptMessageExpectation], timeout: .tenSeconds)
 
-        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
+        XCTAssertEqual(fakeCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
         sendCommitContinuation?.resume()
     }
 
@@ -651,7 +663,42 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     // MARK: - Decrypt Message
 
-    func test_decryptMessage() async throws {
+    func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_BufferedFutureMessageError() async throws {
+        try await internalTest_decryptMessage_throwsError(CoreCryptoError.Mls(.BufferedFutureMessage))
+    }
+
+    func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_OtherError() async throws {
+        try await internalTest_decryptMessage_throwsError(
+            CoreCryptoError.Mls(.Other(
+                "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
+            ))
+        )
+    }
+
+    func internalTest_decryptMessage_throwsError(_ error: Error) async throws {
+
+        // Given
+        let groupID = MLSGroupID.random()
+        let encryptedMessage = Data.random(byteCount: 1)
+
+        let fakeCoreCryptoContext = FakeCoreCryptoContext(noPointer: .init())
+        mockCoreCrypto.transactionCommand_MockMethod = { command in
+
+            fakeCoreCryptoContext.decryptMessage = (nil, error)
+
+            try await command.execute(context: fakeCoreCryptoContext)
+        }
+
+        // When
+        await assertItThrows(error: MLSActionExecutor.Failure.bufferedDecryptedMessage) {
+            _ = try await sut.decryptMessage(encryptedMessage, in: groupID)
+        }
+
+        // Then
+        XCTAssertEqual(fakeCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
+    }
+
+    func test_decryptMessage_successfully() async throws {
 
         // Given
         let groupID = MLSGroupID.random()
@@ -668,8 +715,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             crlNewDistributionPoints: nil
         )
 
-        mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
-            decryptedMessage
+        let fakeCoreCryptoContext = FakeCoreCryptoContext(noPointer: .init())
+        mockCoreCrypto.transactionCommand_MockMethod = { command in
+
+            fakeCoreCryptoContext.decryptMessage = (decryptedMessage, nil)
+
+            try await command.execute(context: fakeCoreCryptoContext)
         }
 
         // When
@@ -677,7 +728,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then
         XCTAssertEqual(result, decryptedMessage)
-        XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
+        XCTAssertEqual(fakeCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
     }
-
 }

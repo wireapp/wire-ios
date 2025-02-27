@@ -303,7 +303,8 @@ public final class ClientSessionComponent {
         let pushSupportedProtocolsUseCase = PushSupportedProtocolsUseCase(
             featureConfigRepository: featureConfigRepository,
             pushSupportedProtocolsSync: pushSupportedProtocolsSync,
-            userClientsLocalStore: userClientsLocalStore
+            userClientsLocalStore: userClientsLocalStore,
+            userLocalStore: userLocalStore
         )
 
         return InitialSync(

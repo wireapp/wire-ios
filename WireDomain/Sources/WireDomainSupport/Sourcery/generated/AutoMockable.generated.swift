@@ -3402,6 +3402,24 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         }
     }
 
+    // MARK: - fetchSelfUserSupportedProtocols
+
+    public var fetchSelfUserSupportedProtocols_Invocations: [Void] = []
+    public var fetchSelfUserSupportedProtocols_MockMethod: (() async -> Set<WireDataModel.MessageProtocol>)?
+    public var fetchSelfUserSupportedProtocols_MockValue: Set<WireDataModel.MessageProtocol>?
+
+    public func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol> {
+        fetchSelfUserSupportedProtocols_Invocations.append(())
+
+        if let mock = fetchSelfUserSupportedProtocols_MockMethod {
+            return await mock()
+        } else if let mock = fetchSelfUserSupportedProtocols_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfUserSupportedProtocols`")
+        }
+    }
+
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {

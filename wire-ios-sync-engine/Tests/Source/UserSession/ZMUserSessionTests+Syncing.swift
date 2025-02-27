@@ -58,7 +58,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         syncMOC.performAndWait {
             sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         }
-        sut.didFinishIncrementalSync()
+        sut.didFinishIncrementalSync(isRecovering: false)
     }
 
     func startSlowSync() {
