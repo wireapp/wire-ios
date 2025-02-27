@@ -22,6 +22,23 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class NoHistoryViewModel: ObservableObject {
-    func confirm() {}
+package final class NoHistoryViewModel: ObservableObject {
+
+    private let userID: UUID
+    private let cookies: [HTTPCookie]
+    private let onFlowCompletion: (AuthenticationResult) -> Void
+
+    package init(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+    ) {
+        self.userID = userID
+        self.cookies = cookies
+        self.onFlowCompletion = onFlowCompletion
+    }
+
+    func confirm() {
+        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: nil))
+    }
 }

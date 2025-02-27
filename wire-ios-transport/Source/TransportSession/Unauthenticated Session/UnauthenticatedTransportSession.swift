@@ -39,10 +39,12 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 public final class UserInfo: NSObject {
     public let identifier: UUID
     public let cookieData: Data
+    public let cookies: [HTTPCookie]
 
-    public init(identifier: UUID, cookieData: Data) {
+    public init(identifier: UUID, cookieData: Data, cookies: [HTTPCookie]) {
         self.identifier = identifier
         self.cookieData = cookieData
+        self.cookies = cookies
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -259,14 +261,14 @@ private enum UserKey: String {
 extension ZMTransportResponse {
 
     /// Extracts the wire cookie data from the response.
-    /// - returns: The encrypted cookie data (using the cookies key) if there is any.
-    private func extractCookieData() -> Data? {
-        guard let response = rawResponse else { return nil }
+    /// - returns: The encrypted cookie data (using the cookies key) if there is any and [HTTPCookie]
+    private func extractCookies() -> (data: Data?, array: [HTTPCookie]?) {
+        guard let response = rawResponse else { return (nil, nil) }
         let cookies = HTTPCookie.cookies(
             withResponseHeaderFields: response.allHeaderFields as! [String: String],
             for: response.url!
         )
-        return HTTPCookie.extractData(from: cookies)
+        return (HTTPCookie.extractData(from: cookies), cookies)
     }
 
     private func extractUserIdentifier() -> UUID? {
@@ -277,20 +279,26 @@ extension ZMTransportResponse {
 
     @objc
     public func extractUserInfo() -> UserInfo? {
-        guard let data = extractCookieData(), let id = extractUserIdentifier() else { return nil }
-        return .init(identifier: id, cookieData: data)
+        guard
+            let data = extractCookies().data,
+            let cookies = extractCookies().array,
+            let id = extractUserIdentifier()
+        else {
+            return nil
+        }
+        return .init(identifier: id, cookieData: data, cookies: cookies)
     }
 
 }
 
-extension HTTPCookie {
+public extension HTTPCookie {
 
     static func cookies(from string: String, for url: URL) -> [HTTPCookie] {
         let headers = [HeaderKey.cookie.rawValue: string]
         return HTTPCookie.cookies(withResponseHeaderFields: headers, for: url)
     }
 
-    public static func extractCookieData(from cookieString: String, url: URL) -> Data? {
+    static func extractCookieData(from cookieString: String, url: URL) -> Data? {
         let cookies = HTTPCookie.cookies(from: cookieString, for: url)
         return extractData(from: cookies)
     }

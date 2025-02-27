@@ -51,6 +51,12 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
     }
+    var ssoCallbackURLScheme: String {
+        return rootComponent.ssoCallbackURLScheme
+    }
+    var userDefaults: UserDefaults {
+        return rootComponent.userDefaults
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -100,18 +106,23 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.defaultBackendEnvironment] = "defaultBackendEnvironment-BackendEnvironment"
         keyPathToName[\DetermineAuthMethodComponentDependency.defaultAPIVersion] = "defaultAPIVersion-APIVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
+        keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
+        keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["defaultBackendEnvironment-BackendEnvironment"] = { [unowned self] in self.defaultBackendEnvironment as Any }
         localTable["defaultAPIVersion-APIVersion"] = { [unowned self] in self.defaultAPIVersion as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
+        localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
+        localTable["userDefaults-UserDefaults"] = { [unowned self] in self.userDefaults as Any }
+        localTable["onRegisterAccount-() -> Void"] = { [unowned self] in self.onRegisterAccount as Any }
+        localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
 }

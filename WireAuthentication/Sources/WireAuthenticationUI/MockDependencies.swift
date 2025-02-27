@@ -27,6 +27,17 @@ final class MockDependencies {
         RootViewModel()
     }
 
+    private var backendEnvironment: LocalBackendEnvironment {
+        _backendEnvironment
+    }
+
+    var _backendEnvironment = LocalBackendEnvironment(
+        title: "backen name",
+        url: URL(string: "https://example.com")!,
+        accountsURL: URL(string: "https://example.com")!,
+        proxySettings: nil
+    )
+
     var rootView: RootView {
         RootView(
             viewModel: rootViewModel,
@@ -44,6 +55,7 @@ final class MockDependencies {
                 router: rootViewModel,
                 validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
+                ssoLinkGenerator: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
                 alert: alert
@@ -96,7 +108,8 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             validateEmailOrSSOCode: self,
-            determineAuthMethod: self
+            determineAuthMethod: self,
+            ssoLinkGenerator: self
         )
     }
 
@@ -106,6 +119,28 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             factory: self
         )
     }
+
+}
+
+extension MockDependencies: NoHistoryViewBuilder {
+
+    private var noHistoryViewModel: NoHistoryViewModel {
+        NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
+    }
+
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+        NoHistoryView(viewModel: noHistoryViewModel)
+    }
+
+}
+
+extension MockDependencies: SSOLinkGeneratorProtocol {
+
+    func generateSSOLink(ssoCode: UUID) async throws -> URL {
+        URL(string: "https://example.com/login/\(ssoCode)")!
+    }
+
+    func flushToken() {}
 
 }
 
@@ -162,6 +197,26 @@ extension MockDependencies: VerificationCodeBuilder {
         )
     }
 
+}
+
+extension MockDependencies: LoginViaEmailOnPremViewBuilder {
+
+    private func loginViaEmailOnPremViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremViewModel {
+        LoginViaEmailOnPremViewModel(
+            router: rootViewModel,
+            loginViaEmailUseCase: self,
+            email: email,
+            backendEnvironment: backendEnvironment,
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            canCreateAccount: canCreateAccount
+        )
+    }
+
+    func loginViaEmailOnPremView(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremView {
+        LoginViaEmailOnPremView(
+            viewModel: loginViaEmailOnPremViewModel(email: email, canCreateAccount: canCreateAccount)
+        )
+    }
 }
 
 extension MockDependencies: LoginViaSSOBuilder {
