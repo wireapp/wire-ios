@@ -41,8 +41,6 @@ final class MockDependencies {
     var rootView: RootView {
         RootView(
             viewModel: rootViewModel,
-//            determineAuthMethodBuilder: self,
-//            noHistoryViewBuilder: self
             factory: self
         )
     }

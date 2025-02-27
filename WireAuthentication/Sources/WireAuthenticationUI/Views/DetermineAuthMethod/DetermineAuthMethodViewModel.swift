@@ -78,7 +78,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         do {
             let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
-            await handleAuthenticationMethod(method)
+            handleAuthenticationMethod(method)
         } catch {
             switch error {
             case .invalidEmailOrSSOCode:
