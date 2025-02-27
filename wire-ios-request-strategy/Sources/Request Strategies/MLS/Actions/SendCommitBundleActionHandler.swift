@@ -81,7 +81,6 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
 
             action.succeed(with: updateEvents)
 
-        // TODO: Response message label mlsProtocol error
         case (400, "mls-welcome-mismatch"):
             action.fail(with: .mlsWelcomeMismatch(message: message))
 
