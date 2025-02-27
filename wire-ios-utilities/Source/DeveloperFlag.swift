@@ -31,6 +31,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceCRLExpiryAfterOneMinute
     case newInitialSync
     case useWireAuthentication
+    case wireCellsAttachmentsPreviews
 
     public var description: String {
         switch self {
@@ -60,6 +61,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .useWireAuthentication:
             "Use the new WireAuthentication feature module"
+
+        case .wireCellsAttachmentsPreviews:
+            "Use the new WireCells previews for conversations attachments"
         }
     }
 
