@@ -50,7 +50,9 @@ let package = Package(
         .target(
             name: "WireCellsUI",
             dependencies: [
-                .product(name: "WireDesign", package: "WireUI")
+                "WireFoundation",
+                .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireReusableUIComponents", package: "WireUI")
             ]
         ),
         .testTarget(

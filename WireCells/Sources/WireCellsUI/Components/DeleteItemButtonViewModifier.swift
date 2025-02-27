@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireDesign
 
 struct DeleteItemButtonViewModifier: ViewModifier {
     private enum Constants {

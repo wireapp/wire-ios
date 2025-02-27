@@ -27,6 +27,17 @@ final class MockDependencies {
         RootViewModel()
     }
 
+    private var backendEnvironment: LocalBackendEnvironment {
+        _backendEnvironment
+    }
+
+    var _backendEnvironment = LocalBackendEnvironment(
+        title: "backen name",
+        url: URL(string: "https://example.com")!,
+        accountsURL: URL(string: "https://example.com")!,
+        proxySettings: nil
+    )
+
     var rootView: RootView {
         RootView(
             viewModel: rootViewModel,
@@ -140,6 +151,26 @@ extension MockDependencies: VerificationCodeBuilder {
         )
     }
 
+}
+
+extension MockDependencies: LoginViaEmailOnPremViewBuilder {
+
+    private func loginViaEmailOnPremViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremViewModel {
+        LoginViaEmailOnPremViewModel(
+            router: rootViewModel,
+            loginViaEmailUseCase: self,
+            email: email,
+            backendEnvironment: backendEnvironment,
+            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            canCreateAccount: canCreateAccount
+        )
+    }
+
+    func loginViaEmailOnPremView(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremView {
+        LoginViaEmailOnPremView(
+            viewModel: loginViaEmailOnPremViewModel(email: email, canCreateAccount: canCreateAccount)
+        )
+    }
 }
 
 extension MockDependencies: LoginViaSSOBuilder {
