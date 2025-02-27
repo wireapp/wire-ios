@@ -30,6 +30,7 @@ jobs:
 
           upload_sources: true
           download_translations: true
+          # download_translations_args: "-l ar -l da -l de -l es -l et -l fi -l fr -l it -l ja -l lt -l nl -l pl -l pt-BR -l ru -l sl -l tr -l uk -l zh-Hans -l zh-Hant"
           upload_translations: false
           create_pull_request: false
           push_translations: true
