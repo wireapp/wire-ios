@@ -33,8 +33,8 @@ final class VerificationCodeViewModelTests {
 
     @MainActor
     init() {
-        loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
-        sut = VerificationCodeViewModel(
+        self.loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
+        self.sut = VerificationCodeViewModel(
             email: "abc@example.com",
             password: "aaaaaa",
             loginViaEmailUseCase: loginViaEmailUseCase,
@@ -50,7 +50,7 @@ final class VerificationCodeViewModelTests {
     @Test(arguments: [
         (code: ["", "", ""], expected: true),
         (code: ["1", "2", ""], expected: true),
-        (code: ["1", "2", "3"], expected: false),
+        (code: ["1", "2", "3"], expected: false)
     ])
     func isConfirmButtonDisabled(code: [String], expected: Bool) async throws {
         // given
@@ -151,7 +151,7 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test(arguments: [
         LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired,
         LoginViaEmailUseCaseFailure.other,
-        LoginViaEmailUseCaseFailure.invalidCredentials,
+        LoginViaEmailUseCaseFailure.invalidCredentials
     ])
     func submitPassword_whenAnUnhandledError(error: LoginViaEmailUseCaseFailure) async {
         // given
@@ -171,7 +171,7 @@ final class VerificationCodeViewModelTests {
         (value: "", index: 0, expectedCode: ["", "2", "3"]),
         (value: "6a", index: 1, expectedCode: ["1", "6", "3"]),
         (value: "a6", index: 2, expectedCode: ["1", "2", ""]),
-        (value: "6", index: 2, expectedCode: ["1", "2", "6"]),
+        (value: "6", index: 2, expectedCode: ["1", "2", "6"])
     ])
     func handleInputReturningFocus_updatesCode(value: String, index: Int, expectedCode: [String]) async {
         // given
@@ -188,7 +188,7 @@ final class VerificationCodeViewModelTests {
         (value: "1", index: 0, expectedFocus: 1), // Move to next field
         (value: "1", index: 2, expectedFocus: Int?.none), // Finished
         (value: "", index: 1, expectedFocus: 0), // Move to previous field
-        (value: "", index: 0, expectedFocus: 0), // Already at the start
+        (value: "", index: 0, expectedFocus: 0) // Already at the start
     ])
     func handleInputReturningFocus_returnsCorrectFocus(value: String, index: Int, outputFocus: Int?) async {
         // given
@@ -200,7 +200,6 @@ final class VerificationCodeViewModelTests {
         // then
         #expect(result == outputFocus)
     }
-
 
     // MARK: - Scaffolding
 

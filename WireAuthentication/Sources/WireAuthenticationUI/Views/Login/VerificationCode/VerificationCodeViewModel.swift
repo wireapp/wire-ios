@@ -60,7 +60,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         code: [String] = ["", "", "", "", "", ""]
     ) {
-        precondition(code.count > 0)
+        precondition(!code.isEmpty)
 
         self.email = email
         self.password = password
@@ -80,20 +80,17 @@ public final class VerificationCodeViewModel: ObservableObject {
             code[index] = ""
         }
 
-        var focusedIndex: Int?
-        if !code[index].isEmpty{
+        return if !code[index].isEmpty {
             if index < numberOfDigits - 1 {
-                focusedIndex = index + 1
+                index + 1
             } else {
-                focusedIndex = nil
+                nil
             }
         } else if index > 0 {
-            focusedIndex = index - 1
+            index - 1
         } else {
-            focusedIndex = 0
+            0
         }
-
-        return focusedIndex
     }
 
     func confirm() async {
