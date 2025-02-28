@@ -238,12 +238,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationDomain: String?
     ) async -> ZMOTRMessage? {
 
-        guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID,
-            domain: conversationDomain
-        ) else {
-            return nil
+        let conversation = await context.perform { [context] in
+            ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            )
         }
+        
+        guard let conversation else { return nil }
 
         return await context.perform { [context] in
             ZMOTRMessage.fetch(
@@ -258,7 +261,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     public func isMessageMentioningSelf(
         text: Text
     ) async -> Bool {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        let selfUser = await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
 
         return await context.perform {
             text.mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
@@ -278,7 +283,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-
+        
         let conversation = await context.perform { [context] in
             ZMConversation.fetch(
                 with: conversationID,
@@ -286,7 +291,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 in: context
             )
         }
-
+        
         guard let conversation else { return }
 
         let systemMessages = await createSystemMessages(
@@ -694,7 +699,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .participantsAdded(participants, sender, date):
+        case let .participantsAdded(participants, sender, _):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
