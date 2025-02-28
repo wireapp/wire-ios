@@ -32,7 +32,7 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false }
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 16
