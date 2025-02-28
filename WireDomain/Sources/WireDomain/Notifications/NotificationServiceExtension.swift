@@ -23,6 +23,10 @@ import WireLogging
 /// Receives push notifications, process the pending events through the `NotificationSession` to generate a notification
 /// content based on these events.
 final class NotificationServiceExtension: UNNotificationServiceExtension {
+    
+    enum Failure: Error {
+        case noAccountFound
+    }
 
     // MARK: - Properties
 
@@ -43,26 +47,29 @@ final class NotificationServiceExtension: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
+        
         onGoingTask?.cancel()
         self.contentHandler = contentHandler
 
         onGoingTask = Task {
             do {
+                
                 let notificationPayload = try NotificationPayload(
                     userInfo: request.content.userInfo
                 )
                 
                 let userID = notificationPayload.userID
-                let eventID = notificationPayload.eventID
                 
-                let rootComponent = RootComponent(
+                let rootComponent = try setupRootComponent(
                     userID: userID,
-                    contentHandler: contentHandler
+                    notificationHandler: contentHandler
                 )
                 
                 let verifyUserSession = rootComponent.verifyUserSession
                 let startSyncingEvents: () async throws -> Void = {
-                    try await verifyUserSession.startSyncingEvents(eventID: eventID)
+                    try await verifyUserSession.startSyncingEvents(
+                        eventID: notificationPayload.eventID
+                    )
                 }
                 
                 try await verifyUserSession.verify(
@@ -88,6 +95,39 @@ final class NotificationServiceExtension: UNNotificationServiceExtension {
         let emptyNotification = UNNotificationContent()
         contentHandler?(emptyNotification)
         terminate()
+    }
+    
+    private func setupRootComponent(
+        userID: UUID,
+        notificationHandler: @escaping (UNNotificationContent) -> Void
+    ) throws -> RootComponent {
+        let infoDictionary = Bundle.main.infoDictionary
+        guard let appGroupID = infoDictionary?["WireGroupId"] as? String else {
+            fatalError()
+        }
+        
+        let applicationIdentifier = "group.\(appGroupID)"
+        let applicationContainer = FileManager.sharedContainerDirectory(
+            for: applicationIdentifier
+        )
+        
+        let accountManager = AccountManager(
+            sharedDirectory: applicationContainer
+        )
+        
+        guard let selectedAccount = accountManager.account(
+            with: userID
+        ) else {
+            throw Failure.noAccountFound
+        }
+        
+        return RootComponent(
+            userID: userID,
+            applicationIdentifier: applicationIdentifier,
+            applicationContainer: applicationContainer,
+            selectedAccount: selectedAccount,
+            contentHandler: notificationHandler
+        )
     }
 
     private func terminate() {
@@ -133,6 +173,13 @@ extension NotificationServiceExtension {
             case let .unableToPullPendingEvents(error):
                 logger.error(
                     "failed to process notification: could not pull pending events: \(error.localizedDescription)"
+                )
+            }
+        case let serviceSetupError as NotificationServiceExtension.Failure:
+            switch serviceSetupError {
+            case .noAccountFound:
+                logger.error(
+                    "failed to process notification: no selected account found"
                 )
             }
         default:
