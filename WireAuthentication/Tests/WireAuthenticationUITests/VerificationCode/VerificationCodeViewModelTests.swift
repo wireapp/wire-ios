@@ -99,11 +99,11 @@ final class VerificationCodeViewModelTests {
         #expect(router.modalPresent_Invocations.count == 1)
         #expect(
             router.modalPresent_Invocations.first as? RootView.ModalDestination ==
-            RootView.ModalDestination.noHistory(
-                userID: Scaffolding.someAccessToken.userID,
-                cookies: [Scaffolding.someCookie],
-                accessToken: Scaffolding.someAccessToken
-            )
+                RootView.ModalDestination.noHistory(
+                    userID: Scaffolding.someAccessToken.userID,
+                    cookies: [Scaffolding.someCookie],
+                    accessToken: Scaffolding.someAccessToken
+                )
         )
     }
 
