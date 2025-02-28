@@ -75,7 +75,7 @@ final class VerificationCodeViewModelTests {
     func confirm_passesCorrectCredentials() async {
         // given
         loginViaEmailUseCase
-            .invokeEmailPasswordVerificationCode_MockValue = ([Scaffolding.someCookie], Scaffolding.someAccessToken)
+            .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
         sut.code = ["1", "2", "3"]
 
         // when
@@ -93,7 +93,7 @@ final class VerificationCodeViewModelTests {
     func confirm_whenSuccess() async {
         // given
         loginViaEmailUseCase
-            .invokeEmailPasswordVerificationCode_MockValue = ([Scaffolding.someCookie], Scaffolding.someAccessToken)
+            .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
         sut.code = ["1", "2", "3"]
 
         // when
@@ -106,9 +106,9 @@ final class VerificationCodeViewModelTests {
         #expect(
             router.modalPresent_Invocations.first as? RootView.ModalDestination ==
                 RootView.ModalDestination.noHistory(
-                    userID: Scaffolding.someAccessToken.userID,
-                    cookies: [Scaffolding.someCookie],
-                    accessToken: Scaffolding.someAccessToken
+                    userID: Fixture.someAccessToken.userID,
+                    cookies: [Fixture.someCookie],
+                    accessToken: Fixture.someAccessToken
                 )
         )
     }
@@ -271,21 +271,6 @@ final class VerificationCodeViewModelTests {
         // then
         #expect(isResendingCalls == [true, false])
         #expect(sut.alert == .unknownError)
-    }
-
-    // MARK: - Scaffolding
-
-    private enum Scaffolding {
-
-        static let someCookie = HTTPCookie(properties: [
-            .name: "some name",
-            .path: "some path",
-            .value: "some value",
-            .domain: "some domain"
-        ])!
-
-        static let someAccessToken = AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
-
     }
 
 }
