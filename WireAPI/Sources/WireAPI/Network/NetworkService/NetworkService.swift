@@ -18,14 +18,24 @@
 
 import Foundation
 
-public final class NetworkService: NSObject {
+// sourcery: AutoMockable
+public protocol NetworkServiceProtocol {
+
+    func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
+
+}
+
+public final class NetworkService: NSObject, NetworkServiceProtocol {
 
     private let baseURL: URL
     private let serverTrustValidator: ServerTrustValidator
     private var urlSession: URLSession?
     private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
 
-    public init(baseURL: URL, serverTrustValidator: ServerTrustValidator) {
+    public init(
+        baseURL: URL,
+        serverTrustValidator: ServerTrustValidator
+    ) {
         self.baseURL = baseURL
         self.serverTrustValidator = serverTrustValidator
     }
@@ -38,7 +48,7 @@ public final class NetworkService: NSObject {
         self.urlSession = urlSession
     }
 
-    func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+    public func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         guard let urlSession else {
             throw NetworkServiceError.serviceNotConfigured
         }

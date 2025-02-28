@@ -17,6 +17,9 @@
 //
 
 import UIKit
+import WireAPI
+import WireAuthentication
+import WireCommonComponents
 import WireDataModel
 
 /// A type of view controller that can be managed by an authentication coordinator.
@@ -34,6 +37,10 @@ final class AuthenticationInterfaceBuilder {
 
     var backendEnvironment: BackendEnvironmentProvider {
         backendEnvironmentProvider()
+    }
+
+    private var environment: WireTransport.BackendEnvironment {
+        BackendEnvironment.shared
     }
 
     // MARK: - Initialization
@@ -60,8 +67,57 @@ final class AuthenticationInterfaceBuilder {
     /// - returns: The view controller to use for this step, or `nil` if the interface builder
     /// does not support this step.
 
-    func makeViewController(for step: AuthenticationFlowStep) -> AuthenticationStepViewController? {
+    @MainActor
+    func makeViewController(
+        for step: AuthenticationFlowStep,
+        authenticationCoordinator: AuthenticationCoordinator?
+    ) -> AuthenticationStepViewController? {
         switch step {
+        case .wireAuthenticationModule:
+            let assembly = WireAuthenticationAssembly()
+            let (rootView, bridge) = assembly.assemble(
+                defaultBackendEnvironment: BackendEnvironment(
+                    url: environment.backendURL,
+                    webSocketURL: environment.backendWSURL,
+                    pinnedKeys: environment.trustData.map { trustData in
+                        PinnedKey(
+                            key: trustData.certificateKey,
+                            hosts: trustData.hosts.map { host in
+                                switch host.rule {
+                                case .equals:
+                                    .equals(host.value)
+                                case .endsWith:
+                                    .endsWith(host.value)
+                                }
+                            }
+                        )
+                    },
+                    proxySettings: nil
+                ),
+                minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+                defaultAPIVersion: .v8,
+                accountsURL: environment.accountsURL,
+                passwordValidator: AuthenticationPasswordValidator(),
+                ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
+                userDefaults: .shared(),
+                onFlowCompletion: { _ in
+                    // TODO: [WPB-16044] Pass the cookies and token
+                    authenticationCoordinator?.eventResponderChain.handleEvent(
+                        ofType: .wireAuthenticationModuleComplete
+                    )
+                },
+                onRegisterAccount: {
+                    // TODO: [WPB-16279] Navigate to the account registration flow
+                }
+            )
+
+            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
+                bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
+            })
+            authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)
+
+            return AuthenticationHostingController(rootView: rootView)
+
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
             landingViewController.configure(with: featureProvider)
@@ -113,7 +169,7 @@ final class AuthenticationInterfaceBuilder {
             return RemoveClientStepViewController(clients: clients)
 
         case let .noHistory(_, context):
-            let backupStep = BackupRestoreStepDescription(context: context)
+            let backupStep = NoHistoryHintStepDescription(context: context)
             return makeViewController(for: backupStep)
 
         case let .enterEmailVerificationCode(email, _, _):

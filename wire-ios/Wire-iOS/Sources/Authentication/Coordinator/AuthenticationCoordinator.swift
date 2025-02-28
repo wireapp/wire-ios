@@ -89,9 +89,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     /// The object to use to start and control the company login flow.
     let companyLoginController = CompanyLoginController(withDefaultEnvironment: ())
 
-    /// The object to use to restore backups.
-    let backupRestoreController: BackupRestoreController
-
     // MARK: - Internal State
 
     private var loginObservers: [Any] = []
@@ -128,13 +125,11 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         self.stateController = AuthenticationStateController()
         self.interfaceBuilder = AuthenticationInterfaceBuilder(featureProvider: featureProvider)
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
-        self.backupRestoreController = BackupRestoreController(target: presenter)
         super.init()
         updateLoginObservers()
         self.unauthenticatedSessionObserver = sessionManager
             .addUnauthenticatedSessionManagerCreatedSessionObserver(self)
         companyLoginController?.delegate = self
-        backupRestoreController.delegate = self
         presenter.delegate = self
         stateController.delegate = self
         eventResponderChain.configure(delegate: self)
@@ -171,8 +166,9 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
 // MARK: - State Management
 
-extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
+extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControllerDelegate {
 
+    @MainActor
     func stateDidChange(
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
@@ -181,7 +177,10 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             return
         }
 
-        guard let stepViewController = interfaceBuilder.makeViewController(for: newState) else {
+        guard let stepViewController = interfaceBuilder.makeViewController(
+            for: newState,
+            authenticationCoordinator: self
+        ) else {
             fatalError("Step \(newState) requires user interface, but the interface builder does not support it.")
         }
 
@@ -372,9 +371,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case let .startLoginFlow(request, credentials):
                 startLoginFlow(request: request, proxyCredentials: credentials)
 
-            case .startBackupFlow:
-                backupRestoreController.startBackupFlow()
-
             case let .signOut(warn):
                 signOut(warn: warn)
 
@@ -503,18 +499,14 @@ extension AuthenticationCoordinator {
 
     // MARK: - Modals
 
-    /// Opens the browser and reopens the current alert upon dismissal if needed.
+    /// Opens the URL in the selected browser
     private func openURL(_ url: URL) {
-        let browser = BrowserViewController(url: url)
-        browser.onDismiss = {
-            if let alertModel = self.pendingAlert {
-                self.stopActivityIndicator()
-                self.presentAlert(for: alertModel)
-                self.pendingAlert = nil
-            }
+        url.open()
+        if let alertModel = pendingAlert {
+            stopActivityIndicator()
+            presentAlert(for: alertModel)
+            pendingAlert = nil
         }
-
-        presenter?.present(browser, animated: true, completion: nil)
     }
 
     /// Presents an error alert.

@@ -19,18 +19,6 @@
 import WireAPI
 import WireDataModel
 
-/// Process user connection events.
-
-protocol UserConnectionEventProcessorProtocol {
-
-    /// Process a user connection event.
-    ///
-    /// - Parameter event: A user connection event.
-
-    func processEvent(_ event: UserConnectionEvent) async throws
-
-}
-
 struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
 
     let connectionsRepository: any ConnectionsRepositoryProtocol

@@ -37,8 +37,9 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         var items = [
             makeConversationIdItem(),
             makeConversationTypeItem(),
-            makeConversationMessageProtocolItem()
-        ]
+            makeConversationMessageProtocolItem(),
+            makeConversationMLSGroupIDItem()
+        ].compactMap { $0 }
 
         if DeveloperFlag.debugDuplicateObjects.isOn {
             items.append(makeDuplicateConversationItem())
@@ -69,6 +70,13 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         .text(DeveloperToolsViewModel.TextItem(
             title: "Message protocol",
             value: conversation.messageProtocol.rawValue
+        ))
+    }
+
+    private func makeConversationMLSGroupIDItem() -> DeveloperToolsViewModel.Item? {
+        .text(DeveloperToolsViewModel.TextItem(
+            title: "MLS Group ID",
+            value: conversation.mlsGroupID?.description ?? "-"
         ))
     }
 

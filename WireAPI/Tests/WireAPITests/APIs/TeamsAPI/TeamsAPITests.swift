@@ -301,6 +301,7 @@ final class TeamsAPITests: XCTestCase {
                 result,
                 TeamMemberLegalholdInfo(
                     status: .pending,
+                    clientID: "abc123",
                     prekey: .init(id: 12_345, base64EncodedKey: "foo")
                 )
             )

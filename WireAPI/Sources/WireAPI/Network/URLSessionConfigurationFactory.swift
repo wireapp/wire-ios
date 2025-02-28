@@ -59,7 +59,7 @@ public struct URLSessionConfigurationFactory {
         return configuration
     }
 
-    func makeWebSocketSessionConfiguration() -> URLSessionConfiguration {
+    public func makeWebSocketSessionConfiguration() -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
 

@@ -19,15 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullConversationLabelsSyncProtocol {
-
-    func pull() async throws
-
-}
-
-/// An object to keep the local conversation labels up to date
-/// with the remote conversation labels.
-
 struct PullConversationLabelsSync: PullConversationLabelsSyncProtocol {
 
     private let api: any UserPropertiesAPI
@@ -40,9 +31,6 @@ struct PullConversationLabelsSync: PullConversationLabelsSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch all conversation labels from remote, then create and update
-    /// them locally.
 
     func pull() async throws {
         let labels = try await api.getLabels()

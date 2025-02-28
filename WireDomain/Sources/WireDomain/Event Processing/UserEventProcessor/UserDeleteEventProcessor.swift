@@ -18,18 +18,6 @@
 
 import WireAPI
 
-/// Process user delete events.
-
-protocol UserDeleteEventProcessorProtocol {
-
-    /// Process a user delete event.
-    ///
-    /// - Parameter event: A user delete event.
-
-    func processEvent(_ event: UserDeleteEvent) async throws
-
-}
-
 struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol

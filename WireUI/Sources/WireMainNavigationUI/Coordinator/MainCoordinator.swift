@@ -194,7 +194,8 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         conversation: ConversationModel,
         message: ConversationMessageModel?
     ) {
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
                 splitViewController.hideSidebar()
             }
@@ -288,7 +289,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
     public func dismissPresentedViewController() async {
         await withCheckedContinuation { continuation in
-            splitViewController.dismiss(animated: true, completion: continuation.resume)
+            if splitViewController != nil {
+                splitViewController.dismiss(animated: true, completion: continuation.resume)
+            }
         }
     }
 

@@ -7,16 +7,10 @@ let package = Package(
     name: "WireDomainPackage",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
-        .library(name: "WireDomainAPI", targets: ["WireDomainAPI"]),
-        .library(name: "WireDomainPackage", targets: ["WireDomainPkg"]),
-        .library(name: "WireDomainPackageSupport", targets: ["WireDomainPkgSupport"])
+        .library(name: "WireDomainPackage", targets: ["WireDomainPkg"])
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../WirePlugins"),
-        .package(name: "WireAPI", path: "../WireAPI"),
-        .package(name: "WireAnalytics", path: "../WireAnalytics"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0")
     ],
     targets: [
         .target(
@@ -29,20 +23,9 @@ let package = Package(
             path: "./Sources/Package"
         ),
         .target(
-            name: "WireDomainPkgSupport",
-            dependencies: ["WireDomainPkg"],
-            path: "./Sources/PackageSupport",
-            plugins: [
-                .plugin(name: "SourceryPlugin", package: "WirePlugins")
-            ]
-        ),
-        .testTarget(
-            name: "WireDomainPkgTests",
-            dependencies: [
-                "WireDomainPkg",
-                .product(name: "WireTestingPackage", package: "WireFoundation")
-            ],
-            path: "./Tests/PackageTests"
+            name: "WireDomainPkg",
+            path: "./Sources/WireDomain",
+            sources: ["./UseCases/Protocols"]
         )
     ]
 )

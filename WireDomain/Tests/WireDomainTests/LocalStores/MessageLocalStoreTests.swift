@@ -164,7 +164,11 @@ final class MessageLocalStoreTests: XCTestCase {
 
     }
 
-    private func makeConversation(creator: ZMUser) async -> ZMConversation {
+    private func makeConversation(
+        id: UUID,
+        domain: String?,
+        creator: ZMUser
+    ) async -> ZMConversation {
         await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,

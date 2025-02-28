@@ -19,15 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullSelfTeamMembersSyncProtocol {
-
-    func pull(selfTeamID: UUID) async throws
-
-}
-
-/// An object to keep the local self team members up to date
-/// with the remote self team members.
-
 struct PullSelfTeamMembersSync: PullSelfTeamMembersSyncProtocol {
 
     private let api: any TeamsAPI
@@ -40,11 +31,6 @@ struct PullSelfTeamMembersSync: PullSelfTeamMembersSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch the team members0from remote, then create or update
-    /// them locally.
-    ///
-    /// - Parameter selfTeamID: The id of the self user's team.
 
     func pull(selfTeamID: UUID) async throws {
         let remoteMembers = try await api.getTeamMembers(

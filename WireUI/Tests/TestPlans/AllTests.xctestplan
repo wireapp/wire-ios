@@ -32,6 +32,13 @@
   "testTargets" : [
     {
       "target" : {
+        "containerPath" : "container:WireCells",
+        "identifier" : "WireCellsUITests",
+        "name" : "WireCellsUITests"
+      }
+    },
+    {
+      "target" : {
         "containerPath" : "container:WireUI",
         "identifier" : "WireMoveToFolderUITests",
         "name" : "WireMoveToFolderUITests"
@@ -42,6 +49,13 @@
         "containerPath" : "container:WireUI",
         "identifier" : "WireConversationListUITests",
         "name" : "WireConversationListUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireSidebarUITests",
+        "name" : "WireSidebarUITests"
       }
     },
     {
@@ -61,20 +75,6 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireAccountImageUITests",
-        "name" : "WireAccountImageUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireSidebarUITests",
-        "name" : "WireSidebarUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
         "identifier" : "WireMainNavigationUITests",
         "name" : "WireMainNavigationUITests"
       }
@@ -82,15 +82,22 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireDesignTests",
-        "name" : "WireDesignTests"
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
+        "identifier" : "WireAccountImageUITests",
+        "name" : "WireAccountImageUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
       }
     }
   ],

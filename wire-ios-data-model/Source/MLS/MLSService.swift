@@ -331,7 +331,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/601522340/Use+Case+Committing+pending+proposals+MLS)
 
-    func commitPendingProposalsIfNeeded()
+    func commitPendingProposalsIfNeeded() async
 
     /// Commits pending proposals for a group.
     ///
@@ -561,6 +561,8 @@ public final class MLSService: MLSServiceInterface {
     // The number of days to wait until refreshing the key material for a group.
 
     private static let epochChangeBufferSize: Int = 1000
+
+    private let maxRetryAttempts = 3
 
     weak var delegate: MLSServiceDelegate?
 
@@ -1058,8 +1060,10 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
+            let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite
             let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(
                 clientID: clientID,
+                ciphersuite: MLSCipherSuite(rawValue: ciphersuite.rawValue),
                 context: context.notificationContext
             )
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
@@ -1120,11 +1124,13 @@ public final class MLSService: MLSServiceInterface {
 
     private func countUnclaimedKeyPackages(
         clientID: String,
+        ciphersuite: MLSCipherSuite?,
         context: NotificationContext
     ) async throws -> Int {
         do {
             return try await actionsProvider.countUnclaimedKeyPackages(
                 clientID: clientID,
+                ciphersuite: ciphersuite,
                 context: context
             )
 
@@ -1311,6 +1317,10 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             logger.info("repairing out of sync conversation... (\(groupID.safeForLoggingDescription))")
+
+            // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
+            // This ensures we're on the latest state.
+            await syncStatus.recoverWithQuickSync()
 
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
@@ -1720,14 +1730,19 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    public func commitPendingProposalsIfNeeded() {
-        guard let context else {
-            return
+    private var lastExecutionTime = Date.distantPast
+    private let throttleInterval: TimeInterval = 2.0 // 2 seconds throttle
+
+    public func commitPendingProposalsIfNeeded() async {
+        let now = Date.now
+
+        guard now.timeIntervalSince(lastExecutionTime) > throttleInterval else {
+            return // Ignore call if within the throttle period
         }
 
-        WaitingGroupTask(context: context) { [self] in
-            await commitPendingProposals()
-        }
+        lastExecutionTime = now
+
+        await commitPendingProposals()
     }
 
     func commitPendingProposals() async {
@@ -1871,7 +1886,8 @@ public final class MLSService: MLSServiceInterface {
 
     private func retryOnCommitFailure(
         for groupID: MLSGroupID,
-        operation: @escaping () async throws -> Void
+        operation: @escaping () async throws -> Void,
+        retryCount: Int = 0
     ) async throws {
 
         do {
@@ -1879,15 +1895,23 @@ public final class MLSService: MLSServiceInterface {
 
         } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, _) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
-            await syncStatus.performQuickSync()
+            await syncStatus.recoverWithQuickSync()
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
-        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, _) {
+        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: let error) {
             logger.warn("failed to send commit, syncing then retrying operation...")
-            await syncStatus.performQuickSync()
+            await syncStatus.recoverWithQuickSync()
             logger.info("sync finished, retying operation...")
-            try await retryOnCommitFailure(for: groupID, operation: operation)
+
+            guard retryCount <= maxRetryAttempts else {
+                throw error
+            }
+
+            var currentRetryCount = retryCount
+            currentRetryCount += 1
+
+            try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
 
         } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup, _) {
             logger.warn("failed to send commit, repairing group then retrying operation...")
@@ -1899,9 +1923,17 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("failed to send commit, giving up...")
             throw error
 
-        } catch ExternalCommitError.failedToSendCommit(recovery: .retry, _) {
+        } catch ExternalCommitError.failedToSendCommit(recovery: .retry, cause: let error) {
             logger.warn("failed to send external commit, retrying operation...")
-            try await retryOnCommitFailure(for: groupID, operation: operation)
+
+            guard retryCount <= maxRetryAttempts else {
+                throw error
+            }
+
+            var currentRetryCount = retryCount
+            currentRetryCount += 1
+
+            try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
 
         } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
             logger.warn("failed to send external commit, giving up...")

@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport

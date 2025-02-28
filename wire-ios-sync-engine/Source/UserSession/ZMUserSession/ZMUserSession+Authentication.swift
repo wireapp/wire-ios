@@ -77,10 +77,11 @@ extension ZMUserSession {
             deleteUserKeychainItems()
         }
 
-        syncManagedObjectContext.dispatchGroup?.notify(on: .main) {
+        syncManagedObjectContext.perform {
             self.tearDown()
-            completion()
         }
+
+        completion()
     }
 
     public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
@@ -121,7 +122,7 @@ extension ZMUserSession {
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
 
-        var errorCode: UserSessionErrorCode = switch response.result {
+        let errorCode: UserSessionErrorCode = switch response.result {
         case .permanentError:
             switch response.payload?.asDictionary()?["label"] as? String {
             case "client-not-found":

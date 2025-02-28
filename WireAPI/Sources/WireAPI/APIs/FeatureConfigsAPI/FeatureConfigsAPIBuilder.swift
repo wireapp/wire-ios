@@ -26,7 +26,7 @@ public struct FeatureConfigsAPIBuilder {
 
     /// Create a new builder.
     ///
-    /// - Parameter httpClient: A http client.
+    /// - Parameter APIService: An api service.
 
     public init(apiService: any APIServiceProtocol) {
         self.apiService = apiService
@@ -55,6 +55,8 @@ public struct FeatureConfigsAPIBuilder {
             FeatureConfigsAPIV6(apiService: apiService)
         case .v7:
             FeatureConfigsAPIV7(apiService: apiService)
+        case .v8:
+            FeatureConfigsAPIV8(apiService: apiService)
         }
     }
 }

@@ -61,7 +61,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
               operationStatus:(OperationStatus *)operationStatus
                               syncStatus:(SyncStatus *)syncStatus
                   pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
-                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
@@ -74,7 +73,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.operationStatus = operationStatus;
         self.syncStatus = syncStatus;
         self.pushNotificationStatus = pushNotificationStatus;
-        self.callEventStatus = callEventStatus;
         self.transportSession = transportSession;
         self.requestStrategy = requestStrategy;
         self.updateEventProcessor = updateEventProcessor;
@@ -126,17 +124,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 }
 #endif
 
-
-- (APSSignalingKeysStore *)apsSignalKeyStore
-{
-    if (_apsSignalKeyStore == nil) {
-        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-        if (selfUser.selfClient != nil) {
-            _apsSignalKeyStore = [[APSSignalingKeysStore alloc] initWithUserClient:selfUser.selfClient];
-        }
-    }
-    return _apsSignalKeyStore;
-}
 
 - (ZMTransportRequestGenerator)requestGenerator {
     

@@ -22,19 +22,6 @@ import WireCoreCrypto
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-/// Decrypt the E2EE content within update events.
-protocol UpdateEventDecryptorProtocol {
-
-    /// Decrypt events in the given event envelope.
-    ///
-    /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
-    /// - Returns: A list of decrypted update events.
-
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
-
-}
-
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol

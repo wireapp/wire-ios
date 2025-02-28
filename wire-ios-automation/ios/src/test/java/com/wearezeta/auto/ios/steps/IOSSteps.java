@@ -1,0 +1,98 @@
+package com.wearezeta.auto.ios.steps;
+
+import com.wearezeta.auto.ios.common.IOSTestContext;
+import com.wearezeta.auto.ios.pages.*;
+import com.wearezeta.auto.ios.pages.details_overlay.group.GroupAddPeoplePage;
+import com.wearezeta.auto.ios.pages.details_overlay.group.GroupConnectedParticipantProfilePage;
+import com.wearezeta.auto.ios.pages.details_overlay.group.GroupDetailsPage;
+import com.wearezeta.auto.ios.pages.details_overlay.group.GuestOptionsPage;
+import com.wearezeta.auto.ios.pages.details_overlay.single.SinglePendingUserIncomingConnectionProfilePage;
+import com.wearezeta.auto.ios.pages.external_app.FileChooseDialogPage;
+import com.wearezeta.auto.ios.pages.linear_groupcreation.AddPeoplePage;
+import com.wearezeta.auto.ios.pages.linear_groupcreation.NewGroupPage;
+import com.wearezeta.auto.ios.pages.webview.WebViewPage;
+
+public class IOSSteps {
+  IOSTestContext context;
+
+  public IOSSteps(IOSTestContext context) {
+    this.context = context;
+  }
+
+  IOSPage getCommonPage() {
+    return context.getPagesCollection().getPage(IOSPage.class);
+  }
+
+  NewGroupPage getNewGroupPage() {
+    return context.getPagesCollection().getPage(NewGroupPage.class);
+  }
+
+  SearchUIPage getSearchUIPage() {
+    return context.getPagesCollection()
+        .getPage(SearchUIPage.class);
+  }
+
+  FileChooseDialogPage getFileChooseDialogPage() {
+    return context.getPagesCollection().getPage(FileChooseDialogPage.class);
+  }
+
+  GroupAddPeoplePage getGroupAddPeoplePage() {
+    return context.getPagesCollection().getPage(GroupAddPeoplePage.class);
+  }
+
+  SettingsPage getSettingsPage() {
+    return context.getPagesCollection().getPage(SettingsPage.class);
+  }
+
+  GroupConnectedParticipantProfilePage getGroupParticipantProfilePage() {
+    return context.getPagesCollection().getPage(GroupConnectedParticipantProfilePage.class);
+  }
+
+  FileInspectionPage getFileInspectionPage()  {
+    return context.getPagesCollection().getPage(FileInspectionPage.class);
+  }
+
+  AddPeoplePage getAddPeoplePage()  {
+    return context.getPagesCollection().getPage(AddPeoplePage.class);
+  }
+
+  GroupDetailsPage getGroupDetailsPage() {
+    return context.getPagesCollection().getPage(GroupDetailsPage.class);
+  }
+
+  TeamSearchUIPage getTeamSearchUIPage() {
+    return context.getPagesCollection().getPage(TeamSearchUIPage.class);
+  }
+
+  ConversationViewPage getConversationViewPage() {
+    return context.getPagesCollection().getPage(ConversationViewPage.class);
+  }
+
+  ServiceDetailPage getServiceDetailPage() {
+    return context.getPagesCollection().getPage(ServiceDetailPage.class);
+  }
+
+  ConversationsListPage getConversationListPage() {
+    return context.getPagesCollection().getPage(ConversationsListPage.class);
+  }
+
+  SinglePendingUserIncomingConnectionProfilePage getSinglePendingUserIncomingConnectionProfilePage() {
+    return context.getPagesCollection().getPage(SinglePendingUserIncomingConnectionProfilePage.class);
+  }
+
+  GuestOptionsPage getGuestOptionsPage() {
+    return context.getPagesCollection().getPage(GuestOptionsPage.class);
+  }
+
+  WebViewPage getWebView() {
+    return context.getPagesCollection().getPage(WebViewPage.class);
+  }
+
+  protected BackupRestorePage getBackupRestorePage() {
+    return context.getPagesCollection().getPage(BackupRestorePage.class);
+  }
+
+  protected BackupPasswordOverlayPage getBackupPasswordOverlayPage() {
+    return context.getPagesCollection().getPage(BackupPasswordOverlayPage.class);
+  }
+}

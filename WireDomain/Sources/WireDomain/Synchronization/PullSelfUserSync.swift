@@ -19,15 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullSelfUserSyncProtocol {
-
-    func pull() async throws
-
-}
-
-/// An object to keep the local self user up to date
-/// with the remote self user.
-
 struct PullSelfUserSync: PullSelfUserSyncProtocol {
 
     private let api: any SelfUserAPI
@@ -41,14 +32,16 @@ struct PullSelfUserSync: PullSelfUserSyncProtocol {
         self.store = store
     }
 
-    /// Fetch the self user from remote, then create or update
-    /// it locally.
-
-    func pull() async throws {
+    @discardableResult
+    func pull() async throws -> (id: UUID, domain: String?, teamID: UUID?) {
         let remoteSelfUser = try await api.getSelfUser()
+        let localSelfUser = remoteSelfUser.toDomainModel()
+        await store.persistUser(userInfo: localSelfUser)
 
-        await store.persistUser(
-            userInfo: remoteSelfUser.toDomainModel()
+        return (
+            id: localSelfUser.userID.uuid,
+            domain: localSelfUser.userID.domain,
+            teamID: localSelfUser.teamID
         )
     }
 

@@ -323,10 +323,6 @@ final class ConversationContentViewController: UIViewController {
         }
     }
 
-    override var shouldAutorotate: Bool {
-        true
-    }
-
     override func didReceiveMemoryWarning() {
         zmLog.warn("Received system memory warning.")
         super.didReceiveMemoryWarning()
@@ -347,7 +343,7 @@ final class ConversationContentViewController: UIViewController {
             return nil
         }
 
-        let message = dataSource.messages[indexPath.section] as? ZMMessage
+        let message = dataSource.messages[indexPath.section]
 
         if message == dataSource.selectedMessage {
 

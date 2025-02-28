@@ -34,7 +34,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     public let requestCancellation: ZMRequestCancellation
     public let teamInvitationStatus: TeamInvitationStatus
     public let assetDeletionStatus: AssetDeletionStatus
-    public let callEventStatus: CallEventStatus
 
     fileprivate var callInProgressObserverToken: Any?
 
@@ -48,7 +47,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
-        self.callEventStatus = CallEventStatus()
         self.teamInvitationStatus = TeamInvitationStatus()
         operationStatus.isInBackground = application.applicationState == .background
         self.syncStatus = SyncStatus(
@@ -108,14 +106,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         } else {
             .online
         }
-    }
-
-    public func requestResyncResources() {
-        syncStatus.resyncResources()
-    }
-
-    public func requestQuickSync() {
-        syncStatus.forceQuickSync()
     }
 
 }
