@@ -104,7 +104,10 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
 extension MockDependencies: RequestLoginVerificationCodeUseCaseProtocol {
 
-    func invoke(email: String) async throws(WireAuthenticationAPI.RequestLoginVerificationCodeUseCaseFailure) {}
+    func invoke(email: String) async throws(WireAuthenticationAPI.RequestLoginVerificationCodeUseCaseFailure) {
+        try! await Task.sleep(for: .seconds(3))
+    }
+
 
 }
 
