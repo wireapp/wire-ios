@@ -23,13 +23,13 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 
 final class ConversationLocalStoreTests: XCTestCase {
 
     private var sut: ConversationLocalStore!
-    private var userLocalStore: MockUserLocalStoreProtocol!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
 
@@ -46,14 +46,12 @@ final class ConversationLocalStoreTests: XCTestCase {
     override func setUp() async throws {
         mlsService = MockMLSServiceInterface()
         coreDataStackHelper = CoreDataStackHelper()
-        userLocalStore = MockUserLocalStoreProtocol()
         messageLocalStore = MockMessageLocalStoreProtocol()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         sut = ConversationLocalStore(
             context: context,
             mlsService: mlsService,
-            userLocalStore: userLocalStore,
             messageLocalStore: messageLocalStore
         )
     }
@@ -65,7 +63,6 @@ final class ConversationLocalStoreTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
-        userLocalStore = nil
         messageLocalStore = nil
         subscription = nil
     }
@@ -217,7 +214,6 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         messageLocalStore
             .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
-        userLocalStore.fetchUserIdDomain_MockValue = removedUser
 
         // When
 
@@ -229,7 +225,6 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userLocalStore.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(
             messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations
                 .count,
@@ -406,7 +401,6 @@ final class ConversationLocalStoreTests: XCTestCase {
             return (conversation, sender, addedUser)
         }
 
-        userLocalStore.fetchOrCreateUserIdDomain_MockValue = addedUser
         messageLocalStore
             .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
@@ -425,7 +419,6 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(
             messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations
                 .count,

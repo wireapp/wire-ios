@@ -327,6 +327,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
         mockDecryptionService.decryptMessageForSubconversationType_MockError = error
+        mockSyncStatus.mockRecoverWithQuickSync = {}
 
         let expectation = XCTestExpectation(description: "repaired conversation")
         await uiMOC.perform {
@@ -379,7 +380,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
         // When
-        try await sut.createGroup(for: groupID)
+        try await _ = sut.createGroup(for: groupID)
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
@@ -408,7 +409,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // when / then
         do {
-            try await sut.createGroup(for: groupID)
+            try await _ = sut.createGroup(for: groupID)
             XCTFail("Unexpected success")
         } catch MLSService.MLSGroupCreationError.failedToCreateGroup {
             // Then
@@ -493,7 +494,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
         // When
-        try await sut.establishGroup(for: groupID, with: [])
+        try await _ = sut.establishGroup(for: groupID, with: [])
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
@@ -550,7 +551,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
         // When
-        try await sut.establishGroup(for: groupID, with: users)
+        try await _ = sut.establishGroup(for: groupID, with: users)
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
@@ -600,7 +601,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // When
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: usersIncludingSelf)) {
-            try await sut.establishGroup(for: groupID, with: users)
+            try await _ = sut.establishGroup(for: groupID, with: users)
         }
 
         // Then
@@ -967,6 +968,51 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Pending proposals
 
+    func test_CommitPendingProposalsIfNeeded_It_Discards_Calls_Within_The_Throttle_Interval() async throws {
+        // Given
+        let futureCommitDate = Date().addingTimeInterval(2)
+        let groupID = MLSGroupID(.init([1, 2, 3]))
+        var conversation: ZMConversation!
+
+        await uiMOC.perform { [self] in
+            // A group with pending proposal in the future
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.commitPendingProposalDate = futureCommitDate
+        }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
+
+        // Mock committing pending proposal.
+        var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
+        let updateEvent = dummyMemberJoinEvent()
+
+        var commitPendingProposalsCount = 0
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            commitPendingProposalsCount += 1
+            return [updateEvent]
+        }
+
+        // When
+        await withTaskGroup(of: Void.self) { group in
+            for _ in 0 ..< 10 {  // Simulating 10 rapid calls
+                group.addTask {
+                    await self.sut.commitPendingProposalsIfNeeded()
+                }
+
+                try? await Task.sleep(
+                    nanoseconds: 100_000_000
+                ) // 0.1s delay between each call
+            }
+        }
+
+        // Then, 9 calls within the throttle interval have been discarded, only 1 went through.
+        XCTAssertEqual(commitPendingProposalsCount, 1)
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[updateEvent]])
+    }
+
     func test_CommitPendingProposals_NoProposalsExist() async throws {
         // Given
         let overdueCommitDate = Date().addingTimeInterval(-5)
@@ -1216,7 +1262,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
 
         // Then we try to commit pending proposals twice, once for the subgroup, once for the parent
-        var mockCommitPendingProposalArguments = await commitPendingProposalsArgumentsActor.items
+        let mockCommitPendingProposalArguments = await commitPendingProposalsArgumentsActor.items
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
         let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
 
@@ -1477,6 +1523,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockRecoverWithQuickSync = {}
 
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
@@ -1508,6 +1555,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
 
+        mockSyncStatus.mockRecoverWithQuickSync = {}
+
         let expectation = XCTestExpectation(description: "didn't rejoin conversation")
         expectation.isInverted = true
 
@@ -1535,6 +1584,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockPerformQuickSync = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -1575,6 +1625,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
+        mockSyncStatus.mockPerformQuickSync = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -1726,7 +1777,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // mock return value for unclaimed key packages count
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             countUnclaimedKeyPackages.fulfill()
             return unsufficientKeyPackagesAmount
         }
@@ -1743,7 +1794,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockClientKeypackagesCount, 1)
 
         let countUnclaimedKeypackagesInvocations = mockActionsProvider
-            .countUnclaimedKeyPackagesClientIDContext_Invocations
+            .countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations
         XCTAssertEqual(countUnclaimedKeypackagesInvocations.count, 1)
         XCTAssertEqual(countUnclaimedKeypackagesInvocations.first?.clientID, clientID)
 
@@ -1769,7 +1820,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             countUnclaimedKeyPackages.fulfill()
             return 0
         }
@@ -1794,7 +1845,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             throw TestError.failedToCountUnclaimedKeyPackages
         }
 
@@ -1818,7 +1869,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
 
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             0
         }
 
@@ -1854,7 +1905,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // mock return value for unclaimed key packages count
-        mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
+        mockActionsProvider.countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod = { _, _, _ in
             countUnclaimedKeyPackages.fulfill()
             return self.sut.targetUnclaimedKeyPackageCount
         }
@@ -1968,9 +2019,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // When
@@ -1980,7 +2032,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 2)
 
         // Then it performed a quick sync once.
-        XCTAssertEqual(mockPerformQuickSyncCount, 1)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 1)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
@@ -2008,9 +2060,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // When
@@ -2020,10 +2073,64 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
 
         // Then it performed a quick sync 3 times (for 3 failures).
-        XCTAssertEqual(mockPerformQuickSyncCount, 3)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 3)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
+    }
+
+    func test_RetryOnCommitFailure_Keep_Throwing_Commit_Error_Prevents_Infinite_Loop() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Since `retryOnCommitFailure` is a recursive function for specific error
+        // `CommitError.failedToSendCommit(recovery: .retryAfterQuickSync`, we'll try to create an infinite loop by keep throwing the same error over and over again.
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+        }
+
+        // Mock quick sync.
+        mockSyncStatus.mockRecoverWithQuickSync = {}
+
+        do {
+            // When
+            try await sut.updateKeyMaterial(for: groupID)
+        } catch let error as SendMLSMessageAction.Failure {
+            // Then, infinite loop is broken after a few attempts, it throws an error
+            XCTAssertEqual(error, .mlsStaleMessage)
+        }
+    }
+
+    func test_RetryOnCommitFailure_Keep_Throwing_External_Commit_Error_Prevents_Infinite_Loop() async throws {
+        // Given a group.
+        let groupID = MLSGroupID.random()
+
+        // Since `retryOnCommitFailure` is a recursive function for specific error
+        // `ExternalCommitError.failedToSendCommit(recovery: .retry)`, we'll try to create an infinite loop by keep throwing the same error over and over again.
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
+        }
+
+        // Mock quick sync.
+        mockSyncStatus.mockRecoverWithQuickSync = {}
+
+        do {
+            // When
+            try await sut.updateKeyMaterial(for: groupID)
+        } catch let error as SendMLSMessageAction.Failure {
+            // Then, infinite loop is broken after a few attempts, it throws an error
+            XCTAssertEqual(error, .mlsStaleMessage)
+        }
     }
 
     func test_RetryOnCommitFailure_ChainMultipleRecoverableOperations() async throws {
@@ -2055,9 +2162,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // When
@@ -2070,7 +2178,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
 
         // Then it performed a quick sync 5 times (for 2 + 3 failures).
-        XCTAssertEqual(mockPerformQuickSyncCount, 5)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 5)
 
         // Then processed the results twice (1 for each success).
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[], []])
@@ -2106,9 +2214,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // When
@@ -2121,7 +2230,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
 
         // Then it performed a quick sync once.
-        XCTAssertEqual(mockPerformQuickSyncCount, 1)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 1)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
@@ -2144,9 +2253,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Mock quick sync.
-        var mockPerformQuickSyncCount = 0
-        mockSyncStatus.mockPerformQuickSync = {
-            mockPerformQuickSyncCount += 1
+        var mockRecoverQuickSyncCount = 0
+
+        mockSyncStatus.mockRecoverWithQuickSync = {
+            mockRecoverQuickSyncCount += 1
         }
 
         // Then
@@ -2159,7 +2269,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
 
         // Then it didn't perform a quick sync.
-        XCTAssertEqual(mockPerformQuickSyncCount, 0)
+        XCTAssertEqual(mockRecoverQuickSyncCount, 0)
 
         // Then it didn't process any result.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [])

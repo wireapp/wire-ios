@@ -19,15 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullSelfTeamRolesSyncProtocol {
-
-    func pull(selfTeamID: UUID) async throws
-
-}
-
-/// An object to keep the local team roles up to date
-/// with the remote team roles.
-
 struct PullSelfTeamRolesSync: PullSelfTeamRolesSyncProtocol {
 
     private let api: any TeamsAPI
@@ -40,11 +31,6 @@ struct PullSelfTeamRolesSync: PullSelfTeamRolesSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch the team roles from remote, then create or update
-    /// them locally.
-    ///
-    /// - Parameter selfTeamID: The id of the self user's team.
 
     func pull(selfTeamID: UUID) async throws {
         let remoteTeamRoles = try await api.getTeamRoles(for: selfTeamID)

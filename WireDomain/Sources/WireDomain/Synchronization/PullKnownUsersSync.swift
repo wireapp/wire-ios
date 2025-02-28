@@ -19,15 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullKnownUsersSyncProtocol {
-
-    func pull() async throws
-
-}
-
-/// An object to keep the local users up to date
-/// with the remote users.
-
 struct PullKnownUsersSync: PullKnownUsersSyncProtocol {
 
     private let api: any UsersAPI
@@ -40,9 +31,6 @@ struct PullKnownUsersSync: PullKnownUsersSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch all locally known users from remote, then update
-    /// them locally.
 
     func pull() async throws {
         let knownUserIDs = try await store.fetchUsersQualifiedIDs()

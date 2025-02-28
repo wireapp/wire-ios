@@ -553,7 +553,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
             deviceModel: UIDevice.current.model,
-            deviceOS: UIDevice.current.systemVersion,
+            osVersion: UIDevice.current.systemVersion,
             countlyProvider: countlyProvider
         )
 
@@ -889,17 +889,15 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         requireInternal(activeUserSession.userId == account.userIdentifier, "User session and account are different")
 
-        delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [dispatchGroup] in
-            dispatchGroup.enter()
-
+        delegate?.sessionManagerWillLogout(error: error) { [weak self] in
             activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
-                    self.deleteAccountData(for: account)
+                    self?.deleteAccountData(for: account)
                 }
-                dispatchGroup.leave()
             }
-            self.activeUserSession = nil
-        })
+
+            self?.activeUserSession = nil
+        }
     }
 
     /// Loads a session for a given account
@@ -1008,6 +1006,31 @@ public final class SessionManager: NSObject, SessionManagerType {
         delegate?.sessionManagerAsksToRetryStart()
     }
 
+    /// The active user session will be torn down and the app goes into migration state.
+    public func prepareForRestoreWithMigration(completion: @escaping () -> Void) {
+        guard let delegate else {
+            WireLogger.sessionManager.debug("SessionManager.delegate is nil, aborting migration preparation")
+            return completion()
+        }
+
+        WireLogger.sessionManager.debug("SessionManager.delegate.sessionManagerWillMigrateAccount ...")
+        delegate.sessionManagerWillMigrateAccount { [self] in
+
+            WireLogger.sessionManager.debug("... userSessionCanBeTornDown { ... }")
+
+            if let accountID = activeUserSession?.account.userIdentifier {
+                tearDownBackgroundSession(for: accountID) { [self] in
+                    activeUserSession = nil
+                    accountTokens.removeValue(forKey: accountID)
+                    completion()
+                }
+            } else {
+                activeUserSession = nil
+                completion()
+            }
+        }
+    }
+
     private func setupUserSession(
         account: Account,
         onCompletion: @escaping (ZMUserSession?) -> Void
@@ -1048,9 +1071,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         let context = userSession.syncContext
         context.perform {
             if context.readMigrationNeedsSlowSyncFlag() {
-                userSession.syncStatus.forceSlowSync()
+                userSession.triggerInitialSync()
             } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.syncStatus.resyncResources()
+                userSession.triggerResourcesSync()
             }
         }
     }

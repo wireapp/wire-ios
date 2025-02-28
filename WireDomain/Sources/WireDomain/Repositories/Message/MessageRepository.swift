@@ -18,32 +18,18 @@
 
 import WireDataModel
 
-// sourcery: AutoMockable
-/// Facilitate access to message related domain objects.
-public protocol MessageRepositoryProtocol {
-
-    func addSystemMessage(
-        messageType: SystemMessageType,
-        conversationID: UUID,
-        conversationDomain: String?
-    ) async
-}
-
 public class MessageRepository: MessageRepositoryProtocol {
 
     // MARK: - Properties
 
     private let localStore: any MessageLocalStoreProtocol
-    private let conversationRepository: any ConversationRepositoryProtocol
 
     // MARK: - Object lifecycle
 
     public init(
-        localStore: any MessageLocalStoreProtocol,
-        conversationRepository: any ConversationRepositoryProtocol
+        localStore: any MessageLocalStoreProtocol
     ) {
         self.localStore = localStore
-        self.conversationRepository = conversationRepository
     }
 
     public func addSystemMessage(

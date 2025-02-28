@@ -31,8 +31,9 @@ final class OneOnOneResolverTests: XCTestCase {
     var coreDataStack: CoreDataStack!
     var coreDataStackHelper: CoreDataStackHelper!
     var modelHelper: ModelHelper!
-    var userRepository: MockUserRepositoryProtocol!
-    var conversationsRepository: MockConversationRepositoryProtocol!
+    var userLocalStore: MockUserLocalStoreProtocol!
+    var conversationLocalStore: MockConversationLocalStoreProtocol!
+    var pullMLSOneOnOneSync: MockPullMLSOneOnOneSyncProtocol!
     var mlsService: MockMLSServiceInterface!
 
     var context: NSManagedObjectContext {
@@ -44,13 +45,15 @@ final class OneOnOneResolverTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
-        userRepository = MockUserRepositoryProtocol()
-        conversationsRepository = MockConversationRepositoryProtocol()
+        userLocalStore = MockUserLocalStoreProtocol()
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+        pullMLSOneOnOneSync = MockPullMLSOneOnOneSyncProtocol()
         mlsService = MockMLSServiceInterface()
         sut = OneOnOneResolver(
             context: context,
-            userRepository: userRepository,
-            conversationsRepository: conversationsRepository,
+            userLocalStore: userLocalStore,
+            conversationLocalStore: conversationLocalStore,
+            pullMLSOneOnOneSync: pullMLSOneOnOneSync,
             mlsProvider: MLSProvider(service: mlsService, isMLSEnabled: true)
         )
     }
@@ -62,8 +65,9 @@ final class OneOnOneResolverTests: XCTestCase {
         modelHelper = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
-        userRepository = nil
-        conversationsRepository = nil
+        userLocalStore = nil
+        conversationLocalStore = nil
+        pullMLSOneOnOneSync = nil
         mlsService = nil
     }
 
@@ -178,8 +182,19 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // Then
 
-        await context.perform {
-            let migratedMessagesTexts = mlsOneOnOneConversation.allMessages
+        try await context.perform { [self] in
+            let allMessages = mlsOneOnOneConversation.allMessages
+
+            try XCTAssertCount(allMessages, count: 3)
+            let mlsSystemMessage = try XCTUnwrap(mlsOneOnOneConversation.lastMessage as? ZMSystemMessage)
+            XCTAssertEqual(
+                mlsSystemMessage.systemMessageType.rawValue,
+                ZMSystemMessageType.mlsMigrationFinalized.rawValue
+            )
+
+            XCTAssertEqual(mlsOneOnOneConversation.needsToBeUpdatedFromBackend, true)
+
+            let migratedMessagesTexts = allMessages
                 .compactMap(\.textMessageData)
                 .compactMap(\.messageText)
                 .sorted()
@@ -317,14 +332,13 @@ final class OneOnOneResolverTests: XCTestCase {
         mlsOneOnOneConversation: ZMConversation,
         mlsConversationExists: Bool = false
     ) {
-        userRepository.fetchUserIdDomain_MockValue = user
-        userRepository.fetchSelfUser_MockValue = selfUser
-        userRepository
+        userLocalStore.fetchUserIdDomain_MockValue = user
+        userLocalStore.fetchSelfUser_MockValue = selfUser
+        userLocalStore
             .fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
 
-        conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = Scaffolding.conversationID
-            .uuidString
-        conversationsRepository.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation
+        pullMLSOneOnOneSync.pullUserIDUserDomain_MockValue = Scaffolding.mlsGroupID
+        conversationLocalStore.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation
 
         mlsService.establishGroupForWithRemovalKeys_MockValue = Scaffolding.ciphersuite
         mlsService.conversationExistsGroupID_MockValue = mlsConversationExists

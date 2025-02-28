@@ -30,6 +30,7 @@ jobs:
 
           upload_sources: true
           download_translations: true
+          download_translations_args: "-l ar -l da -l de -l es-ES -l et -l fi -l fr -l it -l ja -l lt -l nl -l pl -l pt-BR -l ru -l sl -l tr -l uk -l zh-CN -l zh-TW"
           upload_translations: false
           create_pull_request: false
           push_translations: true
@@ -46,7 +47,7 @@ jobs:
         run: |
           BASE_BRANCH=${GITHUB_REF#refs/heads/}
           HEAD_BRANCH="chore/update-localization"
-          TITLE="chore: Update localization - no ticket"
+          TITLE="chore: Update localization - WPB-15278"
           BODY="This PR pulls in the latest localization translations from Crowdin."
 
           git config --global --add safe.directory "$GITHUB_WORKSPACE"

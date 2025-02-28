@@ -26,109 +26,133 @@ import XCTest
 
 final class NotificationSessionTests: XCTestCase {
     private var sut: NotificationSession!
-    private var conversationLocalStore: MockConversationLocalStoreProtocol!
-    private var userRepository: MockUserRepositoryProtocol!
-
-    private var stack: CoreDataStack!
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var modelHelper: ModelHelper!
-
-    private var context: NSManagedObjectContext {
-        stack.syncContext
-    }
+    private var authenticationServiceProvider: MockAuthenticationServiceProvider!
+    private var authenticationService: MockAuthenticationServiceProtocol!
+    private var authenticatedSession: MockAuthenticatedSessionProtocol!
 
     override func setUp() async throws {
-        conversationLocalStore = MockConversationLocalStoreProtocol()
-        userRepository = MockUserRepositoryProtocol()
-        modelHelper = ModelHelper()
-        coreDataStackHelper = CoreDataStackHelper()
-        stack = try await coreDataStackHelper.createStack()
-        registerDependencies()
+        authenticationServiceProvider = MockAuthenticationServiceProvider()
+        authenticationService = MockAuthenticationServiceProtocol()
+        authenticatedSession = MockAuthenticatedSessionProtocol()
     }
 
     override func tearDown() async throws {
-        stack = nil
         sut = nil
-        conversationLocalStore = nil
-        userRepository = nil
-        try coreDataStackHelper.cleanupDirectory()
-        modelHelper = nil
-        coreDataStackHelper = nil
+        authenticationService = nil
+        authenticationServiceProvider = nil
+        authenticatedSession = nil
     }
 
-    private func registerDependencies() {
-        Injector.register(ConversationLocalStoreProtocol.self) {
-            self.conversationLocalStore
-        }
-
-        Injector.register(UserRepositoryProtocol.self) {
-            self.userRepository
-        }
-    }
-
-    func testNotificationSession_It_Triggers_Callback_When_Pulling_Pending_Events() async throws {
+    func testNotificationSession_It_Generates_Correct_Notifications_Amount() async throws {
 
         // Given
 
-        let expectation = XCTestExpectation()
-        var count = 0
-
-        let updateEventsAPI = MockUpdateEventsAPI()
-        updateEventsAPI.getUpdateEventsSelfClientIDSinceEventID_MockValue = .init(fetchPage: { _ in
-            if count < 3 {
-                count += 1
-            }
-
-            // 3 events batches
-            return .init(
-                element: [Scaffolding.updateEventEnvelope],
-                hasMore: count < 3,
-                nextStart: .init()
-            )
-        })
-
-        let updateEventDecryptor = MockUpdateEventDecryptorProtocol()
-        updateEventDecryptor.decryptEventsIn_MockValue = [
+        let mockEvents = [
             Scaffolding.mlsMessageUpdateEvent,
             Scaffolding.proteusMessageUpdateEvent
         ]
 
-        let updateEventsLocalStore = MockUpdateEventsLocalStoreProtocol()
-        updateEventsLocalStore.lastEventID_MockValue = .mockID1
-        updateEventsLocalStore.indexOfLastEventEnvelope_MockValue = 1
-        updateEventsLocalStore.persistEventEnvelopeIndex_MockMethod = { _, _ in }
-        updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
-        userRepository.isSelfUserIdDomain_MockValue = false
-        conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = await context.perform { [self] in
-            modelHelper.createGroupConversation(in: context)
+        authenticatedSession.setup_MockMethod = {}
+        authenticatedSession.startSyncNewEventID_MockValue = AsyncStream {
+            $0.yield(mockEvents) // First batch of 2 events
+            $0.yield(mockEvents) // Second batch of 2 events
+            $0.finish()
         }
-        conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
-        conversationLocalStore.lastReadServerTimestamp_MockValue = .now
+        authenticationService.authenticated_MockValue = authenticatedSession
+        authenticationServiceProvider.authenticationService = authenticationService
 
-        let updateEventsRepository = UpdateEventsRepository(
-            userID: .mockID1,
-            selfClientID: UUID.mockID2.uuidString,
-            updateEventsAPI: updateEventsAPI,
-            pushChannel: MockPushChannelProtocol(),
-            updateEventDecryptor: updateEventDecryptor,
-            updateEventsLocalStore: updateEventsLocalStore
-        )
+        var receivedNotifications = [UNMutableNotificationContent]()
 
         sut = NotificationSession(
-            accountID: .mockID5,
-            updateEventsRepository: updateEventsRepository,
-            onNotificationContent: { _ in
-                // Then, all 3 events batches have been received
-                expectation.fulfill()
+            eventID: .mockID7,
+            authenticationServiceProvider: authenticationServiceProvider,
+            notificationHandler: { notification in
+                receivedNotifications.append(notification)
             }
         )
 
         // When
 
-        try await updateEventsRepository.pullPendingEvents()
+        try await sut.start()
 
-        await fulfillment(of: [expectation])
+        // Then
 
+        XCTAssertEqual(receivedNotifications.count, 4) // 4 notifications (2 batches of 2 events) are generated
+    }
+
+    func testNotificationSession_It_Throws_Error_When_Unauthenticated() async throws {
+
+        // Given
+
+        enum MockError: Error {
+            case unauthenticated
+        }
+
+        authenticationService.authenticated_MockError = MockError.unauthenticated
+        authenticationServiceProvider.authenticationService = authenticationService
+
+        sut = NotificationSession(
+            eventID: .mockID7,
+            authenticationServiceProvider: authenticationServiceProvider,
+            notificationHandler: { _ in }
+        )
+
+        // Then
+        await XCTAssertThrowsErrorAsync(MockError.unauthenticated) {
+            // When
+            try await self.sut.start()
+        }
+    }
+
+    func testNotificationSession_It_Throws_Error_When_Authenticated_Session_Setup_Fails() async throws {
+
+        // Given
+
+        enum MockError: Error {
+            case setupError
+        }
+
+        authenticatedSession.setup_MockError = MockError.setupError
+        authenticationService.authenticated_MockValue = authenticatedSession
+        authenticationServiceProvider.authenticationService = authenticationService
+
+        sut = NotificationSession(
+            eventID: .mockID7,
+            authenticationServiceProvider: authenticationServiceProvider,
+            notificationHandler: { _ in }
+        )
+
+        // Then
+        await XCTAssertThrowsErrorAsync(MockError.setupError) {
+            // When
+            try await self.sut.start()
+        }
+    }
+
+    func testNotificationSession_It_Throws_Error_When_Pull_Sync_Fails() async throws {
+
+        // Given
+
+        enum MockError: Error {
+            case pullSyncFailed
+        }
+
+        authenticatedSession.setup_MockMethod = {}
+        authenticatedSession.startSyncNewEventID_MockError = MockError.pullSyncFailed
+        authenticationService.authenticated_MockValue = authenticatedSession
+        authenticationServiceProvider.authenticationService = authenticationService
+
+        sut = NotificationSession(
+            eventID: .mockID7,
+            authenticationServiceProvider: authenticationServiceProvider,
+            notificationHandler: { _ in }
+        )
+
+        // Then
+        await XCTAssertThrowsErrorAsync(MockError.pullSyncFailed) {
+            // When
+            try await self.sut.start()
+        }
     }
 
     enum Scaffolding {

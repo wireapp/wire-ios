@@ -59,12 +59,15 @@ struct ResponseParser<Success> {
 
     /// Success with no output
 
-    func success(code: Int) -> ResponseParser<Success> where Success == Void {
-        precondition(200 ..< 300 ~= code, "Requires a valid success code: 2xx")
+    func success(code: HTTPStatusCode) -> ResponseParser<Success> where Success == Void {
+        precondition(200 ..< 300 ~= code.rawValue, "Requires a valid success code: 2xx")
 
         var copy = self
         copy.parseBlocks.append { actualCode, data in
-            guard actualCode == code, data == nil else { return nil }
+            guard
+                actualCode == code.rawValue,
+                data == nil || data?.isEmpty == true
+            else { return nil }
             return ()
         }
         return copy

@@ -23,22 +23,6 @@ import WireDataModel
 import WireLogging
 import WireSystem
 
-protocol SyncManagerProtocol {
-
-    /// Pulls and stores all required objects for the database to be initially up-to-date.
-
-    func performSlowSync() async throws
-
-    /// Fetch events from the server and process all pending events.
-
-    func performQuickSync() async throws
-
-    /// Stop all syncing activities and prepare to idle.
-
-    func suspend() async throws
-
-}
-
 final class SyncManager: SyncManagerProtocol {
 
     enum Failure: Error {
@@ -53,14 +37,6 @@ final class SyncManager: SyncManagerProtocol {
     // MARK: - Repositories
 
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
-    private let teamRepository: any TeamRepositoryProtocol
-    private let connectionsRepository: any ConnectionsRepositoryProtocol
-    private let conversationsRepository: any ConversationRepositoryProtocol
-    private let userRepository: any UserRepositoryProtocol
-    private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
-    private let featureConfigsRepository: any FeatureConfigRepositoryProtocol
-    private let backendConfigRepository: any BackendConfigRepositoryProtocol
-    private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
     private let mlsProvider: MLSProvider
     private let context: NSManagedObjectContext
 
@@ -72,61 +48,14 @@ final class SyncManager: SyncManagerProtocol {
 
     init(
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
-        teamRepository: any TeamRepositoryProtocol,
-        connectionsRepository: any ConnectionsRepositoryProtocol,
-        conversationsRepository: any ConversationRepositoryProtocol,
-        userRepository: any UserRepositoryProtocol,
-        conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
-        featureConfigsRepository: any FeatureConfigRepositoryProtocol,
-        backendConfigRepository: any BackendConfigRepositoryProtocol,
         updateEventProcessor: any UpdateEventProcessorProtocol,
-        pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol,
         mlsProvider: MLSProvider,
         context: NSManagedObjectContext
     ) {
         self.updateEventsRepository = updateEventsRepository
-        self.teamRepository = teamRepository
-        self.connectionsRepository = connectionsRepository
-        self.conversationsRepository = conversationsRepository
-        self.userRepository = userRepository
-        self.conversationLabelsRepository = conversationLabelsRepository
-        self.featureConfigsRepository = featureConfigsRepository
-        self.backendConfigRepository = backendConfigRepository
         self.updateEventProcessor = updateEventProcessor
-        self.pushSupportedProtocolsUseCase = pushSupportedProtocolsUseCase
         self.mlsProvider = mlsProvider
         self.context = context
-    }
-
-    func performSlowSync() async throws {
-        do {
-            try await updateEventsRepository.pullLastEventID()
-            try await teamRepository.pullSelfTeam()
-            try await teamRepository.pullSelfTeamRoles()
-            try await teamRepository.pullSelfTeamMembers()
-            try await connectionsRepository.pullConnections()
-            try await conversationsRepository.pullConversations()
-            try await userRepository.pullKnownUsers()
-            try await userRepository.pullSelfUser()
-            try await teamRepository.pullSelfLegalholdInfo()
-            try await conversationLabelsRepository.pullConversationLabels()
-            try await featureConfigsRepository.pullFeatureConfigs()
-            await backendConfigRepository.pullMLSBackendStatus()
-            try await pushSupportedProtocolsUseCase.invoke()
-            let oneOnOneResolver = makeOneOnOneResolver()
-            try await oneOnOneResolver.resolveAllOneOnOneConversations()
-        } catch {
-            throw Failure.failedToPerformSlowSync(error)
-        }
-    }
-
-    private func makeOneOnOneResolver() -> OneOnOneResolverProtocol {
-        OneOnOneResolver(
-            context: context,
-            userRepository: userRepository,
-            conversationsRepository: conversationsRepository,
-            mlsProvider: mlsProvider
-        )
     }
 
     func performQuickSync() async throws {

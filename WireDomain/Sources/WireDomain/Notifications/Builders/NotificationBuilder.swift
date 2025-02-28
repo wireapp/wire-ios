@@ -20,5 +20,5 @@ import UserNotifications
 
 protocol NotificationBuilder {
     func shouldBuildNotification() async -> Bool
-    func buildContent() async -> UNMutableNotificationContent
+    func buildContent() async throws -> UNMutableNotificationContent
 }

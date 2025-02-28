@@ -19,18 +19,6 @@
 import WireAPI
 import WireDataModel
 
-/// Process conversation message timer update events.
-
-protocol ConversationMessageTimerUpdateEventProcessorProtocol {
-
-    /// Process a conversation message timer update event.
-    ///
-    /// - Parameter event: A conversation message timer update event.
-
-    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async
-
-}
-
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
 
     let conversationLocalStore: any ConversationLocalStoreProtocol

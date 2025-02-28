@@ -19,15 +19,6 @@
 import Foundation
 import WireAPI
 
-protocol PullUserConnectionsSyncProtocol {
-
-    func pull() async throws
-
-}
-
-/// An object to keep the local user connections up to date
-/// with the remote user connections.
-
 struct PullUserConnectionsSync: PullUserConnectionsSyncProtocol {
 
     private let api: any ConnectionsAPI
@@ -40,9 +31,6 @@ struct PullUserConnectionsSync: PullUserConnectionsSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch all user connections from remote, then create or update
-    /// them locally.
 
     func pull() async throws {
         let connectionsPager = try await api.getConnections()

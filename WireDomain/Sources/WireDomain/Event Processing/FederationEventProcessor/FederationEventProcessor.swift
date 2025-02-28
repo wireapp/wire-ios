@@ -19,21 +19,6 @@
 import Foundation
 import WireAPI
 
-/// Process federation update events.
-
-protocol FederationEventProcessorProtocol {
-
-    /// Process a federation update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A federation update event.
-
-    func processEvent(_ event: FederationEvent) async throws
-
-}
-
 struct FederationEventProcessor {
 
     let connectionRemovedEventProcessor: any FederationConnectionRemovedEventProcessorProtocol

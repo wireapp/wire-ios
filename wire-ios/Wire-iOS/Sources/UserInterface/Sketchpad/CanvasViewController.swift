@@ -66,13 +66,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     // MARK: - Override methods
 
-    override var shouldAutorotate: Bool {
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
-            true
-        default:
-            false
-        }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        wr_supportedInterfaceOrientations
     }
 
     override func viewDidLayoutSubviews() {

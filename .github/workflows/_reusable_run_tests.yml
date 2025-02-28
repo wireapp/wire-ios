@@ -9,10 +9,13 @@ on:
         required: false
       branch:
         type: string
-        required: true
+        required: false
       notify_secret:
         type: string
         required: true
+      test_dependencies:
+        type: boolean
+        default: false
       
     secrets:
       ZENKINS_USERNAME:
@@ -29,7 +32,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
@@ -45,8 +48,15 @@ jobs:
 
       - name: Sanitize branch name
         run: |
-            SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
-            echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a "$GITHUB_ENV"
     
       - name: Retrieve Xcode version
         run: |
@@ -105,9 +115,14 @@ jobs:
           bundle exec fastlane prepare_for_tests
 
       - name: "Test all selected frameworks" 
-        id: set_frameworks
+        if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
+
+      - name: "Test frameworks without dependencies" 
+        if: ${{ inputs.test_dependencies == false }}
+        run: |
+          bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
 
       - name: Find all .xcresult files
         if: ${{ always() && github.event_name == 'pull_request' }}
@@ -119,6 +134,7 @@ jobs:
       - name: Debug Print xcresult files
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+
       - name: Upload .xcresult files as artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -181,7 +197,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **Tests for ${{ inputs.branch }}**
+            **Tests for ${{ inputs.branch || github.head_ref }}**
 
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
@@ -193,7 +209,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **🚨 Tests for ${{ inputs.branch }} failed 🆘**
+            **🚨 Tests for ${{ inputs.branch || github.head_ref }} failed 🆘**
 
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
@@ -203,7 +219,7 @@ jobs:
     needs: run-tests
     name: Analyze xcresults
     if: ${{ always() && github.event_name == 'pull_request' }}
-    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
     strategy:
       matrix:
         xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
@@ -211,7 +227,14 @@ jobs:
     steps:
       - name: Sanitize branch name
         run: |
-          SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
           echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
       - name: Download .xcresult files
@@ -238,8 +261,15 @@ jobs:
     steps:
       - name: Sanitize branch name
         run: |
-            SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
-            echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+          if [ -n "${{ inputs.branch }}" ]; then
+            BRANCH="${{ inputs.branch }}"
+          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+          SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
+          echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
 
       - name: Download tests results
         uses: actions/download-artifact@v4

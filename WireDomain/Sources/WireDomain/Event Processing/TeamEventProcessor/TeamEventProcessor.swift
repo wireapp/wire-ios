@@ -19,21 +19,6 @@
 import Foundation
 import WireAPI
 
-/// Process team update events.
-
-protocol TeamEventProcessorProtocol {
-
-    /// Process a team update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A team update event.
-
-    func processEvent(_ event: TeamEvent) async throws
-
-}
-
 struct TeamEventProcessor {
 
     let deleteEventProcessor: any TeamDeleteEventProcessorProtocol

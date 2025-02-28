@@ -19,6 +19,7 @@
 import avs
 import Combine
 import Foundation
+import WireAnalytics
 import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
@@ -35,6 +36,8 @@ public class WireCallCenterV3: NSObject {
     let legacyVideoParticipantsLimit = 4
 
     // MARK: - Properties
+
+    private let notificationCenter: NotificationCenter
 
     /// The selfUser remoteIdentifier
     let selfUserId: AVSIdentifier
@@ -74,7 +77,7 @@ public class WireCallCenterV3: NSObject {
     var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
 
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
-    var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)] = []
+    var bufferedEvents: [CallEvent] = []
 
     /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to
     /// AVS.
@@ -83,9 +86,8 @@ public class WireCallCenterV3: NSObject {
             VoIPPushHelper.isAVSReady = isReady
 
             if isReady {
-                bufferedEvents.forEach { (item: (event: CallEvent, completionHandler: () -> Void)) in
-                    let (event, completionHandler) = item
-                    handleCallEvent(event, completionHandler: completionHandler)
+                bufferedEvents.forEach { event in
+                    handleCallEvent(event)
                 }
                 bufferedEvents = []
             }
@@ -125,13 +127,14 @@ public class WireCallCenterV3: NSObject {
         avsWrapper: AVSWrapperType? = nil,
         uiMOC: NSManagedObjectContext,
         flowManager: FlowManagerType,
-        transport: WireCallCenterTransport
+        transport: WireCallCenterTransport,
+        notificationCenter: NotificationCenter
     ) {
-
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
         self.transport = transport
+        self.notificationCenter = notificationCenter
 
         super.init()
 
@@ -878,6 +881,8 @@ public extension WireCallCenterV3 {
     /// - parameter videoState: The new video state for the self user.
 
     func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
+        defer { postDidToggleVideoNotification(notificationCenter, conversationId, videoState) }
+
         Self.logger.info("setting video state")
         guard videoState != .badConnection else { return }
 
@@ -1006,21 +1011,24 @@ extension WireCallCenterV3 {
     /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it
     /// to the `bufferedEvents`.
     /// - parameter callEvent: calling event to process.
-    /// - parameter completionHandler: called after the call event has been processed (this will for example wait for
-    /// AVS to signal that it's ready).
-    func processCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
+    func processCallEvent(_ callEvent: CallEvent) {
         Self.logger.info("process call event")
         if isReady {
-            handleCallEvent(callEvent, completionHandler: completionHandler)
+            Self.logger
+                .info(
+                    "ready handle event \(callEvent.conversationId) - currentTimestamp \(callEvent.currentTimestamp) - serverTimestamp \(callEvent.serverTimestamp)"
+                )
+            handleCallEvent(callEvent)
         } else {
-            bufferedEvents.append((callEvent, completionHandler))
+            Self.logger
+                .info(
+                    "buffering handle event \(callEvent.conversationId) - currentTimestamp \(callEvent.currentTimestamp) - serverTimestamp \(callEvent.serverTimestamp)"
+                )
+            bufferedEvents.append(callEvent)
         }
     }
 
-    private func handleCallEvent(
-        _ callEvent: CallEvent,
-        completionHandler: @escaping () -> Void
-    ) {
+    private func handleCallEvent(_ callEvent: CallEvent) {
         Self.logger.info("handle call event (timestamp: \(callEvent.currentTimestamp))")
 
         guard
@@ -1028,7 +1036,6 @@ extension WireCallCenterV3 {
             let conversationType = conversationType(from: callEvent)
         else {
             Self.logger.warn("can't handle call event: unable to determine conversation type")
-            completionHandler()
             return
         }
 
@@ -1044,8 +1051,6 @@ extension WireCallCenterV3 {
                 conversationId: callEvent.conversationId
             ).post(in: context.notificationContext)
         }
-
-        completionHandler()
     }
 
     private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {

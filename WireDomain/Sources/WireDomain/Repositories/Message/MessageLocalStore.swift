@@ -21,190 +21,6 @@ import WireCryptobox
 import WireDataModel
 import WireLogging
 
-// sourcery: AutoMockable
-/// Facilitate access to message related domain objects.
-public protocol MessageLocalStoreProtocol {
-
-    /// Adds a system message to a given conversation.
-    /// - Parameters:
-    ///     - messageType: The type of system message to add.
-    ///     - conversationID: The conversation id.
-    ///     - conversationDomain: The conversation domain.
-
-    func addSystemMessage(
-        messageType: SystemMessageType,
-        conversationID: UUID,
-        conversationDomain: String?
-    ) async
-
-    /// Fetches or creates a `ZMClientMessage` locally.
-    /// - Parameters:
-    ///     - id: The message ID.
-    ///     - conversation: The conversation the message is related to.
-    ///     - sender: The message sender info.
-    ///     - date: The date the message was received.
-
-    func fetchOrCreateClientMessage(
-        id: String,
-        conversation: ZMConversation,
-        sender: (id: UUID, domain: String, clientID: String?),
-        date: Date
-    ) async throws -> (ZMClientMessage, isNew: Bool)
-
-    /// Fetches or creates a `ZMAssetClientMessage` locally.
-    /// - Parameters:
-    ///     - id: The message ID.
-    ///     - conversation: The conversation the message is related to.
-    ///     - sender: The message sender info.
-    ///     - date: The date the message was received.
-
-    func fetchOrCreateAssetClientMessage(
-        id: String,
-        conversation: ZMConversation,
-        sender: (id: UUID, domain: String, clientID: String?),
-        date: Date
-    ) async throws -> (ZMAssetClientMessage, isNew: Bool)
-
-    /// Adds a `ZMClientMessage` to a given conversation.
-    /// - Parameters:
-    ///     - clientMessage: The client message.
-    ///     - isNewMessage: Whether it is a new message.
-    ///     - genericMessage: The related protobuf message.
-    ///     - conversation: The conversation the message is related to.
-    ///     - senderID: The message sender ID.
-    ///     - senderDomain: The message sender domain.
-
-    func addClientMessage(
-        _ clientMessage: ZMClientMessage,
-        isNewMessage: Bool,
-        genericMessage: GenericMessage,
-        conversation: ZMConversation,
-        senderID: UUID,
-        senderDomain: String
-    ) async
-
-    /// Adds a `ZMAssetClientMessage` to a given conversation.
-    /// - Parameters:
-    ///     - clientMessage: The client message.
-    ///     - isNewMessage: Whether it is a new message.
-    ///     - genericMessage: The related protobuf message.
-    ///     - conversation: The conversation the message is related to.
-    ///     - senderID: The message sender ID.
-    ///     - senderDomain: The message sender domain.
-
-    func addAssetClientMessage(
-        _ assetClientMessage: ZMAssetClientMessage,
-        isNewMessage: Bool,
-        genericMessage: GenericMessage,
-        conversation: ZMConversation,
-        senderID: UUID,
-        senderDomain: String
-    ) async
-
-    /// Checks whether a message can be added to the conversation.
-    /// - Parameters:
-    ///     - conversation: The conversation to add the message to.
-    ///     - senderID: The message sender id.
-
-    func canAddMessage(
-        conversation: ZMConversation,
-        senderID: UUID
-    ) async -> Bool
-
-    /// Deletes a given message from all of the self user's devices.
-    /// - Parameters:
-    ///     - hiddenMessage: The hidden message protobuf object.
-    ///     - conversation: The related conversation.
-    ///
-    /// "Delete for me" will locally delete the message, and tell all other devices of this user to delete the message
-    /// in a similar fashion.
-    /// In the optimal case, no trace of that message is left on the user's devices.
-    /// However, other users will still see that message.
-
-    func deleteMessageForSelf(
-        _ hiddenMessage: MessageHide,
-        in conversation: ZMConversation
-    ) async
-
-    /// Recalls a previously sent message.
-    /// - Parameters:
-    ///     - deletedMessage: The delete message protobuf object.
-    ///     - conversation: The related conversation.
-    ///
-    /// "Delete for everyone" will recall the message. The message is deleted locally, and all other participants
-    /// devices in the conversation are requested to delete the message.
-    /// In the optimal case, these devices will delete the message and replace it with a visible "delete message"
-    /// placeholder.
-
-    func deleteMessageForEveryone(
-        _ deletedMessage: MessageDelete,
-        in conversation: ZMConversation,
-        senderID: UUID
-    ) async
-
-    /// Adds a reaction to a message.
-    /// - Parameters:
-    ///     - messageReaction: The message reaction protobuf object.
-    ///     - conversation: The related conversation.
-    ///     - senderID: The message sender id.
-    ///     - date: The date the reaction was added.
-    ///
-    /// For instance, like or unlike a message.
-
-    func addMessageReaction(
-        _ messageReaction: WireProtos.Reaction,
-        in conversation: ZMConversation,
-        senderID: UUID,
-        date: Date
-    ) async
-
-    /// Updates button states.
-    /// - Parameters:
-    ///     - buttonActionConfirmation: The button action confirmation protobuf object.
-    ///     - conversation: The related conversation.
-    ///
-    /// When someone has clicked on a button, to confirm to them that the answer has been accepted.
-
-    func updateButtonStates(
-        _ buttonActionConfirmation: ButtonActionConfirmation,
-        in conversation: ZMConversation
-    ) async
-
-    /// Edits a previously sent message.
-    /// - Parameters:
-    ///     - messageEdit: The protobuf message edit object.
-    ///     - conversation: The related conversation.
-    ///     - senderID: The message sender id.
-    ///     - genericMessage: The protobuf generic message object.
-    ///     - date: The date the reaction was added.
-    ///
-    /// Messages can be edited by the original author (user, not device) of the message.
-    /// This is achieved by the author device sending another message with a request to edit the original one.
-
-    func editMessage(
-        _ messageEdit: MessageEdit,
-        in conversation: ZMConversation,
-        senderID: UUID,
-        genericMessage: GenericMessage,
-        date: Date
-    ) async
-
-    func fetchMessage(
-        id: UUID?,
-        conversationID: UUID,
-        conversationDomain: String?
-    ) async -> ZMOTRMessage?
-
-    func isMessageMentioningSelf(
-        text: Text
-    ) async -> Bool
-
-    func isMessageQuotingSelf(
-        quotedMessage: ZMOTRMessage?
-    ) async -> Bool
-
-}
-
 public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     enum Failure: Error {
@@ -221,19 +37,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let conversationLocalStore: any ConversationLocalStoreProtocol
-    let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
-        context: NSManagedObjectContext,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        userLocalStore: any UserLocalStoreProtocol
+        context: NSManagedObjectContext
     ) {
         self.context = context
-        self.conversationLocalStore = conversationLocalStore
-        self.userLocalStore = userLocalStore
     }
 
     // MARK: - Public
@@ -244,12 +54,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationDomain: String?
     ) async -> ZMOTRMessage? {
 
-        guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID,
-            domain: conversationDomain
-        ) else {
-            return nil
+        let conversation = await context.perform { [context] in
+            ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            )
         }
+        
+        guard let conversation else { return nil }
 
         return await context.perform { [context] in
             ZMOTRMessage.fetch(
@@ -264,7 +77,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     public func isMessageMentioningSelf(
         text: Text
     ) async -> Bool {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        let selfUser = await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
 
         return await context.perform {
             text.mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
@@ -284,10 +99,16 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-        guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID,
-            domain: conversationDomain
-        ) else { return }
+        
+        let conversation = await context.perform { [context] in
+            ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            )
+        }
+        
+        guard let conversation else { return }
 
         let systemMessages = await createSystemMessages(
             from: messageType,
@@ -304,7 +125,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversation: ZMConversation,
         senderID: UUID
     ) async -> Bool {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        let selfUser = await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
 
         return await context.perform {
             let isSelf = conversation.isSelfConversation && senderID != selfUser.remoteIdentifier
@@ -692,7 +515,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .participantsAdded(participants, sender, date):
+        case let .participantsAdded(participants, sender, _):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -700,14 +523,20 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 return []
             }
 
-            let newUsers = await userLocalStore.fetchOrCreateUsers(
-                userIDs: participants
-            )
+            let newUsers = await context.perform { [context] in
+                participants.map {
+                    ZMUser.fetchOrCreate(
+                        with: $0.id,
+                        domain: $0.domain,
+                        in: context
+                    )
+                }
+            }
 
             let systemMessage = await createSystemMessage(
                 messageType: .participantsAdded,
                 sender: sender,
-                users: newUsers
+                users: Set(newUsers)
             )
 
             return [systemMessage]
@@ -936,10 +765,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             return [systemMessage]
 
         case let .sessionReset(sender, senderClientID, date):
-            let sender = await userLocalStore.fetchOrCreateUser(
-                id: sender.id,
-                domain: sender.domain
-            )
+            let sender = await context.perform { [context] in
+                ZMUser.fetchOrCreate(
+                    with: sender.id,
+                    domain: sender.domain,
+                    in: context
+                )
+            }
 
             let client = await context.perform {
                 UserClient.fetchUserClient(
@@ -1083,14 +915,19 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         id: UUID,
         domain: String?
     ) async -> ZMUser? {
-        try? await userLocalStore.fetchUser(
-            id: id,
-            domain: domain
-        )
+        await context.perform { [context] in
+            ZMUser.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
     }
 
     private func fetchSelfUser() async -> ZMUser {
-        await userLocalStore.fetchSelfUser()
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
     }
 
     private func editMessage(

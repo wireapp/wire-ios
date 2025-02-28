@@ -1,0 +1,258 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.wearezeta.auto</groupId>
+    <artifactId>auto-ios</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>auto-ios</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Java version (see also maven-compiler-plugin settings) -->
+        <maven.compiler.release>17</maven.compiler.release>
+        <skipTests>false</skipTests>
+        <TestRun>DevRun</TestRun>
+        <Url>http://127.0.0.1:4723</Url>
+        <appPath/>
+        <oldAppPath/>
+        <platformVersion>16.0</platformVersion>
+        <realBuildNumber/>
+        <bundleId/>
+        <appName>Wire</appName>
+        <isSimulator>true</isSimulator>
+        <enableAppiumOutput>false</enableAppiumOutput>
+        <UDID></UDID>
+        <driverTimeoutSeconds>10</driverTimeoutSeconds>
+        <deviceName>iPhone 11</deviceName>
+        <perfDuration>1</perfDuration> <!-- Performance test duration, minutes -->
+        <perfUsersCount>11</perfUsersCount> <!-- The number of contacts for perf test -->
+        <backendType>staging</backendType>
+        <perfReportPath>{user.home}/Documents/performance.json</perfReportPath>
+        <isOnGrid>false</isOnGrid>
+        <enableAppiumOutput>true</enableAppiumOutput>
+        <browserName></browserName>
+        <picklejar.tags></picklejar.tags>
+        <picklejar.parallelism>1</picklejar.parallelism>
+        <picklejar.steps.packages>com.wearezeta.auto.ios.steps</picklejar.steps.packages>
+        <picklejar.feature.packages>com.wearezeta.auto.ios</picklejar.feature.packages>
+        <picklejar.cucumber.report.path>target/</picklejar.cucumber.report.path>
+        <picklejar.cucumber.report.filename>report.json</picklejar.cucumber.report.filename>
+        <accountPagesPath>https://wire-account-staging.zinfra.io/</accountPagesPath>
+        <maven.test.failure.ignore/>
+        <picklejar.random>0</picklejar.random>
+        <test/>
+        <surefire.rerunFailingTestsCount>0</surefire.rerunFailingTestsCount>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Central Repository</name>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/zinfra/zautomation</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.wire.qa</groupId>
+            <artifactId>qa-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-java</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <!-- When changing versions make sure that selenium version above corresponds -->
+            <version>8.5.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-remote-driver</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-support</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.plist</groupId>
+            <artifactId>dd-plist</artifactId>
+            <version>1.18</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <sourceDirectory>src/main/java</sourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <!-- specify UTF-8, ISO-8859-1 or any other file encoding -->
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>java</executable>
+                    <includeProjectDependencies>true</includeProjectDependencies>
+                    <includePluginDependencies>false</includePluginDependencies>
+                    <skip>${skipTests}</skip>
+                    <classpathScope>test</classpathScope>
+                    <arguments>
+                        <!-- The add-opens parameter fixes a bug with pagefactory -->
+                        <!-- See https://github.com/appium/java-client/issues/1619 -->
+                        <argument>--add-opens</argument>
+                        <argument>java.base/java.lang=ALL-UNNAMED</argument>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>-DappPath=${appPath}</argument>
+                        <argument>-DoldAppPath=${oldAppPath}</argument>
+                        <argument>-DplatformVersion=${platformVersion}</argument>
+                        <argument>-DrealBuildNumber=${realBuildNumber}</argument>
+                        <argument>-DbundleId=${bundleId}</argument>
+                        <argument>-DisSimulator=${isSimulator}</argument>
+                        <argument>-DenableAppiumOutput=${enableAppiumOutput}</argument>
+                        <argument>-DbrowserName=${browserName}</argument>
+                        <argument>-DdeviceName=${deviceName}</argument>
+                        <argument>-Dpicklejar.tags=${picklejar.tags}</argument>
+                        <argument>-Djunit.jupiter.execution.parallel.enabled=true</argument>
+                        <argument>-Djunit.jupiter.execution.parallel.mode.default=concurrent</argument>
+                        <argument>-Djunit.jupiter.execution.parallel.mode.classes.default=concurrent</argument>
+                        <argument>-Djunit.jupiter.execution.parallel.config.strategy=fixed</argument>
+                        <argument>-Djunit.jupiter.execution.parallel.config.strategy=custom</argument>
+                        <argument>
+                            -Djunit.jupiter.execution.parallel.config.custom.class=com.wire.qa.picklejar.engine.CustomStrategy
+                        </argument>
+                        <argument>-Dpicklejar.parallelism=${picklejar.parallelism}</argument>
+                        <argument>-Dmaven.test.failure.ignore=${maven.test.failure.ignore}</argument>
+                        <!-- Uncomment the next line to have more logging -->
+                        <!-- <argument>-Djava.util.logging.config.file=/Users/sven/workspace/zautomation/tests/webapp/src/test/resources/logging.properties</argument> -->
+                        <argument>-Dtest=${test}</argument>
+                        <argument>-Dsurefire.rerunFailingTestsCount=${surefire.rerunFailingTestsCount}</argument>
+                        <mainClass>com.wire.qa.picklejar.launcher.PicklejarLauncher</mainClass>
+                        <argument>${project.build.directory}</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+
+            <!-- This is needed because maven magically always includes surefire by default and makes it impossible to use test property otherwise -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <testclasses>;${basedir}\target\test-classes</testclasses>
+            </properties>
+        </profile>
+        <profile>
+            <id>Unix</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <testclasses>:${basedir}/target/test-classes</testclasses>
+            </properties>
+        </profile>
+        <profile>
+            <id>isOnGrid</id>
+            <properties>
+                <Url>http://192.168.2.110:44110/wd/hub</Url>
+                <isOnGrid>true</isOnGrid>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

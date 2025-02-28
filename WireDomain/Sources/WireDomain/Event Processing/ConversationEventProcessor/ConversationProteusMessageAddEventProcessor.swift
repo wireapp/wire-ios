@@ -20,18 +20,6 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-/// Process conversation proteus message add events.
-
-protocol ConversationProteusMessageAddEventProcessorProtocol {
-
-    /// Process a conversation proteus message add event.
-    ///
-    /// - Parameter event: A conversation proteus message add event.
-
-    func processEvent(_ event: ConversationProteusMessageAddEvent) async throws
-
-}
-
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
 
     let conversationLocalStore: any ConversationLocalStoreProtocol

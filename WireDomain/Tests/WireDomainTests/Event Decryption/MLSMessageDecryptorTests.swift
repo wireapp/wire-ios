@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -48,7 +49,6 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         sut = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
         )
     }

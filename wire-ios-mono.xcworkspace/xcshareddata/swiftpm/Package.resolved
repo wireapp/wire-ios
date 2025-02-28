@@ -6,8 +6,35 @@
         "repositoryURL": "https://github.com/openid/AppAuth-iOS.git",
         "state": {
           "branch": null,
-          "revision": "c89ed571ae140f8eb1142735e6e23d7bb8c34cb2",
-          "version": "1.7.5"
+          "revision": "2781038865a80e2c425a1da12cc1327bcd56501f",
+          "version": "1.7.6"
+        }
+      },
+      {
+        "package": "aws-crt-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-crt-swift",
+        "state": {
+          "branch": null,
+          "revision": "5a65eb60edbd080a8a79af813a5bb6e5ff387550",
+          "version": "0.43.0"
+        }
+      },
+      {
+        "package": "aws-sdk-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "13fd05c74d7d1c421707ef5b738a5b18d5fa347a",
+          "version": "1.2.17"
+        }
+      },
+      {
+        "package": "CellsSDK",
+        "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
+        "state": {
+          "branch": "v0.1.1-alpha02",
+          "revision": "88654ec1adf7395a3aaa841f1f313bc110665fb9",
+          "version": null
         }
       },
       {
@@ -74,6 +101,15 @@
         }
       },
       {
+        "package": "NeedleFoundation",
+        "repositoryURL": "https://github.com/uber/needle.git",
+        "state": {
+          "branch": null,
+          "revision": "69f7a889d2736f2621c6083ac29e0a75d158f249",
+          "version": "0.25.1"
+        }
+      },
+      {
         "package": "opentelemetry-swift",
         "repositoryURL": "https://github.com/DataDog/opentelemetry-swift-packages.git",
         "state": {
@@ -105,8 +141,17 @@
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
-          "revision": "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
-          "version": "1.11.2"
+          "revision": "fec2ff791b27fd9b9ceab9072025dea56409cca1",
+          "version": "1.11.3"
+        }
+      },
+      {
+        "package": "smithy-swift",
+        "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
+        "state": {
+          "branch": null,
+          "revision": "edfc55c48a3d8c17720780872d94c17449241d88",
+          "version": "0.115.0"
         }
       },
       {
@@ -141,8 +186,8 @@
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
-          "revision": "9cb486020ebf03bfa5b5df985387a14a98744537",
-          "version": "1.6.1"
+          "revision": "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
+          "version": "1.6.2"
         }
       },
       {

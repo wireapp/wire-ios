@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireRequestStrategy
 
 class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
@@ -31,7 +32,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
 
     override func setUp() {
         super.setUp()
-        action = CountSelfMLSKeyPackagesAction(clientID: clientID)
+        action = CountSelfMLSKeyPackagesAction(clientID: clientID, ciphersuite: nil)
         handler = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
     }
 
@@ -43,6 +44,31 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
             expectedPath: requestPath,
             expectedMethod: .get,
             apiVersion: .v5
+        )
+    }
+
+    func test_itGeneratesValidRequestWithCiphersuite_APIV5() throws {
+        // Given
+        action = CountSelfMLSKeyPackagesAction(
+            clientID: clientID,
+            ciphersuite: .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+        )
+        let expectedPath = "/v5/mls/key-packages/self/clientID/count?ciphersuite=0x0003"
+
+        // When, Then
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: expectedPath,
+            expectedMethod: .get,
+            apiVersion: .v5
+        )
+    }
+
+    func test_itRequiresCiphersuite_APIV8() throws {
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v8,
+            expectedError: .ciphersuiteNotProvided
         )
     }
 
@@ -58,7 +84,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
 
         // When the client ID is invalid
         test_itDoesntGenerateARequest(
-            action: CountSelfMLSKeyPackagesAction(clientID: ""),
+            action: CountSelfMLSKeyPackagesAction(clientID: "", ciphersuite: nil),
             apiVersion: .v5,
             expectedError: .invalidClientID
         )

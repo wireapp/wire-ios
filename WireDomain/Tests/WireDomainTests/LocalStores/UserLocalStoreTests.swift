@@ -30,6 +30,7 @@ final class UserLocalStoreTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
     private var mockUserDefaults: UserDefaults!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
 
     private var context: NSManagedObjectContext {
         stack.syncContext
@@ -44,8 +45,11 @@ final class UserLocalStoreTests: XCTestCase {
             suiteName: Scaffolding.defaultsTestSuiteName
         )
 
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+
         sut = UserLocalStore(
             context: context,
+            conversationLocalStore: conversationLocalStore,
             userDefaults: mockUserDefaults
         )
     }
@@ -60,6 +64,7 @@ final class UserLocalStoreTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
+        conversationLocalStore = nil
     }
 
     // MARK: - Tests
@@ -95,7 +100,7 @@ final class UserLocalStoreTests: XCTestCase {
             XCTAssertEqual(user.handle, Scaffolding.userInfo.handle)
             XCTAssertEqual(user.teamIdentifier, Scaffolding.userInfo.teamID)
             XCTAssertEqual(user.accentColorValue, Int16(Scaffolding.userInfo.accentID))
-            XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.deleted)
+            XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.isDeleted)
             XCTAssertEqual(user.emailAddress, Scaffolding.userInfo.email)
             XCTAssertEqual(user.supportedProtocols, Scaffolding.userInfo.supportedProtocols)
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
@@ -369,7 +374,7 @@ final class UserLocalStoreTests: XCTestCase {
             accentID: 1,
             previewAssetKey: nil,
             completeAssetKey: nil,
-            deleted: false,
+            isDeleted: false,
             email: "john.doe@example.com",
             expiresAt: .now,
             serviceID: nil,

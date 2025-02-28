@@ -19,16 +19,6 @@
 import Foundation
 import WireAPI
 
-/// Process user push remove events.
-
-protocol UserPushRemoveEventProcessorProtocol {
-
-    /// Process a user push remove event.
-
-    func processEvent()
-
-}
-
 struct UserPushRemoveEventProcessor: UserPushRemoveEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol

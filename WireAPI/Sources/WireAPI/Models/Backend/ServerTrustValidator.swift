@@ -19,7 +19,7 @@
 import Foundation
 @preconcurrency import Security
 
-struct ServerTrustValidator: Sendable {
+public struct ServerTrustValidator: Sendable {
 
     enum Failure: Error, Equatable {
         case evaluatingServerTrustFailed
@@ -29,7 +29,7 @@ struct ServerTrustValidator: Sendable {
 
     private let pinnedKeys: [PinnedKey]
 
-    init(pinnedKeys: [PinnedKey]) {
+    public init(pinnedKeys: [PinnedKey]) {
         self.pinnedKeys = pinnedKeys
     }
 

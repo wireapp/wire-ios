@@ -76,7 +76,7 @@ extension AnalyticsEvent.Segmentation {
 
         /// Creates a ``Segmentation`` for the reason a call has ended.
 
-        static func callEndReason(_ value: String) -> AnalyticsEvent.Segmentation {
+        static func callEndReason(_ value: Int) -> AnalyticsEvent.Segmentation {
             .init(key: "call_end_reason", value: value)
         }
     }

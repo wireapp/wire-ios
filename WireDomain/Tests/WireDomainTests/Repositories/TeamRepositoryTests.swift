@@ -48,11 +48,12 @@ final class TeamRepositoryTests: XCTestCase {
         teamLocalStore = MockTeamLocalStoreProtocol()
 
         sut = TeamRepository(
-            selfTeamID: Scaffolding.selfTeamID,
             userRepository: userRespository,
             teamLocalStore: teamLocalStore,
             teamsAPI: teamsAPI
         )
+
+        teamLocalStore.selfTeamID_MockValue = Scaffolding.selfTeamID
     }
 
     override func tearDown() async throws {
@@ -300,6 +301,7 @@ final class TeamRepositoryTests: XCTestCase {
 
         static let teamMemberLegalhold = TeamMemberLegalholdInfo(
             status: .pending,
+            clientID: "abc123",
             prekey: prekey
         )
 

@@ -108,7 +108,8 @@ final class WireCallCenterV3Tests: MessagingTest {
             avsWrapper: mockAVSWrapper,
             uiMOC: uiMOC,
             flowManager: flowManager,
-            transport: mockTransport
+            transport: mockTransport,
+            notificationCenter: .init()
         )
         // set conferenceCalling feature flag
         conferenceCalling = Feature.fetch(name: .conferenceCalling, context: uiMOC)
@@ -1307,7 +1308,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         )
 
         // when
-        sut.processCallEvent(callEvent, completionHandler: {})
+        sut.processCallEvent(callEvent)
         XCTAssertEqual((sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.count, 0)
 
         // and when
@@ -1346,70 +1347,11 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         // when
         syncMOC.performAndWait {
-            sut.processCallEvent(callEvent) {
-                calledCompletionHandler.fulfill()
-            }
+            sut.processCallEvent(callEvent)
+            calledCompletionHandler.fulfill()
         }
-
         // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-    }
 
-    func testThatItCallProcessCallEventCompletionHandler() {
-        // given
-        let userId = AVSIdentifier.stub
-        let clientId = "foo"
-        let data = verySmallJPEGData()
-        let callEvent = CallEvent(
-            data: data,
-            currentTimestamp: Date(),
-            serverTimestamp: Date(),
-            conversationId: oneOnOneConversationID,
-            userId: userId,
-            clientId: clientId
-        )
-        sut.setCallReady(version: 3)
-
-        // expect
-        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
-
-        // when
-        sut.processCallEvent(callEvent, completionHandler: {
-            calledCompletionHandler.fulfill()
-        })
-
-        // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-    }
-
-    func testThatItCallProcessCallEventCompletionHandlerWhenEmptyingBuffer() {
-        // given
-        let userId = AVSIdentifier.stub
-        let clientId = "foo"
-        let data = verySmallJPEGData()
-        let callEvent = CallEvent(
-            data: data,
-            currentTimestamp: Date(),
-            serverTimestamp: Date(),
-            conversationId: oneOnOneConversationID,
-            userId: userId,
-            clientId: clientId
-        )
-
-        // expect
-        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
-
-        // when
-        sut.processCallEvent(callEvent, completionHandler: {
-            calledCompletionHandler.fulfill()
-        })
-        XCTAssertEqual((sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.count, 0)
-
-        // and when
-        sut.setCallReady(version: 2)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
@@ -1429,8 +1371,6 @@ final class WireCallCenterV3Tests: MessagingTest {
         sut.setCallReady(version: 3)
 
         // expect
-        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
-
         customExpectation(
             forNotification: WireCallCenterCallErrorNotification.notificationName,
             object: nil
@@ -1440,17 +1380,17 @@ final class WireCallCenterV3Tests: MessagingTest {
             else { return false }
             XCTAssertEqual(note.error, self.mockAVSWrapper.callError)
             XCTAssertEqual(note.conversationId, self.oneOnOneConversationID)
+
             return true
         }
 
         // when
 
         mockAVSWrapper.callError = .unknownProtocol
-
-        sut.processCallEvent(callEvent, completionHandler: {
-            calledCompletionHandler.fulfill()
-        })
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        // wait for setCallReady to be done
+        uiMOC.performAndWait {
+            sut.processCallEvent(callEvent)
+        }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -1472,15 +1412,14 @@ final class WireCallCenterV3Tests: MessagingTest {
         sut.setCallReady(version: 3)
 
         // expect
-        let calledCompletionHandler = customExpectation(description: "processCallEvent completion handler called")
+        let calledCompletionHandler = expectation(description: "processCallEvent completion handler called")
+        calledCompletionHandler.isInverted = true
 
         // when
-        sut.processCallEvent(callEvent, completionHandler: {
-            calledCompletionHandler.fulfill()
-        })
+        sut.processCallEvent(callEvent)
 
         // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        wait(for: [calledCompletionHandler], timeout: 0.5)
     }
 
     func testThatActiveCallsOnlyIncludeExpectedCallStates() {

@@ -25,22 +25,18 @@ final class MessageRepositoryTests: XCTestCase {
 
     private var sut: MessageRepository!
     private var localStore: MockMessageLocalStoreProtocol!
-    private var conversationRepository: MockConversationRepositoryProtocol!
 
     override func setUp() async throws {
         localStore = MockMessageLocalStoreProtocol()
-        conversationRepository = MockConversationRepositoryProtocol()
 
         sut = MessageRepository(
-            localStore: localStore,
-            conversationRepository: conversationRepository
+            localStore: localStore
         )
     }
 
     override func tearDown() async throws {
         sut = nil
         localStore = nil
-        conversationRepository = nil
     }
 
     // MARK: - Tests

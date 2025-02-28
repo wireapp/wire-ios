@@ -44,7 +44,8 @@ class VoiceChannelV3Tests: MessagingTest {
             clientId: selfClientId,
             uiMOC: uiMOC,
             flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init()
         )
 
         uiMOC.zm_callCenter = wireCallCenterMock

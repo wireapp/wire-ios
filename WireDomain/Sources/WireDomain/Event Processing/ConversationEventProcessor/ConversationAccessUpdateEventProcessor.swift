@@ -18,18 +18,6 @@
 
 import WireAPI
 
-/// Process conversation access update events.
-
-protocol ConversationAccessUpdateEventProcessorProtocol {
-
-    /// Process a conversation access update event.
-    ///
-    /// - Parameter event: A conversation access update event.
-
-    func processEvent(_ event: ConversationAccessUpdateEvent) async
-
-}
-
 struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProcessorProtocol {
 
     let repository: any ConversationRepositoryProtocol

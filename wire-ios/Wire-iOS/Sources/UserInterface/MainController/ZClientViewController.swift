@@ -177,14 +177,15 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
+        selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?
     ) {
         self.account = account
+        self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
-        self.selfProfileViewsMonitor = SelfProfileViewsMonitorImplementation()
         super.init(nibName: nil, bundle: nil)
 
         self.proximityMonitorManager = ProximityMonitorManager()
@@ -217,7 +218,6 @@ final class ZClientViewController: UIViewController {
                 }
             }
 
-        setupAppearance()
         createLegalHoldDisclosureController()
     }
 
@@ -502,14 +502,6 @@ final class ZClientViewController: UIViewController {
             // selectListItemWhenNoPreviousItemSelected()
             return false
         }
-    }
-
-    private func setupAppearance() {
-
-        let labelColor: UIColor
-        labelColor = .label
-
-        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = labelColor
     }
 
     // MARK: - Setup methods

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import WireRequestStrategySupport
 import WireTransport
 import XCTest
@@ -27,6 +28,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     var sut: UserProfileRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
+    var mockOneOnOneResolver: MockOneOnOneResolverInterface!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -44,10 +46,14 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         mockSyncProgress.currentSyncPhase = .done
         mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
 
+        mockOneOnOneResolver = MockOneOnOneResolverInterface()
+        mockOneOnOneResolver.resolveOneOnOneConversationWithIn_MockValue = .noAction
+
         sut = UserProfileRequestStrategy(
             managedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
-            syncProgress: mockSyncProgress
+            syncProgress: mockSyncProgress,
+            oneOnOneResolver: mockOneOnOneResolver
         )
         apiVersion = .v0
     }
@@ -56,6 +62,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
+        mockOneOnOneResolver = nil
 
         super.tearDown()
     }
@@ -546,7 +553,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             payloadData = userProfiles.payloadData()
-        case .v4, .v5, .v6, .v7:
+        case .v4, .v5, .v6, .v7, .v8:
             let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: failed)
             payloadData = userProfiles.payloadData()
         }

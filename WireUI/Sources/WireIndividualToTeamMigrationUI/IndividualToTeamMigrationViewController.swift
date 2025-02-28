@@ -19,7 +19,7 @@
 import SwiftUI
 import WireAnalytics
 import WireDesign
-import WireDomainAPI
+import WireDomainPkg
 import WireFoundation
 import WireReusableUIComponents
 
@@ -110,7 +110,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let features: [TeamPlanFeature]
     let termsOfUseURL: String
     let privacyPolicyURL: String
-    let useCase: any IndividualToTeamMigrationUseCase
+    let useCase: any IndividualToTeamMigrationUseCaseProtocol
     let userProfileName: String
     private var analyticsFlowCompletionAction: AnalyticsEvent.User.IndividualToTeamMigration.CompletedAction?
     private let analyticsEventTracker: (any AnalyticsEventTracker)?
@@ -119,7 +119,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         features: [TeamPlanFeature],
         privacyPolicyURL: String,
         termsOfUseURL: String,
-        useCase: any IndividualToTeamMigrationUseCase,
+        useCase: any IndividualToTeamMigrationUseCaseProtocol,
         userProfileName: String,
         analyticsEventTracker: (any AnalyticsEventTracker)?,
         actionCallback: @escaping @Sendable (Action) -> Void
@@ -139,7 +139,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     public convenience init(
         privacyPolicyURL: String,
         termsOfUseURL: String,
-        useCase: any IndividualToTeamMigrationUseCase,
+        useCase: any IndividualToTeamMigrationUseCaseProtocol,
         userProfileName: String,
         analyticsEventTracker: (any AnalyticsEventTracker)?,
         actionCallback: @escaping @Sendable (Action) -> Void
@@ -252,7 +252,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.setViewControllers([vc], animated: true)
-            isModalInPresentation = false
+            isModalInPresentation = true
         case .toCompletionDismiss:
             analyticsFlowCompletionAction = nil
             actionCallback(.completionDismiss)
@@ -351,17 +351,21 @@ private func hostedView(
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     )
     vc.title = step.title
-    vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
-        action: UIAction { _ in
-            switch step {
-            case .teamPlanSelection, .teamName, .confirmation:
-                transitionCallback(.toCancellationAlert)
-            case .completion:
-                transitionCallback(.toCompletionDismiss)
-            }
-        },
-        accessibilityLabel: step.closeButtonAccessibilityLabel
-    )
+    if case .completion = step {
+        vc.navigationItem.rightBarButtonItem = nil
+    } else {
+        vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { _ in
+                switch step {
+                case .teamPlanSelection, .teamName, .confirmation:
+                    transitionCallback(.toCancellationAlert)
+                case .completion:
+                    transitionCallback(.toCompletionDismiss)
+                }
+            },
+            accessibilityLabel: step.closeButtonAccessibilityLabel
+        )
+    }
     // Hide navigation bar title
     vc.navigationItem.titleView = UIView()
     vc.navigationItem.rightBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground

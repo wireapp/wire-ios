@@ -3792,24 +3792,24 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - countUnclaimedKeyPackages
 
-    var countUnclaimedKeyPackagesClientIDContext_Invocations: [(clientID: String, context: NotificationContext)] = []
-    var countUnclaimedKeyPackagesClientIDContext_MockError: Error?
-    var countUnclaimedKeyPackagesClientIDContext_MockMethod: ((String, NotificationContext) async throws -> Int)?
-    var countUnclaimedKeyPackagesClientIDContext_MockValue: Int?
+    var countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations: [(clientID: String, ciphersuite: MLSCipherSuite?, context: NotificationContext)] = []
+    var countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockError: Error?
+    var countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod: ((String, MLSCipherSuite?, NotificationContext) async throws -> Int)?
+    var countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockValue: Int?
 
-    func countUnclaimedKeyPackages(clientID: String, context: NotificationContext) async throws -> Int {
-        countUnclaimedKeyPackagesClientIDContext_Invocations.append((clientID: clientID, context: context))
+    func countUnclaimedKeyPackages(clientID: String, ciphersuite: MLSCipherSuite?, context: NotificationContext) async throws -> Int {
+        countUnclaimedKeyPackagesClientIDCiphersuiteContext_Invocations.append((clientID: clientID, ciphersuite: ciphersuite, context: context))
 
-        if let error = countUnclaimedKeyPackagesClientIDContext_MockError {
+        if let error = countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockError {
             throw error
         }
 
-        if let mock = countUnclaimedKeyPackagesClientIDContext_MockMethod {
-            return try await mock(clientID, context)
-        } else if let mock = countUnclaimedKeyPackagesClientIDContext_MockValue {
+        if let mock = countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockMethod {
+            return try await mock(clientID, ciphersuite, context)
+        } else if let mock = countUnclaimedKeyPackagesClientIDCiphersuiteContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `countUnclaimedKeyPackagesClientIDContext`")
+            fatalError("no mock for `countUnclaimedKeyPackagesClientIDCiphersuiteContext`")
         }
     }
 
@@ -4617,16 +4617,16 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - commitPendingProposalsIfNeeded
 
     public var commitPendingProposalsIfNeeded_Invocations: [Void] = []
-    public var commitPendingProposalsIfNeeded_MockMethod: (() -> Void)?
+    public var commitPendingProposalsIfNeeded_MockMethod: (() async -> Void)?
 
-    public func commitPendingProposalsIfNeeded() {
+    public func commitPendingProposalsIfNeeded() async {
         commitPendingProposalsIfNeeded_Invocations.append(())
 
         guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
             fatalError("no mock for `commitPendingProposalsIfNeeded`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - commitPendingProposals
@@ -5476,6 +5476,75 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
         } else {
             fatalError("no mock for `findSubgroupTypeAndParentIDFor`")
         }
+    }
+
+}
+
+public class MockSyncStatusProtocol: SyncStatusProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - performQuickSync
+
+    public var performQuickSync_Invocations: [Void] = []
+    public var performQuickSync_MockMethod: (() async -> Void)?
+
+    public func performQuickSync() async {
+        performQuickSync_Invocations.append(())
+
+        guard let mock = performQuickSync_MockMethod else {
+            fatalError("no mock for `performQuickSync`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - resyncResources
+
+    public var resyncResources_Invocations: [Void] = []
+    public var resyncResources_MockMethod: (() -> Void)?
+
+    public func resyncResources() {
+        resyncResources_Invocations.append(())
+
+        guard let mock = resyncResources_MockMethod else {
+            fatalError("no mock for `resyncResources`")
+        }
+
+        mock()
+    }
+
+    // MARK: - forceSlowSync
+
+    public var forceSlowSync_Invocations: [Void] = []
+    public var forceSlowSync_MockMethod: (() -> Void)?
+
+    public func forceSlowSync() {
+        forceSlowSync_Invocations.append(())
+
+        guard let mock = forceSlowSync_MockMethod else {
+            fatalError("no mock for `forceSlowSync`")
+        }
+
+        mock()
+    }
+
+    // MARK: - recoverWithQuickSync
+
+    public var recoverWithQuickSync_Invocations: [Void] = []
+    public var recoverWithQuickSync_MockMethod: (() async -> Void)?
+
+    public func recoverWithQuickSync() async {
+        recoverWithQuickSync_Invocations.append(())
+
+        guard let mock = recoverWithQuickSync_MockMethod else {
+            fatalError("no mock for `recoverWithQuickSync`")
+        }
+
+        await mock()
     }
 
 }
