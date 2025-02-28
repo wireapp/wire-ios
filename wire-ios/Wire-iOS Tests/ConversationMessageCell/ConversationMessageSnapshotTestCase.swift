@@ -164,8 +164,13 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     ) -> UIStackView {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
-        let section = ConversationMessageSectionController(message: message, context: context, userSession: userSession)
-        let views = section.cellDescriptions.map { $0.makeView() }
+        let section = ConversationMessageSectionController(
+            message: message,
+            context: context,
+            userSession: userSession,
+            useInvertedIndices: false
+        )
+        let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -185,4 +190,26 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     }
 
+}
+
+private extension ConversationMessageCellDescription {
+
+    func makeView() -> UIView {
+        let view = View()
+        let container = UIView()
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(view)
+
+        let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor)
+        let trailing = view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+        let top = view.topAnchor.constraint(equalTo: container.topAnchor, constant: topMargin)
+        let bottom = view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+
+        NSLayoutConstraint.activate([leading, trailing, top, bottom])
+
+        view.configure(with: configuration, animated: false)
+
+        return container
+    }
 }

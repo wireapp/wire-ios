@@ -38,11 +38,13 @@ extension UITableViewCell {
 
 }
 
-class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView,
-    HighlightableView, ConversationMessageCellMenuPresenter {
+final class ConversationMessageCellTableViewAdapter<
+    C: ConversationMessageCellDescription
+>: UITableViewCell,
+    SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
 
-    var cellView: C.View
-    var ephemeralCountdownView: EphemeralCountdownView
+    let cellView: C.View
+    let ephemeralCountdownView: EphemeralCountdownView
 
     var cellDescription: C? {
         didSet {
@@ -52,15 +54,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
     }
 
-    var topMargin: Float = 0 {
+    var topMargin: CGFloat = 0 {
         didSet {
             top.constant = CGFloat(topMargin)
-        }
-    }
-
-    var isFullWidth: Bool = false {
-        didSet {
-            configureConstraints(fullWidth: isFullWidth)
         }
     }
 
@@ -102,10 +98,10 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        self.focusStyle = .custom
-        self.selectionStyle = .none
-        self.backgroundColor = .clear
-        self.isOpaque = false
+        focusStyle = .custom
+        selectionStyle = .none
+        backgroundColor = .clear
+        isOpaque = false
 
         contentView.addSubview(cellView)
         contentView.addSubview(ephemeralCountdownView)
@@ -115,7 +111,10 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
         self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
+        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(
+            equalTo: cellView.topAnchor,
+            constant: cellView.ephemeralTimerTopInset
+        )
 
         NSLayoutConstraint.activate([
             ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -126,6 +125,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
             top,
             bottom
         ])
+        ephemeralTop.constant = cellView.ephemeralTimerTopInset
 
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
@@ -145,25 +145,16 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with object: C.View.Configuration, fullWidth: Bool, topMargin: Float) {
+    func configure(with object: C.View.Configuration, topMargin: CGFloat) {
         cellView.configure(with: object, animated: false)
-        isFullWidth = fullWidth
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
     }
 
-    func configureConstraints(fullWidth: Bool) {
-        let margins = conversationHorizontalMargins
-
-        leading.constant = fullWidth ? 0 : margins.left
-        trailing.constant = fullWidth ? 0 : -margins.right
-        ephemeralTop.constant = cellView.ephemeralTimerTopInset
-    }
-
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        configureConstraints(fullWidth: isFullWidth)
+        ephemeralTop.constant = cellView.ephemeralTimerTopInset
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -195,7 +186,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         display(messageActionsController: controller)
     }
 
-    func display(messageActionsController: MessageActionsViewController) {
+    private func display(messageActionsController: MessageActionsViewController) {
         cellView.delegate?.conversationMessageWantsToShowActionsController(
             cellView,
             actionsController: messageActionsController
@@ -327,7 +318,6 @@ extension UITableView {
         cell.cellDescription = description
         cell.configure(
             with: description.configuration,
-            fullWidth: description.isFullWidth,
             topMargin: description.topMargin
         )
 

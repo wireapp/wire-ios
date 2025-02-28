@@ -100,7 +100,6 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
         cell.cellDescription = description
         cell.configure(
             with: description.configuration,
-            fullWidth: description.isFullWidth,
             topMargin: description.topMargin
         )
 
