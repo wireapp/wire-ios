@@ -24,13 +24,22 @@ struct GenerateNotificationService {
     
     private let eventsStream: AsyncStream<[UpdateEvent]>
     private let contentHandler: (UNNotificationContent) -> Void
+    private let userLocalStore: any UserLocalStoreProtocol
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let messageLocalStore: any MessageLocalStoreProtocol
     
     init(
         eventsStream: AsyncStream<[UpdateEvent]>,
-        contentHandler: @escaping (UNNotificationContent) -> Void
+        contentHandler: @escaping (UNNotificationContent) -> Void,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.eventsStream = eventsStream
         self.contentHandler = contentHandler
+        self.conversationLocalStore = conversationLocalStore
+        self.userLocalStore = userLocalStore
+        self.messageLocalStore = messageLocalStore
     }
     
     /// Processes the events stream.
@@ -55,11 +64,15 @@ struct GenerateNotificationService {
             switch event {
             case let .conversation(conversationEvent):
                 notificationBuilder = await ConversationEventNotificationBuilder(
-                    event: conversationEvent
+                    event: conversationEvent,
+                    userLocalStore: userLocalStore,
+                    conversationLocalStore: conversationLocalStore,
+                    messageLocalStore: messageLocalStore
                 )
             case let .user(userEvent):
                 notificationBuilder = UserNotificationBuilder(
-                    event: userEvent
+                    event: userEvent,
+                    userLocalStore: userLocalStore
                 )
                 
             default:

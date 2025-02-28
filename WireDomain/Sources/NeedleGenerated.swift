@@ -3,6 +3,7 @@
 import CoreData
 import Foundation
 import NeedleFoundation
+import UserNotifications
 import WireAPI
 import WireCrypto
 import WireDataModel
@@ -26,49 +27,20 @@ private func parent3(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
     return component.parent.parent.parent
 }
 
-private func parent4(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Scope {
-    return component.parent.parent.parent.parent
-}
-
-private func parent5(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Scope {
-    return component.parent.parent.parent.parent.parent
-}
-
 // MARK: - Providers
 
 #if !NEEDLE_DYNAMIC
 
-private class EnvironmentDependency387fee667d71719a0ca1Provider: EnvironmentDependency {
-    var applicationIdentifier: String {
-        return rootComponent.applicationIdentifier
+private class PullEventsDependency2fd4ab45fd1c7ccdf95cProvider: PullEventsDependency {
+    var userID: UUID {
+        return rootComponent.userID
     }
-    private let rootComponent: RootComponent
-    init(rootComponent: RootComponent) {
-        self.rootComponent = rootComponent
+    var coreData: CoreDataStack {
+        return verifyUserComponent.coreData
     }
-}
-/// ^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent->APIComponent->EnvironmentComponent
-private func factorycf77651f97e9afb25ff75245f15e7ddf9f8adb40(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return EnvironmentDependency387fee667d71719a0ca1Provider(rootComponent: parent5(component) as! RootComponent)
-}
-private class LocalStoreDependency2ff0dbd93b34b2bc7f54Provider: LocalStoreDependency {
-    var userIdentifier: UUID {
-        return rootComponent.userIdentifier
+    var cookieStorage: any CookieStorageProtocol {
+        return verifyUserComponent.cookieStorage
     }
-    private let rootComponent: RootComponent
-    init(rootComponent: RootComponent) {
-        self.rootComponent = rootComponent
-    }
-}
-/// ^->RootComponent->AuthenticationComponent->AuthenticatedComponent->LocalStoreComponent
-private func factoryf9db81fe6fa8008f441942f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return LocalStoreDependency2ff0dbd93b34b2bc7f54Provider(rootComponent: parent3(component) as! RootComponent)
-}
-/// ^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent->LocalStoreComponent
-private func factoryf9db81fe6fa8008f441921a9c45ed079aafca21f(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return LocalStoreDependency2ff0dbd93b34b2bc7f54Provider(rootComponent: parent4(component) as! RootComponent)
-}
-private class CoreStorageDependencycbc32c33f0a53f38a599Provider: CoreStorageDependency {
     var selectedAccount: Account {
         return rootComponent.selectedAccount
     }
@@ -78,32 +50,56 @@ private class CoreStorageDependencycbc32c33f0a53f38a599Provider: CoreStorageDepe
     var applicationIdentifier: String {
         return rootComponent.applicationIdentifier
     }
-    var userIdentifier: UUID {
-        return rootComponent.userIdentifier
+    var messageLocalStore: any MessageLocalStoreProtocol {
+        return verifyUserComponent.messageLocalStore
+    }
+    var conversationLocalStore: any ConversationLocalStoreProtocol {
+        return verifyUserComponent.conversationLocalStore
+    }
+    var userLocalStore: any UserLocalStoreProtocol {
+        return verifyUserComponent.userLocalStore
     }
     private let rootComponent: RootComponent
-    init(rootComponent: RootComponent) {
+    private let verifyUserComponent: VerifyUserComponent
+    init(rootComponent: RootComponent, verifyUserComponent: VerifyUserComponent) {
         self.rootComponent = rootComponent
+        self.verifyUserComponent = verifyUserComponent
     }
 }
-/// ^->RootComponent->AuthenticationComponent->CoreStorageComponent
-private func factory12f7ed8a55d8f76ae861a9403e3301bb54f80df0(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return CoreStorageDependencycbc32c33f0a53f38a599Provider(rootComponent: parent2(component) as! RootComponent)
+/// ^->RootComponent->VerifyUserComponent->PullEventsComponent
+private func factoryb76115b3e674a8bbffc00e4ca4825856fdf1a57c(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return PullEventsDependency2fd4ab45fd1c7ccdf95cProvider(rootComponent: parent2(component) as! RootComponent, verifyUserComponent: parent1(component) as! VerifyUserComponent)
 }
-/// ^->RootComponent->AuthenticationComponent->AuthenticatedComponent->CoreStorageComponent
-private func factory12f7ed8a55d8f76ae86142f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return CoreStorageDependencycbc32c33f0a53f38a599Provider(rootComponent: parent3(component) as! RootComponent)
-}
-/// ^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent->APIComponent->CoreStorageComponent
-private func factory12f7ed8a55d8f76ae8615245f15e7ddf9f8adb40(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return CoreStorageDependencycbc32c33f0a53f38a599Provider(rootComponent: parent5(component) as! RootComponent)
-}
-private class CoreServiceDependency78456aa1cb483153746bProvider: CoreServiceDependency {
-    var userIdentifier: UUID {
-        return rootComponent.userIdentifier
+private class GenerateNotificationDependency56a07c37e817db4ed050Provider: GenerateNotificationDependency {
+    var contentHandler: (UNNotificationContent) -> Void {
+        return rootComponent.contentHandler
     }
-    var applicationContainer: URL {
-        return rootComponent.applicationContainer
+    var messageLocalStore: any MessageLocalStoreProtocol {
+        return verifyUserComponent.messageLocalStore
+    }
+    var conversationLocalStore: any ConversationLocalStoreProtocol {
+        return verifyUserComponent.conversationLocalStore
+    }
+    var userLocalStore: any UserLocalStoreProtocol {
+        return verifyUserComponent.userLocalStore
+    }
+    private let rootComponent: RootComponent
+    private let verifyUserComponent: VerifyUserComponent
+    init(rootComponent: RootComponent, verifyUserComponent: VerifyUserComponent) {
+        self.rootComponent = rootComponent
+        self.verifyUserComponent = verifyUserComponent
+    }
+}
+/// ^->RootComponent->VerifyUserComponent->PullEventsComponent->GenerateNotificationComponent
+private func factoryfc879bce2c4eef2d1ee9b0226f348eb7db75c336(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return GenerateNotificationDependency56a07c37e817db4ed050Provider(rootComponent: parent3(component) as! RootComponent, verifyUserComponent: parent2(component) as! VerifyUserComponent)
+}
+private class VerifyUserDependency1ae953de4ac1a2a84a5dProvider: VerifyUserDependency {
+    var userID: UUID {
+        return rootComponent.userID
+    }
+    var selectedAccount: Account {
+        return rootComponent.selectedAccount
     }
     var applicationIdentifier: String {
         return rootComponent.applicationIdentifier
@@ -113,81 +109,54 @@ private class CoreServiceDependency78456aa1cb483153746bProvider: CoreServiceDepe
         self.rootComponent = rootComponent
     }
 }
-/// ^->RootComponent->AuthenticationComponent->AuthenticatedComponent->CoreServiceComponent
-private func factorycb4ffa78e95857334d2142f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return CoreServiceDependency78456aa1cb483153746bProvider(rootComponent: parent3(component) as! RootComponent)
-}
-private class PullEventsSyncDependency9c514b897c25cc8dddddProvider: PullEventsSyncDependency {
-    var userIdentifier: UUID {
-        return rootComponent.userIdentifier
-    }
-    private let rootComponent: RootComponent
-    init(rootComponent: RootComponent) {
-        self.rootComponent = rootComponent
-    }
-}
-/// ^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent
-private func factoryb0555b85879e31100a0642f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return PullEventsSyncDependency9c514b897c25cc8dddddProvider(rootComponent: parent3(component) as! RootComponent)
+/// ^->RootComponent->VerifyUserComponent
+private func factoryd5eeee80e5892aa86d18b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return VerifyUserDependency1ae953de4ac1a2a84a5dProvider(rootComponent: parent1(component) as! RootComponent)
 }
 
 #else
-extension AuthenticationComponent: NeedleFoundation.Registration {
+extension PullEventsComponent: NeedleFoundation.Registration {
     public func registerItems() {
-
-
-    }
-}
-extension EnvironmentComponent: NeedleFoundation.Registration {
-    public func registerItems() {
-        keyPathToName[\EnvironmentDependency.applicationIdentifier] = "applicationIdentifier-String"
-    }
-}
-extension LocalStoreComponent: NeedleFoundation.Registration {
-    public func registerItems() {
-        keyPathToName[\LocalStoreDependency.userIdentifier] = "userIdentifier-UUID"
-    }
-}
-extension AuthenticatedComponent: NeedleFoundation.Registration {
-    public func registerItems() {
-
+        keyPathToName[\PullEventsDependency.userID] = "userID-UUID"
+        keyPathToName[\PullEventsDependency.coreData] = "coreData-CoreDataStack"
+        keyPathToName[\PullEventsDependency.cookieStorage] = "cookieStorage-any CookieStorageProtocol"
+        keyPathToName[\PullEventsDependency.selectedAccount] = "selectedAccount-Account"
+        keyPathToName[\PullEventsDependency.applicationContainer] = "applicationContainer-URL"
+        keyPathToName[\PullEventsDependency.applicationIdentifier] = "applicationIdentifier-String"
+        keyPathToName[\PullEventsDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
+        keyPathToName[\PullEventsDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
+        keyPathToName[\PullEventsDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
 
     }
 }
-extension CoreStorageComponent: NeedleFoundation.Registration {
+extension GenerateNotificationComponent: NeedleFoundation.Registration {
     public func registerItems() {
-        keyPathToName[\CoreStorageDependency.selectedAccount] = "selectedAccount-Account"
-        keyPathToName[\CoreStorageDependency.applicationContainer] = "applicationContainer-URL"
-        keyPathToName[\CoreStorageDependency.applicationIdentifier] = "applicationIdentifier-String"
-        keyPathToName[\CoreStorageDependency.userIdentifier] = "userIdentifier-UUID"
-    }
-}
-extension CoreServiceComponent: NeedleFoundation.Registration {
-    public func registerItems() {
-        keyPathToName[\CoreServiceDependency.userIdentifier] = "userIdentifier-UUID"
-        keyPathToName[\CoreServiceDependency.applicationContainer] = "applicationContainer-URL"
-        keyPathToName[\CoreServiceDependency.applicationIdentifier] = "applicationIdentifier-String"
+        keyPathToName[\GenerateNotificationDependency.contentHandler] = "contentHandler-(UNNotificationContent) -> Void"
+        keyPathToName[\GenerateNotificationDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
+        keyPathToName[\GenerateNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
+        keyPathToName[\GenerateNotificationDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["userIdentifier-UUID"] = { [unowned self] in self.userIdentifier as Any }
+        localTable["userID-UUID"] = { [unowned self] in self.userID as Any }
         localTable["applicationIdentifier-String"] = { [unowned self] in self.applicationIdentifier as Any }
         localTable["applicationContainer-URL"] = { [unowned self] in self.applicationContainer as Any }
         localTable["selectedAccount-Account"] = { [unowned self] in self.selectedAccount as Any }
+        localTable["contentHandler-(UNNotificationContent) -> Void"] = { [unowned self] in self.contentHandler as Any }
     }
 }
-extension SyncComponent: NeedleFoundation.Registration {
+extension VerifyUserComponent: NeedleFoundation.Registration {
     public func registerItems() {
-        keyPathToName[\PullEventsSyncDependency.userIdentifier] = "userIdentifier-UUID"
-
-    }
-}
-extension APIComponent: NeedleFoundation.Registration {
-    public func registerItems() {
-
-
+        keyPathToName[\VerifyUserDependency.userID] = "userID-UUID"
+        keyPathToName[\VerifyUserDependency.selectedAccount] = "selectedAccount-Account"
+        keyPathToName[\VerifyUserDependency.applicationIdentifier] = "applicationIdentifier-String"
+        localTable["cookieStorage-any CookieStorageProtocol"] = { [unowned self] in self.cookieStorage as Any }
+        localTable["userLocalStore-any UserLocalStoreProtocol"] = { [unowned self] in self.userLocalStore as Any }
+        localTable["conversationLocalStore-any ConversationLocalStoreProtocol"] = { [unowned self] in self.conversationLocalStore as Any }
+        localTable["messageLocalStore-any MessageLocalStoreProtocol"] = { [unowned self] in self.messageLocalStore as Any }
+        localTable["coreData-CoreDataStack"] = { [unowned self] in self.coreData as Any }
     }
 }
 
@@ -206,18 +175,10 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 #if !NEEDLE_DYNAMIC
 
 @inline(never) private func register1() {
-    registerProviderFactory("^->RootComponent->AuthenticationComponent", factoryEmptyDependencyProvider)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent->APIComponent->EnvironmentComponent", factorycf77651f97e9afb25ff75245f15e7ddf9f8adb40)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent->LocalStoreComponent", factoryf9db81fe6fa8008f441942f5655bf2362a8495f6)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent->LocalStoreComponent", factoryf9db81fe6fa8008f441921a9c45ed079aafca21f)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent", factoryEmptyDependencyProvider)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->CoreStorageComponent", factory12f7ed8a55d8f76ae861a9403e3301bb54f80df0)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent->CoreStorageComponent", factory12f7ed8a55d8f76ae86142f5655bf2362a8495f6)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent->APIComponent->CoreStorageComponent", factory12f7ed8a55d8f76ae8615245f15e7ddf9f8adb40)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent->CoreServiceComponent", factorycb4ffa78e95857334d2142f5655bf2362a8495f6)
+    registerProviderFactory("^->RootComponent->VerifyUserComponent->PullEventsComponent", factoryb76115b3e674a8bbffc00e4ca4825856fdf1a57c)
+    registerProviderFactory("^->RootComponent->VerifyUserComponent->PullEventsComponent->GenerateNotificationComponent", factoryfc879bce2c4eef2d1ee9b0226f348eb7db75c336)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent", factoryb0555b85879e31100a0642f5655bf2362a8495f6)
-    registerProviderFactory("^->RootComponent->AuthenticationComponent->AuthenticatedComponent->SyncComponent->APIComponent", factoryEmptyDependencyProvider)
+    registerProviderFactory("^->RootComponent->VerifyUserComponent", factoryd5eeee80e5892aa86d18b3a8f24c1d289f2c0f2e)
 }
 #endif
 
