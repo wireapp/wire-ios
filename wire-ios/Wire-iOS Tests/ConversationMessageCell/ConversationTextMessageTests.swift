@@ -61,7 +61,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         verify(message: message)
     }
 
-    func testLinkPreview() { // TODO: check snapshot images
+    func testLinkPreview() {
         // GIVEN
         let linkURL = "http://www.example.com"
         let linkPreview = LinkPreview.with {

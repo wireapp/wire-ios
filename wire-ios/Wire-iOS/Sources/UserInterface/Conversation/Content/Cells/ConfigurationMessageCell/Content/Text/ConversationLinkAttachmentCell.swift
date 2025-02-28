@@ -87,16 +87,14 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     }
 
     private func updateAspectRatio(_ heightRatio: CGFloat) {
-        if let currentConstraint = self.attachmentViewHeightRatioConstraint {
-            currentConstraint.isActive = false
-        }
+        attachmentViewHeightRatioConstraint?.isActive = false
 
-        let heightRatioConstraint = attachmentView.heightAnchor.constraint(
+        let attachmentViewHeightRatioConstraint = attachmentView.heightAnchor.constraint(
             equalTo: attachmentView.widthAnchor,
             multiplier: heightRatio
         )
-        heightRatioConstraint.isActive = true
-        self.attachmentViewHeightRatioConstraint = heightRatioConstraint
+        attachmentViewHeightRatioConstraint.isActive = true
+        self.attachmentViewHeightRatioConstraint = attachmentViewHeightRatioConstraint
     }
 
     // MARK: - Configuration
