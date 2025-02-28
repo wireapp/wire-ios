@@ -60,9 +60,7 @@ public class ConversationTitleView: UIView {
     }
 
     private func configureLayout() {
-        // TODO: add action
-        //        titleButton.addTarget(self, action: #selector(titleButtonTapped), for: .touchUpInside)
-
+        
         let stackView = UIStackView.vertical()
         addSubview(stackView)
         stackView.alignment = .center
