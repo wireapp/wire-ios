@@ -198,6 +198,15 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
     ) async -> [ZMUpdateEvent] {
+
+        func storeLastEventId() async {
+            await syncMOC.perform {
+                if let eventUUID = event.uuid, !event.isTransient {
+                    self.lastEventIDRepository.storeLastEventID(eventUUID)
+                }
+            }
+        }
+        
         do {
             let decryptedEvents = try await decryptEvent(
                 event: event,
@@ -215,12 +224,7 @@ extension EventDecoder {
                 }
             }
 
-            await syncMOC.perform {
-                if let eventUUID = event.uuid, !event.isTransient {
-                    self.lastEventIDRepository.storeLastEventID(eventUUID)
-                }
-            }
-
+            await storeLastEventId()
             return decryptedEvents
 
         } catch let error as Failure {
@@ -230,13 +234,15 @@ extension EventDecoder {
                     "failed to decrypt mls message: missing MLS group ID"
                 )
             }
-
+        
+            await storeLastEventId()
             return []
         } catch {
             WireLogger.mls.warn(
                 "failed to decrypt mls message: \(String(describing: error))"
             )
 
+            await storeLastEventId()
             return []
         }
     }
