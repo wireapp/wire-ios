@@ -59,14 +59,18 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             let batchCount = envelopes.count
             var count = 0
 
-            WireLogger.sync.debug("received batch of \(batchCount) envelopes")
+            if batchCount > 0 {
+                WireLogger.sync.debug("fetched \(batchCount) envelopes from remote")
+            } else {
+                WireLogger.sync.debug("no new events on remote")
+            }
 
             // If we need to abort, do it before processing the next page.
             try Task.checkCancellation()
 
             func log(_ message: String, envelopeID: UUID?) {
                 WireLogger.sync.debug(
-                    "event \(count) os \(batchCount): \(message)",
+                    "event \(count) of \(batchCount): \(message)",
                     attributes: [.eventEnvelopeID: envelopeID]
                 )
             }
@@ -78,13 +82,9 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 var decryptedEnvelope = envelope
                 decryptedEnvelope.events = try await decryptor.decryptEvents(in: envelope)
 
-                // We can only decrypt once so store the decrypted events for later retrieval.
-                log("encoding...", envelopeID: envelope.id)
-                let decryptedEnvelopeData = try jsonEncoder.encode(decryptedEnvelope)
-
                 log("storing...", envelopeID: envelope.id)
                 try await store.persistEventEnvelope(
-                    decryptedEnvelopeData,
+                    decryptedEnvelope,
                     index: currentIndex
                 )
 
