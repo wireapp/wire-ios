@@ -516,7 +516,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         else { return nil }
 
         let replyAction = UIContextualAction(style: .normal, title: "") { _, _, completionHandler in
-            print("trigger reply")
+            actionController.perform(action: .reply)
             completionHandler(true)
         }
 
