@@ -515,6 +515,7 @@ extension ConversationContentViewController: UITableViewDelegate {
             actionController.canPerformAction(action: .reply)
         else { return nil }
 
+        // setting an empty title string since it would be displayed upside down
         let replyAction = UIContextualAction(style: .normal, title: "") { _, _, completionHandler in
             actionController.perform(action: .reply)
             completionHandler(true)
@@ -522,6 +523,7 @@ extension ConversationContentViewController: UITableViewDelegate {
 
         let arrowImage = UIImage(systemName: "arrowshape.turn.up.backward.fill")!
             .withTintColor(.white, renderingMode: .alwaysTemplate)
+        // since the table view is flipped vertically we also render the image flipped
         let upsideDownImage = UIGraphicsImageRenderer(size: arrowImage.size).image { rendererContext in
             rendererContext.cgContext.translateBy(x: arrowImage.size.width / 2, y: arrowImage.size.height / 2)
             rendererContext.cgContext.scaleBy(x: 1.0, y: -1.0)
