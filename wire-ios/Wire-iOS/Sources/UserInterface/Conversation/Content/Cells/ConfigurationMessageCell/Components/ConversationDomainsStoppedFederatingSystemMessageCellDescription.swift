@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
-
+//
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
@@ -27,7 +27,7 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
 
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0

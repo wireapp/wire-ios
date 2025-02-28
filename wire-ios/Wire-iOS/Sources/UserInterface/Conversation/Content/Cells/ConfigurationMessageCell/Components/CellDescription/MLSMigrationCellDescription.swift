@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
-
+//
 final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
@@ -32,7 +32,7 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0

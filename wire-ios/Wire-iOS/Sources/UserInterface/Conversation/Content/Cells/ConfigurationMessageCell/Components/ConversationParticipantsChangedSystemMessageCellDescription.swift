@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
-
+//
 final class ConversationParticipantsChangedSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationParticipantsSystemMessageCell
@@ -32,7 +32,7 @@ final class ConversationParticipantsChangedSystemMessageCellDescription: Convers
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0

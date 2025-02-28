@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
-
+//
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationNewDeviceSystemMessageCell
@@ -33,7 +33,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
