@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-
+//
 final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
@@ -30,7 +30,7 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 26.0
