@@ -128,7 +128,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
     func test_SendCommitBundleMlsCommitMissingReferences_ThrowsWithRecoveryStrategy_RetryAfterQuickSync() async {
         await assertSendCommitBundleThrows(
             withRecovery: .retryAfterQuickSync,
-            for: .mlsCommitMissingReferences(message: "test"),
+            for: .mlsCommitMissingReferences(message: ""),
             shouldClearPendingCommit: true
         )
     }
