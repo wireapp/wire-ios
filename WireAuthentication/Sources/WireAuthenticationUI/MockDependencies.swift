@@ -108,7 +108,6 @@ extension MockDependencies: RequestLoginVerificationCodeUseCaseProtocol {
         try! await Task.sleep(for: .seconds(3))
     }
 
-
 }
 
 extension MockDependencies: DetermineAuthMethodBuilder {
