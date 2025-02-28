@@ -193,7 +193,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
