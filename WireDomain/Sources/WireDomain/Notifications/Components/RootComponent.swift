@@ -23,13 +23,22 @@ import WireDataModel
 final class RootComponent: BootstrapComponent {
 
     public let userID: UUID
+    public let applicationIdentifier: String
+    public let applicationContainer: URL
+    public let selectedAccount: Account
     public let contentHandler: (UNNotificationContent) -> Void
 
     init(
         userID: UUID,
+        applicationIdentifier: String,
+        applicationContainer: URL,
+        selectedAccount: Account,
         contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
         self.userID = userID
+        self.applicationIdentifier = applicationIdentifier
+        self.applicationContainer = applicationContainer
+        self.selectedAccount = selectedAccount
         self.contentHandler = contentHandler
 
         super.init()

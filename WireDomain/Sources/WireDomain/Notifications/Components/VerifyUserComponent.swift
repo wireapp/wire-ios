@@ -25,10 +25,12 @@ import WireFoundation
 
 protocol VerifyUserDependency: Dependency {
     var userID: UUID { get }
+    var selectedAccount: Account { get }
+    var applicationIdentifier: String { get }
 }
 
 final class VerifyUserComponent: Component<VerifyUserDependency> {
-
+    
     var verifyUserSession: VerifyUserSession {
         VerifyUserSession(
             pullEventsServiceProvider: pullEventsComponent,
@@ -45,71 +47,38 @@ final class VerifyUserComponent: Component<VerifyUserDependency> {
 }
 
 extension VerifyUserComponent {
-    var userLocalStore: any UserLocalStoreProtocol {
-        UserLocalStore(
-            context: coreData.syncContext,
-            conversationLocalStore: <#T##any ConversationLocalStoreProtocol#>
-        )
-    }
     
     public var cookieStorage: any CookieStorageProtocol {
-        let cookiesEncryptionKey: Data = {
-            let cookieKey = "ZMCookieKey"
-            let sharedDefaults = UserDefaults.standard
-            if let key = sharedDefaults.data(forKey: "cookieKeyKey") {
-                return key
-            }
-
-            // Creates a new key
-            do {
-                let newKey = try AES256Crypto.generateRandomEncryptionKey()
-                sharedDefaults.set(newKey, forKey: cookieKey)
-                return newKey
-            } catch {
-                fatalError()
-            }
-        }()
-        
-        return CookieStorage(
-            userID: dependency.userID,
-            cookieEncryptionKey: cookiesEncryptionKey,
-            keychain: keychain
+        CoreStorageFactory.makeCookieStorage(
+            userID: dependency.userID
         )
     }
     
-    var keychain: any KeychainProtocol {
-        Keychain()
+    public var userLocalStore: any UserLocalStoreProtocol {
+        UserLocalStore(
+            context: coreData.syncContext,
+            conversationLocalStore: conversationLocalStore
+        )
     }
     
-    public var applicationIdentifier: String {
-        let infoDictionary = Bundle.main.infoDictionary
-        guard let appGroupID = infoDictionary?["WireGroupId"] as? String else {
-            fatalError() // TODO: Jullian
-        }
-        
-        return "group.\(appGroupID)"
+    public var conversationLocalStore: any ConversationLocalStoreProtocol {
+        ConversationLocalStore(
+            context: coreData.syncContext,
+            mlsService: nil,
+            messageLocalStore: messageLocalStore
+        )
     }
     
-    public var applicationContainer: URL {
-        FileManager.sharedContainerDirectory(for: applicationIdentifier)
+    public var messageLocalStore: any MessageLocalStoreProtocol {
+        MessageLocalStore(
+            context: coreData.syncContext
+        )
     }
     
-    public var selectedAccount: Account {
-        let accountManager = AccountManager(sharedDirectory: applicationContainer)
-        
-        guard let selectedAccount = accountManager.account(
-            with: dependency.userID
-        ) else {
-            fatalError() // TODO: Jullian
-        }
-        
-        return selectedAccount
-    }
-    
-    var coreData: CoreDataStack {
-        CoreDataStack(
-            account: selectedAccount,
-            applicationContainer: applicationContainer
+    public var coreData: CoreDataStack {
+        CoreStorageFactory.makeCoreData(
+            account: dependency.selectedAccount,
+            applicationIdentifier: dependency.applicationIdentifier
         )
     }
 }

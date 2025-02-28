@@ -28,6 +28,9 @@ protocol PullEventsDependency: Dependency {
     var selectedAccount: Account { get }
     var applicationContainer: URL { get }
     var applicationIdentifier: String { get }
+    var messageLocalStore: any MessageLocalStoreProtocol { get }
+    var conversationLocalStore: any ConversationLocalStoreProtocol { get }
+    var userLocalStore: any UserLocalStoreProtocol { get }
 }
 
 protocol PullEventsServiceProvider {
@@ -72,17 +75,17 @@ extension PullEventsComponent {
         selfUserID: UUID,
         selfClientID: String
     ) async -> any PullUpdateEventsSyncProtocol {
-        let userID = dependency.userID
-        
-        let updateEventsAPI = await updateEventsAPI(
-            selfClientID: selfClientID
+        let updateEventsAPI = await APIFactory.updateEventsAPI(
+            cookieStorage: dependency.cookieStorage,
+            selfClientID: selfClientID,
+            applicationIdentifier: dependency.applicationIdentifier
         )
         
         let updateEventDecryptor = updateEventDecryptor(
             selfUserID: selfUserID
         )
 
-        let pullUpdateEventsSync = PullUpdateEventsSync(
+        return PullUpdateEventsSync(
             selfClientID: selfClientID,
             api: updateEventsAPI,
             store: updateEventsLocalStore,
@@ -93,8 +96,6 @@ extension PullEventsComponent {
     private func updateEventDecryptor(
         selfUserID: UUID
     ) -> any UpdateEventDecryptorProtocol {
-        let userID = dependency.userID
-        let messageLocalStore = MessageLocalStore(context: dependency.coreData.syncContext)
         let proteusMessageDecryptor = proteusMessageDecryptor(
             selfUserID: selfUserID
         )
@@ -105,7 +106,7 @@ extension PullEventsComponent {
         return UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
-            messageLocalStore: messageLocalStore
+            messageLocalStore: dependency.messageLocalStore
         )
     }
     
@@ -126,55 +127,22 @@ extension PullEventsComponent {
         selfUserID: UUID
     ) -> any ProteusMessageDecryptorProtocol {
         let coreData = dependency.coreData
-        let userID = dependency.userID
-        let featureRepository = FeatureRepository(context: coreData.syncContext)
         let coreCryptoProvider = coreCryptoProvider(
             selfUserID: selfUserID
         )
         
-        let mlsService = mlsService(selfUserID: selfUserID)
-        let messageLocalStore = MessageLocalStore(context: coreData.syncContext)
-        let conversationLocalStore = ConversationLocalStore(
-            context: coreData.syncContext,
-            mlsService: mlsService,
-            messageLocalStore: messageLocalStore
-        )
         let userClientsLocalStore = UserClientsLocalStore(context: coreData.syncContext)
-        let userLocalStore = UserLocalStore(
-            context: coreData.syncContext,
-            conversationLocalStore: conversationLocalStore
-        )
-        
         let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
         
         return ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
-            userLocalStore: userLocalStore
+            userLocalStore: dependency.userLocalStore
         )
     }
     
-    func mlsService(
-        selfUserID: UUID
-    ) -> any MLSServiceInterface {
-        let coreData = dependency.coreData
-        let userID = dependency.userID
-        let coreCryptoProvider = coreCryptoProvider(
-            selfUserID: selfUserID
-        )
-        
-        let featureRepository = FeatureRepository(context: coreData.syncContext)
-        
-        return MLSService(
-            context: coreData.syncContext,
-            notificationContext: coreData.syncContext.notificationContext,
-            coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: <#T##any ConversationEventProcessorProtocol#>,
-            featureRepository: featureRepository,
-            userDefaults: .standard,
-            syncStatus: <#T##any SyncStatusProtocol#>,
-            userID: userID
-        )
+    private var featureRepository: any FeatureRepositoryInterface {
+        FeatureRepository(context: dependency.coreData.syncContext)
     }
     
     private var updateEventsLocalStore: any UpdateEventsLocalStoreProtocol {
@@ -204,8 +172,6 @@ extension PullEventsComponent {
             notificationContext: coreData.syncContext.notificationContext
         )
         
-        let featureRepository = FeatureRepository(context: coreData.syncContext)
-        
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
             commitSender: commitSender,
@@ -217,114 +183,10 @@ extension PullEventsComponent {
             mlsActionExecutor: mlsActionExecutor
         )
         
-        let messageLocalStore = MessageLocalStore(context: coreData.syncContext)
-        let mlsService = mlsService(selfUserID: selfUserID)
-        
-        let conversationLocalStore = ConversationLocalStore(
-            context: coreData.syncContext,
-            mlsService: mlsService,
-            messageLocalStore: messageLocalStore
-        )
-        
         return MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: dependency.conversationLocalStore
         )
-    }
-    
-    private func updateEventsAPI(
-        selfClientID: String
-    ) async -> any UpdateEventsAPI {
-        let authenticationManager = await authenticationManager(
-            selfClientID: selfClientID
-        )
-        
-        let apiService = await APIService(
-            networkService: networkService,
-            authenticationManager: authenticationManager
-        )
-
-        return UpdateEventsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-    }
-    
-    func apiService(
-        applicationIdentifier: String,
-        selfClientID: String
-    ) async -> any APIServiceProtocol {
-        let authenticationManager = await authenticationManager(
-            selfClientID: selfClientID
-        )
-        
-        return await APIService(
-            networkService: networkService,
-            authenticationManager: authenticationManager
-        )
-    }
-    
-    var userDefaults: UserDefaults {
-        let userDefaults = UserDefaults.standard
-        userDefaults.addSuite(named: dependency.applicationIdentifier)
-        return userDefaults
-    }
-
-    var apiVersion: WireAPI.APIVersion {
-        let key = "SelectedAPIVersion"
-        
-        guard userDefaults.object(forKey: key) != nil else {
-            fatalError("API version not found")
-        }
-
-        let storedValue = userDefaults.integer(forKey: key)
-        let legacyAPIVersion = APIVersion(rawValue: Int32(storedValue))
-
-        guard let legacyAPIVersion,
-              let apiVersion = WireAPI.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
-            return .v0
-        }
-
-        return apiVersion
-    }
-
-    var networkService: NetworkService {
-        get async {
-            let service = await NetworkService(
-                baseURL: backendEnvironment.url,
-                serverTrustValidator: ServerTrustValidator(
-                    pinnedKeys: backendEnvironment.pinnedKeys
-                )
-            )
-
-            let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
-            let config = await URLSessionConfigurationFactory(
-                minTLSVersion: minTLSVersion,
-                proxySettings: proxySettings
-            )
-            
-            let session = URLSession(
-                configuration: config.makeRESTAPISessionConfiguration(),
-                delegate: service,
-                delegateQueue: nil
-            )
-            service.configure(with: session)
-
-            return service
-        }
-    }
-
-    func authenticationManager(
-        selfClientID: String
-    ) async -> any AuthenticationManagerProtocol {
-        await AuthenticationManager(
-            clientID: selfClientID,
-            cookieStorage: dependency.cookieStorage,
-            networkService: networkService
-        )
-    }
-
-    private var minTLSVersion: String? {
-        appMainBundle.infoForKey("MinTLSVersion")
     }
     
     private var accountContainer: URL {
@@ -332,131 +194,5 @@ extension PullEventsComponent {
             accountIdentifier: dependency.userID,
             applicationContainer: dependency.applicationContainer
         )
-    }
-    
-    var backendEnvironment: WireAPI.BackendEnvironment {
-        get async {
-            BackendEnvironment(
-                url: legacyBackendEnvironment.backendURL,
-                webSocketURL: legacyBackendEnvironment.backendWSURL,
-                pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
-                    PinnedKey(
-                        key: trustData.certificateKey,
-                        hosts: trustData.hosts.map { host in
-                            switch host.rule {
-                            case .equals:
-                                    .equals(host.value)
-                            case .endsWith:
-                                    .endsWith(host.value)
-                            }
-                        }
-                    )
-                },
-                proxySettings: await proxySettings
-            )
-        }
-    }
-
-    var appMainBundle: Bundle {
-        let mainBundle: Bundle
-
-        let runningInExtension = Bundle.main.bundlePath.hasSuffix(".appex")
-
-        if runningInExtension {
-            let extensionBundleURL = Bundle.main.bundleURL
-            let mainAppBundleURL = extensionBundleURL.deletingLastPathComponent().deletingLastPathComponent()
-            guard let bundle = Bundle(url: mainAppBundleURL) else { fatalError("Failed to find main app bundle") }
-            mainBundle = bundle
-        } else {
-            mainBundle = .main
-        }
-        return mainBundle
-    }
-
-    var proxySettings: ProxySettings? {
-        get async {
-            guard let proxy = legacyBackendEnvironment.proxy else { return nil }
-            
-            let keychain = WireFoundation.Keychain()
-            let usernameItemID = "proxy-\(proxy.host):\(proxy.port)-username"
-            let passwordItemID = "proxy-\(proxy.host):\(proxy.port)-password"
-            
-            let proxyUsername: String? = try? await keychain.fetchItem(
-                query: [
-                    .itemClass(.genericPassword),
-                    .account(usernameItemID),
-                    .returningData(true)
-                ]
-            )
-            
-            let proxyPassword: String? = try? await keychain.fetchItem(
-                query: [
-                    .itemClass(.genericPassword),
-                    .account(passwordItemID),
-                    .returningData(true)
-                ]
-            )
-            
-            if proxy.needsAuthentication {
-                guard let proxyUsername, let proxyPassword else {
-                    fatalInternal(
-                        "Proxy needs authentication but credentials are missing"
-                    )
-                    
-                    return nil
-                }
-                
-                return .authenticated(
-                    host: proxy.host,
-                    port: proxy.port,
-                    username: proxyUsername,
-                    password: proxyPassword
-                )
-            } else {
-                return .unauthenticated(
-                    host: proxy.host,
-                    port: proxy.port
-                )
-            }
-        }
-    }
-
-    private var legacyBackendEnvironment: WireDataModel.BackendEnvironment {
-        guard let backendEnvironmentTypeOverride else {
-            fatalError()
-        }
-
-        let environmentType = EnvironmentType(
-            stringValue: backendEnvironmentTypeOverride
-        )
-
-        guard let backendEnvironment = BackendEnvironment(
-            userDefaults: userDefaults,
-            configurationBundle: backendBundle,
-            environmentType: environmentType
-        ) else {
-            fatalError("Malformed backend configuration data")
-        }
-
-        return backendEnvironment
-    }
-
-    private var backendEnvironmentTypeOverride: String? {
-        userDefaults.string(forKey: "BackendEnvironmentTypeOverrideKey")
-    }
-
-    private var backendBundle: Bundle {
-        guard let backendBundlePath = appMainBundle.path(
-            forResource: "Backend",
-            ofType: "bundle"
-        ) else {
-            fatalError("Could not find backend.bundle")
-        }
-
-        guard let bundle = Bundle(path: backendBundlePath) else {
-            fatalError("Could not load backend.bundle")
-        }
-
-        return bundle
     }
 }

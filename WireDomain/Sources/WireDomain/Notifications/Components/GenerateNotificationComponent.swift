@@ -22,6 +22,9 @@ import WireAPI
 
 protocol GenerateNotificationDependency: Dependency {
     var contentHandler: (UNNotificationContent) -> Void { get }
+    var messageLocalStore: any MessageLocalStoreProtocol { get }
+    var conversationLocalStore: any ConversationLocalStoreProtocol { get }
+    var userLocalStore: any UserLocalStoreProtocol { get }
 }
 
 protocol GenerateNotificationProvider {
@@ -37,7 +40,10 @@ final class GenerateNotificationComponent: Component<GenerateNotificationDepende
     ) -> GenerateNotificationService {
         GenerateNotificationService(
             eventsStream: eventsStream,
-            contentHandler: dependency.contentHandler
+            contentHandler: dependency.contentHandler,
+            userLocalStore: dependency.userLocalStore,
+            conversationLocalStore: dependency.conversationLocalStore,
+            messageLocalStore: dependency.messageLocalStore
         )
     }
     
