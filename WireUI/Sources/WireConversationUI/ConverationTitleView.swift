@@ -60,7 +60,7 @@ public class ConversationTitleView: UIView {
     }
 
     private func configureLayout() {
-        
+
         let stackView = UIStackView.vertical()
         addSubview(stackView)
         stackView.alignment = .center
