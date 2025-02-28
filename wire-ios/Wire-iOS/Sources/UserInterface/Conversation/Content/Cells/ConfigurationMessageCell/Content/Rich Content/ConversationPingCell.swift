@@ -130,7 +130,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
     typealias View = ConversationPingCell
     let configuration: ConversationPingCell.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false }
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
