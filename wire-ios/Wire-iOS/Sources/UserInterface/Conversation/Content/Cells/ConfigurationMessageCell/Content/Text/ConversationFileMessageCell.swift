@@ -126,7 +126,7 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     typealias View = ConversationFileMessageCell
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: [WPB-16018] check which ones can be combined
+    var canBeCombinedWithOtherCells: Bool { false } // TODO: check which ones can be combined
 
     var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false
