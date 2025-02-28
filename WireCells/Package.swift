@@ -7,6 +7,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 
 let package = Package(
     name: "WireCells",
+    defaultLocalization: "en",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -27,7 +28,8 @@ let package = Package(
         .package(url: "https://github.com/pydio/cells-sdk-swift.git", branch: "v0.1.1-alpha02"),
         .package(url: "https://github.com/awslabs/aws-sdk-swift.git", from: "1.0.0"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
-        .package(name: "WireUI", path: "../WireUI")
+        .package(name: "WireUI", path: "../WireUI"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -53,7 +55,8 @@ let package = Package(
                 "WireFoundation",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI")
-            ]
+            ],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireCellsTests",
