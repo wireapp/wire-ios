@@ -36,6 +36,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
         static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
         static let invalid2FACode = Alert(title: Title.invalidInvalid2FACode, message: Message.invalidInvalid2FACode)
+        static let invalidEmail = Alert(title: Title.invalidCredentials, message: Message.invalidCredentials)
         static let accountPendingActivation = Alert(
             title: Title.accountPendingActivation,
             message: Message.accountPendingActivation
@@ -46,6 +47,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     @Published var code: [String]
     @Published private(set) var isLoading = false
+    @Published private(set) var isResending = false
     @Published var alert: Alert?
 
     let email: String
@@ -142,7 +144,39 @@ public final class VerificationCodeViewModel: ObservableObject {
     }
 
     func resend() async {
-        // TODO: [WPB-15950] Implement
+        isResending = true
+
+        let requestTask = Task.detached { [requestLoginVerificationCodeUseCase, email] in
+            try await requestLoginVerificationCodeUseCase.invoke(email: email)
+        }
+
+        do {
+            try await requestTask.value
+            WireLogger.authentication.info("Resend 2FA code succeeded")
+        } catch {
+            WireLogger.authentication.info("Resend 2FA login failed: \(error)")
+
+            switch error {
+            case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
+                alert = .invalidEmail
+                WireLogger.authentication.error("Unexpected invalid email when resending 2FA login code: \(error)")
+            case let RequestLoginVerificationCodeUseCaseFailure.unexpected(underlying) where underlying.isNoInternet:
+                alert = .noInternet
+            default:
+                WireLogger.authentication.error("Unexpected error when resending 2FA login code: \(error)")
+                alert = .unknownError
+            }
+        }
+
+        isResending = false
     }
 
+}
+
+private extension Error {
+    var isNoInternet: Bool {
+        guard let urlError = self as? URLError else { return false }
+
+        return urlError.code == .notConnectedToInternet || urlError.code == .networkConnectionLost
+    }
 }

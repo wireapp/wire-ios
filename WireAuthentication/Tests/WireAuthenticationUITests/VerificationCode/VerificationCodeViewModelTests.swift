@@ -31,6 +31,7 @@ final class VerificationCodeViewModelTests {
     private let router: MockRouter
     private let sut: VerificationCodeViewModel
     private var isLoadingCalls: [Bool] = []
+    private var isResendingCalls: [Bool] = []
     private var cancellables: Set<AnyCancellable> = []
 
     @MainActor
@@ -49,6 +50,7 @@ final class VerificationCodeViewModelTests {
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
+        sut.$isResending.dropFirst().sink { [self] in isResendingCalls.append($0) }.store(in: &cancellables)
     }
 
     // MARK: - isConfirmButtonDisabled tests
@@ -103,11 +105,11 @@ final class VerificationCodeViewModelTests {
         #expect(router.modalPresent_Invocations.count == 1)
         #expect(
             router.modalPresent_Invocations.first as? RootView.ModalDestination ==
-            RootView.ModalDestination.noHistory(
-                userID: Scaffolding.someAccessToken.userID,
-                cookies: [Scaffolding.someCookie],
-                accessToken: Scaffolding.someAccessToken
-            )
+                RootView.ModalDestination.noHistory(
+                    userID: Scaffolding.someAccessToken.userID,
+                    cookies: [Scaffolding.someCookie],
+                    accessToken: Scaffolding.someAccessToken
+                )
         )
     }
 
@@ -214,6 +216,61 @@ final class VerificationCodeViewModelTests {
 
         // then
         #expect(result == outputFocus)
+    }
+
+    // MARK: - resend tests
+
+    @MainActor @Test
+    func resend_whenSuccess() async {
+        // given, when
+        await sut.resend()
+
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(requestLoginVerificationCodeUseCase.invokeEmail_Invocations == ["abc@example.com"])
+    }
+
+    @MainActor @Test
+    func resend_withInvalidEmail() async {
+        // given
+        requestLoginVerificationCodeUseCase.invokeEmail_MockError = .invalidEmail
+
+        // when
+        await sut.resend()
+
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(sut.alert == .invalidEmail)
+    }
+
+    @MainActor @Test(arguments: [
+        RequestLoginVerificationCodeUseCaseFailure.unexpected(URLError(.notConnectedToInternet)),
+        RequestLoginVerificationCodeUseCaseFailure.unexpected(URLError(.networkConnectionLost))
+    ])
+    func resend_whenNoInternet(error: RequestLoginVerificationCodeUseCaseFailure) async {
+        // given
+        requestLoginVerificationCodeUseCase.invokeEmail_MockError = error
+
+        // when
+        await sut.resend()
+
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(sut.alert == .noInternet)
+    }
+
+    @MainActor @Test
+    func resend_whenSomeOtherError() async {
+        // given
+        requestLoginVerificationCodeUseCase.invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure
+            .unexpected(URLError(.badURL))
+
+        // when
+        await sut.resend()
+
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(sut.alert == .unknownError)
     }
 
     // MARK: - Scaffolding

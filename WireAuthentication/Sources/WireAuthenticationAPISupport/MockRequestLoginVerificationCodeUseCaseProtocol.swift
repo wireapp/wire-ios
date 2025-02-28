@@ -19,7 +19,8 @@
 import Foundation
 import WireAuthenticationAPI
 
-public final class MockRequestLoginVerificationCodeUseCaseProtocol: @unchecked Sendable, RequestLoginVerificationCodeUseCaseProtocol {
+public final class MockRequestLoginVerificationCodeUseCaseProtocol: @unchecked Sendable,
+    RequestLoginVerificationCodeUseCaseProtocol {
 
     // MARK: - Life cycle
 
