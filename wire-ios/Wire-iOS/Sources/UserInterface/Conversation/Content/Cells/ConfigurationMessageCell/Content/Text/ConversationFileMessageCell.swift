@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -29,7 +29,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         }
     }
 
-    private var containerView = UIView()
+    private var containerView = RoundedView()
     private let fileTransferView = FileTransferView(frame: .zero)
     private let obfuscationView = ObfuscationView(icon: .paperclip)
     private let restrictionView = FileMessageRestrictionView()
@@ -51,8 +51,8 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        shape = .rounded(radius: 12)
-        backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.shape = .rounded(radius: 12)
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
@@ -73,7 +73,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
 
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.left),
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
             bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
