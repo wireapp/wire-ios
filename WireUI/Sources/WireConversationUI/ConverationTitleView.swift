@@ -29,7 +29,7 @@ public class ConversationTitleView: UIView {
     private let accountImageView = AccountImageView()
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
-    private let drowdownImage = UIImageView(image: .dropdown)
+    private let dropdownImage = UIImageView(image: .dropdown)
 
     init(source: ConversationTitleSource) {
         self.source = source
@@ -70,7 +70,7 @@ public class ConversationTitleView: UIView {
 
         let avatarAndNameStackView = UIStackView.horizontal(spacing: 5)
         avatarAndNameStackView.alignment = .center
-        [accountImageView, nameLabel, drowdownImage]
+        [accountImageView, nameLabel, dropdownImage]
             .forEach(avatarAndNameStackView.addArrangedSubview)
 
         var views: [UIView] = [avatarAndNameStackView]
@@ -80,7 +80,7 @@ public class ConversationTitleView: UIView {
         views.forEach(stackView.addArrangedSubview)
 
         accountImageView.constraintToSquare(sideLength: 32)
-        drowdownImage.constraintToSquare(sideLength: 16)
+        dropdownImage.constraintToSquare(sideLength: 16)
     }
 }
 
