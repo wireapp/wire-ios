@@ -57,14 +57,6 @@ extension VerifyUserComponent {
     public var userLocalStore: any UserLocalStoreProtocol {
         UserLocalStore(
             context: coreData.syncContext,
-            conversationLocalStore: conversationLocalStore
-        )
-    }
-    
-    public var conversationLocalStore: any ConversationLocalStoreProtocol {
-        ConversationLocalStore(
-            context: coreData.syncContext,
-            mlsService: nil,
             messageLocalStore: messageLocalStore
         )
     }

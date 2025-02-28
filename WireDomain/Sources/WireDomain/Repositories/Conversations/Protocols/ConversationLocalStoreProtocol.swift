@@ -394,5 +394,25 @@ public protocol ConversationLocalStoreProtocol {
     func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
+    
+    func name(
+        for conversation: ZMConversation
+    ) async -> String?
+    
+    func shouldHideNotification() async -> Bool
+    
+    func isMessageSilenced(
+        _ message: GenericMessage,
+        senderID: UUID?,
+        conversation: ZMConversation
+    ) async -> Bool
+    
+    func conversationMutedMessageTypesIncludingAvailability(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes
+    
+    func lastReadServerTimestamp(
+        _ conversation: ZMConversation
+    ) async -> Date?
 
 }

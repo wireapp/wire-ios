@@ -29,7 +29,6 @@ protocol PullEventsDependency: Dependency {
     var applicationContainer: URL { get }
     var applicationIdentifier: String { get }
     var messageLocalStore: any MessageLocalStoreProtocol { get }
-    var conversationLocalStore: any ConversationLocalStoreProtocol { get }
     var userLocalStore: any UserLocalStoreProtocol { get }
 }
 
@@ -71,6 +70,14 @@ final class PullEventsComponent: Component<PullEventsDependency>, PullEventsServ
 }
 
 extension PullEventsComponent {
+    public var conversationLocalStore: any ConversationLocalStoreProtocol {
+        ConversationLocalStore(
+            context: dependency.coreData.syncContext,
+            mlsService: nil,
+            messageLocalStore: dependency.messageLocalStore
+        )
+    }
+    
     private func pullEventsSync(
         selfUserID: UUID,
         selfClientID: String
@@ -153,7 +160,7 @@ extension PullEventsComponent {
         )
     }
     
-    var userClientsLocalStore: any UserClientsLocalStoreProtocol {
+    private var userClientsLocalStore: any UserClientsLocalStoreProtocol {
         UserClientsLocalStore(
             context: dependency.coreData.syncContext
         )
@@ -185,7 +192,7 @@ extension PullEventsComponent {
         
         return MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            conversationLocalStore: dependency.conversationLocalStore
+            conversationLocalStore: conversationLocalStore
         )
     }
     

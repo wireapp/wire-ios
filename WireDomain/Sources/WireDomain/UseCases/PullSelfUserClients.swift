@@ -75,9 +75,15 @@ public extension PullSelfUserClients {
         context: NSManagedObjectContext
     ) -> PullSelfUserClientsProtocol {
         let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+        
+        let messageLocalStore = MessageLocalStore(context: context)
 
-        let userLocalStore = UserLocalStore(context: context)
-        let userClientsLocalStore = UserClientsLocalStore(context: context, userLocalStore: userLocalStore)
+        let userLocalStore = UserLocalStore(
+            context: context,
+            messageLocalStore: messageLocalStore
+        )
+        
+        let userClientsLocalStore = UserClientsLocalStore(context: context)
 
         return PullSelfUserClients(userClientsAPI: userClientsAPI, userClientsLocalStore: userClientsLocalStore)
     }

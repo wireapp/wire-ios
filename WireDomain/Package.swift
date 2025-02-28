@@ -14,15 +14,6 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireDomainAPI",
-            path: "./Sources/WireDomainAPI"
-        ),
-        .target(
-            name: "WireDomainPkg",
-            dependencies: ["WireAPI", "WireAnalytics"],
-            path: "./Sources/Package"
-        ),
-        .target(
             name: "WireDomainPkg",
             path: "./Sources/WireDomain",
             sources: ["./UseCases/Protocols"]

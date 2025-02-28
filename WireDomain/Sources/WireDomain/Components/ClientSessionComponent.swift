@@ -126,7 +126,6 @@ public final class ClientSessionComponent {
     private lazy var conversationLocalStore: some ConversationLocalStoreProtocol = ConversationLocalStore(
         context: syncContext,
         mlsService: mlsService,
-        userLocalStore: userLocalStore,
         messageLocalStore: messageLocalStore
     )
 
@@ -135,8 +134,7 @@ public final class ClientSessionComponent {
     )
 
     private lazy var messageLocalStore: some MessageLocalStoreProtocol = MessageLocalStore(
-        context: syncContext,
-        userLocalStore: userLocalStore
+        context: syncContext
     )
 
     private lazy var teamLocalStore: some TeamLocalStoreProtocol = TeamLocalStore(
@@ -151,8 +149,7 @@ public final class ClientSessionComponent {
     )
 
     private lazy var userClientsLocalStore: some UserClientsLocalStore = UserClientsLocalStore(
-        context: syncContext,
-        userLocalStore: userLocalStore
+        context: syncContext
     )
 
     private lazy var userConnectionsStore: some ConnectionsLocalStoreProtocol = ConnectionsLocalStore(
@@ -161,6 +158,7 @@ public final class ClientSessionComponent {
 
     private lazy var userLocalStore: some UserLocalStoreProtocol = UserLocalStore(
         context: syncContext,
+        messageLocalStore: messageLocalStore,
         userDefaults: sharedUserDefaults
     )
 

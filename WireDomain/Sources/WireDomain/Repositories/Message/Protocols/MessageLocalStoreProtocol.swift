@@ -186,5 +186,19 @@ public protocol MessageLocalStoreProtocol {
         genericMessage: GenericMessage,
         date: Date
     ) async
+    
+    func fetchMessage(
+        id: UUID?,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async -> ZMOTRMessage?
+    
+    func isMessageMentioningSelf(
+        text: Text
+    ) async -> Bool
+    
+    func isMessageQuotingSelf(
+        quotedMessage: ZMOTRMessage?
+    ) async -> Bool
 
 }
