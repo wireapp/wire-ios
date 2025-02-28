@@ -1172,8 +1172,8 @@
 				015B25B72D68EAD000959185 /* Wire-iOS Share Extension */,
 				015DB12B2D68DB7B004EE8C9 /* WireCommonComponents */,
 				015DB15C2D68DB7F004EE8C9 /* Wire Notification Service Extension */,
-				8F42C539199244A700288E4D /* Products */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
+				8F42C539199244A700288E4D /* Products */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";

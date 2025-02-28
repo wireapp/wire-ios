@@ -111,8 +111,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 2
-    let isFullWidth: Bool = true
+    var topMargin: CGFloat = 2
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
