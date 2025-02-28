@@ -54,6 +54,7 @@ let package = Package(
             name: "WireAuthenticationLogicTests",
             dependencies: [
                 "WireAuthenticationLogic",
+                "WireAuthenticationAPISupport",
                 .product(name: "WireAPISupport", package: "WireAPI"),
             ]
         ),

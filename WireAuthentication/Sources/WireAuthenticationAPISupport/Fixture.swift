@@ -19,15 +19,20 @@
 import Foundation
 import WireAuthenticationAPI
 
-enum Fixture {
+public enum Fixture {
 
-    static let someCookie = HTTPCookie(properties: [
+    public static let someCookie = HTTPCookie(properties: [
         .name: "some name",
         .path: "some path",
         .value: "some value",
         .domain: "some domain"
     ])!
 
-    static let someAccessToken = AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
+    public static let someAccessToken = AccessToken(
+        userID: UUID(),
+        token: "token",
+        type: "type",
+        expirationDate: Date()
+    )
 
 }
