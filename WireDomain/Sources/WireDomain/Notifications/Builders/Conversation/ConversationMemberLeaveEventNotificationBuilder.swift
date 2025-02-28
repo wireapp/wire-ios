@@ -37,12 +37,10 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
     init(
         removedUserIDs: Set<UUID>,
         conversationID: WireAPI.QualifiedID,
-        senderID: UserID
+        senderID: UserID,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol
     ) async {
-
-        let conversationLocalStore: ConversationLocalStoreProtocol
-        let userLocalStore: UserLocalStoreProtocol
-
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain

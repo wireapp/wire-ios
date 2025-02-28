@@ -23,11 +23,14 @@ import WireDataModel
 struct UserNotificationBuilder: NotificationBuilder {
 
     private let event: UserEvent
+    private let userLocalStore: any UserLocalStoreProtocol
 
     init(
-        event: UserEvent
+        event: UserEvent,
+        userLocalStore: any UserLocalStoreProtocol
     ) {
         self.event = event
+        self.userLocalStore = userLocalStore
     }
 
     func shouldBuildNotification() async -> Bool {
@@ -51,7 +54,8 @@ struct UserNotificationBuilder: NotificationBuilder {
             builder = await UserConnectionEventNotificationBuilder(
                 userConnectionEvent: userConnectionEvent,
                 conversationID: qualifiedID,
-                senderID: connection.senderID
+                senderID: connection.senderID,
+                userLocalStore: userLocalStore
             )
 
         case let .contactJoin(userContactJoinEvent):

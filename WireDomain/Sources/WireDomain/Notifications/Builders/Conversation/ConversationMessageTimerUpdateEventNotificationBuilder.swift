@@ -37,11 +37,10 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
     init(
         newTimer: Int64?,
         conversationID: WireAPI.QualifiedID,
-        senderID: UserID
+        senderID: UserID,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol
     ) async {
-
-        let conversationLocalStore: ConversationLocalStoreProtocol
-        let userLocalStore: UserLocalStoreProtocol
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,

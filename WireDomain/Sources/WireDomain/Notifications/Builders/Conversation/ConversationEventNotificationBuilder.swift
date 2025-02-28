@@ -32,20 +32,26 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
     }
 
     private let event: ConversationEvent
+    private let userLocalStore: any UserLocalStoreProtocol
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let messageLocalStore: any MessageLocalStoreProtocol
     private let context: Context
 
     init(
-        event: ConversationEvent
+        event: ConversationEvent,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        messageLocalStore: any MessageLocalStoreProtocol
     ) async {
         self.event = event
+        self.userLocalStore = userLocalStore
+        self.conversationLocalStore = conversationLocalStore
+        self.messageLocalStore = messageLocalStore
 
-        let conversationLocalStore: ConversationLocalStoreProtocol
-        let userRepository: UserRepositoryProtocol
-
-        let isSelfUser = try? await userRepository.isSelfUser(
+        let isSelfUser = try? await userLocalStore.isSelfUser(
             id: event.senderID.uuid,
             domain: event.senderID.domain
-        )
+        ).isSelfUser
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: event.conversationID.uuid,
@@ -80,7 +86,10 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             builder = try await ConversationMLSMessageAddEventNotificationBuilder(
                 mlsMessageEvent: mlsMessageEvent,
                 conversationID: mlsMessageEvent.conversationID,
-                senderID: mlsMessageEvent.senderID
+                senderID: mlsMessageEvent.senderID,
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                messageLocalStore: messageLocalStore
             )
 
         case let .proteusMessageAdd(proteusMessageEvent):
@@ -88,7 +97,10 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             builder = try await ConversationProteusMessageAddEventNotificationBuilder(
                 proteusMessageEvent: proteusMessageEvent,
                 conversationID: proteusMessageEvent.conversationID,
-                senderID: proteusMessageEvent.senderID
+                senderID: proteusMessageEvent.senderID,
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                messageLocalStore: messageLocalStore
             )
 
         case let .memberLeave(memberLeaveEvent):
@@ -97,7 +109,9 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             builder = await ConversationMemberLeaveEventNotificationBuilder(
                 removedUserIDs: removedUserIDs,
                 conversationID: memberLeaveEvent.conversationID,
-                senderID: memberLeaveEvent.senderID
+                senderID: memberLeaveEvent.senderID,
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
             )
 
         case let .memberJoin(memberJoinEvent):
@@ -106,21 +120,27 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             builder = await ConversationMemberJoinEventNotificationBuilder(
                 addedUserIDs: addedUserIDs,
                 conversationID: memberJoinEvent.conversationID,
-                senderID: memberJoinEvent.senderID
+                senderID: memberJoinEvent.senderID,
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
             )
 
         case let .create(conversationCreateEvent):
 
             builder = await ConversationCreateEventNotificationBuilder(
                 conversationID: conversationCreateEvent.conversationID,
-                senderID: conversationCreateEvent.senderID
+                senderID: conversationCreateEvent.senderID,
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
             )
 
         case let .delete(conversationDeleteEvent):
 
             builder = await ConversationDeleteEventNotificationBuilder(
                 conversationID: conversationDeleteEvent.conversationID,
-                senderID: conversationDeleteEvent.senderID
+                senderID: conversationDeleteEvent.senderID,
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
             )
 
         case let .messageTimerUpdate(messageTimerUpdateEvent):
@@ -128,7 +148,9 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             builder = await ConversationMessageTimerUpdateEventNotificationBuilder(
                 newTimer: messageTimerUpdateEvent.newTimer,
                 conversationID: messageTimerUpdateEvent.conversationID,
-                senderID: messageTimerUpdateEvent.senderID
+                senderID: messageTimerUpdateEvent.senderID,
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore
             )
 
         default:

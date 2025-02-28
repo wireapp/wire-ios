@@ -45,13 +45,18 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
     }
 
     private let message: GenericMessage
+    private let messageLocalStore: any MessageLocalStoreProtocol
     private let context: Context
 
     init(
         proteusMessageEvent: ConversationProteusMessageAddEvent,
         conversationID: WireAPI.QualifiedID,
-        senderID: UserID
+        senderID: UserID,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        messageLocalStore: any MessageLocalStoreProtocol
     ) async throws {
+        self.messageLocalStore = messageLocalStore
 
         let decryptedMessage = proteusMessageEvent.message.decryptedMessage
         let externalEncryptedMessage = proteusMessageEvent.externalData?.encryptedMessage
@@ -65,9 +70,6 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         }
 
         self.message = genericMessage
-
-        let conversationLocalStore: ConversationLocalStoreProtocol
-        let userLocalStore: UserLocalStoreProtocol
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
@@ -231,7 +233,6 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             return UNMutableNotificationContent()
         }
 
-        let messageLocalStore: MessageLocalStoreProtocol
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
         let quotedMessage = await messageLocalStore.fetchMessage(
             id: quotedMessageId,
@@ -300,7 +301,6 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
 
         if ephemeral.hasText {
             let textMessageData = ephemeral.text
-            let messageLocalStore: MessageLocalStoreProtocol
             let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
             let quotedMessage = await messageLocalStore.fetchMessage(
                 id: quotedMessageId,

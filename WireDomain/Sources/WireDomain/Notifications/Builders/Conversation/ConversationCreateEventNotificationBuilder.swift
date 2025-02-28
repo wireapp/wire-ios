@@ -22,6 +22,8 @@ import WireDataModel
 struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
 
     private let context: Context
+    private let userLocalStore: any UserLocalStoreProtocol
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
 
     struct Context {
         let senderName: String?
@@ -35,11 +37,13 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
 
     init(
         conversationID: WireAPI.QualifiedID,
-        senderID: UserID
+        senderID: UserID,
+        userLocalStore: any UserLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol
     ) async {
 
-        let conversationLocalStore: ConversationLocalStoreProtocol
-        let userLocalStore: UserLocalStoreProtocol
+        self.userLocalStore = userLocalStore
+        self.conversationLocalStore = conversationLocalStore
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
