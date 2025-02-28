@@ -54,6 +54,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         let request = try URLRequestBuilder(path: path)
             .withBody(encodedJSON, contentType: .json)
             .withMethod(.post)
+            .withQueryItem(name: "persist", value: "true")
             .build()
 
         let (data, response) = try await networkService.executeRequest(request)
