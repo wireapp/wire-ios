@@ -25,6 +25,8 @@ import WireLogging
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
 
+    private static let numberOfDigits = 6
+
     @Published var code: [String]
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
@@ -41,16 +43,16 @@ public final class VerificationCodeViewModel: ObservableObject {
         password: String,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         router: any Router,
-        code: [String] = ["", "", "", "", "", ""]
+        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
     ) {
-        precondition(!code.isEmpty)
+        precondition(numberOfDigits > 0)
 
         self.email = email
         self.password = password
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.router = router
-        self.code = code
-        self.numberOfDigits = code.count
+        self.code = Array(repeating: "", count: numberOfDigits)
+        self.numberOfDigits = numberOfDigits
     }
 
     var isConfirmButtonDisabled: Bool {

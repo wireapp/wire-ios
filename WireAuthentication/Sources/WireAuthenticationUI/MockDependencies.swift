@@ -174,15 +174,16 @@ extension MockDependencies: VerificationCodeBuilder {
         password: String,
         code: [String] = ["", "", "", "", "", ""]
     ) -> VerificationCodeView {
-        VerificationCodeView(
-            viewModel: VerificationCodeViewModel(
-                email: email,
-                password: password,
-                loginViaEmailUseCase: self,
-                router: rootViewModel,
-                code: code
-            )
+        let viewModel = VerificationCodeViewModel(
+            email: email,
+            password: password,
+            loginViaEmailUseCase: self,
+            router: rootViewModel,
+            numberOfDigits: code.count
         )
+        viewModel.code = code
+
+        return VerificationCodeView(viewModel: viewModel)
     }
 
     func verificationCodeView(

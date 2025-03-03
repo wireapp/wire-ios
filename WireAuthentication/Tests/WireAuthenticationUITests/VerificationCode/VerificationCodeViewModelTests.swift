@@ -41,7 +41,7 @@ final class VerificationCodeViewModelTests {
             password: "aaaaaa",
             loginViaEmailUseCase: loginViaEmailUseCase,
             router: router,
-            code: ["", "", ""] // Lets use a 3 digit code for simplicity
+            numberOfDigits: 3 // Lets use a 3 digit code for simplicity
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
