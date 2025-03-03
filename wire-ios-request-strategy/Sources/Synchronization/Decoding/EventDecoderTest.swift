@@ -51,9 +51,13 @@ class EventDecoderTest: MessagingTestBase {
             selfConversation.remoteIdentifier = self.accountIdentifier
             selfConversation.conversationType = .self
         }
+        self.disableZMLogError(true)
+      
     }
 
     override func tearDown() {
+        // log ZMUpdateEvents will produce errors (SafeTypes)
+        self.disableZMLogError(false)
         EventDecoder.testingBatchSize = nil
         sut = nil
         super.tearDown()
@@ -475,12 +479,12 @@ extension EventDecoderTest {
         proteusViaCoreCrypto.isOn = false
     }
 
-    func test_ProteusEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
+    func test_ProteusEventDecryptionDoesStoreLastEventIdIfFails() async throws {
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         defer {
             DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
         }
-
+       
         let mockProteusService = MockProteusServiceInterface()
         enum FakeError: Error {
             case decryptionError
@@ -506,7 +510,7 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
-        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
+        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 1)
     }
 
     func test_MLSEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
@@ -675,11 +679,6 @@ extension EventDecoderTest {
 extension EventDecoderTest {
     func test_DecryptMLSMessage_ReturnsDecryptedEvent() async throws {
         // Given
-        self.disableZMLogError(true)
-        defer {
-            // log ZMUpdateEvents will produce errors (SafeTypes)
-            self.disableZMLogError(false)
-        }
         let messageData = Data.random()
         let senderClientID = "clientID"
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
@@ -740,11 +739,6 @@ extension EventDecoderTest {
 
     func test_DecryptMLSMessage_CommitsPendingsProposals_WhenReceivingProposalOnWebsocket() async throws {
         // Given
-        self.disableZMLogError(true)
-        defer {
-            // log ZMUpdateEvents will produce errors (SafeTypes)
-            self.disableZMLogError(false)
-        }
         let commitDelay: UInt64 = 5
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
@@ -768,11 +762,6 @@ extension EventDecoderTest {
 
     func test_DecryptMLSMessage_CommitsPendingsProposalsIsNotCalled_WhenReceivingProposalViaDownload() async throws {
         // Given
-        self.disableZMLogError(true)
-        defer {
-            // log ZMUpdateEvents will produce errors (SafeTypes)
-            self.disableZMLogError(false)
-        }
         let commitDelay: UInt64 = 5
         let mlsGroupID = MLSGroupID.random()
         let event = await syncMOC.perform { [self] in
@@ -812,11 +801,6 @@ extension EventDecoderTest {
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenGroupIDIsMissing() async throws {
         // Given
-        self.disableZMLogError(true)
-        defer {
-            // log ZMUpdateEvents will produce errors (SafeTypes)
-            self.disableZMLogError(false)
-        }
         let event = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
                 data: Data.random().base64EncodedString(),
@@ -835,11 +819,6 @@ extension EventDecoderTest {
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenDecryptedDataIsNil() async throws {
         // Given
-        self.disableZMLogError(true)
-        defer {
-            // log ZMUpdateEvents will produce errors (SafeTypes)
-            self.disableZMLogError(false)
-        }
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
             []
         }
