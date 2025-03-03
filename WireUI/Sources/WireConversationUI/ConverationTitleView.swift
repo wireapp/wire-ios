@@ -31,7 +31,7 @@ public class ConversationTitleView: UIView {
     private let subtitleLabel = UILabel()
     private let dropdownImage = UIImageView(image: .dropdown)
 
-    init(source: ConversationTitleSource) {
+    public init(source: ConversationTitleSource) {
         self.source = source
         super.init(frame: CGRect.zero)
         configureViews()
@@ -44,7 +44,6 @@ public class ConversationTitleView: UIView {
     }
 
     private func configureViews() {
-
         nameLabel.font = FontSpec.normalSemiboldFont.font
         nameLabel.textColor = SemanticColors.Label.textDefault
         nameLabel.text = source.title
@@ -54,9 +53,11 @@ public class ConversationTitleView: UIView {
         subtitleLabel.text = source.subtitle
 
         accountImageView.availability = nil
-        accountImageView.source = source.accountImageSource
+        if let imageSource = source.accountImageSource {
+            updateAvatar(source: imageSource, animated: false)
+        }
         accountImageView.hideProfileNotificationsBadge = true
-
+        accountImageView.isHidden = source.accountImageSource == nil
     }
 
     private func configureLayout() {
@@ -81,6 +82,38 @@ public class ConversationTitleView: UIView {
 
         accountImageView.constraintToSquare(sideLength: 32)
         dropdownImage.constraintToSquare(sideLength: 16)
+    }
+    
+    public func updateSource(_ source: ConversationTitleSource) {
+        if let imageSource = source.accountImageSource {
+            updateAvatar(source: imageSource, animated: true)
+        }
+        accountImageView.isHidden = source.accountImageSource == nil
+        nameLabel.text = source.title
+        subtitleLabel.text = source.subtitle
+    }
+    
+    private func updateAvatar(source: AccountImageSource, animated: Bool) {
+        let updateBlock = {
+            self.accountImageView.source = source
+        }
+        
+        let animated = true
+
+        if animated
+//            ,
+//           !ProcessInfo.processInfo.isRunningTests
+        {
+            UIView.transition(
+                with: self,
+                duration: 0.15,
+                options: .transitionCrossDissolve,
+                animations: updateBlock,
+                completion: nil
+            )
+        } else {
+            updateBlock()
+        }
     }
 }
 

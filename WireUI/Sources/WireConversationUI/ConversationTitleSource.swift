@@ -19,7 +19,17 @@
 import WireAccountImageUI
 
 public struct ConversationTitleSource {
-    let accountImageSource: AccountImageSource
+    let accountImageSource: AccountImageSource?
     let title: String
     let subtitle: String?
+    
+    public init(
+        accountImageSource: AccountImageSource?,
+        title: String,
+        subtitle: String?
+    ) {
+        self.accountImageSource = accountImageSource
+        self.title = title
+        self.subtitle = subtitle
+    }
 }
