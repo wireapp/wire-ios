@@ -22,7 +22,7 @@ import WireDataModel
 // MARK: - Reaction
 
 struct MessageReactionMetadata: Equatable {
-    let emoji: Emoji.ID
+    let emojiID: Emoji.ID
     let count: UInt
     let isSelfUserReacting: Bool
 }
@@ -35,6 +35,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     var isSelected = false
     var message: ZMConversationMessage?
+    private var reactions = [MessageReactionMetadata]()
 
     weak var delegate: ConversationMessageCellDelegate?
 
@@ -46,18 +47,32 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     )
 
     private lazy var collectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
-        // collectionView.backgroundColor = .white
-        collectionView.dataSource = self
+        let collectionView = SelfSizingCollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+        collectionView.backgroundColor = .clear
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         return collectionView
     }()
 
-    private lazy var dataSource = UICollectionViewDiffableDataSource(
+    private enum SectionID: Hashable {
+        case single
+    }
+    private lazy var dataSource = UICollectionViewDiffableDataSource<SectionID, Emoji.ID>(
         collectionView: collectionView
-    ) { collectionView, indexPath, itemID in
-        fatalError()
+    ) { [weak self] collectionView, indexPath, emojiID in
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        if let reaction = self?.reactions.first(where: { $0.emojiID == emojiID }) {
+            var reactionToggle: ReactionToggle! = cell.contentView.subviews.compactMap { $0 as? ReactionToggle }.first
+            if reactionToggle == nil {
+                reactionToggle = ReactionToggle(reaction: reaction) { [weak self] in
+                    guard let self, let message else { return }
+                    delegate?.perform(action: .react(reaction.emojiID), for: message, view: self)
+                }
+                cell.contentView.addSubview(reactionToggle)
+                reactionToggle.fitIn(view: cell.contentView)
+            }
+        }
+        return cell
     }
 
     private lazy var collectionViewLayout = {
@@ -77,45 +92,27 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
     }
 
     // MARK: - configure Views and constraints
 
     private func configureSubviews() {
+        collectionView.dataSource = dataSource
         addSubview(collectionView)
         collectionView.fitIn(view: self, insets: insets)
     }
 
     // MARK: - configure method
 
-    func configure(
-        with reactions: [MessageReactionMetadata],
-        animated: Bool
-    ) {
-        let reactionToggles = reactions.map { reaction in
-            ReactionToggle(
-                emoji: reaction.emoji,
-                count: reaction.count,
-                isToggled: reaction.isSelfUserReacting
-            ) { [weak self] in
-                guard
-                    let self,
-                    let message
-                else {
-                    return
-                }
+    func configure(with reactions: [MessageReactionMetadata], animated: Bool) {
+        self.reactions = reactions
 
-                delegate?.perform(
-                    action: .react(reaction.emoji),
-                    for: message,
-                    view: self
-                )
-            }
-        }
-
-        //reactionsView.configure(views: reactionToggles)
+        var snapshot = NSDiffableDataSourceSnapshot<SectionID, Emoji.ID>()
+        snapshot.appendSections([.single])
+        snapshot.appendItems(reactions.map(\.emojiID))
+        dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
 
@@ -148,4 +145,31 @@ private final class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLay
         }
         return attributesCopy
     }
+}
+
+private final class SelfSizingCollectionView: UICollectionView {
+
+    override var contentSize: CGSize {
+        didSet { invalidateIntrinsicContentSize() }
+    }
+
+    override var intrinsicContentSize: CGSize {
+        collectionViewLayout.collectionViewContentSize
+    }
+
+}
+
+// MARK: - Helpers
+
+private extension ReactionToggle {
+
+    convenience init(reaction: MessageReactionMetadata, onToggle: @escaping () -> Void) {
+        self.init(
+            emoji: reaction.emojiID,
+            count: reaction.count,
+            isToggled: reaction.isSelfUserReacting,
+            onToggle: onToggle
+        )
+    }
+
 }

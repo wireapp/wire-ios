@@ -30,20 +30,14 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     init(message: ZMConversationMessage) {
         self.message = message
-
-        let reactions: [MessageReactionMetadata] = message.reactionsSortedByCreationDate().compactMap { reaction in
-            guard !reaction.users.isEmpty else {
-                return nil
-            }
-
+        configuration = message.reactionsSortedByCreationDate().compactMap { reaction in
+            guard !reaction.users.isEmpty else { return nil }
             return MessageReactionMetadata(
-                emoji: reaction.reactionString,
+                emojiID: reaction.reactionString,
                 count: UInt(reaction.users.count),
                 isSelfUserReacting: reaction.users.contains(where: \.isSelfUser)
             )
         }
-
-        self.configuration = reactions
     }
 
     var topMargin: CGFloat = 0

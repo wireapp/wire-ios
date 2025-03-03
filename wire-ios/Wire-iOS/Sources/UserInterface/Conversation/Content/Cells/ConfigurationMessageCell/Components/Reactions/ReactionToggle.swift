@@ -38,7 +38,7 @@ final class ReactionToggle: UIControl {
         color: SemanticColors.Label.textDefault
     )
 
-    private var onToggle: (() -> Void)?
+    private var onToggle: () -> Void
 
     var isToggled: Bool {
         didSet {
@@ -53,7 +53,7 @@ final class ReactionToggle: UIControl {
         emoji: Emoji.ID,
         count: UInt,
         isToggled: Bool = false,
-        onToggle: (() -> Void)? = nil
+        onToggle: @escaping () -> Void
     ) {
         self.isToggled = isToggled
         self.onToggle = onToggle
@@ -121,7 +121,7 @@ final class ReactionToggle: UIControl {
 
     @objc
     private func didToggle() {
-        onToggle?()
+        onToggle()
     }
 
     // MARK: - Accessibility
