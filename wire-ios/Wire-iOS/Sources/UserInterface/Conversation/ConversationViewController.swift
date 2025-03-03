@@ -165,7 +165,7 @@ final class ConversationViewController: UIViewController {
             source: ConversationTitleSource(
                 accountImageSource: nil,
                 title: conversation.displayNameWithFallback,
-                subtitle: getConversationSubtitle()),
+                subtitle: Self.getConversationSubtitle(conversation)),
             canAnimate: !ProcessInfo.processInfo.isRunningTests
         )
 
@@ -422,14 +422,14 @@ final class ConversationViewController: UIViewController {
                     .updateSource(ConversationTitleSource(
                         accountImageSource: source,
                         title: conversation.displayNameWithFallback,
-                        subtitle: getConversationSubtitle()))
+                        subtitle: Self.getConversationSubtitle(conversation)))
             }
         } else {
             // no need Image avatar for group chat
             titleView.updateSource(ConversationTitleSource(
                     accountImageSource: nil,
                     title: conversation.displayNameWithFallback,
-                    subtitle: getConversationSubtitle()))
+                    subtitle: Self.getConversationSubtitle(conversation)))
         }
         
 
@@ -439,7 +439,7 @@ final class ConversationViewController: UIViewController {
         updateRightNavigationItemsButtons()
     }
     
-    private func getConversationSubtitle() -> String? {
+    static func getConversationSubtitle(_ conversation: ZMConversation) -> String? {
         guard let user = conversation.firstActiveParticipantOtherThanSelf else {
             return nil
         }
