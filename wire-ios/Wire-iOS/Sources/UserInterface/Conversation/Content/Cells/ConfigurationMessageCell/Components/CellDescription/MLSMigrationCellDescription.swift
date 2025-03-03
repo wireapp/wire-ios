@@ -16,6 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: fix
+/*
+ reactions wrong layout
+ reactions tap
+ messages with links right after being sent
+ timer
+ */
+
+
+
 import UIKit
 import WireDataModel
 import WireDesign
