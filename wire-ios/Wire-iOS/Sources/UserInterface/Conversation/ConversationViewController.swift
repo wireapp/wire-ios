@@ -421,14 +421,14 @@ final class ConversationViewController: UIViewController {
                     .updateSource(ConversationTitleSource(
                         accountImageSource: source,
                         title: conversation.displayNameWithFallback,
-                        subtitle: "Federated"))
+                        subtitle: getConversationSubtitle()))
             }
         } else {
             // no need Image avatar for group chat
             titleView.updateSource(ConversationTitleSource(
                     accountImageSource: nil,
                     title: conversation.displayNameWithFallback,
-                    subtitle: "Federated"))
+                    subtitle: getConversationSubtitle()))
         }
         
 
@@ -436,6 +436,21 @@ final class ConversationViewController: UIViewController {
         navigationItem.leftItemsSupplementBackButton = false
 
         updateRightNavigationItemsButtons()
+    }
+    
+    private func getConversationSubtitle() -> String? {
+        guard let user = conversation.firstActiveParticipantOtherThanSelf else {
+            return nil
+        }
+        if user.isExternalPartner {
+            return L10n.Localizable.Profile.Details.partner.uppercased()
+        } else if user.isFederated {
+            return L10n.Localizable.Profile.Details.federated.uppercased()
+        } else if !user.isTeamMember {
+            return L10n.Localizable.Profile.Details.guest.uppercased()
+        }
+        return nil
+
     }
 
     // MARK: Resolve 1-1 conversations
