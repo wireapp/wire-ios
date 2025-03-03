@@ -98,7 +98,15 @@ class LoginViaEmailViewModelTests: XCTestCase {
         // then
         XCTAssertNil(sut.alert)
         XCTAssertEqual(isLoadingCalls, [true, false])
-        // TODO: [WPB-16276] Assert it navigates to first time login screen
+        XCTAssertEqual(router.modalPresent_Invocations.count, 1)
+        XCTAssertEqual(
+            router.modalPresent_Invocations.first as? RootView.ModalDestination,
+            RootView.ModalDestination.noHistory(
+                userID: Scaffolding.someAccessToken.userID,
+                cookies: [Scaffolding.someCookie],
+                accessToken: Scaffolding.someAccessToken
+            )
+        )
     }
 
     @MainActor
