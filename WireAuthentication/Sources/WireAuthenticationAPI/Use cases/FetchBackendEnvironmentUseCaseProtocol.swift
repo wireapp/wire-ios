@@ -21,7 +21,7 @@ import Foundation
 public protocol FetchBackendEnvironmentUseCaseProtocol: Sendable {
 
     @MainActor
-    func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentResponse
+    func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentInfo
 
 }
 
@@ -33,19 +33,19 @@ public enum FetchBackendEnvironmentFailure: Error, Equatable {
 
 }
 
-public struct BackendEnvironmentResponse: Codable, Sendable, Hashable {
+public struct BackendEnvironmentInfo: Codable, Sendable, Hashable {
 
     public let title: String
-    public let endpoints: BackendEndpoints
+    public let endpoints: BackendURLs
 
-    public init(title: String, endpoints: BackendEndpoints) {
+    public init(title: String, endpoints: BackendURLs) {
         self.title = title
         self.endpoints = endpoints
     }
 
 }
 
-public struct BackendEndpoints: Codable, Sendable, Hashable {
+public struct BackendURLs: Codable, Sendable, Hashable {
 
     public let backendURL: URL
     public let backendWSURL: URL

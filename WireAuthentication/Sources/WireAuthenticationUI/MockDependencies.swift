@@ -82,6 +82,7 @@ extension MockDependencies: ValidateEmailOrSSOCodeUseCaseProtocol {
 }
 
 extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
+
     func invoke(
         emailOrSSOCode: String
     ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
@@ -89,13 +90,15 @@ extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
 
         return .loginViaEmail(email: emailOrSSOCode)
     }
+
 }
 
 extension MockDependencies: FetchBackendEnvironmentUseCaseProtocol {
-    func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentResponse {
-        BackendEnvironmentResponse(
+
+    func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentInfo {
+        BackendEnvironmentInfo(
             title: "backend name",
-            endpoints: BackendEndpoints(
+            endpoints: BackendURLs(
                 backendURL: URL(string: "example")!,
                 backendWSURL: URL(string: "example")!,
                 blackListURL: URL(string: "example")!,
@@ -105,6 +108,7 @@ extension MockDependencies: FetchBackendEnvironmentUseCaseProtocol {
             )
         )
     }
+
 }
 
 extension MockDependencies: LoginViaEmailUseCaseProtocol {
@@ -140,22 +144,35 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 }
 
+extension MockDependencies: FetchDefaultSSOSettingsUseCaseProtocol {
+
+    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
+        nil
+    }
+    
+}
+
 extension MockDependencies: SwitchBackendConfirmationBuilder {
 
     private var switchBackendConfirmationViewModel: SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
-            backendName: "backendName",
-            backendURL: "backendURL",
-            backendWSURL: "backendWSURL",
-            blacklistURL: "blacklistURL",
-            teamsURL: "teamsURL",
-            accountsURL: "accountsURL",
-            websiteURL: "websiteURL",
-            action: { _ in }
+            router: rootViewModel,
+            fetchDefaultSSOSettings: self,
+            environment: BackendEnvironmentInfo(
+                title:  "backendName",
+                endpoints: BackendURLs(
+                    backendURL: URL(string: "backendURL")!,
+                    backendWSURL: URL(string: "backendWSURL")!,
+                    blackListURL: URL(string: "blacklistURL")!,
+                    teamsURL: URL(string: "teamsURL")!,
+                    accountsURL: URL(string: "accountsURL")!,
+                    websiteURL: URL(string: "websiteURL")!
+                )
+            )
         )
     }
 
-    func switchBackendView(environment: BackendEnvironmentResponse) -> SwitchBackendConfirmationView {
+    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(viewModel: switchBackendConfirmationViewModel)
     }
 

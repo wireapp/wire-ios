@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
+@MainActor
 public class SwitchBackendConfirmationViewModel {
 
     private typealias Strings = L10n.SwitchBackendConfirmation
@@ -25,60 +27,55 @@ public class SwitchBackendConfirmationViewModel {
     // MARK: - State
 
     let items: [ItemUIModel]
+    @Published private(set) var isLoading = false
 
-    private let action: (Event) -> Void
+    private let router: any Router
+    private let fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol
 
     // MARK: - Life cycle
 
-    convenience init(
-        environment: BackendEnvironmentInfo,
-        action: @escaping (Event) -> Void
-    ) {
-        self.init(
-            backendName: environment.title,
-            backendURL: environment.backendURL.absoluteString,
-            backendWSURL: environment.backendWSURL.absoluteString,
-            blacklistURL: environment.blacklistURL.absoluteString,
-            teamsURL: environment.teamsURL.absoluteString,
-            accountsURL: environment.accountsURL.absoluteString,
-            websiteURL: environment.websiteURL.absoluteString,
-            action: action
-        )
-    }
-
     public init(
-        backendName: String,
-        backendURL: String,
-        backendWSURL: String,
-        blacklistURL: String,
-        teamsURL: String,
-        accountsURL: String,
-        websiteURL: String,
-        action: @escaping (Event) -> Void
+        router: any Router,
+        fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol,
+        environment: BackendEnvironmentInfo
     ) {
-        self.action = action
+        self.router = router
+        self.fetchDefaultSSOSettings = fetchDefaultSSOSettings
         self.items = [
-            ItemUIModel(title: Strings.backendName, value: backendName, isURL: false),
-            ItemUIModel(title: Strings.backendUrl, value: backendURL, isURL: true),
-            ItemUIModel(title: Strings.backendWsurl, value: backendWSURL, isURL: true),
-            ItemUIModel(title: Strings.blacklistUrl, value: blacklistURL, isURL: true),
-            ItemUIModel(title: Strings.teamsUrl, value: teamsURL, isURL: true),
-            ItemUIModel(title: Strings.accountsUrl, value: accountsURL, isURL: true),
-            ItemUIModel(title: Strings.websiteUrl, value: websiteURL, isURL: true)
+            ItemUIModel(title: Strings.backendName, value: environment.title, isURL: false),
+            ItemUIModel(title: Strings.backendUrl, value: environment.endpoints.backendURL.absoluteString, isURL: true),
+            ItemUIModel(title: Strings.backendWsurl, value: environment.endpoints.backendWSURL.absoluteString, isURL: true),
+            ItemUIModel(title: Strings.blacklistUrl, value: environment.endpoints.blackListURL.absoluteString, isURL: true),
+            ItemUIModel(title: Strings.teamsUrl, value: environment.endpoints.teamsURL.absoluteString, isURL: true),
+            ItemUIModel(title: Strings.accountsUrl, value: environment.endpoints.accountsURL.absoluteString, isURL: true),
+            ItemUIModel(title: Strings.websiteUrl, value: environment.endpoints.websiteURL.absoluteString, isURL: true)
         ]
     }
 
     // MARK: - Events
 
-    public enum Event {
+    func confirm() async {
+        isLoading = true
 
-        case didCancel
-        case didConfirm
-
+        let fetchDefaultSSOTask = Task.detached { [fetchDefaultSSOSettings] in
+            try await fetchDefaultSSOSettings.invoke()
+        }
+        do {
+            if let ssoCode = try await fetchDefaultSSOTask.value {
+                // show SSO
+                //router.presentSheet()
+            } else {
+                // show login
+                //router.presentSheet()
+            }
+        } catch {
+            //alert = .unknownError
+        }
+        isLoading = false
     }
 
-    func handleEvent(_ event: Event) {
-        action(event)
+    func cancel() {
+        //
     }
 
     // MARK: - Model

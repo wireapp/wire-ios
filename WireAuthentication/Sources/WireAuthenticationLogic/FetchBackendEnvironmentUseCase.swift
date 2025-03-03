@@ -25,7 +25,7 @@ public struct FetchBackendEnvironmentUseCase: FetchBackendEnvironmentUseCaseProt
 
     public init() {}
 
-    public func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentResponse {
+    public func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentInfo {
         do {
             return try await fetchEnvironment(url: configURL)
         } catch let error as FetchBackendEnvironmentFailure {
@@ -35,14 +35,14 @@ public struct FetchBackendEnvironmentUseCase: FetchBackendEnvironmentUseCaseProt
         }
     }
 
-    private func fetchEnvironment(url: URL) async throws -> BackendEnvironmentResponse {
+    private func fetchEnvironment(url: URL) async throws -> BackendEnvironmentInfo {
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
 
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-            let environmentResponse = try decoder.decode(BackendEnvironmentResponse.self, from: data)
+            let environmentResponse = try decoder.decode(BackendEnvironmentInfo.self, from: data)
             WireLogger.backend.info("Fetched custom configuration from \(url)")
 
             return environmentResponse

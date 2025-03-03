@@ -120,6 +120,26 @@ package struct DetermineAuthMethodView: View {
                 factory.switchBackendView(environment: environment)
             }
         })
+//        .fullScreenCover(item: $viewModel.modalDestination) { destination in
+//            switch destination {
+//            case let .ssoLogin(url: ssoURL):
+//                factory.loginViaSSOView(ssoURL: ssoURL)
+//
+//            case let .switchBackend(email: email, environment: environment):
+////                factory.switchBackendView(environment: environment).background(.ultraThinMaterial)
+////                    //.background(ClearBackgroundView())
+//                SwitchBackendConfirmationModal(viewModel: SwitchBackendConfirmationViewModel(
+//                    backendName: "backendName",
+//                    backendURL: "backendURL",
+//                    backendWSURL: "backendWSURL",
+//                    blacklistURL: "blacklistURL",
+//                    teamsURL: "teamsURL",
+//                    accountsURL: "accountsURL",
+//                    websiteURL: "websiteURL",
+//                    action: { _ in })
+//                ).background(.ultraThinMaterial)
+//            }
+//        }
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)

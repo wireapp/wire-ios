@@ -18,14 +18,15 @@
 
 import Foundation
 
-struct BackendEnvironmentInfo: Sendable {
+public protocol FetchDefaultSSOSettingsUseCaseProtocol: Sendable {
 
-    let title: String
-    let backendURL: URL
-    let backendWSURL: URL
-    let blacklistURL: URL
-    let teamsURL: URL
-    let accountsURL: URL
-    let websiteURL: URL
+    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID?
+
+}
+
+public enum FetchDefaultSSOSettingsUseCaseFailure: Error {
+
+    case networkFailure
+    case unknown
 
 }

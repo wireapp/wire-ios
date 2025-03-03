@@ -23,7 +23,7 @@ import WireDesign
 package protocol SwitchBackendConfirmationBuilder {
 
     @MainActor
-    func switchBackendView(environment: BackendEnvironmentResponse) -> SwitchBackendConfirmationView
+    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView
 
 }
 
@@ -162,7 +162,7 @@ package struct SwitchBackendConfirmationView: View {
 
     private var cancelButton: some View {
         Button {
-            viewModel.handleEvent(.didCancel)
+            viewModel.cancel()
             dismiss()
         } label: {
             Text(Strings.cancel)
@@ -173,7 +173,7 @@ package struct SwitchBackendConfirmationView: View {
 
     private var proceedButton: some View {
         Button {
-            viewModel.handleEvent(.didConfirm)
+            Task { await viewModel.confirm() }
             dismiss()
         } label: {
             Text(Strings.proceed)
@@ -186,27 +186,149 @@ package struct SwitchBackendConfirmationView: View {
 
 // MARK: - Previews
 
-#Preview("Regular fonts") {
+#Preview() {
     BackgroundView()
-        .overlay(
-            ZStack {
-                SwitchBackendConfirmationPreview()
-                    .padding()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        )
+        .sheet(isPresented: .constant(true)) {
+            MockDependencies().switchBackendView(environment:  BackendEnvironmentInfo(
+                title:  "backendName",
+                endpoints: BackendURLs(
+                    backendURL: URL(string: "backendURL")!,
+                    backendWSURL: URL(string: "backendWSURL")!,
+                    blackListURL: URL(string: "blacklistURL")!,
+                    teamsURL: URL(string: "teamsURL")!,
+                    accountsURL: URL(string: "accountsURL")!,
+                    websiteURL: URL(string: "websiteURL")!
+                )
+            ))
+        }
 }
 
-#Preview("Large fonts") {
-    VStack {
-        BackgroundView()
-            .overlay(
-                ZStack {
-                    SwitchBackendConfirmationPreview()
-                        .padding()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            )
-    }
-    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
-}
+
+
+//package struct SwitchBackendConfirmationView11: View {
+//
+//    private let viewModel: SwitchBackendConfirmationViewModel
+//
+//    package init(
+//        viewModel: SwitchBackendConfirmationViewModel
+//    ) {
+//        self.viewModel = viewModel
+//    }
+//
+//    @Environment(\.dismiss) private var dismiss
+//
+//    package var body: some View {
+//        ZStack {
+//            // Transparent background
+//            Color.clear
+//                .edgesIgnoringSafeArea(.all)
+//                .onTapGesture { dismiss() } // Dismiss when tapping outside
+//
+//            VStack(spacing: 16) {
+//                Text("Redirect to an on-premises backend?")
+//                    .font(.title3)
+//                    .bold()
+//
+//                Text("If you proceed, you will be redirected to the following on-premises backend to log in:")
+//                    .multilineTextAlignment(.center)
+//                    .foregroundColor(.secondary)
+//
+//                VStack(alignment: .leading, spacing: 8) {
+//                    Text("**Backend name:** \("backendName")")
+//                    Text("**Backend URL:** 11111111")
+//                }
+//                .frame(maxWidth: .infinity, alignment: .leading)
+//
+//                Button("Show details") {
+//                    // Implement details view if necessary
+//                }
+//                .foregroundColor(.blue)
+//
+//                HStack {
+//                    Button("Cancel") {
+//                        dismiss()
+//                    }
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color(.systemGray5))
+//                    .cornerRadius(8)
+//
+//                    Button("Proceed") {
+//                        dismiss()
+//                        // Handle backend switch logic here
+//                    }
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                    .background(Color.blue)
+//                    .foregroundColor(.white)
+//                    .cornerRadius(8)
+//                }
+//            }
+//            .padding()
+//            .frame(width: 350)
+//            .background(Color.white) // Alert content
+//            .cornerRadius(16)
+//            .shadow(radius: 10)
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 16)
+//                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+//            )
+//        }
+//        .background(ClearBackgroundView()) // Fixes SwiftUI's white background issue
+//    }
+//}
+//
+//struct ClearBackgroundView1: UIViewControllerRepresentable {
+//    func makeUIViewController(context: Context) -> UIViewController {
+//        let controller = UIViewController()
+//        controller.view.backgroundColor = .clear // Fully transparent
+//        return controller
+//    }
+//
+//    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+//}
+//struct ClearBackgroundView: UIViewRepresentable {
+//    func makeUIView(context: Context) -> UIView {
+//        return InnerView()
+//    }
+//
+//    func updateUIView(_ uiView: UIView, context: Context) {
+//    }
+//
+//    private class InnerView: UIView {
+//        override func didMoveToWindow() {
+//            super.didMoveToWindow()
+//
+//            superview?.superview?.backgroundColor = .clear
+//        }
+//
+//    }
+//}
+
+
+
+
+//struct SwitchBackendConfirmationModal: View {
+//    let viewModel: SwitchBackendConfirmationViewModel
+//    //@Binding var isPresented: Bool
+//
+//    var body: some View {
+//        ZStack {
+//            // Dimmed background
+//            Color.black.opacity(0.4)
+//                .edgesIgnoringSafeArea(.all)
+//                .onTapGesture {
+//                    //isPresented = false
+//                }
+//
+//            // Centered Modal
+//            VStack {
+//                SwitchBackendConfirmationView(viewModel: viewModel)
+//                    .background(Color.white)
+//                    .cornerRadius(16)
+//                    .shadow(radius: 10)
+//            }
+//            .padding()
+//        }
+//    }
+//}

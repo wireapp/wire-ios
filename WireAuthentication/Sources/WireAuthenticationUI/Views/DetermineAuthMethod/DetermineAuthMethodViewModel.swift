@@ -39,7 +39,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL)
-        case switchBackend(email: String, environment: BackendEnvironmentResponse)
+        case switchBackend(email: String, environment: BackendEnvironmentInfo)
     }
 
     private let router: any Router
@@ -151,7 +151,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 do {
                     let environmentInfo = try await self.fetchBackendEnvironment.invoke(at: backendConfig)
                     await MainActor.run {
-                        print(environmentInfo)
                         self.modalDestination = .switchBackend(email: email, environment: environmentInfo)
                     }
                 } catch {
