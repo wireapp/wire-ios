@@ -38,14 +38,36 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
 
-    private let collectionView = UICollectionView()
-
     private lazy var insets = UIEdgeInsets(
         top: 8,
         left: conversationHorizontalMargins.left,
         bottom: 0,
         right: conversationHorizontalMargins.right
     )
+
+    private lazy var collectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+        // collectionView.backgroundColor = .white
+        collectionView.dataSource = self
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        return collectionView
+    }()
+
+    private lazy var dataSource = UICollectionViewDiffableDataSource(
+        collectionView: collectionView
+    ) { collectionView, indexPath, itemID in
+        fatalError()
+    }
+
+    private lazy var collectionViewLayout = {
+        let layout = LeftAlignedCollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 8
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        return layout
+    }()
 
     // MARK: - Life cycle
 
@@ -94,5 +116,36 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         }
 
         //reactionsView.configure(views: reactionToggles)
+    }
+}
+
+// MARK: -
+
+private final class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLayout {
+
+    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        // Get the default attributes from the superclass
+        guard let attributes = super.layoutAttributesForElements(in: rect) else { return nil }
+        // Create a copy to avoid modifying read-only attributes
+        let attributesCopy = attributes.map { $0.copy() as! UICollectionViewLayoutAttributes }
+
+        var leftMargin = sectionInset.left
+        var maxY: CGFloat = -1.0
+
+        for attribute in attributesCopy {
+            if attribute.representedElementCategory == .cell {
+                // If this cell is on a new line, reset the left margin
+                if attribute.frame.origin.y >= maxY {
+                    leftMargin = sectionInset.left
+                }
+                // Set the x position of the cell to the left margin
+                attribute.frame.origin.x = leftMargin
+                // Update the left margin for the next cell
+                leftMargin += attribute.frame.width + minimumInteritemSpacing
+                // Update the maximum y value for this row
+                maxY = max(attribute.frame.maxY, maxY)
+            }
+        }
+        return attributesCopy
     }
 }
