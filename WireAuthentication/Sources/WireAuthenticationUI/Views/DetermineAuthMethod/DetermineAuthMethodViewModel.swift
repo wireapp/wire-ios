@@ -32,6 +32,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case unknownError
         case onPremLoginNotPossible(recovery: AuthenticationMethod)
         case invalidSSOLink
+        case cloudAccountAlreadyRegistered
 
     }
 
@@ -89,6 +90,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 alert = .onPremLoginNotPossible(recovery: recovery)
             case .invalidResponse:
                 alert = .invalidResponse
+            case .cloudAccountAlreadyRegistered:
+                alert = .cloudAccountAlreadyRegistered
             case let .urlError(urlError):
                 switch urlError.code {
                 case .notConnectedToInternet, .networkConnectionLost:

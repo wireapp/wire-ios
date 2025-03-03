@@ -58,6 +58,10 @@ public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
 
     case invalidResponse
 
+    ///
+
+    case cloudAccountAlreadyRegistered
+
     case urlError(URLError)
 
     case unknown

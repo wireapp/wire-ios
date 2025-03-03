@@ -98,10 +98,15 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             return .loginViaSSO(code: ssoCode)
 
         case .backend:
-            guard let backendURL = configuration.backendURL else {
-                throw DetermineAuthMethodUseCaseFailure.invalidResponse
+            if let isCloudAccountAlreadyRegistered = configuration.isCloudAccountAlreadyRegistered,
+                isCloudAccountAlreadyRegistered {
+                throw DetermineAuthMethodUseCaseFailure.cloudAccountAlreadyRegistered
+            } else {
+                guard let backendURL = configuration.backendURL else {
+                    throw DetermineAuthMethodUseCaseFailure.invalidResponse
+                }
+                return .onPremLogin(email: email, backendConfig: backendURL)
             }
-            return .onPremLogin(email: email, backendConfig: backendURL)
         }
     }
 

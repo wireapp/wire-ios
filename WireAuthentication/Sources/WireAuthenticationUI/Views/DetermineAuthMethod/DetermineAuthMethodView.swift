@@ -144,6 +144,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Title.onPremNotPossible)
         case .invalidSSOLink:
             Text(L10n.Authentication.Error.Title.invalidSsoLink)
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
         }
     }
 
@@ -159,6 +161,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
         case .invalidSSOLink:
             Text(L10n.Authentication.Error.Message.invalidSsoLink)
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
         }
     }
 
