@@ -19,7 +19,7 @@
 import Foundation
 import WireAPI
 
-struct FederationEventProcessor {
+struct FederationEventProcessor: FederationEventProcessorProtocol {
 
     let connectionRemovedEventProcessor: any FederationConnectionRemovedEventProcessorProtocol
     let deleteEventProcessor: any FederationDeleteEventProcessorProtocol
