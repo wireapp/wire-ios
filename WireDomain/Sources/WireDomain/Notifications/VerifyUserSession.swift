@@ -17,20 +17,20 @@
 //
 
 import WireAPI
-import WireDataModel
-import WireLogging
-import WireFoundation
 import WireCrypto
+import WireDataModel
+import WireFoundation
+import WireLogging
 
 /// Observes pending events, process them and generates new notifications content.
 struct VerifyUserSession {
-    
+
     enum Constants {
         static let cookieName = "zuid"
     }
-    
+
     // MARK: - Error
-    
+
     enum Failure: Error {
         case userUnauthenticated
         case missingUserClient
@@ -39,11 +39,11 @@ struct VerifyUserSession {
     // MARK: - Properties
 
     typealias NotificationHandler = (UNMutableNotificationContent) -> Void
-    
+
     private let pullEventsServiceProvider: any PullEventsServiceProvider
     private let userLocalStore: any UserLocalStoreProtocol
     private let cookieStorage: any CookieStorageProtocol
-    
+
     init(
         pullEventsServiceProvider: any PullEventsServiceProvider,
         userLocalStore: any UserLocalStoreProtocol,
@@ -53,47 +53,47 @@ struct VerifyUserSession {
         self.userLocalStore = userLocalStore
         self.cookieStorage = cookieStorage
     }
-    
+
     /// Ensures user is properly authenticated.
     /// - parameters
     ///     - userID: The user ID to verify the authentication for.
     ///     - handler: Completion block called if the user is authenticated.
-    
+
     func verify(
         userID: UUID,
         then completion: () async throws -> Void
     ) async throws {
         let cookies = try await cookieStorage.fetchCookies()
         var hasExpirationDate = false
-        
+
         for cookie in cookies where cookie.name == Constants.cookieName {
             hasExpirationDate = cookie.expiresDate != nil
         }
-        
+
         guard hasExpirationDate else {
             throw Failure.userUnauthenticated
         }
-        
+
         try await completion()
     }
-    
+
     /// Start syncing events.
     /// - parameter eventID: The id to start fetching the events from remotely.
-    
+
     func startSyncingEvents(
         eventID: UUID
     ) async throws {
         let selfUserInfo = await userLocalStore.selfUserInfo()
-        
+
         guard let selfClientID = selfUserInfo.clientId else {
             throw Failure.missingUserClient
         }
-        
+
         let pullEventsService = await pullEventsServiceProvider.pullEventsService(
             selfUserID: selfUserInfo.id,
             selfClientID: selfClientID
         )
-        
+
         try await pullEventsService.startSync(
             newEventID: eventID
         )

@@ -17,15 +17,15 @@
 //
 
 import Foundation
-import WireDataModel
 import WireAPI
 import WireCrypto
+import WireDataModel
 import WireFoundation
 
 struct CoreStorageFactory {
-    
+
     private init() {}
-    
+
     static func makeCoreData(
         account: Account,
         applicationIdentifier: String
@@ -33,13 +33,13 @@ struct CoreStorageFactory {
         let applicationContainer = makeApplicationContainer(
             applicationIdentifier: applicationIdentifier
         )
-        
+
         return CoreDataStack(
             account: account,
             applicationContainer: applicationContainer
         )
     }
-    
+
     static func makeCookieStorage(userID: UUID) -> any CookieStorageProtocol {
         let cookiesEncryptionKey: Data = {
             let cookieKey = "ZMCookieKey"
@@ -57,18 +57,18 @@ struct CoreStorageFactory {
                 fatalError()
             }
         }()
-        
+
         return CookieStorage(
             userID: userID,
             cookieEncryptionKey: cookiesEncryptionKey,
             keychain: makeKeychain()
         )
     }
-    
+
     private static func makeApplicationContainer(applicationIdentifier: String) -> URL {
         FileManager.sharedContainerDirectory(for: applicationIdentifier)
     }
-    
+
     private static func makeKeychain() -> any KeychainProtocol {
         Keychain()
     }

@@ -43,7 +43,7 @@ final class RootComponent: BootstrapComponent {
 
         super.init()
     }
-    
+
     var verifyUserSession: VerifyUserSession {
         verifyComponent.verifyUserSession
     }

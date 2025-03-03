@@ -119,6 +119,6 @@ public protocol UserClientsLocalStoreProtocol {
         forUser user: ZMUser,
         createIfNeeded: Bool
     ) async -> WireDataModel.UserClient?
-    
+
     func fetchSelfClientID() async -> UUID
 }

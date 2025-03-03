@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireTesting
+import XCTest
 @testable import WireAPI
 @testable import WireDomain
 
@@ -48,7 +48,7 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
             case .accepted:
                 XCTAssertEqual(notification.body, "You and \(Scaffolding.username) are now connected")
                 XCTAssertEqual(notification.categoryIdentifier, NotificationCategory.nonActionable.rawValue)
-                
+
             default:
                 XCTFail()
             }
@@ -65,7 +65,7 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
             userName: Scaffolding.username,
             connection: acceptedConnection
         )
-        
+
         static let pendingConnection = Connection(
             senderID: .mockID1,
             receiverID: .mockID2,
@@ -75,7 +75,7 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
             lastUpdate: .distantPast,
             status: .pending
         )
-        
+
         static let acceptedConnection = Connection(
             senderID: .mockID1,
             receiverID: .mockID2,

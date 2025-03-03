@@ -400,7 +400,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             )
         }
     }
-    
+
     public func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol> {
         await context.perform { [context] in
             ZMUser.selfUser(in: context).supportedProtocols

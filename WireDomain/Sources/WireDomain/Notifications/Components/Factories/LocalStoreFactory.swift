@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import WireCrypto
-import WireAPI
 import Foundation
+import WireAPI
+import WireCrypto
 import WireDataModel
+import WireFoundation
 
 struct APIFactory {
-    
+
     private init() {}
-    
+
     static func updateEventsAPI(
         cookieStorage: any CookieStorageProtocol,
         selfClientID: String,
@@ -34,30 +34,30 @@ struct APIFactory {
         let userDefaults = makeUserDefaults(
             applicationIdentifier: applicationIdentifier
         )
-        
+
         let authenticationManager = await makeAuthenticationManager(
             cookieStorage: cookieStorage,
             userDefaults: userDefaults,
             selfClientID: selfClientID
         )
-        
+
         let networkService = await makeNetworkService(userDefaults: userDefaults)
-        
+
         let apiService = APIService(
             networkService: networkService,
             authenticationManager: authenticationManager
         )
-        
+
         let apiVersion = makeApiVersion(userDefaults: userDefaults)
 
         return UpdateEventsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
     }
-    
+
     private static func makeApiVersion(userDefaults: UserDefaults) -> WireAPI.APIVersion {
         let key = "SelectedAPIVersion"
-        
+
         guard userDefaults.object(forKey: key) != nil else {
             fatalError("API version not found")
         }
@@ -72,7 +72,7 @@ struct APIFactory {
 
         return apiVersion
     }
-    
+
     private static func makeAuthenticationManager(
         cookieStorage: any CookieStorageProtocol,
         userDefaults: UserDefaults,
@@ -84,10 +84,10 @@ struct APIFactory {
             networkService: makeNetworkService(userDefaults: userDefaults)
         )
     }
-    
+
     private static func makeLegacyBackendEnvironment(userDefaults: UserDefaults) -> WireDataModel.BackendEnvironment {
         let backendEnvironmentTypeOverride = userDefaults.string(forKey: "BackendEnvironmentTypeOverrideKey")
-        
+
         guard let backendEnvironmentTypeOverride else {
             fatalError()
         }
@@ -106,17 +106,17 @@ struct APIFactory {
 
         return backendEnvironment
     }
-    
+
     private static func makeUserDefaults(applicationIdentifier: String) -> UserDefaults {
         let userDefaults = UserDefaults.standard
         userDefaults.addSuite(named: applicationIdentifier)
         return userDefaults
     }
-    
+
     private static func makeBackendEnvironment(userDefaults: UserDefaults) async -> WireAPI.BackendEnvironment {
         let legacyBackendEnvironment = makeLegacyBackendEnvironment(userDefaults: userDefaults)
         let proxySettings = await makeProxySettings(userDefaults: userDefaults)
-        
+
         return BackendEnvironment(
             url: legacyBackendEnvironment.backendURL,
             webSocketURL: legacyBackendEnvironment.backendWSURL,
@@ -126,9 +126,9 @@ struct APIFactory {
                     hosts: trustData.hosts.map { host in
                         switch host.rule {
                         case .equals:
-                                .equals(host.value)
+                            .equals(host.value)
                         case .endsWith:
-                                .endsWith(host.value)
+                            .endsWith(host.value)
                         }
                     }
                 )
@@ -136,15 +136,15 @@ struct APIFactory {
             proxySettings: proxySettings
         )
     }
-    
+
     private static func makeProxySettings(userDefaults: UserDefaults) async -> ProxySettings? {
         let legacyBackendEnvironment = makeLegacyBackendEnvironment(userDefaults: userDefaults)
         guard let proxy = legacyBackendEnvironment.proxy else { return nil }
-        
+
         let keychain = WireFoundation.Keychain()
         let usernameItemID = "proxy-\(proxy.host):\(proxy.port)-username"
         let passwordItemID = "proxy-\(proxy.host):\(proxy.port)-password"
-        
+
         let proxyUsername: String? = try? await keychain.fetchItem(
             query: [
                 .itemClass(.genericPassword),
@@ -152,7 +152,7 @@ struct APIFactory {
                 .returningData(true)
             ]
         )
-        
+
         let proxyPassword: String? = try? await keychain.fetchItem(
             query: [
                 .itemClass(.genericPassword),
@@ -160,16 +160,16 @@ struct APIFactory {
                 .returningData(true)
             ]
         )
-        
+
         if proxy.needsAuthentication {
             guard let proxyUsername, let proxyPassword else {
                 fatalInternal(
                     "Proxy needs authentication but credentials are missing"
                 )
-                
+
                 return nil
             }
-            
+
             return .authenticated(
                 host: proxy.host,
                 port: proxy.port,
@@ -183,39 +183,39 @@ struct APIFactory {
             )
         }
     }
-    
+
     private static func makeNetworkService(
         userDefaults: UserDefaults
     ) async -> NetworkService {
         let backendEnvironment = await makeBackendEnvironment(userDefaults: userDefaults)
-        
+
         let service = NetworkService(
             baseURL: backendEnvironment.url,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: backendEnvironment.pinnedKeys
             )
         )
-        
+
         let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
         let config = await URLSessionConfigurationFactory(
             minTLSVersion: minTLSVersion,
             proxySettings: makeProxySettings(userDefaults: userDefaults)
         )
-        
+
         let session = URLSession(
             configuration: config.makeRESTAPISessionConfiguration(),
             delegate: service,
             delegateQueue: nil
         )
         service.configure(with: session)
-        
+
         return service
     }
-    
+
     private static var minTLSVersion: String? {
         appMainBundle.infoForKey("MinTLSVersion")
     }
-    
+
     private static var appMainBundle: Bundle {
         let mainBundle: Bundle
 
@@ -231,7 +231,7 @@ struct APIFactory {
         }
         return mainBundle
     }
-    
+
     private static var backendBundle: Bundle {
         guard let backendBundlePath = appMainBundle.path(
             forResource: "Backend",

@@ -97,7 +97,7 @@ extension ConversationLocalStore {
         }
 
         let conversationExists: Bool
-        
+
         guard let mlsService else { return }
 
         do {

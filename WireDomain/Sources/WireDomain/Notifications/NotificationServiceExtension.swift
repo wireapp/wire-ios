@@ -23,7 +23,7 @@ import WireLogging
 /// Receives push notifications, process the pending events through the `NotificationSession` to generate a notification
 /// content based on these events.
 final class NotificationServiceExtension: UNNotificationServiceExtension {
-    
+
     enum Failure: Error {
         case noAccountFound
     }
@@ -47,36 +47,36 @@ final class NotificationServiceExtension: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        
+
         onGoingTask?.cancel()
         self.contentHandler = contentHandler
 
         onGoingTask = Task {
             do {
-                
+
                 let notificationPayload = try NotificationPayload(
                     userInfo: request.content.userInfo
                 )
-                
+
                 let userID = notificationPayload.userID
-                
+
                 let rootComponent = try setupRootComponent(
                     userID: userID,
                     notificationHandler: contentHandler
                 )
-                
+
                 let verifyUserSession = rootComponent.verifyUserSession
                 let startSyncingEvents: () async throws -> Void = {
                     try await verifyUserSession.startSyncingEvents(
                         eventID: notificationPayload.eventID
                     )
                 }
-                
+
                 try await verifyUserSession.verify(
                     userID: userID,
                     then: startSyncingEvents
                 )
-                
+
             } catch {
                 logError(error)
                 finishWithEmptyNotification()
@@ -88,15 +88,16 @@ final class NotificationServiceExtension: UNNotificationServiceExtension {
         logger.warn("legacy service extension will expire")
         finishWithEmptyNotification()
     }
-    
-    // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
+
+    // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty content to
+    // the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
     private func finishWithEmptyNotification() {
         logger.info("finishing without showing notification")
         let emptyNotification = UNNotificationContent()
         contentHandler?(emptyNotification)
         terminate()
     }
-    
+
     private func setupRootComponent(
         userID: UUID,
         notificationHandler: @escaping (UNNotificationContent) -> Void
@@ -105,22 +106,22 @@ final class NotificationServiceExtension: UNNotificationServiceExtension {
         guard let appGroupID = infoDictionary?["WireGroupId"] as? String else {
             fatalError()
         }
-        
+
         let applicationIdentifier = "group.\(appGroupID)"
         let applicationContainer = FileManager.sharedContainerDirectory(
             for: applicationIdentifier
         )
-        
+
         let accountManager = AccountManager(
             sharedDirectory: applicationContainer
         )
-        
+
         guard let selectedAccount = accountManager.account(
             with: userID
         ) else {
             throw Failure.noAccountFound
         }
-        
+
         return RootComponent(
             userID: userID,
             applicationIdentifier: applicationIdentifier,

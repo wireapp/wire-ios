@@ -59,7 +59,7 @@ struct PullEventsService: PullEventsServiceProtocol {
         newEventID id: UUID
     ) async throws {
         try setup()
-        
+
         let selfClientID = await userClientsLocalStore.fetchSelfClientID()
         let lastEventID = updateEventsLocalStore.lastEventID()
 
@@ -69,18 +69,18 @@ struct PullEventsService: PullEventsServiceProtocol {
 
         do {
             let decodedEventsStream = try await eventsSync.pull()
-            
+
             let generateNotificationService = generateNotificationProvider.generateNotificationService(
                 eventsStream: decodedEventsStream
             )
-            
+
             await generateNotificationService.process()
-            
+
         } catch {
             throw Failure.unableToPullPendingEvents(error)
         }
     }
-    
+
     /// Setup core data stores and its dependencies.
     private func setup() throws {
         var loadStoresError: Error?

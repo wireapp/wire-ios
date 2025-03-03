@@ -41,17 +41,17 @@ protocol PullEventsServiceProvider {
 
 /// Provides sync objects.
 final class PullEventsComponent: Component<PullEventsDependency>, PullEventsServiceProvider {
-    
+
     func pullEventsService(
         selfUserID: UUID,
         selfClientID: String
     ) async -> any PullEventsServiceProtocol {
-        
+
         let pullEventsSync = await pullEventsSync(
             selfUserID: selfUserID,
             selfClientID: selfClientID
         )
-        
+
         return PullEventsService(
             coreData: dependency.coreData,
             userClientsLocalStore: userClientsLocalStore,
@@ -60,9 +60,9 @@ final class PullEventsComponent: Component<PullEventsDependency>, PullEventsServ
             generateNotificationProvider: generateNotificationComponent
         )
     }
-    
+
     // MARK: - Children
-    
+
     var generateNotificationComponent: GenerateNotificationComponent {
         GenerateNotificationComponent(parent: self)
     }
@@ -77,7 +77,7 @@ extension PullEventsComponent {
             messageLocalStore: dependency.messageLocalStore
         )
     }
-    
+
     private func pullEventsSync(
         selfUserID: UUID,
         selfClientID: String
@@ -87,7 +87,7 @@ extension PullEventsComponent {
             selfClientID: selfClientID,
             applicationIdentifier: dependency.applicationIdentifier
         )
-        
+
         let updateEventDecryptor = updateEventDecryptor(
             selfUserID: selfUserID
         )
@@ -99,7 +99,7 @@ extension PullEventsComponent {
             decryptor: updateEventDecryptor
         )
     }
-    
+
     private func updateEventDecryptor(
         selfUserID: UUID
     ) -> any UpdateEventDecryptorProtocol {
@@ -109,14 +109,14 @@ extension PullEventsComponent {
         let mlsMessageDecryptor = mlsMessageDecryptor(
             selfUserID: selfUserID
         )
-        
+
         return UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
             messageLocalStore: dependency.messageLocalStore
         )
     }
-    
+
     private func coreCryptoProvider(
         selfUserID: UUID
     ) -> any CoreCryptoProviderProtocol {
@@ -129,7 +129,7 @@ extension PullEventsComponent {
             allowCreation: false
         )
     }
-    
+
     private func proteusMessageDecryptor(
         selfUserID: UUID
     ) -> any ProteusMessageDecryptorProtocol {
@@ -137,21 +137,21 @@ extension PullEventsComponent {
         let coreCryptoProvider = coreCryptoProvider(
             selfUserID: selfUserID
         )
-        
+
         let userClientsLocalStore = UserClientsLocalStore(context: coreData.syncContext)
         let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
-        
+
         return ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
             userLocalStore: dependency.userLocalStore
         )
     }
-    
+
     private var featureRepository: any FeatureRepositoryInterface {
         FeatureRepository(context: dependency.coreData.syncContext)
     }
-    
+
     private var updateEventsLocalStore: any UpdateEventsLocalStoreProtocol {
         UpdateEventsLocalStore(
             context: dependency.coreData.syncContext,
@@ -159,13 +159,13 @@ extension PullEventsComponent {
             sharedUserDefaults: .standard
         )
     }
-    
+
     private var userClientsLocalStore: any UserClientsLocalStoreProtocol {
         UserClientsLocalStore(
             context: dependency.coreData.syncContext
         )
     }
-    
+
     private func mlsMessageDecryptor(
         selfUserID: UUID
     ) -> any MLSMessageDecryptorProtocol {
@@ -173,29 +173,29 @@ extension PullEventsComponent {
         let coreCryptoProvider = coreCryptoProvider(
             selfUserID: selfUserID
         )
-        
+
         let commitSender = CommitSender(
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: coreData.syncContext.notificationContext
         )
-        
+
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
             commitSender: commitSender,
             featureRepository: featureRepository
         )
-        
+
         let mlsDecryptionService = MLSDecryptionService(
             context: coreData.syncContext,
             mlsActionExecutor: mlsActionExecutor
         )
-        
+
         return MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
             conversationLocalStore: conversationLocalStore
         )
     }
-    
+
     private var accountContainer: URL {
         CoreDataStack.accountDataFolder(
             accountIdentifier: dependency.userID,

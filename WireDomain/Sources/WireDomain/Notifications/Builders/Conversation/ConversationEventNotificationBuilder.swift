@@ -21,7 +21,7 @@ import WireAPI
 import WireDataModel
 
 struct ConversationEventNotificationBuilder: NotificationBuilder {
-    
+
     enum Failure: Error {
         case failedToDecryptMLSMessage
         case failedToDecryptProteusMessage
@@ -93,7 +93,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
                 decryptedMessage: decryptedMessage,
                 isProteus: false
             )
-            
+
             // TODO: Handle calling from genericMessage.calling
 
             builder = try await ConversationMLSMessageAddEventNotificationBuilder(
@@ -113,7 +113,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
                 decryptedMessage: decryptedMessage,
                 external: external
             )
-            
+
             // TODO: Handle calling from genericMessage.calling
 
             builder = try await ConversationProteusMessageAddEventNotificationBuilder(
@@ -203,7 +203,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
 
         return true
     }
-    
+
     private func decryptMessage(
         decryptedMessage: String?,
         external: String? = nil,
@@ -216,7 +216,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
               ) else {
             throw isProteus ? Failure.failedToDecryptProteusMessage : Failure.failedToDecryptMLSMessage
         }
-        
+
         return genericMessage
     }
 

@@ -61,7 +61,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 in: context
             )
         }
-        
+
         guard let conversation else { return nil }
 
         return await context.perform { [context] in
@@ -99,7 +99,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-        
+
         let conversation = await context.perform { [context] in
             ZMConversation.fetch(
                 with: conversationID,
@@ -107,7 +107,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 in: context
             )
         }
-        
+
         guard let conversation else { return }
 
         let systemMessages = await createSystemMessages(

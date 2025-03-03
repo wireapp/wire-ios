@@ -21,8 +21,8 @@ import UserNotifications
 typealias CallKitContent = [String: Any]
 
 enum UserNotification {
-  case text(UNMutableNotificationContent)
-  case callKit(CallKitContent)
+    case text(UNMutableNotificationContent)
+    case callKit(CallKitContent)
 }
 
 protocol NotificationBuilder {

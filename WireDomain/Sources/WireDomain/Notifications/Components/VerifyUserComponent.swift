@@ -18,9 +18,9 @@
 
 import NeedleFoundation
 import UserNotifications
-import WireDataModel
 import WireAPI
 import WireCrypto
+import WireDataModel
 import WireFoundation
 
 protocol VerifyUserDependency: Dependency {
@@ -30,7 +30,7 @@ protocol VerifyUserDependency: Dependency {
 }
 
 final class VerifyUserComponent: Component<VerifyUserDependency> {
-    
+
     var verifyUserSession: VerifyUserSession {
         VerifyUserSession(
             pullEventsServiceProvider: pullEventsComponent,
@@ -38,35 +38,35 @@ final class VerifyUserComponent: Component<VerifyUserDependency> {
             cookieStorage: cookieStorage
         )
     }
-    
+
     // MARK: - Children
-    
+
     var pullEventsComponent: PullEventsComponent {
         PullEventsComponent(parent: self)
     }
 }
 
 extension VerifyUserComponent {
-    
+
     public var cookieStorage: any CookieStorageProtocol {
         CoreStorageFactory.makeCookieStorage(
             userID: dependency.userID
         )
     }
-    
+
     public var userLocalStore: any UserLocalStoreProtocol {
         UserLocalStore(
             context: coreData.syncContext,
             messageLocalStore: messageLocalStore
         )
     }
-    
+
     public var messageLocalStore: any MessageLocalStoreProtocol {
         MessageLocalStore(
             context: coreData.syncContext
         )
     }
-    
+
     public var coreData: CoreDataStack {
         CoreStorageFactory.makeCoreData(
             account: dependency.selectedAccount,

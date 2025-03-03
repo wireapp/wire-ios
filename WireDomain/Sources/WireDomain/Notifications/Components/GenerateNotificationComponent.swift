@@ -34,7 +34,7 @@ protocol GenerateNotificationProvider {
 }
 
 final class GenerateNotificationComponent: Component<GenerateNotificationDependency>, GenerateNotificationProvider {
-    
+
     func generateNotificationService(
         eventsStream: AsyncStream<[UpdateEvent]>
     ) -> GenerateNotificationService {
@@ -46,5 +46,5 @@ final class GenerateNotificationComponent: Component<GenerateNotificationDepende
             messageLocalStore: dependency.messageLocalStore
         )
     }
-    
+
 }

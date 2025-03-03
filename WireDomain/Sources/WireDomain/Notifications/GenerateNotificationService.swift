@@ -17,18 +17,18 @@
 //
 
 import CallKit
-import WireAPI
 import UserNotifications
+import WireAPI
 import WireLogging
 
 struct GenerateNotificationService {
-    
+
     private let eventsStream: AsyncStream<[UpdateEvent]>
     private let contentHandler: (UNNotificationContent) -> Void
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
-    
+
     init(
         eventsStream: AsyncStream<[UpdateEvent]>,
         contentHandler: @escaping (UNNotificationContent) -> Void,
@@ -42,26 +42,26 @@ struct GenerateNotificationService {
         self.userLocalStore = userLocalStore
         self.messageLocalStore = messageLocalStore
     }
-    
+
     /// Processes the events stream.
     func process() async {
         for await events in eventsStream {
             await generateNotifications(for: events)
         }
     }
-    
+
     private func generateNotifications(
         for events: [UpdateEvent]
     ) async {
         guard !events.isEmpty else {
             return contentHandler(UNMutableNotificationContent())
         }
-        
+
         var notifications: [UNMutableNotificationContent] = []
-        
+
         for event in events {
             var notificationBuilder: NotificationBuilder
-            
+
             switch event {
             case let .conversation(conversationEvent):
                 notificationBuilder = await ConversationEventNotificationBuilder(
@@ -70,30 +70,31 @@ struct GenerateNotificationService {
                     conversationLocalStore: conversationLocalStore,
                     messageLocalStore: messageLocalStore
                 )
+
             case let .user(userEvent):
                 notificationBuilder = UserNotificationBuilder(
                     event: userEvent,
                     userLocalStore: userLocalStore
                 )
-                
+
             default:
                 continue
             }
-            
+
             guard await notificationBuilder.shouldBuildNotification() else {
                 continue
             }
-            
+
             do {
                 let userNotification = try await notificationBuilder.buildContent()
-                
+
                 switch userNotification {
-                case .text(let notificationContent):
+                case let .text(notificationContent):
                     notifications.append(notificationContent)
-                case .callKit(let callKitContent):
+                case let .callKit(callKitContent):
                     try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
                 }
-                
+
             } catch {
                 WireLogger.notifications.error(
                     "Failed to generate notification: \(error.localizedDescription)"
@@ -101,13 +102,13 @@ struct GenerateNotificationService {
                 notifications.append(UNMutableNotificationContent())
             }
         }
-        
+
         showNotifications(notifications)
     }
-    
+
     private func showNotifications(_ notifications: [UNMutableNotificationContent]) {
         var notification: UNMutableNotificationContent
-        
+
         switch notifications.count {
         case 0:
             // Nothing to show
@@ -119,7 +120,7 @@ struct GenerateNotificationService {
             let body = NotificationBody.bundled(messagesCount: notifications.count)
             notification.body = body.make()
         }
-        
+
         // Displays the notification to the user
         contentHandler(notification)
     }
