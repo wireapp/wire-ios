@@ -30,9 +30,11 @@ public class ConversationTitleView: UIView {
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let dropdownImage = UIImageView(image: .dropdown)
+    private let canAnimate: Bool
 
-    public init(source: ConversationTitleSource) {
+    public init(source: ConversationTitleSource, canAnimate: Bool) {
         self.source = source
+        self.canAnimate = canAnimate
         super.init(frame: CGRect.zero)
         configureViews()
         configureLayout()
@@ -106,10 +108,7 @@ public class ConversationTitleView: UIView {
         
         let animated = true
 
-        if animated
-//            ,
-//           !ProcessInfo.processInfo.isRunningTests
-        {
+        if animated, canAnimate {
             UIView.transition(
                 with: self,
                 duration: 0.15,
@@ -164,7 +163,10 @@ public class ConversationTitleView: UIView {
 @MainActor
 private func makeVC(source: ConversationTitleSource) -> UIViewController {
     let vc = UIViewController()
-    vc.navigationItem.titleView = ConversationTitleView(source: source)
+    vc.navigationItem.titleView = ConversationTitleView(
+        source: source,
+        canAnimate: false
+    )
     vc.view.backgroundColor = .systemBackground
     let navigationController = UINavigationController(rootViewController: vc)
     let navBar = navigationController.navigationBar

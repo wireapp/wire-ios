@@ -165,7 +165,8 @@ final class ConversationViewController: UIViewController {
             source: ConversationTitleSource(
                 accountImageSource: nil,
                 title: conversation.displayNameWithFallback,
-                subtitle: "Federated")
+                subtitle: getConversationSubtitle()),
+            canAnimate: !ProcessInfo.processInfo.isRunningTests
         )
 
         super.init(nibName: nil, bundle: nil)
