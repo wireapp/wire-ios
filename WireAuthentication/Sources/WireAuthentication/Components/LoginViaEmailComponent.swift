@@ -39,9 +39,17 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     // MARK: - View
 
     @MainActor
-    func view(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+    func view(
+        email: String,
+        canCreateAccount: Bool,
+        isCloudAccountAlreadyRegistered: Bool
+    ) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: viewModel(email: email, canCreateAccount: canCreateAccount),
+            viewModel: viewModel(
+                email: email,
+                canCreateAccount: canCreateAccount,
+                isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+            ),
             factory: self
         )
     }
@@ -49,7 +57,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     @MainActor
     private func viewModel(
         email: String,
-        canCreateAccount: Bool
+        canCreateAccount: Bool,
+        isCloudAccountAlreadyRegistered: Bool
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
@@ -58,6 +67,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
+            isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered,
             onCreateAccount: { [weak dependency] in
                 dependency?.bridge.registerAccount()
             }

@@ -33,6 +33,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         case invalidCredentials
         case accountPendingActivation
         case accountSuspended
+        case cloudAccountAlreadyRegistered
     }
 
     @Published var password: String = "" {
@@ -48,6 +49,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private let forgotPasswordURL: URL
     private let passwordValidator: any PasswordValidator
     private let onCreateAccount: () -> Void
+    private let isCloudAccountAlreadyRegistered: Bool
 
     let email: String
     let canCreateAccount: Bool
@@ -61,6 +63,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool,
+        isCloudAccountAlreadyRegistered: Bool,
         onCreateAccount: @escaping () -> Void
     ) {
         self.router = router
@@ -69,6 +72,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
+        self.isCloudAccountAlreadyRegistered = isCloudAccountAlreadyRegistered
         self.onCreateAccount = onCreateAccount
     }
 
@@ -93,6 +97,10 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         do {
             let (cookies, token) = try await loginTask.value
+            // Not sure
+            if isCloudAccountAlreadyRegistered {
+                alert = .cloudAccountAlreadyRegistered
+            }
             // TODO: [WPB-16276] Navigate to the first time login screen
             WireLogger.authentication.info("login via email succeeded")
         } catch {

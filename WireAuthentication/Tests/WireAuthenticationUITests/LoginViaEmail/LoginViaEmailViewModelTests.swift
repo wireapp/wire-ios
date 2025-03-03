@@ -51,6 +51,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
             accountsURL: URL(string: "https://www.example.com")!,
             passwordValidator: passwordValidator,
             canCreateAccount: true,
+            isCloudAccountAlreadyRegistered: false,
             onCreateAccount: { [self] in onCreateAccountCalled = true }
         )
 

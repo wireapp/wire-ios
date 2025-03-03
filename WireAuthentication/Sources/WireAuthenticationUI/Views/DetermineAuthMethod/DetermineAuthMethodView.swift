@@ -98,7 +98,7 @@ package struct DetermineAuthMethodView: View {
             message: messageForAlert,
             actions: { alert in
                 Button {
-                    viewModel.didDismissAlert(alert: alert)
+                    //dismiss()
                 } label: {
                     Text(L10n.Authentication.Error.confirm)
                 }
@@ -106,10 +106,18 @@ package struct DetermineAuthMethodView: View {
         )
         .navigationDestination(for: Destination.self) {
             switch $0 {
-            case let .login(email):
-                factory.loginViaEmailView(email: email, canCreateAccount: false)
+            case let .login(email, isCloudAccountAlreadyRegistered):
+                factory.loginViaEmailView(
+                    email: email,
+                    canCreateAccount: false,
+                    isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+                )
             case let .loginOrRegister(email):
-                factory.loginViaEmailView(email: email, canCreateAccount: true)
+                factory.loginViaEmailView(
+                    email: email,
+                    canCreateAccount: true,
+                    isCloudAccountAlreadyRegistered: false
+                )
             }
         }
         .sheet(item: $viewModel.modalDestination, content: {
@@ -125,7 +133,7 @@ package struct DetermineAuthMethodView: View {
 
     package enum Destination: Hashable {
 
-        case login(email: String)
+        case login(email: String, isCloudAccountAlreadyRegistered: Bool)
         case loginOrRegister(email: String)
 
     }
@@ -140,12 +148,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Title.general)
         case .unknownError:
             Text(L10n.Authentication.Error.Title.general)
-        case .onPremLoginNotPossible:
-            Text(L10n.Authentication.Error.Title.onPremNotPossible)
         case .invalidSSOLink:
             Text(L10n.Authentication.Error.Title.invalidSsoLink)
-        case .cloudAccountAlreadyRegistered:
-            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
         }
     }
 
@@ -157,12 +161,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Message.general)
         case .unknownError:
             Text(L10n.Authentication.Error.Message.general)
-        case .onPremLoginNotPossible:
-            Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
         case .invalidSSOLink:
             Text(L10n.Authentication.Error.Message.invalidSsoLink)
-        case .cloudAccountAlreadyRegistered:
-            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
         }
     }
 

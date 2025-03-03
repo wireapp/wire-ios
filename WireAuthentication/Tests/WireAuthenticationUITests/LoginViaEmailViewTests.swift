@@ -39,7 +39,11 @@ class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: true)
+        let view = MockDependencies().loginViaEmailView(
+            email: "foo@bar.com",
+            canCreateAccount: true,
+            isCloudAccountAlreadyRegistered: false
+        )
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -54,7 +58,11 @@ class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: true)
+        let view = MockDependencies().loginViaEmailView(
+            email: "foo@bar.com",
+            canCreateAccount: true,
+            isCloudAccountAlreadyRegistered: false
+        )
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
@@ -70,7 +78,11 @@ class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: false)
+        let view = MockDependencies().loginViaEmailView(
+            email: "foo@bar.com",
+            canCreateAccount: false,
+            isCloudAccountAlreadyRegistered: false
+        )
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -85,7 +97,11 @@ class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: false)
+        let view = MockDependencies().loginViaEmailView(
+            email: "foo@bar.com",
+            canCreateAccount: false,
+            isCloudAccountAlreadyRegistered: false
+        )
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

@@ -25,7 +25,8 @@ package protocol LoginViaEmailBuilder {
     @MainActor
     func loginViaEmailView(
         email: String,
-        canCreateAccount: Bool
+        canCreateAccount: Bool,
+        isCloudAccountAlreadyRegistered: Bool
     ) -> LoginViaEmailView
 
 }
@@ -189,6 +190,8 @@ package struct LoginViaEmailView: View {
             Text(L10n.Authentication.Error.Title.accountPendingActivation)
         case .accountSuspended:
             Text(L10n.Authentication.Error.Title.accountSuspended)
+        case .cloudAccountAlreadyRegistered:
+            Text("")
         }
     }
 
@@ -204,6 +207,8 @@ package struct LoginViaEmailView: View {
             Text(L10n.Authentication.Error.Message.accountPendingActivation)
         case .accountSuspended:
             Text(L10n.Authentication.Error.Message.accountSuspended)
+        case .cloudAccountAlreadyRegistered:
+            Text("")
         }
     }
 
@@ -212,6 +217,10 @@ package struct LoginViaEmailView: View {
 #Preview() {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: false)
+            MockDependencies().loginViaEmailView(
+                email: "foo@bar.com",
+                canCreateAccount: false,
+                isCloudAccountAlreadyRegistered: false
+            )
         }
 }

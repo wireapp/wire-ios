@@ -86,7 +86,7 @@ extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
     ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
         try! await Task.sleep(for: .seconds(3))
 
-        return .loginViaEmail(email: emailOrSSOCode)
+        return .loginViaEmail(email: emailOrSSOCode, isCloudAccountAlreadyRegistered: false)
     }
 }
 
@@ -154,11 +154,12 @@ extension MockDependencies: LoginViaEmailBuilder {
             accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
+            isCloudAccountAlreadyRegistered: false,
             onCreateAccount: {}
         )
     }
 
-    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+    func loginViaEmailView(email: String, canCreateAccount: Bool, isCloudAccountAlreadyRegistered: Bool) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
             factory: self
