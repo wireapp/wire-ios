@@ -24,6 +24,7 @@ import Foundation
 public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
 
     public var processedEvents: [ZMUpdateEvent] = []
+    public var processedLivedEvents: [ZMUpdateEvent] = []
     public var bufferedEvents: [ZMUpdateEvent] = []
 
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
@@ -32,6 +33,10 @@ public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
 
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         processedEvents.append(contentsOf: events)
+    }
+    
+    public func processLiveEvents(_ events: [ZMUpdateEvent]) async throws {
+        processedLivedEvents.append(contentsOf: events)
     }
 
     public func processBufferedEvents() async {
