@@ -50,6 +50,7 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
+        syncAgent?.suspend()
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
@@ -63,7 +64,7 @@ public extension ZMUserSession {
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
-
+        syncAgent?.resume()
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()
@@ -72,7 +73,7 @@ public extension ZMUserSession {
 
     internal func processPendingEvents() {
         syncContext.performGroupedBlock {
-            self.processEvents()
+            self.processLegacyEvents()
         }
     }
 

@@ -19,7 +19,7 @@
 import Foundation
 import WireAPI
 
-struct UserEventProcessor {
+struct UserEventProcessor: UserEventProcessorProtocol {
 
     let clientAddEventProcessor: any UserClientAddEventProcessorProtocol
     let clientRemoveEventProcessor: any UserClientRemoveEventProcessorProtocol

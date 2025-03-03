@@ -1208,6 +1208,38 @@ public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
 
 }
 
+public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - perform
+
+    public var perform_Invocations: [Void] = []
+    public var perform_MockError: Error?
+    public var perform_MockMethod: (() async throws -> IncrementalSync.Token)?
+    public var perform_MockValue: IncrementalSync.Token?
+
+    public func perform() async throws -> IncrementalSync.Token {
+        perform_Invocations.append(())
+
+        if let error = perform_MockError {
+            throw error
+        }
+
+        if let mock = perform_MockMethod {
+            return try await mock()
+        } else if let mock = perform_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `perform`")
+        }
+    }
+
+}
+
 public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigrationUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -1235,38 +1267,6 @@ public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigra
             return mock
         } else {
             fatalError("no mock for `invokeTeamName`")
-        }
-    }
-
-}
-
-public class MockInitialSyncBuilderProtocol: InitialSyncBuilderProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - buildInitialSync
-
-    public var buildInitialSync_Invocations: [Void] = []
-    public var buildInitialSync_MockError: Error?
-    public var buildInitialSync_MockMethod: (() throws -> Sync)?
-    public var buildInitialSync_MockValue: Sync?
-
-    public func buildInitialSync() throws -> Sync {
-        buildInitialSync_Invocations.append(())
-
-        if let error = buildInitialSync_MockError {
-            throw error
-        }
-
-        if let mock = buildInitialSync_MockMethod {
-            return try mock()
-        } else if let mock = buildInitialSync_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `buildInitialSync`")
         }
     }
 
@@ -2589,19 +2589,20 @@ public class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
 
 }
 
-class MockUpdateEventProcessorProtocol: UpdateEventProcessorProtocol {
+public class MockUpdateEventProcessorProtocol: UpdateEventProcessorProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - processEvent
 
-    var processEvent_Invocations: [UpdateEvent] = []
-    var processEvent_MockError: Error?
-    var processEvent_MockMethod: ((UpdateEvent) async throws -> Void)?
+    public var processEvent_Invocations: [UpdateEvent] = []
+    public var processEvent_MockError: Error?
+    public var processEvent_MockMethod: ((UpdateEvent) async throws -> Void)?
 
-    func processEvent(_ event: UpdateEvent) async throws {
+    public func processEvent(_ event: UpdateEvent) async throws {
         processEvent_Invocations.append(event)
 
         if let error = processEvent_MockError {
@@ -2682,12 +2683,12 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     // MARK: - persistEventEnvelope
 
-    public var persistEventEnvelopeIndex_Invocations: [(data: Data, index: Int64)] = []
+    public var persistEventEnvelopeIndex_Invocations: [(eventEnvelope: UpdateEventEnvelope, index: Int64)] = []
     public var persistEventEnvelopeIndex_MockError: Error?
-    public var persistEventEnvelopeIndex_MockMethod: ((Data, Int64) async throws -> Void)?
+    public var persistEventEnvelopeIndex_MockMethod: ((UpdateEventEnvelope, Int64) async throws -> Void)?
 
-    public func persistEventEnvelope(_ data: Data, index: Int64) async throws {
-        persistEventEnvelopeIndex_Invocations.append((data: data, index: index))
+    public func persistEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws {
+        persistEventEnvelopeIndex_Invocations.append((eventEnvelope: eventEnvelope, index: index))
 
         if let error = persistEventEnvelopeIndex_MockError {
             throw error
@@ -2697,29 +2698,29 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
             fatalError("no mock for `persistEventEnvelopeIndex`")
         }
 
-        try await mock(data, index)
+        try await mock(eventEnvelope, index)
     }
 
-    // MARK: - fetchStoredEventEnvelopePayloads
+    // MARK: - fetchStoredEventEnvelopes
 
-    public var fetchStoredEventEnvelopePayloadsLimit_Invocations: [UInt] = []
-    public var fetchStoredEventEnvelopePayloadsLimit_MockError: Error?
-    public var fetchStoredEventEnvelopePayloadsLimit_MockMethod: ((UInt) async throws -> [Data])?
-    public var fetchStoredEventEnvelopePayloadsLimit_MockValue: [Data]?
+    public var fetchStoredEventEnvelopesLimit_Invocations: [UInt] = []
+    public var fetchStoredEventEnvelopesLimit_MockError: Error?
+    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [UpdateEventEnvelope])?
+    public var fetchStoredEventEnvelopesLimit_MockValue: [UpdateEventEnvelope]?
 
-    public func fetchStoredEventEnvelopePayloads(limit: UInt) async throws -> [Data] {
-        fetchStoredEventEnvelopePayloadsLimit_Invocations.append(limit)
+    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [UpdateEventEnvelope] {
+        fetchStoredEventEnvelopesLimit_Invocations.append(limit)
 
-        if let error = fetchStoredEventEnvelopePayloadsLimit_MockError {
+        if let error = fetchStoredEventEnvelopesLimit_MockError {
             throw error
         }
 
-        if let mock = fetchStoredEventEnvelopePayloadsLimit_MockMethod {
+        if let mock = fetchStoredEventEnvelopesLimit_MockMethod {
             return try await mock(limit)
-        } else if let mock = fetchStoredEventEnvelopePayloadsLimit_MockValue {
+        } else if let mock = fetchStoredEventEnvelopesLimit_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchStoredEventEnvelopePayloadsLimit`")
+            fatalError("no mock for `fetchStoredEventEnvelopesLimit`")
         }
     }
 
@@ -2743,148 +2744,24 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         try await mock(limit)
     }
 
-}
+    // MARK: - deleteEventEnvelope
 
-class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
+    public var deleteEventEnvelopeAtIndex_Invocations: [Int64] = []
+    public var deleteEventEnvelopeAtIndex_MockError: Error?
+    public var deleteEventEnvelopeAtIndex_MockMethod: ((Int64) async throws -> Void)?
 
-    // MARK: - Life cycle
+    public func deleteEventEnvelope(atIndex index: Int64) async throws {
+        deleteEventEnvelopeAtIndex_Invocations.append(index)
 
-
-
-    // MARK: - pullPendingEvents
-
-    var pullPendingEvents_Invocations: [Void] = []
-    var pullPendingEvents_MockError: Error?
-    var pullPendingEvents_MockMethod: (() async throws -> Void)?
-
-    func pullPendingEvents() async throws {
-        pullPendingEvents_Invocations.append(())
-
-        if let error = pullPendingEvents_MockError {
+        if let error = deleteEventEnvelopeAtIndex_MockError {
             throw error
         }
 
-        guard let mock = pullPendingEvents_MockMethod else {
-            fatalError("no mock for `pullPendingEvents`")
+        guard let mock = deleteEventEnvelopeAtIndex_MockMethod else {
+            fatalError("no mock for `deleteEventEnvelopeAtIndex`")
         }
 
-        try await mock()
-    }
-
-    // MARK: - fetchNextPendingEvents
-
-    var fetchNextPendingEventsLimit_Invocations: [UInt] = []
-    var fetchNextPendingEventsLimit_MockError: Error?
-    var fetchNextPendingEventsLimit_MockMethod: ((UInt) async throws -> [UpdateEventEnvelope])?
-    var fetchNextPendingEventsLimit_MockValue: [UpdateEventEnvelope]?
-
-    func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope] {
-        fetchNextPendingEventsLimit_Invocations.append(limit)
-
-        if let error = fetchNextPendingEventsLimit_MockError {
-            throw error
-        }
-
-        if let mock = fetchNextPendingEventsLimit_MockMethod {
-            return try await mock(limit)
-        } else if let mock = fetchNextPendingEventsLimit_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchNextPendingEventsLimit`")
-        }
-    }
-
-    // MARK: - deleteNextPendingEvents
-
-    var deleteNextPendingEventsLimit_Invocations: [UInt] = []
-    var deleteNextPendingEventsLimit_MockError: Error?
-    var deleteNextPendingEventsLimit_MockMethod: ((UInt) async throws -> Void)?
-
-    func deleteNextPendingEvents(limit: UInt) async throws {
-        deleteNextPendingEventsLimit_Invocations.append(limit)
-
-        if let error = deleteNextPendingEventsLimit_MockError {
-            throw error
-        }
-
-        guard let mock = deleteNextPendingEventsLimit_MockMethod else {
-            fatalError("no mock for `deleteNextPendingEventsLimit`")
-        }
-
-        try await mock(limit)
-    }
-
-    // MARK: - startBufferingLiveEvents
-
-    var startBufferingLiveEvents_Invocations: [Void] = []
-    var startBufferingLiveEvents_MockError: Error?
-    var startBufferingLiveEvents_MockMethod: (() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error>)?
-    var startBufferingLiveEvents_MockValue: AsyncThrowingStream<UpdateEventEnvelope, Error>?
-
-    func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
-        startBufferingLiveEvents_Invocations.append(())
-
-        if let error = startBufferingLiveEvents_MockError {
-            throw error
-        }
-
-        if let mock = startBufferingLiveEvents_MockMethod {
-            return try await mock()
-        } else if let mock = startBufferingLiveEvents_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `startBufferingLiveEvents`")
-        }
-    }
-
-    // MARK: - stopReceivingLiveEvents
-
-    var stopReceivingLiveEvents_Invocations: [Void] = []
-    var stopReceivingLiveEvents_MockMethod: (() async -> Void)?
-
-    func stopReceivingLiveEvents() async {
-        stopReceivingLiveEvents_Invocations.append(())
-
-        guard let mock = stopReceivingLiveEvents_MockMethod else {
-            fatalError("no mock for `stopReceivingLiveEvents`")
-        }
-
-        await mock()
-    }
-
-    // MARK: - storeLastEventEnvelopeID
-
-    var storeLastEventEnvelopeID_Invocations: [UUID] = []
-    var storeLastEventEnvelopeID_MockMethod: ((UUID) -> Void)?
-
-    func storeLastEventEnvelopeID(_ id: UUID) {
-        storeLastEventEnvelopeID_Invocations.append(id)
-
-        guard let mock = storeLastEventEnvelopeID_MockMethod else {
-            fatalError("no mock for `storeLastEventEnvelopeID`")
-        }
-
-        mock(id)
-    }
-
-    // MARK: - pullLastEventID
-
-    var pullLastEventID_Invocations: [Void] = []
-    var pullLastEventID_MockError: Error?
-    var pullLastEventID_MockMethod: (() async throws -> Void)?
-
-    func pullLastEventID() async throws {
-        pullLastEventID_Invocations.append(())
-
-        if let error = pullLastEventID_MockError {
-            throw error
-        }
-
-        guard let mock = pullLastEventID_MockMethod else {
-            fatalError("no mock for `pullLastEventID`")
-        }
-
-        try await mock()
+        try await mock(index)
     }
 
 }
