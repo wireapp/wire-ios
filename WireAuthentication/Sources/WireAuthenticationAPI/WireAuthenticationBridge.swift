@@ -70,27 +70,3 @@ public struct WireAuthenticationBridge {
     }
 
 }
-
-/// The result of an authentication flow.
-
-public struct AuthenticationResult: Equatable {
-
-    /// The user id of whom the token belongs.
-
-    let userID: UUID
-
-    /// The authentication cookies.
-
-    let cookies: [HTTPCookie]
-
-    /// A token used to make authenticated requests to the backend if available.
-
-    let accessToken: AccessToken?
-
-    public init(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) {
-        self.userID = userID
-        self.cookies = cookies
-        self.accessToken = accessToken
-    }
-
-}
