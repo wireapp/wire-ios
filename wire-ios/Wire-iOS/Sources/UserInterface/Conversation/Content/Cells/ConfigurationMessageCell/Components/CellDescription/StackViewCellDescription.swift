@@ -24,8 +24,6 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
 
     var cellDescriptions: [AnyConversationMessageCellDescription] { configuration }
 
-    var canBeCombinedWithOtherCells: Bool { false }
-
     var topMargin: CGFloat {
         get { cellDescriptions.first?.topMargin ?? 0 }
         set { fatalError() }

@@ -164,6 +164,8 @@ protocol ConversationMessageCellDescription: AnyObject {
 
 extension ConversationMessageCellDescription {
 
+    var canBeCombinedWithOtherCells: Bool { false }
+
     func willDisplayCell() {
         _ = message?.startSelfDestructionIfNeeded()
     }
