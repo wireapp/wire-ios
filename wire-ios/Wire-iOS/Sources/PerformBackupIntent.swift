@@ -25,17 +25,72 @@ import UniformTypeIdentifiers
 
 enum BackupError: Error, LocalizedError {
     case emptyPassword
+    case noSessionManager
+    case noBackupFile
     
     var errorDescription: String? {
         switch self {
         case .emptyPassword:
             return "Password cannot be empty."
+        case .noSessionManager:
+            return "no SessionManager."
+        case .noBackupFile:
+            return "no backup file"
         }
     }
 }
 
+struct SwitchAccountIntent: AppIntent {
+    static var title: LocalizedStringResource = "Select Account"
+    
+    
+    
+    func perform() async throws -> some IntentDialog {
+        
+        return .result(opensIntent: PerformBackupIntent(account: <#T##IntentParameter<String>#>), dialog: .)
+    }
+    
+    
+}
+
+class SelectAccountIntentHandler: NSObject, SelectAccountIntentHandling {
+    
+    func resolveAccount(for intent: SelectAccountIntent, with completion: @escaping (INObjectResolutionResult) -> Void) {
+        let accounts = fetchAccounts() // Fetch accounts from your data source
+        
+        let accountObjects = accounts.map { account in
+            INObject(identifier: account.id, display: account.name)
+        }
+
+        if accountObjects.isEmpty {
+            completion(.unsupported(reason: "No accounts available."))
+        } else if accountObjects.count == 1 {
+            completion(.success(with: accountObjects.first!))
+        } else {
+            completion(.disambiguation(with: accountObjects))
+        }
+    }
+    
+    private func fetchAccounts() -> [Account] {
+        return [
+            Account(id: "1", name: "Personal"),
+            Account(id: "2", name: "Work"),
+            Account(id: "3", name: "Savings")
+        ]
+    }
+}
+
+struct Account {
+    let id: String
+    let name: String
+}
+
+
 struct PerformBackupIntent: AppIntent {
     static var title: LocalizedStringResource = "Perform Backup"
+    
+    @Parameter(title: "Account")
+    var account: String
     
     @Parameter(title: "Password")
     var password: String
@@ -48,20 +103,23 @@ struct PerformBackupIntent: AppIntent {
         if password.isEmpty {
             throw BackupError.emptyPassword
         }
-        
-        let fileURL = try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.main.async {
-                SessionManager.shared?.backupActiveAccount(password: password) { result in
-                    switch result {
-                    case .success(let url):
-                        continuation.resume(returning: url)
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                    }
-                }
+
+        guard let sessionManager = SessionManager.shared else {
+            throw BackupError.emptyPassword
+        }
+        var fileURL: URL?
+        let useCase = CreateLegacyBackupUseCase(sessionManager: sessionManager)
+        for try await update in useCase.invoke(password: password) {
+            switch update {
+            case let .progress(fraction):
+                break
+            case let .done(url):
+                fileURL = url
             }
         }
-        
+        guard let fileURL else {
+            throw BackupError.noBackupFile
+        }
         return .result(
             value: IntentFile(fileURL: fileURL,
                               filename: fileURL.lastPathComponent,
