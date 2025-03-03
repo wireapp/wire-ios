@@ -125,10 +125,17 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
-        NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
+        NoHistoryViewModel(
+            userID: UUID(),
+            cookies: [],
+            isCloudAccountAlreadyRegistered: false,
+            howToChangeEmailURL: URL(string: "https://wire.com")!,
+            howToDeleteAccountURL: URL(string: "https://wire.com")!,
+            onFlowCompletion: { _ in }
+        )
     }
 
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie], isCloudAccountAlreadyRegistered: Bool) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 

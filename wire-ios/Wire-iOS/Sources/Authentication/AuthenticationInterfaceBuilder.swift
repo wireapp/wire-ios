@@ -97,6 +97,8 @@ final class AuthenticationInterfaceBuilder {
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 defaultAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
+                howToChangeEmailURL: URL(string: "https://wire.com")!,
+                howToDeleteAccountURL: URL(string: "https://wire.com")!,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 userDefaults: .shared(),

@@ -21,7 +21,11 @@ import SwiftUI
 package protocol NoHistoryViewBuilder {
 
     @MainActor
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView
+    func noHistoryView(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        isCloudAccountAlreadyRegistered: Bool
+    ) -> NoHistoryView
 
 }
 
@@ -51,10 +55,43 @@ package struct NoHistoryView: View {
                 .wireButtonStyle(.primary)
                 .bold()
         }
+        .alert(
+            item: $viewModel.alert,
+            title: titleForAlert,
+            message: messageForAlert,
+            actions: { alert in
+                Button(L10n.Authentication.Error.howToChangeEmail, action: {
+                    viewModel.howToChangeEmail()
+                })
+                Button(L10n.Authentication.Error.howToDeleteAccount, action: {
+                    viewModel.howToDeleteAccount()
+                })
+                Button(L10n.Authentication.Error.confirm, action: {})
+            }
+        )
+        .onAppear {
+            if viewModel.isCloudAccountAlreadyRegistered {
+                viewModel.alert = .cloudAccountAlreadyRegistered
+            }
+        }
         .padding()
         .presentationDetents([.medium])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+    }
+
+    private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
+        switch alert {
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
+        }
+    }
+
+    private func messageForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
+        switch alert {
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
+        }
     }
 
 }
@@ -63,6 +100,9 @@ package struct NoHistoryView: View {
     let viewModel = NoHistoryViewModel(
         userID: UUID(),
         cookies: [],
+        isCloudAccountAlreadyRegistered: false,
+        howToChangeEmailURL: URL(string: "https://wire.com")!,
+        howToDeleteAccountURL: URL(string: "https://wire.com")!,
         onFlowCompletion: { _ in }
     )
     NoHistoryView(viewModel: viewModel)
@@ -74,6 +114,9 @@ package struct NoHistoryView: View {
             let viewModel = NoHistoryViewModel(
                 userID: UUID(),
                 cookies: [],
+                isCloudAccountAlreadyRegistered: false,
+                howToChangeEmailURL: URL(string: "https://wire.com")!,
+                howToDeleteAccountURL: URL(string: "https://wire.com")!,
                 onFlowCompletion: { _ in }
             )
             NoHistoryView(viewModel: viewModel)

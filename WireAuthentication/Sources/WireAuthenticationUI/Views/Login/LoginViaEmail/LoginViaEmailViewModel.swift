@@ -33,7 +33,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         case invalidCredentials
         case accountPendingActivation
         case accountSuspended
-        case cloudAccountAlreadyRegistered
+        //case cloudAccountAlreadyRegistered(UUID, [HTTPCookie])
     }
 
     @Published var password: String = "" {
@@ -97,11 +97,17 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         do {
             let (cookies, token) = try await loginTask.value
-            // Not sure
-            if isCloudAccountAlreadyRegistered {
-                alert = .cloudAccountAlreadyRegistered
-            }
-            // TODO: [WPB-16276] Navigate to the first time login screen
+//            if isCloudAccountAlreadyRegistered {
+//                alert = .cloudAccountAlreadyRegistered(token.userID, cookies)
+//            } else {
+                router.presentSheet(
+                    RootView.ModalDestination.noHistory(
+                        userID: token.userID,
+                        cookies: cookies,
+                        isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+                    )
+                )
+//            }
             WireLogger.authentication.info("login via email succeeded")
         } catch {
             WireLogger.authentication.info("login via email returned an error: \(error)")

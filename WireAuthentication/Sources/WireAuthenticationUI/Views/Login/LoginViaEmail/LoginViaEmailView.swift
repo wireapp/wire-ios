@@ -72,8 +72,16 @@ package struct LoginViaEmailView: View {
             item: $viewModel.alert,
             title: titleForAlert,
             message: messageForAlert,
-            actions: { _ in
-                Button(L10n.Authentication.Error.confirm, action: {})
+            actions: { alert in
+//                Button(L10n.Authentication.Error.howToChangeEmail, action: {
+//                    viewModel.howToChangeEmail()
+//                })
+//                Button(L10n.Authentication.Error.howToDeleteAccount, action: {
+//                    viewModel.howToDeleteAccount()
+//                })
+                Button(L10n.Authentication.Error.confirm, action: {
+                  //  viewModel.didDismissAlert(alert: alert)
+                })
             }
         )
         .navigationDestination(for: Destination.self) { destination in
@@ -190,8 +198,8 @@ package struct LoginViaEmailView: View {
             Text(L10n.Authentication.Error.Title.accountPendingActivation)
         case .accountSuspended:
             Text(L10n.Authentication.Error.Title.accountSuspended)
-        case .cloudAccountAlreadyRegistered:
-            Text("")
+//        case .cloudAccountAlreadyRegistered:
+//            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
         }
     }
 
@@ -207,8 +215,8 @@ package struct LoginViaEmailView: View {
             Text(L10n.Authentication.Error.Message.accountPendingActivation)
         case .accountSuspended:
             Text(L10n.Authentication.Error.Message.accountSuspended)
-        case .cloudAccountAlreadyRegistered:
-            Text("")
+//        case .cloudAccountAlreadyRegistered:
+//            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
         }
     }
 
