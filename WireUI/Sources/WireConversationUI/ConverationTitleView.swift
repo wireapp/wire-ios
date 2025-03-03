@@ -44,13 +44,14 @@ public class ConversationTitleView: UIView {
     }
 
     private func configureViews() {
-        nameLabel.font = FontSpec.normalSemiboldFont.font
+        nameLabel.font = .preferredFont(forTextStyle: .headline)
         nameLabel.textColor = SemanticColors.Label.textDefault
         nameLabel.text = source.title
 
-        subtitleLabel.font = FontSpec.smallBoldFont.font
+        subtitleLabel.font = .boldSystemFont(ofSize: 9)
         subtitleLabel.textColor = SemanticColors.Accent.blue
         subtitleLabel.text = source.subtitle
+        subtitleLabel.isHidden = source.subtitle == nil
 
         accountImageView.availability = nil
         if let imageSource = source.accountImageSource {
@@ -69,20 +70,25 @@ public class ConversationTitleView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.fitIn(view: self)
 
-        let avatarAndNameStackView = UIStackView.horizontal(spacing: 5)
+        let avatarAndNameStackView = UIStackView.horizontal(spacing: 4)
         avatarAndNameStackView.alignment = .center
-        [accountImageView, nameLabel, dropdownImage]
+
+        [accountImageView, nameLabel, dropdownImage.wrapInView(topInset: 4)]
             .forEach(avatarAndNameStackView.addArrangedSubview)
 
-        var views: [UIView] = [avatarAndNameStackView]
-        if source.subtitle != nil {
-            views.append(subtitleLabel)
-        }
-        views.forEach(stackView.addArrangedSubview)
+        [
+            avatarAndNameStackView,
+            subtitleLabel.wrapInView(topInset: -8, bottomInset: 6)
+        ]
+            .forEach(stackView.addArrangedSubview)
 
-        accountImageView.constraintToSquare(sideLength: 32)
+        accountImageView.constraintToSquare(sideLength: 26)
         dropdownImage.constraintToSquare(sideLength: 16)
+        stackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        
+        stackView.center(in: self)
     }
+    
     
     public func updateSource(_ source: ConversationTitleSource) {
         if let imageSource = source.accountImageSource {
@@ -140,14 +146,43 @@ public class ConversationTitleView: UIView {
 #Preview("No subtitle") {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
+        title: "John Snow",
+        subtitle: nil
+    ))
+}
+
+@available(iOS 17, *)
+#Preview("LONG") {
+    makeVC(source: ConversationTitleSource(
+        accountImageSource: .image(.checkmark),
         title: "Paul Nagel NagelNagelNagelNagelNagelNagel",
         subtitle: nil
     ))
 }
 
+
 @MainActor
 private func makeVC(source: ConversationTitleSource) -> UIViewController {
     let vc = UIViewController()
     vc.navigationItem.titleView = ConversationTitleView(source: source)
-    return UINavigationController(rootViewController: vc)
+    vc.view.backgroundColor = .systemBackground
+    let navigationController = UINavigationController(rootViewController: vc)
+    let navBar = navigationController.navigationBar
+    addBottomBorder(to: navBar)
+    return navigationController
+}
+
+@MainActor
+private func addBottomBorder(to navBar: UINavigationBar) {
+    let border = UIView()
+    border.backgroundColor = UIColor.lightGray
+    border.translatesAutoresizingMaskIntoConstraints = false
+    navBar.addSubview(border)
+
+    NSLayoutConstraint.activate([
+        border.bottomAnchor.constraint(equalTo: navBar.bottomAnchor),
+        border.leadingAnchor.constraint(equalTo: navBar.leadingAnchor),
+        border.trailingAnchor.constraint(equalTo: navBar.trailingAnchor),
+        border.heightAnchor.constraint(equalToConstant: 1)
+    ])
 }
