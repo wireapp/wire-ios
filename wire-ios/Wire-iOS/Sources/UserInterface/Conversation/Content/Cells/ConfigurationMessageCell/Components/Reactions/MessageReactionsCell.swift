@@ -22,15 +22,9 @@ import WireDataModel
 // MARK: - Reaction
 
 struct MessageReactionMetadata: Equatable {
-
     let emoji: Emoji.ID
     let count: UInt
     let isSelfUserReacting: Bool
-
-    static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
-        lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
-    }
-
 }
 
 // MARK: - MessageReactionsCell
@@ -44,7 +38,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
 
-    private let reactionsView = GridLayoutView()
+    private let collectionView = UICollectionView()
 
     private lazy var insets = UIEdgeInsets(
         top: 8,
@@ -68,8 +62,8 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure Views and constraints
 
     private func configureSubviews() {
-        addSubview(reactionsView)
-        reactionsView.fitIn(view: self, insets: insets)
+        addSubview(collectionView)
+        collectionView.fitIn(view: self, insets: insets)
     }
 
     // MARK: - configure method
@@ -99,26 +93,6 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
             }
         }
 
-        reactionsView.configure(views: reactionToggles)
-    }
-
-    func prepareForReuse() {
-        reactionsView.prepareForReuse()
-    }
-
-    override func systemLayoutSizeFitting(
-        _ targetSize: CGSize,
-        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
-        verticalFittingPriority: UILayoutPriority
-    ) -> CGSize {
-        let insetsWidth = insets.left + insets.right
-        reactionsView.widthForCalculations = targetSize.width - insetsWidth
-        reactionsView.setNeedsLayout()
-        reactionsView.layoutIfNeeded()
-        return super.systemLayoutSizeFitting(
-            CGSize(width: targetSize.width - insetsWidth, height: UIView.noIntrinsicMetric),
-            withHorizontalFittingPriority: horizontalFittingPriority,
-            verticalFittingPriority: verticalFittingPriority
-        )
+        //reactionsView.configure(views: reactionToggles)
     }
 }
