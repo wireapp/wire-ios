@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 ruby file: ".ruby-version"
 
+gem 'abbrev'
 gem 'fastlane'
 gem 'git'
 gem 'httparty'
