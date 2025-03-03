@@ -24,7 +24,8 @@ package protocol VerificationCodeBuilder {
     @MainActor
     func verificationCodeView(
         email: String,
-        password: String
+        password: String,
+        isCloudAccountAlreadyRegistered: Bool
     ) -> VerificationCodeView
 
 }

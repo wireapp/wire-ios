@@ -105,7 +105,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
             RootView.ModalDestination.noHistory(
                 userID: Scaffolding.someAccessToken.userID,
                 cookies: [Scaffolding.someCookie],
-                accessToken: Scaffolding.someAccessToken
+                accessToken: Scaffolding.someAccessToken,
+                isCloudAccountAlreadyRegistered: false
             )
         )
     }

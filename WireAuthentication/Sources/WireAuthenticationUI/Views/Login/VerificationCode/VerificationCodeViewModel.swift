@@ -26,6 +26,7 @@ import WireLogging
 public final class VerificationCodeViewModel: ObservableObject {
 
     private static let numberOfDigits = 6
+    private let isCloudAccountAlreadyRegistered: Bool
 
     @Published var code: [String]
     @Published private(set) var isLoading = false
@@ -43,7 +44,8 @@ public final class VerificationCodeViewModel: ObservableObject {
         password: String,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         router: any Router,
-        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
+        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits,
+        isCloudAccountAlreadyRegistered: Bool
     ) {
         precondition(numberOfDigits > 0)
 
@@ -53,6 +55,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.router = router
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
+        self.isCloudAccountAlreadyRegistered = isCloudAccountAlreadyRegistered
     }
 
     var isConfirmButtonDisabled: Bool {
@@ -96,7 +99,8 @@ public final class VerificationCodeViewModel: ObservableObject {
                 RootView.ModalDestination.noHistory(
                     userID: token.userID,
                     cookies: cookies,
-                    accessToken: token
+                    accessToken: token,
+                    isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
                 )
             )
             WireLogger.authentication.info("2FA login via email succeeded")

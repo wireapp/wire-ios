@@ -88,8 +88,12 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
 extension LoginViaEmailComponent: LoginViaEmailView.Factory {
 
-    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
-        verificationCodeComponent.view(email: email, password: password)
+    func verificationCodeView(
+        email: String,
+        password: String,
+        isCloudAccountAlreadyRegistered: Bool
+    ) -> VerificationCodeView {
+        verificationCodeComponent.view(email: email, password: password, isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered)
     }
 
 }

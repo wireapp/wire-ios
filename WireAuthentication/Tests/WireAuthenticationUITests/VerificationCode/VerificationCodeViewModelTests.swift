@@ -41,7 +41,8 @@ final class VerificationCodeViewModelTests {
             password: "aaaaaa",
             loginViaEmailUseCase: loginViaEmailUseCase,
             router: router,
-            numberOfDigits: 3 // Lets use a 3 digit code for simplicity
+            numberOfDigits: 3,// Lets use a 3 digit code for simplicity
+            isCloudAccountAlreadyRegistered: false
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
@@ -102,7 +103,8 @@ final class VerificationCodeViewModelTests {
                 RootView.ModalDestination.noHistory(
                     userID: Scaffolding.someAccessToken.userID,
                     cookies: [Scaffolding.someCookie],
-                    accessToken: Scaffolding.someAccessToken
+                    accessToken: Scaffolding.someAccessToken,
+                    isCloudAccountAlreadyRegistered: false
                 )
         )
     }
