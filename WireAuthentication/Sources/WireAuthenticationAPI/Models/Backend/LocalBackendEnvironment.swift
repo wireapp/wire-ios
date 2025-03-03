@@ -21,32 +21,89 @@ import Foundation
 // TODO: [WPB-16272] Remove duplication
 public struct LocalBackendEnvironment {
 
-    public init(
-        title: String,
-        url: URL,
-        accountsURL: URL,
-        proxySettings: LocalProxySettings? = nil
-    ) {
-        self.title = title
-        self.url = url
-        self.accountsURL = accountsURL
-        self.proxySettings = proxySettings
-    }
-
-    /// The  name of the backend.
+    /// The backend's title.
 
     public let title: String
 
-    /// The `URL` of the backend.
+    /// The backend's domain which describes the namespace
+    /// for objects beloging to this backend.
 
-    public let url: URL
+    public let domain: String
 
-    /// The `URL` of the accounts.
+    /// The resolved api version to use when communicating
+    /// with this backend.
 
-    public let accountsURL: URL
+    public let resolvedAPIVersion: Int
 
-    /// The proxy settings for the backend if any.
+    /// Whether this backend is allowed to communicated with
+    /// other backends.
+
+    public let isFederationEnabled: Bool
+
+    /// Whether this backend supports the MLS communcation protocol.
+
+    public let isMLSEnabled: Bool
+
+    /// The base endpoints available on this backend.
+
+    public let endpoints: Endpoints
+
+    /// The backends certificate pinning keys.
+
+    public let pinnedKeys: [Data]
+
+    /// The proxy configuration.
+    ///
+    /// If present, then all requests must be proxied.
 
     public let proxySettings: LocalProxySettings?
+
+    public init(
+        title: String,
+        domain: String,
+        resolvedAPIVersion: Int,
+        isFederationEnabled: Bool,
+        isMLSEnabled: Bool,
+        endpoints: Endpoints,
+        pinnedKeys: [Data],
+        proxySettings: LocalProxySettings?
+    ) {
+        self.title = title
+        self.domain = domain
+        self.resolvedAPIVersion = resolvedAPIVersion
+        self.isFederationEnabled = isFederationEnabled
+        self.isMLSEnabled = isMLSEnabled
+        self.endpoints = endpoints
+        self.pinnedKeys = pinnedKeys
+        self.proxySettings = proxySettings
+    }
+
+    /// Endpoints available on a backend.
+
+    public struct Endpoints {
+
+        /// The base url for requests to the REST api.
+
+        public let restAPIURL: URL
+
+        /// The base url for requests to establish a websocket.
+
+        public let websocketURL: URL
+
+        /// The url to the "accounts" endpoint.
+
+        public let accountsURL: URL
+
+        public init(
+            restAPIURL: URL,
+            websocketURL: URL,
+            accountsURL: URL
+        ) {
+            self.restAPIURL = restAPIURL
+            self.websocketURL = websocketURL
+            self.accountsURL = accountsURL
+        }
+
+    }
 
 }

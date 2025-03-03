@@ -75,8 +75,16 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
         let dependencies = MockDependencies()
         dependencies._backendEnvironment = LocalBackendEnvironment(
             title: "<backend name>",
-            url: URL(string: "https://example.com")!,
-            accountsURL: URL(string: "https://example.com")!,
+            domain: "example.com",
+            resolvedAPIVersion: 8,
+            isFederationEnabled: false,
+            isMLSEnabled: false,
+            endpoints: LocalBackendEnvironment.Endpoints(
+                restAPIURL: URL(string: "https://example.com")!,
+                websocketURL: URL(string: "https://example.com")!,
+                accountsURL: URL(string: "https://example.com")!
+            ),
+            pinnedKeys: [],
             proxySettings: .unauthenticated(host: "socks-test.net", port: 10)
         )
         let view = dependencies.loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
@@ -97,8 +105,16 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
         let dependencies = MockDependencies()
         dependencies._backendEnvironment = LocalBackendEnvironment(
             title: "<backend name>",
-            url: URL(string: "https://example.com")!,
-            accountsURL: URL(string: "https://example.com")!,
+            domain: "example.com",
+            resolvedAPIVersion: 8,
+            isFederationEnabled: false,
+            isMLSEnabled: false,
+            endpoints: LocalBackendEnvironment.Endpoints(
+                restAPIURL: URL(string: "https://example.com")!,
+                websocketURL: URL(string: "https://example.com")!,
+                accountsURL: URL(string: "https://example.com")!
+            ),
+            pinnedKeys: [],
             proxySettings: .unauthenticated(host: "socks-test.net", port: 10)
         )
         let view = dependencies.loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)

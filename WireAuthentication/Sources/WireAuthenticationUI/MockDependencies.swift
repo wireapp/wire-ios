@@ -32,9 +32,17 @@ final class MockDependencies {
     }
 
     var _backendEnvironment = LocalBackendEnvironment(
-        title: "backen name",
-        url: URL(string: "https://example.com")!,
-        accountsURL: URL(string: "https://example.com")!,
+        title: "Example backend",
+        domain: "example.com",
+        resolvedAPIVersion: 8,
+        isFederationEnabled: false,
+        isMLSEnabled: false,
+        endpoints: LocalBackendEnvironment.Endpoints(
+            restAPIURL: URL(string: "www.example.com")!,
+            websocketURL: URL(string: "www.example.com")!,
+            accountsURL: URL(string: "www.example.com")!
+        ),
+        pinnedKeys: [],
         proxySettings: nil
     )
 

@@ -51,7 +51,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     private var forgotPasswordURL: URL {
-        backendEnvironment.accountsURL.appendingPathComponent("forgot")
+        backendEnvironment.endpoints.accountsURL.appendingPathComponent("forgot")
     }
 
     var backendName: String {
@@ -64,7 +64,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             backendName,
             "",
             L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendEnvironment.url.absoluteString
+            backendEnvironment.endpoints.restAPIURL.absoluteString
         ].joined(separator: "\n")
     }
 
@@ -77,7 +77,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     var proxyServer: String {
-        backendEnvironment.url.absoluteString
+        backendEnvironment.endpoints.restAPIURL.absoluteString
     }
 
     func isValidPassword(_ password: String) -> Bool {
