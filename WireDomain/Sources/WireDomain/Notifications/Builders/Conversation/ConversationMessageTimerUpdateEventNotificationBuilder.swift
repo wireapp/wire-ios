@@ -77,7 +77,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
         true
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         var timeoutStrValue: String?
 
         if let timeoutValue = context.newTimer {
@@ -93,7 +93,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
 
     // MARK: - Build notifications
 
-    private func buildTimerUpdateNotification(timeout: String?) -> UNMutableNotificationContent {
+    private func buildTimerUpdateNotification(timeout: String?) -> UserNotification {
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle() {
@@ -120,7 +120,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

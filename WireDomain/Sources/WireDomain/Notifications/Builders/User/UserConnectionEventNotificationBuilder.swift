@@ -60,7 +60,7 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         true
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         switch context.connectionStatus {
         case .pending:
             buildConnectionRequestNotification(isPending: true)
@@ -73,7 +73,7 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
 
     private func buildConnectionRequestNotification(
         isPending: Bool
-    ) -> UNMutableNotificationContent {
+    ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
         let connectionStatus = context.connectionStatus
@@ -90,7 +90,7 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

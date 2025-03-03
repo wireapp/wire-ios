@@ -136,7 +136,7 @@ struct CallNotificationBuilder: NotificationBuilder {
         validator.validate()
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         switch context.callState {
         case let .incomingCall(isVideo):
             buildIncomingCallNotification(isVideo: isVideo)
@@ -149,9 +149,8 @@ struct CallNotificationBuilder: NotificationBuilder {
 
     // MARK: - Build notifications
 
-    private func buildIncomingCallNotification(isVideo: Bool) -> UNMutableNotificationContent {
+    private func buildIncomingCallNotification(isVideo: Bool) -> UserNotification {
         let content = UNMutableNotificationContent()
-        let isGroupConversation = context.isGroupConversation
         let senderName = context.callerName
 
         if let title = makeTitle() {
@@ -170,12 +169,11 @@ struct CallNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildMissedCallNotification() -> UNMutableNotificationContent {
+    private func buildMissedCallNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
-        let isGroupConversation = context.isGroupConversation
         let senderName = context.callerName
 
         if let title = makeTitle() {
@@ -190,7 +188,7 @@ struct CallNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

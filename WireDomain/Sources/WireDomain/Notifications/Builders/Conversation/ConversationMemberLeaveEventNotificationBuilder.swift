@@ -76,13 +76,13 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
         context.removedUserIDs.contains(context.selfUserID)
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         buildMemberLeaveNotification()
     }
 
     // MARK: - Build notifications
 
-    private func buildMemberLeaveNotification() -> UNMutableNotificationContent {
+    private func buildMemberLeaveNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle() {
@@ -101,7 +101,7 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

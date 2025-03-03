@@ -79,13 +79,13 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
         true
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         buildConversationCreatedNotification()
     }
 
     // MARK: - Build notifications
 
-    private func buildConversationCreatedNotification() -> UNMutableNotificationContent {
+    private func buildConversationCreatedNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle() {
@@ -104,7 +104,7 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

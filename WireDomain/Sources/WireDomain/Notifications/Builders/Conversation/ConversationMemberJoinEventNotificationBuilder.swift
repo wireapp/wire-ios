@@ -76,13 +76,13 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         context.addedUserIDs.contains(context.selfUserID)
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         buildMemberJoinNotification()
     }
 
     // MARK: - Build notifications
 
-    private func buildMemberJoinNotification() -> UNMutableNotificationContent {
+    private func buildMemberJoinNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle() {
@@ -101,7 +101,7 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

@@ -39,13 +39,13 @@ struct UserContactJoinEventNotificationBuilder: NotificationBuilder {
         true
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         buildUserContactJoinNotification()
     }
 
     // MARK: - Build notifications
 
-    private func buildUserContactJoinNotification() -> UNMutableNotificationContent {
+    private func buildUserContactJoinNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
 
         let body = "\(context.name) just joined Wire"
@@ -54,7 +54,7 @@ struct UserContactJoinEventNotificationBuilder: NotificationBuilder {
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

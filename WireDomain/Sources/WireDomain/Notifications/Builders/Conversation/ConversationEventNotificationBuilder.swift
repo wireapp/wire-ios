@@ -21,6 +21,11 @@ import WireAPI
 import WireDataModel
 
 struct ConversationEventNotificationBuilder: NotificationBuilder {
+    
+    enum Failure: Error {
+        case failedToDecryptMLSMessage
+        case failedToDecryptProteusMessage
+    }
 
     private struct Context {
         let senderID: UserID
@@ -77,14 +82,22 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         )
     }
 
-    func buildContent() async throws -> UNMutableNotificationContent {
+    func buildContent() async throws -> UserNotification {
         let builder: NotificationBuilder
 
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
+            let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
+
+            let genericMessage = try decryptMessage(
+                decryptedMessage: decryptedMessage,
+                isProteus: false
+            )
+            
+            // TODO: Handle calling from genericMessage.calling
 
             builder = try await ConversationMLSMessageAddEventNotificationBuilder(
-                mlsMessageEvent: mlsMessageEvent,
+                message: genericMessage,
                 conversationID: mlsMessageEvent.conversationID,
                 senderID: mlsMessageEvent.senderID,
                 userLocalStore: userLocalStore,
@@ -93,9 +106,18 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             )
 
         case let .proteusMessageAdd(proteusMessageEvent):
+            let decryptedMessage = proteusMessageEvent.message.decryptedMessage
+            let external = proteusMessageEvent.externalData?.encryptedMessage
+
+            let genericMessage = try decryptMessage(
+                decryptedMessage: decryptedMessage,
+                external: external
+            )
+            
+            // TODO: Handle calling from genericMessage.calling
 
             builder = try await ConversationProteusMessageAddEventNotificationBuilder(
-                proteusMessageEvent: proteusMessageEvent,
+                message: genericMessage,
                 conversationID: proteusMessageEvent.conversationID,
                 senderID: proteusMessageEvent.senderID,
                 userLocalStore: userLocalStore,
@@ -154,11 +176,11 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             )
 
         default:
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
 
         guard await builder.shouldBuildNotification() else {
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
 
         return try await builder.buildContent()
@@ -180,6 +202,22 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         }
 
         return true
+    }
+    
+    private func decryptMessage(
+        decryptedMessage: String?,
+        external: String? = nil,
+        isProteus: Bool = true
+    ) throws -> GenericMessage {
+        guard let decryptedMessage,
+              let (genericMessage, _) = ProtobufMessageDecoder.getProtobufMessage(
+                  from: decryptedMessage,
+                  externalData: external
+              ) else {
+            throw isProteus ? Failure.failedToDecryptProteusMessage : Failure.failedToDecryptMLSMessage
+        }
+        
+        return genericMessage
     }
 
 }

@@ -21,10 +21,6 @@ import WireDataModel
 
 struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
 
-    enum Failure: Error {
-        case failedToDecryptMLSMessage
-    }
-
     private enum AssetType {
         case image
         case video
@@ -49,7 +45,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
     private let context: Context
 
     init(
-        mlsMessageEvent: ConversationMLSMessageAddEvent,
+        message: GenericMessage,
         conversationID: WireAPI.QualifiedID,
         senderID: UserID,
         userLocalStore: any UserLocalStoreProtocol,
@@ -57,17 +53,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         messageLocalStore: any MessageLocalStoreProtocol
     ) async throws {
         self.messageLocalStore = messageLocalStore
-        
-        let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
-
-        guard let decryptedMessage,
-              let (genericMessage, _) = ProtobufMessageDecoder.getProtobufMessage(
-                  from: decryptedMessage
-              ) else {
-            throw Failure.failedToDecryptMLSMessage
-        }
-
-        self.message = genericMessage
+        self.message = message
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
@@ -109,7 +95,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         !context.isMessageSilenced
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         guard !context.hidesNotificationContent else {
             return buildHiddenNotification()
         }
@@ -142,13 +128,13 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         case .hidden:
             return buildHiddenNotification()
         default:
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
     }
 
     // MARK: - Build notifications
 
-    private func buildAssetNotification(ofType assetType: AssetType) -> UNMutableNotificationContent {
+    private func buildAssetNotification(ofType assetType: AssetType) -> UserNotification {
         let content = UNMutableNotificationContent()
         let isGroupConversation = context.isGroupConversation
         let senderName = context.senderName
@@ -182,10 +168,10 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildPingNotification() -> UNMutableNotificationContent {
+    private func buildPingNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
         let senderName = context.senderName
 
@@ -203,10 +189,10 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildHiddenNotification() -> UNMutableNotificationContent {
+    private func buildHiddenNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
 
         // No title for hidden message, only a body.
@@ -217,18 +203,18 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildTextNotification(_ text: Text?) async -> UNMutableNotificationContent {
+    private func buildTextNotification(_ text: Text?) async -> UserNotification {
         guard let textMessageData = text else {
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
 
         let text = textMessageData.content.removingExtremeCombiningCharacters
 
         guard !text.isEmpty else {
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
 
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
@@ -266,10 +252,10 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildLocationNotification() -> UNMutableNotificationContent {
+    private func buildLocationNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
         let isGroupConversation = context.isGroupConversation
         let senderName = context.senderName
@@ -288,12 +274,12 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
     private func buildEphemeralNotification(
         ephemeral: Ephemeral
-    ) async -> UNMutableNotificationContent {
+    ) async -> UserNotification {
         let isMention: Bool
         let isReply: Bool
 
@@ -334,7 +320,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

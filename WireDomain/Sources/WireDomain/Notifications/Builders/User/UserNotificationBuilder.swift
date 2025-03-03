@@ -37,7 +37,7 @@ struct UserNotificationBuilder: NotificationBuilder {
         true
     }
 
-    func buildContent() async throws -> UNMutableNotificationContent {
+    func buildContent() async throws -> UserNotification {
         let builder: NotificationBuilder
 
         switch event {
@@ -65,11 +65,11 @@ struct UserNotificationBuilder: NotificationBuilder {
             )
 
         default:
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
 
         guard await builder.shouldBuildNotification() else {
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
 
         return try await builder.buildContent()

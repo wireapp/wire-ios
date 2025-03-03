@@ -18,7 +18,14 @@
 
 import UserNotifications
 
+typealias CallKitContent = [String: Any]
+
+enum UserNotification {
+  case text(UNMutableNotificationContent)
+  case callKit(CallKitContent)
+}
+
 protocol NotificationBuilder {
     func shouldBuildNotification() async -> Bool
-    func buildContent() async throws -> UNMutableNotificationContent
+    func buildContent() async throws -> UserNotification
 }

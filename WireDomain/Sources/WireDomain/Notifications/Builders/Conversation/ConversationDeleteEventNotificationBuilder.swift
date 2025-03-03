@@ -79,13 +79,13 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
         context.isGroupConversation
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         buildDeletedConversationNotification()
     }
 
     // MARK: - Build notifications
 
-    private func buildDeletedConversationNotification() -> UNMutableNotificationContent {
+    private func buildDeletedConversationNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle() {
@@ -104,7 +104,7 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers

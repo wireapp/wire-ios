@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CallKit
 import WireAPI
 import UserNotifications
 import WireLogging
@@ -84,11 +85,18 @@ struct GenerateNotificationService {
             }
             
             do {
-                let notificationContent = try await notificationBuilder.buildContent()
-                notifications.append(notificationContent)
+                let userNotification = try await notificationBuilder.buildContent()
+                
+                switch userNotification {
+                case .text(let notificationContent):
+                    notifications.append(notificationContent)
+                case .callKit(let callKitContent):
+                    try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
+                }
+                
             } catch {
                 WireLogger.notifications.error(
-                    "Failed to build notification: \(error.localizedDescription)"
+                    "Failed to generate notification: \(error.localizedDescription)"
                 )
                 notifications.append(UNMutableNotificationContent())
             }

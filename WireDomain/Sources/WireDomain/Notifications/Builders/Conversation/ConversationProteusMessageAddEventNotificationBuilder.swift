@@ -21,10 +21,6 @@ import WireDataModel
 
 struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilder {
 
-    enum Failure: Error {
-        case failedToDecryptProteusMessage
-    }
-
     private enum AssetType {
         case image
         case video
@@ -49,7 +45,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
     private let context: Context
 
     init(
-        proteusMessageEvent: ConversationProteusMessageAddEvent,
+        message: GenericMessage,
         conversationID: WireAPI.QualifiedID,
         senderID: UserID,
         userLocalStore: any UserLocalStoreProtocol,
@@ -57,19 +53,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         messageLocalStore: any MessageLocalStoreProtocol
     ) async throws {
         self.messageLocalStore = messageLocalStore
-
-        let decryptedMessage = proteusMessageEvent.message.decryptedMessage
-        let externalEncryptedMessage = proteusMessageEvent.externalData?.encryptedMessage
-
-        guard let decryptedMessage,
-              let (genericMessage, _) = ProtobufMessageDecoder.getProtobufMessage(
-                  from: decryptedMessage,
-                  externalData: externalEncryptedMessage
-              ) else {
-            throw Failure.failedToDecryptProteusMessage
-        }
-
-        self.message = genericMessage
+        self.message = message
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
@@ -111,7 +95,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         !context.isMessageSilenced
     }
 
-    func buildContent() async -> UNMutableNotificationContent {
+    func buildContent() async -> UserNotification {
         guard !context.hidesNotificationContent else {
             return buildHiddenNotification()
         }
@@ -144,13 +128,13 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         case .hidden:
             return buildHiddenNotification()
         default:
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
     }
 
     // MARK: - Build notifications
 
-    private func buildAssetNotification(ofType assetType: AssetType) -> UNMutableNotificationContent {
+    private func buildAssetNotification(ofType assetType: AssetType) -> UserNotification {
         let content = UNMutableNotificationContent()
         let isGroupConversation = context.isGroupConversation
         let senderName = context.senderName
@@ -184,10 +168,10 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildPingNotification() -> UNMutableNotificationContent {
+    private func buildPingNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
         let senderName = context.senderName
 
@@ -205,10 +189,10 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildHiddenNotification() -> UNMutableNotificationContent {
+    private func buildHiddenNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
 
         // No title for hidden message, only a body.
@@ -219,18 +203,18 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildTextNotification(_ text: Text?) async -> UNMutableNotificationContent {
+    private func buildTextNotification(_ text: Text?) async -> UserNotification {
         guard let textMessageData = text else {
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
 
         let text = textMessageData.content.removingExtremeCombiningCharacters
 
         guard !text.isEmpty else {
-            return UNMutableNotificationContent()
+            return .text(UNMutableNotificationContent())
         }
 
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
@@ -268,10 +252,10 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
-    private func buildLocationNotification() -> UNMutableNotificationContent {
+    private func buildLocationNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
         let isGroupConversation = context.isGroupConversation
         let senderName = context.senderName
@@ -290,12 +274,12 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
 
-        return content
+        return .text(content)
     }
 
     private func buildEphemeralNotification(
         ephemeral: Ephemeral
-    ) async -> UNMutableNotificationContent {
+    ) async -> UserNotification {
         let isMention: Bool
         let isReply: Bool
 
@@ -336,7 +320,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
 
-        return content
+        return .text(content)
     }
 
     // MARK: - Helpers
