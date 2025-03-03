@@ -32,19 +32,30 @@ class NoHistoryComponent {
     private func viewModel(
         userID: UUID,
         cookies: [HTTPCookie],
+        emailCredentials: EmailCredentials?,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) -> NoHistoryViewModel {
         NoHistoryViewModel(
             userID: userID,
             cookies: cookies,
+            emailCredentials: emailCredentials,
             onFlowCompletion: onFlowCompletion
         )
     }
 
     @MainActor
-    func view(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+    func view(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        emailCredentials: EmailCredentials?
+    ) -> NoHistoryView {
         NoHistoryView(
-            viewModel: viewModel(userID: userID, cookies: cookies, onFlowCompletion: onFlowCompletion)
+            viewModel: viewModel(
+                userID: userID,
+                cookies: cookies,
+                emailCredentials: emailCredentials,
+                onFlowCompletion: onFlowCompletion
+            )
         )
     }
 

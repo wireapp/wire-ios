@@ -50,8 +50,12 @@ package struct RootView: View {
                                 }
                             )
                     }
-                case let .noHistory(userID, cookies):
-                    factory.noHistoryView(userID: userID, cookies: cookies)
+                case let .noHistory(userID, cookies, emailCredentials):
+                    factory.noHistoryView(
+                        userID: userID,
+                        cookies: cookies,
+                        emailCredentials: emailCredentials
+                    )
                 }
 
             }
@@ -75,7 +79,7 @@ package struct RootView: View {
         public var id: Self { self }
 
         case authFlow
-        case noHistory(userID: UUID, cookies: [HTTPCookie])
+        case noHistory(userID: UUID, cookies: [HTTPCookie], emailCredentials: EmailCredentials?)
     }
 
 }

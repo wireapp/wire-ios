@@ -18,36 +18,30 @@
 
 import Foundation
 
-/// The result of an authentication flow.
+/// Email credentials for a user.
 
-public struct AuthenticationResult: Equatable {
+public struct EmailCredentials: Equatable, Hashable {
 
-    /// The user id of whom the token belongs.
+    /// The user's email address.
 
-    public let userID: UUID
+    public let email: String
 
-    /// The authentication cookies.
+    /// The plaintext password.
 
-    public let cookies: [HTTPCookie]
+    public let password: String
 
-    /// A token used to make authenticated requests to the backend if available.
+    /// A second factor authentication code.
 
-    public let accessToken: AccessToken?
-
-    /// The user's email credentials.
-
-    public let emailCredentials: EmailCredentials?
+    public let verificationCode: String?
 
     public init(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        emailCredentials: EmailCredentials?
+        email: String,
+        password: String,
+        verificationCode: String?
     ) {
-        self.userID = userID
-        self.cookies = cookies
-        self.accessToken = accessToken
-        self.emailCredentials = emailCredentials
+        self.email = email
+        self.password = password
+        self.verificationCode = verificationCode
     }
 
 }

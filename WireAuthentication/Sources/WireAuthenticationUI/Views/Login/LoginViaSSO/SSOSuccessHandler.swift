@@ -27,8 +27,17 @@ package struct SSOSuccessHandler {
     }
 
     @MainActor
-    package func handleSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        router.presentSheet(RootView.ModalDestination.noHistory(userID: userID, cookies: cookies))
+    package func handleSuccess(
+        userID: UUID,
+        cookies: [HTTPCookie]
+    ) {
+        router.presentSheet(
+            RootView.ModalDestination.noHistory(
+                userID: userID,
+                cookies: cookies,
+                emailCredentials: nil
+            )
+        )
     }
 
 }

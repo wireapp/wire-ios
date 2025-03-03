@@ -108,8 +108,16 @@ extension RootComponent: RootView.Factory {
     }
 
     @MainActor
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
-        noHistoryComponent.view(userID: userID, cookies: cookies)
+    func noHistoryView(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        emailCredentials: EmailCredentials?
+    ) -> NoHistoryView {
+        noHistoryComponent.view(
+            userID: userID,
+            cookies: cookies,
+            emailCredentials: emailCredentials
+        )
     }
 
 }

@@ -26,19 +26,29 @@ package final class NoHistoryViewModel: ObservableObject {
 
     private let userID: UUID
     private let cookies: [HTTPCookie]
+    private let emailCredentials: EmailCredentials?
     private let onFlowCompletion: (AuthenticationResult) -> Void
 
     package init(
         userID: UUID,
         cookies: [HTTPCookie],
+        emailCredentials: EmailCredentials?,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
         self.userID = userID
         self.cookies = cookies
+        self.emailCredentials = emailCredentials
         self.onFlowCompletion = onFlowCompletion
     }
 
     func confirm() {
-        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: nil))
+        onFlowCompletion(
+            AuthenticationResult(
+                userID: userID,
+                cookies: cookies,
+                accessToken: nil,
+                emailCredentials: emailCredentials
+            )
+        )
     }
 }
