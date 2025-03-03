@@ -31,6 +31,7 @@ package struct SSOSuccessHandler {
         router.presentSheet(RootView.ModalDestination.noHistory(
             userID: userID,
             cookies: cookies,
+            accessToken: nil,
             isCloudAccountAlreadyRegistered: false)
         )
     }

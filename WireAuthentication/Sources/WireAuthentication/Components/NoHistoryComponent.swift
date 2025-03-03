@@ -18,7 +18,7 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
+//import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
@@ -37,6 +37,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency>  {
     private func viewModel(
         userID: UUID,
         cookies: [HTTPCookie],
+        accessToken: AccessToken?,
         isCloudAccountAlreadyRegistered: Bool,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
@@ -45,6 +46,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency>  {
         NoHistoryViewModel(
             userID: userID,
             cookies: cookies,
+            accessToken: accessToken,
             isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
@@ -56,6 +58,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency>  {
     func view(
         userID: UUID,
         cookies: [HTTPCookie],
+        accessToken: AccessToken?,
         isCloudAccountAlreadyRegistered: Bool,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) -> NoHistoryView {
@@ -63,6 +66,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency>  {
             viewModel: viewModel(
                 userID: userID,
                 cookies: cookies,
+                accessToken: accessToken,
                 isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered,
                 howToChangeEmailURL: dependency.howToChangeEmailURL,
                 howToDeleteAccountURL: dependency.howToDeleteAccountURL,

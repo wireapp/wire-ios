@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 
 package protocol NoHistoryViewBuilder {
 
@@ -24,6 +25,7 @@ package protocol NoHistoryViewBuilder {
     func noHistoryView(
         userID: UUID,
         cookies: [HTTPCookie],
+        accessToken: AccessToken?,
         isCloudAccountAlreadyRegistered: Bool
     ) -> NoHistoryView
 
@@ -100,6 +102,7 @@ package struct NoHistoryView: View {
     let viewModel = NoHistoryViewModel(
         userID: UUID(),
         cookies: [],
+        accessToken: nil,
         isCloudAccountAlreadyRegistered: false,
         howToChangeEmailURL: URL(string: "https://wire.com")!,
         howToDeleteAccountURL: URL(string: "https://wire.com")!,
@@ -114,6 +117,7 @@ package struct NoHistoryView: View {
             let viewModel = NoHistoryViewModel(
                 userID: UUID(),
                 cookies: [],
+                accessToken: nil,
                 isCloudAccountAlreadyRegistered: false,
                 howToChangeEmailURL: URL(string: "https://wire.com")!,
                 howToDeleteAccountURL: URL(string: "https://wire.com")!,

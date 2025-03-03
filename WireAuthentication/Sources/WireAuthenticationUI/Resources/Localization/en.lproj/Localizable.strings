@@ -70,7 +70,8 @@
 "authentication.error.title.invalid_sso_link" = "Error";
 "authentication.error.title.sso_login_failed" = "Something went wrong";
 "authentication.error.title.invalid_credentials" = "Invalid Information";
-"authentication.error.title.account_pending_activation" = "Account Pending Activation";
+"authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
+"authentication.error.title.account_pending_activation" = "Pending activation";
 "authentication.error.title.account_suspended" = "Unauthorized";
 
 "authentication.error.message.no_internet" = "You are not connected to the internet.";
@@ -78,7 +79,8 @@
 "authentication.error.message.invalid_sso_link" = "Invalid company login url.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
 "authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
-"authentication.error.message.account_pending_activation" = "The account you are trying access is pending activation. Please verify your details.";
+"authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
+"authentication.error.message.account_pending_activation" = "The account you are trying to access is pending activation. Please verify your details.";
 "authentication.error.message.account_suspended" = "This account is no longer authorized to log in.";
 
 "authentication.error.confirm" = "OK";

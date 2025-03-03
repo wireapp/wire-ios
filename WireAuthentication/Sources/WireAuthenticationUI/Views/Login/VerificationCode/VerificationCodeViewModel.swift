@@ -20,28 +20,134 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+import WireLogging
 
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
 
+    private static let numberOfDigits = 6
+
     @Published var code: [String]
+    @Published private(set) var isLoading = false
+    @Published var alert: Alert?
+
     let email: String
     let password: String
+    let numberOfDigits: Int
+
+    private let loginViaEmailUseCase: LoginViaEmailUseCaseProtocol
+    private let router: any Router
 
     package init(
         email: String,
         password: String,
-        code: [String] = ["", "", "", "", "", ""]
+        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
+        router: any Router,
+        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
     ) {
+        precondition(numberOfDigits > 0)
+
         self.email = email
         self.password = password
-        self.code = code
+        self.loginViaEmailUseCase = loginViaEmailUseCase
+        self.router = router
+        self.code = Array(repeating: "", count: numberOfDigits)
+        self.numberOfDigits = numberOfDigits
     }
 
-    func confirm() async {}
+    var isConfirmButtonDisabled: Bool {
+        code.contains { $0.isEmpty }
+    }
+
+    func handleInputReturningFocus(_ newValue: String, at index: Int) -> Int? {
+        if let intValue = Int(newValue.prefix(1)), (0 ... 9).contains(intValue) {
+            code[index] = String(intValue)
+        } else {
+            code[index] = ""
+        }
+
+        return if !code[index].isEmpty {
+            if index < numberOfDigits - 1 {
+                index + 1
+            } else {
+                nil
+            }
+        } else if index > 0 {
+            index - 1
+        } else {
+            0
+        }
+    }
+
+    func confirm() async {
+        isLoading = true
+
+        let loginTask = Task.detached { [loginViaEmailUseCase, email, password, code] in
+            try await loginViaEmailUseCase.invoke(
+                email: email,
+                password: password,
+                verificationCode: code.joined()
+            )
+        }
+
+        do {
+            let (cookies, token) = try await loginTask.value
+            router.presentSheet(
+                RootView.ModalDestination.noHistory(
+                    userID: token.userID,
+                    cookies: cookies,
+                    accessToken: token
+                )
+            )
+            WireLogger.authentication.info("2FA login via email succeeded")
+        } catch {
+            WireLogger.authentication.info("2FA login via email failed: \(error)")
+
+            switch error {
+            case LoginViaEmailUseCaseFailure.noInternet:
+                alert = .noInternet
+            case LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed:
+                alert = .invalid2FACode
+            case LoginViaEmailUseCaseFailure.accountPendingActivation:
+                alert = .accountPendingActivation
+            case LoginViaEmailUseCaseFailure.accountSuspended:
+                alert = .accountSuspended
+            default:
+                WireLogger.authentication.error("Unexpected error during 2FA login via email: \(error)")
+                alert = .unknownError
+            }
+        }
+
+        isLoading = false
+    }
 
     func resend() async {
         // TODO: [WPB-15950] Implement
+    }
+
+}
+
+// MARK: Alerts
+
+package extension VerificationCodeViewModel {
+
+    package struct Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        let title: String
+        let message: String
+
+        private typealias Title = L10n.Authentication.Error.Title
+        private typealias Message = L10n.Authentication.Error.Message
+
+        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
+        static let invalid2FACode = Alert(title: Title.invalidInvalid2FACode, message: Message.invalidInvalid2FACode)
+        static let accountPendingActivation = Alert(
+            title: Title.accountPendingActivation,
+            message: Message.accountPendingActivation
+        )
+        static let accountSuspended = Alert(title: Title.accountSuspended, message: Message.accountSuspended)
+        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }

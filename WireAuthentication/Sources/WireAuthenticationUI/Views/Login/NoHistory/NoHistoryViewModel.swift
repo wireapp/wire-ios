@@ -36,6 +36,7 @@ package final class NoHistoryViewModel: ObservableObject {
     private let cookies: [HTTPCookie]
     private let howToChangeEmailURL: URL
     private let howToDeleteAccountURL: URL
+    private let accessToken: AccessToken?
     private let onFlowCompletion: (AuthenticationResult) -> Void
 
     let isCloudAccountAlreadyRegistered: Bool
@@ -43,6 +44,7 @@ package final class NoHistoryViewModel: ObservableObject {
     package init(
         userID: UUID,
         cookies: [HTTPCookie],
+        accessToken: AccessToken?,
         isCloudAccountAlreadyRegistered: Bool,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
@@ -50,6 +52,7 @@ package final class NoHistoryViewModel: ObservableObject {
     ) {
         self.userID = userID
         self.cookies = cookies
+        self.accessToken = accessToken
         self.isCloudAccountAlreadyRegistered = isCloudAccountAlreadyRegistered
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
@@ -57,7 +60,7 @@ package final class NoHistoryViewModel: ObservableObject {
     }
 
     func confirm() {
-        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: nil))
+        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: accessToken))
     }
 
     func howToChangeEmail() {

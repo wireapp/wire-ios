@@ -24,7 +24,12 @@ internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
 
-protocol VerificationCodeComponentDependency: Dependency {}
+protocol VerificationCodeComponentDependency: Dependency {
+
+    @MainActor var router: any Router { get }
+    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
+
+}
 
 class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
@@ -42,7 +47,9 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
     private func viewModel(email: String, password: String) -> VerificationCodeViewModel {
         VerificationCodeViewModel(
             email: email,
-            password: password
+            password: password,
+            loginViaEmailUseCase: dependency.loginViaEmailUseCase,
+            router: dependency.router
         )
     }
 

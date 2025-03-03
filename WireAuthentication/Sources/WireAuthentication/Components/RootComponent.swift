@@ -117,11 +117,13 @@ extension RootComponent: RootView.Factory {
     func noHistoryView(
         userID: UUID,
         cookies: [HTTPCookie],
+        accessToken: WireAuthenticationAPI.AccessToken?,
         isCloudAccountAlreadyRegistered: Bool
     ) -> NoHistoryView {
         noHistoryComponent.view(
             userID: userID,
             cookies: cookies,
+            accessToken: accessToken,
             isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered,
             onFlowCompletion: bridge.onFlowCompletion
         )

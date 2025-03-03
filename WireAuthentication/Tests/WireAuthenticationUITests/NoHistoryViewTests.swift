@@ -44,6 +44,7 @@ class NoHistoryViewTests: XCTestCase {
         let viewModel = NoHistoryViewModel(
             userID: UUID(),
             cookies: [],
+            accessToken: nil,
             isCloudAccountAlreadyRegistered: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,
@@ -67,6 +68,7 @@ class NoHistoryViewTests: XCTestCase {
         let viewModel = NoHistoryViewModel(
             userID: UUID(),
             cookies: [],
+            accessToken: nil,
             isCloudAccountAlreadyRegistered: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,

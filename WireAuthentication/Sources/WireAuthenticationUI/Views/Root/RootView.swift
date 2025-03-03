@@ -50,8 +50,13 @@ package struct RootView: View {
                                 }
                             )
                     }
-                case let .noHistory(userID, cookies, isCloudAccountAlreadyRegistered):
-                    factory.noHistoryView(userID: userID, cookies: cookies, isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered)
+                case let .noHistory(userID, cookies, accessToken, isCloudAccountAlreadyRegistered):
+                    factory.noHistoryView(
+                        userID: userID,
+                        cookies: cookies,
+                        accessToken: accessToken,
+                        isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+                    )
                 }
 
             }
@@ -75,7 +80,12 @@ package struct RootView: View {
         public var id: Self { self }
 
         case authFlow
-        case noHistory(userID: UUID, cookies: [HTTPCookie], isCloudAccountAlreadyRegistered: Bool)
+        case noHistory(
+            userID: UUID,
+            cookies: [HTTPCookie],
+            accessToken: AccessToken?,
+            isCloudAccountAlreadyRegistered: Bool
+        )
     }
 
 }

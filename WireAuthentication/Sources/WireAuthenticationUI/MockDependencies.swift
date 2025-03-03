@@ -128,6 +128,7 @@ extension MockDependencies: NoHistoryViewBuilder {
         NoHistoryViewModel(
             userID: UUID(),
             cookies: [],
+            accessToken: nil,
             isCloudAccountAlreadyRegistered: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,
@@ -135,7 +136,7 @@ extension MockDependencies: NoHistoryViewBuilder {
         )
     }
 
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie], isCloudAccountAlreadyRegistered: Bool) -> NoHistoryView {
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?, isCloudAccountAlreadyRegistered: Bool) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 
@@ -177,9 +178,37 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 extension MockDependencies: VerificationCodeBuilder {
 
-    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+    func previewVerificationCodeView(
+        email: String,
+        password: String,
+        code: [String] = ["", "", "", "", "", ""]
+    ) -> VerificationCodeView {
+        let viewModel = VerificationCodeViewModel(
+            email: email,
+            password: password,
+            loginViaEmailUseCase: self,
+            router: rootViewModel,
+            numberOfDigits: code.count,
+            isCloudAccountAlreadyRegistered: false
+        )
+        viewModel.code = code
+
+        return VerificationCodeView(viewModel: viewModel)
+    }
+
+    func verificationCodeView(
+        email: String,
+        password: String,
+        isCloudAccountAlreadyRegistered: Bool
+    ) -> VerificationCodeView {
         VerificationCodeView(
-            viewModel: VerificationCodeViewModel(email: email, password: password)
+            viewModel: VerificationCodeViewModel(
+                email: email,
+                password: password,
+                loginViaEmailUseCase: self,
+                router: rootViewModel,
+                isCloudAccountAlreadyRegistered: false
+            )
         )
     }
 

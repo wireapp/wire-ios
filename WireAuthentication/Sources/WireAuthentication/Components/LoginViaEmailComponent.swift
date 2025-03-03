@@ -36,6 +36,10 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
+    public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
+        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
+    }
+
     // MARK: - View
 
     @MainActor
@@ -72,12 +76,6 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
                 dependency?.bridge.registerAccount()
             }
         )
-    }
-
-    // MARK: - Private dependencies
-
-    private var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
     }
 
     // MARK: - Children
