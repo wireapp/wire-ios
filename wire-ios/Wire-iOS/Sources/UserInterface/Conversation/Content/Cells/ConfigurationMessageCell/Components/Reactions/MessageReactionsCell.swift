@@ -112,7 +112,9 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         var snapshot = NSDiffableDataSourceSnapshot<SectionID, Emoji.ID>()
         snapshot.appendSections([.single])
         snapshot.appendItems(reactions.map(\.emojiID))
-        dataSource.apply(snapshot, animatingDifferences: animated)
+        dataSource.apply(snapshot, animatingDifferences: animated) { [weak self] in
+//            self?.collectionView.invalidateIntrinsicContentSize()
+        }
     }
 }
 
