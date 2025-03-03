@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"exportBackup.cancel.label" = "Backup abbrechen";
-"importBackup.cancel.label" = "Cancel restore";
-"backup.password.show.label" = "Passwort anzeigen";
-"backup.password.hide.label" = "Passwort ausblenden";
+"passwordtextfield.preview.title" = "Пароль (НЕОБЯЗАТЕЛЬНО)";
+"passwordtextfield.preview.placeholder" = "Введите пароль";
+"passwordtextfield.preview.passwordrules" = "Используйте как минимум 8 символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
+"passwordtextfield.hide_password" = "Скрыть пароль";
+"passwordtextfield.show_password" = "Показать пароль";
