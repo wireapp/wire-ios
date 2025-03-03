@@ -47,7 +47,11 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         for cellDescription in configuration {
             let contentView = cellDescription.makeView(frame: .zero)
             cellDescription.configureContentView(contentView)
+            let lastArrangedSubview = stackView.arrangedSubviews.last
             stackView.addArrangedSubview(contentView)
+            if let lastArrangedSubview {
+                stackView.setCustomSpacing(cellDescription.topMargin, after: lastArrangedSubview)
+            }
         }
         UIView.performWithoutAnimation {
             stackView.setNeedsLayout()

@@ -56,7 +56,7 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        clipsToBounds = true
+        containerView.clipsToBounds = true
 
         transferView.delegate = self
         setup(transferView)
