@@ -34,7 +34,7 @@ public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         processedEvents.append(contentsOf: events)
     }
-    
+
     public func processLiveEvents(_ events: [ZMUpdateEvent]) async throws {
         processedLivedEvents.append(contentsOf: events)
     }
