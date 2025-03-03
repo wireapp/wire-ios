@@ -129,7 +129,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
 // MARK: Alerts
 
-extension VerificationCodeViewModel {
+package extension VerificationCodeViewModel {
 
     package struct Alert: Hashable, Identifiable, Sendable {
         package var id: Self { self }

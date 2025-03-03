@@ -134,7 +134,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
 // MARK: Alerts
 
-extension LoginViaEmailViewModel {
+package extension LoginViaEmailViewModel {
 
     package struct Alert: Hashable, Identifiable, Sendable {
         package var id: Self { self }
