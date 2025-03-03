@@ -43,6 +43,8 @@ final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
         switch currentStep {
         case let .noHistory(credentials, _):
             authenticationCredentials = credentials
+        case .wireAuthenticationModule:
+            break
         case let .authenticateEmailCredentials(credentials):
             authenticationCredentials = credentials
         default:

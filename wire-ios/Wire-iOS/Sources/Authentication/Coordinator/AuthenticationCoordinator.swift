@@ -295,6 +295,25 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 unauthenticatedSession.continueAfterBackupImportStep()
 
+            case let .completeWireAuthenticationLogin(result):
+
+                if let emailCredentials = result.emailCredentials {
+                    // Set credentials so we can register a new client via registration status.
+                    unauthenticatedSession.authenticationStatus.loginCredentials = UserCredentials(
+                        email: emailCredentials.email,
+                        password: emailCredentials.password,
+                        emailVerificationCode: emailCredentials.verificationCode
+                    )
+                }
+
+                let userInfo = UserInfo(
+                    identifier: result.userID,
+                    cookieData: HTTPCookie.extractData(from: result.cookies)!,
+                    cookies: result.cookies
+                )
+
+                unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)
+
             case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
 

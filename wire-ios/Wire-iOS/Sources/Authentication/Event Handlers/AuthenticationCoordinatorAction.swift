@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireAuthenticationAPI
 import WireSyncEngine
 
 /// Valid response actions for authentication events.
@@ -28,6 +29,7 @@ enum AuthenticationCoordinatorAction {
     case presentAlert(AuthenticationCoordinatorAlert)
     case presentErrorAlert(AuthenticationCoordinatorErrorAlert)
     case completeBackupStep(didSucceed: Bool?)
+    case completeWireAuthenticationLogin(AuthenticationResult)
     case completeLoginFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
