@@ -22,7 +22,7 @@ import WireDataModel
 final class StackViewCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationStackMessageContentView
 
-    private var cellDescriptions: [AnyConversationMessageCellDescription] { configuration }
+    var cellDescriptions: [AnyConversationMessageCellDescription] { configuration }
 
     var canBeCombinedWithOtherCells: Bool { false }
 
