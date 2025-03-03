@@ -25,16 +25,6 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
-    package enum Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        case noInternet
-        case unknownError
-        case invalidCredentials
-        case accountPendingActivation
-        case accountSuspended
-    }
-
     @Published var password: String = "" {
         didSet { showPasswordRules = !isPasswordValid }
     }
@@ -77,23 +67,29 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var isPasswordValid: Bool {
-        passwordValidator.isPasswordValid(cleanPassword)
+        passwordValidator.isPasswordValid(trimmedPassword)
     }
 
     func submitPassword() async {
         isLoading = true
 
-        let loginTask = Task.detached { [loginViaEmailUseCase, email, cleanPassword] in
+        let loginTask = Task.detached { [loginViaEmailUseCase, email, trimmedPassword] in
             try await loginViaEmailUseCase.invoke(
                 email: email,
-                password: cleanPassword,
+                password: trimmedPassword,
                 verificationCode: nil
             )
         }
 
         do {
             let (cookies, token) = try await loginTask.value
-            // TODO: [WPB-16276] Navigate to the first time login screen
+            router.presentSheet(
+                RootView.ModalDestination.noHistory(
+                    userID: token.userID,
+                    cookies: cookies,
+                    accessToken: token
+                )
+            )
             WireLogger.authentication.info("login via email succeeded")
         } catch {
             WireLogger.authentication.info("login via email returned an error: \(error)")
@@ -130,8 +126,33 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private var cleanPassword: String {
+    private var trimmedPassword: String {
         password.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+}
+
+// MARK: Alerts
+
+package extension LoginViaEmailViewModel {
+
+    package struct Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        let title: String
+        let message: String
+
+        private typealias Title = L10n.Authentication.Error.Title
+        private typealias Message = L10n.Authentication.Error.Message
+
+        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
+        static let invalidCredentials = Alert(title: Title.invalidCredentials, message: Message.invalidCredentials)
+        static let accountPendingActivation = Alert(
+            title: Title.accountPendingActivation,
+            message: Message.accountPendingActivation
+        )
+        static let accountSuspended = Alert(title: Title.accountSuspended, message: Message.accountSuspended)
+        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }
