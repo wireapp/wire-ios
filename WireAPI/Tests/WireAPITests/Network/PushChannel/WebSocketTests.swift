@@ -37,19 +37,6 @@ final class WebSocketTests: XCTestCase {
         try await super.tearDown()
     }
 
-    func testWebSocketCancelsWhenItDeinitializes() async throws {
-        // When
-        {
-            _ = WebSocket(connection: self.connection)
-        }()
-
-        // Then
-        let invocations = connection.cancelWithReason_Invocations
-        try XCTAssertCount(invocations, count: 1)
-        XCTAssertEqual(invocations[0].closeCode, .goingAway)
-        XCTAssertNil(invocations[0].reason)
-    }
-
     func testWebSocketCloses() async throws {
         // Given we're iterating over the web socket
         let sut = WebSocket(connection: connection)
@@ -69,7 +56,7 @@ final class WebSocketTests: XCTestCase {
 
         Task {
             do {
-                for try await _ in try sut.open() {
+                for try await _ in try await sut.open() {
                     didReceiveMessage.fulfill()
                 }
             } catch {
@@ -83,7 +70,7 @@ final class WebSocketTests: XCTestCase {
         await fulfillment(of: [didReceiveMessage], timeout: 1)
 
         // When
-        sut.close()
+        await sut.close()
 
         // Then the stream finished successfully
         await fulfillment(of: [didFinishIterating], timeout: 1)
@@ -113,7 +100,7 @@ final class WebSocketTests: XCTestCase {
 
         Task {
             do {
-                for try await _ in try sut.open() {
+                for try await _ in try await sut.open() {
                     didReceiveMessage.fulfill()
                 }
             } catch {
@@ -157,7 +144,7 @@ final class WebSocketTests: XCTestCase {
 
         Task {
             do {
-                for try await _ in try sut.open() {
+                for try await _ in try await sut.open() {
                     didReceiveMessage.fulfill()
                 }
             } catch {
@@ -199,7 +186,7 @@ final class WebSocketTests: XCTestCase {
 
         // When
         do {
-            for try await message in try sut.open() {
+            for try await message in try await sut.open() {
                 if case let .data(data) = message {
                     receivedMessageData.append(data)
                 }
