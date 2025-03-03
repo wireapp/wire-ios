@@ -414,5 +414,9 @@ public protocol ConversationLocalStoreProtocol {
     func lastReadServerTimestamp(
         _ conversation: ZMConversation
     ) async -> Date?
+    
+    func conversationNeedsBackendUpdate(
+        _ conversation: ZMConversation
+    ) async -> Bool
 
 }

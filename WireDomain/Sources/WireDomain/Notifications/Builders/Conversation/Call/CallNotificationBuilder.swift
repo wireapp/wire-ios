@@ -75,16 +75,15 @@ struct CallNotificationBuilder: NotificationBuilder {
         calling: Calling,
         at time: Date?,
         conversationID: ConversationID,
-        senderID: UserID
+        senderID: UserID,
+        conversationLocalStore: ConversationLocalStoreProtocol,
+        userLocalStore: UserLocalStoreProtocol
     ) async {
         guard let callContent: CallContent = .decode(from: calling) else {
             return nil
         }
 
         let callState = CallState(callContent: callContent)
-
-        let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
-        let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
@@ -159,13 +158,13 @@ struct CallNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.call(
-            isVideo ?
-                .isCallingWithVideo(senderName: isGroupConversation ? senderName : nil) :
-                .isCalling(senderName: isGroupConversation ? senderName : nil)
-        )
+        let body = if isVideo {
+            senderName != nil ? "\(senderName!) is calling with video" : "Incoming video call"
+        } else {
+            senderName != nil ? "\(senderName!) is calling" : "Incoming call"
+        }
 
-        content.body = body.make()
+        content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
@@ -183,11 +182,9 @@ struct CallNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = NotificationBody.call(
-            .called(senderName: isGroupConversation ? senderName : nil)
-        )
+        let body = senderName != nil ? "\(senderName!) called" : "Missed call"
 
-        content.body = body.make()
+        content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
@@ -208,7 +205,7 @@ struct CallNotificationBuilder: NotificationBuilder {
             return nil
         }
 
-        let format: NotificationTitle.MessageTitleFormat = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {
@@ -223,7 +220,7 @@ struct CallNotificationBuilder: NotificationBuilder {
         }
 
         return NotificationTitle
-            .newMessage(format)
+            .conversationMessage(format)
             .make()
     }
 
@@ -255,9 +252,9 @@ struct CallNotificationBuilder: NotificationBuilder {
     private func makeUserInfo() -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo["selfUserIDString"] = context.selfUserID
-        userInfo["senderIDString"] = context.callerID
-        userInfo["conversationIDString"] = context.conversationID.uuid
+        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID
+        userInfo[NotificationUserInfoKey.senderID] = context.callerID
+        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid
 
         return userInfo
     }

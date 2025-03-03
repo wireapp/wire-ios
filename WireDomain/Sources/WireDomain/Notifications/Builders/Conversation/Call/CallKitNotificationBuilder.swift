@@ -98,7 +98,9 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         senderID: UserID,
         accountID: UUID,
         userDefaults: UserDefaults = .standard,
-        callKitReporting: CallKitReporting.Type = CXProvider.self
+        callKitReporting: CallKitReporting.Type = CXProvider.self,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol
     ) async {
         guard let callContent: CallContent = .decode(from: calling) else {
             return nil
@@ -112,9 +114,6 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             callContent: callContent,
             wasCallHandleReported: wasCallHandleReported
         )
-
-        let conversationLocalStore: ConversationLocalStoreProtocol = Injector.resolve()
-        let userLocalStore: UserLocalStoreProtocol = Injector.resolve()
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
@@ -210,7 +209,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             return nil
         }
 
-        let format: NotificationTitle.MessageTitleFormat = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {
@@ -225,7 +224,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         }
 
         return NotificationTitle
-            .newMessage(format)
+            .conversationMessage(format)
             .make()
     }
 
