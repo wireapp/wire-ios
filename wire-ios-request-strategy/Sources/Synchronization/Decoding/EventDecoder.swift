@@ -206,7 +206,7 @@ extension EventDecoder {
                 }
             }
         }
-        
+
         do {
             let decryptedEvents = try await decryptEvent(
                 event: event,
@@ -234,7 +234,7 @@ extension EventDecoder {
                     "failed to decrypt mls message: missing MLS group ID"
                 )
             }
-        
+
             await storeLastEventId()
             return []
         } catch {

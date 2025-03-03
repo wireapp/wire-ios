@@ -51,13 +51,13 @@ class EventDecoderTest: MessagingTestBase {
             selfConversation.remoteIdentifier = self.accountIdentifier
             selfConversation.conversationType = .self
         }
-        self.disableZMLogError(true)
-      
+        disableZMLogError(true)
+
     }
 
     override func tearDown() {
         // log ZMUpdateEvents will produce errors (SafeTypes)
-        self.disableZMLogError(false)
+        disableZMLogError(false)
         EventDecoder.testingBatchSize = nil
         sut = nil
         super.tearDown()
@@ -484,7 +484,7 @@ extension EventDecoderTest {
         defer {
             DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
         }
-       
+
         let mockProteusService = MockProteusServiceInterface()
         enum FakeError: Error {
             case decryptionError
