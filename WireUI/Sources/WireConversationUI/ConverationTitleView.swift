@@ -30,8 +30,18 @@ public class ConversationTitleView: UIView {
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let dropdownImage = UIImageView(image: .dropdown)
+    private let tapButton = UIButton(type: .custom)
+    
     private let canAnimate: Bool
-
+   
+    public var menuProvider: (() -> UIMenu)? {
+        didSet {
+            if let menu = menuProvider?() {
+                tapButton.menu = menu
+            }
+        }
+    }
+    
     public init(source: ConversationTitleSource, canAnimate: Bool) {
         self.source = source
         self.canAnimate = canAnimate
@@ -44,7 +54,7 @@ public class ConversationTitleView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func configureViews() {
         nameLabel.font = .preferredFont(forTextStyle: .headline)
         nameLabel.textColor = SemanticColors.Label.textDefault
@@ -89,6 +99,10 @@ public class ConversationTitleView: UIView {
         stackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
 
         stackView.center(in: self)
+        
+        addSubview(tapButton)
+        tapButton.fitIn(view: self)
+        tapButton.showsMenuAsPrimaryAction = true
     }
 
     public func updateSource(_ source: ConversationTitleSource) {

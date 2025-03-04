@@ -46,12 +46,6 @@ final class ConversationViewController: UIViewController {
                 input: "f",
                 modifierFlags: [.command],
                 discoverabilityTitle: keyboardShortcut.searchInConversation
-            ),
-            UIKeyCommand(
-                action: #selector(titleViewTapped),
-                input: "i",
-                modifierFlags: [.command],
-                discoverabilityTitle: keyboardShortcut.conversationDetail
             )
         ]
     }
@@ -402,14 +396,32 @@ final class ConversationViewController: UIViewController {
     }
 
     @objc
-    private func titleViewTapped() {
-        if let superview = titleView.superview,
-           let participantsController {
-            presentParticipantsViewController(participantsController, from: superview)
+    private func setupTitleViewTap() {
+        var actions = [UIAction]()
+        if shouldShowCollectionsButton {
+            actions.append(UIAction(
+                title: L10n.Localizable.Conversation.Action.search,
+                image: UIImage(systemName: "magnifyingglass"),
+                handler: { [weak self]_ in
+                    self?.onSearchButtonPressed(nil)
+                })
+            )
         }
+        actions.append(UIAction(
+            title: "Conversation Details",
+            image: UIImage(systemName: "info.circle"),
+            handler: { [weak self] _ in
+                self?.onConversationDetailsPressed()
+            }))
+        
+        let menu = UIMenu(title: "", children: actions)
+        
+        titleView.menuProvider = { menu }
     }
 
     private func setupNavigationItem() {
+        setupTitleViewTap()
+        
         if conversation.conversationType == .oneOnOne {
             Task { [weak self] in
                 guard let self else { return }
@@ -641,7 +653,6 @@ extension ConversationViewController: ZMConversationListObserver {
 extension ConversationViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
             setupNavigationItem()
@@ -718,6 +729,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     func conversationInputBarViewControllerDidComposeDraft(message: DraftMessage) {
         userSession.enqueue {
             self.conversation.draftMessage = message
+        }
+    }
+    
+    private func onConversationDetailsPressed() {
+        if let superview = titleView.superview,
+           let participantsController {
+            presentParticipantsViewController(participantsController, from: superview)
         }
     }
 
