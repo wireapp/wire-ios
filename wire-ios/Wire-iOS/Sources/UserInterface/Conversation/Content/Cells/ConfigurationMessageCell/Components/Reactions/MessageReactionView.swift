@@ -30,48 +30,16 @@ struct MessageReactionView: View {
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
 
-        if #available(iOS 17.0, *) {
-
-            if reaction.isSelfUserReacting {
-                text
-                    .foregroundStyle(.tint)
-                    .background(
-                        Capsule()
-                            .fill(.tint.tertiary)
-                    )
-                    .overlay(
-                        Capsule()
-                            .stroke(.tint.secondary, lineWidth: 1)
-                    )
-                    .tint(.blue)
-            } else {
-                text
-                    .foregroundStyle(.gray)
-                    .overlay(
-                        Capsule()
-                            .stroke(.tint.secondary, lineWidth: 1)
-                    )
-                    .tint(.gray)
-            }
-
-        } else {
-            backportedBody(text)
-        }
-    }
-
-    @ViewBuilder
-    private func backportedBody(_ text: some View) -> some View {
-
         if reaction.isSelfUserReacting {
             text
                 .foregroundStyle(.tint)
                 .background(
                     Capsule()
-                        .fill(.gray.opacity(0.2))
+                        .fill(.blue.opacity(0.5)) // TODO: fix color
                 )
                 .overlay(
                     Capsule()
-                        .stroke(.gray.opacity(0.4), lineWidth: 1)
+                        .stroke(.blue, lineWidth: 1) // TODO: fix color
                 )
                 .tint(.blue)
         } else {
@@ -79,11 +47,10 @@ struct MessageReactionView: View {
                 .foregroundStyle(.gray)
                 .overlay(
                     Capsule()
-                        .stroke(.gray.opacity(0.4), lineWidth: 1)
+                        .stroke(.blue, lineWidth: 1) // TODO: fix color
                 )
                 .tint(.gray)
         }
-
     }
 }
 
