@@ -17,10 +17,19 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct MessageReactionView: View {
 
-    var reaction: MessageReaction
+    private(set) var reaction: MessageReaction
+
+    private let backgroundColorNormal = SemanticColors.Button.backroundReactionNormal.color
+    private let strokeColorNormal = SemanticColors.Button.borderReactionNormal.color
+    private let textColorNormal = SemanticColors.Label.textDefault.color
+
+    private let backgroundColorSelected = SemanticColors.Button.backgroundReactionSelected.color
+    private let strokeColorSelected = SemanticColors.Button.borderReactionSelected.color
+    private let textColorSelected = SemanticColors.Label.textReactionCounterSelected.color
 
     var body: some View {
 
@@ -32,24 +41,26 @@ struct MessageReactionView: View {
 
         if reaction.isSelfUserReacting {
             text
-                .foregroundStyle(.tint)
+                .foregroundStyle(textColorSelected)
                 .background(
                     Capsule()
-                        .fill(.blue.opacity(0.5)) // TODO: fix color
+                        .fill(backgroundColorSelected)
                 )
                 .overlay(
                     Capsule()
-                        .stroke(.blue, lineWidth: 1) // TODO: fix color
+                        .stroke(strokeColorSelected, lineWidth: 1)
                 )
-                .tint(.blue)
         } else {
             text
-                .foregroundStyle(.gray)
+                .foregroundStyle(textColorNormal)
+                .background(
+                    Capsule()
+                        .fill(backgroundColorNormal)
+                )
                 .overlay(
                     Capsule()
-                        .stroke(.blue, lineWidth: 1) // TODO: fix color
+                        .stroke(strokeColorSelected, lineWidth: 1)
                 )
-                .tint(.gray)
         }
     }
 }

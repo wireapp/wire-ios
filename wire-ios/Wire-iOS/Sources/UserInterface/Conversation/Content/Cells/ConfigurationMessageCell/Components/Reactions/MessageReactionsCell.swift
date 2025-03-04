@@ -43,7 +43,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
                 MessageReactionView(reaction: reaction)
             }
             .margins(.all, 0)
-            .margins(.bottom, 1) // the border of the cell would be clipped otherwise
+            .margins(.vertical, 1) // the border of the cell would be clipped otherwise
         }
         return cell
     }

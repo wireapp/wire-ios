@@ -25,7 +25,7 @@ final class MessageReactionsCollectionViewFlowLayout: UICollectionViewFlowLayout
     override init() {
         super.init()
 
-        minimumInteritemSpacing = 8
+        minimumInteritemSpacing = 6
         minimumLineSpacing = 8
         estimatedItemSize = UICollectionViewFlowLayout.automaticSize
     }
