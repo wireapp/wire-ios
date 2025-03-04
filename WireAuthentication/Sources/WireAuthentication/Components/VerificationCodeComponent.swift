@@ -28,10 +28,15 @@ protocol VerificationCodeComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
+    var authenticationAPI: AuthenticationAPI { get }
 
 }
 
 class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
+
+    private var requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol {
+        RequestLoginVerificationCodeUseCase(authenticationAPI: dependency.authenticationAPI)
+    }
 
     @MainActor
     func view(email: String, password: String) -> VerificationCodeView {
@@ -49,6 +54,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             email: email,
             password: password,
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
+            requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: dependency.router
         )
     }
