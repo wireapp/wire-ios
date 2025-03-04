@@ -16,4 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol Placeholder {}
+import NeedleFoundation
+import SwiftUI
+import WireConversationsImplementation
+import WireConversationsUI
+
+public final class WireConversationGroupIconFactory {
+
+    private let mapper = ConversationIDToIconMapper()
+
+    @MainActor
+    func create(conversationID: String) -> some View {
+        WireConversationGroupIcon(
+            conversationID: conversationID,
+            conversationIDMapper: mapper
+        )
+    }
+}

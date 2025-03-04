@@ -14,22 +14,49 @@ let package = Package(
         .library(name: "WireConversationsUI", targets: ["WireConversationsUI"]),
     ],
     dependencies: [
-        .package(path: "../WireFoundation"),
-        .package(path: "../WirePlugins")
+        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WirePlugins"),
+        .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1"))
     ],
     targets: [
         .target(
             name: "WireConversationsAPI"
         ),
         .target(
-            name: "WireConversationsBindings"
+            name: "WireConversationsBindings",
+            dependencies: [
+                .product(name: "NeedleFoundation", package: "needle"),
+                "WireConversationsAPI",
+                "WireConversationsImplementation",
+                "WireConversationsUI"
+            ]
         ),
         .target(
-            name: "WireConversationsImplementation"
+            name: "WireConversationsUIBindings",
+            dependencies: [
+                .product(name: "NeedleFoundation", package: "needle"),
+                "WireConversationsAPI",
+                "WireConversationsImplementation",
+                "WireConversationsUI"
+            ]
+        ),
+        .target(
+            name: "WireConversationsImplementation",
+            dependencies: [
+                "WireConversationsAPI",
+                "WireConversationsResources"
+            ]
+        ),
+        .target(
+            name: "WireConversationsResources",
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .target(
             name: "WireConversationsUI",
-            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+            dependencies: [
+                "WireConversationsAPI",
+                "WireConversationsResources"
+            ]
         ),
         .testTarget(
             name: "WireConversationsUITests",

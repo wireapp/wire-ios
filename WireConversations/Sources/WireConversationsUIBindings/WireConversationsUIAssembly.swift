@@ -16,4 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol Placeholder {}
+public final class WireConversationsUIAssembly {
+    public func assemble() -> {
+        let rootComponent = RootComponent(
+            defaultBackendEnvironment: defaultBackendEnvironment,
+            defaultAPIVersion: defaultAPIVersion,
+            minTLSVersion: minTLSVersion,
+            accountsURL: accountsURL,
+            passwordValidator: passwordValidator,
+            ssoCallbackURLScheme: ssoCallbackURLScheme,
+            userDefaults: userDefaults,
+            onRegisterAccount: onRegisterAccount,
+            onFlowCompletion: onFlowCompletion
+        )
+    }
+}
