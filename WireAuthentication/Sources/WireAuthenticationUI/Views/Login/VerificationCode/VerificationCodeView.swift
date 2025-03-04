@@ -81,6 +81,7 @@ package struct VerificationCodeView: View {
                 Text(L10n.VerificationCode.resendCode)
             })
             .wireButtonStyle(.link)
+            .disabled(viewModel.isResending)
             Spacer()
         }
         .padding()

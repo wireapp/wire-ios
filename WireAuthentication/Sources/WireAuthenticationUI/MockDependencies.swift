@@ -102,6 +102,14 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
 }
 
+extension MockDependencies: RequestLoginVerificationCodeUseCaseProtocol {
+
+    func invoke(email: String) async throws(WireAuthenticationAPI.RequestLoginVerificationCodeUseCaseFailure) {
+        try! await Task.sleep(for: .seconds(3))
+    }
+
+}
+
 extension MockDependencies: DetermineAuthMethodBuilder {
 
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
@@ -196,6 +204,7 @@ extension MockDependencies: VerificationCodeBuilder {
             email: email,
             password: password,
             loginViaEmailUseCase: self,
+            requestLoginVerificationCodeUseCase: self,
             router: rootViewModel,
             numberOfDigits: code.count,
             emailConflictWithCloudAccount: false
@@ -215,6 +224,7 @@ extension MockDependencies: VerificationCodeBuilder {
                 email: email,
                 password: password,
                 loginViaEmailUseCase: self,
+                requestLoginVerificationCodeUseCase: self,
                 router: rootViewModel,
                 emailConflictWithCloudAccount: false
             )

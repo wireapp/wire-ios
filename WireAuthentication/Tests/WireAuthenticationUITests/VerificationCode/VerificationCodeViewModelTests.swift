@@ -27,25 +27,30 @@ import WireAuthenticationAPISupport
 final class VerificationCodeViewModelTests {
 
     private let loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol
+    private let requestLoginVerificationCodeUseCase: MockRequestLoginVerificationCodeUseCaseProtocol
     private let router: MockRouter
     private let sut: VerificationCodeViewModel
     private var isLoadingCalls: [Bool] = []
+    private var isResendingCalls: [Bool] = []
     private var cancellables: Set<AnyCancellable> = []
 
     @MainActor
     init() {
         self.loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
+        self.requestLoginVerificationCodeUseCase = MockRequestLoginVerificationCodeUseCaseProtocol()
         self.router = MockRouter()
         self.sut = VerificationCodeViewModel(
             email: "abc@example.com",
             password: "aaaaaa",
             loginViaEmailUseCase: loginViaEmailUseCase,
+            requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: router,
             numberOfDigits: 3, // Lets use a 3 digit code for simplicity
             emailConflictWithCloudAccount: false
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
+        sut.$isResending.dropFirst().sink { [self] in isResendingCalls.append($0) }.store(in: &cancellables)
     }
 
     // MARK: - isConfirmButtonDisabled tests
@@ -70,7 +75,7 @@ final class VerificationCodeViewModelTests {
     func confirm_passesCorrectCredentials() async {
         // given
         loginViaEmailUseCase
-            .invokeEmailPasswordVerificationCode_MockValue = ([Scaffolding.someCookie], Scaffolding.someAccessToken)
+            .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
         sut.code = ["1", "2", "3"]
 
         // when
@@ -88,7 +93,7 @@ final class VerificationCodeViewModelTests {
     func confirm_whenSuccess() async {
         // given
         loginViaEmailUseCase
-            .invokeEmailPasswordVerificationCode_MockValue = ([Scaffolding.someCookie], Scaffolding.someAccessToken)
+            .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
         sut.code = ["1", "2", "3"]
 
         // when
@@ -100,12 +105,12 @@ final class VerificationCodeViewModelTests {
         #expect(router.modalPresent_Invocations.count == 1)
         #expect(
             router.modalPresent_Invocations.first as? RootView.ModalDestination ==
-                RootView.ModalDestination.noHistory(
-                    userID: Scaffolding.someAccessToken.userID,
-                    cookies: [Scaffolding.someCookie],
-                    accessToken: Scaffolding.someAccessToken,
-                    emailConflictWithCloudAccount: false
-                )
+            RootView.ModalDestination.noHistory(
+                userID: Fixture.someAccessToken.userID,
+                cookies: [Fixture.someCookie],
+                accessToken: Fixture.someAccessToken,
+                emailConflictWithCloudAccount: false
+            )
         )
     }
 
@@ -214,19 +219,59 @@ final class VerificationCodeViewModelTests {
         #expect(result == outputFocus)
     }
 
-    // MARK: - Scaffolding
+    // MARK: - resend tests
 
-    private enum Scaffolding {
+    @MainActor @Test
+    func resend_whenSuccess() async {
+        // given, when
+        await sut.resend()
 
-        static let someCookie = HTTPCookie(properties: [
-            .name: "some name",
-            .path: "some path",
-            .value: "some value",
-            .domain: "some domain"
-        ])!
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(requestLoginVerificationCodeUseCase.invokeEmail_Invocations == ["abc@example.com"])
+    }
 
-        static let someAccessToken = AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
+    @MainActor @Test
+    func resend_withInvalidEmail() async {
+        // given
+        requestLoginVerificationCodeUseCase.invokeEmail_MockError = .invalidEmail
 
+        // when
+        await sut.resend()
+
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(sut.alert == .invalidEmail)
+    }
+
+    @MainActor @Test(arguments: [
+        RequestLoginVerificationCodeUseCaseFailure.unexpected(URLError(.notConnectedToInternet)),
+        RequestLoginVerificationCodeUseCaseFailure.unexpected(URLError(.networkConnectionLost))
+    ])
+    func resend_whenNoInternet(error: RequestLoginVerificationCodeUseCaseFailure) async {
+        // given
+        requestLoginVerificationCodeUseCase.invokeEmail_MockError = error
+
+        // when
+        await sut.resend()
+
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(sut.alert == .noInternet)
+    }
+
+    @MainActor @Test
+    func resend_whenSomeOtherError() async {
+        // given
+        requestLoginVerificationCodeUseCase.invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure
+            .unexpected(URLError(.badURL))
+
+        // when
+        await sut.resend()
+
+        // then
+        #expect(isResendingCalls == [true, false])
+        #expect(sut.alert == .unknownError)
     }
 
 }
