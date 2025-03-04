@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct MessageReaction: Equatable {
-    var emojiID: Emoji.ID
-    var count: UInt
-    var isSelfUserReacting: Bool
-}
+import Foundation
+
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .path

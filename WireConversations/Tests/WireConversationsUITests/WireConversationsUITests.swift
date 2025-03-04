@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct MessageReaction: Equatable {
-    var emojiID: Emoji.ID
-    var count: UInt
-    var isSelfUserReacting: Bool
+import XCTest
+@testable import WireConversationsUI
+
+final class WireConversationsTests: XCTestCase {
+    func testExample() throws {
+        // XCTest Documentation
+        // https://developer.apple.com/documentation/xctest
+
+        // Defining Test Cases and Test Methods
+        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
+    }
 }
