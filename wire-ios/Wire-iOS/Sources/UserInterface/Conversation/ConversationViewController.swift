@@ -18,11 +18,11 @@
 
 import UIKit
 import WireCommonComponents
+import WireConversationUI
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
-import WireConversationUI
 
 final class ConversationViewController: UIViewController {
 
@@ -147,9 +147,9 @@ final class ConversationViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
-        
+
         self.getParticipantImageSourceUseCase = getParticipantImageSourceUseCase
-        
+
         DeveloperToolsViewModel.context.currentConversation = conversation
 
         self.inputBarController = ConversationInputBarViewController(
@@ -165,7 +165,8 @@ final class ConversationViewController: UIViewController {
             source: ConversationTitleSource(
                 accountImageSource: nil,
                 title: conversation.displayNameWithFallback,
-                subtitle: Self.getConversationSubtitle(conversation)),
+                subtitle: Self.getConversationSubtitle(conversation)
+            ),
             canAnimate: !ProcessInfo.processInfo.isRunningTests
         )
 
@@ -199,7 +200,7 @@ final class ConversationViewController: UIViewController {
         if let participant = conversation.firstActiveParticipantOtherThanSelf {
             userObservationToken = userSession.addUserObserver(self, for: participant)
         }
-        
+
         startCallController = ConversationCallController(conversation: conversation, target: self)
     }
 
@@ -409,36 +410,33 @@ final class ConversationViewController: UIViewController {
     }
 
     private func setupNavigationItem() {
-        // TODO
-//        titleView.tapHandler = { [weak self] _ in
-//            self?.titleViewTapped()
-//        }
         if conversation.conversationType == .oneOnOne {
             Task { [weak self] in
                 guard let self else { return }
-                let source = await self.getParticipantImageSourceUseCase
-                    .invoke(user: self.conversation.firstActiveParticipantOtherThanSelf)
-                self.titleView
+                let source = await getParticipantImageSourceUseCase
+                    .invoke(user: conversation.firstActiveParticipantOtherThanSelf)
+                titleView
                     .updateSource(ConversationTitleSource(
                         accountImageSource: source,
                         title: conversation.displayNameWithFallback,
-                        subtitle: Self.getConversationSubtitle(conversation)))
+                        subtitle: Self.getConversationSubtitle(conversation)
+                    ))
             }
         } else {
             // no need Image avatar for group chat
             titleView.updateSource(ConversationTitleSource(
-                    accountImageSource: nil,
-                    title: conversation.displayNameWithFallback,
-                    subtitle: Self.getConversationSubtitle(conversation)))
+                accountImageSource: nil,
+                title: conversation.displayNameWithFallback,
+                subtitle: Self.getConversationSubtitle(conversation)
+            ))
         }
-        
 
         navigationItem.titleView = titleView
         navigationItem.leftItemsSupplementBackButton = false
 
         updateRightNavigationItemsButtons()
     }
-    
+
     static func getConversationSubtitle(_ conversation: ZMConversation) -> String? {
         guard let user = conversation.firstActiveParticipantOtherThanSelf else {
             return nil
@@ -650,7 +648,6 @@ extension ConversationViewController: UserObserving {
         }
     }
 }
-
 
 // MARK: - InputBar
 
