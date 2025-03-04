@@ -403,8 +403,7 @@ final class ConversationViewController: UIViewController {
 
     @objc
     private func titleViewTapped() {
-        if let superview = titleView.superview,
-           let participantsController {
+        if let superview = titleView.superview, let participantsController {
             presentParticipantsViewController(participantsController, from: superview)
         }
     }
