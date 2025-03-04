@@ -93,17 +93,26 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
                 decryptedMessage: decryptedMessage,
                 isProteus: false
             )
-
-            // TODO: Handle calling from genericMessage.calling
-
-            builder = try await ConversationMLSMessageAddEventNotificationBuilder(
-                message: genericMessage,
+            
+            let callingBuilder = await callingBuilder(
+                calling: genericMessage.calling,
                 conversationID: mlsMessageEvent.conversationID,
-                senderID: mlsMessageEvent.senderID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore,
-                messageLocalStore: messageLocalStore
+                senderID: mlsMessageEvent.senderID
             )
+            
+            if let callingBuilder {
+                builder = callingBuilder
+            } else {
+                builder = try await ConversationMLSMessageAddEventNotificationBuilder(
+                    message: genericMessage,
+                    conversationID: mlsMessageEvent.conversationID,
+                    senderID: mlsMessageEvent.senderID,
+                    userLocalStore: userLocalStore,
+                    conversationLocalStore: conversationLocalStore,
+                    messageLocalStore: messageLocalStore
+                )
+
+            }
 
         case let .proteusMessageAdd(proteusMessageEvent):
             let decryptedMessage = proteusMessageEvent.message.decryptedMessage
@@ -113,17 +122,27 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
                 decryptedMessage: decryptedMessage,
                 external: external
             )
-
-            // TODO: Handle calling from genericMessage.calling
-
-            builder = try await ConversationProteusMessageAddEventNotificationBuilder(
-                message: genericMessage,
+            
+            let callingBuilder = await callingBuilder(
+                calling: genericMessage.calling,
+                at: proteusMessageEvent.timestamp,
                 conversationID: proteusMessageEvent.conversationID,
-                senderID: proteusMessageEvent.senderID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore,
-                messageLocalStore: messageLocalStore
+                senderID: proteusMessageEvent.senderID
             )
+            
+            // If there's a call to handle, there will be some value, else, there is no call to handle.
+            if let callingBuilder {
+                builder = callingBuilder
+            } else {
+                builder = try await ConversationProteusMessageAddEventNotificationBuilder(
+                    message: genericMessage,
+                    conversationID: proteusMessageEvent.conversationID,
+                    senderID: proteusMessageEvent.senderID,
+                    userLocalStore: userLocalStore,
+                    conversationLocalStore: conversationLocalStore,
+                    messageLocalStore: messageLocalStore
+                )
+            }
 
         case let .memberLeave(memberLeaveEvent):
             let removedUserIDs = Set(memberLeaveEvent.removedUserIDs.compactMap(\.uuid))
@@ -202,6 +221,42 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         }
 
         return true
+    }
+    
+    private func callingBuilder(
+        calling: Calling,
+        at date: Date? = nil,
+        conversationID: WireAPI.QualifiedID,
+        senderID: WireAPI.QualifiedID
+    ) async -> NotificationBuilder? {
+        let callKitBuilder = await CallKitNotificationBuilder(
+            calling: calling,
+            conversationID: conversationID,
+            senderID: senderID,
+            accountID: UUID(),
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore
+        )
+        
+        let callNotificationBuilder = await CallNotificationBuilder(
+            calling: calling,
+            at: date,
+            conversationID: conversationID,
+            senderID: senderID,
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore
+        )
+        
+        // First, let's try to handle a call notification with CallKit.
+        // If not, try fallback to regular push notification builder.
+        // Else, this is not a call.
+        if let callKitBuilder, await callKitBuilder.shouldBuildNotification() {
+            return callKitBuilder
+        } else if let callNotificationBuilder {
+            return callNotificationBuilder
+        } else {
+            return nil
+        }
     }
 
     private func decryptMessage(

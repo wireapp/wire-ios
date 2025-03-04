@@ -147,7 +147,6 @@ public protocol UserLocalStoreProtocol {
 
     func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol>
 
-
     /// Fetches self user info : user ID and client ID.
     /// - returns: the user ID and the client ID.
 
