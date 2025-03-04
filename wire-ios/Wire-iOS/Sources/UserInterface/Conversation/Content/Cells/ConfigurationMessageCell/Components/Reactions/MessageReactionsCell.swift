@@ -82,14 +82,21 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
 
     func configure(with reactions: [MessageReaction], animated: Bool) {
         self.reactions = reactions
-        updateCollectionView()
+
+        var snapshot = MessageReactionsDiffableDataSourceSnapshot()
+        snapshot.appendSections([.single])
+        snapshot.appendItems(reactions.map(\.emojiID))
+        dataSource.applySnapshotUsingReloadData(snapshot)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let message else { return }
 
         reactions[indexPath.item].isSelfUserReacting.toggle()
-        updateCollectionView()
+//        updateCollectionView()
+        var snapshot = dataSource.snapshot()
+        snapshot.reloadItems([reactions[indexPath.item].emojiID])
+        dataSource.apply(snapshot, animatingDifferences: true)
 
         delegate?.perform(action: .react(reactions[indexPath.item].emojiID), for: message, view: self) // TODO: what to pass as view?
     }
