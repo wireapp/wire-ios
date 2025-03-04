@@ -19,6 +19,7 @@
 import WireAPI
 import WireAPISupport
 import WireAuthenticationAPI
+import WireAuthenticationAPISupport
 import WireTestingPackage
 import XCTest
 
@@ -45,20 +46,14 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
     func testInvoke_whenSuccess() async throws {
         // given
         let accessToken = WireAPI.AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
-        let cookie = HTTPCookie(properties: [
-            .name: "some name",
-            .path: "some path",
-            .value: "some value",
-            .domain: "some domain"
-        ])!
         mockAuthenticationAPI
-            .loginEmailPasswordVerificationCodeLabel_MockValue = ([cookie], accessToken)
+            .loginEmailPasswordVerificationCodeLabel_MockValue = ([Fixture.someCookie], accessToken)
 
         // when
         let result = try await sut.invoke(email: "email", password: "password", verificationCode: "code")
 
         // then
-        XCTAssertEqual(result.0, [cookie])
+        XCTAssertEqual(result.0, [Fixture.someCookie])
         XCTAssertEqual(
             result.1,
             AccessToken(

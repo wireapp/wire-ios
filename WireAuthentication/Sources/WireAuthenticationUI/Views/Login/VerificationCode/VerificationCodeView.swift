@@ -35,16 +35,11 @@ package struct VerificationCodeView: View {
 
     private enum Constants {
         static let backgroundCornerRadius: CGFloat = 16
-        static let numberOfDigits = 6
     }
 
     @StateObject private var viewModel: VerificationCodeViewModel
 
     @FocusState private var focusedIndex: Int?
-
-    private var isConfirmButtonDisabled: Bool {
-        viewModel.code.contains { $0.isEmpty }
-    }
 
     package init(viewModel: VerificationCodeViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -67,11 +62,17 @@ package struct VerificationCodeView: View {
             Button(action: {
                 Task { await viewModel.confirm() }
             }, label: {
-                Text(L10n.VerificationCode.confirm)
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+
+                    Text(L10n.VerificationCode.confirm)
+                }
             })
             .wireButtonStyle(.primary)
             .padding(.horizontal)
-            .disabled(isConfirmButtonDisabled)
+            .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
                 Task.detached { await viewModel.resend() }
@@ -79,6 +80,7 @@ package struct VerificationCodeView: View {
                 Text(L10n.VerificationCode.resendCode)
             })
             .wireButtonStyle(.link)
+            .disabled(viewModel.isResending)
             Spacer()
         }
         .padding()
@@ -88,11 +90,19 @@ package struct VerificationCodeView: View {
             RoundedRectangle(cornerRadius: Constants.backgroundCornerRadius)
                 .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
         )
+        .alert(
+            item: $viewModel.alert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { _ in
+                Button(L10n.Authentication.Error.confirm, action: {})
+            }
+        )
     }
 
     private var verificationCodeView: some View {
         HStack(spacing: 10) {
-            ForEach(0 ..< Constants.numberOfDigits, id: \.self) { index in
+            ForEach(0 ..< viewModel.numberOfDigits, id: \.self) { index in
                 TextField("", text: $viewModel.code[index])
                     .frame(width: 50, height: 50)
                     .background(
@@ -108,7 +118,7 @@ package struct VerificationCodeView: View {
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
                     .onChange(of: viewModel.code[index]) { newValue in
-                        handleInput(newValue, index: index)
+                        focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
                     }
             }
         }
@@ -117,43 +127,20 @@ package struct VerificationCodeView: View {
         }
     }
 
-    private func handleInput(_ newValue: String, index: Int) {
-        if let intValue = Int(newValue.prefix(1)), (0 ... 9).contains(intValue) {
-            viewModel.code[index] = String(intValue)
-        } else {
-            viewModel.code[index] = ""
-        }
-
-        if !viewModel.code[index].isEmpty {
-            if index < Constants.numberOfDigits - 1 {
-                focusedIndex = index + 1
-            } else {
-                focusedIndex = nil
-            }
-        } else {
-            if index > 0 {
-                focusedIndex = index - 1
-            }
-        }
-    }
 }
 
 #Preview("Empty code") {
-    VerificationCodeView(
-        viewModel: VerificationCodeViewModel(
-            email: "name.name@mail.com",
-            password: "pasword"
-        )
+    MockDependencies().previewVerificationCodeView(
+        email: "name.name@mail.com",
+        password: "pasword"
     )
 }
 
 #Preview("Not empty code") {
-    VerificationCodeView(
-        viewModel: VerificationCodeViewModel(
-            email: "name.name@mail.com",
-            password: "pasword",
-            code: ["1", "2", "3", "4", "5", ""]
-        )
+    MockDependencies().previewVerificationCodeView(
+        email: "name.name@mail.com",
+        password: "pasword",
+        code: ["1", "2", "3", "4", "5", ""]
     )
 }
 
@@ -163,11 +150,9 @@ package struct VerificationCodeView: View {
             VStack(spacing: 0) {
                 Spacer()
                     .frame(maxHeight: .infinity)
-                VerificationCodeView(
-                    viewModel: VerificationCodeViewModel(
-                        email: "name.name@mail.com",
-                        password: "pasword"
-                    )
+                MockDependencies().previewVerificationCodeView(
+                    email: "name.name@mail.com",
+                    password: "pasword"
                 )
             }
         }

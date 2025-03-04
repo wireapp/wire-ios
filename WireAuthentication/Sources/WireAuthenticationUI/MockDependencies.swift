@@ -102,6 +102,14 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
 }
 
+extension MockDependencies: RequestLoginVerificationCodeUseCaseProtocol {
+
+    func invoke(email: String) async throws(WireAuthenticationAPI.RequestLoginVerificationCodeUseCaseFailure) {
+        try! await Task.sleep(for: .seconds(3))
+    }
+
+}
+
 extension MockDependencies: DetermineAuthMethodBuilder {
 
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
@@ -125,10 +133,10 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
-        NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
+        NoHistoryViewModel(userID: UUID(), cookies: [], accessToken: nil, onFlowCompletion: { _ in })
     }
 
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 
@@ -169,9 +177,36 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 extension MockDependencies: VerificationCodeBuilder {
 
-    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+    func previewVerificationCodeView(
+        email: String,
+        password: String,
+        code: [String] = ["", "", "", "", "", ""]
+    ) -> VerificationCodeView {
+        let viewModel = VerificationCodeViewModel(
+            email: email,
+            password: password,
+            loginViaEmailUseCase: self,
+            requestLoginVerificationCodeUseCase: self,
+            router: rootViewModel,
+            numberOfDigits: code.count
+        )
+        viewModel.code = code
+
+        return VerificationCodeView(viewModel: viewModel)
+    }
+
+    func verificationCodeView(
+        email: String,
+        password: String
+    ) -> VerificationCodeView {
         VerificationCodeView(
-            viewModel: VerificationCodeViewModel(email: email, password: password)
+            viewModel: VerificationCodeViewModel(
+                email: email,
+                password: password,
+                loginViaEmailUseCase: self,
+                requestLoginVerificationCodeUseCase: self,
+                router: rootViewModel
+            )
         )
     }
 

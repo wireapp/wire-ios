@@ -16,32 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 import WireAuthenticationAPI
 
-@MainActor
-package final class NoHistoryViewModel: ObservableObject {
+public final class MockRequestLoginVerificationCodeUseCaseProtocol: @unchecked Sendable,
+    RequestLoginVerificationCodeUseCaseProtocol {
 
-    private let userID: UUID
-    private let cookies: [HTTPCookie]
-    private let accessToken: AccessToken?
-    private let onFlowCompletion: (AuthenticationResult) -> Void
+    // MARK: - Life cycle
 
-    package init(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
-    ) {
-        self.userID = userID
-        self.cookies = cookies
-        self.accessToken = accessToken
-        self.onFlowCompletion = onFlowCompletion
+    public init() {}
+
+    // MARK: - invoke
+
+    public var invokeEmail_Invocations: [String] = []
+    public var invokeEmail_MockError: RequestLoginVerificationCodeUseCaseFailure?
+
+    public func invoke(email: String) async throws(RequestLoginVerificationCodeUseCaseFailure) {
+        invokeEmail_Invocations.append(email)
+
+        if let error = invokeEmail_MockError {
+            throw error
+        }
     }
 
-    func confirm() {
-        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: accessToken))
-    }
 }
