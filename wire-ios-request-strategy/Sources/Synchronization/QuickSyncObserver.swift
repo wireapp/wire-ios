@@ -84,19 +84,19 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
     }
 
     public func waitForDecryptionOfEventsToFinish() async {
-        if finishedDecrypting {
+        if await quickSyncHasCompleted() {
             WireLogger.messaging.info(
-                "no need to wait, because app has finished decrypting",
+                "no need to wait, because app has finished quick sync, so decryption too",
                 attributes: .safePublic
             )
             return
         }
 
         WireLogger.messaging.info(
-            "Waiting for app to finish decrypting before sending message",
+            "Waiting for app to finish decrypting during quickSync before sending message",
             attributes: .safePublic
         )
-
+        
         for await _ in notificationCenter.notifications(
             named: .didStopDecryptingEventsNotification,
             object: notificationContext
@@ -111,5 +111,12 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
 
     private var finishedDecrypting: Bool {
         decryptionState == .done
+    }
+    
+    
+    private func quickSyncHasCompleted() async -> Bool {
+        await context.perform {
+            self.applicationStatus.synchronizationState == .online
+        }
     }
 }
