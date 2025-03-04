@@ -82,16 +82,15 @@ public class ConversationTitleView: UIView {
             avatarAndNameStackView,
             subtitleLabel.wrapInView(topInset: -8, bottomInset: 6)
         ]
-            .forEach(stackView.addArrangedSubview)
+        .forEach(stackView.addArrangedSubview)
 
         accountImageView.constraintToSquare(sideLength: 26)
         dropdownImage.constraintToSquare(sideLength: 16)
         stackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        
+
         stackView.center(in: self)
     }
-    
-    
+
     public func updateSource(_ source: ConversationTitleSource) {
         if let imageSource = source.accountImageSource {
             updateAvatar(source: imageSource, animated: true)
@@ -100,12 +99,12 @@ public class ConversationTitleView: UIView {
         nameLabel.text = source.title
         subtitleLabel.text = source.subtitle
     }
-    
+
     private func updateAvatar(source: AccountImageSource, animated: Bool) {
         let updateBlock = {
             self.accountImageView.source = source
         }
-        
+
         let animated = true
 
         if animated, canAnimate {
@@ -158,7 +157,6 @@ public class ConversationTitleView: UIView {
         subtitle: nil
     ))
 }
-
 
 @MainActor
 private func makeVC(source: ConversationTitleSource) -> UIViewController {

@@ -47,20 +47,24 @@ public extension UIView {
             heightAnchor.constraint(equalToConstant: sideLength)
         ])
     }
-    
+
     func center(in view: UIView) {
         NSLayoutConstraint.activate([
-            self.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            self.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
 }
 
-
 public extension UIView {
-    
-    func wrapInView(topInset: CGFloat = 0, leadingInset: CGFloat = 0, bottomInset: CGFloat = 0, trailingInset: CGFloat = 0) -> UIView {
+
+    func wrapInView(
+        topInset: CGFloat = 0,
+        leadingInset: CGFloat = 0,
+        bottomInset: CGFloat = 0,
+        trailingInset: CGFloat = 0
+    ) -> UIView {
         let view = UIView()
         view.addSubview(self)
         translatesAutoresizingMaskIntoConstraints = false
@@ -69,7 +73,7 @@ public extension UIView {
         constraints.append(view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: trailingInset))
         constraints.append(topAnchor.constraint(equalTo: view.topAnchor, constant: topInset))
         constraints.append(view.bottomAnchor.constraint(equalTo: bottomAnchor, constant: bottomInset))
-    
+
         NSLayoutConstraint.activate(constraints)
 
         return view

@@ -25,29 +25,30 @@ protocol GetParticipantImageSourceUseCaseProtocol {
 }
 
 class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol {
-    
+
     private let userSession: UserSession
 
     init(userSession: UserSession) {
         self.userSession = userSession
     }
-    
+
     @MainActor
     func invoke(user: UserType?) async -> WireAccountImageUI.AccountImageSource {
         guard let user else {
             return WireAccountImageUI.AccountImageSource.text("")
         }
-        
+
         return await withCheckedContinuation { continuation in
             user.fetchProfileImage(
                 session: userSession,
                 imageCache: UIImage.defaultUserImageCache,
                 sizeLimit: 32,
-                isDesaturated: false) { image, _ in
-                    if let image {
-                        continuation.resume(returning: WireAccountImageUI.AccountImageSource.image(image))
-                    }
+                isDesaturated: false
+            ) { image, _ in
+                if let image {
+                    continuation.resume(returning: WireAccountImageUI.AccountImageSource.image(image))
                 }
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ public struct ConversationTitleSource {
     let accountImageSource: AccountImageSource?
     let title: String
     let subtitle: String?
-    
+
     public init(
         accountImageSource: AccountImageSource?,
         title: String,
