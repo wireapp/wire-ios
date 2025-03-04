@@ -22,6 +22,19 @@ import UIKit
 /// starts a new row if the next item doesn't fit anymore.
 final class MessageReactionsCollectionViewFlowLayout: UICollectionViewFlowLayout {
 
+    override init() {
+        super.init()
+
+        minimumInteritemSpacing = 8
+        minimumLineSpacing = 8
+        estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         // Get the default attributes from the superclass
         guard let attributes = super.layoutAttributesForElements(in: rect) else { return nil }

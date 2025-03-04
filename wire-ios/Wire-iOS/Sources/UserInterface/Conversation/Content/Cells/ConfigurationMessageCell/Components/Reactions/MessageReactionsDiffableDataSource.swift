@@ -18,28 +18,10 @@
 
 import UIKit
 
-/// The collection view adjusts it's `intrinsicContentSize` to match the layout's content size, so that no scrolling is
-/// needed.
-final class MessageReactionsCollectionView: UICollectionView {
+typealias MessageReactionsDiffableDataSource = UICollectionViewDiffableDataSource<MessageReactionsSectionID, Emoji.ID>
 
-    override var contentSize: CGSize {
-        didSet { invalidateIntrinsicContentSize() }
-    }
-
-    override var intrinsicContentSize: CGSize {
-        collectionViewLayout.collectionViewContentSize
-    }
-
-    init() {
-        super.init(
-            frame: .zero,
-            collectionViewLayout: MessageReactionsCollectionViewFlowLayout()
-        )
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
+enum MessageReactionsSectionID: Hashable {
+    case single
 }
+
+typealias MessageReactionsDiffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<MessageReactionsSectionID, Emoji.ID>

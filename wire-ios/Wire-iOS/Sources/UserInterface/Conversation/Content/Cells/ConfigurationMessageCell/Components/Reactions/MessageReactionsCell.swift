@@ -27,33 +27,18 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     var isSelected = false
     var message: ZMConversationMessage?
+
     private var reactions = [MessageReaction]()
+    private let collectionView = MessageReactionsCollectionView()
 
     weak var delegate: ConversationMessageCellDelegate?
 
-    private lazy var insets = UIEdgeInsets(
-        top: 8,
-        left: conversationHorizontalMargins.left,
-        bottom: 0,
-        right: conversationHorizontalMargins.right
-    )
-
-    private lazy var collectionView = {
-        let collectionView = MessageReactionsCollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
-        collectionView.backgroundColor = .clear
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-        return collectionView
-    }()
-
-    private enum SectionID: Hashable {
-        case single
-    }
-
-    private lazy var dataSource = UICollectionViewDiffableDataSource<SectionID, Emoji.ID>(
+    private lazy var dataSource = MessageReactionsDiffableDataSource(
         collectionView: collectionView
     ) { [weak self] collectionView, indexPath, emojiID in
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+
         if let reaction = self?.reactions.first(where: { $0.emojiID == emojiID }) {
             var reactionToggle: MessageReactionToggleControl! = cell.contentView.subviews
                 .compactMap { $0 as? MessageReactionToggleControl }.first
@@ -66,16 +51,16 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
                 reactionToggle.fitIn(view: cell.contentView)
             }
         }
+
         return cell
     }
 
-    private lazy var collectionViewLayout = {
-        let layout = MessageReactionsCollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 8
-        layout.minimumLineSpacing = 8
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-        return layout
-    }()
+    private lazy var insets = UIEdgeInsets(
+        top: 8,
+        left: conversationHorizontalMargins.left,
+        bottom: 0,
+        right: conversationHorizontalMargins.right
+    )
 
     // MARK: - Life cycle
 
@@ -89,20 +74,22 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         fatalError("init(coder:) is not supported")
     }
 
-    // MARK: - configure Views and constraints
-
     private func configureSubviews() {
+
+        collectionView.backgroundColor = .clear
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         collectionView.dataSource = dataSource
+
         addSubview(collectionView)
         collectionView.fitIn(view: self, insets: insets)
-    }
 
-    // MARK: - configure method
+    }
 
     func configure(with reactions: [MessageReaction], animated: Bool) {
         self.reactions = reactions
 
-        var snapshot = NSDiffableDataSourceSnapshot<SectionID, Emoji.ID>()
+        var snapshot = MessageReactionsDiffableDataSourceSnapshot()
         snapshot.appendSections([.single])
         snapshot.appendItems(reactions.map(\.emojiID))
         dataSource.apply(snapshot, animatingDifferences: animated)
