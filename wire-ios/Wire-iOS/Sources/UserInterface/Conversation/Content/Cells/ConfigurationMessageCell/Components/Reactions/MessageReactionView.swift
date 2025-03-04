@@ -30,16 +30,48 @@ struct MessageReactionView: View {
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
 
+        if #available(iOS 17.0, *) {
+
+            if reaction.isSelfUserReacting {
+                text
+                    .foregroundStyle(.tint)
+                    .background(
+                        Capsule()
+                            .fill(.tint.tertiary)
+                    )
+                    .overlay(
+                        Capsule()
+                            .stroke(.tint.secondary, lineWidth: 1)
+                    )
+                    .tint(.blue)
+            } else {
+                text
+                    .foregroundStyle(.gray)
+                    .overlay(
+                        Capsule()
+                            .stroke(.tint.secondary, lineWidth: 1)
+                    )
+                    .tint(.gray)
+            }
+
+        } else {
+            backportedBody(text)
+        }
+    }
+
+    @ViewBuilder
+    private func backportedBody(_ text: some View) -> some View {
+
         if reaction.isSelfUserReacting {
             text
                 .foregroundStyle(.tint)
                 .background(
                     Capsule()
-                        .fill(.tint.tertiary)
+                        .fill(.gray.opacity(0.2))
                 )
                 .overlay(
                     Capsule()
-                        .stroke(.tint.secondary, lineWidth: 1)
+                        .stroke(.gray.opacity(0.4), lineWidth: 1)
                 )
                 .tint(.blue)
         } else {
@@ -47,9 +79,20 @@ struct MessageReactionView: View {
                 .foregroundStyle(.gray)
                 .overlay(
                     Capsule()
-                        .stroke(.tint.secondary, lineWidth: 1)
+                        .stroke(.gray.opacity(0.4), lineWidth: 1)
                 )
                 .tint(.gray)
         }
+
     }
+}
+
+#Preview("self-user-reacting") {
+    let reaction = MessageReaction(emojiID: "🧹", count: 1, isSelfUserReacting: true)
+    MessageReactionView(reaction: reaction)
+}
+
+#Preview("other-users-reacting") {
+    let reaction = MessageReaction(emojiID: "🧹", count: 1, isSelfUserReacting: false)
+    MessageReactionView(reaction: reaction)
 }

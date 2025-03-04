@@ -17,7 +17,7 @@
 //
 
 struct MessageReaction: Equatable {
-    let emojiID: Emoji.ID
-    let count: UInt
-    let isSelfUserReacting: Bool
+    var emojiID: Emoji.ID
+    var count: UInt
+    var isSelfUserReacting: Bool
 }
