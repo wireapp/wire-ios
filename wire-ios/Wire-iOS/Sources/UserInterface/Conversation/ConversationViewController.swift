@@ -454,7 +454,7 @@ final class ConversationViewController: UIViewController {
 
     static func getConversationSubtitle(_ conversation: ZMConversation) -> String? {
         guard conversation.conversationType == .oneOnOne,
-                let user = conversation.firstActiveParticipantOtherThanSelf else {
+              let user = conversation.firstActiveParticipantOtherThanSelf else {
             return nil
         }
         if user.isExternalPartner {
