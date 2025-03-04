@@ -210,7 +210,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncMOC,
                 localNotificationDispatcher: pushMessageHandler,
                 applicationStatus: applicationStatusDirectory,
-                messageSender: messageSender
+                messageSender: messageSender,
+                isMLSEnabled: mlsFeature.isEnabled
             ),
             DeliveryReceiptRequestStrategy(
                 managedObjectContext: syncMOC,

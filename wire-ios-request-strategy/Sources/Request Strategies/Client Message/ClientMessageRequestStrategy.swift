@@ -21,11 +21,25 @@ import WireLogging
 
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
-    static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
+    static func shouldBeSentPredicate(
+        context: NSManagedObjectContext,
+        isMLSEnabled: Bool
+    ) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, fromSelf])
+
+        var predicates = [notDelivered, notExpired, fromSelf]
+
+        if !isMLSEnabled {
+            let excludeMLS = NSPredicate(
+                format: "conversation.primitiveMessageProtocol IN %@",
+                [MessageProtocol.proteus.int16Value, MessageProtocol.mixed.int16Value]
+            )
+            predicates.append(excludeMLS)
+        }
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 
     // MARK: - Properties
@@ -43,10 +57,14 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         context: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
         applicationStatus: ApplicationStatus,
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        isMLSEnabled: Bool
     ) {
         self.insertedObjectSync = InsertedObjectSync(
-            insertPredicate: Self.shouldBeSentPredicate(context: context)
+            insertPredicate: Self.shouldBeSentPredicate(
+                context: context,
+                isMLSEnabled: isMLSEnabled
+            )
         )
 
         self.context = context

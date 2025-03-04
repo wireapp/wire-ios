@@ -50,7 +50,8 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
                 context: syncMOC,
                 localNotificationDispatcher: localNotificationDispatcher,
                 applicationStatus: mockApplicationStatus,
-                messageSender: mockMessageSender
+                messageSender: mockMessageSender,
+                isMLSEnabled: false
             )
         }
 
@@ -81,6 +82,41 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 // MARK: - Request generation
 
 extension ClientMessageRequestStrategyTests {
+
+    func testThatItDoesSendProteusMessage() {
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+
+            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
+
+    func testThatItDoesNotSendMLSMessageWhenMLSFeatureDisabled() {
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            message.conversation?.messageProtocol = .mls
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+
+            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
 
     func testThatItDoesNotSendMessageIfSenderIsNotSelfUser() {
 

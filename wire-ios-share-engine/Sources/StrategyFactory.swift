@@ -101,11 +101,14 @@ final class StrategyFactory {
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {
-        ClientMessageRequestStrategy(
+        let mlsFeature = FeatureRepository(context: syncContext).fetchMLS()
+
+        return ClientMessageRequestStrategy(
             context: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
             applicationStatus: applicationStatus,
-            messageSender: messageSender
+            messageSender: messageSender,
+            isMLSEnabled: mlsFeature.isEnabled
         )
     }
 
