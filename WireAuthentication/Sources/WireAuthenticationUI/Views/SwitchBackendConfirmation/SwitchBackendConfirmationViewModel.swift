@@ -29,16 +29,21 @@ public class SwitchBackendConfirmationViewModel {
     let items: [ItemUIModel]
 
     private let router: any Router
+    private let email: String
+    private let environment: BackendEnvironmentInfo
     private let fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol
 
     // MARK: - Life cycle
 
     public init(
         router: any Router,
+        email: String,
         fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol,
         environment: BackendEnvironmentInfo
     ) {
         self.router = router
+        self.email = email
+        self.environment = environment
         self.fetchDefaultSSOSettings = fetchDefaultSSOSettings
         self.items = [
             ItemUIModel(title: Strings.backendName, value: environment.title, isURL: false),
@@ -63,8 +68,10 @@ public class SwitchBackendConfirmationViewModel {
                 // show SSO
                 //router.presentSheet()
             } else {
-                // show login
-                //router.presentSheet()
+                router.presentSheet(RootView.ModalDestination.onPremiseLogin(
+                    email: email,
+                    environment: environment)
+                )
             }
         } catch {
             //alert = .unknownError

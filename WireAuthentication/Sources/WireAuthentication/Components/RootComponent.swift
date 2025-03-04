@@ -99,6 +99,10 @@ class RootComponent: BootstrapComponent {
         NoHistoryComponent(onFlowCompletion: bridge.onFlowCompletion)
     }
 
+    var loginViaEmailOnPremComponent: LoginViaEmailOnPremComponent {
+        LoginViaEmailOnPremComponent(parent: self)
+    }
+
 }
 
 extension RootComponent: RootView.Factory {
@@ -114,6 +118,14 @@ extension RootComponent: RootView.Factory {
         accessToken: WireAuthenticationAPI.AccessToken?
     ) -> NoHistoryView {
         noHistoryComponent.view(userID: userID, cookies: cookies, accessToken: accessToken)
+    }
+
+    @MainActor
+    func loginViaEmailOnPremView(
+        email: String,
+        backendEnvironment: BackendEnvironmentInfo
+    ) -> LoginViaEmailOnPremView {
+        loginViaEmailOnPremComponent.view(email: email, backendEnvironment: backendEnvironment)
     }
 
 }

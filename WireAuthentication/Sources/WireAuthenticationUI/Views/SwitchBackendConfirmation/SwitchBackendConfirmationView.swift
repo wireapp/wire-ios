@@ -23,7 +23,7 @@ import WireDesign
 package protocol SwitchBackendConfirmationBuilder {
 
     @MainActor
-    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView
+    func switchBackendView(email: String, environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView
 
 }
 
@@ -173,7 +173,7 @@ package struct SwitchBackendConfirmationView: View {
     private var proceedButton: some View {
         Button {
             Task { await viewModel.confirm() }
-            dismiss()
+           // dismiss()
         } label: {
             Text(Strings.proceed)
                 .font(.textStyle(.buttonBig))

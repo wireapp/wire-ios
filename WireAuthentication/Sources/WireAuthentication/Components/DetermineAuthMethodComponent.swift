@@ -115,9 +115,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
-    @MainActor
-    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
-        switchBackendConfirmationComponent.view(environment: environment)
+    func switchBackendView(email: String, environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
+        switchBackendConfirmationComponent.view(email: email, environment: environment)
     }
 
 }

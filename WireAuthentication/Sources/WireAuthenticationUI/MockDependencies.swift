@@ -27,15 +27,21 @@ final class MockDependencies {
         RootViewModel()
     }
 
-    private var backendEnvironment: LocalBackendEnvironment {
+    private var backendEnvironment: BackendEnvironmentInfo {
         _backendEnvironment
     }
 
-    var _backendEnvironment = LocalBackendEnvironment(
+    var _backendEnvironment = BackendEnvironmentInfo(
         title: "backen name",
-        url: URL(string: "https://example.com")!,
-        accountsURL: URL(string: "https://example.com")!,
-        proxySettings: nil
+        endpoints: BackendURLs(
+            backendURL: URL(string: "https://example.com")!,
+            backendWSURL: URL(string: "https://example.com")!,
+            blackListURL: URL(string: "https://example.com")!,
+            teamsURL: URL(string: "https://example.com")!,
+            accountsURL: URL(string: "https://example.com")!,
+            websiteURL: URL(string: "https://example.com")!),
+        proxySettings: nil,
+        pinnedKeys: nil
     )
 
     var rootView: RootView {
@@ -104,7 +110,7 @@ extension MockDependencies: FetchBackendEnvironmentUseCaseProtocol {
                 accountsURL: URL(string: "example")!,
                 websiteURL: URL(string: "example")!
             ),
-            apiProxy: nil,
+            proxySettings: nil,
             pinnedKeys: nil
         )
     }
@@ -164,6 +170,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
     private var switchBackendConfirmationViewModel: SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
             router: rootViewModel,
+            email: "email",
             fetchDefaultSSOSettings: self,
             environment: BackendEnvironmentInfo(
                 title:  "backendName",
@@ -175,13 +182,13 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
                     accountsURL: URL(string: "accountsURL")!,
                     websiteURL: URL(string: "websiteURL")!
                 ),
-                apiProxy: nil,
+                proxySettings: nil,
                 pinnedKeys: nil
             )
         )
     }
 
-    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
+    func switchBackendView(email: String, environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(viewModel: switchBackendConfirmationViewModel)
     }
 
@@ -269,22 +276,22 @@ extension MockDependencies: VerificationCodeBuilder {
 
 }
 
-extension MockDependencies: LoginViaEmailOnPremViewBuilder {
+extension MockDependencies: LoginViaEmailOnPremBuilder {
 
-    private func loginViaEmailOnPremViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremViewModel {
+    private func loginViaEmailOnPremViewModel(email: String, backendEnvironment: BackendEnvironmentInfo) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
             email: email,
             backendEnvironment: backendEnvironment,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: canCreateAccount
+            canCreateAccount: false
         )
     }
 
-    func loginViaEmailOnPremView(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremView {
+    func loginViaEmailOnPremView(email: String, backendEnvironment: BackendEnvironmentInfo) -> LoginViaEmailOnPremView {
         LoginViaEmailOnPremView(
-            viewModel: loginViaEmailOnPremViewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: loginViaEmailOnPremViewModel(email: email, backendEnvironment: backendEnvironment)
         )
     }
 }

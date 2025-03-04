@@ -27,7 +27,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let passwordValidator: any PasswordValidator
-    private let backendEnvironment: LocalBackendEnvironment
+    private let backendEnvironment: BackendEnvironmentInfo
 
     let email: String
     let canCreateAccount: Bool
@@ -38,7 +38,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String,
-        backendEnvironment: LocalBackendEnvironment,
+        backendEnvironment: BackendEnvironmentInfo,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool
     ) {
@@ -51,7 +51,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     private var forgotPasswordURL: URL {
-        backendEnvironment.accountsURL.appendingPathComponent("forgot")
+        backendEnvironment.endpoints.accountsURL.appendingPathComponent("forgot")
     }
 
     var backendName: String {
@@ -64,7 +64,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             backendName,
             "",
             L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendEnvironment.url.absoluteString
+            backendEnvironment.endpoints.backendURL.absoluteString
         ].joined(separator: "\n")
     }
 
@@ -77,7 +77,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     var proxyServer: String {
-        backendEnvironment.url.absoluteString
+        backendEnvironment.endpoints.backendURL.absoluteString
     }
 
     func isValidPassword(_ password: String) -> Bool {

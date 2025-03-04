@@ -17,15 +17,16 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
-package protocol LoginViaEmailOnPremViewBuilder {
+package protocol LoginViaEmailOnPremBuilder {
 
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
-        canCreateAccount: Bool
+        backendEnvironment: BackendEnvironmentInfo
     ) -> LoginViaEmailOnPremView
 
 }
@@ -230,7 +231,7 @@ package struct LoginViaEmailOnPremView: View {
         .sheet(isPresented: .constant(true)) {
             MockDependencies().loginViaEmailOnPremView(
                 email: "foo@bar.com",
-                canCreateAccount: false
+                backendEnvironment: MockDependencies()._backendEnvironment
             )
         }
 }

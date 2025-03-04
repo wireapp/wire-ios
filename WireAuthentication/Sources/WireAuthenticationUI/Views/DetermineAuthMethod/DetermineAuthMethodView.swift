@@ -116,8 +116,8 @@ package struct DetermineAuthMethodView: View {
             switch $0 {
             case let .ssoLogin(url: ssoURL):
                 factory.loginViaSSOView(ssoURL: ssoURL)
-            case .switchBackend(email: let email, environment: let environment):
-                factory.switchBackendView(environment: environment)
+            case let .switchBackend(email: email, environment: environment):
+                factory.switchBackendView(email: email, environment: environment)
             }
         })
         .presentationDetents([.medium, .large])

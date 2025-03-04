@@ -20,20 +20,31 @@ import Foundation
 
 public struct BackendEnvironmentInfo: Decodable, Sendable, Hashable {
 
+    /// The  name of the backend.
+
     public let title: String
+
+    /// Backend URLs
+
     public let endpoints: BackendURLs
-    public let apiProxy: ProxySettings?
+
+    /// The proxy settings for the backend if any.
+
+    public let proxySettings: ProxySettings?
+
+    /// The pinned keys for the backend for use with certificate pinning.
+
     public let pinnedKeys: [TrustData]?
 
     public init(
         title: String,
         endpoints: BackendURLs,
-        apiProxy: ProxySettings?,
+        proxySettings: ProxySettings?,
         pinnedKeys: [TrustData]?
     ) {
         self.title = title
         self.endpoints = endpoints
-        self.apiProxy = apiProxy
+        self.proxySettings = proxySettings
         self.pinnedKeys = pinnedKeys
     }
 

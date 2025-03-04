@@ -35,14 +35,15 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
     // MARK: - View
 
     @MainActor
-    func view(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(viewModel: viewModel(environment: environment))
+    func view(email: String, environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(viewModel: viewModel(email: email, environment: environment))
     }
 
     @MainActor
-    private func viewModel(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationViewModel {
+    private func viewModel(email: String, environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
             router: dependency.router,
+            email: email,
             fetchDefaultSSOSettings: fetchDefaultSSOSettings,
             environment: environment
         )
