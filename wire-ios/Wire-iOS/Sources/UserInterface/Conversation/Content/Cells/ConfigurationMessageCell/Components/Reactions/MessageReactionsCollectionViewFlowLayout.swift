@@ -18,7 +18,8 @@
 
 import UIKit
 
-/// A flow layout that doesn't distribute the space between items equally, but instead fills the space from the left and starts a new row if the next item doesn't fit anymore.
+/// A flow layout that doesn't distribute the space between items equally, but instead fills the space from the left and
+/// starts a new row if the next item doesn't fit anymore.
 final class MessageReactionsCollectionViewFlowLayout: UICollectionViewFlowLayout {
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -30,19 +31,17 @@ final class MessageReactionsCollectionViewFlowLayout: UICollectionViewFlowLayout
         var leftMargin = sectionInset.left
         var maxY: CGFloat = -1.0
 
-        for attribute in attributesCopy {
-            if attribute.representedElementCategory == .cell {
-                // If this cell is on a new line, reset the left margin
-                if attribute.frame.origin.y >= maxY {
-                    leftMargin = sectionInset.left
-                }
-                // Set the x position of the cell to the left margin
-                attribute.frame.origin.x = leftMargin
-                // Update the left margin for the next cell
-                leftMargin += attribute.frame.width + minimumInteritemSpacing
-                // Update the maximum y value for this row
-                maxY = max(attribute.frame.maxY, maxY)
+        for attribute in attributesCopy where attribute.representedElementCategory == .cell {
+            // If this cell is on a new line, reset the left margin
+            if attribute.frame.origin.y >= maxY {
+                leftMargin = sectionInset.left
             }
+            // Set the x position of the cell to the left margin
+            attribute.frame.origin.x = leftMargin
+            // Update the left margin for the next cell
+            leftMargin += attribute.frame.width + minimumInteritemSpacing
+            // Update the maximum y value for this row
+            maxY = max(attribute.frame.maxY, maxY)
         }
         return attributesCopy
     }

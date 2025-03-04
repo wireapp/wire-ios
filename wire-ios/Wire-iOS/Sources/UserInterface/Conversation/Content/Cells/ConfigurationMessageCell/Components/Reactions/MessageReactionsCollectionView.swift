@@ -18,7 +18,8 @@
 
 import UIKit
 
-/// The collection view adjusts it's `intrinsicContentSize` to match the layout's content size, so that no scrolling is needed.
+/// The collection view adjusts it's `intrinsicContentSize` to match the layout's content size, so that no scrolling is
+/// needed.
 final class MessageReactionsCollectionView: UICollectionView {
 
     override var contentSize: CGSize {

@@ -28,7 +28,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     init(message: ZMConversationMessage) {
         self.message = message
-        configuration = message.reactionsSortedByCreationDate().compactMap { reaction in
+        self.configuration = message.reactionsSortedByCreationDate().compactMap { reaction in
 
             guard !reaction.users.isEmpty else { return nil }
 

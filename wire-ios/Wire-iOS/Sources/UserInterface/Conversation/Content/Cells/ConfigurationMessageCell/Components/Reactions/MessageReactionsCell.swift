@@ -49,12 +49,14 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     private enum SectionID: Hashable {
         case single
     }
+
     private lazy var dataSource = UICollectionViewDiffableDataSource<SectionID, Emoji.ID>(
         collectionView: collectionView
     ) { [weak self] collectionView, indexPath, emojiID in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         if let reaction = self?.reactions.first(where: { $0.emojiID == emojiID }) {
-            var reactionToggle: MessageReactionToggleControl! = cell.contentView.subviews.compactMap { $0 as? MessageReactionToggleControl }.first
+            var reactionToggle: MessageReactionToggleControl! = cell.contentView.subviews
+                .compactMap { $0 as? MessageReactionToggleControl }.first
             if reactionToggle == nil {
                 reactionToggle = MessageReactionToggleControl(reaction: reaction) { [weak self] in
                     guard let self, let message else { return }
@@ -69,7 +71,6 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     private lazy var collectionViewLayout = {
         let layout = MessageReactionsCollectionViewFlowLayout()
-        // layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
