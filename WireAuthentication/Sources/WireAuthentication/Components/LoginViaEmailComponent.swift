@@ -93,7 +93,11 @@ extension LoginViaEmailComponent: LoginViaEmailView.Factory {
         password: String,
         isCloudAccountAlreadyRegistered: Bool
     ) -> VerificationCodeView {
-        verificationCodeComponent.view(email: email, password: password, isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered)
+        verificationCodeComponent.view(
+            email: email,
+            password: password,
+            isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+        )
     }
 
 }

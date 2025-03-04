@@ -44,7 +44,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: true,
             isCloudAccountAlreadyRegistered: false
         )
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -63,7 +63,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: true,
             isCloudAccountAlreadyRegistered: false
         )
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -83,7 +83,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: false,
             isCloudAccountAlreadyRegistered: false
         )
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -102,7 +102,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: false,
             isCloudAccountAlreadyRegistered: false
         )
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

@@ -82,7 +82,8 @@ package struct LoginViaEmailView: View {
                 factory.verificationCodeView(
                     email: email,
                     password: password,
-                    isCloudAccountAlreadyRegistered: viewModel.isCloudAccountAlreadyRegistered)
+                    isCloudAccountAlreadyRegistered: viewModel.isCloudAccountAlreadyRegistered
+                )
             }
         }
         .presentationDetents([.medium, .large])

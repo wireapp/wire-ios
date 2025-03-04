@@ -41,7 +41,7 @@ final class VerificationCodeViewModelTests {
             password: "aaaaaa",
             loginViaEmailUseCase: loginViaEmailUseCase,
             router: router,
-            numberOfDigits: 3,// Lets use a 3 digit code for simplicity
+            numberOfDigits: 3, // Lets use a 3 digit code for simplicity
             isCloudAccountAlreadyRegistered: false
         )
 

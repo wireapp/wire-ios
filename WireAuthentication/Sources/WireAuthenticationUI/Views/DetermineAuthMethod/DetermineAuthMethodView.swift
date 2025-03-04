@@ -97,7 +97,7 @@ package struct DetermineAuthMethodView: View {
             item: $viewModel.alert,
             title: titleForAlert,
             message: messageForAlert,
-            actions: { alert in
+            actions: { _ in
                 Button {
                     dismiss()
                 } label: {
