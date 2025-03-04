@@ -41,7 +41,9 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
         if let reaction = self?.reactions[indexPath.item] {
             cell.contentConfiguration = UIHostingConfiguration {
                 MessageReactionView(reaction: reaction)
-            }.margins(.all, 0)
+            }
+            .margins(.all, 0)
+            .margins(.bottom, 1) // the border of the cell would be clipped otherwise
         }
         return cell
     }
