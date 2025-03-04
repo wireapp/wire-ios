@@ -77,7 +77,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     private lazy var collectionViewLayout = {
         let layout = LeftAlignedCollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        // layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
@@ -112,9 +112,9 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         var snapshot = NSDiffableDataSourceSnapshot<SectionID, Emoji.ID>()
         snapshot.appendSections([.single])
         snapshot.appendItems(reactions.map(\.emojiID))
-        dataSource.apply(snapshot, animatingDifferences: animated) { [weak self] in
+        dataSource.apply(snapshot, animatingDifferences: animated)/* { [weak self] in
 //            self?.collectionView.invalidateIntrinsicContentSize()
-        }
+        }*/
     }
 }
 
