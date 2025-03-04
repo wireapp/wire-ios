@@ -737,8 +737,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     private func onConversationDetailsPressed() {
-        if let superview = titleView.superview,
-           let participantsController {
+        if let superview = titleView.superview, let participantsController {
             presentParticipantsViewController(participantsController, from: superview)
         }
     }
