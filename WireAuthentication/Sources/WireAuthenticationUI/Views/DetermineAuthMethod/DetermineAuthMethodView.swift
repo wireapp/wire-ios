@@ -30,6 +30,7 @@ package struct DetermineAuthMethodView: View {
 
     package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder
 
+    @Environment(\.dismiss) var dismiss
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let factory: any Factory
@@ -98,7 +99,7 @@ package struct DetermineAuthMethodView: View {
             message: messageForAlert,
             actions: { alert in
                 Button {
-                    //dismiss()
+                    dismiss()
                 } label: {
                     Text(L10n.Authentication.Error.confirm)
                 }

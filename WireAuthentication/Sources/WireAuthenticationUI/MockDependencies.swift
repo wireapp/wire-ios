@@ -136,7 +136,12 @@ extension MockDependencies: NoHistoryViewBuilder {
         )
     }
 
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?, isCloudAccountAlreadyRegistered: Bool) -> NoHistoryView {
+    func noHistoryView(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        accessToken: AccessToken?,
+        isCloudAccountAlreadyRegistered: Bool
+    ) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 
@@ -167,7 +172,11 @@ extension MockDependencies: LoginViaEmailBuilder {
         )
     }
 
-    func loginViaEmailView(email: String, canCreateAccount: Bool, isCloudAccountAlreadyRegistered: Bool) -> LoginViaEmailView {
+    func loginViaEmailView(
+        email: String,
+        canCreateAccount: Bool,
+        isCloudAccountAlreadyRegistered: Bool
+    ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
             factory: self

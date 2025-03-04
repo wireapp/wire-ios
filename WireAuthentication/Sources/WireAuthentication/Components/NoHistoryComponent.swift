@@ -30,7 +30,7 @@ protocol NoHistoryComponentDependency: Dependency {
 
 }
 
-class NoHistoryComponent: Component<NoHistoryComponentDependency>  {
+class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     @MainActor
     private func viewModel(

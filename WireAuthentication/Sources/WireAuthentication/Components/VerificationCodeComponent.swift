@@ -45,7 +45,11 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
     }
 
     @MainActor
-    private func viewModel(email: String, password: String, isCloudAccountAlreadyRegistered: Bool) -> VerificationCodeViewModel {
+    private func viewModel(
+        email: String,
+        password: String,
+        isCloudAccountAlreadyRegistered: Bool
+    ) -> VerificationCodeViewModel {
         VerificationCodeViewModel(
             email: email,
             password: password,

@@ -97,9 +97,13 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
 
         let testCases: [(config: DomainRegistrationConfiguration, expected: AuthenticationMethod)] = [
             (config: .make(domainRedirect: .none), expected: .loginOrRegisterViaEmail(email: email)),
+            (config: .make(domainRedirect: .none, isCloudAccountAlreadyRegistered: true), expected: .loginViaEmail(email: email, isCloudAccountAlreadyRegistered: true)),
             (config: .make(domainRedirect: .locked), expected: .loginOrRegisterViaEmail(email: email)),
             (config: .make(domainRedirect: .preAuthorized), expected: .loginOrRegisterViaEmail(email: email)),
-            (config: .make(domainRedirect: .noRegistration), expected: .loginViaEmail(email: email, isCloudAccountAlreadyRegistered: false)),
+            (config: .make(domainRedirect: .noRegistration), expected: .loginViaEmail(
+                email: email,
+                isCloudAccountAlreadyRegistered: false)
+            ),
             (
                 config: .make(domainRedirect: .sso, ssoCodeString: someSSO.uuidString),
                 expected: .loginViaSSO(code: someSSO)
@@ -137,21 +141,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             }
         }
     }
-
-//    func testInvoke_withOnPremEmail_whenCloudAccountExists() async throws {
-//        // given
-//        mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = .make(
-//            domainRedirect: .none,
-//            isCloudAccountAlreadyRegistered: true
-//        )
-//
-//        // when, then
-//        await XCTAssertThrowsErrorAsync(
-//            DetermineAuthMethodUseCaseFailure.onPremNotPossible(recovery: .loginViaEmail(email: "user@example.com"))
-//        ) { [self] in
-//            _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
-//        }
-//    }
 
     func testInvoke_mapsErrors() async throws {
         // given

@@ -61,7 +61,7 @@ package struct NoHistoryView: View {
             item: $viewModel.alert,
             title: titleForAlert,
             message: messageForAlert,
-            actions: { alert in
+            actions: { _ in
                 Button(L10n.Authentication.Error.howToChangeEmail, action: {
                     viewModel.howToChangeEmail()
                 })

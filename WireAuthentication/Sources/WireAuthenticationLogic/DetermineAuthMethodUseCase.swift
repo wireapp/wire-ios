@@ -83,7 +83,8 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
         switch configuration.domainRedirect {
         case .none where configuration.isCloudAccountAlreadyRegistered == true:
-            // The email domain has been claimed by an on-prem backend but there's already an existing cloud account registered
+            // The email domain has been claimed by an on-prem backend,
+            // but there's already an existing cloud account registered.
             return .loginViaEmail(email: email, isCloudAccountAlreadyRegistered: true)
 
         case .none, .locked, .preAuthorized:
