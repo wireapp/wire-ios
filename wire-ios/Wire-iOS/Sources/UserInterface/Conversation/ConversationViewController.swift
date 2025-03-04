@@ -410,7 +410,7 @@ final class ConversationViewController: UIViewController {
             )
         }
         actions.append(UIAction(
-            title: "Conversation Details",
+            title: L10n.Localizable.Conversation.Action.conversationDetails,
             image: UIImage(systemName: "info.circle"),
             handler: { [weak self] _ in
                 self?.onConversationDetailsPressed()
