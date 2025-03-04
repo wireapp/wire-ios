@@ -105,8 +105,6 @@ public class ConversationTitleView: UIView {
             self.accountImageView.source = source
         }
 
-        let animated = true
-
         if animated, canAnimate {
             UIView.transition(
                 with: self,
