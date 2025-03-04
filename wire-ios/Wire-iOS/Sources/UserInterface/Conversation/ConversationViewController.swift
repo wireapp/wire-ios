@@ -721,36 +721,6 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
-    var searchBarButtonItem: UIBarButtonItem {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .search), for: .normal)
-        button.tintColor = IconColors.foregroundDefault
-
-        button.accessibilityIdentifier = "collection"
-        button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
-
-        button.addTarget(
-            self,
-            action: #selector(onSearchButtonPressed(_:)),
-            for: .touchUpInside
-        )
-
-        // Enable large content viewer
-        button.showsLargeContentViewer = true
-        button.largeContentTitle = L10n.Accessibility.Conversation.SearchButton.description
-        button.largeContentImage = UIImage(resource: .search)
-
-        button.backgroundColor = ButtonColors.backgroundBarItem
-        button.layer.borderWidth = 1
-        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
-        button.layer.cornerRadius = 12
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
-
-        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
-
-        return UIBarButtonItem(customView: button)
-    }
-
     @objc
     private func onSearchButtonPressed(_ sender: AnyObject?) {
         if collectionController == .none {

@@ -177,10 +177,6 @@ extension ConversationViewController {
             items.append(createBackButton(hasUnread: hasUnread))
         }
 
-        if shouldShowCollectionsButton {
-            items.append(searchBarButtonItem)
-        }
-
         return items
     }
 
