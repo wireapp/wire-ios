@@ -55,6 +55,7 @@ final class MockDependencies {
                 router: rootViewModel,
                 validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
+                fetchBackendEnvironment: self,
                 ssoLinkGenerator: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
@@ -90,6 +91,25 @@ extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
     }
 }
 
+extension MockDependencies: FetchBackendEnvironmentUseCaseProtocol {
+
+    func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentInfo {
+        BackendEnvironmentInfo(
+            title: "backend name",
+            endpoints: BackendURLs(
+                backendURL: URL(string: "example")!,
+                backendWSURL: URL(string: "example")!,
+                blackListURL: URL(string: "example")!,
+                teamsURL: URL(string: "example")!,
+                accountsURL: URL(string: "example")!,
+                websiteURL: URL(string: "example")!
+            ),
+            apiProxy: nil,
+            pinnedKeys: nil
+        )
+    }
+}
+
 extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
     func invoke(
@@ -117,6 +137,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             validateEmailOrSSOCode: self,
             determineAuthMethod: self,
+            fetchBackendEnvironment: self,
             ssoLinkGenerator: self
         )
     }
@@ -126,6 +147,42 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             viewModel: determineAuthMethodViewModel,
             factory: self
         )
+    }
+
+}
+
+extension MockDependencies: FetchDefaultSSOSettingsUseCaseProtocol {
+
+    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
+        nil
+    }
+
+}
+
+extension MockDependencies: SwitchBackendConfirmationBuilder {
+
+    private var switchBackendConfirmationViewModel: SwitchBackendConfirmationViewModel {
+        SwitchBackendConfirmationViewModel(
+            router: rootViewModel,
+            fetchDefaultSSOSettings: self,
+            environment: BackendEnvironmentInfo(
+                title:  "backendName",
+                endpoints: BackendURLs(
+                    backendURL: URL(string: "backendURL")!,
+                    backendWSURL: URL(string: "backendWSURL")!,
+                    blackListURL: URL(string: "blacklistURL")!,
+                    teamsURL: URL(string: "teamsURL")!,
+                    accountsURL: URL(string: "accountsURL")!,
+                    websiteURL: URL(string: "websiteURL")!
+                ),
+                apiProxy: nil,
+                pinnedKeys: nil
+            )
+        )
+    }
+
+    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(viewModel: switchBackendConfirmationViewModel)
     }
 
 }

@@ -80,6 +80,24 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
 private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
 }
+private class SwitchBackendConfirmationComponentDependency7a1956d88810c08ef169Provider: SwitchBackendConfirmationComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var authenticationAPI: AuthenticationAPI {
+        return determineAuthMethodComponent.authenticationAPI
+    }
+    private let determineAuthMethodComponent: DetermineAuthMethodComponent
+    private let rootComponent: RootComponent
+    init(determineAuthMethodComponent: DetermineAuthMethodComponent, rootComponent: RootComponent) {
+        self.determineAuthMethodComponent = determineAuthMethodComponent
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent
+private func factorye1144df20d596f07c3bec770221f242f9204cf85(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return SwitchBackendConfirmationComponentDependency7a1956d88810c08ef169Provider(determineAuthMethodComponent: parent1(component) as! DetermineAuthMethodComponent, rootComponent: parent2(component) as! RootComponent)
+}
 private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: LoginViaEmailComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -127,6 +145,12 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
     }
 }
+extension SwitchBackendConfirmationComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\SwitchBackendConfirmationComponentDependency.router] = "router-any Router"
+        keyPathToName[\SwitchBackendConfirmationComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
+    }
+}
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
@@ -170,6 +194,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe623cded1e126cd6f1df3cee)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent", factorye1144df20d596f07c3bec770221f242f9204cf85)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent", factory9bda312c16141c932061c770221f242f9204cf85)
 }

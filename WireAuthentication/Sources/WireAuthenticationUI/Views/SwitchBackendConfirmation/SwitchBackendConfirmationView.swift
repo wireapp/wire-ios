@@ -17,7 +17,15 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
+
+package protocol SwitchBackendConfirmationBuilder {
+
+    @MainActor
+    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView
+
+}
 
 package struct SwitchBackendConfirmationView: View {
 
@@ -154,7 +162,6 @@ package struct SwitchBackendConfirmationView: View {
 
     private var cancelButton: some View {
         Button {
-            viewModel.handleEvent(.didCancel)
             dismiss()
         } label: {
             Text(Strings.cancel)
@@ -165,7 +172,7 @@ package struct SwitchBackendConfirmationView: View {
 
     private var proceedButton: some View {
         Button {
-            viewModel.handleEvent(.didConfirm)
+            Task { await viewModel.confirm() }
             dismiss()
         } label: {
             Text(Strings.proceed)
@@ -178,27 +185,27 @@ package struct SwitchBackendConfirmationView: View {
 
 // MARK: - Previews
 
-#Preview("Regular fonts") {
-    BackgroundView()
-        .overlay(
-            ZStack {
-                SwitchBackendConfirmationPreview()
-                    .padding()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        )
-}
-
-#Preview("Large fonts") {
-    VStack {
-        BackgroundView()
-            .overlay(
-                ZStack {
-                    SwitchBackendConfirmationPreview()
-                        .padding()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            )
-    }
-    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
-}
+//#Preview("Regular fonts") {
+//    BackgroundView()
+//        .overlay(
+//            ZStack {
+//                SwitchBackendConfirmationPreview()
+//                    .padding()
+//            }
+//            .frame(maxWidth: .infinity, maxHeight: .infinity)
+//        )
+//}
+//
+//#Preview("Large fonts") {
+//    VStack {
+//        BackgroundView()
+//            .overlay(
+//                ZStack {
+//                    SwitchBackendConfirmationPreview()
+//                        .padding()
+//                }
+//                .frame(maxWidth: .infinity, maxHeight: .infinity)
+//            )
+//    }
+//    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+//}

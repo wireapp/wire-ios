@@ -39,11 +39,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL)
+        case switchBackend(email: String, environment: BackendEnvironmentInfo)
     }
 
     private let router: any Router
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+    private let fetchBackendEnvironment: any FetchBackendEnvironmentUseCaseProtocol
     private let ssoLinkGenerator: SSOLinkGeneratorProtocol
 
     @Published var emailOrSSOCode: String = ""
@@ -59,6 +61,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         router: any Router,
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
+        fetchBackendEnvironment: any FetchBackendEnvironmentUseCaseProtocol,
         ssoLinkGenerator: any SSOLinkGeneratorProtocol,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
@@ -67,6 +70,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.router = router
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.determineAuthMethod = determineAuthMethod
+        self.fetchBackendEnvironment = fetchBackendEnvironment
         self.ssoLinkGenerator = ssoLinkGenerator
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
@@ -143,8 +147,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             }
 
         case let .onPremLogin(email, backendConfig):
-            // TODO: [WPB-15944] Handle on-prem login
-            break
+            Task.detached {
+                do {
+                    let environmentInfo = try await self.fetchBackendEnvironment.invoke(at: backendConfig)
+                    await MainActor.run {
+                        self.modalDestination = .switchBackend(email: email, environment: environmentInfo)
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.alert = .onPremLoginNotPossible(recovery: .loginViaEmail(email: email))
+                    }
+                }
+            }
         }
     }
 

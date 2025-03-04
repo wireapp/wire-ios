@@ -18,24 +18,19 @@
 
 import SwiftUI
 
-public struct SwitchBackendConfirmationPreview: View {
-    public init() {}
-
-    public var body: some View {
-        VStack {
-            SwitchBackendConfirmationView(
-                viewModel: SwitchBackendConfirmationViewModel(
-                    backendName: "Staging",
-                    backendURL: "www.staging.com",
-                    backendWSURL: "www.ws.staging.com",
-                    blacklistURL: "www.blacklist.staging.com",
-                    teamsURL: "www.teams.staging.com",
-                    accountsURL: "www.accounts.staging.com",
-                    websiteURL: "www.wire.com",
-                    action: { _ in }
-                )
-            )
-        }
-    }
-
-}
+//public struct SwitchBackendConfirmationPreview: View {
+//    public init() {}
+//
+//    public var body: some View {
+//        VStack {
+//            SwitchBackendConfirmationView(
+//                viewModel: SwitchBackendConfirmationViewModel(
+//                    router: self,
+//                    fetchDefaultSSOSettings: <#T##any FetchDefaultSSOSettingsUseCaseProtocol#>,
+//                    environment: <#T##BackendEnvironmentInfo#>
+//                )
+//            )
+//        }
+//    }
+//
+//}
