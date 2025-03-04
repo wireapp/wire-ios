@@ -31,11 +31,13 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
 
     weak var delegate: ConversationMessageCellDelegate?
 
+    private let cellReuseIdentifier = "ReactionsCell"
+
     private lazy var dataSource = MessageReactionsDiffableDataSource(
         collectionView: collectionView
-    ) { [weak self] collectionView, indexPath, _ in
+    ) { [weak self, cellReuseIdentifier] collectionView, indexPath, _ in
 
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath)
         if let reaction = self?.reactions[indexPath.item] {
             cell.contentConfiguration = UIHostingConfiguration {
                 MessageReactionView(reaction: reaction)
@@ -69,7 +71,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
 
         collectionView.backgroundColor = .clear
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellReuseIdentifier)
         collectionView.dataSource = dataSource
         collectionView.delegate = self
 
