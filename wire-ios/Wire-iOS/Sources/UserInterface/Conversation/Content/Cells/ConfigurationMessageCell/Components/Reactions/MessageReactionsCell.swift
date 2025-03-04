@@ -19,20 +19,6 @@
 import UIKit
 import WireDataModel
 
-// MARK: - Reaction
-
-struct MessageReactionMetadata: Equatable {
-
-    let emoji: Emoji.ID
-    let count: UInt
-    let isSelfUserReacting: Bool
-
-    static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
-        lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
-    }
-
-}
-
 // MARK: - MessageReactionsCell
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
@@ -42,9 +28,32 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     var isSelected = false
     var message: ZMConversationMessage?
 
+    private var reactions = [MessageReaction]()
+    private let collectionView = MessageReactionsCollectionView()
+
     weak var delegate: ConversationMessageCellDelegate?
 
-    private let reactionsView = GridLayoutView()
+    private lazy var dataSource = MessageReactionsDiffableDataSource(
+        collectionView: collectionView
+    ) { [weak self] collectionView, indexPath, emojiID in
+
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+
+        if let reaction = self?.reactions.first(where: { $0.emojiID == emojiID }) {
+            var reactionToggle: MessageReactionToggleControl! = cell.contentView.subviews
+                .compactMap { $0 as? MessageReactionToggleControl }.first
+            if reactionToggle == nil {
+                reactionToggle = MessageReactionToggleControl(reaction: reaction) { [weak self] in
+                    guard let self, let message else { return }
+                    delegate?.perform(action: .react(reaction.emojiID), for: message, view: self)
+                }
+                cell.contentView.addSubview(reactionToggle)
+                reactionToggle.fitIn(view: cell.contentView)
+            }
+        }
+
+        return cell
+    }
 
     private lazy var insets = UIEdgeInsets(
         top: 8,
@@ -61,64 +70,28 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
     }
-
-    // MARK: - configure Views and constraints
 
     private func configureSubviews() {
-        addSubview(reactionsView)
-        reactionsView.fitIn(view: self, insets: insets)
+
+        collectionView.backgroundColor = .clear
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.dataSource = dataSource
+
+        addSubview(collectionView)
+        collectionView.fitIn(view: self, insets: insets)
+
     }
 
-    // MARK: - configure method
+    func configure(with reactions: [MessageReaction], animated: Bool) {
+        self.reactions = reactions
 
-    func configure(
-        with reactions: [MessageReactionMetadata],
-        animated: Bool
-    ) {
-        let reactionToggles = reactions.map { reaction in
-            ReactionToggle(
-                emoji: reaction.emoji,
-                count: reaction.count,
-                isToggled: reaction.isSelfUserReacting
-            ) { [weak self] in
-                guard
-                    let self,
-                    let message
-                else {
-                    return
-                }
-
-                delegate?.perform(
-                    action: .react(reaction.emoji),
-                    for: message,
-                    view: self
-                )
-            }
-        }
-
-        reactionsView.configure(views: reactionToggles)
-    }
-
-    func prepareForReuse() {
-        reactionsView.prepareForReuse()
-    }
-
-    override func systemLayoutSizeFitting(
-        _ targetSize: CGSize,
-        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
-        verticalFittingPriority: UILayoutPriority
-    ) -> CGSize {
-        let insetsWidth = insets.left + insets.right
-        reactionsView.widthForCalculations = targetSize.width - insetsWidth
-        reactionsView.setNeedsLayout()
-        reactionsView.layoutIfNeeded()
-        return super.systemLayoutSizeFitting(
-            CGSize(width: targetSize.width - insetsWidth, height: UIView.noIntrinsicMetric),
-            withHorizontalFittingPriority: horizontalFittingPriority,
-            verticalFittingPriority: verticalFittingPriority
-        )
+        var snapshot = MessageReactionsDiffableDataSourceSnapshot()
+        snapshot.appendSections([.single])
+        snapshot.appendItems(reactions.map(\.emojiID))
+        dataSource.apply(snapshot, animatingDifferences: animated)
     }
 }
