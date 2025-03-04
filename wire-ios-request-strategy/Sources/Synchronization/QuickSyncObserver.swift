@@ -84,7 +84,7 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
     }
 
     public func waitForDecryptionOfEventsToFinish() async {
-        if await quickSyncHasCompleted() {
+        if await quickSyncHasCompleted() || finishedDecrypting {
             WireLogger.messaging.info(
                 "no need to wait, because app has finished quick sync, so decryption too",
                 attributes: .safePublic
