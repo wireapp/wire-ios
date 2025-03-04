@@ -51,7 +51,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
             accountsURL: URL(string: "https://www.example.com")!,
             passwordValidator: passwordValidator,
             canCreateAccount: true,
-            isCloudAccountAlreadyRegistered: false,
+            emailConflictWithCloudAccount: false,
             onCreateAccount: { [self] in onCreateAccountCalled = true }
         )
 
@@ -106,7 +106,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
                 userID: Scaffolding.someAccessToken.userID,
                 cookies: [Scaffolding.someCookie],
                 accessToken: Scaffolding.someAccessToken,
-                isCloudAccountAlreadyRegistered: false
+                emailConflictWithCloudAccount: false
             )
         )
     }

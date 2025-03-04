@@ -46,13 +46,13 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     func view(
         email: String,
         canCreateAccount: Bool,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: viewModel(
                 email: email,
                 canCreateAccount: canCreateAccount,
-                isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+                emailConflictWithCloudAccount: emailConflictWithCloudAccount
             ),
             factory: self
         )
@@ -62,7 +62,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     private func viewModel(
         email: String,
         canCreateAccount: Bool,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
@@ -71,7 +71,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
-            isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered,
+            emailConflictWithCloudAccount: emailConflictWithCloudAccount,
             onCreateAccount: { [weak dependency] in
                 dependency?.bridge.registerAccount()
             }
@@ -91,12 +91,12 @@ extension LoginViaEmailComponent: LoginViaEmailView.Factory {
     func verificationCodeView(
         email: String,
         password: String,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> VerificationCodeView {
         verificationCodeComponent.view(
             email: email,
             password: password,
-            isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+            emailConflictWithCloudAccount: emailConflictWithCloudAccount
         )
     }
 

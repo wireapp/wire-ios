@@ -85,13 +85,13 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
         case .none where configuration.isCloudAccountAlreadyRegistered == true:
             // The email domain has been claimed by an on-prem backend,
             // but there's already an existing cloud account registered.
-            return .loginViaEmail(email: email, isCloudAccountAlreadyRegistered: true)
+            return .loginViaEmail(email: email, emailConflictWithCloudAccount: true)
 
         case .none, .locked, .preAuthorized:
             return .loginOrRegisterViaEmail(email: email)
 
         case .noRegistration:
-            return .loginViaEmail(email: email, isCloudAccountAlreadyRegistered: false)
+            return .loginViaEmail(email: email, emailConflictWithCloudAccount: false)
 
         case .sso:
             guard let ssoCode = configuration.ssoCode else {

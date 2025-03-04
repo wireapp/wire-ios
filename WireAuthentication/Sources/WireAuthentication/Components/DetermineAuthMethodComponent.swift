@@ -99,12 +99,12 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
     func loginViaEmailView(
         email: String,
         canCreateAccount: Bool,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> LoginViaEmailView {
         loginViaEmailComponent.view(
             email: email,
             canCreateAccount: canCreateAccount,
-            isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+            emailConflictWithCloudAccount: emailConflictWithCloudAccount
         )
     }
 

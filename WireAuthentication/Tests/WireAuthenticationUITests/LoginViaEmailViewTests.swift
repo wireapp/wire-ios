@@ -42,7 +42,7 @@ class LoginViaEmailViewTests: XCTestCase {
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: true,
-            isCloudAccountAlreadyRegistered: false
+            emailConflictWithCloudAccount: false
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +61,7 @@ class LoginViaEmailViewTests: XCTestCase {
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: true,
-            isCloudAccountAlreadyRegistered: false
+            emailConflictWithCloudAccount: false
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -81,7 +81,7 @@ class LoginViaEmailViewTests: XCTestCase {
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: false,
-            isCloudAccountAlreadyRegistered: false
+            emailConflictWithCloudAccount: false
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -100,7 +100,7 @@ class LoginViaEmailViewTests: XCTestCase {
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: false,
-            isCloudAccountAlreadyRegistered: false
+            emailConflictWithCloudAccount: false
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

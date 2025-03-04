@@ -26,7 +26,7 @@ package protocol LoginViaEmailBuilder {
     func loginViaEmailView(
         email: String,
         canCreateAccount: Bool,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> LoginViaEmailView
 
 }
@@ -82,7 +82,7 @@ package struct LoginViaEmailView: View {
                 factory.verificationCodeView(
                     email: email,
                     password: password,
-                    isCloudAccountAlreadyRegistered: viewModel.isCloudAccountAlreadyRegistered
+                    emailConflictWithCloudAccount: viewModel.emailConflictWithCloudAccount
                 )
             }
         }
@@ -190,7 +190,7 @@ package struct LoginViaEmailView: View {
             MockDependencies().loginViaEmailView(
                 email: "foo@bar.com",
                 canCreateAccount: false,
-                isCloudAccountAlreadyRegistered: false
+                emailConflictWithCloudAccount: false
             )
         }
 }

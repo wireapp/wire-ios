@@ -99,7 +99,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             (config: .make(domainRedirect: .none), expected: .loginOrRegisterViaEmail(email: email)),
             (
                 config: .make(domainRedirect: .none, isCloudAccountAlreadyRegistered: true),
-                expected: .loginViaEmail(email: email, isCloudAccountAlreadyRegistered: true)
+                expected: .loginViaEmail(email: email, emailConflictWithCloudAccount: true)
             ),
             (config: .make(domainRedirect: .locked), expected: .loginOrRegisterViaEmail(email: email)),
             (config: .make(domainRedirect: .preAuthorized), expected: .loginOrRegisterViaEmail(email: email)),
@@ -107,7 +107,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
                 config: .make(domainRedirect: .noRegistration),
                 expected: .loginViaEmail(
                     email: email,
-                    isCloudAccountAlreadyRegistered: false
+                    emailConflictWithCloudAccount: false
                 )
             ),
             (

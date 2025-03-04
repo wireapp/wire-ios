@@ -107,17 +107,17 @@ package struct DetermineAuthMethodView: View {
         )
         .navigationDestination(for: Destination.self) {
             switch $0 {
-            case let .login(email, isCloudAccountAlreadyRegistered):
+            case let .login(email, emailConflictWithCloudAccount):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: false,
-                    isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+                    emailConflictWithCloudAccount: emailConflictWithCloudAccount
                 )
             case let .loginOrRegister(email):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: true,
-                    isCloudAccountAlreadyRegistered: false
+                    emailConflictWithCloudAccount: false
                 )
             }
         }
@@ -134,7 +134,7 @@ package struct DetermineAuthMethodView: View {
 
     package enum Destination: Hashable {
 
-        case login(email: String, isCloudAccountAlreadyRegistered: Bool)
+        case login(email: String, emailConflictWithCloudAccount: Bool)
         case loginOrRegister(email: String)
 
     }

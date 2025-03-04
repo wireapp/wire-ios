@@ -34,12 +34,12 @@ protocol VerificationCodeComponentDependency: Dependency {
 class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
     @MainActor
-    func view(email: String, password: String, isCloudAccountAlreadyRegistered: Bool) -> VerificationCodeView {
+    func view(email: String, password: String, emailConflictWithCloudAccount: Bool) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: viewModel(
                 email: email,
                 password: password,
-                isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+                emailConflictWithCloudAccount: emailConflictWithCloudAccount
             )
         )
     }
@@ -48,14 +48,14 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
     private func viewModel(
         email: String,
         password: String,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> VerificationCodeViewModel {
         VerificationCodeViewModel(
             email: email,
             password: password,
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
             router: dependency.router,
-            isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+            emailConflictWithCloudAccount: emailConflictWithCloudAccount
         )
     }
 

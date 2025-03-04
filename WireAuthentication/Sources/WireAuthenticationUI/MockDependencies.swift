@@ -86,7 +86,7 @@ extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
     ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
         try! await Task.sleep(for: .seconds(3))
 
-        return .loginViaEmail(email: emailOrSSOCode, isCloudAccountAlreadyRegistered: false)
+        return .loginViaEmail(email: emailOrSSOCode, emailConflictWithCloudAccount: false)
     }
 }
 
@@ -129,7 +129,7 @@ extension MockDependencies: NoHistoryViewBuilder {
             userID: UUID(),
             cookies: [],
             accessToken: nil,
-            isCloudAccountAlreadyRegistered: false,
+            emailConflictWithCloudAccount: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,
             onFlowCompletion: { _ in }
@@ -140,7 +140,7 @@ extension MockDependencies: NoHistoryViewBuilder {
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
@@ -167,7 +167,7 @@ extension MockDependencies: LoginViaEmailBuilder {
             accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
-            isCloudAccountAlreadyRegistered: false,
+            emailConflictWithCloudAccount: false,
             onCreateAccount: {}
         )
     }
@@ -175,7 +175,7 @@ extension MockDependencies: LoginViaEmailBuilder {
     func loginViaEmailView(
         email: String,
         canCreateAccount: Bool,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
@@ -198,7 +198,7 @@ extension MockDependencies: VerificationCodeBuilder {
             loginViaEmailUseCase: self,
             router: rootViewModel,
             numberOfDigits: code.count,
-            isCloudAccountAlreadyRegistered: false
+            emailConflictWithCloudAccount: false
         )
         viewModel.code = code
 
@@ -208,7 +208,7 @@ extension MockDependencies: VerificationCodeBuilder {
     func verificationCodeView(
         email: String,
         password: String,
-        isCloudAccountAlreadyRegistered: Bool
+        emailConflictWithCloudAccount: Bool
     ) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: VerificationCodeViewModel(
@@ -216,7 +216,7 @@ extension MockDependencies: VerificationCodeBuilder {
                 password: password,
                 loginViaEmailUseCase: self,
                 router: rootViewModel,
-                isCloudAccountAlreadyRegistered: false
+                emailConflictWithCloudAccount: false
             )
         )
     }

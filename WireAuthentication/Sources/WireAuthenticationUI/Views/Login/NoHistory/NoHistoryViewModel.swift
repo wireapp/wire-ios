@@ -39,13 +39,13 @@ package final class NoHistoryViewModel: ObservableObject {
     private let accessToken: AccessToken?
     private let onFlowCompletion: (AuthenticationResult) -> Void
 
-    let isCloudAccountAlreadyRegistered: Bool
+    let emailConflictWithCloudAccount: Bool
 
     package init(
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
-        isCloudAccountAlreadyRegistered: Bool,
+        emailConflictWithCloudAccount: Bool,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
@@ -53,7 +53,7 @@ package final class NoHistoryViewModel: ObservableObject {
         self.userID = userID
         self.cookies = cookies
         self.accessToken = accessToken
-        self.isCloudAccountAlreadyRegistered = isCloudAccountAlreadyRegistered
+        self.emailConflictWithCloudAccount = emailConflictWithCloudAccount
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.onFlowCompletion = onFlowCompletion

@@ -110,10 +110,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
         switch method {
-        case let .loginViaEmail(email, isCloudAccountAlreadyRegistered):
+        case let .loginViaEmail(email, emailConflictWithCloudAccount):
             router.navigate(to: DetermineAuthMethodView.Destination.login(
                 email: email,
-                isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered
+                emailConflictWithCloudAccount: emailConflictWithCloudAccount
             ))
 
         case let .loginOrRegisterViaEmail(email):
