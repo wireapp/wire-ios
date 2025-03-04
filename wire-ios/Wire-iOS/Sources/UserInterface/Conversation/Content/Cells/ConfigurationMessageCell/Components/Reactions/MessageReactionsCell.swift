@@ -19,14 +19,6 @@
 import UIKit
 import WireDataModel
 
-// MARK: - Reaction
-
-struct MessageReactionMetadata: Equatable {
-    let emojiID: Emoji.ID
-    let count: UInt
-    let isSelfUserReacting: Bool
-}
-
 // MARK: - MessageReactionsCell
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
@@ -35,7 +27,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     var isSelected = false
     var message: ZMConversationMessage?
-    private var reactions = [MessageReactionMetadata]()
+    private var reactions = [MessageReaction]()
 
     weak var delegate: ConversationMessageCellDelegate?
 
@@ -47,7 +39,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     )
 
     private lazy var collectionView = {
-        let collectionView = SelfSizingCollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+        let collectionView = MessageReactionsCollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.backgroundColor = .clear
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
@@ -62,9 +54,9 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     ) { [weak self] collectionView, indexPath, emojiID in
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         if let reaction = self?.reactions.first(where: { $0.emojiID == emojiID }) {
-            var reactionToggle: ReactionToggle! = cell.contentView.subviews.compactMap { $0 as? ReactionToggle }.first
+            var reactionToggle: MessageReactionToggleControl! = cell.contentView.subviews.compactMap { $0 as? MessageReactionToggleControl }.first
             if reactionToggle == nil {
-                reactionToggle = ReactionToggle(reaction: reaction) { [weak self] in
+                reactionToggle = MessageReactionToggleControl(reaction: reaction) { [weak self] in
                     guard let self, let message else { return }
                     delegate?.perform(action: .react(reaction.emojiID), for: message, view: self)
                 }
@@ -76,7 +68,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     }
 
     private lazy var collectionViewLayout = {
-        let layout = LeftAlignedCollectionViewFlowLayout()
+        let layout = MessageReactionsCollectionViewFlowLayout()
         // layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
@@ -106,72 +98,12 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - configure method
 
-    func configure(with reactions: [MessageReactionMetadata], animated: Bool) {
+    func configure(with reactions: [MessageReaction], animated: Bool) {
         self.reactions = reactions
 
         var snapshot = NSDiffableDataSourceSnapshot<SectionID, Emoji.ID>()
         snapshot.appendSections([.single])
         snapshot.appendItems(reactions.map(\.emojiID))
-        dataSource.apply(snapshot, animatingDifferences: animated)/* { [weak self] in
-//            self?.collectionView.invalidateIntrinsicContentSize()
-        }*/
+        dataSource.apply(snapshot, animatingDifferences: animated)
     }
-}
-
-// MARK: -
-
-private final class LeftAlignedCollectionViewFlowLayout: UICollectionViewFlowLayout {
-
-    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        // Get the default attributes from the superclass
-        guard let attributes = super.layoutAttributesForElements(in: rect) else { return nil }
-        // Create a copy to avoid modifying read-only attributes
-        let attributesCopy = attributes.map { $0.copy() as! UICollectionViewLayoutAttributes }
-
-        var leftMargin = sectionInset.left
-        var maxY: CGFloat = -1.0
-
-        for attribute in attributesCopy {
-            if attribute.representedElementCategory == .cell {
-                // If this cell is on a new line, reset the left margin
-                if attribute.frame.origin.y >= maxY {
-                    leftMargin = sectionInset.left
-                }
-                // Set the x position of the cell to the left margin
-                attribute.frame.origin.x = leftMargin
-                // Update the left margin for the next cell
-                leftMargin += attribute.frame.width + minimumInteritemSpacing
-                // Update the maximum y value for this row
-                maxY = max(attribute.frame.maxY, maxY)
-            }
-        }
-        return attributesCopy
-    }
-}
-
-private final class SelfSizingCollectionView: UICollectionView {
-
-    override var contentSize: CGSize {
-        didSet { invalidateIntrinsicContentSize() }
-    }
-
-    override var intrinsicContentSize: CGSize {
-        collectionViewLayout.collectionViewContentSize
-    }
-
-}
-
-// MARK: - Helpers
-
-private extension ReactionToggle {
-
-    convenience init(reaction: MessageReactionMetadata, onToggle: @escaping () -> Void) {
-        self.init(
-            emoji: reaction.emojiID,
-            count: reaction.count,
-            isToggled: reaction.isSelfUserReacting,
-            onToggle: onToggle
-        )
-    }
-
 }

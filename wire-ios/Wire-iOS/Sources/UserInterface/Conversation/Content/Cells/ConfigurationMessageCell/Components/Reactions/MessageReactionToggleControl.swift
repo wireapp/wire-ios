@@ -20,9 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-// MARK: - ReactionToggle
-
-final class ReactionToggle: UIControl {
+final class MessageReactionToggleControl: UIControl {
 
     // MARK: - Properties
 
@@ -90,6 +88,15 @@ final class ReactionToggle: UIControl {
         setupAccessibility(
             value: emoji,
             count: count
+        )
+    }
+
+    convenience init(reaction: MessageReaction, onToggle: @escaping () -> Void) {
+        self.init(
+            emoji: reaction.emojiID,
+            count: reaction.count,
+            isToggled: reaction.isSelfUserReacting,
+            onToggle: onToggle
         )
     }
 
