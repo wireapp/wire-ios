@@ -47,9 +47,9 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    private var fetchBackendEnvironmentUseCase: some FetchBackendEnvironmentUseCaseProtocol {
-        FetchBackendEnvironmentUseCase()
-    }
+//    private var fetchBackendEnvironmentUseCase: some FetchBackendEnvironmentUseCaseProtocol {
+//        FetchBackendEnvironmentUseCase()
+//    }
 
     private var ssoLinkGenerator: SSOLinkGeneratorProtocol {
         SSOLinkGenerator(
@@ -65,7 +65,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             router: dependency.router,
             validateEmailOrSSOCode: validateEmailOrSSOCode,
             determineAuthMethod: determineAuthMethodUseCase,
-            fetchBackendEnvironment: fetchBackendEnvironmentUseCase,
+            //fetchBackendEnvironment: fetchBackendEnvironmentUseCase,
             ssoLinkGenerator: ssoLinkGenerator
         )
     }
@@ -96,9 +96,9 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         LoginViaSSOComponent()
     }
 
-    var switchBackendConfirmationComponent: SwitchBackendConfirmationComponent {
-        SwitchBackendConfirmationComponent(parent: self)
-    }
+//    var switchBackendConfirmationComponent: SwitchBackendConfirmationComponent {
+//        SwitchBackendConfirmationComponent(parent: self)
+//    }
 
 }
 
@@ -115,8 +115,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
-    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
-        switchBackendConfirmationComponent.view(environment: environment)
-    }
+//    func switchBackendView(environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
+//        switchBackendConfirmationComponent.view(environment: environment)
+//    }
 
 }

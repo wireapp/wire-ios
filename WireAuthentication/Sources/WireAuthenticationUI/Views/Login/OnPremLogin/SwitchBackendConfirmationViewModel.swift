@@ -16,74 +16,74 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAuthenticationAPI
-
-@MainActor
-public class SwitchBackendConfirmationViewModel {
-
-    private typealias Strings = L10n.SwitchBackendConfirmation
-
-    // MARK: - State
-
-    let items: [ItemUIModel]
-    @Published private(set) var isLoading = false
-
-    private let router: any Router
-    private let fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol
-
-    // MARK: - Life cycle
-
-    public init(
-        router: any Router,
-        fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol,
-        environment: BackendEnvironmentInfo
-    ) {
-        self.router = router
-        self.fetchDefaultSSOSettings = fetchDefaultSSOSettings
-        self.items = [
-            ItemUIModel(title: Strings.backendName, value: environment.title, isURL: false),
-            ItemUIModel(title: Strings.backendUrl, value: environment.endpoints.backendURL.absoluteString, isURL: true),
-            ItemUIModel(title: Strings.backendWsurl, value: environment.endpoints.backendWSURL.absoluteString, isURL: true),
-            ItemUIModel(title: Strings.blacklistUrl, value: environment.endpoints.blackListURL.absoluteString, isURL: true),
-            ItemUIModel(title: Strings.teamsUrl, value: environment.endpoints.teamsURL.absoluteString, isURL: true),
-            ItemUIModel(title: Strings.accountsUrl, value: environment.endpoints.accountsURL.absoluteString, isURL: true),
-            ItemUIModel(title: Strings.websiteUrl, value: environment.endpoints.websiteURL.absoluteString, isURL: true)
-        ]
-    }
-
-    // MARK: - Events
-
-    func confirm() async {
-        isLoading = true
-
-        let fetchDefaultSSOTask = Task.detached { [fetchDefaultSSOSettings] in
-            try await fetchDefaultSSOSettings.invoke()
-        }
-        do {
-            if let ssoCode = try await fetchDefaultSSOTask.value {
-                // show SSO
-                //router.presentSheet()
-            } else {
-                // show login
-                //router.presentSheet()
-            }
-        } catch {
-            //alert = .unknownError
-        }
-        isLoading = false
-    }
-
-    func cancel() {
-        //
-    }
-
-    // MARK: - Model
-
-    package struct ItemUIModel {
-        let title: String
-        let value: String
-        let isURL: Bool
-    }
-
-}
+//import Foundation
+//import WireAuthenticationAPI
+//
+//@MainActor
+//public class SwitchBackendConfirmationViewModel {
+//
+//    private typealias Strings = L10n.SwitchBackendConfirmation
+//
+//    // MARK: - State
+//
+//    let items: [ItemUIModel]
+//    @Published private(set) var isLoading = false
+//
+//    private let router: any Router
+//    private let fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol
+//
+//    // MARK: - Life cycle
+//
+//    public init(
+//        router: any Router,
+//        fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol,
+//        environment: BackendEnvironmentInfo
+//    ) {
+//        self.router = router
+//        self.fetchDefaultSSOSettings = fetchDefaultSSOSettings
+//        self.items = [
+//            ItemUIModel(title: Strings.backendName, value: environment.title, isURL: false),
+//            ItemUIModel(title: Strings.backendUrl, value: environment.endpoints.backendURL.absoluteString, isURL: true),
+//            ItemUIModel(title: Strings.backendWsurl, value: environment.endpoints.backendWSURL.absoluteString, isURL: true),
+//            ItemUIModel(title: Strings.blacklistUrl, value: environment.endpoints.blackListURL.absoluteString, isURL: true),
+//            ItemUIModel(title: Strings.teamsUrl, value: environment.endpoints.teamsURL.absoluteString, isURL: true),
+//            ItemUIModel(title: Strings.accountsUrl, value: environment.endpoints.accountsURL.absoluteString, isURL: true),
+//            ItemUIModel(title: Strings.websiteUrl, value: environment.endpoints.websiteURL.absoluteString, isURL: true)
+//        ]
+//    }
+//
+//    // MARK: - Events
+//
+//    func confirm() async {
+//        isLoading = true
+//
+//        let fetchDefaultSSOTask = Task.detached { [fetchDefaultSSOSettings] in
+//            try await fetchDefaultSSOSettings.invoke()
+//        }
+//        do {
+//            if let ssoCode = try await fetchDefaultSSOTask.value {
+//                // show SSO
+//                //router.presentSheet()
+//            } else {
+//                // show login
+//                //router.presentSheet()
+//            }
+//        } catch {
+//            //alert = .unknownError
+//        }
+//        isLoading = false
+//    }
+//
+//    func cancel() {
+//        //
+//    }
+//
+//    // MARK: - Model
+//
+//    package struct ItemUIModel {
+//        let title: String
+//        let value: String
+//        let isURL: Bool
+//    }
+//
+//}

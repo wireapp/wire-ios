@@ -33,19 +33,28 @@ public enum FetchBackendEnvironmentFailure: Error, Equatable {
 
 }
 
-public struct BackendEnvironmentInfo: Codable, Sendable, Hashable {
+public struct BackendEnvironmentInfo: Decodable, Sendable, Hashable {
 
     public let title: String
     public let endpoints: BackendURLs
+    public let apiProxy: ProxySettings?
+    public let pinnedKeys: [TrustData]?
 
-    public init(title: String, endpoints: BackendURLs) {
+    public init(
+        title: String,
+        endpoints: BackendURLs,
+        apiProxy: ProxySettings?,
+        pinnedKeys: [TrustData]?
+    ) {
         self.title = title
         self.endpoints = endpoints
+        self.apiProxy = apiProxy
+        self.pinnedKeys = pinnedKeys
     }
 
 }
 
-public struct BackendURLs: Codable, Sendable, Hashable {
+public struct BackendURLs: Decodable, Sendable, Hashable {
 
     public let backendURL: URL
     public let backendWSURL: URL
@@ -71,4 +80,66 @@ public struct BackendURLs: Codable, Sendable, Hashable {
     }
 }
 
+public struct TrustData: Decodable, Sendable, Hashable {
 
+    public struct Host: Decodable, Sendable, Hashable {
+        public enum Rule: String, Decodable, Sendable {
+            case endsWith = "ends_with"
+            case equals
+        }
+
+        public let rule: Rule
+        public let value: String
+    }
+
+    public let certificateKey: SecKey
+    public let hosts: [Host]
+
+    enum CodingKeys: String, CodingKey {
+        case certificateKey
+        case hosts
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let certificateKeyData = try container.decode(Data.self, forKey: .certificateKey)
+
+        guard let certificate = SecCertificateCreateWithData(nil, certificateKeyData as CFData) else {
+            throw DecodingError.dataCorruptedError(
+                forKey: CodingKeys.certificateKey,
+                in: container,
+                debugDescription: "Error decoding certificate for pinned key"
+            )
+        }
+
+        guard let certificateKey = SecCertificateCopyKey(certificate) else {
+            throw DecodingError.dataCorruptedError(
+                forKey: CodingKeys.certificateKey,
+                in: container,
+                debugDescription: "Error extracting pinned key from certificate"
+            )
+        }
+        self.certificateKey = certificateKey
+        self.hosts = try container.decode([TrustData.Host].self, forKey: .hosts)
+    }
+
+}
+
+public struct ProxySettings: Decodable, Sendable, Hashable {
+
+    let host: String
+    let port: Int
+    let needsAuthentication: Bool
+
+    init(
+        host: String,
+        port: Int,
+        needsAuthentication: Bool = false
+    ) {
+        self.host = host
+        self.port = port
+        self.needsAuthentication = needsAuthentication
+
+    }
+
+}
