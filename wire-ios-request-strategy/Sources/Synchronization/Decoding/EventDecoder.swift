@@ -200,8 +200,8 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
 
         func storeLastEventId() async {
-            await syncMOC.perform {
-                if let eventUUID = event.uuid, !event.isTransient {
+            if let eventUUID = event.uuid, !event.isTransient {
+                await syncMOC.perform {
                     self.lastEventIDRepository.storeLastEventID(eventUUID)
                 }
             }

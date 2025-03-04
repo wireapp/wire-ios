@@ -89,48 +89,50 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 extension SendMLSMessageAction.Failure {
 
     init?(from response: ZMTransportResponse) {
+        let payloadMessage = response.payloadMessage() ?? ""
+
         switch (response.httpStatus, response.payloadLabel()) {
         case (201, _):
             return nil
 
         case (400, "mls-group-conversation-mismatch"):
-            self = .mlsGroupConversationMismatch(message: response.payloadMessage() ?? "")
+            self = .mlsGroupConversationMismatch(message: payloadMessage)
 
         case (400, "mls-client-sender-user-mismatch"):
-            self = .mlsClientSenderUserMismatch(message: response.payloadMessage() ?? "")
+            self = .mlsClientSenderUserMismatch(message: payloadMessage)
 
         case (400, "mls-self-removal-not-allowed"):
-            self = .mlsSelfRemovalNotAllowed(message: response.payloadMessage() ?? "")
+            self = .mlsSelfRemovalNotAllowed(message: payloadMessage)
 
         case (400, "mls-commit-missing-references"):
-            self = .mlsCommitMissingReferences(message: response.payloadMessage() ?? "")
+            self = .mlsCommitMissingReferences(message: payloadMessage)
 
         case (400, "mls-protocol-error"):
-            self = .mlsProtocolError(message: response.payloadMessage() ?? "")
+            self = .mlsProtocolError(message: payloadMessage)
 
         case (400, _):
-            self = .invalidRequestBody(message: response.payloadMessage() ?? "")
+            self = .invalidRequestBody(message: payloadMessage)
 
         case (403, "missing-legalhold-consent"):
-            self = .missingLegalHoldConsent(message: response.payloadMessage() ?? "")
+            self = .missingLegalHoldConsent(message: payloadMessage)
 
         case (403, "legalhold-not-enabled"):
-            self = .legalHoldNotEnabled(message: response.payloadMessage() ?? "")
+            self = .legalHoldNotEnabled(message: payloadMessage)
 
         case (403, "access-denied"):
-            self = .accessDenied(message: response.payloadMessage() ?? "")
+            self = .accessDenied(message: payloadMessage)
 
         case (404, "mls-proposal-not-found"):
-            self = .mlsProposalNotFound(message: response.payloadMessage() ?? "")
+            self = .mlsProposalNotFound(message: payloadMessage)
 
         case (404, "mls-key-package-ref-not-found"):
-            self = .mlsKeyPackageRefNotFound(message: response.payloadMessage() ?? "")
+            self = .mlsKeyPackageRefNotFound(message: payloadMessage)
 
         case (404, "no-conversation"):
-            self = .noConversation(message: response.payloadMessage() ?? "")
+            self = .noConversation(message: payloadMessage)
 
         case (404, "no-conversation-member"):
-            self = .noConversationMember(message: response.payloadMessage() ?? "")
+            self = .noConversationMember(message: payloadMessage)
 
         case (409, "mls-stale-message"):
             self = .mlsStaleMessage
@@ -139,10 +141,10 @@ extension SendMLSMessageAction.Failure {
             self = .mlsClientMismatch
 
         case (422, "mls-unsupported-proposal"):
-            self = .mlsUnsupportedProposal(message: response.payloadMessage() ?? "")
+            self = .mlsUnsupportedProposal(message: payloadMessage)
 
         case (422, "mls-unsupported-message"):
-            self = .mlsUnsupportedMessage(message: response.payloadMessage() ?? "")
+            self = .mlsUnsupportedMessage(message: payloadMessage)
 
         default:
             let errorInfo = response.errorInfo
