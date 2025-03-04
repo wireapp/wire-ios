@@ -399,12 +399,14 @@ final class ConversationViewController: UIViewController {
     private func setupTitleViewTap() {
         var actions = [UIAction]()
         if shouldShowCollectionsButton {
-            actions.append(UIAction(
-                title: L10n.Localizable.Conversation.Action.search,
-                image: UIImage(systemName: "magnifyingglass"),
-                handler: { [weak self]_ in
-                    self?.onSearchButtonPressed(nil)
-                })
+            actions.append(
+                UIAction(
+                    title: L10n.Localizable.Conversation.Action.search,
+                    image: UIImage(systemName: "magnifyingglass"),
+                    handler: { [weak self] _ in
+                        self?.onSearchButtonPressed(nil)
+                    }
+                )
             )
         }
         actions.append(UIAction(
@@ -412,16 +414,17 @@ final class ConversationViewController: UIViewController {
             image: UIImage(systemName: "info.circle"),
             handler: { [weak self] _ in
                 self?.onConversationDetailsPressed()
-            }))
-        
+            }
+        ))
+
         let menu = UIMenu(title: "", children: actions)
-        
+
         titleView.menuProvider = { menu }
     }
 
     private func setupNavigationItem() {
         setupTitleViewTap()
-        
+
         if conversation.conversationType == .oneOnOne {
             Task { [weak self] in
                 guard let self else { return }
@@ -731,7 +734,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             self.conversation.draftMessage = message
         }
     }
-    
+
     private func onConversationDetailsPressed() {
         if let superview = titleView.superview,
            let participantsController {
