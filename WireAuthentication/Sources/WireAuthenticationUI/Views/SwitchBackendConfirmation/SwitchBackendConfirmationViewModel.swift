@@ -31,7 +31,7 @@ public class SwitchBackendConfirmationViewModel {
     // MARK: - Life cycle
 
     convenience init(
-        environment: BackendEnvironmentInfo,
+        environment: BackendEnvironmentInfo1,
         action: @escaping (Event) -> Void
     ) {
         self.init(
