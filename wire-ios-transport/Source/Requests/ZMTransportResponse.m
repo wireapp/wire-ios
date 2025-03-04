@@ -169,6 +169,11 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
     return [[self.payload asDictionary] optionalStringForKey:@"label"];
 }
 
+- (NSString *)payloadMessage
+{
+    return [[self.payload asDictionary] optionalStringForKey:@"message"];
+}
+
 
 - (NSString *)description;
 {
