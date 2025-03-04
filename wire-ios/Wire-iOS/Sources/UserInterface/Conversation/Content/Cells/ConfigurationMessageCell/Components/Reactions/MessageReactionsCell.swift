@@ -48,13 +48,6 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
         return cell
     }
 
-    private lazy var insets = UIEdgeInsets(
-        top: 8,
-        left: conversationHorizontalMargins.left,
-        bottom: 0,
-        right: conversationHorizontalMargins.right
-    )
-
     // MARK: - Life cycle
 
     override init(frame: CGRect) {
@@ -76,6 +69,8 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
         collectionView.delegate = self
 
         addSubview(collectionView)
+        let horizontalMargins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 7, left: horizontalMargins.left, bottom: 0, right: horizontalMargins.right)
         collectionView.fitIn(view: self, insets: insets)
 
     }
