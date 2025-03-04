@@ -19,8 +19,6 @@
 import SwiftUI
 import WireDataModel
 
-// MARK: - MessageReactionsCell
-
 final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionViewDelegate {
 
     // MARK: - Properties
@@ -91,7 +89,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
         reactions[indexPath.item].isSelfUserReacting.toggle()
         updateCollectionView()
 
-        delegate?.perform(action: .react(reactions[indexPath.item].emojiID), for: message, view: self) // TODO: what to pass as view?
+        delegate?.perform(action: .react(reactions[indexPath.item].emojiID), for: message, view: self)
     }
 
     private func updateCollectionView() {
