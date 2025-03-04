@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import NeedleFoundation
-import SwiftUI
+public import SwiftUI
 import WireConversationsImplementation
 import WireConversationsUI
 
@@ -25,8 +24,10 @@ public final class WireConversationGroupIconFactory {
 
     private let mapper = ConversationIDToIconMapper()
 
+    public init() { }
+
     @MainActor
-    func create(conversationID: String) -> some View {
+    public func create(conversationID: String) -> some View {
         WireConversationGroupIcon(
             conversationID: conversationID,
             conversationIDMapper: mapper

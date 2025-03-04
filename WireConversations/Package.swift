@@ -60,7 +60,7 @@ let package = Package(
         ),
         .testTarget(
             name: "WireConversationsUITests",
-            dependencies: ["WireConversationsUI"]
+            dependencies: ["WireConversationsUIBindings"]
         ),
     ]
 )

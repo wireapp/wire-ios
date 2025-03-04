@@ -20,11 +20,12 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import WireConversationsBindings
-@testable import WireConversationsUI
+import WireConversationsUIBindings
 
 class WireConversationGroupIconTests: XCTestCase {
 
+    private let conversationID = "12345"
+    private let viewFactory = WireConversationGroupIconFactory()
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
@@ -38,9 +39,8 @@ class WireConversationGroupIconTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let conversationID = "12345"
-        let view = WireConversationGroupIcon(conversationID: conversationID)
-            .frame(width: 350, height: 200)
+        let view = viewFactory.create(conversationID: conversationID)
+            .frame(width: 40, height: 40)
             .padding()
 
         snapshotHelper
@@ -53,8 +53,8 @@ class WireConversationGroupIconTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = WireConversationGroupIcon(conversationID: conversationID)
-            .frame(width: 350, height: 500)
+        let view = viewFactory.create(conversationID: conversationID)
+            .frame(width: 40, height: 40)
             .padding()
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
