@@ -16,12 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-extension ClientSessionComponent: InitialSyncBuilderProtocol {
-
-    public func buildInitialSync() throws -> any InitialSyncProtocol {
-        initialSync
-    }
-
-}
+"conversation.file.preview.open" = "Open preview";

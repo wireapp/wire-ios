@@ -21,7 +21,7 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-struct UploadDocumentPreview: View {
+public struct UploadDocumentPreview: View {
     let headerIcon: Image
     let headerText: String
     let labelText: String
@@ -29,7 +29,7 @@ struct UploadDocumentPreview: View {
 
     @ScaledMetric private var scale: CGFloat = 1
 
-    init(
+    public init(
         headerIcon: Image,
         headerText: String,
         labelText: String,
@@ -41,8 +41,8 @@ struct UploadDocumentPreview: View {
         self.onRemove = onRemove
     }
 
-    var body: some View {
-        VStack(spacing: 6) {
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 4 * floor(scale)) {
                 headerIcon
                     .resizable()
@@ -57,7 +57,7 @@ struct UploadDocumentPreview: View {
             Text(labelText)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurfaceVariant.color)
                 .wireTextStyle(.h3)
-                .lineLimit(max(2, 2 * Int(round(scale))))
+                .lineLimit(max(2, 2 * Int(round(scale))), reservesSpace: true)
         }
         .roundedBorderAndBackground(
             backgroundColor: ColorTheme.Backgrounds.surfaceVariant.color,
@@ -70,10 +70,10 @@ struct UploadDocumentPreview: View {
     }
 }
 
-public struct UploadDocumentPreview_Preview: View {
-    public init() {}
+package struct UploadDocumentPreview_Preview: View {
+    package init() {}
 
-    public var body: some View {
+    package var body: some View {
         UploadDocumentPreview(
             headerIcon: Image(systemName: "text.document"),
             headerText: "Document (336 KB)",

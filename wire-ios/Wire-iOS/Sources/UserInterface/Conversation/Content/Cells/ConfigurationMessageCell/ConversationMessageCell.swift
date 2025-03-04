@@ -43,7 +43,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
 /// A generic view that displays conversation contents.
 
-protocol ConversationMessageCell: AnyObject {
+protocol ConversationMessageCell: UIView {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
 
@@ -119,10 +119,7 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The top margin is used to configure the spacing between cells. This property will
     /// get updated by the ConversationMessageSectionController if necessary so any
     /// default value is just a recommendation.
-    var topMargin: Float { get set }
-
-    /// Whether the view occupies the entire width of the cell.
-    var isFullWidth: Bool { get }
+    var topMargin: CGFloat { get set }
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
@@ -153,7 +150,6 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     func register(in tableView: UITableView)
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell
-    func makeView() -> UIView
     func willDisplayCell()
     func didEndDisplayingCell()
     func isConfigurationEqual(with other: Any) -> Bool
@@ -173,30 +169,6 @@ extension ConversationMessageCellDescription {
         tableView.register(cell: type(of: self))
     }
 
-    func makeView() -> UIView {
-        let view = View()
-        let container = UIView()
-
-        view.translatesAutoresizingMaskIntoConstraints = false
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(view)
-
-        let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor)
-        let trailing = view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
-        let top = view.topAnchor.constraint(equalTo: container.topAnchor)
-        let bottom = view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
-
-        top.constant = CGFloat(topMargin)
-        leading.constant = isFullWidth ? 0 : view.conversationHorizontalMargins.left
-        trailing.constant = isFullWidth ? 0 : -view.conversationHorizontalMargins.right
-
-        NSLayoutConstraint.activate([leading, trailing, top, bottom])
-
-        view.configure(with: configuration, animated: false)
-
-        return container
-    }
-
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
         cell.cellView.delegate = delegate
@@ -207,10 +179,14 @@ extension ConversationMessageCellDescription {
 
     func configureCell(_ cell: UITableViewCell, animated: Bool = false) {
         guard let adapterCell = cell as? ConversationMessageCellTableViewAdapter<Self> else { return }
+        configureContentView(adapterCell.cellView)
+    }
 
-        adapterCell.cellView.configure(with: configuration, animated: animated)
+    func configureContentView(_ cellView: any UIView & ConversationMessageCell, animated: Bool = false) {
+        guard let cellView = cellView as? View else { return }
+        cellView.configure(with: configuration, animated: animated)
 
-        if cell.isVisible {
+        if cellView.isVisible {
             _ = message?.startSelfDestructionIfNeeded()
         }
     }
@@ -243,17 +219,18 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
 
 final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
-    private let viewGenerator: () -> UIView
+    private let viewGenerator: (_ frame: CGRect) -> (any UIView & ConversationMessageCell)
     private let registrationBlock: (UITableView) -> Void
-    private let configureBlock: (UITableViewCell, Bool) -> Void
+    private let configureCell: (UITableViewCell, Bool) -> Void
+    private let configureContentView: (any UIView & ConversationMessageCell, Bool) -> Void
     private let baseTypeGetter: () -> AnyClass
-    private let instanceGetter: () -> AnyObject
+    private let instanceGetter: () -> any ConversationMessageCellDescription
     private let isConfigurationEqualBlock: (AnyConversationMessageCellDescription) -> Bool
 
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
-    private let _topMargin: AnyMutableProperty<Float>
+    private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _showEphemeralTimer: AnyMutableProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
@@ -264,12 +241,16 @@ final class AnyConversationMessageCellDescription: NSObject {
             description.register(in: tableView)
         }
 
-        self.configureBlock = { cell, animated in
+        self.configureCell = { cell, animated in
             description.configureCell(cell, animated: animated)
         }
 
-        self.viewGenerator = {
-            description.makeView()
+        self.configureContentView = { contentView, animated in
+            description.configureContentView(contentView, animated: animated)
+        }
+
+        self.viewGenerator = { frame in
+            T.View(frame: frame)
         }
 
         self.cellGenerator = { tableView, indexPath in
@@ -298,7 +279,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
 
-    var instance: AnyObject {
+    var instance: any ConversationMessageCellDescription {
         instanceGetter()
     }
 
@@ -321,7 +302,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         set { _actionController.setter(newValue) }
     }
 
-    var topMargin: Float {
+    var topMargin: CGFloat {
         get { _topMargin.getter() }
         set { _topMargin.setter(newValue) }
     }
@@ -345,8 +326,12 @@ final class AnyConversationMessageCellDescription: NSObject {
         _axLabel.getter()
     }
 
-    func configure(cell: UITableViewCell, animated: Bool = false) {
-        configureBlock(cell, animated)
+    func configureCell(_ cell: UITableViewCell, animated: Bool = false) {
+        configureCell(cell, animated)
+    }
+
+    func configureContentView(_ contentView: any UIView & ConversationMessageCell, animated: Bool = false) {
+        configureContentView(contentView, animated)
     }
 
     func register(in tableView: UITableView) {
@@ -357,8 +342,8 @@ final class AnyConversationMessageCellDescription: NSObject {
         cellGenerator(tableView, indexPath)
     }
 
-    func makeView() -> UIView {
-        viewGenerator()
+    func makeView(frame: CGRect) -> (any UIView & ConversationMessageCell) {
+        viewGenerator(frame)
     }
 
     func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {

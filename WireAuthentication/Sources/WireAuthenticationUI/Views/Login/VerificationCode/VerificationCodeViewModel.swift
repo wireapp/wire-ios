@@ -25,25 +25,7 @@ import WireLogging
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
 
-    package struct Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        let title: String
-        let message: String
-
-        private typealias Title = L10n.Authentication.Error.Title
-        private typealias Message = L10n.Authentication.Error.Message
-
-        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
-        static let invalid2FACode = Alert(title: Title.invalidInvalid2FACode, message: Message.invalidInvalid2FACode)
-        static let invalidEmail = Alert(title: Title.invalidCredentials, message: Message.invalidCredentials)
-        static let accountPendingActivation = Alert(
-            title: Title.accountPendingActivation,
-            message: Message.accountPendingActivation
-        )
-        static let accountSuspended = Alert(title: Title.accountSuspended, message: Message.accountSuspended)
-        static let unknownError = Alert(title: Title.general, message: Message.general)
-    }
+    private static let numberOfDigits = 6
 
     @Published var code: [String]
     @Published private(set) var isLoading = false
@@ -64,17 +46,17 @@ public final class VerificationCodeViewModel: ObservableObject {
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol,
         router: any Router,
-        code: [String] = ["", "", "", "", "", ""]
+        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
     ) {
-        precondition(!code.isEmpty)
+        precondition(numberOfDigits > 0)
 
         self.email = email
         self.password = password
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.requestLoginVerificationCodeUseCase = requestLoginVerificationCodeUseCase
         self.router = router
-        self.code = code
-        self.numberOfDigits = code.count
+        self.code = Array(repeating: "", count: numberOfDigits)
+        self.numberOfDigits = numberOfDigits
     }
 
     var isConfirmButtonDisabled: Bool {
@@ -179,4 +161,30 @@ private extension Error {
 
         return urlError.code == .notConnectedToInternet || urlError.code == .networkConnectionLost
     }
+}
+
+// MARK: Alerts
+
+package extension VerificationCodeViewModel {
+
+    package struct Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        let title: String
+        let message: String
+
+        private typealias Title = L10n.Authentication.Error.Title
+        private typealias Message = L10n.Authentication.Error.Message
+
+        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
+        static let invalid2FACode = Alert(title: Title.invalidInvalid2FACode, message: Message.invalidInvalid2FACode)
+        static let invalidEmail = Alert(title: Title.invalidCredentials, message: Message.invalidCredentials)
+        static let accountPendingActivation = Alert(
+            title: Title.accountPendingActivation,
+            message: Message.accountPendingActivation
+        )
+        static let accountSuspended = Alert(title: Title.accountSuspended, message: Message.accountSuspended)
+        static let unknownError = Alert(title: Title.general, message: Message.general)
+    }
+
 }

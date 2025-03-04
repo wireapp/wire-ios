@@ -16,14 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol SyncManagerProtocol {
+import Foundation
 
-    /// Fetch events from the server and process all pending events.
+extension ClientSessionComponent: InitialSyncProvider {
 
-    func performQuickSync() async throws
-
-    /// Stop all syncing activities and prepare to idle.
-
-    func suspend() async throws
+    public func provideInitialSync() throws -> any InitialSyncProtocol {
+        initialSync
+    }
 
 }

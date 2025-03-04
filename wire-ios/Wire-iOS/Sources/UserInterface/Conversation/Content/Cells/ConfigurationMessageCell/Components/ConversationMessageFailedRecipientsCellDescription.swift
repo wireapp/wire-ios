@@ -32,9 +32,8 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 5
+    var topMargin: CGFloat = 5
 
-    var isFullWidth: Bool = true
     var supportsActions: Bool = false
     var containsHighlightableContent: Bool = false
 

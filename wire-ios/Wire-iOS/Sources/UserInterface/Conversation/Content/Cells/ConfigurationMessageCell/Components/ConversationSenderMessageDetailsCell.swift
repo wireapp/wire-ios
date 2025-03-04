@@ -286,9 +286,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 16
+    var topMargin: CGFloat = 16
 
-    let isFullWidth: Bool = true
     let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
@@ -304,14 +303,13 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         self.message = message
 
         let teamRoleIndicator = sender.teamRoleIndicator()
-        var indicator: Indicator?
-
-        if message.isDeletion {
-            indicator = .deleted
+        let indicator: Indicator? = if message.isDeletion {
+            .deleted
         } else if message.updatedAt != nil {
-            indicator = .edited
+            .edited
+        } else {
+            .none
         }
-
         self.configuration = View.Configuration(
             user: sender,
             indicator: indicator,

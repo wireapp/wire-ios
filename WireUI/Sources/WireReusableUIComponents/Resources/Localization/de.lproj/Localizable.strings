@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"passwordtextfield.preview.title" = "Password (OPTIONAL)";
+"passwordtextfield.preview.title" = "Passwort (OPTIONAL)";
 "passwordtextfield.preview.placeholder" = "Passwort eingeben";
-"passwordtextfield.preview.passwordrules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
-"passwordtextfield.hide_password" = "Hide password";
-"passwordtextfield.show_password" = "Show password";
+"passwordtextfield.preview.passwordrules" = "Verwenden Sie mindestens 8 Zeichen mit einem Kleinbuchstaben, einem Großbuchstaben, einer Zahl und einem Sonderzeichen.";
+"passwordtextfield.hide_password" = "Passwort ausblenden";
+"passwordtextfield.show_password" = "Passwort anzeigen";

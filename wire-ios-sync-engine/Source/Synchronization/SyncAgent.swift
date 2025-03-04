@@ -30,8 +30,12 @@ final class SyncAgent: NSObject {
 
     weak var delegate: SyncAgentDelegate?
     private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
-    private let initialSyncBuilder: any InitialSyncBuilderProtocol
+    private let initialSyncProvider: any InitialSyncProvider
+    private let incrementalSyncProvider: any IncrementalSyncProvider
     private let legacySyncStatus: any SyncStatusProtocol
+
+    private let incrementalSyncTaskManager = NonReentrantTaskManager()
+    private var incrementalSyncToken: IncrementalSync.Token?
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -41,23 +45,52 @@ final class SyncAgent: NSObject {
 
     init(
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
-        initialSyncBuilder: any InitialSyncBuilderProtocol,
+        initialSyncProvider: any InitialSyncProvider,
+        incrementalSyncProvider: any IncrementalSyncProvider,
         legacySyncStatus: any SyncStatusProtocol
     ) {
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
-        self.initialSyncBuilder = initialSyncBuilder
+        self.initialSyncProvider = initialSyncProvider
+        self.incrementalSyncProvider = incrementalSyncProvider
         self.legacySyncStatus = legacySyncStatus
         super.init()
     }
 
     // MARK: - API
 
+    /// Trigger the appropriate sync depending in the local state.
+    ///
+    /// If no last event id is known, then the initial sync will be performed,
+    /// otherwise the incremental sync will be performed.
+    ///
+    /// This method logs any errors and does not wait for the sync to finish.
+
+    func resume() {
+        Task {
+            do {
+                try await performSync()
+            } catch {
+                WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
+            }
+        }
+    }
+
+    /// Suspend any ongoing sync tasks.
+
+    func suspend() {
+        WireLogger.sync.debug("suspending sync")
+        Task {
+            await incrementalSyncToken?.suspend()
+            incrementalSyncToken = nil
+        }
+    }
+
     /// Performs the appropriate sync depending in the local state.
     ///
     /// If no last event id is known, then the initial sync will be performed,
     /// otherwise the incremental sync will be performed.
 
-    func performSyncIfNeeded() async throws {
+    func performSync() async throws {
         if !hasCompletedInitialSync {
             try await performInitialSync()
         } else {
@@ -72,7 +105,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new initial sync")
-                try await initialSyncBuilder.buildInitialSync().perform(skipPullingLastUpdateEventID: false)
+                try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: false)
                 WireLogger.sync.debug("did finish new initial sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
@@ -94,7 +127,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new resource sync")
-                try await initialSyncBuilder.buildInitialSync().perform(skipPullingLastUpdateEventID: true)
+                try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: true)
                 WireLogger.sync.debug("did finish new resource sync")
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
@@ -112,7 +145,26 @@ final class SyncAgent: NSObject {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        await legacySyncStatus.performQuickSync()
+        if DeveloperFlag.newInitialSync.isOn {
+            guard incrementalSyncToken == nil else {
+                WireLogger.sync.info("incremental sync already running...")
+                return
+            }
+
+            do {
+                try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
+                    guard let self else { return }
+                    delegate?.syncAgentDidStartIncrementalSync(self)
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    delegate?.syncAgentDidFinishIncrementalSync(self)
+                }
+            } catch {
+                WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
+                throw error
+            }
+        } else {
+            await legacySyncStatus.performQuickSync()
+        }
     }
 
 }
