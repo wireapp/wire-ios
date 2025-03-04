@@ -94,6 +94,12 @@ struct WireURLs: Codable {
     /// Link to an article explaining how to add a conversation to a custom folder.
     let howToAddConversationToCustomFolder: URL
 
+    /// Link to an article explaining how to change email address.
+    let howToChangeEmailURL: URL
+
+    /// Link to an article explaining how to delete a private account.
+    let howToDeleteAccountURL: URL
+
     static var shared: WireURLs = {
         do {
             return try WireURLs(forResource: "url", withExtension: "json")
@@ -132,6 +138,8 @@ struct WireURLs: Codable {
         case endToEndIdentityInfo
         case howToAddConversationToYourFavourites
         case howToAddConversationToCustomFolder
+        case howToChangeEmailURL
+        case howToDeleteAccountURL
     }
 
     enum WireURLsError: Error {
