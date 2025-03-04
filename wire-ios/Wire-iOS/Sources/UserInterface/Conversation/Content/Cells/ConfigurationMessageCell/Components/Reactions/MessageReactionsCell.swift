@@ -77,6 +77,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     private func configureSubviews() {
 
         collectionView.backgroundColor = .clear
+        collectionView.allowsSelection = false
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         collectionView.dataSource = dataSource
