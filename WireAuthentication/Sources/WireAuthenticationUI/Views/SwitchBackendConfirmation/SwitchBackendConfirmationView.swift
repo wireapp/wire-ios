@@ -173,7 +173,6 @@ package struct SwitchBackendConfirmationView: View {
     private var proceedButton: some View {
         Button {
             Task { await viewModel.confirm() }
-           // dismiss()
         } label: {
             Text(Strings.proceed)
                 .font(.textStyle(.buttonBig))
@@ -185,27 +184,13 @@ package struct SwitchBackendConfirmationView: View {
 
 // MARK: - Previews
 
-//#Preview("Regular fonts") {
-//    BackgroundView()
-//        .overlay(
-//            ZStack {
-//                SwitchBackendConfirmationPreview()
-//                    .padding()
-//            }
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//        )
-//}
-//
-//#Preview("Large fonts") {
-//    VStack {
-//        BackgroundView()
-//            .overlay(
-//                ZStack {
-//                    SwitchBackendConfirmationPreview()
-//                        .padding()
-//                }
-//                .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            )
-//    }
-//    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
-//}
+#Preview("Regular fonts") {
+    BackgroundView()
+        .overlay(
+            ZStack {
+                SwitchBackendConfirmationPreview()
+                    .padding()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        )
+}

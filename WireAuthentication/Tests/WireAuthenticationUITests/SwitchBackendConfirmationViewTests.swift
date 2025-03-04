@@ -22,48 +22,48 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-//class SwitchBackendConfirmationViewTests: XCTestCase {
-//
-//    private var snapshotHelper: SnapshotHelper!
-//
-//    override func setUp() {
-//        snapshotHelper = .init()
-//            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-//    }
-//
-//    override func tearDown() {
-//        snapshotHelper = nil
-//    }
-//
-//    @MainActor
-//    func testColorSchemeVariants() {
-//        let screenBounds = UIScreen.main.bounds
-//
-//        let view = SwitchBackendConfirmationPreview()
-//            .frame(width: screenBounds.width, height: screenBounds.height)
-//
-//        snapshotHelper
-//            .withUserInterfaceStyle(.light)
-//            .verify(matching: view, named: "light")
-//        snapshotHelper
-//            .withUserInterfaceStyle(.dark)
-//            .verify(matching: view, named: "dark")
-//    }
-//
-//    @MainActor
-//    func testDynamicTypeVariants() {
-//        let screenBounds = UIScreen.main.bounds
-//
-//        let view = SwitchBackendConfirmationPreview()
-//            .frame(width: screenBounds.width, height: screenBounds.height)
-//
-//        for dynamicTypeSize in DynamicTypeSize.allCases {
-//            snapshotHelper
-//                .verify(
-//                    matching: view.dynamicTypeSize(dynamicTypeSize),
-//                    named: "\(dynamicTypeSize)"
-//                )
-//        }
-//    }
-//
-//}
+class SwitchBackendConfirmationViewTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+    }
+
+    @MainActor
+    func testColorSchemeVariants() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = SwitchBackendConfirmationPreview()
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariants() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = SwitchBackendConfirmationPreview()
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+}

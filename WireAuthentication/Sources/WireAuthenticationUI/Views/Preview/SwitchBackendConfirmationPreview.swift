@@ -18,19 +18,16 @@
 
 import SwiftUI
 
-//public struct SwitchBackendConfirmationPreview: View {
-//    public init() {}
-//
-//    public var body: some View {
-//        VStack {
-//            SwitchBackendConfirmationView(
-//                viewModel: SwitchBackendConfirmationViewModel(
-//                    router: self,
-//                    fetchDefaultSSOSettings: <#T##any FetchDefaultSSOSettingsUseCaseProtocol#>,
-//                    environment: <#T##BackendEnvironmentInfo#>
-//                )
-//            )
-//        }
-//    }
-//
-//}
+public struct SwitchBackendConfirmationPreview: View {
+    public init() {}
+
+    public var body: some View {
+        VStack {
+            MockDependencies().switchBackendView(
+                email: "email.com",
+                environment: MockDependencies()._backendEnvironment
+            )
+        }
+    }
+
+}

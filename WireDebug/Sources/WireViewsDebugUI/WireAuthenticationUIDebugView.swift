@@ -26,7 +26,7 @@ public struct WireAuthenticationUIDebugView: View {
         var id: String { rawValue }
 
         case background
-        //case switchBackend
+        case switchBackend
         case verificationCode
 
     }
@@ -41,10 +41,10 @@ public struct WireAuthenticationUIDebugView: View {
                 action: { presentedItem = .background },
                 label: { Text("Background") }
             )
-//            Button(
-//                action: { presentedItem = .switchBackend },
-//                label: { Text("Switch backend confirmation") }
-//            )
+            Button(
+                action: { presentedItem = .switchBackend },
+                label: { Text("Switch backend confirmation") }
+            )
             Button(
                 action: { presentedItem = .verificationCode },
                 label: { Text("Verification code") }
@@ -54,17 +54,17 @@ public struct WireAuthenticationUIDebugView: View {
             switch item {
             case .background:
                 fullscreenCover(content: { BackgroundView() })
-//            case .switchBackend:
-//                fullscreenCover(content: {
-//                    BackgroundView()
-//                        .overlay(
-//                            ZStack {
-//                                SwitchBackendConfirmationPreview()
-//                                    .padding()
-//                            }
-//                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                        )
-//                })
+            case .switchBackend:
+                fullscreenCover(content: {
+                    BackgroundView()
+                        .overlay(
+                            ZStack {
+                                SwitchBackendConfirmationPreview()
+                                    .padding()
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        )
+                })
             case .verificationCode:
                 fullscreenCover(content: {
                     BackgroundView()
