@@ -20,10 +20,6 @@ import WireAccountImageUI
 import WireDataModel
 import WireSyncEngine
 
-protocol GetParticipantImageSourceUseCaseProtocol {
-    func invoke(user: UserType?) async -> WireAccountImageUI.AccountImageSource
-}
-
 class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol {
 
     private let userSession: UserSession
