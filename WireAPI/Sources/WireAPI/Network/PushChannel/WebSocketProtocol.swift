@@ -19,10 +19,10 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol WebSocketProtocol {
+public protocol WebSocketProtocol: Sendable {
 
-    func open() throws -> AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
+    func open() async throws -> AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
 
-    func close()
+    func close() async
 
 }

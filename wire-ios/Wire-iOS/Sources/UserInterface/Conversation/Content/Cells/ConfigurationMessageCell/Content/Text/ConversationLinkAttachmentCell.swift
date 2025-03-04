@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
+final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView,
+    ContextMenuDelegate {
 
     struct Configuration {
         let attachment: LinkAttachment
@@ -42,7 +43,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
 
     var isSelected: Bool = false
     var currentAttachment: LinkAttachment?
-    var heightRatioConstraint: NSLayoutConstraint?
+    var attachmentViewHeightRatioConstraint: NSLayoutConstraint?
 
     // MARK: - Initialization
 
@@ -62,6 +63,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         shouldGroupAccessibilityChildren = true
         accessibilityIdentifier = "link-attachment"
         accessibilityTraits = [.link]
+        attachmentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(attachmentView)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
@@ -69,28 +71,30 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     }
 
     private func configureConstraints() {
-        attachmentView.translatesAutoresizingMaskIntoConstraints = false
 
         let widthConstraint = attachmentView.widthAnchor.constraint(equalToConstant: 414)
         widthConstraint.priority = .defaultHigh
 
+        let margins = conversationHorizontalMargins
+
         NSLayoutConstraint.activate([
-            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
-            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            attachmentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
+            bottomAnchor.constraint(equalTo: attachmentView.bottomAnchor),
             widthConstraint
         ])
     }
 
     private func updateAspectRatio(_ heightRatio: CGFloat) {
-        if let currentConstraint = self.heightRatioConstraint {
-            currentConstraint.isActive = false
-        }
+        attachmentViewHeightRatioConstraint?.isActive = false
 
-        let heightRatioConstraint = heightAnchor.constraint(equalTo: widthAnchor, multiplier: heightRatio)
-        heightRatioConstraint.isActive = true
-        self.heightRatioConstraint = heightRatioConstraint
+        let attachmentViewHeightRatioConstraint = attachmentView.heightAnchor.constraint(
+            equalTo: attachmentView.widthAnchor,
+            multiplier: heightRatio
+        )
+        attachmentViewHeightRatioConstraint.isActive = true
+        self.attachmentViewHeightRatioConstraint = attachmentViewHeightRatioConstraint
     }
 
     // MARK: - Configuration
@@ -149,9 +153,8 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

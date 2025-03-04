@@ -17,11 +17,26 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-extension ClientSessionComponent: InitialSyncBuilderProtocol {
+public final class MockRequestLoginVerificationCodeUseCaseProtocol: @unchecked Sendable,
+    RequestLoginVerificationCodeUseCaseProtocol {
 
-    public func buildInitialSync() throws -> any InitialSyncProtocol {
-        initialSync
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - invoke
+
+    public var invokeEmail_Invocations: [String] = []
+    public var invokeEmail_MockError: RequestLoginVerificationCodeUseCaseFailure?
+
+    public func invoke(email: String) async throws(RequestLoginVerificationCodeUseCaseFailure) {
+        invokeEmail_Invocations.append(email)
+
+        if let error = invokeEmail_MockError {
+            throw error
+        }
     }
 
 }
