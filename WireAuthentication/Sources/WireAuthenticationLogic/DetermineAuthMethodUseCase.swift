@@ -86,8 +86,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             throw DetermineAuthMethodUseCaseFailure.onPremNotPossible(recovery: .loginViaEmail(email: email))
 
         case .none, .locked, .preAuthorized:
-            //return .loginOrRegisterViaEmail(email: email)
-            return .onPremLogin(email: email, backendConfig: URL(string: "https://nginz-https.chala.wire.link/deeplink.json")!)
+            return .loginOrRegisterViaEmail(email: email)
 
         case .noRegistration:
             return .loginViaEmail(email: email)

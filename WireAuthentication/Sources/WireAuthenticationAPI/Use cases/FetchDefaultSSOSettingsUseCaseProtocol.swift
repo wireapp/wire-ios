@@ -28,5 +28,5 @@ public enum FetchDefaultSSOSettingsUseCaseFailure: Error {
 
     case networkFailure
     case unknown
-    
+
 }
