@@ -16,32 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
-import SwiftUI
 import WireAuthenticationAPI
 
-@MainActor
-package final class NoHistoryViewModel: ObservableObject {
+public enum Fixture {
 
-    private let userID: UUID
-    private let cookies: [HTTPCookie]
-    private let accessToken: AccessToken?
-    private let onFlowCompletion: (AuthenticationResult) -> Void
+    public static let someCookie = HTTPCookie(properties: [
+        .name: "some name",
+        .path: "some path",
+        .value: "some value",
+        .domain: "some domain"
+    ])!
 
-    package init(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
-    ) {
-        self.userID = userID
-        self.cookies = cookies
-        self.accessToken = accessToken
-        self.onFlowCompletion = onFlowCompletion
-    }
+    public static let someAccessToken = AccessToken(
+        userID: UUID(),
+        token: "token",
+        type: "type",
+        expirationDate: Date()
+    )
 
-    func confirm() {
-        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: accessToken))
-    }
 }

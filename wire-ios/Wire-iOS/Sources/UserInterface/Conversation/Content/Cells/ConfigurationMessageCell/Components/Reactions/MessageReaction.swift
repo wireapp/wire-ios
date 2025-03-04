@@ -16,21 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-
-public struct VerificationCodeView_Previews: View {
-
-    var code: [String]
-
-    public init(code: [String]) {
-        self.code = code
-    }
-
-    public var body: some View {
-        MockDependencies().previewVerificationCodeView(
-            email: "name.name@mail.com",
-            password: "password"
-        )
-    }
-
+struct MessageReaction: Equatable {
+    let emojiID: Emoji.ID
+    let count: UInt
+    let isSelfUserReacting: Bool
 }

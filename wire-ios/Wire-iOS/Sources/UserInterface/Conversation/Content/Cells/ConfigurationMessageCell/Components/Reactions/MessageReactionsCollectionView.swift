@@ -16,21 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import UIKit
 
-public struct VerificationCodeView_Previews: View {
+/// The collection view adjusts it's `intrinsicContentSize` to match the layout's content size, so that no scrolling is
+/// needed.
+final class MessageReactionsCollectionView: UICollectionView {
 
-    var code: [String]
-
-    public init(code: [String]) {
-        self.code = code
+    override var contentSize: CGSize {
+        didSet { invalidateIntrinsicContentSize() }
     }
 
-    public var body: some View {
-        MockDependencies().previewVerificationCodeView(
-            email: "name.name@mail.com",
-            password: "password"
+    override var intrinsicContentSize: CGSize {
+        collectionViewLayout.collectionViewContentSize
+    }
+
+    init() {
+        super.init(
+            frame: .zero,
+            collectionViewLayout: MessageReactionsCollectionViewFlowLayout()
         )
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
     }
 
 }

@@ -16,21 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import UIKit
 
-public struct VerificationCodeView_Previews: View {
+typealias MessageReactionsDiffableDataSource = UICollectionViewDiffableDataSource<MessageReactionsSectionID, Emoji.ID>
 
-    var code: [String]
-
-    public init(code: [String]) {
-        self.code = code
-    }
-
-    public var body: some View {
-        MockDependencies().previewVerificationCodeView(
-            email: "name.name@mail.com",
-            password: "password"
-        )
-    }
-
+enum MessageReactionsSectionID: Hashable {
+    case single
 }
+
+typealias MessageReactionsDiffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<MessageReactionsSectionID, Emoji.ID>

@@ -20,9 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-// MARK: - ReactionToggle
-
-final class ReactionToggle: UIControl {
+final class MessageReactionToggleControl: UIControl {
 
     // MARK: - Properties
 
@@ -38,7 +36,7 @@ final class ReactionToggle: UIControl {
         color: SemanticColors.Label.textDefault
     )
 
-    private var onToggle: (() -> Void)?
+    private var onToggle: () -> Void
 
     var isToggled: Bool {
         didSet {
@@ -53,7 +51,7 @@ final class ReactionToggle: UIControl {
         emoji: Emoji.ID,
         count: UInt,
         isToggled: Bool = false,
-        onToggle: (() -> Void)? = nil
+        onToggle: @escaping () -> Void
     ) {
         self.isToggled = isToggled
         self.onToggle = onToggle
@@ -93,6 +91,15 @@ final class ReactionToggle: UIControl {
         )
     }
 
+    convenience init(reaction: MessageReaction, onToggle: @escaping () -> Void) {
+        self.init(
+            emoji: reaction.emojiID,
+            count: reaction.count,
+            isToggled: reaction.isSelfUserReacting,
+            onToggle: onToggle
+        )
+    }
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -121,7 +128,7 @@ final class ReactionToggle: UIControl {
 
     @objc
     private func didToggle() {
-        onToggle?()
+        onToggle()
     }
 
     // MARK: - Accessibility

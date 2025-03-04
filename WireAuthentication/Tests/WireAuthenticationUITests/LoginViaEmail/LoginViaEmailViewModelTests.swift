@@ -72,7 +72,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
     func testSubmitPassword_passesCorrectCredentials() async {
         // given
         loginViaEmailUseCase
-            .invokeEmailPasswordVerificationCode_MockValue = ([Scaffolding.someCookie], Scaffolding.someAccessToken)
+            .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
         sut.password = " password "
 
         // when
@@ -89,7 +89,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
     func testSubmitPassword_whenSuccessful() async {
         // given
         loginViaEmailUseCase
-            .invokeEmailPasswordVerificationCode_MockValue = ([Scaffolding.someCookie], Scaffolding.someAccessToken)
+            .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
         sut.password = "password"
 
         // when
@@ -98,7 +98,15 @@ class LoginViaEmailViewModelTests: XCTestCase {
         // then
         XCTAssertNil(sut.alert)
         XCTAssertEqual(isLoadingCalls, [true, false])
-        // TODO: [WPB-16276] Assert it navigates to first time login screen
+        XCTAssertEqual(router.modalPresent_Invocations.count, 1)
+        XCTAssertEqual(
+            router.modalPresent_Invocations.first as? RootView.ModalDestination,
+            RootView.ModalDestination.noHistory(
+                userID: Fixture.someAccessToken.userID,
+                cookies: [Fixture.someCookie],
+                accessToken: Fixture.someAccessToken
+            )
+        )
     }
 
     @MainActor
@@ -239,21 +247,6 @@ class LoginViaEmailViewModelTests: XCTestCase {
 
         // then
         XCTAssertFalse(sut.showPasswordRules)
-    }
-
-    // MARK: - Scaffolding
-
-    private enum Scaffolding {
-
-        static let someCookie = HTTPCookie(properties: [
-            .name: "some name",
-            .path: "some path",
-            .value: "some value",
-            .domain: "some domain"
-        ])!
-
-        static let someAccessToken = AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
-
     }
 
 }
