@@ -46,6 +46,12 @@ final class ConversationViewController: UIViewController {
                 input: "f",
                 modifierFlags: [.command],
                 discoverabilityTitle: keyboardShortcut.searchInConversation
+            ),
+            UIKeyCommand(
+                action: #selector(onConversationDetailsPressed),
+                input: "i",
+                modifierFlags: [.command],
+                discoverabilityTitle: keyboardShortcut.conversationDetail
             )
         ]
     }
@@ -736,6 +742,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
+    @objc
     private func onConversationDetailsPressed() {
         if let superview = titleView.superview, let participantsController {
             presentParticipantsViewController(participantsController, from: superview)
@@ -744,6 +751,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     @objc
     private func onSearchButtonPressed(_ sender: AnyObject?) {
+        guard shouldShowCollectionsButton else { return }
         if collectionController == .none {
             let collections = CollectionsViewController(
                 conversation: conversation,
