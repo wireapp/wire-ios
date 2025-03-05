@@ -30,7 +30,7 @@ final class RequestSnapshotter {
     private var receivedRequests = [URLRequest]()
 
     init() {
-        networkService = NetworkService(
+        self.networkService = NetworkService(
             baseURL: URL(string: "https://www.wire.com")!,
             serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
         )
@@ -44,7 +44,7 @@ final class RequestSnapshotter {
             expirationDate: .distantFuture
         )
 
-        apiService = APIService(
+        self.apiService = APIService(
             networkService: networkService,
             authenticationManager: authenticationManager
         )
