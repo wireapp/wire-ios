@@ -412,11 +412,22 @@ final class ConversationViewController: UIViewController {
         if conversation.conversationType == .oneOnOne {
             Task { [weak self] in
                 guard let self else { return }
-                let source = await getParticipantImageSourceUseCase
-                    .invoke(user: conversation.firstActiveParticipantOtherThanSelf)
+                guard let user = conversation.firstActiveParticipantOtherThanSelf else {
+                    WireLogger.conversation
+                        .error("missing first active participant other then self for 1-1 conversation")
+                    return
+                }
+                let imageSource = await getParticipantImageSourceUseCase
+                    .invoke(user: user)
+                if imageSource == nil, titleView.source.accountImageSource != nil {
+                    // no need to update because of the way updates come when avatar is changed (in several events)
+                    // if we get empty image after update but previously there was an image, we need to skip
+                    // so with next update event (which comes right after) we get updated image
+                    return
+                }
                 titleView
                     .updateSource(ConversationTitleSource(
-                        accountImageSource: source,
+                        accountImageSource: imageSource,
                         title: conversation.displayNameWithFallback,
                         subtitle: Self.getConversationSubtitle(conversation)
                     ))
