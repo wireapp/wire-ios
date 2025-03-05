@@ -9,36 +9,6 @@
             "value" : "حفظ في الأرشيف"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -49,12 +19,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiv"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
           }
         },
         "en" : {
@@ -75,18 +39,6 @@
             "value" : "Arhiveeri"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -97,36 +49,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archives"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "is" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
           }
         },
         "it" : {
@@ -141,52 +63,16 @@
             "value" : "アーカイブ"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archyvuoti"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiveren"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
           }
         },
         "pl" : {
@@ -201,64 +87,16 @@
             "value" : "Arquivar"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Архивировать"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arhiviraj"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
           }
         },
         "tr" : {
@@ -271,18 +109,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Архівувати"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Archive"
           }
         },
         "zh-Hans" : {
@@ -307,36 +133,6 @@
             "value" : "المحادثات"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -347,12 +143,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unterhaltungen"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
           }
         },
         "en" : {
@@ -373,18 +163,6 @@
             "value" : "Vestlused"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -394,36 +172,6 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversations"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "is" : {
-          "stringUnit" : {
-            "state" : "new",
             "value" : "Conversations"
           }
         },
@@ -439,52 +187,16 @@
             "value" : "会話"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Susirašinėjimai"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gesprekken"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
           }
         },
         "pl" : {
@@ -499,64 +211,16 @@
             "value" : "Conversas"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Беседы"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pogovori"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
           }
         },
         "tr" : {
@@ -569,18 +233,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Розмови"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Conversations"
           }
         },
         "zh-Hans" : {
@@ -605,36 +257,6 @@
             "value" : "الإعدادات"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -645,12 +267,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einstellungen"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
           }
         },
         "en" : {
@@ -671,18 +287,6 @@
             "value" : "Seaded"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -693,36 +297,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paramètres"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "is" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
           }
         },
         "it" : {
@@ -737,52 +311,16 @@
             "value" : "設定"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nustatymai"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Instellingen"
-          }
-        },
-        "no" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
           }
         },
         "pl" : {
@@ -797,64 +335,16 @@
             "value" : "Ajustes"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Настройки"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nastavitve"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
           }
         },
         "tr" : {
@@ -867,18 +357,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Налаштування"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings"
           }
         },
         "zh-Hans" : {
