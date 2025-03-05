@@ -148,6 +148,7 @@ final class ConversationMessageCellTableViewAdapter<
 
     func configure(with object: C.View.Configuration, topMargin: CGFloat) {
         cellView.configure(with: object, animated: false)
+        ephemeralTop.constant = cellView.ephemeralTimerTopInset
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
