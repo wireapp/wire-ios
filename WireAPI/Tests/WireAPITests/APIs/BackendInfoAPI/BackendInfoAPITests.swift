@@ -29,9 +29,9 @@ final class BackendInfoAPITests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
+        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, _ in
             let builder = BackendInfoAPIBuilder(apiService: apiService)
-            return builder.makeAPI(for: apiVersion)
+            return builder.makeAPI()
         }
     }
 
@@ -40,7 +40,7 @@ final class BackendInfoAPITests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Request generation
+    // MARK: - Get backend info
 
     func testGetBackendInfoRequest() async throws {
         // Then
@@ -50,44 +50,27 @@ final class BackendInfoAPITests: XCTestCase {
         }
     }
 
-    func testGetBackendMLSPublicKeysRequest() async throws {
+    func testGetBackendInfo_SuccessResponse_200_V0_WithoutDevelopmentVersions() async throws {
         // Given
-        let apiVersions = APIVersion.v5.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetBackendInfoSuccessResponse1")
+        ])
+        let sut = BackendInfoAPIV0(apiService: apiService)
+
+        // When
+        let result = try await sut.getBackendInfo()
 
         // Then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
-            // When
-            _ = try await sut.getBackendMLSPublicKeys()
-        }
-    }
-
-    // MARK: - Response handling
-
-    // MARK: - V0
-
-    func testGetBackendInfo_SuccessResponse_200_V0_WithoutDevelopmentVersions() async throws {
-        try await withThrowingTaskGroup(of: BackendInfo.self) { _ in
-            // Given
-            let apiService = MockAPIServiceProtocol.withResponses([
-                (.ok, "GetBackendInfoSuccessResponse1")
-            ])
-            let sut = BackendInfoAPIV0(apiService: apiService)
-
-            // When
-            let result = try await sut.getBackendInfo()
-
-            // Then
-            XCTAssertEqual(
-                result,
-                BackendInfo(
-                    domain: "example.com",
-                    isFederationEnabled: true,
-                    isMLSEnabled: false,
-                    supportedVersions: [.v0, .v1, .v2],
-                    developmentVersions: []
-                )
+        XCTAssertEqual(
+            result,
+            BackendInfo(
+                domain: "example.com",
+                isFederationEnabled: true,
+                isMLSEnabled: false,
+                supportedVersions: [.v0, .v1, .v2],
+                developmentVersions: []
             )
-        }
+        )
     }
 
     func testGetBackendInfo_SuccessResponse_200_V0_WithDevelopmentVersions() async throws {
@@ -113,63 +96,4 @@ final class BackendInfoAPITests: XCTestCase {
         )
     }
 
-    // MARK: - V5
-
-    func testGetBackendMLSPublicKeys_SuccessResponse_200_V5_And_Next_Versions() async throws {
-        // Given
-        try await withThrowingTaskGroup(of: BackendMLSPublicKeys.self) { taskGroup in
-            let testedVersions = APIVersion.v5.andNextVersions
-
-            for version in testedVersions {
-                let apiService = MockAPIServiceProtocol.withResponses([
-                    (.ok, "GetBackendMLSPublicKeysSuccessResponse1")
-                ])
-                let sut = version.buildAPI(apiService: apiService)
-
-                taskGroup.addTask {
-                    // When
-                    try await sut.getBackendMLSPublicKeys()
-                }
-
-                for try await value in taskGroup {
-                    // Then
-                    XCTAssertEqual(
-                        value,
-                        BackendMLSPublicKeys(
-                            removal: .init(
-                                ed25519: "YVAl3Nsu27aNpNbYlPB6fi",
-                                ed448: nil,
-                                p256: "BM036midcNiOMgny9m7N",
-                                p384: "BPSlomkR8K4BcFLGTDOJx",
-                                p512: "BAC3OmJi7rAPFAIXjU"
-                            )
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    func testGetBackendMLSPublicKeys_givenV5AndErrorResponse() async throws {
-        // Given
-        let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .badRequest,
-            label: "mls-not-enabled"
-        )
-
-        let api = BackendInfoAPIV5(apiService: apiService)
-
-        // Then
-        await XCTAssertThrowsErrorAsync(BackendInfoAPIError.mlsNotEnabled) {
-            // When
-            try await api.getBackendMLSPublicKeys()
-        }
-    }
-}
-
-private extension APIVersion {
-    func buildAPI(apiService: any APIServiceProtocol) -> any BackendInfoAPI {
-        let builder = BackendInfoAPIBuilder(apiService: apiService)
-        return builder.makeAPI(for: self)
-    }
 }

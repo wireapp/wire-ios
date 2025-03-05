@@ -34,30 +34,10 @@ public struct BackendInfoAPIBuilder {
 
     /// Make a `BackendInfoAPI`.
     ///
-    /// - Parameter version: An api version.
     /// - Returns: A `BackendInfoAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any BackendInfoAPI {
-        switch version {
-        case .v0:
-            BackendInfoAPIV0(apiService: apiService)
-        case .v1:
-            BackendInfoAPIV1(apiService: apiService)
-        case .v2:
-            BackendInfoAPIV2(apiService: apiService)
-        case .v3:
-            BackendInfoAPIV3(apiService: apiService)
-        case .v4:
-            BackendInfoAPIV4(apiService: apiService)
-        case .v5:
-            BackendInfoAPIV5(apiService: apiService)
-        case .v6:
-            BackendInfoAPIV6(apiService: apiService)
-        case .v7:
-            BackendInfoAPIV7(apiService: apiService)
-        case .v8:
-            BackendInfoAPIV8(apiService: apiService)
-        }
+    public func makeAPI() -> any BackendInfoAPI {
+        BackendInfoAPIV0(apiService: apiService)
     }
 
 }
