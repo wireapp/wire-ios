@@ -18,7 +18,7 @@
 
 @testable import Wire
 
-class MockConversationMessageCellDescription: ConversationMessageCellDescription {
+final class MockConversationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = MockConversationMessageCell
 
     // MARK: - Life cycle

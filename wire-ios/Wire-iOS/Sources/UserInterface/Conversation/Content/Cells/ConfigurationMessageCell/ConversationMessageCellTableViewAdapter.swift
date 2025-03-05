@@ -40,8 +40,7 @@ extension UITableViewCell {
 
 final class ConversationMessageCellTableViewAdapter<
     C: ConversationMessageCellDescription
->: UITableViewCell,
-    SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
+>: UITableViewCell, SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
 
     let cellView: C.View
     let ephemeralCountdownView: EphemeralCountdownView
