@@ -1,8 +1,0 @@
-{
-    "removal": {
-        "ecdsa_secp256r1_sha256": "BM036midcNiOMgny9m7N",
-        "ecdsa_secp384r1_sha384": "BPSlomkR8K4BcFLGTDOJx",
-        "ecdsa_secp521r1_sha512": "BAC3OmJi7rAPFAIXjU",
-        "ed25519": "YVAl3Nsu27aNpNbYlPB6fi"
-    }
-}

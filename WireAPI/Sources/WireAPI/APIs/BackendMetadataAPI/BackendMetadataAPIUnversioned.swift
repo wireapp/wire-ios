@@ -18,7 +18,7 @@
 
 import Foundation
 
-class BackendInfoAPIUnversioned: BackendInfoAPI {
+class BackendMetadataAPIUnversioned: BackendMetadataAPI {
 
     // MARK: - Properties
 
@@ -28,7 +28,7 @@ class BackendInfoAPIUnversioned: BackendInfoAPI {
         self.networkService = networkService
     }
 
-    func getBackendInfo() async throws -> BackendInfo {
+    func getBackendMetadata() async throws -> BackendMetadata {
         // 'api-version` is a not a versioned endpoint, no version prefix is ​​needed.
         let request = try URLRequestBuilder(path: "/api-version")
             .withMethod(.get)
@@ -38,20 +38,20 @@ class BackendInfoAPIUnversioned: BackendInfoAPI {
         let (data, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: .ok, type: BackendInfoResponse.self)
+            .success(code: .ok, type: APIVersionResponse.self)
             .parse(code: response.statusCode, data: data)
     }
 
 }
 
-private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
+private struct APIVersionResponse: Decodable, ToAPIModelConvertible {
 
     var domain: String
     var federation: Bool
     var supported: [UInt]
     var development: [UInt]?
 
-    func toAPIModel() -> BackendInfo {
+    func toAPIModel() -> BackendMetadata {
         .init(
             domain: domain,
             isFederationEnabled: federation,

@@ -18,9 +18,9 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+/// A builder of `BackendMetadataAPI`.
 
-public struct BackendInfoAPIBuilder {
+public struct BackendMetadataAPIBuilder {
 
     let networkService: NetworkService
 
@@ -36,8 +36,8 @@ public struct BackendInfoAPIBuilder {
     ///
     /// - Returns: A `BackendInfoAPI`.
 
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIUnversioned(networkService: networkService)
+    public func makeAPI() -> any BackendMetadataAPI {
+        BackendMetadataAPIUnversioned(networkService: networkService)
     }
 
 }

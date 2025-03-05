@@ -21,33 +21,33 @@ import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
 
-final class BackendInfoAPITests: XCTestCase {
+final class BackendMetadataAPITests: XCTestCase {
 
     // MARK: - Get backend info
 
-    func testGetBackendInfoRequest() async throws {
+    func testGetBackendMetadataRequest() async throws {
         // Then
         try await RequestSnapshotter().verifyRequest { _, networkService in
-            let sut = BackendInfoAPIBuilder(networkService: networkService).makeAPI()
+            let sut = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
             // When
-            _ = try? await sut.getBackendInfo()
+            _ = try? await sut.getBackendMetadata()
         }
     }
 
-    func testGetBackendInfo_SuccessResponse_200_V0_WithoutDevelopmentVersions() async throws {
+    func testGetBackendMetadata_SuccessResponse_200_V0_WithoutDevelopmentVersions() async throws {
         // Given
         let networkService = MockNetworkServiceProtocol.withResponses([
-            (.ok, "GetBackendInfoSuccessResponse1")
+            (.ok, "GetBackendMetadataSuccessResponse1")
         ])
-        let sut = BackendInfoAPIUnversioned(networkService: networkService)
+        let sut = BackendMetadataAPIUnversioned(networkService: networkService)
 
         // When
-        let result = try await sut.getBackendInfo()
+        let result = try await sut.getBackendMetadata()
 
         // Then
         XCTAssertEqual(
             result,
-            BackendInfo(
+            BackendMetadata(
                 domain: "example.com",
                 isFederationEnabled: true,
                 supportedVersions: [.v0, .v1, .v2],
@@ -56,20 +56,20 @@ final class BackendInfoAPITests: XCTestCase {
         )
     }
 
-    func testGetBackendInfo_SuccessResponse_200_V0_WithDevelopmentVersions() async throws {
+    func testGetBackendMetadata_SuccessResponse_200_V0_WithDevelopmentVersions() async throws {
         // Given
         let networkService = MockNetworkServiceProtocol.withResponses([
-            (.ok, "GetBackendInfoSuccessResponse2")
+            (.ok, "GetBackendMetadataSuccessResponse2")
         ])
-        let sut = BackendInfoAPIUnversioned(networkService: networkService)
+        let sut = BackendMetadataAPIUnversioned(networkService: networkService)
 
         // When
-        let result = try await sut.getBackendInfo()
+        let result = try await sut.getBackendMetadata()
 
         // Then
         XCTAssertEqual(
             result,
-            BackendInfo(
+            BackendMetadata(
                 domain: "example.com",
                 isFederationEnabled: true,
                 supportedVersions: [.v0, .v1, .v2],

@@ -18,11 +18,24 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol BackendInfoAPI {
+/// Metadata about the local backend.
 
-    /// Fetch the info of the local backend.
+public struct BackendMetadata: Equatable, Sendable {
 
-    func getBackendInfo() async throws -> BackendInfo
+    /// The local domain.
+
+    public let domain: String
+
+    /// Whether federation is enabled on the local backend.
+
+    public let isFederationEnabled: Bool
+
+    /// All production ready api versions supported by the local backend.
+
+    public let supportedVersions: Set<APIVersion>
+
+    /// All api versions currently under development by the local backend.
+
+    public let developmentVersions: Set<APIVersion>
 
 }
