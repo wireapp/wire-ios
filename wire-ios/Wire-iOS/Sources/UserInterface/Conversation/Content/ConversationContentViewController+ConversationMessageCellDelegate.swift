@@ -45,7 +45,7 @@ extension UIView {
     }
 }
 
-extension ConversationContentViewController: ConversationMessageCellDelegate {
+extension ConversationContentViewController: ConversationMessageCellDelegatee { // TODO: here
 
     func conversationMessageWantsToShowActionsController(
         _ cell: UIView,
