@@ -23,28 +23,12 @@ import XCTest
 
 final class BackendInfoAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APIServiceSnapshotHelper<any BackendInfoAPI>!
-
-    // MARK: - Setup
-
-    override func setUp() {
-        super.setUp()
-        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, _ in
-            let builder = BackendInfoAPIBuilder(apiService: apiService)
-            return builder.makeAPI()
-        }
-    }
-
-    override func tearDown() {
-        apiSnapshotHelper = nil
-        super.tearDown()
-    }
-
     // MARK: - Get backend info
 
     func testGetBackendInfoRequest() async throws {
         // Then
-        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+        try await RequestSnapshotter().verifyRequest { _, networkService in
+            let sut = BackendInfoAPIBuilder(networkService: networkService).makeAPI()
             // When
             _ = try? await sut.getBackendInfo()
         }
@@ -52,10 +36,10 @@ final class BackendInfoAPITests: XCTestCase {
 
     func testGetBackendInfo_SuccessResponse_200_V0_WithoutDevelopmentVersions() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetBackendInfoSuccessResponse1")
         ])
-        let sut = BackendInfoAPIV0(apiService: apiService)
+        let sut = BackendInfoAPIV0(networkService: networkService)
 
         // When
         let result = try await sut.getBackendInfo()
@@ -75,10 +59,10 @@ final class BackendInfoAPITests: XCTestCase {
 
     func testGetBackendInfo_SuccessResponse_200_V0_WithDevelopmentVersions() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetBackendInfoSuccessResponse2")
         ])
-        let sut = BackendInfoAPIV0(apiService: apiService)
+        let sut = BackendInfoAPIV0(networkService: networkService)
 
         // When
         let result = try await sut.getBackendInfo()

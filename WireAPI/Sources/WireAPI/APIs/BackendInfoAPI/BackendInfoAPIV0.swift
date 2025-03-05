@@ -22,10 +22,10 @@ class BackendInfoAPIV0: BackendInfoAPI {
 
     // MARK: - Properties
 
-    let apiService: any APIServiceProtocol
+    let networkService: any NetworkServiceProtocol
 
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    init(networkService: any NetworkServiceProtocol) {
+        self.networkService = networkService
     }
 
     func getBackendInfo() async throws -> BackendInfo {
@@ -35,10 +35,7 @@ class BackendInfoAPIV0: BackendInfoAPI {
             .withAcceptType(.json)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
             .success(code: .ok, type: BackendInfoResponse.self)
