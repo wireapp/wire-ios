@@ -112,6 +112,15 @@ private class SwitchBackendConfirmationComponentDependency7a1956d88810c08ef169Pr
     var authenticationAPI: AuthenticationAPI {
         return determineAuthMethodComponent.authenticationAPI
     }
+    var defaultBackendEnvironment: BackendEnvironment {
+        return rootComponent.defaultBackendEnvironment
+    }
+    var ssoCallbackURLScheme: String {
+        return rootComponent.ssoCallbackURLScheme
+    }
+    var userDefaults: UserDefaults {
+        return rootComponent.userDefaults
+    }
     private let determineAuthMethodComponent: DetermineAuthMethodComponent
     private let rootComponent: RootComponent
     init(determineAuthMethodComponent: DetermineAuthMethodComponent, rootComponent: RootComponent) {
@@ -183,6 +192,9 @@ extension SwitchBackendConfirmationComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\SwitchBackendConfirmationComponentDependency.router] = "router-any Router"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
+        keyPathToName[\SwitchBackendConfirmationComponentDependency.defaultBackendEnvironment] = "defaultBackendEnvironment-BackendEnvironment"
+        keyPathToName[\SwitchBackendConfirmationComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
+        keyPathToName[\SwitchBackendConfirmationComponentDependency.userDefaults] = "userDefaults-UserDefaults"
     }
 }
 extension RootComponent: NeedleFoundation.Registration {

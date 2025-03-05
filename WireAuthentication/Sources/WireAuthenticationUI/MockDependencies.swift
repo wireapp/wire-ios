@@ -172,8 +172,9 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
             router: rootViewModel,
             email: "email",
             fetchDefaultSSOSettings: self,
+            ssoLinkGenerator: self,
             environment: BackendEnvironmentInfo(
-                title:  "backendName",
+                title: "backendName",
                 endpoints: BackendURLs(
                     backendURL: URL(string: "backendURL")!,
                     backendWSURL: URL(string: "backendWSURL")!,

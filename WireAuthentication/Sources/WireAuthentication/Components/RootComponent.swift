@@ -103,6 +103,10 @@ class RootComponent: BootstrapComponent {
         LoginViaEmailOnPremComponent(parent: self)
     }
 
+    var loginViaSSOComponent: LoginViaSSOComponent {
+        LoginViaSSOComponent()
+    }
+
 }
 
 extension RootComponent: RootView.Factory {
@@ -126,6 +130,10 @@ extension RootComponent: RootView.Factory {
         backendEnvironment: BackendEnvironmentInfo
     ) -> LoginViaEmailOnPremView {
         loginViaEmailOnPremComponent.view(email: email, backendEnvironment: backendEnvironment)
+    }
+
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
 }

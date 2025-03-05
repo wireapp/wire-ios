@@ -35,7 +35,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     }
 
-    package enum ModalDestination: Hashable, Identifiable {
+    package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
         case ssoLogin(url: URL)

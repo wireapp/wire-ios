@@ -32,6 +32,9 @@ public class SwitchBackendConfirmationViewModel {
     private let email: String
     private let environment: BackendEnvironmentInfo
     private let fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol
+    private let ssoLinkGenerator: SSOLinkGeneratorProtocol
+
+    @Published private(set) var isLoading = false
 
     // MARK: - Life cycle
 
@@ -39,12 +42,14 @@ public class SwitchBackendConfirmationViewModel {
         router: any Router,
         email: String,
         fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol,
+        ssoLinkGenerator: SSOLinkGeneratorProtocol,
         environment: BackendEnvironmentInfo
     ) {
         self.router = router
         self.email = email
         self.environment = environment
         self.fetchDefaultSSOSettings = fetchDefaultSSOSettings
+        self.ssoLinkGenerator = ssoLinkGenerator
         self.items = [
             ItemUIModel(title: Strings.backendName, value: environment.title, isURL: false),
             ItemUIModel(title: Strings.backendUrl, value: environment.endpoints.backendURL.absoluteString, isURL: true),
@@ -59,14 +64,20 @@ public class SwitchBackendConfirmationViewModel {
     // MARK: - Events
 
     func confirm() async {
+        isLoading = true
 
         let fetchDefaultSSOTask = Task.detached { [fetchDefaultSSOSettings] in
             try await fetchDefaultSSOSettings.invoke()
         }
         do {
             if let ssoCode = try await fetchDefaultSSOTask.value {
-                // show SSO
-                //router.presentSheet()
+                Task.detached {
+                    let url = try await self.generateSSOLink(ssoCode: ssoCode)
+                    await MainActor.run {
+                        self.router.presentSheet(RootView.ModalDestination.ssoLogin(url: url))
+                    }
+                }
+
             } else {
                 router.presentSheet(RootView.ModalDestination.onPremiseLogin(
                     email: email,
@@ -76,6 +87,11 @@ public class SwitchBackendConfirmationViewModel {
         } catch {
             //alert = .unknownError
         }
+        isLoading = false
+    }
+
+    private func generateSSOLink(ssoCode: UUID) async throws -> URL {
+        try await ssoLinkGenerator.generateSSOLink(ssoCode: ssoCode)
     }
 
     // MARK: - Model

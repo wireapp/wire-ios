@@ -21,7 +21,7 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory = DetermineAuthMethodBuilder & NoHistoryViewBuilder & LoginViaEmailOnPremBuilder
+    package typealias Factory = DetermineAuthMethodBuilder & NoHistoryViewBuilder & LoginViaEmailOnPremBuilder & LoginViaSSOBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -54,6 +54,8 @@ package struct RootView: View {
                     factory.noHistoryView(userID: userID, cookies: cookies, accessToken: accessToken)
                 case let .onPremiseLogin(email, environment):
                     factory.loginViaEmailOnPremView(email: email, backendEnvironment: environment)
+                case let .ssoLogin(url: ssoURL):
+                    factory.loginViaSSOView(ssoURL: ssoURL)
                 }
 
             }
@@ -79,6 +81,7 @@ package struct RootView: View {
         case authFlow
         case noHistory(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?)
         case onPremiseLogin(email: String, environment: BackendEnvironmentInfo)
+        case ssoLogin(url: URL)
     }
 
 }

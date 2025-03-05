@@ -27,6 +27,9 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     var authenticationAPI: AuthenticationAPI { get }
+    var defaultBackendEnvironment: BackendEnvironment { get }
+    var ssoCallbackURLScheme: String { get }
+    var userDefaults: UserDefaults { get }
 
 }
 
@@ -45,6 +48,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
             router: dependency.router,
             email: email,
             fetchDefaultSSOSettings: fetchDefaultSSOSettings,
+            ssoLinkGenerator: ssoLinkGenerator,
             environment: environment
         )
     }
@@ -53,6 +57,15 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
 
     private var fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol {
         FetchDefaultSSOSettingsUseCase(authenticationAPI: dependency.authenticationAPI)
+    }
+
+    private var ssoLinkGenerator: SSOLinkGeneratorProtocol {
+        SSOLinkGenerator(
+            authenticationAPI: dependency.authenticationAPI,
+            baseURL: dependency.defaultBackendEnvironment.url,
+            callbackScheme: dependency.ssoCallbackURLScheme,
+            defaults: dependency.userDefaults
+        )
     }
 
 }
