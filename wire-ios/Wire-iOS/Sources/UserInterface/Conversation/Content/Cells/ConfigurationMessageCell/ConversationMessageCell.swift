@@ -39,6 +39,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
         actionsController: MessageActionsViewController
     )
     func conversationMessageShouldUpdate()
+
 }
 
 /// A generic view that displays conversation contents.
