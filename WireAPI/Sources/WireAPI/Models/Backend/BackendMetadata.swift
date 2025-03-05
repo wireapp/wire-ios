@@ -18,16 +18,24 @@
 
 import Foundation
 
-/// Errors originating from `BackendInfoAPI`.
+/// Metadata about the local backend.
 
-public enum BackendInfoAPIError: Error {
+public struct BackendMetadata: Equatable, Sendable {
 
-    /// Unsupported endpoint for API version
+    /// The local domain.
 
-    case unsupportedEndpointForAPIVersion
+    public let domain: String
 
-    /// MLS is not configured on this backend
+    /// Whether federation is enabled on the local backend.
 
-    case mlsNotEnabled
+    public let isFederationEnabled: Bool
+
+    /// All production ready api versions supported by the local backend.
+
+    public let supportedVersions: Set<APIVersion>
+
+    /// All api versions currently under development by the local backend.
+
+    public let developmentVersions: Set<APIVersion>
 
 }

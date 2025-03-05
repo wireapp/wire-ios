@@ -18,15 +18,24 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol BackendInfoAPI {
+class MLSAPIV0: MLSAPI, VersionedAPI {
 
-    /// Fetch the info of the local backend.
+    // MARK: - Properties
 
-    func getBackendInfo() async throws -> BackendInfo
+    let apiService: any APIServiceProtocol
 
-    /// Fetch the info of MLS support on the backend available from ``APIVersion`` v5.
+    var apiVersion: APIVersion { .v0 }
 
-    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys
+    // MARK: - Life cycle
+
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
+    }
+
+    // MARK: - Methods
+
+    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys {
+        throw MLSAPIError.unsupportedEndpointForAPIVersion
+    }
 
 }

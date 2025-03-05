@@ -16,6 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class BackendInfoAPIV2: BackendInfoAPIV1 {
-    override var apiVersion: APIVersion { .v2 }
+import Foundation
+
+// sourcery: AutoMockable
+public protocol MLSAPI {
+
+    /// Fetch the info of MLS support on the backend available from ``APIVersion`` v5.
+
+    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys
+
 }

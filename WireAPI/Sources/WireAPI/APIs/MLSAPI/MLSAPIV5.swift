@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class BackendInfoAPIV5: BackendInfoAPIV4 {
+import Foundation
+
+class MLSAPIV5: MLSAPIV4 {
 
     override var apiVersion: APIVersion { .v5 }
+
+    // MARK: Methods
 
     override func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys {
         let request = try URLRequestBuilder(path: "\(pathPrefix)/mls/public-keys")
@@ -33,7 +37,7 @@ class BackendInfoAPIV5: BackendInfoAPIV4 {
 
         return try ResponseParser()
             .success(code: .ok, type: BackendMLSPublicKeysResponseV5.self)
-            .failure(code: .badRequest, label: "mls-not-enabled", error: BackendInfoAPIError.mlsNotEnabled)
+            .failure(code: .badRequest, label: "mls-not-enabled", error: MLSAPIError.mlsNotEnabled)
             .parse(code: response.statusCode, data: data)
     }
 

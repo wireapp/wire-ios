@@ -16,6 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class BackendInfoAPIV4: BackendInfoAPIV3 {
-    override var apiVersion: APIVersion { .v4 }
+import Foundation
+
+class MLSAPIV7: MLSAPIV6 {
+
+    override var apiVersion: APIVersion { .v7 }
+
 }

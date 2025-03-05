@@ -18,53 +18,43 @@
 
 import Foundation
 
-class BackendInfoAPIV0: BackendInfoAPI, VersionedAPI {
+class BackendMetadataAPIUnversioned: BackendMetadataAPI {
 
     // MARK: - Properties
 
-    let apiService: any APIServiceProtocol
+    let networkService: any NetworkServiceProtocol
 
-    var apiVersion: APIVersion { .v0 }
-
-    init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    init(networkService: any NetworkServiceProtocol) {
+        self.networkService = networkService
     }
 
-    // 'api-version` is a not a versioned endpoint, no version prefix is ​​needed.
-    func getBackendInfo() async throws -> BackendInfo {
+    func getBackendMetadata() async throws -> BackendMetadata {
+        // 'api-version` is a not a versioned endpoint, no version prefix is ​​needed.
         let request = try URLRequestBuilder(path: "/api-version")
             .withMethod(.get)
             .withAcceptType(.json)
             .build()
 
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: false
-        )
+        let (data, response) = try await networkService.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: .ok, type: BackendInfoResponse.self)
+            .success(code: .ok, type: APIVersionResponse.self)
             .parse(code: response.statusCode, data: data)
-    }
-
-    func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys {
-        throw BackendInfoAPIError.unsupportedEndpointForAPIVersion
     }
 
 }
 
-private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
+private struct APIVersionResponse: Decodable, ToAPIModelConvertible {
 
     var domain: String
     var federation: Bool
     var supported: [UInt]
     var development: [UInt]?
 
-    func toAPIModel() -> BackendInfo {
+    func toAPIModel() -> BackendMetadata {
         .init(
             domain: domain,
             isFederationEnabled: federation,
-            isMLSEnabled: false,
             supportedVersions: Set(supported.compactMap(APIVersion.init)),
             developmentVersions: Set(development?.compactMap(APIVersion.init) ?? [])
         )

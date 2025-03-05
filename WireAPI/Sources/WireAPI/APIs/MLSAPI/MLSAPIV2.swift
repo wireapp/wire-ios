@@ -18,28 +18,8 @@
 
 import Foundation
 
-/// Metadata about the local backend.
+class MLSAPIV2: MLSAPIV1 {
 
-public struct BackendInfo: Equatable, Sendable {
-
-    /// The local domain.
-
-    public let domain: String
-
-    /// Whether federation is enabled on the local backend.
-
-    public let isFederationEnabled: Bool
-
-    /// Whether the backend supports MLS.
-
-    public let isMLSEnabled: Bool
-
-    /// All production ready api versions supported by the local backend.
-
-    public let supportedVersions: Set<APIVersion>
-
-    /// All api versions currently under development by the local backend.
-
-    public let developmentVersions: Set<APIVersion>
+    override var apiVersion: APIVersion { .v2 }
 
 }
