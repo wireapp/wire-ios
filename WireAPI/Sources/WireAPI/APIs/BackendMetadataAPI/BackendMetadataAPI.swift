@@ -16,6 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class BackendInfoAPIV8: BackendInfoAPIV7 {
-    override var apiVersion: APIVersion { .v8 }
+import Foundation
+
+// sourcery: AutoMockable
+public protocol BackendMetadataAPI {
+
+    /// Fetch the info of the local backend.
+
+    func getBackendMetadata() async throws -> BackendMetadata
+
 }
