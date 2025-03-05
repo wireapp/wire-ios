@@ -57,7 +57,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     var ephemeralTimerTopInset: CGFloat {
         guard let font = messageTextView.font else {
-            return 0
+            return 15
         }
 
         return font.lineHeight / 2
