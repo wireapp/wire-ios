@@ -58,7 +58,10 @@ final class ConversationRootViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder,
             mediaPlaybackManager: mediaPlaybackManager,
             classificationProvider: ZMUserSession.shared(),
-            networkStatusObservable: NetworkStatus.shared
+            networkStatusObservable: NetworkStatus.shared,
+            getParticipantImageSourceUseCase: GetParticipantImageSourceUseCase(
+                userSession: userSession
+            )
         )
 
         self.conversationViewController = conversationController

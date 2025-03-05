@@ -17,19 +17,8 @@
 //
 
 import WireAccountImageUI
+import WireDataModel
 
-public struct ConversationTitleSource {
-    public let accountImageSource: AccountImageSource?
-    public let title: String
-    public let subtitle: String?
-
-    public init(
-        accountImageSource: AccountImageSource?,
-        title: String,
-        subtitle: String?
-    ) {
-        self.accountImageSource = accountImageSource
-        self.title = title
-        self.subtitle = subtitle
-    }
+protocol GetParticipantImageSourceUseCaseProtocol {
+    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource?
 }

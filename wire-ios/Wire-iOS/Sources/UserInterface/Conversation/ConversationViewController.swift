@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireConversationUI
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
@@ -28,6 +29,7 @@ final class ConversationViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let visibleMessage: ZMConversationMessage?
+    private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
@@ -82,7 +84,8 @@ final class ConversationViewController: UIViewController {
     let guestsBarController: GuestsBarController = .init()
     let invisibleInputAccessoryView: InvisibleInputAccessoryView = .init()
     let mediaBarViewController: MediaBarViewController
-    private let titleView: ConversationTitleView
+
+    private let titleView: WireConversationUI.ConversationTitleView
 
     let userSession: UserSession
 
@@ -93,6 +96,7 @@ final class ConversationViewController: UIViewController {
     private var voiceChannelStateObserverToken: Any?
     private var conversationObserverToken: Any?
     private var conversationListObserverToken: Any?
+    private var userObservationToken: NSObjectProtocol?
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
@@ -127,7 +131,8 @@ final class ConversationViewController: UIViewController {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
-        networkStatusObservable: any NetworkStatusObservable
+        networkStatusObservable: any NetworkStatusObservable,
+        getParticipantImageSourceUseCase: any GetParticipantImageSourceUseCaseProtocol
     ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
@@ -142,6 +147,9 @@ final class ConversationViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
+
+        self.getParticipantImageSourceUseCase = getParticipantImageSourceUseCase
+
         DeveloperToolsViewModel.context.currentConversation = conversation
 
         self.inputBarController = ConversationInputBarViewController(
@@ -153,7 +161,14 @@ final class ConversationViewController: UIViewController {
 
         self.mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
 
-        self.titleView = ConversationTitleView(conversation: conversation, interactive: true)
+        self.titleView = WireConversationUI.ConversationTitleView(
+            source: ConversationTitleSource(
+                accountImageSource: nil,
+                title: conversation.displayNameWithFallback,
+                subtitle: Self.getConversationSubtitle(conversation)
+            ),
+            canAnimate: !ProcessInfo.processInfo.isRunningTests
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -177,11 +192,15 @@ final class ConversationViewController: UIViewController {
     private var observationToken: SelfUnregisteringNotificationCenterToken?
 
     private func update(conversation: ZMConversation) {
-        setupNavigatiomItem()
+        setupNavigationItem()
         updateOutgoingConnectionVisibility()
 
         voiceChannelStateObserverToken = addCallStateObserver()
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        if let participant = conversation.firstActiveParticipantOtherThanSelf {
+            userObservationToken = userSession.addUserObserver(self, for: participant)
+        }
+
         startCallController = ConversationCallController(conversation: conversation, target: self)
     }
 
@@ -384,22 +403,63 @@ final class ConversationViewController: UIViewController {
 
     @objc
     private func titleViewTapped() {
-        if let superview = titleView.superview,
-           let participantsController {
+        if let superview = titleView.superview, let participantsController {
             presentParticipantsViewController(participantsController, from: superview)
         }
     }
 
-    private func setupNavigatiomItem() {
-        titleView.tapHandler = { [weak self] _ in
-            self?.titleViewTapped()
+    private func setupNavigationItem() {
+        if conversation.conversationType == .oneOnOne {
+            Task { [weak self] in
+                guard let self else { return }
+                guard let user = conversation.firstActiveParticipantOtherThanSelf else {
+                    WireLogger.conversation
+                        .error("missing first active participant other then self for 1-1 conversation")
+                    return
+                }
+                let imageSource = await getParticipantImageSourceUseCase
+                    .invoke(user: user)
+                if imageSource == nil, titleView.source.accountImageSource != nil {
+                    // no need to update because of the way updates come when avatar is changed (in several events)
+                    // if we get empty image after update but previously there was an image, we need to skip
+                    // so with next update event (which comes right after) we get updated image
+                    return
+                }
+                titleView
+                    .updateSource(ConversationTitleSource(
+                        accountImageSource: imageSource,
+                        title: conversation.displayNameWithFallback,
+                        subtitle: Self.getConversationSubtitle(conversation)
+                    ))
+            }
+        } else {
+            // no need Image avatar for group chat
+            titleView.updateSource(ConversationTitleSource(
+                accountImageSource: nil,
+                title: conversation.displayNameWithFallback,
+                subtitle: Self.getConversationSubtitle(conversation)
+            ))
         }
-        titleView.configure()
 
         navigationItem.titleView = titleView
         navigationItem.leftItemsSupplementBackButton = false
 
         updateRightNavigationItemsButtons()
+    }
+
+    static func getConversationSubtitle(_ conversation: ZMConversation) -> String? {
+        guard let user = conversation.firstActiveParticipantOtherThanSelf else {
+            return nil
+        }
+        if user.isExternalPartner {
+            return L10n.Localizable.Profile.Details.partner.uppercased()
+        } else if user.isFederated {
+            return L10n.Localizable.Profile.Details.federated.uppercased()
+        } else if !user.isTeamMember {
+            return L10n.Localizable.Profile.Details.guest.uppercased()
+        }
+        return nil
+
     }
 
     // MARK: Resolve 1-1 conversations
@@ -490,7 +550,7 @@ final class ConversationViewController: UIViewController {
 
         Task {
             await userSession.mlsGroupVerification?.updateConversation(conversation, with: mlsGroupID)
-            setupNavigatiomItem()
+            setupNavigationItem()
         }
     }
 }
@@ -562,11 +622,11 @@ extension ConversationViewController: ZMConversationObserver {
             note.securityLevelChanged ||
             note.connectionStateChanged ||
             note.legalHoldStatusChanged {
-            setupNavigatiomItem()
+            setupNavigationItem()
         }
 
         if note.mlsVerificationStatusChanged {
-            setupNavigatiomItem()
+            setupNavigationItem()
         }
     }
 }
@@ -583,6 +643,19 @@ extension ConversationViewController: ZMConversationListObserver {
 
     func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo) {
         updateLeftNavigationBarItems()
+    }
+}
+
+// MARK: - UserObserving
+
+extension ConversationViewController: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+
+        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
+            changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
+            setupNavigationItem()
+        }
     }
 }
 
