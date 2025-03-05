@@ -26,9 +26,21 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
 
     var isSelected = false
 
-    var message: (any ZMConversationMessage)?
+    var message: (any ZMConversationMessage)? {
+        didSet {
+            for cell in stackView.arrangedSubviews.compactMap({ $0 as? any ConversationMessageCell }) {
+                cell.message = message
+            }
+        }
+    }
 
-    var delegate: (any ConversationMessageCellDelegate)?
+    var delegate: (any ConversationMessageCellDelegate)? {
+        didSet {
+            for cell in stackView.arrangedSubviews.compactMap({ $0 as? any ConversationMessageCell }) {
+                cell.delegate = delegate
+            }
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
