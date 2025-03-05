@@ -39,7 +39,7 @@ final class BackendInfoAPITests: XCTestCase {
         let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetBackendInfoSuccessResponse1")
         ])
-        let sut = BackendInfoAPIV0(networkService: networkService)
+        let sut = BackendInfoAPIUnversioned(networkService: networkService)
 
         // When
         let result = try await sut.getBackendInfo()
@@ -62,7 +62,7 @@ final class BackendInfoAPITests: XCTestCase {
         let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetBackendInfoSuccessResponse2")
         ])
-        let sut = BackendInfoAPIV0(networkService: networkService)
+        let sut = BackendInfoAPIUnversioned(networkService: networkService)
 
         // When
         let result = try await sut.getBackendInfo()

@@ -37,7 +37,7 @@ public struct BackendInfoAPIBuilder {
     /// - Returns: A `BackendInfoAPI`.
 
     public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIV0(networkService: networkService)
+        BackendInfoAPIUnversioned(networkService: networkService)
     }
 
 }

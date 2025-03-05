@@ -18,7 +18,7 @@
 
 import Foundation
 
-class BackendInfoAPIV0: BackendInfoAPI {
+class BackendInfoAPIUnversioned: BackendInfoAPI {
 
     // MARK: - Properties
 
