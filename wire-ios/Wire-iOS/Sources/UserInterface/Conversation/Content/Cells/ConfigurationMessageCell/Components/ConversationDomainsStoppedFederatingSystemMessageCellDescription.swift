@@ -27,8 +27,6 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
 
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
-
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
 

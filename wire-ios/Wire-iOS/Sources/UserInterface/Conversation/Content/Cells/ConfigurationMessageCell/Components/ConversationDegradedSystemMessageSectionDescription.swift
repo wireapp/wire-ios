@@ -32,8 +32,6 @@ final class ConversationDegradedSystemMessageSectionDescription: ConversationMes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
-
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
 
