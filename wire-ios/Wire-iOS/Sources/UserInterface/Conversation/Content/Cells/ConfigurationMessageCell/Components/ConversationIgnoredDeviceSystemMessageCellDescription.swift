@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-//
+
 final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationNewDeviceSystemMessageCell

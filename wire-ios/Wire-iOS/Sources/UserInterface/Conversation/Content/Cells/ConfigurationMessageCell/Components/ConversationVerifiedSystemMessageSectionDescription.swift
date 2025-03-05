@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-//
+
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell

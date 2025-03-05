@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
-//
+
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationNewDeviceSystemMessageCell

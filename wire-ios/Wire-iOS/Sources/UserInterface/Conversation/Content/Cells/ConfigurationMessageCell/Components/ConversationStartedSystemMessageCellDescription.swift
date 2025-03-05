@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
-//
+
 final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
 
     typealias View = ConversationStartedSystemMessageCell

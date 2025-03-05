@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-//
+
 final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationWarningSystemMessageCell

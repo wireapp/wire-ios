@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-//
+
 final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
