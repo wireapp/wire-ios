@@ -296,3 +296,10 @@ final class MockConversationMessageCell: UIView, ConversationMessageCell {
     }
 
 }
+
+extension ConversationMessageCell where CellDescription == MockConversationMessageCellDescription {
+
+    init() {
+        self.init(cellDescription: MockConversationMessageCellDescription())
+    }
+}

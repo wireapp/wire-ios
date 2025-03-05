@@ -19,11 +19,13 @@
 import SwiftUI
 import WireDataModel
 
-final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionViewDelegate {
+final class MessageReactionsCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell, UICollectionViewDelegate {
 
     // MARK: - Properties
 
-    private(set) weak var cellDescription: MessageReactionsCellDescription?
+    private(set) weak var cellDescription: CellDescription?
 
     var isSelected = false
     var message: ZMConversationMessage?
@@ -53,7 +55,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
     // MARK: - Life cycle
 
 
-    required init(cellDescription: MessageReactionsCellDescription) {
+    required init(cellDescription: CellDescription) {
         self.cellDescription = cellDescription
         super.init(frame: .zero)
         configureSubviews()
