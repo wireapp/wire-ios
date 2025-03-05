@@ -23,23 +23,18 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
     typealias Configuration = [AnyConversationMessageCellDescription]
 
     private let stackView = UIStackView()
+    private var conversationMessageCells: [any ConversationMessageCell] {
+        stackView.arrangedSubviews.compactMap { $0 as? any ConversationMessageCell }
+    }
 
     var isSelected = false
 
     var message: (any ZMConversationMessage)? {
-        didSet {
-            for cell in stackView.arrangedSubviews.compactMap({ $0 as? any ConversationMessageCell }) {
-                cell.message = message
-            }
-        }
+        didSet { conversationMessageCells.forEach { $0.message = message } }
     }
 
     var delegate: (any ConversationMessageCellDelegate)? {
-        didSet {
-            for cell in stackView.arrangedSubviews.compactMap({ $0 as? any ConversationMessageCell }) {
-                cell.delegate = delegate
-            }
-        }
+        didSet { conversationMessageCells.forEach { $0.delegate = delegate } }
     }
 
     override init(frame: CGRect) {
@@ -75,6 +70,41 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         stackView.axis = .vertical
         addSubview(stackView)
         stackView.fitIn(view: self)
+    }
+
+    // MARK: - ConversationMessageCell
+
+
+    var selectionView: UIView? {
+        fatalError("??") // TODO: fix
+        // nil
+    }
+
+    var selectionRect: CGRect {
+        fatalError("??") // TODO: fix
+        // selectionView?.bounds ?? .zero
+    }
+
+    var ephemeralTimerTopInset: CGFloat {
+        conversationMessageCells.first?.ephemeralTimerTopInset ?? 8
+    }
+
+    func willDisplay() {
+        for cell in conversationMessageCells {
+            cell.willDisplay()
+        }
+    }
+
+    func didEndDisplaying() {
+        for cell in conversationMessageCells {
+            cell.didEndDisplaying()
+        }
+    }
+
+    func prepareForReuse() {
+        for cell in conversationMessageCells {
+            cell.prepareForReuse()
+        }
     }
 
 }
