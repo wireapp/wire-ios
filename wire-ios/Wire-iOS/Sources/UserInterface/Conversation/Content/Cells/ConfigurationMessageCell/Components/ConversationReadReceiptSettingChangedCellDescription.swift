@@ -78,7 +78,8 @@ struct ReadReceiptViewModel {
 }
 
 final class ConversationReadReceiptSettingChangedCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationReadReceiptSettingChangedCellDescription>
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?

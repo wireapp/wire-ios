@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
+final class ConversationLinkPreviewArticleCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let textMessageData: TextMessageData

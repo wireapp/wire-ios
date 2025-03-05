@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationVideoMessageCell<CellDescription: ConversationMessageCellDescription>: RoundedView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage

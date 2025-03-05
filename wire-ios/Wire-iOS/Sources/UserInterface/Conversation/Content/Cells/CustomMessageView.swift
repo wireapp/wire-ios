@@ -21,9 +21,10 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class CustomMessageView: UIView {
+final class CustomMessageView<CellDescription: ConversationMessageCellDescription>: UIView, UITextViewDelegate {
     var isSelected: Bool = false
 
+    private(set) weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -39,7 +40,9 @@ final class CustomMessageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override init(frame: CGRect) {
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+
         messageLabel.isAccessibilityElement = true
         messageLabel.accessibilityLabel = "Text"
         messageLabel
@@ -50,7 +53,7 @@ final class CustomMessageView: UIView {
             assertionFailure("ZMUser.selfUser() is nil")
         }
 
-        super.init(frame: frame)
+        super.init(frame: .zero)
 
         messageLabel.font = FontSpec(.small, .light).font
         messageLabel.textColor = SemanticColors.Label.textDefault
@@ -70,11 +73,8 @@ final class CustomMessageView: UIView {
             bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor)
         ])
     }
-}
 
-// MARK: - UITextViewDelegate
-
-extension CustomMessageView: UITextViewDelegate {
+    // MARK: - UITextViewDelegate
 
     func textView(
         _ textView: UITextView,

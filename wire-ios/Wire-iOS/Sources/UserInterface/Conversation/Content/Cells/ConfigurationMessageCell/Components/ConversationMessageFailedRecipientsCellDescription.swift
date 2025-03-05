@@ -23,7 +23,7 @@ import WireDataModel
 final class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
-    typealias View = FailedUsersSystemMessageCell
+    typealias View = FailedUsersSystemMessageCell<ConversationMessageFailedRecipientsCellDescription>
 
     let configuration: View.Configuration
 

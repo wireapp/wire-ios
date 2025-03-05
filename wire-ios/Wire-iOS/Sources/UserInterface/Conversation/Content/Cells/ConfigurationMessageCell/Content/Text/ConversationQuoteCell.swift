@@ -276,7 +276,7 @@ final class ConversationReplyContentView: UIView {
 
 }
 
-final class ConversationReplyCell: UIView, ConversationMessageCell {
+final class ConversationReplyCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell {
     typealias Configuration = ConversationReplyContentView.Configuration
     var isSelected: Bool = false
 

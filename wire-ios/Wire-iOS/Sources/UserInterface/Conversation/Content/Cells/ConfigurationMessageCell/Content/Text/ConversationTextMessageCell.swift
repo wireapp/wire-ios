@@ -19,7 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
+final class ConversationTextMessageCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString

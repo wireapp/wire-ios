@@ -36,7 +36,9 @@ enum TeamRoleIndicator {
 
 // MARK: - ConversationSenderMessageDetailsCell
 
-final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
+final class ConversationSenderMessageDetailsCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell {
 
     struct Configuration {
         let user: UserType
@@ -47,8 +49,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     // MARK: - Properties
 
+    private(set) weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
-
     weak var message: ZMConversationMessage?
 
     private var trailingDateLabelConstraint: NSLayoutConstraint?
@@ -99,8 +101,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     // MARK: - Init
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         configureSubviews()
         configureConstraints()
     }
@@ -277,7 +280,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     // MARK: - Properties
 
-    typealias View = ConversationSenderMessageDetailsCell
+    typealias View = ConversationSenderMessageDetailsCell<ConversationSenderMessageCellDescription>
     typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
     let configuration: View.Configuration
 

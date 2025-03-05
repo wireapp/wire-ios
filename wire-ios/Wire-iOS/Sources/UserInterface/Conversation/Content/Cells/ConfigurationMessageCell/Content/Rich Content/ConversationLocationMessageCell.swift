@@ -21,7 +21,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
+final class ConversationLocationMessageCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let location: LocationMessageData

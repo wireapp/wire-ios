@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationPingCell<CellDescription: ConversationMessageCellDescription>: ConversationIconBasedCell, ConversationMessageCell {
 
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
     var animationBlock: AnimationBlock?

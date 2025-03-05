@@ -20,7 +20,9 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationAudioMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: RoundedView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -34,13 +36,15 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     private let obfuscationView = ObfuscationView(icon: .microphone)
     private let restrictionView = AudioMessageRestrictionView()
 
+    private(set) weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
     var isSelected: Bool = false
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         configureSubview()
         configureConstraints()
     }
@@ -121,7 +125,8 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
 }
 
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationAudioMessageCell
+    typealias View = ConversationAudioMessageCell<ConversationAudioMessageCellDescription>
+
     let configuration: View.Configuration
 
     var topMargin: CGFloat = 8
