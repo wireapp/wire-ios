@@ -19,6 +19,7 @@
 import WireAccountImageUI
 import WireDataModel
 
+// sourcery: AutoMockable
 protocol GetParticipantImageSourceUseCaseProtocol {
     func invoke(user: UserType?) async -> WireAccountImageUI.AccountImageSource
 }
