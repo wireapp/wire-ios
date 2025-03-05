@@ -97,6 +97,7 @@ final class ConversationViewController: UIViewController {
     private var conversationObserverToken: Any?
     private var conversationListObserverToken: Any?
     private var userObservationToken: NSObjectProtocol?
+    private var selfUserObservationToken: NSObjectProtocol?
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
@@ -175,6 +176,7 @@ final class ConversationViewController: UIViewController {
         definesPresentationContext = true
 
         update(conversation: conversation)
+        titleView.updateAccentColor(userSession.selfUser.accentColor)
     }
 
     @available(*, unavailable)
@@ -200,8 +202,11 @@ final class ConversationViewController: UIViewController {
         if let participant = conversation.firstActiveParticipantOtherThanSelf {
             userObservationToken = userSession.addUserObserver(self, for: participant)
         }
+        
+        selfUserObservationToken = userSession.addUserObserver(self, for: userSession.selfUser)
 
         startCallController = ConversationCallController(conversation: conversation, target: self)
+        
     }
 
     override func viewDidLoad() {
@@ -676,6 +681,10 @@ extension ConversationViewController: ZMConversationListObserver {
 extension ConversationViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.user.isSelfUser, changeInfo.accentColorValueChanged {
+            titleView.updateAccentColor(changeInfo.user.accentColor)
+        }
+        
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
             setupNavigationItem(isAfterTitleRelatedDataChanged: true)
