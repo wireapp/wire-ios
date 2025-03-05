@@ -29,12 +29,8 @@ class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     }
 
     @MainActor
-    func invoke(user: UserType?) async -> WireAccountImageUI.AccountImageSource {
-        guard let user else {
-            return WireAccountImageUI.AccountImageSource.text("")
-        }
-
-        return await withCheckedContinuation { continuation in
+    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
+        await withCheckedContinuation { continuation in
             user.fetchProfileImage(
                 session: userSession,
                 imageCache: UIImage.defaultUserImageCache,
@@ -43,6 +39,8 @@ class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
             ) { image, _ in
                 if let image {
                     continuation.resume(returning: WireAccountImageUI.AccountImageSource.image(image))
+                } else {
+                    continuation.resume(returning: nil)
                 }
             }
         }

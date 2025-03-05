@@ -20,5 +20,5 @@ import WireAccountImageUI
 import WireDataModel
 
 protocol GetParticipantImageSourceUseCaseProtocol {
-    func invoke(user: UserType?) async -> WireAccountImageUI.AccountImageSource
+    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource?
 }

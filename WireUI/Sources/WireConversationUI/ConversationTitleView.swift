@@ -24,7 +24,7 @@ import WireReusableUIComponents
 
 public class ConversationTitleView: UIView {
 
-    private let source: ConversationTitleSource
+    public private(set) var source: ConversationTitleSource
 
     private let accountImageView = AccountImageView()
     private let nameLabel = UILabel()
@@ -106,6 +106,7 @@ public class ConversationTitleView: UIView {
     }
 
     public func updateSource(_ source: ConversationTitleSource) {
+        self.source = source
         if let imageSource = source.accountImageSource {
             updateAvatar(source: imageSource, animated: true)
         }
