@@ -87,7 +87,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
-    func testThatItDoesSendProteusMessage() {
+    func testThatItDoesSendProteusMessageInVisibleConversation() {
 
         syncMOC.performGroupedAndWait {
 
@@ -101,6 +101,25 @@ extension ClientMessageRequestStrategyTests {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
 
             XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
+
+    func testThatItDoesSendProteusMessageInHiddenConversation() {
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            message.visibleInConversation = nil
+            message.hiddenInConversation = groupConversation
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+
+            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
         }
     }
 

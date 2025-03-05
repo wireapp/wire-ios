@@ -32,11 +32,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         var predicates = [notDelivered, notExpired, fromSelf]
 
         if !isMLSEnabled {
-            let excludeMLS = NSPredicate(
-                format: "conversation.primitiveMessageProtocol IN %@",
-                [MessageProtocol.proteus.int16Value, MessageProtocol.mixed.int16Value]
-            )
-            predicates.append(excludeMLS)
+            predicates.append(.proteusAndMixedMessagesOnly)
         }
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)

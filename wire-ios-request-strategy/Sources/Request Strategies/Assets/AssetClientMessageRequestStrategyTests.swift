@@ -176,11 +176,25 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItDoesSendMessageForAnImageMessageUploaded() {
+    func testThatItDoesSendMessageInVisibleConversationForAnImageMessageUploaded() {
         syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             _ = self.createMessage(uploaded: true)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesSendMessageInHiddenConversationForAnImageMessageUploaded() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.createMessage(uploaded: true)
+            message.visibleInConversation = nil
+            message.hiddenInConversation = groupConversation
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

@@ -77,11 +77,28 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         verifyThatItDoesNotScheduleMessageUpdate(for: .processed)
     }
 
-    func testThatItDoesSendLinkPreviewMessage() {
+    func testThatItDoesSendLinkPreviewMessageInVisibleConversation() {
         syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: .uploaded)
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesSendLinkPreviewMessageInHiddenConversation() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+            message.visibleInConversation = nil
+            message.hiddenInConversation = groupConversation
 
             // When
             self.process(message)
