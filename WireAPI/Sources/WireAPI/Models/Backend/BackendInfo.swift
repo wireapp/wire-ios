@@ -30,10 +30,6 @@ public struct BackendInfo: Equatable, Sendable {
 
     public let isFederationEnabled: Bool
 
-    /// Whether the backend supports MLS.
-
-    public let isMLSEnabled: Bool
-
     /// All production ready api versions supported by the local backend.
 
     public let supportedVersions: Set<APIVersion>
