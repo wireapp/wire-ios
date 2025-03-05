@@ -19,8 +19,8 @@
 import UIKit
 
 final class ConversationCannotDecryptSystemMessageCell<
-    CellDescription
->: ConversationIconBasedCell, ConversationMessageCell where CellDescription: ConversationMessageCellDescription {
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell, ConversationMessageCell {
 
     struct Configuration {
         let icon: UIImage?
@@ -28,7 +28,7 @@ final class ConversationCannotDecryptSystemMessageCell<
         let showLine: Bool
     }
 
-    let cellDescription: CellDescription
+    private(set) weak var cellDescription: CellDescription?
 
     var lastConfiguration: Configuration?
 

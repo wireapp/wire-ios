@@ -21,9 +21,13 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationLegalHoldSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell, ConversationMessageCell {
 
-    static let legalHoldURL: URL = WireURLs.shared.legalHoldInfo
+    static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
+
+    private(set) weak var cellDescription: CellDescription?
     var conversation: ZMConversation?
 
     struct Configuration {
@@ -32,8 +36,9 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
         var conversation: ZMConversation?
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         setupView()
     }
 
@@ -54,7 +59,7 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
 }
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationLegalHoldSystemMessageCell
+    typealias View = ConversationLegalHoldSystemMessageCell<ConversationLegalHoldCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -93,8 +98,7 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            L10n.Localizable.Content.System.MessageLegalHold
-                .enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+            L10n.Localizable.Content.System.MessageLegalHold.enabled(View.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
             L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:
