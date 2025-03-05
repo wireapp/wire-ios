@@ -33,15 +33,14 @@ package struct SwitchBackendConfirmationView: View {
 
     @Environment(\.dismiss) var dismiss
     @State private var showFullDetails: Bool = false
+    @StateObject var viewModel: SwitchBackendConfirmationViewModel
 
     private typealias Strings = L10n.SwitchBackendConfirmation
-
-    private let viewModel: SwitchBackendConfirmationViewModel
 
     package init(
         viewModel: SwitchBackendConfirmationViewModel
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     package var body: some View {
@@ -183,6 +182,34 @@ package struct SwitchBackendConfirmationView: View {
 }
 
 // MARK: - Previews
+
+@MainActor
+package func makeSwitchBackendConfirmationViewPreview(
+    backendName: String,
+    backendURL: URL,
+    backendWSURL: URL,
+    blackListURL: URL,
+    teamsURL: URL,
+    accountsURL: URL,
+    websiteURL: URL
+) -> some View {
+    MockDependencies().switchBackendView(
+        email: "email.com",
+        environment: BackendConfig(
+            title: backendName,
+            endpoints: Endpoints(
+                backendURL: backendURL,
+                backendWSURL: backendWSURL,
+                blackListURL: blackListURL,
+                teamsURL: teamsURL,
+                accountsURL: accountsURL,
+                websiteURL: websiteURL
+            ),
+            proxySettings: nil,
+            pinnedKeys: nil
+        )
+    )
+}
 
 #Preview("Regular fonts") {
     BackgroundView()

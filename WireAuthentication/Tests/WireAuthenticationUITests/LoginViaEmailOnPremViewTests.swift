@@ -78,9 +78,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testColorSchemeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let dependencies = MockDependencies()
-        dependencies._backendConfig = BackendConfig(
-            title: "backen name",
+        let backendConfig = BackendConfig(
+            title: "<backen name>",
             endpoints: Endpoints(
                 backendURL: URL(string: "https://example.com")!,
                 backendWSURL: URL(string: "https://example.com")!,
@@ -89,13 +88,13 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 accountsURL: URL(string: "https://example.com")!,
                 websiteURL: URL(string: "https://example.com")!
             ),
-            proxySettings: nil,
+            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
 
-        let view = dependencies.loginViaEmailOnPremView(
+        let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: MockDependencies()._backendConfig
+            backendConfig: backendConfig
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -111,9 +110,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testDynamicTypeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let dependencies = MockDependencies()
-        dependencies._backendConfig = BackendConfig(
-            title: "backen name",
+        let backendConfig = BackendConfig(
+            title: "<backen name>",
             endpoints: Endpoints(
                 backendURL: URL(string: "https://example.com")!,
                 backendWSURL: URL(string: "https://example.com")!,
@@ -125,9 +123,9 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
             proxySettings: nil,
             pinnedKeys: nil
         )
-        let view = dependencies.loginViaEmailOnPremView(
+        let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: MockDependencies()._backendConfig
+            backendConfig: backendConfig
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

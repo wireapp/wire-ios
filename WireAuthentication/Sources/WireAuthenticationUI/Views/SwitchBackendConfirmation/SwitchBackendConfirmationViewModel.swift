@@ -20,7 +20,7 @@ import Foundation
 import WireAuthenticationAPI
 
 @MainActor
-public class SwitchBackendConfirmationViewModel {
+public class SwitchBackendConfirmationViewModel: ObservableObject {
 
     private typealias Strings = L10n.SwitchBackendConfirmation
 

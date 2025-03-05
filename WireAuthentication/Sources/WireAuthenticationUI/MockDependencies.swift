@@ -168,21 +168,24 @@ extension MockDependencies: FetchDefaultSSOSettingsUseCaseProtocol {
 
 extension MockDependencies: SwitchBackendConfirmationBuilder {
 
-    private var switchBackendConfirmationViewModel: SwitchBackendConfirmationViewModel {
+    private func switchBackendConfirmationViewModel(
+        email: String,
+        environment: BackendConfig
+    ) -> SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
             router: rootViewModel,
-            email: "email",
+            email: email,
             fetchDefaultSSOSettings: self,
             ssoLinkGenerator: self,
             environment: BackendConfig(
-                title: "backendName",
+                title: environment.title,
                 endpoints: Endpoints(
-                    backendURL: URL(string: "backendURL")!,
-                    backendWSURL: URL(string: "backendWSURL")!,
-                    blackListURL: URL(string: "blacklistURL")!,
-                    teamsURL: URL(string: "teamsURL")!,
-                    accountsURL: URL(string: "accountsURL")!,
-                    websiteURL: URL(string: "websiteURL")!
+                    backendURL: environment.endpoints.backendURL,
+                    backendWSURL: environment.endpoints.backendWSURL,
+                    blackListURL: environment.endpoints.blackListURL,
+                    teamsURL: environment.endpoints.teamsURL,
+                    accountsURL: environment.endpoints.accountsURL,
+                    websiteURL: environment.endpoints.websiteURL
                 ),
                 proxySettings: nil,
                 pinnedKeys: nil
@@ -191,7 +194,12 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
     }
 
     func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(viewModel: switchBackendConfirmationViewModel)
+        SwitchBackendConfirmationView(
+            viewModel: switchBackendConfirmationViewModel(
+                email: email,
+                environment: environment
+            )
+        )
     }
 
 }
