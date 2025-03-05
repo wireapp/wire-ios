@@ -29,6 +29,5 @@ public enum FetchBackendConfigFailure: Error, Equatable {
 
     case requestFailed
     case invalidResponse
-    case unknown
 
 }

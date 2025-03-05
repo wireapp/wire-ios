@@ -26,7 +26,7 @@ public protocol FetchDefaultSSOSettingsUseCaseProtocol: Sendable {
 
 public enum FetchDefaultSSOSettingsUseCaseFailure: Error {
 
-    case networkFailure
+    case noInternet
     case unknown
 
 }

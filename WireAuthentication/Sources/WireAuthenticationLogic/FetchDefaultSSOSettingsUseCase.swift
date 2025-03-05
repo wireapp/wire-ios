@@ -31,10 +31,15 @@ package struct FetchDefaultSSOSettingsUseCase: FetchDefaultSSOSettingsUseCasePro
     package func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
         do {
             return try await authenticationAPI.getSSOCode()
-        } catch FetchDefaultSSOSettingsUseCaseFailure.networkFailure {
-            throw FetchDefaultSSOSettingsUseCaseFailure.networkFailure
+        } catch let error as URLError {
+            switch error.code {
+            case .notConnectedToInternet, .networkConnectionLost:
+                throw .noInternet
+            default:
+                throw .unknown
+            }
         } catch {
-            throw FetchDefaultSSOSettingsUseCaseFailure.unknown
+            throw .unknown
         }
     }
 
