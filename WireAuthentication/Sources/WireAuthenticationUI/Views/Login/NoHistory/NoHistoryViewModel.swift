@@ -63,6 +63,12 @@ package final class NoHistoryViewModel: ObservableObject {
         onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: accessToken))
     }
 
+    func onAppear() {
+        if emailConflictWithCloudAccount {
+            alert = .cloudAccountAlreadyRegistered
+        }
+    }
+
     func howToChangeEmail() {
         UIApplication.shared.open(howToChangeEmailURL)
     }

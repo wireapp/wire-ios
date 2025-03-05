@@ -72,9 +72,7 @@ package struct NoHistoryView: View {
             }
         )
         .onAppear {
-            if viewModel.emailConflictWithCloudAccount {
-                viewModel.alert = .cloudAccountAlreadyRegistered
-            }
+            viewModel.onAppear()
         }
         .padding()
         .presentationDetents([.medium])
