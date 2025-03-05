@@ -21,8 +21,9 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLinkAttachmentCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell, HighlightableView,
-    ContextMenuDelegate {
+final class ConversationLinkAttachmentCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
 
     struct Configuration {
         let attachment: LinkAttachment
@@ -38,6 +39,7 @@ final class ConversationLinkAttachmentCell<CellDescription: ConversationMessageC
         return view
     }()
 
+    private(set) weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

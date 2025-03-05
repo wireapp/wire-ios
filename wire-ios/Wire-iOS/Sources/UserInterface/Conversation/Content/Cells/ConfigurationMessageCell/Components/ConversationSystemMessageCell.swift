@@ -25,19 +25,12 @@ import WireDesign
 
 final class ConversationSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell, ConversationMessageCell {
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     struct Configuration: Equatable {
         let icon: UIImage?
         let attributedText: NSAttributedString?
         let showLine: Bool
-    }
-
-    private(set) weak var cellDescription: CellDescription?
-
-    init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
     }
 
     // MARK: - Configuration

@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationRenamedSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell, ConversationMessageCell {
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     private typealias IconColors = SemanticColors.Icon
 
@@ -31,13 +31,7 @@ final class ConversationRenamedSystemMessageCell<
         let newConversationName: NSAttributedString
     }
 
-    private(set) weak var cellDescription: CellDescription?
     private let nameLabel = UILabel()
-
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
-    }
 
     override func configureSubviews() {
         super.configureSubviews()

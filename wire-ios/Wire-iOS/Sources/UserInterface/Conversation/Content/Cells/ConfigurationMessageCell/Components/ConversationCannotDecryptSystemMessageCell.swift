@@ -20,7 +20,7 @@ import UIKit
 
 final class ConversationCannotDecryptSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell, ConversationMessageCell {
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     struct Configuration {
         let icon: UIImage?
@@ -28,14 +28,7 @@ final class ConversationCannotDecryptSystemMessageCell<
         let showLine: Bool
     }
 
-    private(set) weak var cellDescription: CellDescription?
-
     var lastConfiguration: Configuration?
-
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
-    }
 
     // MARK: - Configuration
 

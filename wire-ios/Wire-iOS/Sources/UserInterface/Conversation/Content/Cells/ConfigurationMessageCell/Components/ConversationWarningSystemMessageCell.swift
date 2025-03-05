@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationWarningSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell, ConversationMessageCell {
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     private typealias LabelColors = SemanticColors.Label
     private typealias IconColors = SemanticColors.Icon
@@ -31,8 +31,6 @@ final class ConversationWarningSystemMessageCell<
         let topText: String
         let bottomText: String
     }
-
-    private(set) weak var cellDescription: CellDescription?
 
     private let encryptionLabel = DynamicFontLabel(
         style: .subline1,

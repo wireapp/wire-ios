@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationParticipantsSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell, ConversationMessageCell {
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     private typealias LabelColors = SemanticColors.Label
 
@@ -33,19 +33,7 @@ final class ConversationParticipantsSystemMessageCell<
         let warning: String?
     }
 
-    private(set) weak var cellDescription: CellDescription?
     private let warningLabel = UILabel()
-
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
-    }
-
-        // TODO: delete?
-//    @available(*, unavailable)
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) is not supported")
-//    }
 
     override func configureSubviews() {
         super.configureSubviews()

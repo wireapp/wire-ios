@@ -59,8 +59,9 @@ final class ConversationImageMessageCell<
         containerView
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         configureView()
         createConstraints()
     }
@@ -170,7 +171,7 @@ final class ConversationImageMessageCell<
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationImageMessageCell
+    typealias View = ConversationImageMessageCell<ConversationImageMessageCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?

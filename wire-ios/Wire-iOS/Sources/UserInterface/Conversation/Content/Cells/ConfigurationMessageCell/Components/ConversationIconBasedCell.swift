@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-class ConversationIconBasedCell: UIView {
+class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescription>: UIView, UITextViewDelegate {
 
     let imageContainer = UIView()
     let imageView = UIImageView()
@@ -36,6 +36,7 @@ class ConversationIconBasedCell: UIView {
     private var textLabelTopConstraint: NSLayoutConstraint!
     private var topContentViewTrailingConstraint: NSLayoutConstraint!
 
+    private(set) weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -66,8 +67,8 @@ class ConversationIconBasedCell: UIView {
         -conversationHorizontalMargins.right * 2
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        super.init(frame: .zero)
         configureSubviews()
         configureConstraints()
     }
@@ -174,9 +175,8 @@ class ConversationIconBasedCell: UIView {
         topContentViewTrailingConstraint.constant = trailingTextMargin
     }
 
-}
+    // MARK: - UITextViewDelegate
 
-extension ConversationIconBasedCell: UITextViewDelegate {
     func textView(
         _ textView: UITextView,
         shouldInteractWith url: URL,
@@ -184,7 +184,6 @@ extension ConversationIconBasedCell: UITextViewDelegate {
         interaction: UITextItemInteraction
     ) -> Bool {
         // Fixes Swift 5.0 release build child class overridden method not called bug
-
         UIApplication.shared.open(url)
         return false
     }

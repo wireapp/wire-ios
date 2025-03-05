@@ -103,11 +103,8 @@ final class ConversationButtonMessageCell<
         let hasError: Bool
     }
 
-    convenience init() {
-        self.init(frame: .zero)
-    }
-
-    override init(frame: CGRect) {
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
         super.init(frame: .zero)
 
         configureViews()
@@ -155,7 +152,7 @@ final class ConversationButtonMessageCell<
 }
 
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationButtonMessageCell
+    typealias View = ConversationButtonMessageCell<ConversationButtonMessageCellDescription>
 
     var topMargin: CGFloat = .ConversationButtonMessageCell.verticalInset
 

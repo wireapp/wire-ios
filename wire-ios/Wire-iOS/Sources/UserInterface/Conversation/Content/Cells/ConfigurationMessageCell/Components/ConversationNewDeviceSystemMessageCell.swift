@@ -21,13 +21,12 @@ import WireDataModel
 
 final class ConversationNewDeviceSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell, ConversationMessageCell {
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     static var userClientURL: URL {
         URL(string: "settings://user-client")!
     }
 
-    private(set) weak var cellDescription: CellDescription?
     var linkTarget: LinkTarget?
 
     enum LinkTarget {
@@ -42,9 +41,7 @@ final class ConversationNewDeviceSystemMessageCell<
     }
 
     required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
-
+        super.init(cellDescription: cellDescription)
         setupView()
     }
 

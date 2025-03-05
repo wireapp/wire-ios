@@ -19,7 +19,9 @@
 import UIKit
 import WireDataModel
 
-final class ConversationLinkPreviewArticleCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell, ContextMenuDelegate {
+final class ConversationLinkPreviewArticleCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let textMessageData: TextMessageData
@@ -32,6 +34,7 @@ final class ConversationLinkPreviewArticleCell<CellDescription: ConversationMess
 
     private let articleView = ArticleView(withImagePlaceholder: true)
 
+    private(set) weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

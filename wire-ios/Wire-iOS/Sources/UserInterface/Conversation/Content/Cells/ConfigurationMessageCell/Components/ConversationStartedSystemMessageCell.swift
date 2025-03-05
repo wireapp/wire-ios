@@ -21,7 +21,7 @@ import WireDataModel
 
 final class ConversationStartedSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell, ConversationMessageCell {
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     struct Configuration {
         let title: NSAttributedString?
@@ -30,15 +30,8 @@ final class ConversationStartedSystemMessageCell<
         let icon: UIImage?
     }
 
-    private(set) weak var cellDescription: CellDescription?
-
     private let titleLabel = UILabel()
     private var selectedUsers: [UserType] = []
-
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
-    }
 
     override func configureSubviews() {
         super.configureSubviews()

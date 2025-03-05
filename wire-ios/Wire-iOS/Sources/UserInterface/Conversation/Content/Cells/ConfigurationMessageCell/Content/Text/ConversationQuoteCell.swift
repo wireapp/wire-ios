@@ -276,13 +276,18 @@ final class ConversationReplyContentView: UIView {
 
 }
 
-final class ConversationReplyCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell {
+final class ConversationReplyCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell {
+
     typealias Configuration = ConversationReplyContentView.Configuration
+
     var isSelected: Bool = false
 
     let contentView: ConversationReplyContentView
     var container: ReplyRoundCornersView
 
+    private(set) weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

@@ -21,7 +21,7 @@ import WireDataModel
 
 final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationWarningSystemMessageCell
+    typealias View = ConversationWarningSystemMessageCell<ConversationEncryptionInfoSystemMessageCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?

@@ -23,11 +23,10 @@ import WireDesign
 
 final class ConversationLegalHoldSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell, ConversationMessageCell {
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
 
-    private(set) weak var cellDescription: CellDescription?
     var conversation: ZMConversation?
 
     struct Configuration {
@@ -37,8 +36,7 @@ final class ConversationLegalHoldSystemMessageCell<
     }
 
     required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
+        super.init(cellDescription: cellDescription)
         setupView()
     }
 

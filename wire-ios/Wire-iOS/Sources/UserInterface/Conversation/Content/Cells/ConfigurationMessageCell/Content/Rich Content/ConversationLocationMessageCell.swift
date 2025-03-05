@@ -21,7 +21,9 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationLocationMessageCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell, ContextMenuDelegate {
+final class ConversationLocationMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let location: LocationMessageData
@@ -41,6 +43,7 @@ final class ConversationLocationMessageCell<CellDescription: ConversationMessage
     private var recognizer: UITapGestureRecognizer?
     private weak var locationAnnotation: MKPointAnnotation?
 
+    private(set) weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -55,8 +58,9 @@ final class ConversationLocationMessageCell<CellDescription: ConversationMessage
         containerView
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         configureViews()
         createConstraints()
     }
@@ -186,7 +190,8 @@ final class ConversationLocationMessageCell<CellDescription: ConversationMessage
 }
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationLocationMessageCell
+    typealias View = ConversationLocationMessageCell<ConversationLocationMessageCellDescription>
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
