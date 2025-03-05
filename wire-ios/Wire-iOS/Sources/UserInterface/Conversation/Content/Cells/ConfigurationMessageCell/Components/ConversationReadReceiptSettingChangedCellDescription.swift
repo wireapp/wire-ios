@@ -20,7 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-//
+
 struct ReadReceiptViewModel {
     let icon: StyleKitIcon
     let iconColor: UIColor?

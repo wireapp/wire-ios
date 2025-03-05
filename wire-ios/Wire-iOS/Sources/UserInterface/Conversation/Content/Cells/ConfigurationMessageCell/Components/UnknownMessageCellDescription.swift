@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-//
+
 extension CustomMessageView: ConversationMessageCell {
 
     var selectionView: UIView? {

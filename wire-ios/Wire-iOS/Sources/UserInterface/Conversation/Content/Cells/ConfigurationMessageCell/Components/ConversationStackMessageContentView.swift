@@ -61,14 +61,8 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
 
     private func setupStackView() {
         stackView.axis = .vertical
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
-        NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
-            bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
-        ])
+        stackView.fitIn(view: self)
     }
 
 }
