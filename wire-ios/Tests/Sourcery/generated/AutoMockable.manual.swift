@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import Wire
+
 class MockConversationMessageCellDescription: ConversationMessageCellDescription {
+    typealias View = MockConversationMessageCell
 
     // MARK: - Life cycle
 
@@ -166,6 +169,130 @@ class MockConversationMessageCellDescription: ConversationMessageCellDescription
         } else {
             fatalError("no mock for `isConfigurationEqualWith`")
         }
+    }
+
+}
+
+final class MockConversationMessageCell: UIView, ConversationMessageCell {
+    typealias CellDescription = MockConversationMessageCellDescription
+    typealias Configuration = Void
+
+    // MARK: - Life cycle
+
+
+    // MARK: - cellDescription
+
+    var cellDescription: CellDescription?
+
+    // MARK: - isSelected
+
+    var isSelected: Bool {
+        get { return underlyingIsSelected }
+        set(value) { underlyingIsSelected = value }
+    }
+
+    var underlyingIsSelected: Bool!
+
+    // MARK: - selectionView
+
+    var selectionView: UIView?
+
+    // MARK: - selectionRect
+
+    var selectionRect: CGRect {
+        get { return underlyingSelectionRect }
+        set(value) { underlyingSelectionRect = value }
+    }
+
+    var underlyingSelectionRect: CGRect!
+
+    // MARK: - ephemeralTimerTopInset
+
+    var ephemeralTimerTopInset: CGFloat {
+        get { return underlyingEphemeralTimerTopInset }
+        set(value) { underlyingEphemeralTimerTopInset = value }
+    }
+
+    var underlyingEphemeralTimerTopInset: CGFloat!
+
+    // MARK: - message
+
+    var message: ZMConversationMessage?
+
+    // MARK: - delegate
+
+    var delegate: ConversationMessageCellDelegate?
+
+    // MARK: - init
+
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    // MARK: - configure
+
+    var configureWithAnimated_Invocations: [(object: Configuration, animated: Bool)] = []
+    var configureWithAnimated_MockMethod: ((Configuration, Bool) -> Void)?
+
+    func configure(with object: Configuration, animated: Bool) {
+        configureWithAnimated_Invocations.append((object: object, animated: animated))
+
+        guard let mock = configureWithAnimated_MockMethod else {
+            fatalError("no mock for `configureWithAnimated`")
+        }
+
+        mock(object, animated)
+    }
+
+    // MARK: - willDisplay
+
+    var willDisplay_Invocations: [Void] = []
+    var willDisplay_MockMethod: (() -> Void)?
+
+    func willDisplay() {
+        willDisplay_Invocations.append(())
+
+        guard let mock = willDisplay_MockMethod else {
+            fatalError("no mock for `willDisplay`")
+        }
+
+        mock()
+    }
+
+    // MARK: - didEndDisplaying
+
+    var didEndDisplaying_Invocations: [Void] = []
+    var didEndDisplaying_MockMethod: (() -> Void)?
+
+    func didEndDisplaying() {
+        didEndDisplaying_Invocations.append(())
+
+        guard let mock = didEndDisplaying_MockMethod else {
+            fatalError("no mock for `didEndDisplaying`")
+        }
+
+        mock()
+    }
+
+    // MARK: - prepareForReuse
+
+    var prepareForReuse_Invocations: [Void] = []
+    var prepareForReuse_MockMethod: (() -> Void)?
+
+    func prepareForReuse() {
+        prepareForReuse_Invocations.append(())
+
+        guard let mock = prepareForReuse_MockMethod else {
+            fatalError("no mock for `prepareForReuse`")
+        }
+
+        mock()
     }
 
 }
