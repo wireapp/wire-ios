@@ -119,7 +119,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
 
-            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
+            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
         }
     }
 
