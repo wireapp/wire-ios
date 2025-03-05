@@ -18,36 +18,30 @@
 
 import Foundation
 
-/// Metadata about the local backend.
+/// Information about a connected backend.
 
-public struct BackendMetadata: Equatable, Sendable {
+public struct BackendMetadata: Sendable {
 
-    /// The local domain.
+    /// The REST API version to use when making requests.
+
+    public let apiVersion: UInt
+
+    /// The backend's domain.
 
     public let domain: String
 
-    /// Whether federation is enabled on the local backend.
+    /// Whether this backend can communicate with other backends.
 
     public let isFederationEnabled: Bool
 
-    /// All production ready api versions supported by the local backend.
-
-    public let supportedVersions: Set<APIVersion>
-
-    /// All api versions currently under development by the local backend.
-
-    public let developmentVersions: Set<APIVersion>
-
     public init(
+        apiVersion: UInt,
         domain: String,
-        isFederationEnabled: Bool,
-        supportedVersions: Set<APIVersion>,
-        developmentVersions: Set<APIVersion>
+        isFederationEnabled: Bool
     ) {
+        self.apiVersion = apiVersion
         self.domain = domain
         self.isFederationEnabled = isFederationEnabled
-        self.supportedVersions = supportedVersions
-        self.developmentVersions = developmentVersions
     }
 
 }
