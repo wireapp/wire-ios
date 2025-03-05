@@ -17,17 +17,13 @@
 //
 
 package import SwiftUI
-package import WireConversationsAPI
 package import WireConversationsResources
 
 package struct WireConversationGroupIcon: View {
     let groupIcon: WireConversationGroupIconAsset
 
-    package init(
-        conversationID: String,
-        conversationIDMapper: any ConversationIDToPaletteMapper<WireConversationGroupIconAsset>
-    ) {
-        self.groupIcon = ._1
+    package init(asset: WireConversationGroupIconAsset) {
+        self.groupIcon = asset
     }
 
     package var body: some View {

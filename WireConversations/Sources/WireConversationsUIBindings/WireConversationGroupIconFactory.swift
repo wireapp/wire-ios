@@ -24,13 +24,10 @@ public final class WireConversationGroupIconFactory {
 
     private let mapper = ConversationIDToIconMapper()
 
-    public init() { }
+    public init() {}
 
     @MainActor
     public func create(conversationID: String) -> some View {
-        WireConversationGroupIcon(
-            conversationID: conversationID,
-            conversationIDMapper: mapper
-        )
+        WireConversationGroupIcon(asset: mapper.palette(for: conversationID))
     }
 }
