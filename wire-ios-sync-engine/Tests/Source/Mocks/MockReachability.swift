@@ -20,9 +20,7 @@ import Foundation
 
 final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
     var mayBeReachable = true
-    var isMobileConnection = true
     var oldMayBeReachable = true
-    var oldIsMobileConnection = true
 
     var tearDownCalled = false
     func tearDown() {
