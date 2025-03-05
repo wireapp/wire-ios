@@ -29,7 +29,7 @@ public enum AuthenticationMethod: Sendable, Hashable {
 
     /// Cloud login only
 
-    case loginViaEmail(email: String)
+    case loginViaEmail(email: String, didDetectDomainConflict: Bool)
 
     ///  Cloud login or registration.
 
@@ -48,11 +48,6 @@ public enum AuthenticationMethod: Sendable, Hashable {
 public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
 
     case invalidEmailOrSSOCode
-
-    /// The email domain has been claimed by an on-prem backend but there's already an existing cloud account registered
-    /// - note: To proceed, alert the use then continue to login using the `recovery` method.
-
-    case onPremNotPossible(recovery: AuthenticationMethod)
 
     /// Indicates that the domain registration response was invalid.
 
