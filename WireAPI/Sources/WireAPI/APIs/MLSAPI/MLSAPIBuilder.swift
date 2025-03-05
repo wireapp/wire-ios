@@ -18,9 +18,9 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+/// A builder of `MLSAPI`.
 
-public struct BackendInfoAPIBuilder {
+public struct MLSAPIBuilder {
 
     let apiService: any APIServiceProtocol
 
@@ -32,31 +32,31 @@ public struct BackendInfoAPIBuilder {
         self.apiService = apiService
     }
 
-    /// Make a `BackendInfoAPI`.
+    /// Make a `MLSAPI`.
     ///
     /// - Parameter version: An api version.
-    /// - Returns: A `BackendInfoAPI`.
+    /// - Returns: A `MLSAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any BackendInfoAPI {
+    public func makeAPI(for version: APIVersion) -> any MLSAPI {
         switch version {
         case .v0:
-            BackendInfoAPIV0(apiService: apiService)
+            MLSAPIV0(apiService: apiService)
         case .v1:
-            BackendInfoAPIV1(apiService: apiService)
+            MLSAPIV1(apiService: apiService)
         case .v2:
-            BackendInfoAPIV2(apiService: apiService)
+            MLSAPIV2(apiService: apiService)
         case .v3:
-            BackendInfoAPIV3(apiService: apiService)
+            MLSAPIV3(apiService: apiService)
         case .v4:
-            BackendInfoAPIV4(apiService: apiService)
+            MLSAPIV4(apiService: apiService)
         case .v5:
-            BackendInfoAPIV5(apiService: apiService)
+            MLSAPIV5(apiService: apiService)
         case .v6:
-            BackendInfoAPIV6(apiService: apiService)
+            MLSAPIV6(apiService: apiService)
         case .v7:
-            BackendInfoAPIV7(apiService: apiService)
+            MLSAPIV7(apiService: apiService)
         case .v8:
-            BackendInfoAPIV8(apiService: apiService)
+            MLSAPIV8(apiService: apiService)
         }
     }
 

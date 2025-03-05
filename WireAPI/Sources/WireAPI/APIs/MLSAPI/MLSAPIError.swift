@@ -16,6 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class BackendInfoAPIV3: BackendInfoAPIV2 {
-    override var apiVersion: APIVersion { .v3 }
+import Foundation
+
+/// Errors originating from `MLSAPI`.
+
+public enum MLSAPIError: Error {
+
+    /// Unsupported endpoint for API version
+
+    case unsupportedEndpointForAPIVersion
+
+    /// MLS is not configured on this backend
+
+    case mlsNotEnabled
+
 }
