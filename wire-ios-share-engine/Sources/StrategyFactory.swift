@@ -126,7 +126,13 @@ final class StrategyFactory {
     }
 
     private func createLinkPreviewUpdateRequestStrategy() -> LinkPreviewUpdateRequestStrategy {
-        LinkPreviewUpdateRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
+        let mlsFeature = FeatureRepository(context: syncContext).fetchMLS()
+
+        return LinkPreviewUpdateRequestStrategy(
+            managedObjectContext: syncContext,
+            messageSender: messageSender,
+            isMLSEnabled: mlsFeature.isEnabled
+        )
     }
 
     // MARK: - Asset V3
@@ -155,6 +161,12 @@ final class StrategyFactory {
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
-        AssetClientMessageRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
+        let mlsFeature = FeatureRepository(context: syncContext).fetchMLS()
+
+        return AssetClientMessageRequestStrategy(
+            managedObjectContext: syncContext,
+            messageSender: messageSender,
+            isMLSEnabled: mlsFeature.isEnabled
+        )
     }
 }

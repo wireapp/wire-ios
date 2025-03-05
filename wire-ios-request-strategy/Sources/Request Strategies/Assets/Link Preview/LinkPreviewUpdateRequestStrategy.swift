@@ -25,22 +25,41 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
     let modifiedKeysSync: ModifiedKeyObjectSync<LinkPreviewUpdateRequestStrategy>
     let messageSender: MessageSenderInterface
 
-    static func linkPreviewIsUploadedPredicate(context: NSManagedObjectContext) -> NSPredicate {
-        NSPredicate(
+    static func linkPreviewIsUploadedPredicate(
+        context: NSManagedObjectContext,
+        isMLSEnabled: Bool
+    ) -> NSPredicate {
+        let predicate = NSPredicate(
             format: "%K == %@ AND %K == %d",
             #keyPath(ZMClientMessage.sender),
             ZMUser.selfUser(in: context),
             #keyPath(ZMClientMessage.linkPreviewState),
             ZMLinkPreviewState.uploaded.rawValue
         )
+
+        var predicates = [predicate]
+
+        if !isMLSEnabled {
+            let excludeMLS = NSPredicate(
+                format: "conversation.primitiveMessageProtocol IN %@",
+                [MessageProtocol.proteus.int16Value, MessageProtocol.mixed.int16Value]
+            )
+            predicates.append(excludeMLS)
+        }
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 
     public init(
         managedObjectContext: NSManagedObjectContext,
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        isMLSEnabled: Bool
     ) {
 
-        let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(context: managedObjectContext)
+        let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(
+            context: managedObjectContext,
+            isMLSEnabled: isMLSEnabled
+        )
         self.modifiedKeysSync = ModifiedKeyObjectSync(
             trackedKey: ZMClientMessage.linkPreviewStateKey,
             modifiedPredicate: modifiedPredicate

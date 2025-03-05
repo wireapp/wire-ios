@@ -30,13 +30,17 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
     let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
     let messageSender: MessageSenderInterface
 
-    public init(managedObjectContext: NSManagedObjectContext, messageSender: MessageSenderInterface) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        messageSender: MessageSenderInterface,
+        isMLSEnabled: Bool
+    ) {
 
         self.managedObjectContext = managedObjectContext
         self
             .insertedObjectSync = InsertedObjectSync(
                 insertPredicate: Self
-                    .shouldBeSentPredicate(context: managedObjectContext)
+                    .shouldBeSentPredicate(context: managedObjectContext, isMLSEnabled: isMLSEnabled)
             )
         self.messageSender = messageSender
 
@@ -49,19 +53,30 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         [insertedObjectSync]
     }
 
-    static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
+    static func shouldBeSentPredicate(context: NSManagedObjectContext, isMLSEnabled: Bool) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
         let isAssetV3 = NSPredicate(format: "version >= 3")
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+
+        var predicates = [
             notDelivered,
             notExpired,
             isAssetV3,
             isUploaded,
             fromSelf
-        ])
+        ]
+
+        if !isMLSEnabled {
+            let excludeMLS = NSPredicate(
+                format: "conversation.primitiveMessageProtocol IN %@",
+                [MessageProtocol.proteus.int16Value, MessageProtocol.mixed.int16Value]
+            )
+            predicates.append(excludeMLS)
+        }
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 
 }

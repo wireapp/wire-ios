@@ -46,13 +46,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
             mockAttachmentsDetector = MockAttachmentDetector()
             mockMessageSender = MockMessageSenderInterface()
             LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
-            sut = ClientMessageRequestStrategy(
-                context: syncMOC,
-                localNotificationDispatcher: localNotificationDispatcher,
-                applicationStatus: mockApplicationStatus,
-                messageSender: mockMessageSender,
-                isMLSEnabled: false
-            )
+            makeSut()
         }
 
         apiVersion = .v0
@@ -67,6 +61,16 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         sut = nil
 
         super.tearDown()
+    }
+
+    func makeSut(isMLSEnabled: Bool = false) {
+        sut = ClientMessageRequestStrategy(
+            context: syncMOC,
+            localNotificationDispatcher: localNotificationDispatcher,
+            applicationStatus: mockApplicationStatus,
+            messageSender: mockMessageSender,
+            isMLSEnabled: isMLSEnabled
+        )
     }
 
     /// Makes a conversation secure
@@ -115,6 +119,25 @@ extension ClientMessageRequestStrategyTests {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
 
             XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        }
+    }
+
+    func testThatItDoesSendMLSMessageWhenMLSFeatureEnabled() {
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            self.makeSut(isMLSEnabled: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let text = "Lorem ipsum"
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            message.conversation?.messageProtocol = .mls
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+
+            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
         }
     }
 
