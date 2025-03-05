@@ -46,8 +46,9 @@ final class ConversationLinkPreviewArticleCell<
 
     var configuration: Configuration?
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         configureSubviews()
         configureConstraints()
     }
@@ -101,7 +102,8 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
 }
 
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationLinkPreviewArticleCell
+    typealias View = ConversationLinkPreviewArticleCell<ConversationLinkPreviewArticleCellDescription>
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?

@@ -291,10 +291,11 @@ final class ConversationReplyCell<
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    override init(frame: CGRect) {
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
         self.contentView = ConversationReplyContentView()
         self.container = ReplyRoundCornersView(containedView: contentView)
-        super.init(frame: frame)
+        super.init(frame: .zero)
         configureSubviews()
         configureConstraints()
     }
@@ -328,7 +329,8 @@ final class ConversationReplyCell<
 }
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationReplyCell
+    typealias View = ConversationReplyCell<ConversationReplyCellDescription>
+
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false

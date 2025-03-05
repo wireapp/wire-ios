@@ -49,8 +49,9 @@ final class ConversationLinkAttachmentCell<
 
     // MARK: - Initialization
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         configureSubviews()
         configureConstraints()
     }
@@ -147,7 +148,8 @@ extension ConversationLinkAttachmentCell: LinkViewDelegate {
 }
 
 final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationLinkAttachmentCell
+    typealias View = ConversationLinkAttachmentCell<ConversationLinkAttachmentCellDescription>
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?

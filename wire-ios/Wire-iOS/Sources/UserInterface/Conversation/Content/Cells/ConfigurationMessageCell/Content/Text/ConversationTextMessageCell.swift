@@ -74,8 +74,9 @@ final class ConversationTextMessageCell<
         messageTextView.layoutManager.usedRect(for: messageTextView.textContainer)
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         setup()
         setupAccessibility()
     }
@@ -154,7 +155,8 @@ final class ConversationTextMessageCell<
 // MARK: - Description
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationTextMessageCell
+    typealias View = ConversationTextMessageCell<ConversationTextMessageCellDescription>
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
