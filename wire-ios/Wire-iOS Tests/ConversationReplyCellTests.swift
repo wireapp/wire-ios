@@ -23,6 +23,8 @@ import XCTest
 
 final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
+    typealias SUT = ConversationReplyCell<MockConversationMessageCellDescription>
+
     override func tearDown() {
         super.tearDown()
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
@@ -500,7 +502,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     // MARK: - Helpers
 
-    private func makeCell(for message: ZMConversationMessage?) -> ConversationReplyCell {
+    private func makeCell(for message: ZMConversationMessage?) -> SUT {
         let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
         let cell = ConversationReplyCell()
         cell.configure(with: cellDescription.configuration, animated: false)
@@ -509,7 +511,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
     }
 
     private func verifyAccessibilityIdentifiers(
-        _ cell: ConversationReplyCell,
+        _ cell: SUT,
         _ message: ZMConversationMessage?,
         file: StaticString = #filePath,
         line: UInt = #line

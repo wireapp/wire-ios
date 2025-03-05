@@ -26,7 +26,7 @@ final class ConversationReactionMessageTests: XCTestCase {
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: MessageReactionsCell!
+    private var sut: MessageReactionsCell<MockConversationMessageCellDescription>!
 
     // MARK: - setUp
 
