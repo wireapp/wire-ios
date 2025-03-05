@@ -223,18 +223,6 @@ final class MockConversationMessageCell: UIView, ConversationMessageCell {
 
     var delegate: ConversationMessageCellDelegate?
 
-    // MARK: - init
-
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
     // MARK: - configure
 
     var configureWithAnimated_Invocations: [(object: Configuration, animated: Bool)] = []
@@ -295,11 +283,4 @@ final class MockConversationMessageCell: UIView, ConversationMessageCell {
         mock()
     }
 
-}
-
-extension ConversationMessageCell where CellDescription == MockConversationMessageCellDescription {
-
-    init() {
-        self.init(cellDescription: MockConversationMessageCellDescription())
-    }
 }

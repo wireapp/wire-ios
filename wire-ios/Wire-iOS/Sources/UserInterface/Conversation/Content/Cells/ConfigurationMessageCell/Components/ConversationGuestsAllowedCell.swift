@@ -74,9 +74,8 @@ final class GuestsAllowedCell<CellDescription: ConversationMessageCellDescriptio
 
     // MARK: initialization
 
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupViews()
         createConstraints()
     }

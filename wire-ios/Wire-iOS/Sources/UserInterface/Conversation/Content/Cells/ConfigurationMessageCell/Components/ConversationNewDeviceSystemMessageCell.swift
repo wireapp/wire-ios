@@ -40,8 +40,9 @@ final class ConversationNewDeviceSystemMessageCell<
         var linkTarget: LinkTarget
     }
 
-    required init(cellDescription: CellDescription) {
-        super.init(cellDescription: cellDescription)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
         setupView()
     }
 

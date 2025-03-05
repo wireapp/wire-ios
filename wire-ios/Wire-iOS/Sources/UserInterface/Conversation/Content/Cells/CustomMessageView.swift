@@ -40,9 +40,7 @@ final class CustomMessageView<CellDescription: ConversationMessageCellDescriptio
         fatalError("init(coder:) has not been implemented")
     }
 
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-
+    override init(frame: CGRect) {
         messageLabel.isAccessibilityElement = true
         messageLabel.accessibilityLabel = "Text"
         messageLabel
@@ -53,7 +51,7 @@ final class CustomMessageView<CellDescription: ConversationMessageCellDescriptio
             assertionFailure("ZMUser.selfUser() is nil")
         }
 
-        super.init(frame: .zero)
+        super.init(frame: frame)
 
         messageLabel.font = FontSpec(.small, .light).font
         messageLabel.textColor = SemanticColors.Label.textDefault

@@ -67,8 +67,8 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
         -conversationHorizontalMargins.right * 2
     }
 
-    required init(cellDescription: CellDescription) {
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configureSubviews()
         configureConstraints()
     }

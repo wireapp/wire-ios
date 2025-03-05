@@ -291,11 +291,10 @@ final class ConversationReplyCell<
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
+    override init(frame: CGRect) {
         self.contentView = ConversationReplyContentView()
         self.container = ReplyRoundCornersView(containedView: contentView)
-        super.init(frame: .zero)
+        super.init(frame: frame)
         configureSubviews()
         configureConstraints()
     }

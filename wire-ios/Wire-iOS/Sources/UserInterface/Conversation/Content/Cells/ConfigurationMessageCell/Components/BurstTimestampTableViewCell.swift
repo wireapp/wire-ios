@@ -78,10 +78,9 @@ where CellDescription: ConversationMessageCellDescription {
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
+    override init(frame: CGRect) {
         self.timestampView = ConversationCellBurstTimestampView()
-        super.init(frame: .zero)
+        super.init(frame: frame)
         configureSubviews()
         configureConstraints()
     }

@@ -504,7 +504,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     private func makeCell(for message: ZMConversationMessage?) -> SUT {
         let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
-        let cell = ConversationReplyCell()
+        let cell = SUT()
         cell.configure(with: cellDescription.configuration, animated: false)
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
         return cell

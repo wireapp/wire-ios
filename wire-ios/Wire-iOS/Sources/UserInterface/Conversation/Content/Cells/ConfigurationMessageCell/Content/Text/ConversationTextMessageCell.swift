@@ -74,9 +74,8 @@ final class ConversationTextMessageCell<
         messageTextView.layoutManager.usedRect(for: messageTextView.textContainer)
     }
 
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setup()
         setupAccessibility()
     }

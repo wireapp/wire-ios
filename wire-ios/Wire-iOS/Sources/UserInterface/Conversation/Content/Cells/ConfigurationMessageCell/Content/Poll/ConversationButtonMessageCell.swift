@@ -103,8 +103,7 @@ final class ConversationButtonMessageCell<
         let hasError: Bool
     }
 
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
+    override init(frame: CGRect) {
         super.init(frame: .zero)
 
         configureViews()

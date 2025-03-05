@@ -54,10 +54,8 @@ final class MessageReactionsCell<
 
     // MARK: - Life cycle
 
-
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configureSubviews()
     }
 

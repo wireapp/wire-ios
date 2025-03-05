@@ -59,9 +59,8 @@ final class ConversationImageMessageCell<
         containerView
     }
 
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configureView()
         createConstraints()
     }

@@ -69,8 +69,6 @@ protocol ConversationMessageCell: UIView {
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
 
-    init(cellDescription: CellDescription)
-
     /// Configures the cell with the specified configuration object.
     /// - parameter object: The view model for the cell.
     /// - parameter animated: True if the view should animate the changes

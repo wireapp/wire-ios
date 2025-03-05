@@ -35,8 +35,8 @@ final class ConversationLegalHoldSystemMessageCell<
         var conversation: ZMConversation?
     }
 
-    required init(cellDescription: CellDescription) {
-        super.init(cellDescription: cellDescription)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupView()
     }
 
