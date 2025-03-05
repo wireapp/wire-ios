@@ -39,23 +39,29 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
     }
 
     @MainActor
-    func view(email: String, password: String) -> VerificationCodeView {
+    func view(email: String, password: String, didDetectDomainConflict: Bool) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: viewModel(
                 email: email,
-                password: password
+                password: password,
+                didDetectDomainConflict: didDetectDomainConflict
             )
         )
     }
 
     @MainActor
-    private func viewModel(email: String, password: String) -> VerificationCodeViewModel {
+    private func viewModel(
+        email: String,
+        password: String,
+        didDetectDomainConflict: Bool
+    ) -> VerificationCodeViewModel {
         VerificationCodeViewModel(
             email: email,
             password: password,
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
-            router: dependency.router
+            router: dependency.router,
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

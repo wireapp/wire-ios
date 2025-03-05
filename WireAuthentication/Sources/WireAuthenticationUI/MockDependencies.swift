@@ -86,7 +86,7 @@ extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
     ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
         try! await Task.sleep(for: .seconds(3))
 
-        return .loginViaEmail(email: emailOrSSOCode)
+        return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
     }
 }
 
@@ -133,10 +133,23 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
-        NoHistoryViewModel(userID: UUID(), cookies: [], accessToken: nil, onFlowCompletion: { _ in })
+        NoHistoryViewModel(
+            userID: UUID(),
+            cookies: [],
+            accessToken: nil,
+            didDetectDomainConflict: false,
+            howToChangeEmailURL: URL(string: "https://wire.com")!,
+            howToDeleteAccountURL: URL(string: "https://wire.com")!,
+            onFlowCompletion: { _ in }
+        )
     }
 
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) -> NoHistoryView {
+    func noHistoryView(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        accessToken: AccessToken?,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 
@@ -162,11 +175,16 @@ extension MockDependencies: LoginViaEmailBuilder {
             accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: false,
             onCreateAccount: {}
         )
     }
 
-    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+    func loginViaEmailView(
+        email: String,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool
+    ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
             factory: self
@@ -188,7 +206,8 @@ extension MockDependencies: VerificationCodeBuilder {
             loginViaEmailUseCase: self,
             requestLoginVerificationCodeUseCase: self,
             router: rootViewModel,
-            numberOfDigits: code.count
+            numberOfDigits: code.count,
+            didDetectDomainConflict: false
         )
         viewModel.code = code
 
@@ -197,7 +216,8 @@ extension MockDependencies: VerificationCodeBuilder {
 
     func verificationCodeView(
         email: String,
-        password: String
+        password: String,
+        didDetectDomainConflict: Bool
     ) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: VerificationCodeViewModel(
@@ -205,7 +225,8 @@ extension MockDependencies: VerificationCodeBuilder {
                 password: password,
                 loginViaEmailUseCase: self,
                 requestLoginVerificationCodeUseCase: self,
-                router: rootViewModel
+                router: rootViewModel,
+                didDetectDomainConflict: false
             )
         )
     }

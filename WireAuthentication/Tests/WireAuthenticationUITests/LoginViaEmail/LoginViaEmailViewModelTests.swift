@@ -51,6 +51,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
             accountsURL: URL(string: "https://www.example.com")!,
             passwordValidator: passwordValidator,
             canCreateAccount: true,
+            didDetectDomainConflict: false,
             onCreateAccount: { [self] in onCreateAccountCalled = true }
         )
 
@@ -104,7 +105,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
             RootView.ModalDestination.noHistory(
                 userID: Fixture.someAccessToken.userID,
                 cookies: [Fixture.someCookie],
-                accessToken: Fixture.someAccessToken
+                accessToken: Fixture.someAccessToken,
+                didDetectDomainConflict: false
             )
         )
     }
