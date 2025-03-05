@@ -26,11 +26,11 @@ import XCTest
 final class PullMLSStatusSyncTests: XCTestCase {
 
     private var sut: PullMLSStatusSync!
-    private var api: MockBackendInfoAPI!
+    private var api: MockMLSAPI!
     private var store: MockBackendConfigLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockBackendInfoAPI()
+        api = MockMLSAPI()
         store = MockBackendConfigLocalStoreProtocol()
         sut = PullMLSStatusSync(
             api: api,
@@ -65,7 +65,7 @@ final class PullMLSStatusSyncTests: XCTestCase {
     // like the same error.
     func testPull_EndpointUnavailable() async throws {
         // Mock
-        api.getBackendMLSPublicKeys_MockError = BackendInfoAPIError.unsupportedEndpointForAPIVersion
+        api.getBackendMLSPublicKeys_MockError = MLSAPIError.unsupportedEndpointForAPIVersion
         store.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
@@ -84,7 +84,7 @@ final class PullMLSStatusSyncTests: XCTestCase {
     // like the same error.
     func testPull_MLSNotEnabled() async throws {
         // Mock
-        api.getBackendMLSPublicKeys_MockError = BackendInfoAPIError.mlsNotEnabled
+        api.getBackendMLSPublicKeys_MockError = MLSAPIError.mlsNotEnabled
         store.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
