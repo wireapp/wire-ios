@@ -40,7 +40,7 @@ class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
                 if let image {
                     continuation.resume(returning: WireAccountImageUI.AccountImageSource.image(image))
                 } else {
-                    continuation.resume(returning: nil)
+                    continuation.resume(returning: WireAccountImageUI.AccountImageSource.text(user.initials ?? ""))
                 }
             }
         }

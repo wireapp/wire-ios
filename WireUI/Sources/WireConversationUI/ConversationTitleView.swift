@@ -71,6 +71,10 @@ public class ConversationTitleView: UIView {
         }
         accountImageView.hideProfileNotificationsBadge = true
         accountImageView.isHidden = source.accountImageSource == nil
+        
+        let design = AccountImageViewDesign()
+        accountImageView.imageBorderWidth = design.borderWidth
+        accountImageView.imageBorderColor = design.borderColor
     }
 
     private func configureLayout() {

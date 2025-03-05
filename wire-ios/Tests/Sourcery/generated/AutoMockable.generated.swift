@@ -754,11 +754,11 @@ class MockGetParticipantImageSourceUseCaseProtocol: GetParticipantImageSourceUse
 
     // MARK: - invoke
 
-    var invokeUser_Invocations: [UserType?] = []
-    var invokeUser_MockMethod: ((UserType?) async -> WireAccountImageUI.AccountImageSource)?
-    var invokeUser_MockValue: WireAccountImageUI.AccountImageSource?
+    var invokeUser_Invocations: [UserType] = []
+    var invokeUser_MockMethod: ((UserType) async -> WireAccountImageUI.AccountImageSource?)?
+    var invokeUser_MockValue: WireAccountImageUI.AccountImageSource??
 
-    func invoke(user: UserType?) async -> WireAccountImageUI.AccountImageSource {
+    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
         invokeUser_Invocations.append(user)
 
         if let mock = invokeUser_MockMethod {
