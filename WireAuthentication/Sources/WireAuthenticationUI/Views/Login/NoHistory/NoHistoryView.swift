@@ -22,7 +22,12 @@ import WireAuthenticationAPI
 package protocol NoHistoryViewBuilder {
 
     @MainActor
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) -> NoHistoryView
+    func noHistoryView(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        accessToken: AccessToken?,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryView
 
 }
 
@@ -52,10 +57,41 @@ package struct NoHistoryView: View {
                 .wireButtonStyle(.primary)
                 .bold()
         }
+        .alert(
+            item: $viewModel.alert,
+            title: titleForAlert,
+            message: messageForAlert,
+            actions: { _ in
+                Button(L10n.Authentication.Error.howToChangeEmail, action: {
+                    viewModel.howToChangeEmail()
+                })
+                Button(L10n.Authentication.Error.howToDeleteAccount, action: {
+                    viewModel.howToDeleteAccount()
+                })
+                Button(L10n.Authentication.Error.confirm, action: {})
+            }
+        )
+        .onAppear {
+            viewModel.onAppear()
+        }
         .padding()
         .presentationDetents([.medium])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+    }
+
+    private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
+        switch alert {
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
+        }
+    }
+
+    private func messageForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
+        switch alert {
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
+        }
     }
 
 }
@@ -65,6 +101,9 @@ package struct NoHistoryView: View {
         userID: UUID(),
         cookies: [],
         accessToken: nil,
+        didDetectDomainConflict: false,
+        howToChangeEmailURL: URL(string: "https://wire.com")!,
+        howToDeleteAccountURL: URL(string: "https://wire.com")!,
         onFlowCompletion: { _ in }
     )
     NoHistoryView(viewModel: viewModel)
@@ -77,6 +116,9 @@ package struct NoHistoryView: View {
                 userID: UUID(),
                 cookies: [],
                 accessToken: nil,
+                didDetectDomainConflict: false,
+                howToChangeEmailURL: URL(string: "https://wire.com")!,
+                howToDeleteAccountURL: URL(string: "https://wire.com")!,
                 onFlowCompletion: { _ in }
             )
             NoHistoryView(viewModel: viewModel)

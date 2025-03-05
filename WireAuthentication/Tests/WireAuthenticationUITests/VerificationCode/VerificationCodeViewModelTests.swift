@@ -45,7 +45,8 @@ final class VerificationCodeViewModelTests {
             loginViaEmailUseCase: loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: router,
-            numberOfDigits: 3 // Lets use a 3 digit code for simplicity
+            numberOfDigits: 3, // Lets use a 3 digit code for simplicity
+            didDetectDomainConflict: false
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
@@ -107,7 +108,8 @@ final class VerificationCodeViewModelTests {
                 RootView.ModalDestination.noHistory(
                     userID: Fixture.someAccessToken.userID,
                     cookies: [Fixture.someCookie],
-                    accessToken: Fixture.someAccessToken
+                    accessToken: Fixture.someAccessToken,
+                    didDetectDomainConflict: false
                 )
         )
     }

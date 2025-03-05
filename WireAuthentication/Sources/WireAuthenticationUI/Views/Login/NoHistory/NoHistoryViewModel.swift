@@ -24,24 +24,57 @@ import WireAuthenticationAPI
 @MainActor
 package final class NoHistoryViewModel: ObservableObject {
 
+    package enum Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        case cloudAccountAlreadyRegistered
+    }
+
+    @Published var alert: Alert?
+
     private let userID: UUID
     private let cookies: [HTTPCookie]
+    private let howToChangeEmailURL: URL
+    private let howToDeleteAccountURL: URL
     private let accessToken: AccessToken?
     private let onFlowCompletion: (AuthenticationResult) -> Void
+
+    let didDetectDomainConflict: Bool
 
     package init(
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
+        didDetectDomainConflict: Bool,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
         self.userID = userID
         self.cookies = cookies
         self.accessToken = accessToken
+        self.didDetectDomainConflict = didDetectDomainConflict
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
         self.onFlowCompletion = onFlowCompletion
     }
 
     func confirm() {
         onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: accessToken))
     }
+
+    func onAppear() {
+        if didDetectDomainConflict {
+            alert = .cloudAccountAlreadyRegistered
+        }
+    }
+
+    func howToChangeEmail() {
+        UIApplication.shared.open(howToChangeEmailURL)
+    }
+
+    func howToDeleteAccount() {
+        UIApplication.shared.open(howToDeleteAccountURL)
+    }
+
 }

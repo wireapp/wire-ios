@@ -104,10 +104,16 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
-    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+    @MainActor
+    func loginViaEmailView(
+        email: String,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool
+    ) -> LoginViaEmailView {
         loginViaEmailComponent.view(
             email: email,
-            canCreateAccount: canCreateAccount
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

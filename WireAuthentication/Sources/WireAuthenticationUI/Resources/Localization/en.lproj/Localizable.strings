@@ -67,7 +67,6 @@
 
 "authentication.error.title.no_internet" = "No internet";
 "authentication.error.title.general" = "Error";
-"authentication.error.title.on_prem_not_possible" = "On prem not possible";
 "authentication.error.title.invalid_sso_link" = "Error";
 "authentication.error.title.sso_login_failed" = "Something went wrong";
 "authentication.error.title.invalid_credentials" = "Invalid Information";
@@ -77,7 +76,6 @@
 
 "authentication.error.message.no_internet" = "You are not connected to the internet.";
 "authentication.error.message.general" = "Something went wrong";
-"authentication.error.message.email_is_already_registered" = "Email is already registered on Wire Cloud.";
 "authentication.error.message.invalid_sso_link" = "Invalid company login url.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
 "authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
@@ -86,3 +84,8 @@
 "authentication.error.message.account_suspended" = "This account is no longer authorized to log in.";
 
 "authentication.error.confirm" = "OK";
+
+"authentication.error.title.email_already_in_use" = "Email already in use";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
+"authentication.error.how_to_change_email" = "How to change email address";
+"authentication.error.how_to_delete_account" = "How to delete a private account";

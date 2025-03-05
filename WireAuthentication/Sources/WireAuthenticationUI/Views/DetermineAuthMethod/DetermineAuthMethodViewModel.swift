@@ -30,7 +30,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case noInternet
         case invalidResponse
         case unknownError
-        case onPremLoginNotPossible(recovery: AuthenticationMethod)
         case invalidSSOLink
 
     }
@@ -89,8 +88,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
                 // things a little to make this error impossible to happen.
                 break
-            case let .onPremNotPossible(recovery):
-                alert = .onPremLoginNotPossible(recovery: recovery)
             case .invalidResponse:
                 alert = .invalidResponse
             case let .urlError(urlError):
@@ -108,15 +105,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         isLoading = false
     }
 
-    func didDismissAlert(alert: Alert) {
-        switch alert {
-        case let .onPremLoginNotPossible(method):
-            handleAuthenticationMethod(method)
-        default:
-            break
-        }
-    }
-
     func dismissmodalView() {
         ssoLinkGenerator.flushToken()
         modalDestination = nil
@@ -126,8 +114,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
         switch method {
-        case let .loginViaEmail(email):
-            router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
+        case let .loginViaEmail(email, didDetectDomainConflict):
+            router.navigate(to: DetermineAuthMethodView.Destination.login(
+                email: email,
+                didDetectDomainConflict: didDetectDomainConflict
+            ))
 
         case let .loginOrRegisterViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
