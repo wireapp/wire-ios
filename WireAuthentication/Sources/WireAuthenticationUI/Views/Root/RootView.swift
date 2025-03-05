@@ -21,7 +21,8 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory = DetermineAuthMethodBuilder & NoHistoryViewBuilder & LoginViaEmailOnPremBuilder & LoginViaSSOBuilder
+    package typealias Factory = DetermineAuthMethodBuilder & LoginViaEmailOnPremBuilder & LoginViaSSOBuilder &
+        NoHistoryViewBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory

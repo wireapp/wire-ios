@@ -53,10 +53,22 @@ public class SwitchBackendConfirmationViewModel {
         self.items = [
             ItemUIModel(title: Strings.backendName, value: environment.title, isURL: false),
             ItemUIModel(title: Strings.backendUrl, value: environment.endpoints.backendURL.absoluteString, isURL: true),
-            ItemUIModel(title: Strings.backendWsurl, value: environment.endpoints.backendWSURL.absoluteString, isURL: true),
-            ItemUIModel(title: Strings.blacklistUrl, value: environment.endpoints.blackListURL.absoluteString, isURL: true),
+            ItemUIModel(
+                title: Strings.backendWsurl,
+                value: environment.endpoints.backendWSURL.absoluteString,
+                isURL: true
+            ),
+            ItemUIModel(
+                title: Strings.blacklistUrl,
+                value: environment.endpoints.blackListURL.absoluteString,
+                isURL: true
+            ),
             ItemUIModel(title: Strings.teamsUrl, value: environment.endpoints.teamsURL.absoluteString, isURL: true),
-            ItemUIModel(title: Strings.accountsUrl, value: environment.endpoints.accountsURL.absoluteString, isURL: true),
+            ItemUIModel(
+                title: Strings.accountsUrl,
+                value: environment.endpoints.accountsURL.absoluteString,
+                isURL: true
+            ),
             ItemUIModel(title: Strings.websiteUrl, value: environment.endpoints.websiteURL.absoluteString, isURL: true)
         ]
     }
@@ -79,13 +91,15 @@ public class SwitchBackendConfirmationViewModel {
                 }
 
             } else {
-                router.presentSheet(RootView.ModalDestination.onPremiseLogin(
-                    email: email,
-                    environment: environment)
+                router.presentSheet(
+                    RootView.ModalDestination.onPremiseLogin(
+                        email: email,
+                        environment: environment
+                    )
                 )
             }
         } catch {
-            //alert = .unknownError
+            // alert = .unknownError
         }
         isLoading = false
     }

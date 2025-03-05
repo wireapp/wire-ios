@@ -41,8 +41,11 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testColorSchemeVariantsWithoutProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailOnPremView(email: "foo@bar.com", backendConfig: MockDependencies()._backendConfig)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = MockDependencies().loginViaEmailOnPremView(
+            email: "foo@bar.com",
+            backendConfig: MockDependencies()._backendConfig
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -56,8 +59,11 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testDynamicTypeVariantsWithoutProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailOnPremView(email: "foo@bar.com", backendConfig: MockDependencies()._backendConfig)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = MockDependencies().loginViaEmailOnPremView(
+            email: "foo@bar.com",
+            backendConfig: MockDependencies()._backendConfig
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -81,13 +87,17 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 blackListURL: URL(string: "https://example.com")!,
                 teamsURL: URL(string: "https://example.com")!,
                 accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!),
+                websiteURL: URL(string: "https://example.com")!
+            ),
             proxySettings: nil,
             pinnedKeys: nil
         )
 
-        let view = dependencies.loginViaEmailOnPremView(email: "foo@bar.com", backendConfig: MockDependencies()._backendConfig)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = dependencies.loginViaEmailOnPremView(
+            email: "foo@bar.com",
+            backendConfig: MockDependencies()._backendConfig
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -110,12 +120,16 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 blackListURL: URL(string: "https://example.com")!,
                 teamsURL: URL(string: "https://example.com")!,
                 accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!),
+                websiteURL: URL(string: "https://example.com")!
+            ),
             proxySettings: nil,
             pinnedKeys: nil
         )
-        let view = dependencies.loginViaEmailOnPremView(email: "foo@bar.com", backendConfig: MockDependencies()._backendConfig)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = dependencies.loginViaEmailOnPremView(
+            email: "foo@bar.com",
+            backendConfig: MockDependencies()._backendConfig
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

@@ -39,7 +39,8 @@ final class MockDependencies {
             blackListURL: URL(string: "https://example.com")!,
             teamsURL: URL(string: "https://example.com")!,
             accountsURL: URL(string: "https://example.com")!,
-            websiteURL: URL(string: "https://example.com")!),
+            websiteURL: URL(string: "https://example.com")!
+        ),
         proxySettings: nil,
         pinnedKeys: nil
     )
@@ -300,7 +301,10 @@ extension MockDependencies: VerificationCodeBuilder {
 
 extension MockDependencies: LoginViaEmailOnPremBuilder {
 
-    private func loginViaEmailOnPremViewModel(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremViewModel {
+    private func loginViaEmailOnPremViewModel(
+        email: String,
+        backendConfig: BackendConfig
+    ) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,

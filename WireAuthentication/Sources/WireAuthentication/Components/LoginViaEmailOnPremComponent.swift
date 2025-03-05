@@ -53,9 +53,11 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
 
     @MainActor
     func view(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremView {
-        LoginViaEmailOnPremView(viewModel: viewModel(
-            email: email,
-            backendConfig: backendConfig)
+        LoginViaEmailOnPremView(
+            viewModel: viewModel(
+                email: email,
+                backendConfig: backendConfig
+            )
         )
     }
 
