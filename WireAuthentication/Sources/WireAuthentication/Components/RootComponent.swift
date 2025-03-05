@@ -140,9 +140,9 @@ extension RootComponent: RootView.Factory {
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
-        backendEnvironment: BackendEnvironmentInfo
+        backendConfig: BackendConfig
     ) -> LoginViaEmailOnPremView {
-        loginViaEmailOnPremComponent.view(email: email, backendEnvironment: backendEnvironment)
+        loginViaEmailOnPremComponent.view(email: email, backendConfig: backendConfig)
     }
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {

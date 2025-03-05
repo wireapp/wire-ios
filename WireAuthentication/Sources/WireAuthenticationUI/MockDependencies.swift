@@ -27,13 +27,13 @@ final class MockDependencies {
         RootViewModel()
     }
 
-    private var backendEnvironment: BackendEnvironmentInfo {
-        _backendEnvironment
+    private var backendConfig: BackendConfig {
+        _backendConfig
     }
 
-    var _backendEnvironment = BackendEnvironmentInfo(
+    var _backendConfig = BackendConfig(
         title: "backen name",
-        endpoints: BackendURLs(
+        endpoints: Endpoints(
             backendURL: URL(string: "https://example.com")!,
             backendWSURL: URL(string: "https://example.com")!,
             blackListURL: URL(string: "https://example.com")!,
@@ -61,7 +61,7 @@ final class MockDependencies {
                 router: rootViewModel,
                 validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
-                fetchBackendEnvironment: self,
+                fetchBackendConfig: self,
                 ssoLinkGenerator: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
@@ -97,12 +97,12 @@ extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
     }
 }
 
-extension MockDependencies: FetchBackendEnvironmentUseCaseProtocol {
+extension MockDependencies: FetchBackendConfigUseCaseProtocol {
 
-    func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentInfo {
-        BackendEnvironmentInfo(
+    func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig {
+        BackendConfig(
             title: "backend name",
-            endpoints: BackendURLs(
+            endpoints: Endpoints(
                 backendURL: URL(string: "example")!,
                 backendWSURL: URL(string: "example")!,
                 blackListURL: URL(string: "example")!,
@@ -143,7 +143,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             validateEmailOrSSOCode: self,
             determineAuthMethod: self,
-            fetchBackendEnvironment: self,
+            fetchBackendConfig: self,
             ssoLinkGenerator: self
         )
     }
@@ -173,9 +173,9 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
             email: "email",
             fetchDefaultSSOSettings: self,
             ssoLinkGenerator: self,
-            environment: BackendEnvironmentInfo(
+            environment: BackendConfig(
                 title: "backendName",
-                endpoints: BackendURLs(
+                endpoints: Endpoints(
                     backendURL: URL(string: "backendURL")!,
                     backendWSURL: URL(string: "backendWSURL")!,
                     blackListURL: URL(string: "blacklistURL")!,
@@ -189,7 +189,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
         )
     }
 
-    func switchBackendView(email: String, environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView {
+    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(viewModel: switchBackendConfirmationViewModel)
     }
 
@@ -300,20 +300,20 @@ extension MockDependencies: VerificationCodeBuilder {
 
 extension MockDependencies: LoginViaEmailOnPremBuilder {
 
-    private func loginViaEmailOnPremViewModel(email: String, backendEnvironment: BackendEnvironmentInfo) -> LoginViaEmailOnPremViewModel {
+    private func loginViaEmailOnPremViewModel(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
             email: email,
-            backendEnvironment: backendEnvironment,
+            backendConfig: backendConfig,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: false
         )
     }
 
-    func loginViaEmailOnPremView(email: String, backendEnvironment: BackendEnvironmentInfo) -> LoginViaEmailOnPremView {
+    func loginViaEmailOnPremView(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremView {
         LoginViaEmailOnPremView(
-            viewModel: loginViaEmailOnPremViewModel(email: email, backendEnvironment: backendEnvironment)
+            viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
         )
     }
 }

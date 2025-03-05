@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct BackendEnvironmentInfo: Decodable, Sendable, Hashable {
+public struct BackendConfig: Decodable, Sendable, Hashable {
 
     /// The  name of the backend.
 
@@ -26,7 +26,7 @@ public struct BackendEnvironmentInfo: Decodable, Sendable, Hashable {
 
     /// Backend URLs
 
-    public let endpoints: BackendURLs
+    public let endpoints: Endpoints
 
     /// The proxy settings for the backend if any.
 
@@ -38,7 +38,7 @@ public struct BackendEnvironmentInfo: Decodable, Sendable, Hashable {
 
     public init(
         title: String,
-        endpoints: BackendURLs,
+        endpoints: Endpoints,
         proxySettings: ProxySettings?,
         pinnedKeys: [TrustData]?
     ) {
@@ -50,7 +50,7 @@ public struct BackendEnvironmentInfo: Decodable, Sendable, Hashable {
 
 }
 
-public struct BackendURLs: Decodable, Sendable, Hashable {
+public struct Endpoints: Decodable, Sendable, Hashable {
 
     public let backendURL: URL
     public let backendWSURL: URL

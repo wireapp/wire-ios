@@ -52,23 +52,23 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
     // MARK: - View
 
     @MainActor
-    func view(email: String, backendEnvironment: BackendEnvironmentInfo) -> LoginViaEmailOnPremView {
+    func view(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremView {
         LoginViaEmailOnPremView(viewModel: viewModel(
             email: email,
-            backendEnvironment: backendEnvironment)
+            backendConfig: backendConfig)
         )
     }
 
     @MainActor
     private func viewModel(
         email: String,
-        backendEnvironment: BackendEnvironmentInfo
+        backendConfig: BackendConfig
     ) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: dependency.router,
             loginViaEmailUseCase: loginViaEmailUseCase,
             email: email,
-            backendEnvironment: backendEnvironment,
+            backendConfig: backendConfig,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: false
         )

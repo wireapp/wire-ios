@@ -58,7 +58,7 @@ package struct RootView: View {
                         didDetectDomainConflict: didDetectDomainConflict
                     )
                 case let .onPremiseLogin(email, environment):
-                    factory.loginViaEmailOnPremView(email: email, backendEnvironment: environment)
+                    factory.loginViaEmailOnPremView(email: email, backendConfig: environment)
                 case let .ssoLogin(url: ssoURL):
                     factory.loginViaSSOView(ssoURL: ssoURL)
                 }
@@ -89,7 +89,7 @@ package struct RootView: View {
             accessToken: AccessToken?,
             didDetectDomainConflict: Bool
         )
-        case onPremiseLogin(email: String, environment: BackendEnvironmentInfo)
+        case onPremiseLogin(email: String, environment: BackendConfig)
         case ssoLogin(url: URL)
     }
 

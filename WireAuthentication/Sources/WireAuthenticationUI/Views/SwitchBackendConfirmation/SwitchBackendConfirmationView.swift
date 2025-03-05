@@ -23,7 +23,7 @@ import WireDesign
 package protocol SwitchBackendConfirmationBuilder {
 
     @MainActor
-    func switchBackendView(email: String, environment: BackendEnvironmentInfo) -> SwitchBackendConfirmationView
+    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView
 
 }
 

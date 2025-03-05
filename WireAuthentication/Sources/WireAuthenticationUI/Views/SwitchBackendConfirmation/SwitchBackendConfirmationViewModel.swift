@@ -30,7 +30,7 @@ public class SwitchBackendConfirmationViewModel {
 
     private let router: any Router
     private let email: String
-    private let environment: BackendEnvironmentInfo
+    private let environment: BackendConfig
     private let fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol
     private let ssoLinkGenerator: SSOLinkGeneratorProtocol
 
@@ -43,7 +43,7 @@ public class SwitchBackendConfirmationViewModel {
         email: String,
         fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol,
         ssoLinkGenerator: SSOLinkGeneratorProtocol,
-        environment: BackendEnvironmentInfo
+        environment: BackendConfig
     ) {
         self.router = router
         self.email = email

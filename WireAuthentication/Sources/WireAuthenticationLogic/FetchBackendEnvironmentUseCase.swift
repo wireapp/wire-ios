@@ -21,37 +21,37 @@ import WireAPI
 import WireAuthenticationAPI
 import WireLogging
 
-public struct FetchBackendEnvironmentUseCase: FetchBackendEnvironmentUseCaseProtocol {
+public struct FetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 
     public init() {}
 
-    public func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentInfo {
+    public func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig {
         do {
             return try await fetchEnvironment(url: configURL)
-        } catch let error as FetchBackendEnvironmentFailure {
+        } catch let error as FetchBackendConfigFailure {
             throw error
         } catch {
-            throw FetchBackendEnvironmentFailure.unknown
+            throw FetchBackendConfigFailure.unknown
         }
     }
 
-    private func fetchEnvironment(url: URL) async throws -> BackendEnvironmentInfo {
+    private func fetchEnvironment(url: URL) async throws -> BackendConfig {
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
 
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-            let environmentResponse = try decoder.decode(BackendEnvironmentInfo.self, from: data)
+            let environmentResponse = try decoder.decode(BackendConfig.self, from: data)
             WireLogger.backend.info("Fetched custom configuration from \(url)")
 
             return environmentResponse
         } catch let decodingError as DecodingError {
             WireLogger.backend.info("Error decoding response from \(url): \(decodingError)")
-            throw FetchBackendEnvironmentFailure.invalidResponse
+            throw FetchBackendConfigFailure.invalidResponse
         } catch {
             WireLogger.backend.error("Error fetching configuration from \(url): \(error)")
-            throw FetchBackendEnvironmentFailure.requestFailed
+            throw FetchBackendConfigFailure.requestFailed
         }
     }
 

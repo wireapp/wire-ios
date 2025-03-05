@@ -18,14 +18,14 @@
 
 import Foundation
 
-public protocol FetchBackendEnvironmentUseCaseProtocol: Sendable {
+public protocol FetchBackendConfigUseCaseProtocol: Sendable {
 
     @MainActor
-    func invoke(at configURL: URL) async throws(FetchBackendEnvironmentFailure) -> BackendEnvironmentInfo
+    func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig
 
 }
 
-public enum FetchBackendEnvironmentFailure: Error, Equatable {
+public enum FetchBackendConfigFailure: Error, Equatable {
 
     case requestFailed
     case invalidResponse

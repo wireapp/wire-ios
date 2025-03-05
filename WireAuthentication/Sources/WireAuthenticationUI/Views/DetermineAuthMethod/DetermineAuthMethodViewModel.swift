@@ -38,13 +38,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL)
-        case switchBackend(email: String, environment: BackendEnvironmentInfo)
+        case switchBackend(email: String, environment: BackendConfig)
     }
 
     private let router: any Router
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
-    private let fetchBackendEnvironment: any FetchBackendEnvironmentUseCaseProtocol
+    private let fetchBackendConfig: any FetchBackendConfigUseCaseProtocol
     private let ssoLinkGenerator: SSOLinkGeneratorProtocol
 
     @Published var emailOrSSOCode: String = ""
@@ -60,7 +60,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         router: any Router,
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
-        fetchBackendEnvironment: any FetchBackendEnvironmentUseCaseProtocol,
+        fetchBackendConfig: any FetchBackendConfigUseCaseProtocol,
         ssoLinkGenerator: any SSOLinkGeneratorProtocol,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
@@ -69,7 +69,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.router = router
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.determineAuthMethod = determineAuthMethod
-        self.fetchBackendEnvironment = fetchBackendEnvironment
+        self.fetchBackendConfig = fetchBackendConfig
         self.ssoLinkGenerator = ssoLinkGenerator
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
@@ -140,14 +140,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case let .onPremLogin(email, backendConfig):
             Task.detached {
                 do {
-                    let environmentInfo = try await self.fetchBackendEnvironment.invoke(at: backendConfig)
+                    let environmentInfo = try await self.fetchBackendConfig.invoke(at: backendConfig)
                     await MainActor.run {
                         self.modalDestination = .switchBackend(email: email, environment: environmentInfo)
                     }
                 } catch {
-                    await MainActor.run {
-                        self.alert = .onPremLoginNotPossible(recovery: .loginViaEmail(email: email))
-                    }
+//                    await MainActor.run {
+//                        self.alert = .onPremLoginNotPossible(recovery: .loginViaEmail(email: email))
+//                    }
                 }
             }
         }
