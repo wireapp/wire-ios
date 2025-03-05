@@ -25,7 +25,8 @@ package protocol LoginViaEmailBuilder {
     @MainActor
     func loginViaEmailView(
         email: String,
-        canCreateAccount: Bool
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool
     ) -> LoginViaEmailView
 
 }
@@ -78,7 +79,11 @@ package struct LoginViaEmailView: View {
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
             case let .verifyLogin(email, password):
-                factory.verificationCodeView(email: email, password: password)
+                factory.verificationCodeView(
+                    email: email,
+                    password: password,
+                    didDetectDomainConflict: viewModel.didDetectDomainConflict
+                )
             }
         }
         .presentationDetents([.medium, .large])
@@ -182,6 +187,10 @@ package struct LoginViaEmailView: View {
 #Preview() {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: false)
+            MockDependencies().loginViaEmailView(
+                email: "foo@bar.com",
+                canCreateAccount: false,
+                didDetectDomainConflict: false
+            )
         }
 }
