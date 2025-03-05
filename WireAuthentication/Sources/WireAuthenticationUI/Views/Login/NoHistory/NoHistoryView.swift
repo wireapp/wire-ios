@@ -26,7 +26,7 @@ package protocol NoHistoryViewBuilder {
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
-        emailConflictWithCloudAccount: Bool
+        didDetectDomainConflict: Bool
     ) -> NoHistoryView
 
 }
@@ -101,7 +101,7 @@ package struct NoHistoryView: View {
         userID: UUID(),
         cookies: [],
         accessToken: nil,
-        emailConflictWithCloudAccount: false,
+        didDetectDomainConflict: false,
         howToChangeEmailURL: URL(string: "https://wire.com")!,
         howToDeleteAccountURL: URL(string: "https://wire.com")!,
         onFlowCompletion: { _ in }
@@ -116,7 +116,7 @@ package struct NoHistoryView: View {
                 userID: UUID(),
                 cookies: [],
                 accessToken: nil,
-                emailConflictWithCloudAccount: false,
+                didDetectDomainConflict: false,
                 howToChangeEmailURL: URL(string: "https://wire.com")!,
                 howToDeleteAccountURL: URL(string: "https://wire.com")!,
                 onFlowCompletion: { _ in }

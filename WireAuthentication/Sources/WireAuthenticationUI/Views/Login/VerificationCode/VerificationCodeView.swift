@@ -25,7 +25,7 @@ package protocol VerificationCodeBuilder {
     func verificationCodeView(
         email: String,
         password: String,
-        emailConflictWithCloudAccount: Bool
+        didDetectDomainConflict: Bool
     ) -> VerificationCodeView
 
 }

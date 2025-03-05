@@ -29,7 +29,7 @@ public enum AuthenticationMethod: Sendable, Hashable {
 
     /// Cloud login only
 
-    case loginViaEmail(email: String, emailConflictWithCloudAccount: Bool)
+    case loginViaEmail(email: String, didDetectDomainConflict: Bool)
 
     ///  Cloud login or registration.
 

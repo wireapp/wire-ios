@@ -51,7 +51,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
             accountsURL: URL(string: "https://www.example.com")!,
             passwordValidator: passwordValidator,
             canCreateAccount: true,
-            emailConflictWithCloudAccount: false,
+            didDetectDomainConflict: false,
             onCreateAccount: { [self] in onCreateAccountCalled = true }
         )
 
@@ -106,7 +106,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
                 userID: Fixture.someAccessToken.userID,
                 cookies: [Fixture.someCookie],
                 accessToken: Fixture.someAccessToken,
-                emailConflictWithCloudAccount: false
+                didDetectDomainConflict: false
             )
         )
     }

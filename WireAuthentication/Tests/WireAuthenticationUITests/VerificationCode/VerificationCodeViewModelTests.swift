@@ -46,7 +46,7 @@ final class VerificationCodeViewModelTests {
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: router,
             numberOfDigits: 3, // Lets use a 3 digit code for simplicity
-            emailConflictWithCloudAccount: false
+            didDetectDomainConflict: false
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
@@ -109,7 +109,7 @@ final class VerificationCodeViewModelTests {
                     userID: Fixture.someAccessToken.userID,
                     cookies: [Fixture.someCookie],
                     accessToken: Fixture.someAccessToken,
-                    emailConflictWithCloudAccount: false
+                    didDetectDomainConflict: false
                 )
         )
     }

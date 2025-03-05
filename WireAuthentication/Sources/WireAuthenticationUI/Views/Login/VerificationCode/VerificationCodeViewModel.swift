@@ -26,7 +26,7 @@ import WireLogging
 public final class VerificationCodeViewModel: ObservableObject {
 
     private static let numberOfDigits = 6
-    private let emailConflictWithCloudAccount: Bool
+    private let didDetectDomainConflict: Bool
 
     @Published var code: [String]
     @Published private(set) var isLoading = false
@@ -48,7 +48,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol,
         router: any Router,
         numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits,
-        emailConflictWithCloudAccount: Bool
+        didDetectDomainConflict: Bool
     ) {
         precondition(numberOfDigits > 0)
 
@@ -59,7 +59,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.router = router
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
-        self.emailConflictWithCloudAccount = emailConflictWithCloudAccount
+        self.didDetectDomainConflict = didDetectDomainConflict
     }
 
     var isConfirmButtonDisabled: Bool {
@@ -104,7 +104,7 @@ public final class VerificationCodeViewModel: ObservableObject {
                     userID: token.userID,
                     cookies: cookies,
                     accessToken: token,
-                    emailConflictWithCloudAccount: emailConflictWithCloudAccount
+                    didDetectDomainConflict: didDetectDomainConflict
                 )
             )
             WireLogger.authentication.info("2FA login via email succeeded")

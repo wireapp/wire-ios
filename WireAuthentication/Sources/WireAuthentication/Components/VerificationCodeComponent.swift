@@ -39,12 +39,12 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
     }
 
     @MainActor
-    func view(email: String, password: String, emailConflictWithCloudAccount: Bool) -> VerificationCodeView {
+    func view(email: String, password: String, didDetectDomainConflict: Bool) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: viewModel(
                 email: email,
                 password: password,
-                emailConflictWithCloudAccount: emailConflictWithCloudAccount
+                didDetectDomainConflict: didDetectDomainConflict
             )
         )
     }
@@ -53,7 +53,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
     private func viewModel(
         email: String,
         password: String,
-        emailConflictWithCloudAccount: Bool
+        didDetectDomainConflict: Bool
     ) -> VerificationCodeViewModel {
         VerificationCodeViewModel(
             email: email,
@@ -61,7 +61,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: dependency.router,
-            emailConflictWithCloudAccount: emailConflictWithCloudAccount
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

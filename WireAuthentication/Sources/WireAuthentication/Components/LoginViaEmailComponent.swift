@@ -46,13 +46,13 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     func view(
         email: String,
         canCreateAccount: Bool,
-        emailConflictWithCloudAccount: Bool
+        didDetectDomainConflict: Bool
     ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: viewModel(
                 email: email,
                 canCreateAccount: canCreateAccount,
-                emailConflictWithCloudAccount: emailConflictWithCloudAccount
+                didDetectDomainConflict: didDetectDomainConflict
             ),
             factory: self
         )
@@ -62,7 +62,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     private func viewModel(
         email: String,
         canCreateAccount: Bool,
-        emailConflictWithCloudAccount: Bool
+        didDetectDomainConflict: Bool
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
@@ -71,7 +71,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
-            emailConflictWithCloudAccount: emailConflictWithCloudAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: { [weak dependency] in
                 dependency?.bridge.registerAccount()
             }
@@ -91,12 +91,12 @@ extension LoginViaEmailComponent: LoginViaEmailView.Factory {
     func verificationCodeView(
         email: String,
         password: String,
-        emailConflictWithCloudAccount: Bool
+        didDetectDomainConflict: Bool
     ) -> VerificationCodeView {
         verificationCodeComponent.view(
             email: email,
             password: password,
-            emailConflictWithCloudAccount: emailConflictWithCloudAccount
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

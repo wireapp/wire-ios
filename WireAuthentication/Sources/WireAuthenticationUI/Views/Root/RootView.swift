@@ -50,12 +50,12 @@ package struct RootView: View {
                                 }
                             )
                     }
-                case let .noHistory(userID, cookies, accessToken, emailConflictWithCloudAccount):
+                case let .noHistory(userID, cookies, accessToken, didDetectDomainConflict):
                     factory.noHistoryView(
                         userID: userID,
                         cookies: cookies,
                         accessToken: accessToken,
-                        emailConflictWithCloudAccount: emailConflictWithCloudAccount
+                        didDetectDomainConflict: didDetectDomainConflict
                     )
                 }
 
@@ -84,7 +84,7 @@ package struct RootView: View {
             userID: UUID,
             cookies: [HTTPCookie],
             accessToken: AccessToken?,
-            emailConflictWithCloudAccount: Bool
+            didDetectDomainConflict: Bool
         )
     }
 

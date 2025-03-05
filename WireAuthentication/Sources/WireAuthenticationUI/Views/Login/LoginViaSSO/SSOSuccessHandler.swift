@@ -33,7 +33,7 @@ package struct SSOSuccessHandler {
                 userID: userID,
                 cookies: cookies,
                 accessToken: nil,
-                emailConflictWithCloudAccount: false
+                didDetectDomainConflict: false
             )
         )
     }

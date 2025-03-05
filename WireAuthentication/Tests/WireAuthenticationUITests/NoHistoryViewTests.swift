@@ -45,7 +45,7 @@ class NoHistoryViewTests: XCTestCase {
             userID: UUID(),
             cookies: [],
             accessToken: nil,
-            emailConflictWithCloudAccount: false,
+            didDetectDomainConflict: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,
             onFlowCompletion: { _ in }
@@ -69,7 +69,7 @@ class NoHistoryViewTests: XCTestCase {
             userID: UUID(),
             cookies: [],
             accessToken: nil,
-            emailConflictWithCloudAccount: false,
+            didDetectDomainConflict: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,
             onFlowCompletion: { _ in }

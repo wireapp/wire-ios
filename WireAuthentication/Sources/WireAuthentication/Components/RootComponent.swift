@@ -118,13 +118,13 @@ extension RootComponent: RootView.Factory {
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: WireAuthenticationAPI.AccessToken?,
-        emailConflictWithCloudAccount: Bool
+        didDetectDomainConflict: Bool
     ) -> NoHistoryView {
         noHistoryComponent.view(
             userID: userID,
             cookies: cookies,
             accessToken: accessToken,
-            emailConflictWithCloudAccount: emailConflictWithCloudAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
             onFlowCompletion: bridge.onFlowCompletion
         )
     }

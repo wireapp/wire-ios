@@ -37,7 +37,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
-        emailConflictWithCloudAccount: Bool,
+        didDetectDomainConflict: Bool,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
@@ -46,7 +46,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
             userID: userID,
             cookies: cookies,
             accessToken: accessToken,
-            emailConflictWithCloudAccount: emailConflictWithCloudAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
             onFlowCompletion: onFlowCompletion
@@ -58,7 +58,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
-        emailConflictWithCloudAccount: Bool,
+        didDetectDomainConflict: Bool,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) -> NoHistoryView {
         NoHistoryView(
@@ -66,7 +66,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
                 userID: userID,
                 cookies: cookies,
                 accessToken: accessToken,
-                emailConflictWithCloudAccount: emailConflictWithCloudAccount,
+                didDetectDomainConflict: didDetectDomainConflict,
                 howToChangeEmailURL: dependency.howToChangeEmailURL,
                 howToDeleteAccountURL: dependency.howToDeleteAccountURL,
                 onFlowCompletion: onFlowCompletion
