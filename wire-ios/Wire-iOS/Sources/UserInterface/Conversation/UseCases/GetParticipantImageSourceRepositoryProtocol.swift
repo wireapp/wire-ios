@@ -16,25 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAccountImageUI
 import WireDataModel
-import WireSyncEngine
 
-class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol {
-    
-    private let repository: GetParticipantImageSourceRepositoryProtocol
-    
-    init(repository: GetParticipantImageSourceRepositoryProtocol) {
-        self.repository = repository
-    }
-    
-    @MainActor
-    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
-        let image = await repository.invoke(user: user)
-        if let image {
-            return WireAccountImageUI.AccountImageSource.image(image)
-        } else {
-            return WireAccountImageUI.AccountImageSource.text(user.initials ?? "")
-        }
-    }
+// sourcery: AutoMockable
+protocol GetParticipantImageSourceRepositoryProtocol {
+    func invoke(user: UserType) async -> UIImage?
 }

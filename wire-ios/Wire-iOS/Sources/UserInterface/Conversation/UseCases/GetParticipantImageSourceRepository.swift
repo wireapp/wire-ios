@@ -16,25 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAccountImageUI
 import WireDataModel
 import WireSyncEngine
 
-class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol {
+class GetParticipantImageSourceRepository: GetParticipantImageSourceRepositoryProtocol {
     
-    private let repository: GetParticipantImageSourceRepositoryProtocol
+    private let userSession: UserSession
     
-    init(repository: GetParticipantImageSourceRepositoryProtocol) {
-        self.repository = repository
+    init(userSession: UserSession) {
+        self.userSession = userSession
     }
     
     @MainActor
-    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
-        let image = await repository.invoke(user: user)
-        if let image {
-            return WireAccountImageUI.AccountImageSource.image(image)
-        } else {
-            return WireAccountImageUI.AccountImageSource.text(user.initials ?? "")
+    func invoke(user: any UserType) async -> UIImage? {
+        await withCheckedContinuation { continuation in
+            user.fetchProfileImage(
+                session: userSession,
+                imageCache: UIImage.defaultUserImageCache,
+                sizeLimit: 32,
+                isDesaturated: false) { image, _ in
+                    continuation.resume(returning: image)
+                }
         }
     }
+    
 }

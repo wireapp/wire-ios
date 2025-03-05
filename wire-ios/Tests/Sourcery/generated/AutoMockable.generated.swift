@@ -746,6 +746,32 @@ public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
 
 }
 
+class MockGetParticipantImageSourceRepositoryProtocol: GetParticipantImageSourceRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeUser_Invocations: [UserType] = []
+    var invokeUser_MockMethod: ((UserType) async -> UIImage?)?
+    var invokeUser_MockValue: UIImage??
+
+    func invoke(user: UserType) async -> UIImage? {
+        invokeUser_Invocations.append(user)
+
+        if let mock = invokeUser_MockMethod {
+            return await mock(user)
+        } else if let mock = invokeUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUser`")
+        }
+    }
+
+}
+
 class MockGetParticipantImageSourceUseCaseProtocol: GetParticipantImageSourceUseCaseProtocol {
 
     // MARK: - Life cycle
