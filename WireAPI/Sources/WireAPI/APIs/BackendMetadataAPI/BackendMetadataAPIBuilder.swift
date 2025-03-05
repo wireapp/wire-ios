@@ -16,6 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class BackendInfoAPIV6: BackendInfoAPIV5 {
-    override var apiVersion: APIVersion { .v6 }
+import Foundation
+
+/// A builder of `BackendMetadataAPI`.
+
+public struct BackendMetadataAPIBuilder {
+
+    let networkService: NetworkService
+
+    /// Create a new builder.
+    ///
+    /// - Parameter networkService: A service for executing requests.`
+
+    public init(networkService: NetworkService) {
+        self.networkService = networkService
+    }
+
+    /// Make a `BackendMetadataAPI`.
+    ///
+    /// - Returns: A `BackendMetadataAPI`.
+
+    public func makeAPI() -> any BackendMetadataAPI {
+        BackendMetadataAPIUnversioned(networkService: networkService)
+    }
+
 }
