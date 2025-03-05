@@ -62,7 +62,7 @@ final class GuestsAllowedCell<CellDescription: ConversationMessageCellDescriptio
 
     typealias Configuration = Void
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?

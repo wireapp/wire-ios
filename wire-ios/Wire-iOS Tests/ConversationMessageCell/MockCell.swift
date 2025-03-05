@@ -28,7 +28,7 @@ final class MockCell: UIView, ConversationMessageCell {
         let backgroundColor: UIColor
     }
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 

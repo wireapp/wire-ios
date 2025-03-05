@@ -36,7 +36,7 @@ final class ConversationVideoMessageCell<
     private let obfuscationView = ObfuscationView(icon: .videoMessage)
     private let restrictionView = VideoMessageRestrictionView()
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

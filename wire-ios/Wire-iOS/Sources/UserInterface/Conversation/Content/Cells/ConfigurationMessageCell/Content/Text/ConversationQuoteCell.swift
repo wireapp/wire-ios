@@ -287,7 +287,7 @@ final class ConversationReplyCell<
     let contentView: ConversationReplyContentView
     var container: ReplyRoundCornersView
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

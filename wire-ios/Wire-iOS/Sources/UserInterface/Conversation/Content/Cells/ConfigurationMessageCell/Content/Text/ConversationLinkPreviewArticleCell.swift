@@ -34,7 +34,7 @@ final class ConversationLinkPreviewArticleCell<
 
     private let articleView = ArticleView(withImagePlaceholder: true)
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

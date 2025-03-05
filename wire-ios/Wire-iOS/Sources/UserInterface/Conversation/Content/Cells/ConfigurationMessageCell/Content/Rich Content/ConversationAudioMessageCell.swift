@@ -36,7 +36,7 @@ final class ConversationAudioMessageCell<
     private let obfuscationView = ObfuscationView(icon: .microphone)
     private let restrictionView = AudioMessageRestrictionView()
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

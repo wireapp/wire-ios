@@ -25,7 +25,7 @@ final class ConversationButtonMessageCell<
 
     var isSelected: Bool = false
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 

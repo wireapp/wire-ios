@@ -49,7 +49,7 @@ protocol ConversationMessageCell: UIView {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
 
-    var cellDescription: CellDescription? { get }
+    var cellDescription: CellDescription? { get set }
 
     /// Whether the cell is selected.
     var isSelected: Bool { get set }

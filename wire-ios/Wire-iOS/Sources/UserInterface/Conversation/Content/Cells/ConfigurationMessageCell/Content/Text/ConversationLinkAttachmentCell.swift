@@ -39,7 +39,7 @@ final class ConversationLinkAttachmentCell<
         return view
     }()
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

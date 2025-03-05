@@ -53,7 +53,7 @@ final class ConversationTextMessageCell<
 
     var isSelected = false
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var menuPresenter: ConversationMessageCellMenuPresenter?

@@ -49,7 +49,7 @@ final class ConversationSenderMessageDetailsCell<
 
     // MARK: - Properties
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

@@ -25,7 +25,7 @@ final class MessageReactionsCell<
 
     // MARK: - Properties
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
 
     var isSelected = false
     var message: ZMConversationMessage?

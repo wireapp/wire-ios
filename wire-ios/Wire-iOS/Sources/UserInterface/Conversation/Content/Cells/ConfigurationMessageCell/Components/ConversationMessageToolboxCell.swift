@@ -37,7 +37,7 @@ final class ConversationMessageToolboxCell<
         }
     }
 
-    private(set) weak var cellDescription: CellDescription?
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
