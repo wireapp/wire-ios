@@ -89,7 +89,7 @@ public final class ClientSessionComponent {
         authenticationManager: authenticationManager
     )
 
-    private lazy var backendInfoAPI = BackendInfoAPIBuilder(
+    private lazy var backendMetadataAPI = BackendMetadataAPIBuilder(
         networkService: networkService
     ).makeAPI()
 

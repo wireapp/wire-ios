@@ -32,9 +32,9 @@ public struct BackendMetadataAPIBuilder {
         self.networkService = networkService
     }
 
-    /// Make a `BackendInfoAPI`.
+    /// Make a `BackendMetadataAPI`.
     ///
-    /// - Returns: A `BackendInfoAPI`.
+    /// - Returns: A `BackendMetadataAPI`.
 
     public func makeAPI() -> any BackendMetadataAPI {
         BackendMetadataAPIUnversioned(networkService: networkService)
