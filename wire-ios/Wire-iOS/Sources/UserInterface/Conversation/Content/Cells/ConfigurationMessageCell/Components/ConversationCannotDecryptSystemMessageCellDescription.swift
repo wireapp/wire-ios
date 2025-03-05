@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationCannotDecryptSystemMessageCell
+    typealias View = ConversationCannotDecryptSystemMessageCell<ConversationCannotDecryptSystemMessageCellDescription>
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 

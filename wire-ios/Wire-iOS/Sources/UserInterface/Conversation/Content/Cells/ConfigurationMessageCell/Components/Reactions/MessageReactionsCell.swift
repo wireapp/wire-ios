@@ -23,6 +23,8 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
 
     // MARK: - Properties
 
+    let cellDescription: MessageReactionsCellDescription
+
     var isSelected = false
     var message: ZMConversationMessage?
 
@@ -50,8 +52,10 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
 
     // MARK: - Life cycle
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+
+    required init(cellDescription: MessageReactionsCellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         configureSubviews()
     }
 

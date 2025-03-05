@@ -45,8 +45,11 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 /// A generic view that displays conversation contents.
 
 protocol ConversationMessageCell: UIView {
+    associatedtype CellDescription: ConversationMessageCellDescription
     /// The object that contains the configuration of the view.
     associatedtype Configuration
+
+    var cellDescription: CellDescription { get }
 
     /// Whether the cell is selected.
     var isSelected: Bool { get set }
@@ -65,6 +68,8 @@ protocol ConversationMessageCell: UIView {
 
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
+
+    init(cellDescription: CellDescription)
 
     /// Configures the cell with the specified configuration object.
     /// - parameter object: The view model for the cell.

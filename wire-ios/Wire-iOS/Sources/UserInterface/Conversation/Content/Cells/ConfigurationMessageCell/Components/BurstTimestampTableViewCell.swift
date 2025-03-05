@@ -28,8 +28,8 @@ struct BurstTimestampSenderMessageCellConfiguration {
 }
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
+    typealias View = BurstTimestampSenderMessageCell<BurstTimestampSenderMessageCellDescription>
 
-    typealias View = BurstTimestampSenderMessageCell
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -66,7 +66,10 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
 }
 
-final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
+final class BurstTimestampSenderMessageCell<CellDescription>: UIView, ConversationMessageCell
+where CellDescription: ConversationMessageCellDescription {
+
+    let cellDescription: CellDescription
 
     private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?
@@ -75,9 +78,10 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    override init(frame: CGRect) {
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
         self.timestampView = ConversationCellBurstTimestampView()
-        super.init(frame: frame)
+        super.init(frame: .zero)
         configureSubviews()
         configureConstraints()
     }

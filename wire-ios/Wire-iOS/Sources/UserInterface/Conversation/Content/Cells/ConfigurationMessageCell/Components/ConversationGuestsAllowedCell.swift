@@ -25,7 +25,7 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
     // MARK: Properties
 
-    typealias View = GuestsAllowedCell
+    typealias View = GuestsAllowedCell<GuestsAllowedCellDescription>
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -56,11 +56,13 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
 // MARK: GuestAllowedCell
 
-final class GuestsAllowedCell: UIView, ConversationMessageCell {
+final class GuestsAllowedCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell {
 
     // MARK: Properties
 
     typealias Configuration = Void
+
+    let cellDescription: CellDescription
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
@@ -72,8 +74,9 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     // MARK: initialization
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
         setupViews()
         createConstraints()
     }
