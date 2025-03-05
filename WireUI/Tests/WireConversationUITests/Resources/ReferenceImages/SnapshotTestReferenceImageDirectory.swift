@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-@testable import WireConversationListUI
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() {}
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .path
