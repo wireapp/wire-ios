@@ -19,15 +19,13 @@
 import UIKit
 import WireDataModel
 import WireDesign
-//
+
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias System = L10n.Localizable.Content.System
 
     let configuration: View.Configuration
-
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0

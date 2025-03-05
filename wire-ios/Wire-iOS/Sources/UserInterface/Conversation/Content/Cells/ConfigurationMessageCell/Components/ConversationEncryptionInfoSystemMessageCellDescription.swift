@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-//
+
 final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationWarningSystemMessageCell
@@ -27,8 +27,6 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 26.0

@@ -17,11 +17,12 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 
 package protocol NoHistoryViewBuilder {
 
     @MainActor
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView
+    func noHistoryView(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?) -> NoHistoryView
 
 }
 
@@ -63,6 +64,7 @@ package struct NoHistoryView: View {
     let viewModel = NoHistoryViewModel(
         userID: UUID(),
         cookies: [],
+        accessToken: nil,
         onFlowCompletion: { _ in }
     )
     NoHistoryView(viewModel: viewModel)
@@ -74,6 +76,7 @@ package struct NoHistoryView: View {
             let viewModel = NoHistoryViewModel(
                 userID: UUID(),
                 cookies: [],
+                accessToken: nil,
                 onFlowCompletion: { _ in }
             )
             NoHistoryView(viewModel: viewModel)

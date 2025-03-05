@@ -33,9 +33,11 @@ struct ContentView: View {
             defaultAPIVersion: configuration.defaultAPIVersion,
             accountsURL: configuration.accountsURL,
             passwordValidator: configuration.passwordValidator,
+            ssoCallbackURLScheme: "some scheme",
+            userDefaults: .standard,
             onFlowCompletion: { _ in },
             onRegisterAccount: {}
-        )
+        ).view
     }
 
 }

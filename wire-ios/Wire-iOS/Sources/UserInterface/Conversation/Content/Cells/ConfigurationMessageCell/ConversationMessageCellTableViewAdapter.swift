@@ -201,8 +201,7 @@ final class ConversationMessageCellTableViewAdapter<
     }
 
     func messageActionsMenuController(
-        with actions: [MessageAction] = MessageAction
-            .allCases
+        with actions: [MessageAction] = MessageAction.allCases
     ) -> MessageActionsViewController? {
         guard let actionController = cellDescription?.actionController else { return nil }
         let actionsMenuController = MessageActionsViewController.controller(

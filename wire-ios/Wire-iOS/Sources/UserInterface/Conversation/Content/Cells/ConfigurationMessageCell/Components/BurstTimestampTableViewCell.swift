@@ -36,8 +36,6 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { false }
-
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
 

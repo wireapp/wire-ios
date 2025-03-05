@@ -24,8 +24,6 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
 
     var cellDescriptions: [AnyConversationMessageCellDescription] { configuration }
 
-    var canBeCombinedWithOtherCells: Bool { false }
-
     var topMargin: CGFloat {
         get { cellDescriptions.first?.topMargin ?? 0 }
         set { fatalError() }
@@ -97,11 +95,11 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     let configuration: View.Configuration
 
     var accessibilityIdentifier: String? {
-        nil // TODO: fix!
+        nil // not used for the stack view, but only for the arranged subviews
     }
 
     var accessibilityLabel: String? {
-        nil // TODO: fix!
+        nil // not used for the stack view, but only for the arranged subviews
     }
 
     init(cellDescriptions: [AnyConversationMessageCellDescription]) {

@@ -19,15 +19,13 @@
 import UIKit
 import WireDataModel
 import WireDesign
-//
+
 final class MLSMigrationSupportCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
 
     let configuration: View.Configuration
-
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0

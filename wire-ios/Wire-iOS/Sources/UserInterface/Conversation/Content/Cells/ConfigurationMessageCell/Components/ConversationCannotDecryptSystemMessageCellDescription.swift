@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-//
+
 final class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationCannotDecryptSystemMessageCell
@@ -34,8 +34,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-
-    var canBeCombinedWithOtherCells: Bool { false } // TODO: manually test this
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
