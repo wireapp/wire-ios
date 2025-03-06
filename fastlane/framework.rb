@@ -154,6 +154,8 @@ class Framework
             "Ziphy"
         when "WireCells"
             "WireCellsAll"
+        when "WireConversations"
+            "WireConversationsAll" # use a custom scheme that includes all targets in the package
         when "WireDomain"
             name
         when "WireAnalytics"
