@@ -16,18 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-import WireConversationsImplementation
-import WireConversationsUI
+package import SwiftUI
+package import WireConversationsResources
 
-public final class WireConversationGroupIconFactory {
+package struct WireConversationChannelIcon: View {
+    let groupIcon: WireConversationChannelIconAsset
 
-    private let mapper = ConversationIDToGroupIconMapper()
+    package init(asset: WireConversationChannelIconAsset) {
+        self.groupIcon = asset
+    }
 
-    public init() {}
-
-    @MainActor
-    public func create(conversationID: String) -> some View {
-        WireConversationGroupIcon(asset: mapper.palette(for: conversationID))
+    package var body: some View {
+        groupIcon.image
+            .resizable()
+            .aspectRatio(contentMode: .fit)
     }
 }

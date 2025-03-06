@@ -1,0 +1,61 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+package import SwiftUI
+
+package enum WireConversationChannelIconAsset {
+    case blue
+    case purple
+    case red
+    case green
+    case amber
+    case petrol
+    case gray
+
+    package var index: UInt {
+        switch self {
+        case .blue: 1
+        case .purple: 2
+        case .red: 3
+        case .green: 4
+        case .amber: 5
+        case .petrol: 6
+        case .gray: 7
+        }
+    }
+
+    package static var all: [WireConversationChannelIconAsset] {
+        [
+            .blue,
+            .purple,
+            .red,
+            .green,
+            .amber,
+            .petrol,
+            .gray
+        ]
+    }
+
+    package var imageName: String {
+        "channel-icon-\(index)"
+    }
+
+    package var image: Image {
+        Image(imageName, bundle: .module)
+    }
+}
