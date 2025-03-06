@@ -69,9 +69,9 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
                                 hosts: trustData.hosts.map { host in
                                     switch host.rule {
                                     case .equals:
-                                            .equals(host.value)
+                                        .equals(host.value)
                                     case .endsWith:
-                                            .endsWith(host.value)
+                                        .endsWith(host.value)
                                     }
                                 }
                             )
