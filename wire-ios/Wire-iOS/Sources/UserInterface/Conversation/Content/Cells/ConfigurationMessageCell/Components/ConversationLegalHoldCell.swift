@@ -21,9 +21,12 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationLegalHoldSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
-    static let legalHoldURL: URL = WireURLs.shared.legalHoldInfo
+    static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
+
     var conversation: ZMConversation?
 
     struct Configuration {
@@ -54,7 +57,7 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, C
 }
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationLegalHoldSystemMessageCell
+    typealias View = ConversationLegalHoldSystemMessageCell<ConversationLegalHoldCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -92,8 +95,7 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            L10n.Localizable.Content.System.MessageLegalHold
-                .enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+            L10n.Localizable.Content.System.MessageLegalHold.enabled(View.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
             L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:

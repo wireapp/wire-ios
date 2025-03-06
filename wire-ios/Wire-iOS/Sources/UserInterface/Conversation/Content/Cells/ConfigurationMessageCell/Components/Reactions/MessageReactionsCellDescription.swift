@@ -23,7 +23,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     // MARK: - Properties
 
-    typealias View = MessageReactionsCell
+    typealias View = MessageReactionsCell<MessageReactionsCellDescription>
     let configuration: View.Configuration
 
     init(message: ZMConversationMessage) {

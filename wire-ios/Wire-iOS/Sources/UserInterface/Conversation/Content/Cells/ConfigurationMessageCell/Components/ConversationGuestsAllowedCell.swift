@@ -25,7 +25,7 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
     // MARK: Properties
 
-    typealias View = GuestsAllowedCell
+    typealias View = GuestsAllowedCell<GuestsAllowedCellDescription>
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -55,11 +55,13 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
 // MARK: GuestAllowedCell
 
-final class GuestsAllowedCell: UIView, ConversationMessageCell {
+final class GuestsAllowedCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell {
 
     // MARK: Properties
 
     typealias Configuration = Void
+
+    weak var cellDescription: CellDescription?
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?

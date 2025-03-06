@@ -22,15 +22,28 @@ import WireFoundation
 @testable import Wire
 
 final class MockCell: UIView, ConversationMessageCell {
+    typealias CellDescription = MockConversationMessageCellDescription
+
     struct Configuration {
         let backgroundColor: UIColor
     }
 
+    weak var cellDescription: CellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 
     var isConfigured: Bool = false
     var isSelected: Bool = false
+
+    required init(cellDescription: CellDescription) {
+        self.cellDescription = cellDescription
+        super.init(frame: .zero)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
 
     func configure(with object: Configuration, animated: Bool) {
         isConfigured = true
@@ -40,6 +53,7 @@ final class MockCell: UIView, ConversationMessageCell {
 
 final class MockCellDescription<T>: ConversationMessageCellDescription {
     typealias View = MockCell
+
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false

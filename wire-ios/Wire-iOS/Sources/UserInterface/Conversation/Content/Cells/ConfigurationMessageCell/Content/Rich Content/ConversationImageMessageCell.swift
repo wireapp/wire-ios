@@ -20,7 +20,9 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
+final class ConversationImageMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let image: ZMImageMessageData
@@ -47,6 +49,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
+    weak var cellDescription: CellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 
@@ -167,7 +170,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationImageMessageCell
+    typealias View = ConversationImageMessageCell<ConversationImageMessageCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?

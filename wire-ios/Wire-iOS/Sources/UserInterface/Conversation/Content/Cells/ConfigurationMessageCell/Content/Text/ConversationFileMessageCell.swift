@@ -20,7 +20,9 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationFileMessageCell: UIView, ConversationMessageCell {
+final class ConversationFileMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -34,6 +36,7 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     private let obfuscationView = ObfuscationView(icon: .paperclip)
     private let restrictionView = FileMessageRestrictionView()
 
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -123,7 +126,8 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 }
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationFileMessageCell
+    typealias View = ConversationFileMessageCell<ConversationFileMessageCellDescription>
+
     let configuration: View.Configuration
 
     var topMargin: CGFloat = 8

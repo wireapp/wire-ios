@@ -20,7 +20,9 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationVideoMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: RoundedView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -34,6 +36,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     private let obfuscationView = ObfuscationView(icon: .videoMessage)
     private let restrictionView = VideoMessageRestrictionView()
 
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -137,7 +140,7 @@ extension ConversationVideoMessageCell: TransferViewDelegate {
 }
 
 final class ConversationVideoMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationVideoMessageCell
+    typealias View = ConversationVideoMessageCell<ConversationVideoMessageCellDescription>
     let configuration: View.Configuration
 
     var topMargin: CGFloat = 8

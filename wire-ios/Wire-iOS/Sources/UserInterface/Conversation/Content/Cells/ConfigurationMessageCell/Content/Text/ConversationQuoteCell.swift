@@ -276,13 +276,18 @@ final class ConversationReplyContentView: UIView {
 
 }
 
-final class ConversationReplyCell: UIView, ConversationMessageCell {
+final class ConversationReplyCell<
+    CellDescription: ConversationMessageCellDescription
+>: UIView, ConversationMessageCell {
+
     typealias Configuration = ConversationReplyContentView.Configuration
+
     var isSelected: Bool = false
 
     let contentView: ConversationReplyContentView
     var container: ReplyRoundCornersView
 
+    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -323,7 +328,8 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 }
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationReplyCell
+    typealias View = ConversationReplyCell<ConversationReplyCellDescription>
+
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false
