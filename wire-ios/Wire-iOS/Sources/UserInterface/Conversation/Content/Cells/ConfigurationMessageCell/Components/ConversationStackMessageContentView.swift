@@ -29,6 +29,12 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
 
     var isSelected = false
 
+    weak var cellDescription: StackViewCellDescription? {
+        didSet {
+            // TODO: conversationMessageCells.forEach { $0.cellDescription = cellDescription }
+        }
+    }
+
     var message: (any ZMConversationMessage)? {
         didSet { conversationMessageCells.forEach { $0.message = message } }
     }
