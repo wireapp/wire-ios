@@ -114,7 +114,6 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 2
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = "MessageToolbox"

@@ -19,11 +19,6 @@
 import UIKit
 import WireDataModel
 
-protocol ConversationMessageCellMenuPresenter: AnyObject {
-    func showMenu()
-    func showSecuredMenu()
-}
-
 extension UITableViewCell {
 
     @objc
@@ -40,7 +35,7 @@ extension UITableViewCell {
 
 final class ConversationMessageCellTableViewAdapter<
     C: ConversationMessageCellDescription
->: UITableViewCell, SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
+>: UITableViewCell, SelectableView, HighlightableView {
 
     let cellView: C.View
     let ephemeralCountdownView: EphemeralCountdownView
@@ -128,11 +123,11 @@ final class ConversationMessageCellTableViewAdapter<
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
 
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
-        contentView.addGestureRecognizer(longPressGesture)
+        cellView.addGestureRecognizer(longPressGesture)
 
         self.doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
-        contentView.addGestureRecognizer(doubleTapGesture)
+        cellView.addGestureRecognizer(doubleTapGesture)
 
         self.singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
         cellView.addGestureRecognizer(singleTapGesture)
@@ -160,60 +155,21 @@ final class ConversationMessageCellTableViewAdapter<
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        UIView.animate(withDuration: 0.35, animations: {
+        UIView.animate(withDuration: 0.35) {
             self.cellView.isSelected = selected
             self.layoutIfNeeded()
-        })
+        }
     }
 
     // MARK: - Menu
 
-    func showMenu() {
-        guard let controller = messageActionsMenuController(with: MessageAction.allCases) else { return }
-        display(messageActionsController: controller)
-    }
-
-    func showSecuredMenu() {
-        let actions = [
-            MessageAction.visitLink,
-            MessageAction.reply,
-            MessageAction.edit,
-            MessageAction.openDetails,
-            MessageAction.delete,
-            MessageAction.cancel
-        ]
-        guard let controller = messageActionsMenuController(with: actions) else { return }
-        display(messageActionsController: controller)
-    }
-
-    private func display(messageActionsController: MessageActionsViewController) {
-        cellView.delegate?.conversationMessageWantsToShowActionsController(
-            cellView,
-            actionsController: messageActionsController
-        )
-    }
-
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
-            showMenu()
+            if let textMessageCell = gestureRecognizer.view as? ConversationTextMessageCell {
+                textMessageCell.menuPresenter.showMenu()
+            }
         }
-    }
-
-    private func messageActionsMenuController(
-        with actions: [MessageAction] = MessageAction.allCases
-    ) -> MessageActionsViewController? {
-        guard let actionController = cellDescription?.actionController else { return nil }
-        let actionsMenuController = MessageActionsViewController.controller(
-            withActions: actions,
-            actionController: actionController
-        )
-
-        if let popoverPresentationController = actionsMenuController.popoverPresentationController {
-            popoverPresentationController.sourceView = cellView
-        }
-
-        return actionsMenuController
     }
 
     // MARK: - Single Tap Action
