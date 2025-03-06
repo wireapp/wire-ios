@@ -522,20 +522,43 @@ extension ConversationContentViewController: UITableViewDelegate {
             completionHandler(true)
         }
 
-        let arrowImage = UIImage(systemName: "arrowshape.turn.up.backward.fill")!
-            .withTintColor(.white, renderingMode: .alwaysTemplate)
         // since the table view is flipped vertically we also render the image flipped
         // TODO: [WPB-16341] use the arrowImage, remove the upsideDownImage
-        let upsideDownImage = UIGraphicsImageRenderer(size: arrowImage.size).image { rendererContext in
-            rendererContext.cgContext.translateBy(x: arrowImage.size.width / 2, y: arrowImage.size.height / 2)
-            rendererContext.cgContext.scaleBy(x: 1.0, y: -1.0)
-            rendererContext.cgContext.translateBy(x: -arrowImage.size.width / 2, y: -arrowImage.size.height / 2)
-            arrowImage.draw(in: CGRect(origin: .zero, size: arrowImage.size))
-        }
+        let arrowImage = UIImage(systemName: "arrowshape.turn.up.backward.fill")!
+            .withTintColor(.white, renderingMode: .alwaysTemplate)
+            .verticallyInverted()
 
-        replyAction.image = upsideDownImage
+        replyAction.image = arrowImage
         replyAction.backgroundColor = UIColor.accent()
         return UISwipeActionsConfiguration(actions: [replyAction])
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        let sections = dataSource.currentSections
+        guard
+            sections.indices.contains(indexPath.section),
+            sections[indexPath.section].elements.indices.contains(indexPath.row),
+            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
+            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
+            actionController.canPerformAction(action: .react("❤️"))
+        else { return nil }
+
+        // since the table view is flipped vertically we also render the image flipped
+        // TODO: [WPB-16341] use the real image, remove the upsideDownImage
+        let reactImage = UIImage(resource: .addEmojis)
+            .withTintColor(.white, renderingMode: .alwaysTemplate)
+            .verticallyInverted()
+
+        let reactAction = UIContextualAction(style: .normal, title: "") { [weak self] _, _, completionHandler in
+            self?.delegate?.didSwipeToReact(actionController: actionController)
+            completionHandler(true)
+        }
+        reactAction.image = reactImage
+        reactAction.backgroundColor = UIColor.accent()
+        return UISwipeActionsConfiguration(actions: [reactAction])
     }
 }
 

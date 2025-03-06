@@ -74,7 +74,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
 
     // MARK: - ConversationMessageCell
 
-
     var selectionView: UIView? {
         fatalError("??") // TODO: fix
         // nil

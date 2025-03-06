@@ -28,6 +28,7 @@ final class ConversationViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let visibleMessage: ZMConversationMessage?
+    var actionControllerForSelectedEmoji: ConversationMessageActionController?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 

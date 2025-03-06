@@ -24,6 +24,24 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
 
 extension ConversationViewController: ConversationContentViewControllerDelegate {
+
+    func didSwipeToReact(
+        actionController: ConversationMessageActionController
+    ) {
+        actionControllerForSelectedEmoji = actionController
+        let pickerController = CompleteReactionPickerViewController(
+            selectedReactions: actionController.message
+                .selfUserReactions()
+        )
+        pickerController.delegate = self
+
+        // Embed the pickerController in a UINavigationController
+        let navigationController = UINavigationController(rootViewController: pickerController)
+
+        // Present the navigation controller
+        present(navigationController, animated: true)
+    }
+
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect) {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
@@ -160,5 +178,18 @@ extension ConversationViewController {
             from: sourceView,
             contentViewController: viewController
         )
+    }
+}
+
+extension ConversationViewController: EmojiPickerViewControllerDelegate {
+
+    func emojiPickerDeleteTapped() {
+        actionControllerForSelectedEmoji = nil
+    }
+
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
+        actionControllerForSelectedEmoji?.perform(action: .react(emoji.value))
+        dismiss(animated: true)
+        actionControllerForSelectedEmoji = nil
     }
 }
