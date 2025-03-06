@@ -36,6 +36,7 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
     private let ssoLinkGenerator: SSOLinkGeneratorProtocol
 
     @Published private(set) var isLoading = false
+    @Published var alert: Alert?
 
     // MARK: - Life cycle
 
@@ -82,7 +83,7 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
                 return nil
             }
 
-            return try await self.generateSSOLink(ssoCode: ssoCode)
+            return try await self.ssoLinkGenerator.generateSSOLink(ssoCode: ssoCode)
         }
 
         do {
@@ -98,14 +99,13 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
                 )
             }
         } catch {
+            await MainActor.run {
+                self.alert = .unknownError
+            }
             WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
         }
 
         isLoading = false
-    }
-
-    private func generateSSOLink(ssoCode: UUID) async throws -> URL {
-        try await ssoLinkGenerator.generateSSOLink(ssoCode: ssoCode)
     }
 
     // MARK: - Model
@@ -114,6 +114,24 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
         let title: String
         let value: String
         let isURL: Bool
+    }
+
+}
+
+// MARK: Alerts
+
+package extension SwitchBackendConfirmationViewModel {
+
+    struct Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        let title: String
+        let message: String
+
+        private typealias Title = L10n.Authentication.Error.Title
+        private typealias Message = L10n.Authentication.Error.Message
+
+        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }

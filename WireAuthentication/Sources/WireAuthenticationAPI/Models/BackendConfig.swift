@@ -88,35 +88,12 @@ public struct TrustData: Decodable, Sendable, Hashable {
         public let value: String
     }
 
-    public let certificateKey: SecKey
+    public let certificateKey: Data
     public let hosts: [Host]
 
     enum CodingKeys: String, CodingKey {
         case certificateKey
         case hosts
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let certificateKeyData = try container.decode(Data.self, forKey: .certificateKey)
-
-        guard let certificate = SecCertificateCreateWithData(nil, certificateKeyData as CFData) else {
-            throw DecodingError.dataCorruptedError(
-                forKey: CodingKeys.certificateKey,
-                in: container,
-                debugDescription: "Error decoding certificate for pinned key"
-            )
-        }
-
-        guard let certificateKey = SecCertificateCopyKey(certificate) else {
-            throw DecodingError.dataCorruptedError(
-                forKey: CodingKeys.certificateKey,
-                in: container,
-                debugDescription: "Error extracting pinned key from certificate"
-            )
-        }
-        self.certificateKey = certificateKey
-        self.hosts = try container.decode([TrustData.Host].self, forKey: .hosts)
     }
 
 }

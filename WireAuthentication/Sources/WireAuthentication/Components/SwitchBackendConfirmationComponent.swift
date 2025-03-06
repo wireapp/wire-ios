@@ -22,6 +22,7 @@ import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+import WireLogging
 
 protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
@@ -61,18 +62,23 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
                 backendEnvironment: BackendEnvironment(
                     url: environment.endpoints.backendURL,
                     webSocketURL: environment.endpoints.backendWSURL,
-                    pinnedKeys: environment.pinnedKeys?.map { trustData in
-                        PinnedKey(
-                            key: trustData.certificateKey,
-                            hosts: trustData.hosts.map { host in
-                                switch host.rule {
-                                case .equals:
-                                    .equals(host.value)
-                                case .endsWith:
-                                    .endsWith(host.value)
+                    pinnedKeys: environment.pinnedKeys?.compactMap { trustData in
+                        do {
+                            return try PinnedKey(
+                                key: trustData.certificateKey,
+                                hosts: trustData.hosts.map { host in
+                                    switch host.rule {
+                                    case .equals:
+                                            .equals(host.value)
+                                    case .endsWith:
+                                            .endsWith(host.value)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        } catch {
+                            WireLogger.authentication.error("Failed to create PinnedKey: \(error)")
+                            return nil
+                        }
                     } ?? [],
                     proxySettings: convertProxySettings(from: environment.proxySettings)
                 ),
