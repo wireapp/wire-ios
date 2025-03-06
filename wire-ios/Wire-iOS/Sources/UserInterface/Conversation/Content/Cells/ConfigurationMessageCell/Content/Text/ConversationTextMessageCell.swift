@@ -19,9 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationTextMessageCell<
-    CellDescription: ConversationMessageCellDescription
->: UIView, ConversationMessageCell, TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -53,7 +51,7 @@ final class ConversationTextMessageCell<
 
     var isSelected = false
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: ConversationTextMessageCellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var menuPresenter: ConversationMessageCellMenuPresenter?
@@ -154,7 +152,7 @@ final class ConversationTextMessageCell<
 // MARK: - Description
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationTextMessageCell<ConversationTextMessageCellDescription>
+    typealias View = ConversationTextMessageCell
 
     let configuration: View.Configuration
 

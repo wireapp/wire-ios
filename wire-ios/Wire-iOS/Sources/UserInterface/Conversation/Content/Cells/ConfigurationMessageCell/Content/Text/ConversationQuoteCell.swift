@@ -276,9 +276,7 @@ final class ConversationReplyContentView: UIView {
 
 }
 
-final class ConversationReplyCell<
-    CellDescription: ConversationMessageCellDescription
->: UIView, ConversationMessageCell {
+final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     typealias Configuration = ConversationReplyContentView.Configuration
 
@@ -287,7 +285,7 @@ final class ConversationReplyCell<
     let contentView: ConversationReplyContentView
     var container: ReplyRoundCornersView
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: ConversationReplyCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -328,7 +326,7 @@ final class ConversationReplyCell<
 }
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationReplyCell<ConversationReplyCellDescription>
+    typealias View = ConversationReplyCell
 
     let configuration: View.Configuration
 
