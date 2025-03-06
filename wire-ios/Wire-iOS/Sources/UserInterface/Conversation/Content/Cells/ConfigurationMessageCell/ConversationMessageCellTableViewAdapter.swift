@@ -179,7 +179,18 @@ final class ConversationMessageCellTableViewAdapter<
 
     @objc
     private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+        guard gestureRecognizer.state == .recognized else { return }
+
+        if let cellView = cellView as? ConversationStackMessageContentView {
+            for cell in cellView.conversationMessageCells {
+                let location = gestureRecognizer.location(in: cell)
+//                if cell.bounds.contains(location), cell.cellDescription?.supportsActions == true {
+//                    //cell.cellDescription?.actionController?.performSingleTapAction()
+//                    return
+//                }
+            }
+
+        } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
     }
@@ -188,7 +199,18 @@ final class ConversationMessageCellTableViewAdapter<
 
     @objc
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+        guard gestureRecognizer.state == .recognized else { return }
+
+        if let cellView = cellView as? ConversationStackMessageContentView {
+            for cell in cellView.conversationMessageCells {
+                let location = gestureRecognizer.location(in: cell)
+//                if cell.bounds.contains(location), cell.cellDescription?.supportsActions == true {
+//                    //cell.cellDescription?.actionController?.performDoubleTapAction()
+//                    return
+//                }
+            }
+
+        } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }
     }

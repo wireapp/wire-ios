@@ -23,17 +23,13 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
     typealias Configuration = [AnyConversationMessageCellDescription]
 
     private let stackView = UIStackView()
-    private var conversationMessageCells: [any ConversationMessageCell] {
+    var conversationMessageCells: [any UIView & ConversationMessageCell] {
         stackView.arrangedSubviews.compactMap { $0 as? any ConversationMessageCell }
     }
 
     var isSelected = false
 
-    weak var cellDescription: StackViewCellDescription? {
-        didSet {
-            // TODO: conversationMessageCells.forEach { $0.cellDescription = cellDescription }
-        }
-    }
+    weak var cellDescription: StackViewCellDescription?
 
     var message: (any ZMConversationMessage)? {
         didSet { conversationMessageCells.forEach { $0.message = message } }
