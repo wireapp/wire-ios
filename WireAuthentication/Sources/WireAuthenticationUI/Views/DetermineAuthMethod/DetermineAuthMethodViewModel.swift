@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+import WireLogging
 
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
@@ -145,9 +146,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                         self.modalDestination = .switchBackend(email: email, environment: environmentInfo)
                     }
                 } catch {
-//                    await MainActor.run {
-//                        self.alert = .onPremLoginNotPossible(recovery: .loginViaEmail(email: email))
-//                    }
+                    WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
                 }
             }
         }

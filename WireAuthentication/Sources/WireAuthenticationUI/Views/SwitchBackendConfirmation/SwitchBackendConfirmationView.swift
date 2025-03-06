@@ -173,8 +173,13 @@ package struct SwitchBackendConfirmationView: View {
         Button {
             Task { await viewModel.confirm() }
         } label: {
-            Text(Strings.proceed)
-                .font(.textStyle(.buttonBig))
+            HStack {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+                Text(Strings.proceed)
+                    .font(.textStyle(.buttonBig))
+            }
         }
         .wireButtonStyle(.primary)
     }

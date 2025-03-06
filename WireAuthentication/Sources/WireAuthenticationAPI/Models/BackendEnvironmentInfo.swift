@@ -123,9 +123,9 @@ public struct TrustData: Decodable, Sendable, Hashable {
 
 public struct ProxySettings: Decodable, Sendable, Hashable {
 
-    let host: String
-    let port: Int
-    let needsAuthentication: Bool
+    public let host: String
+    public let port: Int
+    public let needsAuthentication: Bool
 
     init(
         host: String,

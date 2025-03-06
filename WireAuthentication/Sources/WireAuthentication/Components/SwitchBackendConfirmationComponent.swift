@@ -26,8 +26,8 @@ internal import WireAuthenticationLogic
 protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var authenticationAPI: AuthenticationAPI { get }
-    var defaultBackendEnvironment: BackendEnvironment { get }
+    var defaultAPIVersion: APIVersion { get }
+    var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
 
@@ -47,22 +47,56 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
         SwitchBackendConfirmationViewModel(
             router: dependency.router,
             email: email,
-            fetchDefaultSSOSettings: fetchDefaultSSOSettings,
-            ssoLinkGenerator: ssoLinkGenerator,
+            fetchDefaultSSOSettings: fetchDefaultSSOSettings(environment: environment),
+            ssoLinkGenerator: ssoLinkGenerator(environment: environment),
             environment: environment
         )
     }
 
     // MARK: - Private dependencies
 
-    private var fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol {
-        FetchDefaultSSOSettingsUseCase(authenticationAPI: dependency.authenticationAPI)
+    private func authenticationAPI(environment: BackendConfig) -> AuthenticationAPI {
+        AuthenticationAPIBuilder(
+            networkService: NetworkService.make(
+                backendEnvironment: BackendEnvironment(
+                    url: environment.endpoints.backendURL,
+                    webSocketURL: environment.endpoints.backendWSURL,
+                    pinnedKeys: environment.pinnedKeys?.map { trustData in
+                        PinnedKey(
+                            key: trustData.certificateKey,
+                            hosts: trustData.hosts.map { host in
+                                switch host.rule {
+                                case .equals:
+                                    .equals(host.value)
+                                case .endsWith:
+                                    .endsWith(host.value)
+                                }
+                            }
+                        )
+                    } ?? [],
+                    proxySettings: convertProxySettings(from: environment.proxySettings)
+                ),
+                minTLSVersion: dependency.minTLSVersion
+            )
+        ).makeAPI(for: dependency.defaultAPIVersion)
     }
 
-    private var ssoLinkGenerator: SSOLinkGeneratorProtocol {
+    private func convertProxySettings(from proxySettings: WireAuthenticationAPI.ProxySettings?) -> WireAPI.ProxySettings? {
+        guard let proxySettings = proxySettings else {
+            return nil
+        }
+
+        return .unauthenticated(host: proxySettings.host, port: proxySettings.port)
+    }
+
+    private func fetchDefaultSSOSettings(environment: BackendConfig) -> any FetchDefaultSSOSettingsUseCaseProtocol {
+        FetchDefaultSSOSettingsUseCase(authenticationAPI: authenticationAPI(environment: environment))
+    }
+
+    private func ssoLinkGenerator(environment: BackendConfig) -> SSOLinkGeneratorProtocol {
         SSOLinkGenerator(
-            authenticationAPI: dependency.authenticationAPI,
-            baseURL: dependency.defaultBackendEnvironment.url,
+            authenticationAPI: authenticationAPI(environment: environment),
+            baseURL: environment.endpoints.backendURL,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
         )

@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireLogging
 
 @MainActor
 public class SwitchBackendConfirmationViewModel: ObservableObject {
@@ -73,23 +74,21 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
         ]
     }
 
-    // MARK: - Events
-
     func confirm() async {
         isLoading = true
 
-        let fetchDefaultSSOTask = Task.detached { [fetchDefaultSSOSettings] in
-            try await fetchDefaultSSOSettings.invoke()
-        }
-        do {
-            if let ssoCode = try await fetchDefaultSSOTask.value {
-                Task.detached {
-                    let url = try await self.generateSSOLink(ssoCode: ssoCode)
-                    await MainActor.run {
-                        self.router.presentSheet(RootView.ModalDestination.ssoLogin(url: url))
-                    }
-                }
+        let task = Task.detached { [fetchDefaultSSOSettings] () -> URL? in
+            guard let ssoCode = try await fetchDefaultSSOSettings.invoke() else {
+                return nil
+            }
 
+            return try await self.generateSSOLink(ssoCode: ssoCode)
+        }
+
+        do {
+            let url = try await task.value
+            if let url {
+                router.presentSheet(RootView.ModalDestination.ssoLogin(url: url))
             } else {
                 router.presentSheet(
                     RootView.ModalDestination.onPremiseLogin(
@@ -99,8 +98,9 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
                 )
             }
         } catch {
-            // alert = .unknownError
+            WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
         }
+
         isLoading = false
     }
 
