@@ -28,7 +28,7 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
 
     func conversationMessageCell(
         _ contentView: any ConversationMessageCell,
-        presentViewController: UIViewController
+        present viewController: UIViewController
     ) {
         // no-op
     }
