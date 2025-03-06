@@ -56,8 +56,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    // TODO: make private
-    private(set) lazy var menuPresenter = ConversationMessageCellMenuPresenter(
+    private(set) lazy var menuPresenter: ConversationMessageCellMenuPresenter? = .init(
         contentView: self,
         actionController: actionController,
         conversationMessageCellDelegate: delegate
@@ -137,9 +136,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
-                menuPresenter.showSecuredMenu()
+                menuPresenter?.showSecuredMenu()
             } else {
-                menuPresenter.showMenu()
+                menuPresenter?.showMenu()
             }
         }
     }
@@ -178,14 +177,14 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
         self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
     }
 
-    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
-        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
-        cell.cellView.delegate = delegate
-        cell.cellView.message = message
-        cell.cellView.actionController = actionController
-        return cell
-    }
+//    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
+//        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
+//        cell.cellView.delegate = delegate
+//        cell.cellView.message = message
+//        cell.cellView.actionController = actionController
+//        return cell
+//    }
 }
 
 // MARK: - Factory

@@ -43,6 +43,14 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         didSet { conversationMessageCells.forEach { $0.delegate = delegate } }
     }
 
+    weak var actionController: ConversationMessageActionController? {
+        didSet { conversationMessageCells.forEach { $0.actionController = actionController } }
+    }
+
+    var menuPresenter: ConversationMessageCellMenuPresenter? {
+        conversationMessageCells.compactMap(\.menuPresenter).first
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupStackView()
