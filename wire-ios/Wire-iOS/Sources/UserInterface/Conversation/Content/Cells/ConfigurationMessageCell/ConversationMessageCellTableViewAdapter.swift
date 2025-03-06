@@ -181,13 +181,18 @@ final class ConversationMessageCellTableViewAdapter<
     private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
 
-        if let cellView = cellView as? ConversationStackMessageContentView {
-            for cell in cellView.conversationMessageCells {
+        if
+            let cellView = cellView as? ConversationStackMessageContentView,
+            let cellDescription = cellDescription as? StackViewCellDescription
+        {
+            for (index, cell) in cellView.conversationMessageCells.enumerated() {
                 let location = gestureRecognizer.location(in: cell)
-//                if cell.bounds.contains(location), cell.cellDescription?.supportsActions == true {
-//                    //cell.cellDescription?.actionController?.performSingleTapAction()
-//                    return
-//                }
+                if cell.bounds.contains(location) {
+                    let stackedCellDescription = cellDescription.cellDescriptions[index]
+                    if stackedCellDescription.supportsActions {
+                        stackedCellDescription.actionController?.performSingleTapAction()
+                    }
+                }
             }
 
         } else if cellDescription?.supportsActions == true {
@@ -201,13 +206,18 @@ final class ConversationMessageCellTableViewAdapter<
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
 
-        if let cellView = cellView as? ConversationStackMessageContentView {
-            for cell in cellView.conversationMessageCells {
+        if
+            let cellView = cellView as? ConversationStackMessageContentView,
+            let cellDescription = cellDescription as? StackViewCellDescription
+        {
+            for (index, cell) in cellView.conversationMessageCells.enumerated() {
                 let location = gestureRecognizer.location(in: cell)
-//                if cell.bounds.contains(location), cell.cellDescription?.supportsActions == true {
-//                    //cell.cellDescription?.actionController?.performDoubleTapAction()
-//                    return
-//                }
+                if cell.bounds.contains(location) {
+                    let stackedCellDescription = cellDescription.cellDescriptions[index]
+                    if stackedCellDescription.supportsActions {
+                        stackedCellDescription.actionController?.performDoubleTapAction()
+                    }
+                }
             }
 
         } else if cellDescription?.supportsActions == true {
