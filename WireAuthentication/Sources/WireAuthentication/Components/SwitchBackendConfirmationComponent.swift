@@ -81,8 +81,9 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
         ).makeAPI(for: dependency.defaultAPIVersion)
     }
 
-    private func convertProxySettings(from proxySettings: WireAuthenticationAPI.ProxySettings?) -> WireAPI.ProxySettings? {
-        guard let proxySettings = proxySettings else {
+    private func convertProxySettings(from proxySettings: WireAuthenticationAPI.ProxySettings?) -> WireAPI
+        .ProxySettings? {
+        guard let proxySettings else {
             return nil
         }
 
