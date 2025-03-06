@@ -51,16 +51,20 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     var isSelected = false
 
+    weak var cellDescription: ConversationTextMessageCellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
-    weak var menuPresenter: ConversationMessageCellMenuPresenter?
+    weak var actionController: ConversationMessageActionController?
+
+    // TODO: make private
+    private(set) lazy var menuPresenter = ConversationMessageCellMenuPresenter(
+        contentView: self,
+        actionController: actionController,
+        conversationMessageCellDelegate: delegate
+    )
 
     var ephemeralTimerTopInset: CGFloat {
-        guard let font = messageTextView.font else {
-            return 0
-        }
-
-        return font.lineHeight / 2
+        messageTextView.font?.lineHeight ?? 0 / 2
     }
 
     var selectionView: UIView? {
@@ -133,9 +137,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
-                menuPresenter?.showSecuredMenu()
+                menuPresenter.showSecuredMenu()
             } else {
-                menuPresenter?.showMenu()
+                menuPresenter.showMenu()
             }
         }
     }
@@ -152,6 +156,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -178,7 +183,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         cell.cellView.delegate = delegate
         cell.cellView.message = message
-        cell.cellView.menuPresenter = cell // TODO: is this still called for stacks?
+        cell.cellView.actionController = actionController
         return cell
     }
 }

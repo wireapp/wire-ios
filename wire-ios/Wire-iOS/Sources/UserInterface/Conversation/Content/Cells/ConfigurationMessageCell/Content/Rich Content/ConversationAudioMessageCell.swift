@@ -34,6 +34,7 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     private let obfuscationView = ObfuscationView(icon: .microphone)
     private let restrictionView = AudioMessageRestrictionView()
 
+    weak var cellDescription: ConversationAudioMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -122,6 +123,7 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
 
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationAudioMessageCell
+
     let configuration: View.Configuration
 
     var canBeCombinedWithOtherCells: Bool { true }

@@ -47,6 +47,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
+    weak var cellDescription: ConversationImageMessageCellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 

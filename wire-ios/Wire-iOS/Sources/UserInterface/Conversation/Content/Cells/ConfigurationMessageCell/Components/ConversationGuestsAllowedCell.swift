@@ -35,7 +35,6 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 16
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -61,6 +60,8 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
     // MARK: Properties
 
     typealias Configuration = Void
+
+    weak var cellDescription: GuestsAllowedCellDescription?
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?

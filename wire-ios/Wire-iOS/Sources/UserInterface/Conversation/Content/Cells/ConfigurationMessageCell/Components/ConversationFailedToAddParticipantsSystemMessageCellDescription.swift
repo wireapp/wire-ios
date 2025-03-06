@@ -22,7 +22,7 @@ import WireDataModel
 final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias SystemContent = L10n.Localizable.Content.System
-    typealias View = FailedUsersSystemMessageCell
+    typealias View = FailedUsersSystemMessageCell<ConversationFailedToAddParticipantsSystemMessageCellDescription>
 
     let configuration: View.Configuration
 
@@ -33,7 +33,6 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 26.0
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

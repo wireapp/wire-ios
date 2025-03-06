@@ -83,13 +83,15 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
         switch configuration.domainRedirect {
         case .none where configuration.isCloudAccountAlreadyRegistered == true:
-            throw DetermineAuthMethodUseCaseFailure.onPremNotPossible(recovery: .loginViaEmail(email: email))
+            // The email domain has been claimed by an on-prem backend,
+            // but there's already an existing cloud account registered.
+            return .loginViaEmail(email: email, didDetectDomainConflict: true)
 
         case .none, .locked, .preAuthorized:
             return .loginOrRegisterViaEmail(email: email)
 
         case .noRegistration:
-            return .loginViaEmail(email: email)
+            return .loginViaEmail(email: email, didDetectDomainConflict: false)
 
         case .sso:
             guard let ssoCode = configuration.ssoCode else {
