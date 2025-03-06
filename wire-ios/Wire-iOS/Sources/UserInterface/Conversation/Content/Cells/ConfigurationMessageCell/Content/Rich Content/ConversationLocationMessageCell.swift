@@ -21,9 +21,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationLocationMessageCell<
-    CellDescription: ConversationMessageCellDescription
->: UIView, ConversationMessageCell, ContextMenuDelegate {
+final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let location: LocationMessageData
@@ -43,7 +41,7 @@ final class ConversationLocationMessageCell<
     private var recognizer: UITapGestureRecognizer?
     private weak var locationAnnotation: MKPointAnnotation?
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: ConversationLocationMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -189,7 +187,7 @@ final class ConversationLocationMessageCell<
 }
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationLocationMessageCell<ConversationLocationMessageCellDescription>
+    typealias View = ConversationLocationMessageCell
 
     let configuration: View.Configuration
 

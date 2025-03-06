@@ -33,7 +33,7 @@ extension CustomMessageView: ConversationMessageCell {
 /// A description for a message cell that informs the user a message cannot be rendered.
 
 final class UnknownMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = CustomMessageView<UnknownMessageCellDescription>
+    typealias View = CustomMessageView
     let configuration: String
 
     weak var message: ZMConversationMessage?
