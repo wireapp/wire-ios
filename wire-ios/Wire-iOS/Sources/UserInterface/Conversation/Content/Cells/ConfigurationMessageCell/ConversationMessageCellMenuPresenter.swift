@@ -20,3 +20,43 @@ protocol ConversationMessageCellMenuPresenter: AnyObject {
     func showMenu()
     func showSecuredMenu()
 }
+
+struct ConversationMessageCellMenuPresenter_ {
+
+    weak var contentView: (any ConversationMessageCell)?
+    weak var actionController: ConversationMessageActionController?
+    weak var conversationMessageCellDelegate: ConversationMessageCellDelegate?
+
+    func showMenu() {
+        guard
+            let contentView,
+            let controller = messageActionsMenuController(with: MessageAction.allCases)
+        else { return }
+
+        conversationMessageCellDelegate?.conversationMessageCell(contentView, present: controller)
+    }
+
+    func showSecuredMenu() {
+        let actions = [
+            MessageAction.visitLink,
+            MessageAction.reply,
+            MessageAction.edit,
+            MessageAction.openDetails,
+            MessageAction.delete,
+            MessageAction.cancel
+        ]
+
+        guard
+            let contentView,
+            let controller = messageActionsMenuController(with: actions)
+        else { return }
+
+        conversationMessageCellDelegate?.conversationMessageCell(contentView, present: controller)
+    }
+
+    func messageActionsMenuController(with actions: [MessageAction]) -> MessageActionsViewController? {
+        guard let actionController else { return nil }
+        return MessageActionsViewController.controller(withActions: actions, actionController: actionController)
+    }
+
+}

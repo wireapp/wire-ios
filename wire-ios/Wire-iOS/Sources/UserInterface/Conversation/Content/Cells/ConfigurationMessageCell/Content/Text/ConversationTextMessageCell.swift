@@ -53,7 +53,14 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
     weak var menuPresenter: ConversationMessageCellMenuPresenter?
+
+    private(set) lazy var menuPresenter_ = ConversationMessageCellMenuPresenter_(
+        contentView: self,
+        actionController: actionController,
+        conversationMessageCellDelegate: delegate
+    )
 
     var ephemeralTimerTopInset: CGFloat {
         guard let font = messageTextView.font else {
@@ -133,9 +140,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
-                menuPresenter?.showSecuredMenu()
+                menuPresenter_.showSecuredMenu()
             } else {
-                menuPresenter?.showMenu()
+                menuPresenter_.showMenu()
             }
         }
     }

@@ -24,7 +24,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageCell(
         _ contentView: any ConversationMessageCell,
-        presentViewController: UIViewController
+        present viewController: UIViewController
     )
 
     func conversationMessageWantsToOpenUserDetails(
