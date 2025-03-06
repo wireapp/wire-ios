@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-final class ConversationMessageToolboxCell<
-    CellDescription: ConversationMessageCellDescription
->: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
+final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
 
     struct Configuration: Equatable {
         let message: ZMConversationMessage
@@ -37,7 +35,7 @@ final class ConversationMessageToolboxCell<
         }
     }
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: ConversationMessageToolboxCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -106,7 +104,7 @@ final class ConversationMessageToolboxCell<
 }
 
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationMessageToolboxCell<ConversationMessageToolboxCellDescription>
+    typealias View = ConversationMessageToolboxCell
 
     let configuration: View.Configuration
 

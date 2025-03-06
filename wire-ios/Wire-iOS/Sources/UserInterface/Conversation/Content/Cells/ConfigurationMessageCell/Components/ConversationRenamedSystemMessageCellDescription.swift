@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationRenamedSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationRenamedSystemMessageCell<ConversationRenamedSystemMessageCellDescription>
+    typealias View = ConversationRenamedSystemMessageCell
     typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration

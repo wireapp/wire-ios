@@ -19,13 +19,11 @@
 import UIKit
 import WireDataModel
 
-final class ConversationButtonMessageCell<
-    CellDescription: ConversationMessageCellDescription
->: UIView, ConversationMessageCell {
+final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     var isSelected: Bool = false
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: ConversationButtonMessageCellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 
@@ -151,7 +149,7 @@ final class ConversationButtonMessageCell<
 }
 
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationButtonMessageCell<ConversationButtonMessageCellDescription>
+    typealias View = ConversationButtonMessageCell
 
     var topMargin: CGFloat = .ConversationButtonMessageCell.verticalInset
 

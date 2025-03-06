@@ -36,9 +36,7 @@ enum TeamRoleIndicator {
 
 // MARK: - ConversationSenderMessageDetailsCell
 
-final class ConversationSenderMessageDetailsCell<
-    CellDescription: ConversationMessageCellDescription
->: UIView, ConversationMessageCell {
+final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let user: UserType
@@ -49,7 +47,7 @@ final class ConversationSenderMessageDetailsCell<
 
     // MARK: - Properties
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: ConversationSenderMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -279,7 +277,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     // MARK: - Properties
 
-    typealias View = ConversationSenderMessageDetailsCell<ConversationSenderMessageCellDescription>
+    typealias View = ConversationSenderMessageDetailsCell
     typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
     let configuration: View.Configuration
 

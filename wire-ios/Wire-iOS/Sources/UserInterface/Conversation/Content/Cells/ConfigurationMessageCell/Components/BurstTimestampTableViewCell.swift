@@ -28,7 +28,7 @@ struct BurstTimestampSenderMessageCellConfiguration {
 }
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
-    typealias View = BurstTimestampSenderMessageCell<BurstTimestampSenderMessageCellDescription>
+    typealias View = BurstTimestampSenderMessageCell
 
     let configuration: View.Configuration
 
@@ -65,10 +65,9 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
 }
 
-final class BurstTimestampSenderMessageCell<CellDescription>: UIView, ConversationMessageCell
-where CellDescription: ConversationMessageCellDescription {
+final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: BurstTimestampSenderMessageCellDescription?
 
     private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?

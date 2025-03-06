@@ -21,8 +21,6 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-// MARK: - ConversationSystemMessageCell
-
 final class ConversationSystemMessageCell<
     CellDescription: ConversationMessageCellDescription
 >: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {

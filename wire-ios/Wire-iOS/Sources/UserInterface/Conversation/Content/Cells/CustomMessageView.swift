@@ -21,10 +21,10 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class CustomMessageView<CellDescription: ConversationMessageCellDescription>: UIView, UITextViewDelegate {
+final class CustomMessageView: UIView, UITextViewDelegate {
     var isSelected: Bool = false
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: UnknownMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 

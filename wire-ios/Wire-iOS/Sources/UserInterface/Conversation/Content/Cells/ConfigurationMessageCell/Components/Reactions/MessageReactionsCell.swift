@@ -19,13 +19,11 @@
 import SwiftUI
 import WireDataModel
 
-final class MessageReactionsCell<
-    CellDescription: ConversationMessageCellDescription
->: UIView, ConversationMessageCell, UICollectionViewDelegate {
+final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionViewDelegate {
 
     // MARK: - Properties
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: MessageReactionsCellDescription?
 
     var isSelected = false
     var message: ZMConversationMessage?

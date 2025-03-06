@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationPingCell<
-    CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
+final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCellDescription>, ConversationMessageCell {
 
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
 
@@ -130,7 +128,7 @@ final class ConversationPingCell<
 }
 
 final class ConversationPingCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationPingCell<ConversationPingCellDescription>
+    typealias View = ConversationPingCell
 
     let configuration: View.Configuration
 

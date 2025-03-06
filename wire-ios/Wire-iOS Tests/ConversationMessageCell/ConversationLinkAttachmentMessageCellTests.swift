@@ -25,10 +25,9 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     // MARK: - Properties
 
-    typealias SUT = ConversationLinkAttachmentCell<MockConversationMessageCellDescription>
     private var snapshotHelper: SnapshotHelper!
     private var mockThumbnail: MockImageResource!
-    private var sut: SUT!
+    private var sut: ConversationLinkAttachmentCell!
 
     // MARK: - setUp
 
@@ -52,8 +51,8 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     // MARK: - Helper method
 
-    func setUpCell(configuration: SUT.Configuration) -> SUT {
-        let cell = SUT()
+    func setUpCell(configuration: ConversationLinkAttachmentCell.Configuration) -> ConversationLinkAttachmentCell {
+        let cell = ConversationLinkAttachmentCell()
         cell.configure(with: configuration, animated: false)
         cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
 
@@ -73,7 +72,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
         )
 
         mockThumbnail.cacheIdentifier = #function
-        let configuration = SUT.Configuration(
+        let configuration = ConversationLinkAttachmentCell.Configuration(
             attachment: attachment,
             thumbnailResource: mockThumbnail
         )
@@ -96,7 +95,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
         )
 
         mockThumbnail.cacheIdentifier = #function
-        let configuration = SUT.Configuration(
+        let configuration = ConversationLinkAttachmentCell.Configuration(
             attachment: attachment,
             thumbnailResource: mockThumbnail
         )
@@ -119,7 +118,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
         )
 
         mockThumbnail.cacheIdentifier = #function
-        let configuration = SUT.Configuration(
+        let configuration = ConversationLinkAttachmentCell.Configuration(
             attachment: attachment,
             thumbnailResource: mockThumbnail
         )
