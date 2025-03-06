@@ -18,7 +18,7 @@
                BlueprintIdentifier = "WireConversationsAPI"
                BuildableName = "WireConversationsAPI"
                BlueprintName = "WireConversationsAPI"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireConversations">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -32,7 +32,7 @@
                BlueprintIdentifier = "WireConversationsBindings"
                BuildableName = "WireConversationsBindings"
                BlueprintName = "WireConversationsBindings"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireConversations">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -46,7 +46,7 @@
                BlueprintIdentifier = "WireConversationsUI"
                BuildableName = "WireConversationsUI"
                BlueprintName = "WireConversationsUI"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireConversations">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -70,7 +70,7 @@
                BlueprintIdentifier = "WireConversationsUITests"
                BuildableName = "WireConversationsUITests"
                BlueprintName = "WireConversationsUITests"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireConversations">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -98,7 +98,7 @@
             BlueprintIdentifier = "WireConversationsAPI"
             BuildableName = "WireConversationsAPI"
             BlueprintName = "WireConversationsAPI"
-            ReferencedContainer = "container:">
+            ReferencedContainer = "container:WireConversations">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
