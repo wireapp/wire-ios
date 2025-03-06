@@ -30,24 +30,13 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
     let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
     let messageSender: MessageSenderInterface
 
-    public init(
-        managedObjectContext: NSManagedObjectContext,
-        messageSender: MessageSenderInterface
-    ) {
-
-        let hasRegisteredMLSClient = managedObjectContext.performAndWait {
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            return selfClient?.hasRegisteredMLSClient ?? false
-        }
+    public init(managedObjectContext: NSManagedObjectContext, messageSender: MessageSenderInterface) {
 
         self.managedObjectContext = managedObjectContext
         self
             .insertedObjectSync = InsertedObjectSync(
                 insertPredicate: Self
-                    .shouldBeSentPredicate(
-                        context: managedObjectContext,
-                        hasRegisteredMLSClient: hasRegisteredMLSClient
-                    )
+                    .shouldBeSentPredicate(context: managedObjectContext)
             )
         self.messageSender = messageSender
 
@@ -60,26 +49,19 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         [insertedObjectSync]
     }
 
-    static func shouldBeSentPredicate(context: NSManagedObjectContext, hasRegisteredMLSClient: Bool) -> NSPredicate {
+    static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
         let isAssetV3 = NSPredicate(format: "version >= 3")
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-
-        var predicates = [
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
             notDelivered,
             notExpired,
             isAssetV3,
             isUploaded,
             fromSelf
-        ]
-
-        if !hasRegisteredMLSClient {
-            predicates.append(.proteusAndMixedMessagesOnly)
-        }
-
-        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        ])
     }
 
 }
@@ -89,6 +71,15 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMAssetClientMessage
 
     func insert(object: ZMAssetClientMessage, completion: @escaping () -> Void) {
+        let hasRegisteredMLSClient = managedObjectContext.performAndWait {
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
+
+        if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            return
+        }
+
         let logAttributesBuilder = MessageLogAttributesBuilder(context: managedObjectContext)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)

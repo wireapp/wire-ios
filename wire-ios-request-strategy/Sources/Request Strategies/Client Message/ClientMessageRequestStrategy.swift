@@ -21,21 +21,11 @@ import WireLogging
 
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
-    static func shouldBeSentPredicate(
-        context: NSManagedObjectContext,
-        hasRegisteredMLSClient: Bool
-    ) -> NSPredicate {
+    static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-
-        var predicates = [notDelivered, notExpired, fromSelf]
-
-        if !hasRegisteredMLSClient {
-            predicates.append(.proteusAndMixedMessagesOnly)
-        }
-
-        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, fromSelf])
     }
 
     // MARK: - Properties
@@ -55,17 +45,8 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         applicationStatus: ApplicationStatus,
         messageSender: MessageSenderInterface
     ) {
-
-        let hasRegisteredMLSClient = context.performAndWait {
-            let selfClient = ZMUser.selfUser(in: context).selfClient()
-            return selfClient?.hasRegisteredMLSClient ?? false
-        }
-
         self.insertedObjectSync = InsertedObjectSync(
-            insertPredicate: Self.shouldBeSentPredicate(
-                context: context,
-                hasRegisteredMLSClient: hasRegisteredMLSClient
-            )
+            insertPredicate: Self.shouldBeSentPredicate(context: context)
         )
 
         self.context = context
@@ -110,6 +91,15 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
+        let hasRegisteredMLSClient = context.performAndWait {
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
+
+        if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            return
+        }
+
         let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)

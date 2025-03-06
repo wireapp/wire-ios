@@ -25,25 +25,14 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
     let modifiedKeysSync: ModifiedKeyObjectSync<LinkPreviewUpdateRequestStrategy>
     let messageSender: MessageSenderInterface
 
-    static func linkPreviewIsUploadedPredicate(
-        context: NSManagedObjectContext,
-        hasRegisteredMLSClient: Bool
-    ) -> NSPredicate {
-        let predicate = NSPredicate(
+    static func linkPreviewIsUploadedPredicate(context: NSManagedObjectContext) -> NSPredicate {
+        NSPredicate(
             format: "%K == %@ AND %K == %d",
             #keyPath(ZMClientMessage.sender),
             ZMUser.selfUser(in: context),
             #keyPath(ZMClientMessage.linkPreviewState),
             ZMLinkPreviewState.uploaded.rawValue
         )
-
-        var predicates = [predicate]
-
-        if !hasRegisteredMLSClient {
-            predicates.append(.proteusAndMixedMessagesOnly)
-        }
-
-        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 
     public init(
@@ -51,15 +40,7 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
         messageSender: MessageSenderInterface
     ) {
 
-        let hasRegisteredMLSClient = managedObjectContext.performAndWait {
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            return selfClient?.hasRegisteredMLSClient ?? false
-        }
-
-        let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(
-            context: managedObjectContext,
-            hasRegisteredMLSClient: hasRegisteredMLSClient
-        )
+        let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(context: managedObjectContext)
         self.modifiedKeysSync = ModifiedKeyObjectSync(
             trackedKey: ZMClientMessage.linkPreviewStateKey,
             modifiedPredicate: modifiedPredicate
@@ -83,6 +64,16 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func synchronize(key: String, for object: ZMClientMessage, completion: @escaping () -> Void) {
+
+        let hasRegisteredMLSClient = managedObjectContext.performAndWait {
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
+
+        if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            return
+        }
+
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
