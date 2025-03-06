@@ -30,6 +30,19 @@
 "create_personal_account.title" = "Don’t have a Wire account?";
 "create_personal_account.button" = "Create Personal Account";
 
+"on_prem_user_login.title" = "Welcome to Wire Enterprise for %@!";
+"on_prem_user_login.message" = "Enter your password to log in";
+"on_prem_user_login.alert.title" = "On-premises Backend";
+"on_prem_user_login.alert.message.backend-name" = "Backend name:";
+"on_prem_user_login.alert.message.backend-url" = "Backend URL:";
+"on_prem_user_login.alert.button" = "OK";
+
+"proxy_credentials.title" = "Proxy Credentials";
+"proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
+"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_password.title" = "Senha";
+"proxy_credentials.input_password.placeholder" = "Enter password";
+
 "switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
 "switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
 "switch_backend_confirmation.backend_name" = "Backend name:";
@@ -51,3 +64,28 @@
 "authentication.no_history.title" = "É a primeira vez que você está usando o Wire nesse dispositivo.";
 "authentication.no_history.message" = "Por questões de privacidade, o seu histórico de conversa não aparecerá aqui.";
 "authentication.no_history.confirm" = "OK";
+
+"authentication.error.title.no_internet" = "No internet";
+"authentication.error.title.general" = "Erro";
+"authentication.error.title.invalid_sso_link" = "Erro";
+"authentication.error.title.sso_login_failed" = "Algo deu errado";
+"authentication.error.title.invalid_credentials" = "Invalid Information";
+"authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
+"authentication.error.title.account_pending_activation" = "Pending activation";
+"authentication.error.title.account_suspended" = "Unauthorized";
+
+"authentication.error.message.no_internet" = "You are not connected to the internet.";
+"authentication.error.message.general" = "Algo deu errado";
+"authentication.error.message.invalid_sso_link" = "Invalid company login url.";
+"authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
+"authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
+"authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
+"authentication.error.message.account_pending_activation" = "The account you are trying to access is pending activation. Please verify your details.";
+"authentication.error.message.account_suspended" = "Esta conta não está mais autorizada a entrar.";
+
+"authentication.error.confirm" = "OK";
+
+"authentication.error.title.email_already_in_use" = "Email already in use";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
+"authentication.error.how_to_change_email" = "How to change email address";
+"authentication.error.how_to_delete_account" = "How to delete a private account";
