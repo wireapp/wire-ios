@@ -173,6 +173,10 @@ protocol ConversationMessageCellDescription: AnyObject {
 
 extension ConversationMessageCellDescription {
 
+    var supportsActions: Bool {
+        false
+    }
+
     func willDisplayCell() {
         _ = message?.startSelfDestructionIfNeeded()
     }
