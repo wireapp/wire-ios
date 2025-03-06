@@ -21,9 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLegalHoldSystemMessageCell<
-    CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
+final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<ConversationLegalHoldCellDescription>, ConversationMessageCell {
 
     static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
 
@@ -57,7 +55,7 @@ final class ConversationLegalHoldSystemMessageCell<
 }
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationLegalHoldSystemMessageCell<ConversationLegalHoldCellDescription>
+    typealias View = ConversationLegalHoldSystemMessageCell
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?

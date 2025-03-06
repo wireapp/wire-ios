@@ -20,9 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-final class ConversationParticipantsSystemMessageCell<
-    CellDescription: ConversationMessageCellDescription
->: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
+final class ConversationParticipantsSystemMessageCell: ConversationIconBasedCell<ConversationParticipantsChangedSystemMessageCellDescription>, ConversationMessageCell {
 
     private typealias LabelColors = SemanticColors.Label
 
