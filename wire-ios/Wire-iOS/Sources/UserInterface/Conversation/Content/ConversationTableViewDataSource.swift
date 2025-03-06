@@ -80,6 +80,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
+    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     var searchQueries: [String] = [] {
         didSet {
@@ -168,10 +169,12 @@ final class ConversationTableViewDataSource: NSObject {
         tableView: UpsideDownTableView,
         actionResponder: MessageActionResponder,
         cellDelegate: ConversationMessageCellDelegate,
+        menuPresenter: ConversationMessageCellMenuPresenter,
         userSession: UserSession
     ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
+        self.menuPresenter = menuPresenter
         self.conversation = conversation
         self.tableView = tableView
         self.userSession = userSession
@@ -223,6 +226,7 @@ final class ConversationTableViewDataSource: NSObject {
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
         sectionController.actionController = actionController(for: message)
+        sectionController.menuPresenter = menuPresenter
 
         sectionControllers[message.objectIdentifier] = sectionController
 

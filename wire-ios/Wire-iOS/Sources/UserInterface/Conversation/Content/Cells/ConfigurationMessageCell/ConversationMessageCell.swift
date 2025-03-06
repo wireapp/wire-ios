@@ -246,6 +246,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
+    private let _menuPresenter: AnyMutableProperty<ConversationMessageCellMenuPresenter?>
     private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _showEphemeralTimer: AnyMutableProperty<Bool>
@@ -288,6 +289,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
+        self._menuPresenter = AnyMutableProperty(description, keyPath: \.menuPresenter)
         self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
@@ -316,6 +318,11 @@ final class AnyConversationMessageCellDescription: NSObject {
     var actionController: ConversationMessageActionController? {
         get { _actionController.getter() }
         set { _actionController.setter(newValue) }
+    }
+
+    var menuPresenter: ConversationMessageCellMenuPresenter? {
+        get { _menuPresenter.getter() }
+        set { _menuPresenter.setter(newValue) }
     }
 
     var topMargin: CGFloat {

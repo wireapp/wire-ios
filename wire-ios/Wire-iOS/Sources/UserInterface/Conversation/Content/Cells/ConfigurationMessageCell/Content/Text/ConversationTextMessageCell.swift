@@ -155,7 +155,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
 
     let configuration: View.Configuration
 
-    weak var message: ZMConversationMessage? { didSet { fatalError() } }
+    weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
     weak var menuPresenter: ConversationMessageCellMenuPresenter?

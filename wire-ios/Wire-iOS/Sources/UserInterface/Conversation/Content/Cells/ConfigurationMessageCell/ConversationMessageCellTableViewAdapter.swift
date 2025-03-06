@@ -162,53 +162,12 @@ final class ConversationMessageCellTableViewAdapter<
 
     // MARK: - Menu
 
-//    func showMenu() {
-//        guard let controller = messageActionsMenuController(with: MessageAction.allCases) else { return }
-//        display(messageActionsController: controller)
-//    }
-//
-//    func showSecuredMenu() {
-//        let actions = [
-//            MessageAction.visitLink,
-//            MessageAction.reply,
-//            MessageAction.edit,
-//            MessageAction.openDetails,
-//            MessageAction.delete,
-//            MessageAction.cancel
-//        ]
-//        guard let controller = messageActionsMenuController(with: actions) else { return }
-//        display(messageActionsController: controller)
-//    }
-//
-//    private func display(messageActionsController: MessageActionsViewController) {
-//        cellView.delegate?.conversationMessageWantsToShowActionsController(
-//            cellView,
-//            actionsController: messageActionsController
-//        )
-//    }
-
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
             cellDescription?.menuPresenter?.showMenu()
         }
     }
-
-//    func messageActionsMenuController(
-//        with actions: [MessageAction] = MessageAction.allCases
-//    ) -> MessageActionsViewController? {
-//        guard let actionController = cellDescription?.actionController else { return nil }
-//        let actionsMenuController = MessageActionsViewController.controller(
-//            withActions: actions,
-//            actionController: actionController
-//        )
-//
-//        if let popoverPresentationController = actionsMenuController.popoverPresentationController {
-//            popoverPresentationController.sourceView = cellView
-//        }
-//
-//        return actionsMenuController
-//    }
 
     // MARK: - Single Tap Action
 

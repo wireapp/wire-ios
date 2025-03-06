@@ -80,6 +80,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         didSet { updateDelegates() }
     }
 
+    weak var menuPresenter: ConversationMessageCellMenuPresenter? {
+        didSet { updateDelegates() }
+    }
+
     /// The message that is being presented.
     var message: ConversationMessage {
         didSet { updateDelegates() }
@@ -318,6 +322,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         cellDescriptions.forEach {
             $0.message = message
             $0.actionController = actionController
+            $0.menuPresenter = menuPresenter
             $0.delegate = cellDelegate
         }
     }

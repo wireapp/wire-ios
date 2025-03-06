@@ -88,6 +88,7 @@ final class ConversationContentViewController: UIViewController {
         tableView: tableView,
         actionResponder: self,
         cellDelegate: self,
+        menuPresenter: self,
         userSession: userSession
     )
 
@@ -506,6 +507,55 @@ extension ConversationContentViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         // no-op
     }
+}
+
+extension ConversationContentViewController: ConversationMessageCellMenuPresenter {
+
+    func showMenu() {
+        fatalError()
+//        guard let controller = messageActionsMenuController(with: MessageAction.allCases) else { return }
+//        display(messageActionsController: controller)
+    }
+
+    func showSecuredMenu() {
+        fatalError()
+//        let actions = [
+//            MessageAction.visitLink,
+//            MessageAction.reply,
+//            MessageAction.edit,
+//            MessageAction.openDetails,
+//            MessageAction.delete,
+//            MessageAction.cancel
+//        ]
+//        guard let controller = messageActionsMenuController(with: actions) else { return }
+//        display(messageActionsController: controller)
+    }
+
+    /*
+    private func display(messageActionsController: MessageActionsViewController) {
+        conversationMessageWantsToShowActionsController(
+            cellView,
+            actionsController: messageActionsController
+        )
+    }
+
+    func messageActionsMenuController(
+        with actions: [MessageAction] = MessageAction.allCases
+    ) -> MessageActionsViewController? {
+        guard let actionController = cellDescription?.actionController else { return nil }
+        let actionsMenuController = MessageActionsViewController.controller(
+            withActions: actions,
+            actionController: actionController
+        )
+
+        if let popoverPresentationController = actionsMenuController.popoverPresentationController {
+            popoverPresentationController.sourceView = cellView
+        }
+
+        return actionsMenuController
+    }
+     */
+
 }
 
 private extension UIAlertController {
