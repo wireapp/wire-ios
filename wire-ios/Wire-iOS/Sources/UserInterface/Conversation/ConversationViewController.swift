@@ -202,11 +202,11 @@ final class ConversationViewController: UIViewController {
         if let participant = conversation.firstActiveParticipantOtherThanSelf {
             userObservationToken = userSession.addUserObserver(self, for: participant)
         }
-        
+
         selfUserObservationToken = userSession.addUserObserver(self, for: userSession.selfUser)
 
         startCallController = ConversationCallController(conversation: conversation, target: self)
-        
+
     }
 
     override func viewDidLoad() {
@@ -447,8 +447,8 @@ final class ConversationViewController: UIViewController {
                 let imageSource = await getParticipantImageSourceUseCase
                     .invoke(user: user)
                 if isAfterTitleRelatedDataChanged,
-                    case .text = imageSource,
-                    case .image = titleView.source.accountImageSource {
+                   case .text = imageSource,
+                   case .image = titleView.source.accountImageSource {
                     // no need to update because of the way updates come when avatar is changed (in several events)
                     // if we get empty image after update but previously there was an image, we need to skip
                     // so with next update event (which comes right after) we get updated image
@@ -684,7 +684,7 @@ extension ConversationViewController: UserObserving {
         if changeInfo.user.isSelfUser, changeInfo.accentColorValueChanged {
             titleView.updateAccentColor(changeInfo.user.accentColor)
         }
-        
+
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
             setupNavigationItem(isAfterTitleRelatedDataChanged: true)

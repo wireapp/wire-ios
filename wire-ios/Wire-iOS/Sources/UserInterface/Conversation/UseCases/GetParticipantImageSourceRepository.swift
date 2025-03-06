@@ -20,13 +20,13 @@ import WireDataModel
 import WireSyncEngine
 
 class GetParticipantImageSourceRepository: GetParticipantImageSourceRepositoryProtocol {
-    
+
     private let userSession: UserSession
-    
+
     init(userSession: UserSession) {
         self.userSession = userSession
     }
-    
+
     @MainActor
     func invoke(user: any UserType) async -> UIImage? {
         await withCheckedContinuation { continuation in
@@ -34,10 +34,11 @@ class GetParticipantImageSourceRepository: GetParticipantImageSourceRepositoryPr
                 session: userSession,
                 imageCache: UIImage.defaultUserImageCache,
                 sizeLimit: 32,
-                isDesaturated: false) { image, _ in
-                    continuation.resume(returning: image)
-                }
+                isDesaturated: false
+            ) { image, _ in
+                continuation.resume(returning: image)
+            }
         }
     }
-    
+
 }

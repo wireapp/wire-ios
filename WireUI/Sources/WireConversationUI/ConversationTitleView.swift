@@ -31,7 +31,7 @@ public class ConversationTitleView: UIView {
     private let subtitleLabel = UILabel()
     private let dropdownImage = UIImageView(image: .dropdown)
     private let tapButton = UIButton(type: .custom)
-    
+
     var accentColor: UIColor = .white
 
     private let canAnimate: Bool
@@ -73,7 +73,7 @@ public class ConversationTitleView: UIView {
         }
         accountImageView.hideProfileNotificationsBadge = true
         accountImageView.isHidden = source.accountImageSource == nil
-        
+
         let design = AccountImageViewDesign()
         accountImageView.imageBorderWidth = design.borderWidth
         accountImageView.imageBorderColor = design.borderColor
@@ -122,9 +122,9 @@ public class ConversationTitleView: UIView {
         nameLabel.text = source.title
         subtitleLabel.text = source.subtitle
     }
-    
+
     public func updateAccentColor(_ color: UIColor) {
-        self.accentColor = color
+        accentColor = color
         subtitleLabel.textColor = color
         accountImageView.initialsBackgroundColor = color
     }

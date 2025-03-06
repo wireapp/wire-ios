@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTestingPackage
 import WireAccountImageUI
+import WireTestingPackage
+import XCTest
 
 @testable import WireConversationUI
 
@@ -42,10 +42,10 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
             title: "Title Sample",
             subtitle: nil
         ))
-                
+
         snapshotHelper.verify(matching: sut)
     }
-    
+
     @MainActor
     func testInitialsAvatarForOneOnOnesWithSubtitle() {
         let sut = createSUT(ConversationTitleSource(
@@ -53,10 +53,10 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
             title: "John snow",
             subtitle: "FEDERATED"
         ))
-                
+
         snapshotHelper.verify(matching: sut)
     }
-    
+
     @MainActor
     func testImageAvatarForOneOnOnesWithNoSubtitle() {
         let sut = createSUT(ConversationTitleSource(
@@ -64,7 +64,7 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
             title: "Willy Wonka",
             subtitle: nil
         ))
-                
+
         snapshotHelper.verify(matching: sut)
     }
 
@@ -74,9 +74,9 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
             source: source,
             canAnimate: false
         )
-        
+
         sut.updateAccentColor(.systemGreen)
-        
+
         sut.frame = CGRect(x: 0, y: 0, width: 150, height: 44)
         return sut
     }

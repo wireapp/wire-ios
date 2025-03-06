@@ -21,13 +21,13 @@ import WireDataModel
 import WireSyncEngine
 
 class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol {
-    
+
     private let repository: GetParticipantImageSourceRepositoryProtocol
-    
+
     init(repository: GetParticipantImageSourceRepositoryProtocol) {
         self.repository = repository
     }
-    
+
     @MainActor
     func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
         let image = await repository.invoke(user: user)

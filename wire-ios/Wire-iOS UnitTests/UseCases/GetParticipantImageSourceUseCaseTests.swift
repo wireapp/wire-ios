@@ -20,16 +20,16 @@ import XCTest
 @testable import Wire
 
 final class GetParticipantImageSourceUseCaseTests: XCTestCase {
-    
+
     let repository = MockGetParticipantImageSourceRepositoryProtocol()
     var sut: GetParticipantImageSourceUseCase!
-    
+
     override func setUp() async throws {
         try await super.setUp()
         repository.invokeUser_MockValue = .some(nil)
         sut = GetParticipantImageSourceUseCase(repository: repository)
     }
-    
+
     func testReturnInitials() async {
         let user = MockUserType()
         user.initials = "DS"
@@ -40,11 +40,11 @@ final class GetParticipantImageSourceUseCaseTests: XCTestCase {
 
         XCTAssertEqual(initials, "DS")
     }
-    
+
     func testReturnEmptyIfNoInitials() async {
         let user = MockUserType()
         user.initials = nil
-        
+
         let source = await sut.invoke(user: user)
         guard case let .text(initials) = source else {
             return XCTFail("Expected .text case, but got \(String(describing: source))")
@@ -52,7 +52,7 @@ final class GetParticipantImageSourceUseCaseTests: XCTestCase {
 
         XCTAssertEqual(initials, "")
     }
-    
+
     func testReturnImage() async {
         let user = MockUserType()
         user.initials = "JS"
