@@ -16,12 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol ConversationMessageCellMenuPresenter: AnyObject {
-    func showMenu()
-    func showSecuredMenu()
-}
-
-struct ConversationMessageCellMenuPresenter_ {
+struct ConversationMessageCellMenuPresenter {
 
     weak var contentView: (any ConversationMessageCell)?
     weak var actionController: ConversationMessageActionController?

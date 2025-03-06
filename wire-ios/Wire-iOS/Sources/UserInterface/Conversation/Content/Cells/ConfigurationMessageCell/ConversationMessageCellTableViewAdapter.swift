@@ -166,7 +166,7 @@ final class ConversationMessageCellTableViewAdapter<
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
             if let textMessageCell = gestureRecognizer.view as? ConversationTextMessageCell {
-                textMessageCell.menuPresenter_.showMenu()
+                textMessageCell.menuPresenter.showMenu()
             }
         }
     }

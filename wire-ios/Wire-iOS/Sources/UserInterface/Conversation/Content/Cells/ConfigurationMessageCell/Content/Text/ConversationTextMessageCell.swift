@@ -55,7 +55,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    /*private*/ private(set) lazy var menuPresenter_ = ConversationMessageCellMenuPresenter_(
+    /*private*/ private(set) lazy var menuPresenter = ConversationMessageCellMenuPresenter(
         contentView: self,
         actionController: actionController,
         conversationMessageCellDelegate: delegate
@@ -135,9 +135,9 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
-                menuPresenter_.showSecuredMenu()
+                menuPresenter.showSecuredMenu()
             } else {
-                menuPresenter_.showMenu()
+                menuPresenter.showMenu()
             }
         }
     }
