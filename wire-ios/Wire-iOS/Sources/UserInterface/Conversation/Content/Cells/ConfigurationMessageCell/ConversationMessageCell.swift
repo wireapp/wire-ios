@@ -22,6 +22,11 @@ import WireUtilities
 
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
+    func conversationMessageCell(
+        _ contentView: any ConversationMessageCell,
+        presentViewController: UIViewController
+    )
+
     func conversationMessageWantsToOpenUserDetails(
         _ cell: UIView,
         user: UserType,
@@ -46,12 +51,8 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
         sourceView: UIView
     )
 
-    func conversationMessageWantsToShowActionsController(
-        _ cell: UIView,
-        actionsController: UIViewController
-    )
-
     func conversationMessageShouldUpdate()
+
 }
 
 /// A generic view that displays conversation contents.

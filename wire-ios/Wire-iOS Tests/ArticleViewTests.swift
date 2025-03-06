@@ -19,16 +19,19 @@
 import WireDataModel
 import WireLinkPreview
 import XCTest
+
 @testable import Wire
 
 // MARK: - MockConversationMessageCellDelegate
 
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
 
-    func conversationMessageWantsToShowActionsController(
-        _ cell: UIView,
-        actionsController: Wire.MessageActionsViewController
-    ) {}
+    func conversationMessageCell(
+        _ contentView: any ConversationMessageCell,
+        presentViewController: UIViewController
+    ) {
+        // no-op
+    }
 
     func conversationMessageWantsToOpenUserDetails(
         _ cell: UIView,

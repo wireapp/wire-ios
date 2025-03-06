@@ -50,6 +50,7 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    weak var menuPresenter: (any ConversationMessageCellMenuPresenter)?
 
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
