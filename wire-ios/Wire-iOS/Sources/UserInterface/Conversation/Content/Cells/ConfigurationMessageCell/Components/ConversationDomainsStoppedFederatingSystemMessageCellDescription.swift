@@ -39,7 +39,6 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
     var message: WireDataModel.ZMConversationMessage?
     var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
-    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     init(systemMessageData: ZMSystemMessageData) {
         let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)

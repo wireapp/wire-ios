@@ -39,7 +39,6 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     var message: WireDataModel.ZMConversationMessage?
     var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
-    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     init(messageType: ZMSystemMessageType, for user: UserType) {
         let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
