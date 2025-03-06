@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<ConversationLegalHoldCellDescription>, ConversationMessageCell {
+final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<ConversationLegalHoldCellDescription>,
+    ConversationMessageCell {
 
     static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
 
