@@ -71,6 +71,7 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
         }
 
         if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            completion()
             return
         }
 
