@@ -9,21 +9,12 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
-        .library(
-            name: "WireConversationsAPI",
-            targets: ["WireConversationsAPI"]
-        ),
-        .library(
-            name: "WireConversationsBindings",
-            targets: ["WireConversationsBindings"]
-        ),
-        .library(
-            name: "WireConversationsUI",
-            targets: ["WireConversationsUI"]
-        ),
+        .library(name: "WireConversationsAPI", targets: ["WireConversationsAPI"]),
+        .library(name: "WireConversationsBindings", targets: ["WireConversationsBindings"]),
+        .library(name: "WireConversationsUI", targets: ["WireConversationsUI"]),
     ],
     dependencies: [
-        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireFoundation"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -56,7 +47,6 @@ for target in package.targets {
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("FullTypedThrows"),
         .enableUpcomingFeature("ExistentialAny")
     ]
 }
