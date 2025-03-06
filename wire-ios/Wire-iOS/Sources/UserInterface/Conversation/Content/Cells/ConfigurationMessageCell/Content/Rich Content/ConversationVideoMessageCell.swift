@@ -149,7 +149,6 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedVideoCell" : "VideoCell"
