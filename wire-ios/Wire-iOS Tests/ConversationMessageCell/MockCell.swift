@@ -21,8 +21,7 @@ import WireFoundation
 
 @testable import Wire
 
-final class MockCell: UIView, ConversationMessageCell {
-    typealias CellDescription = MockConversationMessageCellDescription
+final class MockCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell {
 
     struct Configuration {
         let backgroundColor: UIColor
@@ -52,7 +51,7 @@ final class MockCell: UIView, ConversationMessageCell {
 }
 
 final class MockCellDescription<T>: ConversationMessageCellDescription {
-    typealias View = MockCell
+    typealias View = MockCell<MockCellDescription<T>>
 
     let configuration: View.Configuration
 
