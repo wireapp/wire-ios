@@ -41,7 +41,8 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
         Task {
             try? await Task.sleep(for: .seconds(0.25))
-            NotificationInContext(name: .didStopDecryptingEventsNotification, context: syncMOC.notificationContext).post()
+            NotificationInContext(name: .didStopDecryptingEventsNotification, context: syncMOC.notificationContext)
+                .post()
         }
 
         // then test completes

@@ -96,7 +96,7 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
             "Waiting for app to finish decrypting during quickSync before sending message",
             attributes: .safePublic
         )
-        
+
         for await _ in notificationCenter.notifications(
             named: .didStopDecryptingEventsNotification,
             object: notificationContext
@@ -112,8 +112,7 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
     private var finishedDecrypting: Bool {
         decryptionState == .done
     }
-    
-    
+
     private func quickSyncHasCompleted() async -> Bool {
         await context.perform {
             self.applicationStatus.synchronizationState == .online
