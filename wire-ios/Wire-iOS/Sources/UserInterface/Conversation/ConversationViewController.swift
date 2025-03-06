@@ -48,7 +48,7 @@ final class ConversationViewController: UIViewController {
                 discoverabilityTitle: keyboardShortcut.searchInConversation
             ),
             UIKeyCommand(
-                action: #selector(titleViewTapped),
+                action: #selector(onConversationDetailsPressed),
                 input: "i",
                 modifierFlags: [.command],
                 discoverabilityTitle: keyboardShortcut.conversationDetail
@@ -402,13 +402,35 @@ final class ConversationViewController: UIViewController {
     }
 
     @objc
-    private func titleViewTapped() {
-        if let superview = titleView.superview, let participantsController {
-            presentParticipantsViewController(participantsController, from: superview)
+    private func setupTitleViewTap() {
+        var actions = [UIAction]()
+        if shouldShowCollectionsButton {
+            actions.append(
+                UIAction(
+                    title: L10n.Localizable.Conversation.Action.search,
+                    image: UIImage(systemName: "magnifyingglass"),
+                    handler: { [weak self] _ in
+                        self?.onSearchButtonPressed(nil)
+                    }
+                )
+            )
         }
+        actions.append(UIAction(
+            title: L10n.Localizable.Conversation.Action.conversationDetails,
+            image: UIImage(systemName: "info.circle"),
+            handler: { [weak self] _ in
+                self?.onConversationDetailsPressed()
+            }
+        ))
+
+        let menu = UIMenu(title: "", children: actions)
+
+        titleView.menuProvider = { menu }
     }
 
     private func setupNavigationItem() {
+        setupTitleViewTap()
+
         if conversation.conversationType == .oneOnOne {
             Task { [weak self] in
                 guard let self else { return }
@@ -448,7 +470,8 @@ final class ConversationViewController: UIViewController {
     }
 
     static func getConversationSubtitle(_ conversation: ZMConversation) -> String? {
-        guard let user = conversation.firstActiveParticipantOtherThanSelf else {
+        guard conversation.conversationType == .oneOnOne,
+              let user = conversation.firstActiveParticipantOtherThanSelf else {
             return nil
         }
         if user.isExternalPartner {
@@ -651,7 +674,6 @@ extension ConversationViewController: ZMConversationListObserver {
 extension ConversationViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
             setupNavigationItem()
@@ -731,38 +753,16 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         }
     }
 
-    var searchBarButtonItem: UIBarButtonItem {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .search), for: .normal)
-        button.tintColor = IconColors.foregroundDefault
-
-        button.accessibilityIdentifier = "collection"
-        button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
-
-        button.addTarget(
-            self,
-            action: #selector(onSearchButtonPressed(_:)),
-            for: .touchUpInside
-        )
-
-        // Enable large content viewer
-        button.showsLargeContentViewer = true
-        button.largeContentTitle = L10n.Accessibility.Conversation.SearchButton.description
-        button.largeContentImage = UIImage(resource: .search)
-
-        button.backgroundColor = ButtonColors.backgroundBarItem
-        button.layer.borderWidth = 1
-        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
-        button.layer.cornerRadius = 12
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
-
-        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
-
-        return UIBarButtonItem(customView: button)
+    @objc
+    private func onConversationDetailsPressed() {
+        if let superview = titleView.superview, let participantsController {
+            presentParticipantsViewController(participantsController, from: superview)
+        }
     }
 
     @objc
     private func onSearchButtonPressed(_ sender: AnyObject?) {
+        guard shouldShowCollectionsButton else { return }
         if collectionController == .none {
             let collections = CollectionsViewController(
                 conversation: conversation,

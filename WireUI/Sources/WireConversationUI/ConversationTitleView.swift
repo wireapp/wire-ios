@@ -30,7 +30,17 @@ public class ConversationTitleView: UIView {
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let dropdownImage = UIImageView(image: .dropdown)
+    private let tapButton = UIButton(type: .custom)
+
     private let canAnimate: Bool
+
+    public var menuProvider: (() -> UIMenu)? {
+        didSet {
+            if let menu = menuProvider?() {
+                tapButton.menu = menu
+            }
+        }
+    }
 
     public init(source: ConversationTitleSource, canAnimate: Bool) {
         self.source = source
@@ -89,6 +99,10 @@ public class ConversationTitleView: UIView {
         stackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
 
         stackView.center(in: self)
+
+        addSubview(tapButton)
+        tapButton.fitIn(view: self)
+        tapButton.showsMenuAsPrimaryAction = true
     }
 
     public func updateSource(_ source: ConversationTitleSource) {
