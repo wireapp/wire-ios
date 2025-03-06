@@ -97,6 +97,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         }
 
         if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            completion()
             return
         }
 
