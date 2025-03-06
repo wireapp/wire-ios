@@ -160,10 +160,10 @@ final class ConversationMessageCellTableViewAdapter<
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        UIView.animate(withDuration: 0.35, animations: {
+        UIView.animate(withDuration: 0.35) {
             self.cellView.isSelected = selected
             self.layoutIfNeeded()
-        })
+        }
     }
 
     // MARK: - Menu
@@ -195,8 +195,6 @@ final class ConversationMessageCellTableViewAdapter<
 
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
-        let contentView = gestureRecognizer.view as? (any ConversationMessageCell)
-        print(contentView)
         if gestureRecognizer.state == .began {
             showMenu()
         }

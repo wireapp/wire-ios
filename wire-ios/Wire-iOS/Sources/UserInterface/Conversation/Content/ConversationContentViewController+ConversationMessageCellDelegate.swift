@@ -49,7 +49,7 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
 
     func conversationMessageWantsToShowActionsController(
         _ cell: UIView,
-        actionsController: MessageActionsViewController
+        actionsController: UIViewController
     ) {
         present(actionsController, animated: true)
     }

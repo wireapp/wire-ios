@@ -22,22 +22,35 @@ import WireUtilities
 
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
-    func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
+    func conversationMessageWantsToOpenUserDetails(
+        _ cell: UIView,
+        user: UserType,
+        sourceView: UIView,
+        frame: CGRect
+    )
+
     func conversationMessageWantsToOpenMessageDetails(
         _ cell: UIView,
         for message: ZMConversationMessage,
         preferredDisplayMode: MessageDetailsDisplayMode
     )
-    func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView)
+
+    func conversationMessageWantsToOpenGuestOptionsFromView(
+        _ cell: UIView,
+        sourceView: UIView
+    )
+
     func conversationMessageWantsToOpenParticipantsDetails(
         _ cell: UIView,
         selectedUsers: [UserType],
         sourceView: UIView
     )
+
     func conversationMessageWantsToShowActionsController(
         _ cell: UIView,
-        actionsController: MessageActionsViewController
+        actionsController: UIViewController
     )
+
     func conversationMessageShouldUpdate()
 }
 
