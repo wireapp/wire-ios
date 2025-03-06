@@ -21,9 +21,10 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class CustomMessageView: UIView {
+final class CustomMessageView: UIView, UITextViewDelegate {
     var isSelected: Bool = false
 
+    weak var cellDescription: UnknownMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -70,11 +71,8 @@ final class CustomMessageView: UIView {
             bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor)
         ])
     }
-}
 
-// MARK: - UITextViewDelegate
-
-extension CustomMessageView: UITextViewDelegate {
+    // MARK: - UITextViewDelegate
 
     func textView(
         _ textView: UITextView,

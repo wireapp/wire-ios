@@ -22,7 +22,7 @@ import Foundation
 
 /// A type representing all the versions of the Wire api.
 
-public enum APIVersion: UInt, CaseIterable, Comparable {
+public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
 
     case v0
     case v1

@@ -41,6 +41,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     let email: String
     let canCreateAccount: Bool
+    let didDetectDomainConflict: Bool
 
     // MARK: - Life cycle
 
@@ -51,6 +52,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
         onCreateAccount: @escaping () -> Void
     ) {
         self.router = router
@@ -59,6 +61,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
+        self.didDetectDomainConflict = didDetectDomainConflict
         self.onCreateAccount = onCreateAccount
     }
 
@@ -87,7 +90,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 RootView.ModalDestination.noHistory(
                     userID: token.userID,
                     cookies: cookies,
-                    accessToken: token
+                    accessToken: token,
+                    didDetectDomainConflict: didDetectDomainConflict
                 )
             )
             WireLogger.authentication.info("login via email succeeded")

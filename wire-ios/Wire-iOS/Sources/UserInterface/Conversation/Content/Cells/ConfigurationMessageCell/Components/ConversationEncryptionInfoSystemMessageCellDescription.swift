@@ -21,7 +21,7 @@ import WireDataModel
 
 final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationWarningSystemMessageCell
+    typealias View = ConversationWarningSystemMessageCell<ConversationEncryptionInfoSystemMessageCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -31,7 +31,6 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 26.0
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
