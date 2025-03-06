@@ -18,7 +18,7 @@
 
 import Foundation
 
-public protocol DetermineAuthMethodUseCaseProtocol {
+public protocol DetermineAuthMethodUseCaseProtocol: Sendable {
 
     @MainActor
     func invoke(emailOrSSOCode: String) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod
@@ -56,4 +56,10 @@ public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
     case urlError(URLError)
 
     case unknown
+}
+
+public protocol DetermineAuthMethodUseCaseFactory {
+
+    func determineAuthMethodUseCase(apiVersion: UInt) -> any  DetermineAuthMethodUseCaseProtocol
+
 }

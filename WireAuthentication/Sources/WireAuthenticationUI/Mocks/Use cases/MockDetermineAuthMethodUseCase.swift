@@ -16,29 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAuthenticationAPI
 
-package protocol ValidateEmailOrSSOCodeUseCaseProtocol: Sendable {
+struct MockDetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
-    func invoke(input: String) throws -> ValidatedEmailOrSSOCode
+    func invoke(
+        emailOrSSOCode: String
+    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
+        try! await Task.sleep(for: .seconds(3))
 
-}
-
-package enum ValidatedEmailOrSSOCode: Equatable {
-
-    case email(email: String, domain: String)
-    case ssoCode(UUID)
-
-}
-
-package enum ValidatedEmailOrSSOCodeFailure: Error {
-
-    case invalidInput
-
-}
-
-package protocol ValidateEmailOrSSOCodeUseCaseFactory {
-
-    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol
+        return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
+    }
 
 }

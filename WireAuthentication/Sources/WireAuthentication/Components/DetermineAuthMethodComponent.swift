@@ -28,6 +28,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     var defaultBackendEnvironment: BackendEnvironment { get }
     var defaultAPIVersion: APIVersion { get }
+    var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
@@ -36,13 +37,9 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    private var validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase {
-        ValidateEmailOrSSOCodeUseCase()
-    }
-
     private var determineAuthMethodUseCase: some DetermineAuthMethodUseCaseProtocol {
         DetermineAuthMethodUseCase(
-            validateEmailOrSSOCode: validateEmailOrSSOCode,
+            validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
             authenticationAPI: authenticationAPI
         )
     }
@@ -59,8 +56,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: dependency.router,
-            validateEmailOrSSOCode: validateEmailOrSSOCode,
-            determineAuthMethod: determineAuthMethodUseCase,
+            factory: self,
             ssoLinkGenerator: ssoLinkGenerator
         )
     }
@@ -81,6 +77,15 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         ).makeAPI(for: dependency.defaultAPIVersion)
     }
 
+    private var networkService: NetworkService {
+        shared {
+            NetworkService.make(
+                backendEnvironment: dependency.defaultBackendEnvironment,
+                minTLSVersion: dependency.minTLSVersion
+            )
+        }
+    }
+
     // MARK: - Children
 
     var loginViaEmailComponent: LoginViaEmailComponent {
@@ -89,6 +94,32 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     var loginViaSSOComponent: LoginViaSSOComponent {
         LoginViaSSOComponent()
+    }
+
+}
+
+extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
+
+    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
+        ValidateEmailOrSSOCodeUseCase()
+    }
+
+    func determineAuthMethodUseCase(apiVersion: UInt) -> any DetermineAuthMethodUseCaseProtocol {
+        let apiVersion = APIVersion(rawValue: apiVersion)!
+        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(for: apiVersion)
+        return DetermineAuthMethodUseCase(
+            validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
+            authenticationAPI: authenticationAPI
+        )
+    }
+
+    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
+        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
+        return ResolveBackendMetadataUseCase(
+            backendMetadataAPI: api,
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
     }
 
 }

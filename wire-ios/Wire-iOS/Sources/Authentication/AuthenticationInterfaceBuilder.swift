@@ -96,6 +96,7 @@ final class AuthenticationInterfaceBuilder {
                 ),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 defaultAPIVersion: .v8,
+                preferredAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,

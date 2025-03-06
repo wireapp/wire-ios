@@ -27,6 +27,7 @@ class RootComponent: BootstrapComponent {
 
     public let defaultBackendEnvironment: BackendEnvironment
     public let defaultAPIVersion: APIVersion
+    public let preferredAPIVersion: APIVersion?
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let howToChangeEmailURL: URL
@@ -40,6 +41,7 @@ class RootComponent: BootstrapComponent {
     init(
         defaultBackendEnvironment: BackendEnvironment,
         defaultAPIVersion: APIVersion,
+        preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         accountsURL: URL,
         howToChangeEmailURL: URL,
@@ -52,6 +54,7 @@ class RootComponent: BootstrapComponent {
     ) {
         self.defaultBackendEnvironment = defaultBackendEnvironment
         self.defaultAPIVersion = defaultAPIVersion
+        self.preferredAPIVersion = preferredAPIVersion
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.howToChangeEmailURL = howToChangeEmailURL

@@ -24,6 +24,11 @@ import WireAuthenticationAPI
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
+    package typealias Factory =
+    ResolveBackendMetadataUseCaseFactory &
+    DetermineAuthMethodUseCaseFactory &
+    ValidateEmailOrSSOCodeUseCaseFactory
+
     package enum Alert: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
@@ -41,9 +46,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     private let router: any Router
-    private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
-    private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
     private let ssoLinkGenerator: SSOLinkGeneratorProtocol
+    private let factory: any Factory
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -56,16 +60,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package init(
         router: any Router,
-        validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
-        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
+        factory: any Factory,
         ssoLinkGenerator: any SSOLinkGeneratorProtocol,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
         alert: Alert? = nil
     ) {
         self.router = router
-        self.validateEmailOrSSOCode = validateEmailOrSSOCode
-        self.determineAuthMethod = determineAuthMethod
+        self.factory = factory
         self.ssoLinkGenerator = ssoLinkGenerator
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
@@ -74,28 +76,33 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     func submitEmailOrSSOCode() async {
         isLoading = true
+        defer {
+            isLoading = false
+        }
+
+        let backendMetadata: BackendMetadata
+        do {
+            let useCase = factory.resolveBackendMetadataUseCase()
+            backendMetadata = try await Task.detached { [useCase] in
+                try await useCase.invoke()
+            }.value
+        } catch {
+            // TODO: report via bridge that API version can't be resolved.
+            fatalError()
+        }
 
         do {
-            let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
-            handleAuthenticationMethod(method)
+            let useCase = factory.determineAuthMethodUseCase(apiVersion: backendMetadata.apiVersion)
+            let authMethod = try await Task.detached { [useCase, emailOrSSOCode] in
+                try await useCase.invoke(emailOrSSOCode: emailOrSSOCode)
+            }.value
+
+            handleAuthenticationMethod(authMethod)
+        } catch let error as DetermineAuthMethodUseCaseFailure {
+            handleAuthenticationMethodError(error)
         } catch {
-            switch error {
-            case .invalidEmailOrSSOCode:
-                // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
-                // things a little to make this error impossible to happen.
-                break
-            case .invalidResponse:
-                alert = .invalidResponse
-            case let .urlError(urlError):
-                switch urlError.code {
-                case .notConnectedToInternet, .networkConnectionLost:
-                    alert = .noInternet
-                default:
-                    alert = .unknownError
-                }
-            case .unknown:
-                alert = .unknownError
-            }
+            // TODO: handle
+            fatalError()
         }
 
         isLoading = false
@@ -139,9 +146,30 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
+    private func handleAuthenticationMethodError(_ error: DetermineAuthMethodUseCaseFailure) {
+        switch error {
+        case .invalidEmailOrSSOCode:
+            // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
+            // things a little to make this error impossible to happen.
+            break
+        case .invalidResponse:
+            alert = .invalidResponse
+        case let .urlError(urlError):
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost:
+                alert = .noInternet
+            default:
+                alert = .unknownError
+            }
+        case .unknown:
+            alert = .unknownError
+        }
+    }
+
     private func isValidEmailOrSSOCode() -> Bool {
         do {
-            _ = try validateEmailOrSSOCode.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
+            let useCase = factory.validateEmailOrSSOCodeUseCase()
+            _ = try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
             return true
         } catch {
             return false

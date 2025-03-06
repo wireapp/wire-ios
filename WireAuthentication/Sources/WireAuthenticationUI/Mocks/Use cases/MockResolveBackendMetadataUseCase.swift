@@ -16,29 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAuthenticationAPI
 
-package protocol ValidateEmailOrSSOCodeUseCaseProtocol: Sendable {
+struct MockResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
 
-    func invoke(input: String) throws -> ValidatedEmailOrSSOCode
-
-}
-
-package enum ValidatedEmailOrSSOCode: Equatable {
-
-    case email(email: String, domain: String)
-    case ssoCode(UUID)
-
-}
-
-package enum ValidatedEmailOrSSOCodeFailure: Error {
-
-    case invalidInput
-
-}
-
-package protocol ValidateEmailOrSSOCodeUseCaseFactory {
-
-    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol
+    func invoke() async throws -> BackendMetadata {
+        BackendMetadata(
+            apiVersion: 8,
+            domain: "wire.com",
+            isFederationEnabled: true
+        )
+    }
 
 }

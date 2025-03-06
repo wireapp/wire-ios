@@ -17,28 +17,18 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-package protocol ValidateEmailOrSSOCodeUseCaseProtocol: Sendable {
+struct MockValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
 
-    func invoke(input: String) throws -> ValidatedEmailOrSSOCode
-
-}
-
-package enum ValidatedEmailOrSSOCode: Equatable {
-
-    case email(email: String, domain: String)
-    case ssoCode(UUID)
-
-}
-
-package enum ValidatedEmailOrSSOCodeFailure: Error {
-
-    case invalidInput
-
-}
-
-package protocol ValidateEmailOrSSOCodeUseCaseFactory {
-
-    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol
+    func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if input.contains("@") {
+            return .email(email: input, domain: input.components(separatedBy: "@").last!)
+        } else if input.hasSuffix("wire") {
+            return .ssoCode(UUID())
+        } else {
+            throw ValidatedEmailOrSSOCodeFailure.invalidInput
+        }
+    }
 
 }

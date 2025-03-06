@@ -22,10 +22,13 @@ import WireAuthenticationAPI
 
 package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
-    private let validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase
+    private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let authenticationAPI: AuthenticationAPI
 
-    package init(validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase, authenticationAPI: AuthenticationAPI) {
+    package init(
+        validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
+        authenticationAPI: AuthenticationAPI
+    ) {
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.authenticationAPI = authenticationAPI
     }

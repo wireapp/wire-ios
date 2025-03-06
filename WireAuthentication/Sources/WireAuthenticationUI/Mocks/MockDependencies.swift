@@ -50,44 +50,40 @@ final class MockDependencies {
         isLoading: Bool,
         alert: DetermineAuthMethodViewModel.Alert?
     ) -> DetermineAuthMethodView {
-        DetermineAuthMethodView(
-            viewModel: DetermineAuthMethodViewModel(
-                router: rootViewModel,
-                validateEmailOrSSOCode: self,
-                determineAuthMethod: self,
-                ssoLinkGenerator: self,
-                emailOrSSOCode: emailOrSSOCode,
-                isLoading: isLoading,
-                alert: alert
-            ),
+        let viewModel = DetermineAuthMethodViewModel(
+            router: rootViewModel,
+            factory: self,
+            ssoLinkGenerator: self,
+            emailOrSSOCode: emailOrSSOCode,
+            isLoading: isLoading,
+            alert: alert
+        )
+
+        return DetermineAuthMethodView(
+            viewModel: viewModel,
             factory: self
         )
     }
 
 }
 
-extension MockDependencies: ValidateEmailOrSSOCodeUseCaseProtocol {
+extension MockDependencies: DetermineAuthMethodViewModel.Factory {
 
-    nonisolated func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
-        if input.contains("@") {
-            return .email(email: input, domain: input.components(separatedBy: "@").last!)
-        } else if input.hasSuffix("wire") {
-            return .ssoCode(UUID())
-        } else {
-            throw ValidatedEmailOrSSOCodeFailure.invalidInput
-        }
+    nonisolated
+    func resolveBackendMetadataUseCase() -> any WireAuthenticationAPI.ResolveBackendMetadataUseCaseProtocol {
+        MockResolveBackendMetadataUseCase()
     }
 
-}
-
-extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
-    func invoke(
-        emailOrSSOCode: String
-    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
-        try! await Task.sleep(for: .seconds(3))
-
-        return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
+    nonisolated
+    func determineAuthMethodUseCase(apiVersion: UInt) -> any DetermineAuthMethodUseCaseProtocol {
+        MockDetermineAuthMethodUseCase()
     }
+
+    nonisolated
+    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
+        MockValidateEmailOrSSOCodeUseCase()
+    }
+
 }
 
 extension MockDependencies: LoginViaEmailUseCaseProtocol {
@@ -115,8 +111,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
-            validateEmailOrSSOCode: self,
-            determineAuthMethod: self,
+            factory: self,
             ssoLinkGenerator: self
         )
     }

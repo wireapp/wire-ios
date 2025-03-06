@@ -62,6 +62,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var defaultAPIVersion: APIVersion {
         return rootComponent.defaultAPIVersion
     }
+    var preferredAPIVersion: APIVersion? {
+        return rootComponent.preferredAPIVersion
+    }
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
     }
@@ -137,6 +140,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
         keyPathToName[\DetermineAuthMethodComponentDependency.defaultBackendEnvironment] = "defaultBackendEnvironment-BackendEnvironment"
         keyPathToName[\DetermineAuthMethodComponentDependency.defaultAPIVersion] = "defaultAPIVersion-APIVersion"
+        keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
@@ -148,6 +152,7 @@ extension RootComponent: NeedleFoundation.Registration {
 
         localTable["defaultBackendEnvironment-BackendEnvironment"] = { [unowned self] in self.defaultBackendEnvironment as Any }
         localTable["defaultAPIVersion-APIVersion"] = { [unowned self] in self.defaultAPIVersion as Any }
+        localTable["preferredAPIVersion-APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }

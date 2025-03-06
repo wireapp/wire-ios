@@ -36,6 +36,7 @@ public struct WireAuthenticationAssembly {
         defaultBackendEnvironment: BackendEnvironment,
         minTLSVersion: TLSVersion,
         defaultAPIVersion: APIVersion,
+        preferredAPIVersion: APIVersion?,
         accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
@@ -48,6 +49,7 @@ public struct WireAuthenticationAssembly {
         let rootComponent = RootComponent(
             defaultBackendEnvironment: defaultBackendEnvironment,
             defaultAPIVersion: defaultAPIVersion,
+            preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             accountsURL: accountsURL,
             howToChangeEmailURL: howToChangeEmailURL,
