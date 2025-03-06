@@ -23,7 +23,6 @@ final class MockConversationMessageCellDescription: ConversationMessageCellDescr
 
     // MARK: - Life cycle
 
-
     // MARK: - topMargin
 
     var topMargin: CGFloat {
@@ -88,7 +87,6 @@ final class MockConversationMessageCellDescription: ConversationMessageCellDescr
     // MARK: - accessibilityLabel
 
     var accessibilityLabel: String?
-
 
     // MARK: - register
 
@@ -178,7 +176,6 @@ final class MockConversationMessageCell: UIView, ConversationMessageCell {
     typealias Configuration = Void
 
     // MARK: - Life cycle
-
 
     // MARK: - cellDescription
 
