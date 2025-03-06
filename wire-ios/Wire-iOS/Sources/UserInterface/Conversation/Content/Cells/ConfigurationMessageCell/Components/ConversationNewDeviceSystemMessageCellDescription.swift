@@ -24,7 +24,7 @@ import WireSyncEngine
 
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationNewDeviceSystemMessageCell
+    typealias View = ConversationNewDeviceSystemMessageCell<ConversationNewDeviceSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration
@@ -36,7 +36,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

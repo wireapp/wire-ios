@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationNewDeviceSystemMessageCell
+    typealias View = ConversationNewDeviceSystemMessageCell<ConversationIgnoredDeviceSystemMessageCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -33,7 +33,6 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

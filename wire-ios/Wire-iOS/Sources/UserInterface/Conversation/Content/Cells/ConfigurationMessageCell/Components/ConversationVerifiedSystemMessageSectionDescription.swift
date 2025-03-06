@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationVerifiedSystemMessageSectionDescription>
 
     let configuration: View.Configuration
 
@@ -34,7 +34,6 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

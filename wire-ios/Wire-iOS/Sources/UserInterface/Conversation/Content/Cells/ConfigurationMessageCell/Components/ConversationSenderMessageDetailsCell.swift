@@ -47,8 +47,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     // MARK: - Properties
 
+    weak var cellDescription: ConversationSenderMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
-
     weak var message: ZMConversationMessage?
 
     private var trailingDateLabelConstraint: NSLayoutConstraint?
@@ -290,7 +290,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 16
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

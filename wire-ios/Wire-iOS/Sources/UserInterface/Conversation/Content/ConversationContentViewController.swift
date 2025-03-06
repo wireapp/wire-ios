@@ -83,7 +83,7 @@ final class ConversationContentViewController: UIViewController {
 
     let mentionsSearchResultsViewController: UserSearchResultsViewController = .init()
 
-    lazy var dataSource: ConversationTableViewDataSource = .init(
+    lazy var dataSource = ConversationTableViewDataSource(
         conversation: conversation,
         tableView: tableView,
         actionResponder: self,

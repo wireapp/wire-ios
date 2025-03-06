@@ -50,8 +50,13 @@ package struct RootView: View {
                                 }
                             )
                     }
-                case let .noHistory(userID, cookies, accessToken):
-                    factory.noHistoryView(userID: userID, cookies: cookies, accessToken: accessToken)
+                case let .noHistory(userID, cookies, accessToken, didDetectDomainConflict):
+                    factory.noHistoryView(
+                        userID: userID,
+                        cookies: cookies,
+                        accessToken: accessToken,
+                        didDetectDomainConflict: didDetectDomainConflict
+                    )
                 }
 
             }
@@ -75,7 +80,12 @@ package struct RootView: View {
         public var id: Self { self }
 
         case authFlow
-        case noHistory(userID: UUID, cookies: [HTTPCookie], accessToken: AccessToken?)
+        case noHistory(
+            userID: UUID,
+            cookies: [HTTPCookie],
+            accessToken: AccessToken?,
+            didDetectDomainConflict: Bool
+        )
     }
 
 }

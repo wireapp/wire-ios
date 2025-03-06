@@ -22,30 +22,47 @@ import WireUtilities
 
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
-    func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
+    func conversationMessageCell(
+        _ contentView: any ConversationMessageCell,
+        present viewController: UIViewController
+    )
+
+    func conversationMessageWantsToOpenUserDetails(
+        _ cell: UIView,
+        user: UserType,
+        sourceView: UIView,
+        frame: CGRect
+    )
+
     func conversationMessageWantsToOpenMessageDetails(
         _ cell: UIView,
         for message: ZMConversationMessage,
         preferredDisplayMode: MessageDetailsDisplayMode
     )
-    func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView)
+
+    func conversationMessageWantsToOpenGuestOptionsFromView(
+        _ cell: UIView,
+        sourceView: UIView
+    )
+
     func conversationMessageWantsToOpenParticipantsDetails(
         _ cell: UIView,
         selectedUsers: [UserType],
         sourceView: UIView
     )
-    func conversationMessageWantsToShowActionsController(
-        _ cell: UIView,
-        actionsController: MessageActionsViewController
-    )
+
     func conversationMessageShouldUpdate()
+
 }
 
 /// A generic view that displays conversation contents.
 
 protocol ConversationMessageCell: UIView {
+    associatedtype CellDescription: ConversationMessageCellDescription
     /// The object that contains the configuration of the view.
     associatedtype Configuration
+
+    var cellDescription: CellDescription? { get set }
 
     /// Whether the cell is selected.
     var isSelected: Bool { get set }
@@ -114,7 +131,7 @@ extension ConversationMessageCell {
 
 protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
-    associatedtype View: ConversationMessageCell, UIView
+    associatedtype View: ConversationMessageCell, UIView where View.CellDescription == Self
 
     /// The views of neighbouring cell descriptions which return `true` might be
     /// arranged in a vertical stack view inside a single table view cell.
@@ -165,6 +182,10 @@ protocol ConversationMessageCellDescription: AnyObject {
 extension ConversationMessageCellDescription {
 
     var canBeCombinedWithOtherCells: Bool { false }
+
+    var supportsActions: Bool {
+        false
+    }
 
     func willDisplayCell() {
         _ = message?.startSelfDestructionIfNeeded()

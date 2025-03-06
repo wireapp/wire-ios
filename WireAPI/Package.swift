@@ -44,9 +44,10 @@ let package = Package(
             resources: [
                 .process("APIs/AuthenticationAPI/Resources"),
                 .process("APIs/AccountsAPI/Resources"),
-                .process("APIs/BackendInfoAPI/Resources"),
+                .process("APIs/BackendMetadataAPI/Resources"),
                 .process("APIs/ConnectionsAPI/Resources"),
                 .process("APIs/ConversationsAPI/Resources"),
+                .process("APIs/MLSAPI/Resources"),
                 .process("APIs/TeamsAPI/Resources"),
                 .process("APIs/UpdateEventsAPI/Resources"),
                 .process("APIs/UsersAPI/Resources"),

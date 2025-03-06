@@ -89,15 +89,19 @@ public final class ClientSessionComponent {
         authenticationManager: authenticationManager
     )
 
-    private lazy var backendInfoAPI = BackendInfoAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
+    private lazy var backendMetadataAPI = BackendMetadataAPIBuilder(
+        networkService: networkService
+    ).makeAPI()
 
     private lazy var conversationsAPI = ConversationsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
     private lazy var featureConfigsAPI = FeatureConfigsAPIBuilder(
+        apiService: apiService
+    ).makeAPI(for: apiVersion)
+
+    private lazy var mlsAPI = MLSAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -223,7 +227,7 @@ public final class ClientSessionComponent {
     )
 
     private lazy var pullMLSStatusSync = PullMLSStatusSync(
-        api: backendInfoAPI,
+        api: mlsAPI,
         store: backendConfigLocalStore
     )
 

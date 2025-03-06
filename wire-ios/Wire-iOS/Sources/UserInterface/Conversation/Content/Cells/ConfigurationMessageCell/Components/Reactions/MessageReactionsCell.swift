@@ -23,6 +23,8 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
 
     // MARK: - Properties
 
+    weak var cellDescription: MessageReactionsCellDescription?
+
     var isSelected = false
     var message: ZMConversationMessage?
 

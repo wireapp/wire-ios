@@ -34,6 +34,7 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     private let obfuscationView = ObfuscationView(icon: .paperclip)
     private let restrictionView = FileMessageRestrictionView()
 
+    weak var cellDescription: ConversationFileMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -124,6 +125,7 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
+
     let configuration: View.Configuration
 
     var canBeCombinedWithOtherCells: Bool { true }
