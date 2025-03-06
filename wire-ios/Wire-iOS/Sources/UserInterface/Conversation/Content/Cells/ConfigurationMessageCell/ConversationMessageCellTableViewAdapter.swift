@@ -116,9 +116,13 @@ final class ConversationMessageCellTableViewAdapter<
             constant: cellView.ephemeralTimerTopInset
         )
 
+        let countdownViewLeftInset = conversationHorizontalMargins.left
         NSLayoutConstraint.activate([
             ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            ephemeralCountdownView.trailingAnchor.constraint(equalTo: cellView.leadingAnchor),
+            ephemeralCountdownView.trailingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: countdownViewLeftInset
+            ),
             ephemeralTop,
             leading,
             trailing,
@@ -147,6 +151,7 @@ final class ConversationMessageCellTableViewAdapter<
 
     func configure(with object: C.View.Configuration, topMargin: CGFloat) {
         cellView.configure(with: object, animated: false)
+        ephemeralTop.constant = cellView.ephemeralTimerTopInset
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
