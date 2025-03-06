@@ -58,8 +58,7 @@ final class ConversationTextMessageCell<
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    // TODO: [WPB-16380] make private
-    private(set) lazy var menuPresenter = ConversationMessageCellMenuPresenter(
+    private lazy var menuPresenter = ConversationMessageCellMenuPresenter(
         contentView: self,
         actionController: actionController,
         conversationMessageCellDelegate: delegate

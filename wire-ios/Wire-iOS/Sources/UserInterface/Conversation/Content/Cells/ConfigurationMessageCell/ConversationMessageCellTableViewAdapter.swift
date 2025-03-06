@@ -165,8 +165,9 @@ final class ConversationMessageCellTableViewAdapter<
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
-            if let textMessageCell = gestureRecognizer.view as? ConversationTextMessageCell {
-                textMessageCell.menuPresenter.showMenu()
+            if let textMessageCell = gestureRecognizer.view as? ConversationTextMessageCellDescription.View {
+                fatalError("TODO: move into view")
+                // textMessageCell.menuPresenter.showMenu()
             }
         }
     }
