@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
@@ -107,17 +108,19 @@ package struct DetermineAuthMethodView: View {
         )
         .navigationDestination(for: Destination.self) {
             switch $0 {
-            case let .login(email, didDetectDomainConflict):
+            case let .login(email, didDetectDomainConflict, backendMetadata):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: false,
-                    didDetectDomainConflict: didDetectDomainConflict
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendMetadata: backendMetadata
                 )
-            case let .loginOrRegister(email):
+            case let .loginOrRegister(email, backendMetadata):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: true,
-                    didDetectDomainConflict: false
+                    didDetectDomainConflict: false,
+                    backendMetadata: backendMetadata
                 )
             }
         }
@@ -134,8 +137,8 @@ package struct DetermineAuthMethodView: View {
 
     package enum Destination: Hashable {
 
-        case login(email: String, didDetectDomainConflict: Bool)
-        case loginOrRegister(email: String)
+        case login(email: String, didDetectDomainConflict: Bool, backendMetadata: BackendMetadata)
+        case loginOrRegister(email: String, backendMetadata: BackendMetadata)
 
     }
 

@@ -97,7 +97,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 try await useCase.invoke(emailOrSSOCode: emailOrSSOCode)
             }.value
 
-            handleAuthenticationMethod(authMethod)
+            handleAuthenticationMethod(
+                authMethod,
+                backendMetadata: backendMetadata
+            )
         } catch let error as DetermineAuthMethodUseCaseFailure {
             handleAuthenticationMethodError(error)
         } catch {
@@ -115,16 +118,23 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
+    private func handleAuthenticationMethod(
+        _ method: AuthenticationMethod,
+        backendMetadata: BackendMetadata
+    ) {
         switch method {
         case let .loginViaEmail(email, didDetectDomainConflict):
             router.navigate(to: DetermineAuthMethodView.Destination.login(
                 email: email,
-                didDetectDomainConflict: didDetectDomainConflict
+                didDetectDomainConflict: didDetectDomainConflict,
+                backendMetadata: backendMetadata
             ))
 
         case let .loginOrRegisterViaEmail(email):
-            router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
+            router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(
+                email: email,
+                backendMetadata: backendMetadata
+            ))
 
         case let .loginViaSSO(code):
             Task.detached {

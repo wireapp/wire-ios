@@ -162,7 +162,11 @@ extension MockDependencies: SSOLinkGeneratorProtocol {
 
 extension MockDependencies: LoginViaEmailBuilder {
 
-    private func loginViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailViewModel {
+    private func loginViewModel(
+        email: String,
+        canCreateAccount: Bool,
+        backendMetadata: BackendMetadata
+    ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
@@ -178,10 +182,15 @@ extension MockDependencies: LoginViaEmailBuilder {
     func loginViaEmailView(
         email: String,
         canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
+        didDetectDomainConflict: Bool,
+        backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
+            viewModel: loginViewModel(
+                email: email,
+                canCreateAccount: canCreateAccount,
+                backendMetadata: backendMetadata
+            ),
             factory: self
         )
     }

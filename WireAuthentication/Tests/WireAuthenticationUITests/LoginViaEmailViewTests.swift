@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireTestingPackage
 import XCTest
 
@@ -25,6 +26,11 @@ import XCTest
 class LoginViaEmailViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
+    private let backendMetadata = BackendMetadata(
+        apiVersion: 8,
+        domain: "wire.com",
+        isFederationEnabled: true
+    )
 
     override func setUp() {
         snapshotHelper = .init()
@@ -42,7 +48,8 @@ class LoginViaEmailViewTests: XCTestCase {
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: true,
-            didDetectDomainConflict: false
+            didDetectDomainConflict: false,
+            backendMetadata: backendMetadata
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +68,8 @@ class LoginViaEmailViewTests: XCTestCase {
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: true,
-            didDetectDomainConflict: false
+            didDetectDomainConflict: false,
+            backendMetadata: backendMetadata
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -81,7 +89,8 @@ class LoginViaEmailViewTests: XCTestCase {
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: false,
-            didDetectDomainConflict: false
+            didDetectDomainConflict: false,
+            backendMetadata: backendMetadata
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -100,7 +109,8 @@ class LoginViaEmailViewTests: XCTestCase {
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: false,
-            didDetectDomainConflict: false
+            didDetectDomainConflict: false,
+            backendMetadata: backendMetadata
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

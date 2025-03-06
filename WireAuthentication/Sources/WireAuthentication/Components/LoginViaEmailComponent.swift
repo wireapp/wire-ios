@@ -36,6 +36,16 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
+    public let backendMetadata: WireAuthenticationAPI.BackendMetadata
+
+    init(
+        parent: any Scope,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata
+    ) {
+        self.backendMetadata = backendMetadata
+        super.init(parent: parent)
+    }
+
     public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
         LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
     }

@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
@@ -26,7 +27,8 @@ package protocol LoginViaEmailBuilder {
     func loginViaEmailView(
         email: String,
         canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
+        didDetectDomainConflict: Bool,
+        backendMetadata: BackendMetadata
     ) -> LoginViaEmailView
 
 }
@@ -190,7 +192,12 @@ package struct LoginViaEmailView: View {
             MockDependencies().loginViaEmailView(
                 email: "foo@bar.com",
                 canCreateAccount: false,
-                didDetectDomainConflict: false
+                didDetectDomainConflict: false,
+                backendMetadata: BackendMetadata(
+                    apiVersion: 8,
+                    domain: "wire.com",
+                    isFederationEnabled: true
+                )
             )
         }
 }
