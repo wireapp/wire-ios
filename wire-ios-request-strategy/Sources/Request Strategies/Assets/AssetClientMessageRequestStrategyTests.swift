@@ -46,11 +46,14 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
     // MARK: Helper
 
-    func makeSut(isMLSEnabled: Bool = false) {
+    func makeSut(hasMLSClient: Bool = false) {
+        if hasMLSClient {
+            selfClient?.mlsPublicKeys = .init(ed25519: "key")
+            selfClient?.needsToUploadMLSPublicKeys = false
+        }
         sut = AssetClientMessageRequestStrategy(
             managedObjectContext: syncMOC,
-            messageSender: mockMessageSender,
-            isMLSEnabled: isMLSEnabled
+            messageSender: mockMessageSender
         )
     }
 
@@ -217,7 +220,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItDoesSendMLSAssetMessageWhenMLSEnabled() {
         syncMOC.performGroupedAndWait {
             // GIVEN
-            self.makeSut(isMLSEnabled: true)
+            self.makeSut(hasMLSClient: true)
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             _ = self.createMessage(uploaded: true, messageProtocol: .mls)
         }

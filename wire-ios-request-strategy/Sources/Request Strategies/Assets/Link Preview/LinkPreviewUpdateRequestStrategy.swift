@@ -27,7 +27,7 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
 
     static func linkPreviewIsUploadedPredicate(
         context: NSManagedObjectContext,
-        isMLSEnabled: Bool
+        hasRegisteredMLSClient: Bool
     ) -> NSPredicate {
         let predicate = NSPredicate(
             format: "%K == %@ AND %K == %d",
@@ -39,7 +39,7 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
 
         var predicates = [predicate]
 
-        if !isMLSEnabled {
+        if !hasRegisteredMLSClient {
             predicates.append(.proteusAndMixedMessagesOnly)
         }
 
@@ -48,13 +48,17 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
 
     public init(
         managedObjectContext: NSManagedObjectContext,
-        messageSender: MessageSenderInterface,
-        isMLSEnabled: Bool
+        messageSender: MessageSenderInterface
     ) {
+
+        let hasRegisteredMLSClient = managedObjectContext.performAndWait {
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
 
         let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(
             context: managedObjectContext,
-            isMLSEnabled: isMLSEnabled
+            hasRegisteredMLSClient: hasRegisteredMLSClient
         )
         self.modifiedKeysSync = ModifiedKeyObjectSync(
             trackedKey: ZMClientMessage.linkPreviewStateKey,

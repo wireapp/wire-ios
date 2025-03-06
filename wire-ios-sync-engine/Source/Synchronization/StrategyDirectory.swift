@@ -200,8 +200,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             AssetClientMessageRequestStrategy(
                 managedObjectContext: syncMOC,
-                messageSender: messageSender,
-                isMLSEnabled: mlsFeature.isEnabled
+                messageSender: messageSender
             ),
             AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -211,8 +210,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncMOC,
                 localNotificationDispatcher: pushMessageHandler,
                 applicationStatus: applicationStatusDirectory,
-                messageSender: messageSender,
-                isMLSEnabled: mlsFeature.isEnabled
+                messageSender: messageSender
             ),
             DeliveryReceiptRequestStrategy(
                 managedObjectContext: syncMOC,
@@ -243,8 +241,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             LinkPreviewUpdateRequestStrategy(
                 managedObjectContext: syncMOC,
-                messageSender: messageSender,
-                isMLSEnabled: mlsFeature.isEnabled
+                messageSender: messageSender
             ),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,

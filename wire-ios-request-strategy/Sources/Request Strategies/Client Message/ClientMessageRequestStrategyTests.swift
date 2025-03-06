@@ -63,13 +63,17 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         super.tearDown()
     }
 
-    func makeSut(isMLSEnabled: Bool = false) {
+    func makeSut(hasMLSClient: Bool = false) {
+        if hasMLSClient {
+            selfClient?.mlsPublicKeys = .init(ed25519: "key")
+            selfClient?.needsToUploadMLSPublicKeys = false
+        }
+
         sut = ClientMessageRequestStrategy(
             context: syncMOC,
             localNotificationDispatcher: localNotificationDispatcher,
             applicationStatus: mockApplicationStatus,
-            messageSender: mockMessageSender,
-            isMLSEnabled: isMLSEnabled
+            messageSender: mockMessageSender
         )
     }
 
@@ -146,7 +150,8 @@ extension ClientMessageRequestStrategyTests {
         syncMOC.performGroupedAndWait {
 
             // GIVEN
-            self.makeSut(isMLSEnabled: true)
+
+            makeSut(hasMLSClient: true)
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage

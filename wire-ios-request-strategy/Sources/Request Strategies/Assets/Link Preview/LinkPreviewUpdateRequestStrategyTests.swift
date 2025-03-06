@@ -53,11 +53,14 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         super.tearDown()
     }
 
-    private func makeSut(isMLSEnabled: Bool = false) {
+    func makeSut(hasMLSClient: Bool = false) {
+        if hasMLSClient {
+            selfClient?.mlsPublicKeys = .init(ed25519: "key")
+            selfClient?.needsToUploadMLSPublicKeys = false
+        }
         sut = LinkPreviewUpdateRequestStrategy(
             managedObjectContext: syncMOC,
-            messageSender: mockMessageSender,
-            isMLSEnabled: isMLSEnabled
+            messageSender: mockMessageSender
         )
     }
 
@@ -128,7 +131,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func testThatItDoesSendMLSLinkPreviewMessageWhenMLSFeatureEnabled() {
         syncMOC.performGroupedAndWait {
             // Given
-            self.makeSut(isMLSEnabled: true)
+            self.makeSut(hasMLSClient: true)
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: .uploaded)
             message.conversation?.messageProtocol = .mls

@@ -32,15 +32,22 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
 
     public init(
         managedObjectContext: NSManagedObjectContext,
-        messageSender: MessageSenderInterface,
-        isMLSEnabled: Bool
+        messageSender: MessageSenderInterface
     ) {
+
+        let hasRegisteredMLSClient = managedObjectContext.performAndWait {
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
 
         self.managedObjectContext = managedObjectContext
         self
             .insertedObjectSync = InsertedObjectSync(
                 insertPredicate: Self
-                    .shouldBeSentPredicate(context: managedObjectContext, isMLSEnabled: isMLSEnabled)
+                    .shouldBeSentPredicate(
+                        context: managedObjectContext,
+                        hasRegisteredMLSClient: hasRegisteredMLSClient
+                    )
             )
         self.messageSender = messageSender
 
@@ -53,7 +60,7 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         [insertedObjectSync]
     }
 
-    static func shouldBeSentPredicate(context: NSManagedObjectContext, isMLSEnabled: Bool) -> NSPredicate {
+    static func shouldBeSentPredicate(context: NSManagedObjectContext, hasRegisteredMLSClient: Bool) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
@@ -68,7 +75,7 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
             fromSelf
         ]
 
-        if !isMLSEnabled {
+        if !hasRegisteredMLSClient {
             predicates.append(.proteusAndMixedMessagesOnly)
         }
 

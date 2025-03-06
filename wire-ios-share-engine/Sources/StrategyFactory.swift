@@ -101,14 +101,11 @@ final class StrategyFactory {
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {
-        let mlsFeature = FeatureRepository(context: syncContext).fetchMLS()
-
-        return ClientMessageRequestStrategy(
+        ClientMessageRequestStrategy(
             context: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
             applicationStatus: applicationStatus,
-            messageSender: messageSender,
-            isMLSEnabled: mlsFeature.isEnabled
+            messageSender: messageSender
         )
     }
 
@@ -126,12 +123,9 @@ final class StrategyFactory {
     }
 
     private func createLinkPreviewUpdateRequestStrategy() -> LinkPreviewUpdateRequestStrategy {
-        let mlsFeature = FeatureRepository(context: syncContext).fetchMLS()
-
-        return LinkPreviewUpdateRequestStrategy(
+        LinkPreviewUpdateRequestStrategy(
             managedObjectContext: syncContext,
-            messageSender: messageSender,
-            isMLSEnabled: mlsFeature.isEnabled
+            messageSender: messageSender
         )
     }
 
@@ -161,12 +155,9 @@ final class StrategyFactory {
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
-        let mlsFeature = FeatureRepository(context: syncContext).fetchMLS()
-
-        return AssetClientMessageRequestStrategy(
+        AssetClientMessageRequestStrategy(
             managedObjectContext: syncContext,
-            messageSender: messageSender,
-            isMLSEnabled: mlsFeature.isEnabled
+            messageSender: messageSender
         )
     }
 }

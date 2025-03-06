@@ -23,7 +23,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
 
     static func shouldBeSentPredicate(
         context: NSManagedObjectContext,
-        isMLSEnabled: Bool
+        hasRegisteredMLSClient: Bool
     ) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
@@ -31,7 +31,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
 
         var predicates = [notDelivered, notExpired, fromSelf]
 
-        if !isMLSEnabled {
+        if !hasRegisteredMLSClient {
             predicates.append(.proteusAndMixedMessagesOnly)
         }
 
@@ -53,13 +53,18 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         context: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
         applicationStatus: ApplicationStatus,
-        messageSender: MessageSenderInterface,
-        isMLSEnabled: Bool
+        messageSender: MessageSenderInterface
     ) {
+
+        let hasRegisteredMLSClient = context.performAndWait {
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
+
         self.insertedObjectSync = InsertedObjectSync(
             insertPredicate: Self.shouldBeSentPredicate(
                 context: context,
-                isMLSEnabled: isMLSEnabled
+                hasRegisteredMLSClient: hasRegisteredMLSClient
             )
         )
 
