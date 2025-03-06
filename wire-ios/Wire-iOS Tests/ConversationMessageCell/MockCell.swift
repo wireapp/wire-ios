@@ -34,16 +34,6 @@ final class MockCell<CellDescription: ConversationMessageCellDescription>: UIVie
     var isConfigured: Bool = false
     var isSelected: Bool = false
 
-    required init(cellDescription: CellDescription) {
-        self.cellDescription = cellDescription
-        super.init(frame: .zero)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
     func configure(with object: Configuration, animated: Bool) {
         isConfigured = true
         backgroundColor = object.backgroundColor
