@@ -122,6 +122,7 @@ final class ConversationMessageCellTableViewAdapter<
         ])
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
 
+        // TODO: delete the gesture recognizers from here and move it to the ConversationTextMessageCell class
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         cellView.addGestureRecognizer(longPressGesture)
 
