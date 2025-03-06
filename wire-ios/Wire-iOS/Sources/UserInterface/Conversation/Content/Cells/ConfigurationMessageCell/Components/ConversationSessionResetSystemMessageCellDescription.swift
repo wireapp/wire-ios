@@ -28,6 +28,7 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var message: ZMConversationMessage?
     var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
+    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     var topMargin: CGFloat = 0
     var supportsActions: Bool = false

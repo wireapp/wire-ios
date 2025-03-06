@@ -162,10 +162,9 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
     var containsHighlightableContent: Bool = false
 
     var message: ZMConversationMessage?
-
     weak var delegate: ConversationMessageCellDelegate?
-
     var actionController: ConversationMessageActionController?
+    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     var configuration: View.Configuration
 

@@ -334,6 +334,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
     let accessibilityIdentifier: String? = "ReplyCell"

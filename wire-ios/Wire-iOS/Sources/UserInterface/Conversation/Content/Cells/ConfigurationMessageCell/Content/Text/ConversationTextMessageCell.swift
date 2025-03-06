@@ -152,11 +152,13 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
+
     let configuration: View.Configuration
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? { didSet { fatalError() } }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 8
@@ -176,7 +178,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         cell.cellView.delegate = delegate
         cell.cellView.message = message
-        cell.cellView.menuPresenter = cell
+        cell.cellView.menuPresenter = menuPresenter
         return cell
     }
 }

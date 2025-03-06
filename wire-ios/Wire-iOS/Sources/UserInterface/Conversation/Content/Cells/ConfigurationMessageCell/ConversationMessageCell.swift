@@ -149,6 +149,9 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
 
+    /// Presents conversation message action menus.
+    var menuPresenter: ConversationMessageCellMenuPresenter? { get set }
+
     /// The action controller that handles the menu item.
     var actionController: ConversationMessageActionController? { get set }
 

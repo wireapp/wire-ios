@@ -49,10 +49,9 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
     var containsHighlightableContent: Bool = false
 
     var message: ZMConversationMessage?
-
     weak var delegate: ConversationMessageCellDelegate?
-
     weak var actionController: ConversationMessageActionController?
+    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     var accessibilityIdentifier: String? = "reactionMessageCell"
 

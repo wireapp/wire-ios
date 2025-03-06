@@ -31,6 +31,7 @@ final class ConversationDegradedSystemMessageSectionDescription: ConversationMes
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+    weak var menuPresenter: ConversationMessageCellMenuPresenter?
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
