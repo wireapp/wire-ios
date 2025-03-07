@@ -44,6 +44,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     weak var cellDescription: ConversationLocationMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var labelFont: UIFont? = .normalFont
     var labelTextColor: UIColor? = SemanticColors.Label.textDefault

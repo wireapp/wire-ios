@@ -65,6 +65,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     private let stackView = UIStackView()
     private let titleLabel = UILabel()
