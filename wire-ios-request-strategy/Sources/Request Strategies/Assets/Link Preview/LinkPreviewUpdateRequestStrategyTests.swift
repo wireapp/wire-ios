@@ -42,10 +42,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             self.applicationStatus = MockApplicationStatus()
             self.mockMessageSender = MockMessageSenderInterface()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = LinkPreviewUpdateRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: self.mockMessageSender
-            )
+            makeSut()
         }
         apiVersion = .v0
     }
@@ -54,6 +51,17 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         applicationStatus = nil
         sut = nil
         super.tearDown()
+    }
+
+    func makeSut(hasMLSClient: Bool = false) {
+        if hasMLSClient {
+            selfClient?.mlsPublicKeys = .init(ed25519: "key")
+            selfClient?.needsToUploadMLSPublicKeys = false
+        }
+        sut = LinkPreviewUpdateRequestStrategy(
+            managedObjectContext: syncMOC,
+            messageSender: mockMessageSender
+        )
     }
 
     func testThatItDoesNotCreateARequestInState_Done() {
@@ -70,6 +78,71 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     func testThatItDoesNotCreateARequestInState_Processed() {
         verifyThatItDoesNotScheduleMessageUpdate(for: .processed)
+    }
+
+    func testThatItDoesSendLinkPreviewMessageInVisibleConversation() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesSendLinkPreviewMessageInHiddenConversation() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+            message.visibleInConversation = nil
+            message.hiddenInConversation = groupConversation
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesNotSendMLSLinkPreviewMessageWhenMLSFeatureDisabled() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+            message.conversation?.messageProtocol = .mls
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesSendMLSLinkPreviewMessageWhenMLSFeatureEnabled() {
+        syncMOC.performGroupedAndWait {
+            // Given
+            self.makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+            message.conversation?.messageProtocol = .mls
+
+            // When
+            self.process(message)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesNotScheduleMessageInState_Uploaded_ForOtherUser() {
