@@ -86,7 +86,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 try await useCase.invoke()
             }.value
         } catch {
-            // TODO: report via bridge that API version can't be resolved.
+            // TODO: [WPB-16415] report via bridge that API version can't be resolved.
             fatalError()
         }
 
