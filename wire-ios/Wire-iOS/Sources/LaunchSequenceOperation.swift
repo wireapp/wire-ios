@@ -34,6 +34,17 @@ protocol LaunchSequenceOperation {
 final class DeveloperFlagOperation: LaunchSequenceOperation {
     func execute() {
         DeveloperFlag.storage = .applicationGroup
+        for argument in AutomationHelper.sharedHelper.developerFlagArguments {
+            let keyAndValue = argument.split(separator: ":").map { "\($0)" }
+            if keyAndValue.count != 2 {
+                continue
+            }
+            guard let flag = DeveloperFlag(rawValue: keyAndValue[0]) else {
+                continue
+            }
+            let isOn = keyAndValue[1] == "true"
+            flag.enable(isOn)
+        }
     }
 }
 
@@ -76,7 +87,7 @@ final class AutomationHelperOperation: LaunchSequenceOperation {
 
 final class MediaManagerOperation: LaunchSequenceOperation {
     private let mediaManagerLoader = MediaManagerLoader()
-
+    
     func execute() {
         mediaManagerLoader.send(message: .appStart)
     }
@@ -86,12 +97,12 @@ final class MediaManagerOperation: LaunchSequenceOperation {
 
 final class FileBackupExcluderOperation: LaunchSequenceOperation {
     private let fileBackupExcluder = FileBackupExcluder()
-
+    
     func execute() {
         guard let appGroupIdentifier = Bundle.main.appGroupIdentifier else {
             return
         }
-
+        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
         fileBackupExcluder.excludeLibraryFolderInSharedContainer(sharedContainerURL: sharedContainerURL)
     }
@@ -100,10 +111,10 @@ final class FileBackupExcluderOperation: LaunchSequenceOperation {
 // MARK: - BackendInfoOperation
 
 final class BackendInfoOperation: LaunchSequenceOperation {
-
+    
     func execute() {
         BackendInfo.storage = .applicationGroup
-
+        
         if let preferredVersion = AutomationHelper.sharedHelper.preferredAPIVersion {
             WireLogger.environment.info("automation helper will set preferred api version to \(preferredVersion)")
             BackendInfo.preferredAPIVersion = preferredVersion
@@ -112,14 +123,14 @@ final class BackendInfoOperation: LaunchSequenceOperation {
 }
 
 final class FontSchemeOperation: LaunchSequenceOperation {
-
+    
     func execute() {
         FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
     }
 }
 
 final class VoIPPushHelperOperation: LaunchSequenceOperation {
-
+    
     func execute() {
         VoIPPushHelper.storage = .applicationGroup
     }
@@ -132,14 +143,14 @@ final class VoIPPushHelperOperation: LaunchSequenceOperation {
 /// build, but it's better to be sure.
 
 final class CleanUpDebugStateOperation: LaunchSequenceOperation {
-
+    
     func execute() {
         guard !Bundle.developerModeEnabled else { return }
-
+        
         // Clearing this ensures that the api version is negotiated with the backend
         // and not set explicitly.
         BackendInfo.preferredAPIVersion = nil
-
+        
         // Clearing all developer flags ensures that no custom behavior is
         // present in the app.
         DeveloperFlag.clearAllFlags()
