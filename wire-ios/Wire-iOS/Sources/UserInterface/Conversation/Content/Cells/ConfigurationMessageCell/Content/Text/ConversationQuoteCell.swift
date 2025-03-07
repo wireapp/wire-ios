@@ -277,7 +277,9 @@ final class ConversationReplyContentView: UIView {
 }
 
 final class ConversationReplyCell: UIView, ConversationMessageCell {
+
     typealias Configuration = ConversationReplyContentView.Configuration
+
     var isSelected: Bool = false
 
     let contentView: ConversationReplyContentView
@@ -285,6 +287,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     override init(frame: CGRect) {
         self.contentView = ConversationReplyContentView()
@@ -324,6 +327,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationReplyCell
+
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false

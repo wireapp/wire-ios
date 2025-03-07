@@ -46,7 +46,6 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    let supportsActions: Bool = false
     let containsHighlightableContent = false
 
     init() {

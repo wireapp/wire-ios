@@ -59,7 +59,7 @@ struct MessageReactionView: View {
                 )
                 .overlay(
                     Capsule()
-                        .stroke(strokeColorSelected, lineWidth: 1)
+                        .stroke(strokeColorNormal, lineWidth: 1)
                 )
         }
     }

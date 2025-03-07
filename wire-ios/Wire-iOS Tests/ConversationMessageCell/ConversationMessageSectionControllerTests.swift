@@ -18,6 +18,7 @@
 
 import WireCommonComponents
 import XCTest
+
 @testable import Wire
 
 final class ConversationMessageSectionControllerTests: XCTestCase {
