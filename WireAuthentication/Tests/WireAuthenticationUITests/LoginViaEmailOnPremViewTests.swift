@@ -120,7 +120,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 accountsURL: URL(string: "https://example.com")!,
                 websiteURL: URL(string: "https://example.com")!
             ),
-            proxySettings: nil,
+            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
         let view = MockDependencies().loginViaEmailOnPremView(
