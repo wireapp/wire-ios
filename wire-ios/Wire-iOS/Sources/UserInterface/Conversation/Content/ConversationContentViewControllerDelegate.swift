@@ -60,5 +60,8 @@ protocol ConversationContentViewControllerDelegate: AnyObject {
 
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect)
 
-    func didSwipeToReact(actionController: ConversationMessageActionController)
+    func didSwipeToReact(
+        actionController: ConversationMessageActionController,
+        popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
+    )
 }

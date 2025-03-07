@@ -512,7 +512,7 @@ extension ConversationContentViewController: UITableViewDelegate {
             sections[indexPath.section].elements.indices.contains(indexPath.row),
             sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
             let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
-            actionController.canPerformAction(action: .reply)
+            actionController.message.canAddReaction
         else { return nil }
 
         // setting an empty title string since it would be displayed upside down
@@ -553,8 +553,19 @@ extension ConversationContentViewController: UITableViewDelegate {
             .verticallyInverted()
 
         let reactAction = UIContextualAction(style: .normal, title: "") { [weak self] _, _, completionHandler in
-            self?.delegate?.didSwipeToReact(actionController: actionController)
+            guard let delegate = self?.delegate else {
+                completionHandler(false)
+                return
+            }
             completionHandler(true)
+            // Since view is swipable, we need to wait for it to go back
+            // so we can show popover from cell's original place and not from swiped position
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                let popoverInfo = tableView.cellForRow(at: indexPath).map {
+                    (sourceView: tableView, frame: $0.frame)
+                }
+                delegate.didSwipeToReact(actionController: actionController, popoverPresentationInfo: popoverInfo)
+            }
         }
         reactAction.image = reactImage
         reactAction.backgroundColor = UIColor.accent()

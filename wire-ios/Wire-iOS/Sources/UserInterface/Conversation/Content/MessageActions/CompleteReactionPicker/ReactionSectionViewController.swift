@@ -59,13 +59,20 @@ final class ReactionSectionViewController: UIViewController {
         createButtons(types)
 
         setupViews()
-        createConstraints()
         view.addGestureRecognizer(panGestureRecognizer)
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+
+        sectionButtons.forEach { $0.removeConstraints($0.constraints) }
+
+        createConstraints()
     }
 
     override func viewWillAppear(_ animated: Bool) {

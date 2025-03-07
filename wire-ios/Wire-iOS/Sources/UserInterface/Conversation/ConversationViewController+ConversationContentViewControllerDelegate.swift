@@ -26,7 +26,8 @@ private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentV
 extension ConversationViewController: ConversationContentViewControllerDelegate {
 
     func didSwipeToReact(
-        actionController: ConversationMessageActionController
+        actionController: ConversationMessageActionController,
+        popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
     ) {
         actionControllerForSelectedEmoji = actionController
         let pickerController = CompleteReactionPickerViewController(
@@ -37,8 +38,16 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
         // Embed the pickerController in a UINavigationController
         let navigationController = UINavigationController(rootViewController: pickerController)
+        navigationController.modalPresentationStyle = .popover
+        navigationController.preferredContentSize = CGSize(width: 580, height: 640)
 
-        // Present the navigation controller
+        if let popoverPresentationController = navigationController.popoverPresentationController,
+           let info = popoverPresentationInfo {
+            popoverPresentationController.sourceView = info.sourceView
+            popoverPresentationController.sourceRect = info.frame
+            popoverPresentationController.permittedArrowDirections = .any
+            popoverPresentationController.delegate = self
+        }
         present(navigationController, animated: true)
     }
 
