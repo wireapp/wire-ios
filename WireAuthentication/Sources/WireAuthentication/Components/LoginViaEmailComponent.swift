@@ -29,7 +29,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
-    var authenticationAPI: AuthenticationAPI { get }
+    var networkService: NetworkService { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
@@ -46,8 +46,13 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         super.init(parent: parent)
     }
 
+    public var authenticationAPI: any AuthenticationAPI {
+        let apiVersion = APIVersion(rawValue: backendMetadata.apiVersion)!
+        return AuthenticationAPIBuilder(networkService: dependency.networkService).makeAPI(for: apiVersion)
+    }
+
     public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
+        LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
     // MARK: - View
