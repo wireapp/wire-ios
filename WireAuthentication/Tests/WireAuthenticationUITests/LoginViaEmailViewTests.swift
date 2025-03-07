@@ -27,7 +27,7 @@ class LoginViaEmailViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private let backendMetadata = BackendMetadata(
-        apiVersion: 8,
+        apiVersion: .v8,
         domain: "wire.com",
         isFederationEnabled: true
     )

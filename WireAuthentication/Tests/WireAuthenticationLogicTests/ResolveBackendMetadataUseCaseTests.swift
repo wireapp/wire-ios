@@ -52,7 +52,7 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         let backendMetadata = try await sut.invoke()
 
         // Then
-        XCTAssertEqual(backendMetadata.apiVersion, 8)
+        XCTAssertEqual(backendMetadata.apiVersion, .v8)
         XCTAssertEqual(backendMetadata.domain, "wire.com")
         XCTAssertEqual(backendMetadata.isFederationEnabled, true)
     }
@@ -74,7 +74,7 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         let backendMetadata = try await sut.invoke()
 
         // Then
-        XCTAssertEqual(backendMetadata.apiVersion, 7)
+        XCTAssertEqual(backendMetadata.apiVersion, .v7)
         XCTAssertEqual(backendMetadata.domain, "wire.com")
         XCTAssertEqual(backendMetadata.isFederationEnabled, true)
     }
