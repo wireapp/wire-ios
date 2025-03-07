@@ -271,7 +271,6 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
-//    private let _menuPresenter: AnyConstantProperty<ConversationMessageCellMenuPresenter?>
     private let _canBeCombinedWithOtherCells: () -> Bool
     private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
@@ -316,7 +315,6 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
-//        self._menuPresenter = AnyConstantProperty(description, keyPath: \.menuPresenter)
         self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
         self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
@@ -348,10 +346,6 @@ final class AnyConversationMessageCellDescription: NSObject {
         get { _actionController.getter() }
         set { _actionController.setter(newValue) }
     }
-
-//    var menuPresenter: ConversationMessageCellMenuPresenter? {
-//        _menuPresenter.getter()
-//    }
 
     var canBeCombinedWithOtherCells: Bool {
         _canBeCombinedWithOtherCells()

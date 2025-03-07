@@ -40,7 +40,6 @@ final class ConversationMessageCellTableViewAdapter<
     let cellView: C.View
     let ephemeralCountdownView: EphemeralCountdownView
 
-    // TODO: [WPB-16380] delete if possible
     var cellDescription: C? {
         didSet {
             longPressGesture.isEnabled = cellDescription?.supportsActions == true
