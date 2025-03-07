@@ -170,15 +170,6 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
         self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
     }
-
-//    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
-//        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
-//        cell.cellView.delegate = delegate
-//        cell.cellView.message = message
-//        cell.cellView.actionController = actionController
-//        return cell
-//    }
 }
 
 // MARK: - Factory

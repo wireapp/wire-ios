@@ -216,7 +216,7 @@ extension ConversationMessageCellDescription {
         let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
         cell.cellView.delegate = delegate
         cell.cellView.message = message
-        // cell.cellView.actionController = actionController
+        cell.cellView.actionController = actionController
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         return cell
     }
