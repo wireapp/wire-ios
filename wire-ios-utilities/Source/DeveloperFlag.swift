@@ -65,6 +65,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireCellsAttachmentsPreviews:
             "Use the new WireCells previews for conversations attachments"
+
         case .wireChannels:
             "Use the new WireChannels features"
         }
