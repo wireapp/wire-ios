@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 
 final class ReactionSectionViewController: UIViewController {
 
@@ -26,6 +27,8 @@ final class ReactionSectionViewController: UIViewController {
     private var sectionButtons = [ReactionCategoryButton]()
     private let iconSize = StyleKitIcon.Size.tiny.rawValue
     private var ignoreSelectionUpdates = false
+    
+    private let currentDevice = DeviceWrapper(device: .current)
 
     private var selectedType: EmojiSectionType? {
         willSet(value) {
@@ -59,6 +62,9 @@ final class ReactionSectionViewController: UIViewController {
         createButtons(types)
 
         setupViews()
+        if currentDevice.userInterfaceIdiom == .phone {
+            createConstraints()
+        }
         view.addGestureRecognizer(panGestureRecognizer)
     }
 
@@ -69,9 +75,9 @@ final class ReactionSectionViewController: UIViewController {
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-
+        guard currentDevice.userInterfaceIdiom == .pad else { return }
+        
         sectionButtons.forEach { $0.removeConstraints($0.constraints) }
-
         createConstraints()
     }
 
