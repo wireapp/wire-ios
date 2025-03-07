@@ -60,6 +60,6 @@ public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
 
 public protocol DetermineAuthMethodUseCaseFactory {
 
-    func determineAuthMethodUseCase(apiVersion: UInt) -> any  DetermineAuthMethodUseCaseProtocol
+    func determineAuthMethodUseCase(apiVersion: UInt) -> any DetermineAuthMethodUseCaseProtocol
 
 }
