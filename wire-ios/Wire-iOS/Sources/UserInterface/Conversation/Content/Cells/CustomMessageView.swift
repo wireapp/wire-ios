@@ -26,6 +26,7 @@ final class CustomMessageView: UIView {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var messageLabel = WebLinkTextView()
     var messageText: String? {
