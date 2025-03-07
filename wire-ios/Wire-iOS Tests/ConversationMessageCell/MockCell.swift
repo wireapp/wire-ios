@@ -21,8 +21,7 @@ import WireFoundation
 
 @testable import Wire
 
-final class MockCell<T>: UIView, ConversationMessageCell {
-
+final class MockCell: UIView, ConversationMessageCell {
     struct Configuration {
         let backgroundColor: UIColor
     }
@@ -41,8 +40,7 @@ final class MockCell<T>: UIView, ConversationMessageCell {
 }
 
 final class MockCellDescription<T>: ConversationMessageCellDescription {
-    typealias View = MockCell<T>
-
+    typealias View = MockCell
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false
