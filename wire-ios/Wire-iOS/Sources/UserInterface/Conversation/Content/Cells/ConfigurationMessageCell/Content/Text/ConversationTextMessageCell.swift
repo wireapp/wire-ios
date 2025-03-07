@@ -177,19 +177,26 @@ extension ConversationTextMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        showEphemeralTimer: Bool
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
         }
 
-        return cells(textMessageData: textMessageData, message: message, searchQueries: searchQueries)
+        return cells(
+            textMessageData: textMessageData,
+            message: message,
+            searchQueries: searchQueries,
+            showEphemeralTimer: showEphemeralTimer
+        )
     }
 
     static func cells(
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        showEphemeralTimer: Bool
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
