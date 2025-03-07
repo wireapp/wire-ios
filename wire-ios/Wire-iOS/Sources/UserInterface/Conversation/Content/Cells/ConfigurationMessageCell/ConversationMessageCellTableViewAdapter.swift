@@ -183,8 +183,7 @@ final class ConversationMessageCellTableViewAdapter<
 
         if
             let cellView = cellView as? ConversationStackMessageContentView,
-            let cellDescription = cellDescription as? StackViewCellDescription
-        {
+            let cellDescription = cellDescription as? StackViewCellDescription {
             for (index, cell) in cellView.conversationMessageCells.enumerated() {
                 let location = gestureRecognizer.location(in: cell)
                 if cell.bounds.contains(location) {
@@ -208,8 +207,7 @@ final class ConversationMessageCellTableViewAdapter<
 
         if
             let cellView = cellView as? ConversationStackMessageContentView,
-            let cellDescription = cellDescription as? StackViewCellDescription
-        {
+            let cellDescription = cellDescription as? StackViewCellDescription {
             for (index, cell) in cellView.conversationMessageCells.enumerated() {
                 let location = gestureRecognizer.location(in: cell)
                 if cell.bounds.contains(location) {

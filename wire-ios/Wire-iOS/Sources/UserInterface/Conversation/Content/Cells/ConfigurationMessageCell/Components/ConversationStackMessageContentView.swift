@@ -81,8 +81,7 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         // set ephemeralTimerTopInset
         if
             let index = configuration.firstIndex(where: \.showEphemeralTimer),
-            let contentView = stackView.arrangedSubviews[index] as? any ConversationMessageCell
-        {
+            let contentView = stackView.arrangedSubviews[index] as? any ConversationMessageCell {
             ephemeralTimerTopInset = contentView.frame.origin.y + contentView.ephemeralTimerTopInset
         }
     }
@@ -94,7 +93,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
     }
 
     // MARK: - ConversationMessageCell
-
 
     var selectionView: UIView? {
         fatalError("??") // TODO: fix
