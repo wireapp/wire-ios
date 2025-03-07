@@ -35,6 +35,7 @@ final class MessageReactionsCollectionView: UICollectionView {
             frame: .zero,
             collectionViewLayout: MessageReactionsCollectionViewFlowLayout()
         )
+        clipsToBounds = false
     }
 
     @available(*, unavailable)
