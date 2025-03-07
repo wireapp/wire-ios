@@ -56,11 +56,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    private(set) lazy var menuPresenter: ConversationMessageCellMenuPresenter? = .init(
-        contentView: self,
-        actionController: actionController,
-        conversationMessageCellDelegate: delegate
-    )
     var ephemeralTimerTopInset: CGFloat {
         (messageTextView.font?.lineHeight ?? 0) / 2
     }

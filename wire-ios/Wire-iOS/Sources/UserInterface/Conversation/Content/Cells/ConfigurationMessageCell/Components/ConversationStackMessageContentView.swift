@@ -95,13 +95,11 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
     // MARK: - ConversationMessageCell
 
     var selectionView: UIView? {
-        fatalError("??") // TODO: fix
-        // nil
+        conversationMessageCells.first { $0.selectionView != nil }?.selectionView
     }
 
     var selectionRect: CGRect {
-        fatalError("??") // TODO: fix
-        // selectionView?.bounds ?? .zero
+        conversationMessageCells.first { $0.selectionView != nil }?.selectionRect ?? .zero
     }
 
     private(set) var ephemeralTimerTopInset: CGFloat = 8

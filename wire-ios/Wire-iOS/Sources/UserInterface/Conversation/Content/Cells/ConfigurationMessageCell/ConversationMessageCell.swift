@@ -117,7 +117,11 @@ extension ConversationMessageCell {
     }
 
     var menuPresenter: ConversationMessageCellMenuPresenter? {
-        nil
+        ConversationMessageCellMenuPresenter(
+            contentView: self,
+            actionController: actionController,
+            conversationMessageCellDelegate: delegate
+        )
     }
 
     func willDisplay() {
