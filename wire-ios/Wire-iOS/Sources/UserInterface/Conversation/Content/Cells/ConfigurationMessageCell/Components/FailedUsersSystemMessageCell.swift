@@ -37,6 +37,8 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
+
     var isSelected: Bool = true
 
     private var isCollapsed: Bool = true

@@ -28,6 +28,7 @@ final class MockCell: UIView, ConversationMessageCell {
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isConfigured: Bool = false
     var isSelected: Bool = false
