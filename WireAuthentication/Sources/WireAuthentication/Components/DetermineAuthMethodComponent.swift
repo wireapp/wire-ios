@@ -37,27 +37,10 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    private var determineAuthMethodUseCase: some DetermineAuthMethodUseCaseProtocol {
-        DetermineAuthMethodUseCase(
-            validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
-            authenticationAPI: authenticationAPI
-        )
-    }
-
-    private var ssoLinkGenerator: SSOLinkGeneratorProtocol {
-        SSOLinkGenerator(
-            authenticationAPI: authenticationAPI,
-            baseURL: dependency.defaultBackendEnvironment.url,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
-        )
-    }
-
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: dependency.router,
-            factory: self,
-            ssoLinkGenerator: ssoLinkGenerator
+            factory: self
         )
     }
 
@@ -68,16 +51,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    public var authenticationAPI: AuthenticationAPI {
-        AuthenticationAPIBuilder(
-            networkService: NetworkService.make(
-                backendEnvironment: dependency.defaultBackendEnvironment,
-                minTLSVersion: dependency.minTLSVersion
-            )
-        ).makeAPI(for: dependency.defaultAPIVersion)
-    }
-
-    private var networkService: NetworkService {
+    public var networkService: NetworkService {
         shared {
             NetworkService.make(
                 backendEnvironment: dependency.defaultBackendEnvironment,
@@ -122,6 +96,17 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             backendMetadataAPI: api,
             clientProductionVersions: APIVersion.productionVersions,
             preferredAPIVersion: dependency.preferredAPIVersion
+        )
+    }
+
+    func ssoLinkGenerator(apiVersion: UInt) -> any SSOLinkGeneratorProtocol {
+        let apiVersion = APIVersion(rawValue: apiVersion)!
+        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(for: apiVersion)
+        return SSOLinkGenerator(
+            authenticationAPI: authenticationAPI,
+            baseURL: dependency.defaultBackendEnvironment.url,
+            callbackScheme: dependency.ssoCallbackURLScheme,
+            defaults: dependency.userDefaults
         )
     }
 

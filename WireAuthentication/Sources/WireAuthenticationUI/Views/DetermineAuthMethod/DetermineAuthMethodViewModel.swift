@@ -27,7 +27,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package typealias Factory =
     ResolveBackendMetadataUseCaseFactory &
     DetermineAuthMethodUseCaseFactory &
-    ValidateEmailOrSSOCodeUseCaseFactory
+    ValidateEmailOrSSOCodeUseCaseFactory &
+    SSOLinkGeneratorFactory
 
     package enum Alert: Hashable, Identifiable, Sendable {
         package var id: Self { self }
@@ -46,8 +47,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     private let router: any Router
-    private let ssoLinkGenerator: SSOLinkGeneratorProtocol
     private let factory: any Factory
+    private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -61,14 +62,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        ssoLinkGenerator: any SSOLinkGeneratorProtocol,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
         alert: Alert? = nil
     ) {
         self.router = router
         self.factory = factory
-        self.ssoLinkGenerator = ssoLinkGenerator
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
         self.alert = alert
@@ -112,7 +111,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     func dismissmodalView() {
-        ssoLinkGenerator.flushToken()
+        ssoLinkGenerator?.flushToken()
         modalDestination = nil
     }
 
@@ -137,9 +136,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             ))
 
         case let .loginViaSSO(code):
-            Task.detached {
+            let generator = factory.ssoLinkGenerator(apiVersion: backendMetadata.apiVersion)
+            ssoLinkGenerator = generator
+
+            Task.detached { [generator] in
                 do {
-                    let url = try await self.ssoLinkGenerator.generateSSOLink(ssoCode: code)
+                    let url = try await generator.generateSSOLink(ssoCode: code)
                     await MainActor.run {
                         self.modalDestination = .ssoLogin(url: url)
                     }
