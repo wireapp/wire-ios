@@ -33,11 +33,8 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         mockMessageSender = MockMessageSenderInterface()
 
-        sut = syncMOC.performAndWait {
-            AssetClientMessageRequestStrategy(
-                managedObjectContext: self.syncMOC,
-                messageSender: mockMessageSender
-            )
+        syncMOC.performAndWait {
+            makeSut()
         }
     }
 
@@ -49,6 +46,17 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
     // MARK: Helper
 
+    func makeSut(hasMLSClient: Bool = false) {
+        if hasMLSClient {
+            selfClient?.mlsPublicKeys = .init(ed25519: "key")
+            selfClient?.needsToUploadMLSPublicKeys = false
+        }
+        sut = AssetClientMessageRequestStrategy(
+            managedObjectContext: syncMOC,
+            messageSender: mockMessageSender
+        )
+    }
+
     @discardableResult
     func createMessage(
         isImage: Bool = true,
@@ -57,6 +65,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         assetId: Bool = false,
         expired: Bool = false,
         previewAssetId: Bool = false,
+        messageProtocol: MessageProtocol = .proteus,
         transferState: AssetTransferState = .uploading,
         conversation: ZMConversation? = nil,
         sender: ZMUser? = nil,
@@ -149,6 +158,8 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             message.expire(withReason: .other)
         }
 
+        message.conversation?.messageProtocol = messageProtocol
+
         syncMOC.saveOrRollback()
         prepareUpload(of: message)
 
@@ -163,7 +174,59 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     }
 
     func prepareUpload(of message: ZMAssetClientMessage) {
-        ZMChangeTrackerBootstrap.bootStrapChangeTrackers(sut.contextChangeTrackers, on: syncMOC)
+        sut.contextChangeTrackers.forEach {
+            $0.objectsDidChange(Set([message]))
+        }
+    }
+
+    func testThatItDoesSendMessageInVisibleConversationForAnImageMessageUploaded() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            _ = self.createMessage(uploaded: true)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesSendMessageInHiddenConversationForAnImageMessageUploaded() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.createMessage(uploaded: true)
+            message.visibleInConversation = nil
+            message.hiddenInConversation = groupConversation
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesNotSendMLSAssetMessageWhenMLSDisabled() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            _ = self.createMessage(uploaded: true, messageProtocol: .mls)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesSendMLSAssetMessageWhenMLSEnabled() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            self.makeSut(hasMLSClient: true)
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            _ = self.createMessage(uploaded: true, messageProtocol: .mls)
+        }
+
+        // THEN
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesNotScheduleAMessageForAnImageMessageUploadedByOtherUser() {
