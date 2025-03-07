@@ -143,37 +143,27 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         let contentCellDescriptions: [AnyConversationMessageCellDescription] = if message.isKnock {
             addPingMessageCells(showEphemeralTimer)
-                .map(AnyConversationMessageCellDescription.init)
         } else if message.isComposite {
-            addCompositeMessageCells
+            addCompositeMessageCells(showEphemeralTimer)
         } else if message.isText {
-            ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
+            addTextMessageCells(showEphemeralTimer)
         } else if message.isImage {
-            [AnyConversationMessageCellDescription(ConversationImageMessageCellDescription(
-                message: message,
-                image: message.imageMessageData!
-            ))]
+            addImageMessageCell(showEphemeralTimer)
         } else if message.isLocation {
-            addLocationMessageCells()
+            addLocationMessageCells(showEphemeralTimer)
         } else if message.isAudio {
-            [AnyConversationMessageCellDescription(ConversationAudioMessageCellDescription(message: message))]
+            addAudioMessageCell(showEphemeralTimer)
         } else if message.isVideo {
-            [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
+            addVideoMessageCell(showEphemeralTimer)
         } else if message.isFile {
-            [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
+            addFileMessageCell(showEphemeralTimer)
         } else if message.isSystem {
-            ConversationSystemMessageCellDescription.cells(
-                for: message,
-                isCollapsed: isCollapsed,
-                buttonAction: buttonAction
-            )
+            addSystemMessageCell(showEphemeralTimer)
         } else {
-            [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
+            addUnknownMessageCell(showEphemeralTimer)
         }
 
         if let topContentCellDescription = contentCellDescriptions.first {
-            topContentCellDescription.showEphemeralTimer = message.isEphemeral && !message.isObfuscated
-
             if isSenderVisible, topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
                 // We only do this for text content since the text label already contains the spacing
                 topContentCellDescription.topMargin = 0
@@ -190,49 +180,96 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Content Cells
 
-    private func addPingMessageCells(_ showEphemeralTimer: Bool) -> [ConversationPingCellDescription] {
+    private func addPingMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
         guard let sender = message.senderUser else { return [] }
 
-        let cellDescription = ConversationPingCellDescription(message: message, sender: sender)
-        cellDescription.showEphemeralTimer = showEphemeralTimer
-        return [cellDescription]
+        let pingCellDescription = ConversationPingCellDescription(message: message, sender: sender)
+        pingCellDescription.showEphemeralTimer = showEphemeralTimer
+        return [AnyConversationMessageCellDescription(pingCellDescription)]
     }
 
-    private func addLocationMessageCells() -> [AnyConversationMessageCellDescription] {
-        guard let locationMessageData = message.locationMessageData else {
-            return []
-        }
+    private func addImageMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        let conversationImageMessageCellDescription = ConversationImageMessageCellDescription(
+            message: message,
+            image: message.imageMessageData!
+        )
+        conversationImageMessageCellDescription.showEphemeralTimer = showEphemeralTimer
+        return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
+    }
+
+    private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        ConversationTextMessageCellDescription
+            .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
+    }
+
+    private func addLocationMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        guard let locationMessageData = message.locationMessageData else { return [] }
 
         let locationCell = ConversationLocationMessageCellDescription(message: message, location: locationMessageData)
+        locationCell.showEphemeralTimer = showEphemeralTimer
         return [AnyConversationMessageCellDescription(locationCell)]
     }
 
-    private var addCompositeMessageCells: [AnyConversationMessageCellDescription] {
+    private func addAudioMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        let cellDescription = ConversationAudioMessageCellDescription(message: message)
+        cellDescription.showEphemeralTimer = showEphemeralTimer
+        return [AnyConversationMessageCellDescription(cellDescription)]
+    }
+
+    private func addVideoMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        let cellDescription = ConversationVideoMessageCellDescription(message: message)
+        cellDescription.showEphemeralTimer = showEphemeralTimer
+        return [AnyConversationMessageCellDescription(cellDescription)]
+    }
+
+    private func addFileMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        let cellDescriptions = ConversationFileMessageCellDescription(message: message)
+        cellDescriptions.showEphemeralTimer = showEphemeralTimer
+        return [AnyConversationMessageCellDescription(cellDescriptions)]
+    }
+
+    private func addSystemMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        ConversationSystemMessageCellDescription.cells(
+            for: message,
+            isCollapsed: isCollapsed,
+            buttonAction: buttonAction,
+            showEphemeralTimer: showEphemeralTimer
+        )
+    }
+
+    private func addUnknownMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        let cellDescription = UnknownMessageCellDescription()
+        cellDescription.showEphemeralTimer = showEphemeralTimer
+        return [AnyConversationMessageCellDescription(cellDescription)]
+    }
+
+    private func addCompositeMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
         guard let compositeMessage = message as? ConversationCompositeMessage else { return [] }
 
         var cells: [AnyConversationMessageCellDescription] = []
 
         compositeMessage.compositeMessageData?.items.forEach { item in
             switch item {
+
             case let .text(data):
-                let textCells = ConversationTextMessageCellDescription.cells(
+                cells += ConversationTextMessageCellDescription.cells(
                     textMessageData: data,
                     message: message,
-                    searchQueries: context.searchQueries
+                    searchQueries: context.searchQueries,
+                    showEphemeralTimer: showEphemeralTimer
                 )
 
-                cells += textCells
             case let .button(data):
-
-                let button = AnyConversationMessageCellDescription(ConversationButtonMessageCellDescription(
+                let button = ConversationButtonMessageCellDescription(
                     text: data.title,
                     state: data.state,
                     hasError: data.isExpired,
                     buttonAction: {
                         data.touchAction()
                     }
-                ))
-                cells.append(button)
+                )
+                button.showEphemeralTimer = showEphemeralTimer
+                cells.append(AnyConversationMessageCellDescription(button))
             }
         }
 
