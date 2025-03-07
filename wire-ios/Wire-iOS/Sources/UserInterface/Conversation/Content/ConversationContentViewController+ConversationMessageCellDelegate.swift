@@ -47,11 +47,15 @@ extension UIView {
 
 extension ConversationContentViewController: ConversationMessageCellDelegate {
 
-    func conversationMessageWantsToShowActionsController(
-        _ cell: UIView,
-        actionsController: MessageActionsViewController
+    func conversationMessageCell(
+        _ contentView: any ConversationMessageCell,
+        present viewController: UIViewController
     ) {
-        present(actionsController, animated: true)
+        if let popoverPresentationController = viewController.popoverPresentationController {
+            popoverPresentationController.sourceView = contentView.superview
+            popoverPresentationController.sourceRect = contentView.frame
+        }
+        present(viewController, animated: true)
     }
 
     // MARK: - MessageActionResponder

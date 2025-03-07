@@ -34,6 +34,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -99,6 +100,7 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
 
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkPreviewArticleCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?

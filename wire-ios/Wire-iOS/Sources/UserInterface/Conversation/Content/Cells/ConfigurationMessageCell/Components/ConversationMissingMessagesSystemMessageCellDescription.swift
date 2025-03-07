@@ -36,7 +36,6 @@ final class ConversationMissingMessagesSystemMessageCellDescription: Conversatio
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

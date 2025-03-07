@@ -36,6 +36,7 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -124,6 +125,7 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
+
     let configuration: View.Configuration
 
     var topMargin: CGFloat = 8
