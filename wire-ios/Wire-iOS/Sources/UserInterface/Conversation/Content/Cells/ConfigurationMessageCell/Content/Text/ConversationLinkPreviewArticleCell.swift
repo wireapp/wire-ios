@@ -34,6 +34,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 

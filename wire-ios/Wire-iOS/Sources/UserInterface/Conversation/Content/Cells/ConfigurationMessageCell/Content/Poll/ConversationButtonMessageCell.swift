@@ -25,6 +25,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var errorMessage: String? {
         didSet {

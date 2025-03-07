@@ -30,6 +30,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
     private let collectionView = MessageReactionsCollectionView()
 
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     private let cellReuseIdentifier = "ReactionsCell"
 
