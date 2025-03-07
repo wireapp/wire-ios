@@ -224,6 +224,7 @@ extension ConversationTextMessageCellDescription {
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
             let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
+            quoteCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
 
@@ -233,12 +234,11 @@ extension ConversationTextMessageCellDescription {
                 attributedString: messageText,
                 isObfuscated: message.isObfuscated
             )
+            textCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
 
-        guard !message.isObfuscated else {
-            return cells
-        }
+        guard !message.isObfuscated else { return cells }
 
         // Links
         if let attachment = attachments.first {
@@ -247,10 +247,12 @@ extension ConversationTextMessageCellDescription {
                 attachment: attachment,
                 thumbnailResource: message.linkAttachmentImage
             )
+            attachmentCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview
             let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(message: message, data: textMessageData)
+            linkPreviewCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
         }
 
