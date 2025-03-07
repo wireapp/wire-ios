@@ -20,7 +20,6 @@ import Foundation
 
 public protocol FetchBackendConfigUseCaseProtocol: Sendable {
 
-    @MainActor
     func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig
 
 }

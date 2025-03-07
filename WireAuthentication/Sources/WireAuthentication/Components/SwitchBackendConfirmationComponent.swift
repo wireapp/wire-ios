@@ -36,33 +36,43 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
 class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationComponentDependency> {
 
+    public let backendConfig: BackendConfig
+
+    init(
+        parent: any Scope,
+        backendConfig: BackendConfig
+    ) {
+        self.backendConfig = backendConfig
+        super.init(parent: parent)
+    }
+
     // MARK: - View
 
     @MainActor
-    func view(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(viewModel: viewModel(email: email, environment: environment))
+    func view(email: String) -> SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(viewModel: viewModel(email: email))
     }
 
     @MainActor
-    private func viewModel(email: String, environment: BackendConfig) -> SwitchBackendConfirmationViewModel {
+    private func viewModel(email: String) -> SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
             router: dependency.router,
             email: email,
-            fetchDefaultSSOSettings: fetchDefaultSSOSettings(environment: environment),
-            ssoLinkGenerator: ssoLinkGenerator(environment: environment),
-            environment: environment
+            fetchDefaultSSOSettings: fetchDefaultSSOSettings(environment: backendConfig),
+            ssoLinkGenerator: ssoLinkGenerator(environment: backendConfig),
+            environment: backendConfig
         )
     }
 
     // MARK: - Private dependencies
 
-    private func authenticationAPI(environment: BackendConfig) -> AuthenticationAPI {
+    private var authenticationAPI: AuthenticationAPI {
         AuthenticationAPIBuilder(
             networkService: NetworkService.make(
                 backendEnvironment: BackendEnvironment(
-                    url: environment.endpoints.backendURL,
-                    webSocketURL: environment.endpoints.backendWSURL,
-                    pinnedKeys: environment.pinnedKeys?.compactMap { trustData in
+                    url: backendConfig.endpoints.backendURL,
+                    webSocketURL: backendConfig.endpoints.backendWSURL,
+                    pinnedKeys: backendConfig.pinnedKeys?.compactMap { trustData in
                         do {
                             return try PinnedKey(
                                 key: trustData.certificateKey,
@@ -80,7 +90,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
                             return nil
                         }
                     } ?? [],
-                    proxySettings: convertProxySettings(from: environment.proxySettings)
+                    proxySettings: convertProxySettings(from: backendConfig.proxySettings)
                 ),
                 minTLSVersion: dependency.minTLSVersion
             )
@@ -97,12 +107,12 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
     }
 
     private func fetchDefaultSSOSettings(environment: BackendConfig) -> any FetchDefaultSSOSettingsUseCaseProtocol {
-        FetchDefaultSSOSettingsUseCase(authenticationAPI: authenticationAPI(environment: environment))
+        FetchDefaultSSOSettingsUseCase(authenticationAPI: authenticationAPI)
     }
 
     private func ssoLinkGenerator(environment: BackendConfig) -> SSOLinkGeneratorProtocol {
         SSOLinkGenerator(
-            authenticationAPI: authenticationAPI(environment: environment),
+            authenticationAPI: authenticationAPI,
             baseURL: environment.endpoints.backendURL,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults

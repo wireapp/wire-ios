@@ -82,7 +82,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         do {
             let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
-            handleAuthenticationMethod(method)
+            await handleAuthenticationMethod(method)
         } catch {
             switch error {
             case .invalidEmailOrSSOCode:
@@ -113,7 +113,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
+    private func handleAuthenticationMethod(_ method: AuthenticationMethod) async {
         switch method {
         case let .loginViaEmail(email, didDetectDomainConflict):
             router.navigate(to: DetermineAuthMethodView.Destination.login(
@@ -139,15 +139,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             }
 
         case let .onPremLogin(email, backendConfig):
-            Task.detached {
-                do {
-                    let environmentInfo = try await self.fetchBackendConfig.invoke(at: backendConfig)
-                    await MainActor.run {
-                        self.modalDestination = .switchBackend(email: email, environment: environmentInfo)
-                    }
-                } catch {
-                    WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
-                }
+            do {
+                let environmentInfo = try await Task.detached {
+                    try await self.fetchBackendConfig.invoke(at: backendConfig)
+                }.value
+                modalDestination = .switchBackend(email: email, environment: environmentInfo)
+            } catch {
+                WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
             }
         }
     }
