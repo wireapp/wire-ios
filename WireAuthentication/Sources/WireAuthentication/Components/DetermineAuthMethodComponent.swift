@@ -47,6 +47,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
+    private var fetchBackendConfigUseCase: some FetchBackendConfigUseCaseProtocol {
+        FetchBackendConfigUseCase()
+    }
+
     private var ssoLinkGenerator: SSOLinkGeneratorProtocol {
         SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
@@ -61,6 +65,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             router: dependency.router,
             validateEmailOrSSOCode: validateEmailOrSSOCode,
             determineAuthMethod: determineAuthMethodUseCase,
+            fetchBackendConfig: fetchBackendConfigUseCase,
             ssoLinkGenerator: ssoLinkGenerator
         )
     }
@@ -91,6 +96,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         LoginViaSSOComponent()
     }
 
+    func switchBackendConfirmationComponent(backendConfig: BackendConfig) -> SwitchBackendConfirmationComponent {
+        SwitchBackendConfirmationComponent(parent: self, backendConfig: backendConfig)
+    }
+
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
@@ -110,6 +119,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent.view(ssoURL: ssoURL)
+    }
+
+    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
+        switchBackendConfirmationComponent(backendConfig: environment).view(email: email)
     }
 
 }
