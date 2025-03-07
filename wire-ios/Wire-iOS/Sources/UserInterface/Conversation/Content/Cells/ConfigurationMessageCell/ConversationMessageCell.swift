@@ -152,7 +152,7 @@ protocol ConversationMessageCellDescription: AnyObject {
     var supportsActions: Bool { get }
 
     /// Whether the cell should display an ephemeral timer in the margin given it's an ephemeral message
-    var showEphemeralTimer: Bool { get set }
+    var showEphemeralTimer: Bool { get }
 
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }

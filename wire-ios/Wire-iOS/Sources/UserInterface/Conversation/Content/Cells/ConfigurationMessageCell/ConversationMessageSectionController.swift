@@ -139,9 +139,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         isSenderVisible: Bool,
         to cellDescriptions: inout [AnyConversationMessageCellDescription]
     ) {
+        let showEphemeralTimer = message.isEphemeral && !message.isObfuscated
 
         let contentCellDescriptions: [AnyConversationMessageCellDescription] = if message.isKnock {
-            addPingMessageCells()
+            addPingMessageCells(showEphemeralTimer)
+                .map(AnyConversationMessageCellDescription.init)
         } else if message.isComposite {
             addCompositeMessageCells
         } else if message.isText {
@@ -188,15 +190,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Content Cells
 
-    private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {
-        guard let sender = message.senderUser else {
-            return []
-        }
+    private func addPingMessageCells(_ showEphemeralTimer: Bool) -> [ConversationPingCellDescription] {
+        guard let sender = message.senderUser else { return [] }
 
-        return [AnyConversationMessageCellDescription(ConversationPingCellDescription(
-            message: message,
-            sender: sender
-        ))]
+        let cellDescription = ConversationPingCellDescription(message: message, sender: sender)
+        cellDescription.showEphemeralTimer = showEphemeralTimer
+        return [cellDescription]
     }
 
     private func addLocationMessageCells() -> [AnyConversationMessageCellDescription] {
