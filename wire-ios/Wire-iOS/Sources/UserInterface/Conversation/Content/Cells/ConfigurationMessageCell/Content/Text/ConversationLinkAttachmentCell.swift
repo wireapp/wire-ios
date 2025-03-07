@@ -146,6 +146,7 @@ extension ConversationLinkAttachmentCell: LinkViewDelegate {
 
 final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkAttachmentCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?

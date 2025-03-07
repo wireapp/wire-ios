@@ -63,7 +63,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     )
 
     var ephemeralTimerTopInset: CGFloat {
-        messageTextView.font?.lineHeight ?? 0 / 2
+        (messageTextView.font?.lineHeight ?? 0) / 2
     }
 
     var selectionView: UIView? {

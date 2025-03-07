@@ -187,6 +187,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLocationMessageCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?

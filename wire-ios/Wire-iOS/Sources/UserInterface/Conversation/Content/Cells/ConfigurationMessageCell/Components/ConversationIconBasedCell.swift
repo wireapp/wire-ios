@@ -184,7 +184,6 @@ extension ConversationIconBasedCell: UITextViewDelegate {
         interaction: UITextItemInteraction
     ) -> Bool {
         // Fixes Swift 5.0 release build child class overridden method not called bug
-
         UIApplication.shared.open(url)
         return false
     }

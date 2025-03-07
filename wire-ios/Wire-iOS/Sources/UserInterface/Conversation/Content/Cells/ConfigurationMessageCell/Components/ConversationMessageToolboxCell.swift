@@ -104,6 +104,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationMessageToolboxCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?

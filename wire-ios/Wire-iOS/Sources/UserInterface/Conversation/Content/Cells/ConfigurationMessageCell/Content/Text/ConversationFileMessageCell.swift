@@ -124,6 +124,7 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
+
     let configuration: View.Configuration
 
     var topMargin: CGFloat = 8

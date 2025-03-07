@@ -122,6 +122,7 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
 
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationAudioMessageCell
+
     let configuration: View.Configuration
 
     var topMargin: CGFloat = 8

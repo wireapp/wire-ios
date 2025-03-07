@@ -48,7 +48,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - Properties
 
     weak var delegate: ConversationMessageCellDelegate?
-
     weak var message: ZMConversationMessage?
 
     private var trailingDateLabelConstraint: NSLayoutConstraint?

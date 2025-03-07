@@ -99,6 +99,7 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
 
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkPreviewArticleCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?

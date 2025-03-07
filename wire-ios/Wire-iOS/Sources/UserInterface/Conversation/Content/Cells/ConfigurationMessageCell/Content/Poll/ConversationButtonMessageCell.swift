@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
+
     var isSelected: Bool = false
 
     weak var message: ZMConversationMessage?
@@ -97,10 +98,6 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         let state: ButtonMessageState
         let buttonAction: Completion
         let hasError: Bool
-    }
-
-    convenience init() {
-        self.init(frame: .zero)
     }
 
     override init(frame: CGRect) {
