@@ -32,8 +32,6 @@ public class ConversationTitleView: UIView {
     private let dropdownImage = UIImageView(image: .dropdown)
     private let tapButton = UIButton(type: .custom)
 
-    var accentColor: UIColor = .white
-
     private let canAnimate: Bool
 
     public var menuProvider: (() -> UIMenu)? {
@@ -63,7 +61,7 @@ public class ConversationTitleView: UIView {
         nameLabel.text = source.title
 
         subtitleLabel.font = .boldSystemFont(ofSize: 9)
-        subtitleLabel.textColor = accentColor
+        subtitleLabel.textColor = .white
         subtitleLabel.text = source.subtitle
         subtitleLabel.isHidden = source.subtitle == nil
 
@@ -78,7 +76,6 @@ public class ConversationTitleView: UIView {
         accountImageView.imageBorderWidth = design.borderWidth
         accountImageView.imageBorderColor = design.borderColor
         accountImageView.initialsTextColor = .white
-        updateAccentColor(accentColor)
     }
 
     private func configureLayout() {
@@ -123,10 +120,12 @@ public class ConversationTitleView: UIView {
         subtitleLabel.text = source.subtitle
     }
 
-    public func updateAccentColor(_ color: UIColor) {
-        accentColor = color
-        subtitleLabel.textColor = color
+    public func updateOtherUserAccentColor(_ color: UIColor) {
         accountImageView.initialsBackgroundColor = color
+    }
+
+    public func updateSelfUserAccentColor(_ color: UIColor) {
+        subtitleLabel.textColor = color
     }
 
     private func updateAvatar(source: AccountImageSource, animated: Bool) {

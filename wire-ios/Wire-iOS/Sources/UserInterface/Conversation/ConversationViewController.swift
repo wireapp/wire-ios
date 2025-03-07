@@ -176,7 +176,11 @@ final class ConversationViewController: UIViewController {
         definesPresentationContext = true
 
         update(conversation: conversation)
-        titleView.updateAccentColor(userSession.selfUser.accentColor)
+
+        if let user = conversation.firstActiveParticipantOtherThanSelf {
+            titleView.updateOtherUserAccentColor(user.accentColor)
+        }
+        titleView.updateSelfUserAccentColor(userSession.selfUser.accentColor)
     }
 
     @available(*, unavailable)
@@ -681,8 +685,12 @@ extension ConversationViewController: ZMConversationListObserver {
 extension ConversationViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.user.isSelfUser, changeInfo.accentColorValueChanged {
-            titleView.updateAccentColor(changeInfo.user.accentColor)
+        if changeInfo.accentColorValueChanged {
+            if changeInfo.user.isSelfUser {
+                titleView.updateSelfUserAccentColor(changeInfo.user.accentColor)
+            } else {
+                titleView.updateOtherUserAccentColor(changeInfo.user.accentColor)
+            }
         }
 
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
