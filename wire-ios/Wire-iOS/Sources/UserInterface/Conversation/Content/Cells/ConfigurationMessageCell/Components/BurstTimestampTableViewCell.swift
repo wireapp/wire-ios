@@ -67,8 +67,6 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
-    weak var cellDescription: BurstTimestampSenderMessageCellDescription?
-
     private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?
     private var timer: Timer?

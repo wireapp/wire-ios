@@ -32,7 +32,6 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     private let articleView = ArticleView(withImagePlaceholder: true)
 
-    weak var cellDescription: ConversationLinkPreviewArticleCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?

@@ -37,7 +37,6 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
         return view
     }()
 
-    weak var cellDescription: ConversationLinkAttachmentCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?

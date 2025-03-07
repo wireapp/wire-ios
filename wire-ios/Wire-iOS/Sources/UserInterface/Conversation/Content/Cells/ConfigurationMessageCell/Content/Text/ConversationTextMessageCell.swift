@@ -51,7 +51,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     var isSelected = false
 
-    weak var cellDescription: ConversationTextMessageCellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?

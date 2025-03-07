@@ -41,7 +41,6 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     private var recognizer: UITapGestureRecognizer?
     private weak var locationAnnotation: MKPointAnnotation?
 
-    weak var cellDescription: ConversationLocationMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?

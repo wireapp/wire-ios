@@ -58,11 +58,8 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 /// A generic view that displays conversation contents.
 
 protocol ConversationMessageCell: UIView {
-    associatedtype CellDescription: ConversationMessageCellDescription
     /// The object that contains the configuration of the view.
     associatedtype Configuration
-
-    var cellDescription: CellDescription? { get set } // TODO: is it really needed?
 
     /// Whether the cell is selected.
     var isSelected: Bool { get set }
@@ -144,7 +141,7 @@ extension ConversationMessageCell {
 
 protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
-    associatedtype View: ConversationMessageCell, UIView where View.CellDescription == Self
+    associatedtype View: ConversationMessageCell, UIView
 
     /// The views of neighbouring cell descriptions which return `true` might be
     /// arranged in a vertical stack view inside a single table view cell.

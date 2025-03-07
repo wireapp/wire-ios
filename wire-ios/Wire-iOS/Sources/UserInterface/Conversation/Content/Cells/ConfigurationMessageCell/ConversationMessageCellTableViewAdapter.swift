@@ -308,7 +308,6 @@ extension UITableView {
             with: description.configuration,
             topMargin: description.topMargin
         )
-        cell.cellView.cellDescription = description
 
         return cell
     }
