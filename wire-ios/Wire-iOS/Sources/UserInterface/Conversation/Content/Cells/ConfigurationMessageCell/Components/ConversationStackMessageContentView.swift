@@ -64,8 +64,11 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         for cellDescription in configuration {
             let contentView = cellDescription.makeView(frame: .zero)
             cellDescription.configureContentView(contentView)
+
             let lastArrangedSubview = stackView.arrangedSubviews.last
+
             stackView.addArrangedSubview(contentView)
+
             if let lastArrangedSubview {
                 stackView.setCustomSpacing(cellDescription.topMargin, after: lastArrangedSubview)
             }
@@ -73,6 +76,14 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         UIView.performWithoutAnimation {
             stackView.setNeedsLayout()
             stackView.layoutIfNeeded()
+        }
+
+        // set ephemeralTimerTopInset
+        if
+            let index = configuration.firstIndex(where: \.showEphemeralTimer),
+            let contentView = stackView.arrangedSubviews[index] as? any ConversationMessageCell
+        {
+            ephemeralTimerTopInset = contentView.frame.origin.y + contentView.ephemeralTimerTopInset
         }
     }
 
@@ -95,9 +106,7 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         // selectionView?.bounds ?? .zero
     }
 
-    var ephemeralTimerTopInset: CGFloat {
-        conversationMessageCells.first?.ephemeralTimerTopInset ?? 8
-    }
+    private(set) var ephemeralTimerTopInset: CGFloat = 8
 
     func willDisplay() {
         for cell in conversationMessageCells {
