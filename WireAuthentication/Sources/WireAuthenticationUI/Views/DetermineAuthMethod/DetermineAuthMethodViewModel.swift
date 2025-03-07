@@ -25,10 +25,10 @@ import WireAuthenticationAPI
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
-    ResolveBackendMetadataUseCaseFactory &
-    DetermineAuthMethodUseCaseFactory &
-    ValidateEmailOrSSOCodeUseCaseFactory &
-    SSOLinkGeneratorFactory
+        DetermineAuthMethodUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory &
+        SSOLinkGeneratorFactory &
+        ValidateEmailOrSSOCodeUseCaseFactory
 
     package enum Alert: Hashable, Identifiable, Sendable {
         package var id: Self { self }
@@ -103,8 +103,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         } catch let error as DetermineAuthMethodUseCaseFailure {
             handleAuthenticationMethodError(error)
         } catch {
-            // TODO: handle
-            fatalError()
+            // We won't arrive here because the only error thrown is handled above.
+            // It would be nice to eliminate this impossible state.
         }
 
         isLoading = false
