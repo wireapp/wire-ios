@@ -40,6 +40,8 @@ final class FailedUsersSystemMessageCell<
     weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
+
     var isSelected: Bool = true
 
     private var isCollapsed: Bool = true

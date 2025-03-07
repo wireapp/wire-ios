@@ -37,6 +37,7 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
     weak var cellDescription: ConversationAudioMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
