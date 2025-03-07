@@ -115,7 +115,6 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("FullTypedThrows"),
         .enableUpcomingFeature("ExistentialAny")
     ]
 }
