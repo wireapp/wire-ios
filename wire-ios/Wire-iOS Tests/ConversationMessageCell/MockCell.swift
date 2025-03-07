@@ -21,15 +21,16 @@ import WireFoundation
 
 @testable import Wire
 
-final class MockCell<CellDescription: ConversationMessageCellDescription>: UIView, ConversationMessageCell {
+final class MockCell<T>: UIView, ConversationMessageCell {
 
     struct Configuration {
         let backgroundColor: UIColor
     }
 
-    weak var cellDescription: CellDescription?
+    weak var cellDescription: MockCellDescription<T>?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isConfigured: Bool = false
     var isSelected: Bool = false
@@ -41,7 +42,7 @@ final class MockCell<CellDescription: ConversationMessageCellDescription>: UIVie
 }
 
 final class MockCellDescription<T>: ConversationMessageCellDescription {
-    typealias View = MockCell<MockCellDescription<T>>
+    typealias View = MockCell<T>
 
     let configuration: View.Configuration
 
