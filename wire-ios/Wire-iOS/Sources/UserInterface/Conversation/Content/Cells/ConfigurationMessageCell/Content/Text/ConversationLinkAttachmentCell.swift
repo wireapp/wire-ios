@@ -40,6 +40,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     weak var cellDescription: ConversationLinkAttachmentCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
     var currentAttachment: LinkAttachment?

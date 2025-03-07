@@ -37,6 +37,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     weak var cellDescription: ConversationVideoMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 

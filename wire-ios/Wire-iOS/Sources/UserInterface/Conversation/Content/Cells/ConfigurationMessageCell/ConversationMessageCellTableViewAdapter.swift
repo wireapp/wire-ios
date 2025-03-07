@@ -127,11 +127,11 @@ final class ConversationMessageCellTableViewAdapter<
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
 
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
-        cellView.addGestureRecognizer(longPressGesture)
+        contentView.addGestureRecognizer(longPressGesture)
 
         self.doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
-        cellView.addGestureRecognizer(doubleTapGesture)
+        contentView.addGestureRecognizer(doubleTapGesture)
 
         self.singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
         cellView.addGestureRecognizer(singleTapGesture)
@@ -171,9 +171,7 @@ final class ConversationMessageCellTableViewAdapter<
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
-            if let textMessageCell = gestureRecognizer.view as? ConversationTextMessageCell {
-                textMessageCell.menuPresenter.showMenu()
-            }
+            cellView.menuPresenter?.showMenu()
         }
     }
 

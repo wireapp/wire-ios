@@ -50,6 +50,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     weak var cellDescription: ConversationImageMessageCellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
