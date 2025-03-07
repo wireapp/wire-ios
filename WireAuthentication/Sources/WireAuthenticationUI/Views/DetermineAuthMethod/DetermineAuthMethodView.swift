@@ -150,8 +150,6 @@ package struct DetermineAuthMethodView: View {
         switch alert {
         case .noInternet:
             Text(L10n.Authentication.Error.Title.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Title.general)
         case .unknownError:
             Text(L10n.Authentication.Error.Title.general)
         case .invalidSSOLink:
@@ -163,8 +161,6 @@ package struct DetermineAuthMethodView: View {
         switch alert {
         case .noInternet:
             Text(L10n.Authentication.Error.Message.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Message.general)
         case .unknownError:
             Text(L10n.Authentication.Error.Message.general)
         case .invalidSSOLink:

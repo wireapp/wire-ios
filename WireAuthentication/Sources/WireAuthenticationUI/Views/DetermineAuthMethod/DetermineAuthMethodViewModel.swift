@@ -36,7 +36,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case noInternet
-        case invalidResponse
         case unknownError
         case invalidSSOLink
 
@@ -103,11 +102,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 authMethod,
                 backendMetadata: backendMetadata
             )
-        } catch let error as DetermineAuthMethodUseCaseFailure {
-            handleAuthenticationMethodError(error)
+        } catch DetermineAuthMethodUseCaseFailure.invalidEmailOrSSOCode {
+            // No need to do anything here. In general this shouldn't happen because we validate before submitting.
+            // It is probably worth restructuring the code to avoid this.
+        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+            alert = .noInternet
+        } catch let error as LocalizedError where error.errorDescription != nil {
+            // FIXME: Handle this error
         } catch {
-            // We won't arrive here because the only error thrown is handled above.
-            // It would be nice to eliminate this impossible state.
+            alert = .unknownError
         }
 
         isLoading = false
@@ -165,26 +168,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             } catch {
                 WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
             }
-        }
-    }
-
-    private func handleAuthenticationMethodError(_ error: DetermineAuthMethodUseCaseFailure) {
-        switch error {
-        case .invalidEmailOrSSOCode:
-            // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
-            // things a little to make this error impossible to happen.
-            break
-        case .invalidResponse:
-            alert = .invalidResponse
-        case let .urlError(urlError):
-            switch urlError.code {
-            case .notConnectedToInternet, .networkConnectionLost:
-                alert = .noInternet
-            default:
-                alert = .unknownError
-            }
-        case .unknown:
-            alert = .unknownError
         }
     }
 
