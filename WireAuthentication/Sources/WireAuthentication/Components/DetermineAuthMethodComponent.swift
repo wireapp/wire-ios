@@ -80,9 +80,12 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         ValidateEmailOrSSOCodeUseCase()
     }
 
-    func determineAuthMethodUseCase(apiVersion: UInt) -> any DetermineAuthMethodUseCaseProtocol {
-        let apiVersion = APIVersion(rawValue: apiVersion)!
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(for: apiVersion)
+    func determineAuthMethodUseCase(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any DetermineAuthMethodUseCaseProtocol {
+        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
+            for: .init(apiVersion)
+        )
         return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
             authenticationAPI: authenticationAPI
@@ -98,9 +101,12 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func ssoLinkGenerator(apiVersion: UInt) -> any SSOLinkGeneratorProtocol {
-        let apiVersion = APIVersion(rawValue: apiVersion)!
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(for: apiVersion)
+    func ssoLinkGenerator(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any SSOLinkGeneratorProtocol {
+        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
+            for: .init(apiVersion)
+        )
         return SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
             baseURL: dependency.defaultBackendEnvironment.url,
@@ -129,6 +135,34 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent.view(ssoURL: ssoURL)
+    }
+
+}
+
+// TODO: [WPB-16272] remove when API version is deduplicated.
+extension WireAPI.APIVersion {
+
+    init(_ apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) {
+        switch apiVersion {
+        case .v0:
+            self = .v0
+        case .v1:
+            self = .v1
+        case .v2:
+            self = .v2
+        case .v3:
+            self = .v3
+        case .v4:
+            self = .v4
+        case .v5:
+            self = .v5
+        case .v6:
+            self = .v6
+        case .v7:
+            self = .v7
+        case .v8:
+            self = .v8
+        }
     }
 
 }

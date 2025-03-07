@@ -38,6 +38,6 @@ public protocol SSOLinkGeneratorProtocol {
 
 public protocol SSOLinkGeneratorFactory {
 
-    func ssoLinkGenerator(apiVersion: UInt) -> any SSOLinkGeneratorProtocol
+    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
 
 }

@@ -22,7 +22,7 @@ struct MockResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol 
 
     func invoke() async throws -> BackendMetadata {
         BackendMetadata(
-            apiVersion: 8,
+            apiVersion: .v8,
             domain: "wire.com",
             isFederationEnabled: true
         )

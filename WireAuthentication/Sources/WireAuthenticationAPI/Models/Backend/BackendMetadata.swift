@@ -24,7 +24,7 @@ public struct BackendMetadata: Sendable, Equatable, Hashable {
 
     /// The REST API version to use when making requests.
 
-    public let apiVersion: UInt
+    public let apiVersion: APIVersion
 
     /// The backend's domain.
 
@@ -35,13 +35,28 @@ public struct BackendMetadata: Sendable, Equatable, Hashable {
     public let isFederationEnabled: Bool
 
     public init(
-        apiVersion: UInt,
+        apiVersion: APIVersion,
         domain: String,
         isFederationEnabled: Bool
     ) {
         self.apiVersion = apiVersion
         self.domain = domain
         self.isFederationEnabled = isFederationEnabled
+    }
+
+    // TODO: [WPB-16272] Remove duplication
+    public enum APIVersion: Sendable, Equatable, Hashable {
+
+        case v0
+        case v1
+        case v2
+        case v3
+        case v4
+        case v5
+        case v6
+        case v7
+        case v8
+
     }
 
 }

@@ -194,7 +194,7 @@ package struct LoginViaEmailView: View {
                 canCreateAccount: false,
                 didDetectDomainConflict: false,
                 backendMetadata: BackendMetadata(
-                    apiVersion: 8,
+                    apiVersion: .v8,
                     domain: "wire.com",
                     isFederationEnabled: true
                 )

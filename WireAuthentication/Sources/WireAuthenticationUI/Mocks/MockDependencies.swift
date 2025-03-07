@@ -74,7 +74,7 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
     }
 
     nonisolated
-    func determineAuthMethodUseCase(apiVersion: UInt) -> any DetermineAuthMethodUseCaseProtocol {
+    func determineAuthMethodUseCase(apiVersion: BackendMetadata.APIVersion) -> any DetermineAuthMethodUseCaseProtocol {
         MockDetermineAuthMethodUseCase()
     }
 
@@ -84,7 +84,7 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
     }
 
     nonisolated
-    func ssoLinkGenerator(apiVersion: UInt) -> any SSOLinkGeneratorProtocol {
+    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol {
         MockSSOLinkGenerator()
     }
 

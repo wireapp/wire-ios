@@ -42,7 +42,7 @@ public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtoc
         let backendMetadata = try await backendMetadataAPI.getBackendMetadata()
         let resolvedAPIVersion = try resolveAPIVersion(from: backendMetadata)
         return WireAuthenticationAPI.BackendMetadata(
-            apiVersion: resolvedAPIVersion.rawValue,
+            apiVersion: .init(resolvedAPIVersion),
             domain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled
         )
@@ -68,6 +68,34 @@ public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtoc
             }
 
             throw maxBackendVersion < minClientVersion ? Failure.backendAPIVersionObsolete : .clientVersionObsolete
+        }
+    }
+
+}
+
+private extension WireAuthenticationAPI.BackendMetadata.APIVersion {
+
+    // TODO: [WPB-16272] remove when API version is deduplicated.
+    init(_ apiVersion: WireAPI.APIVersion) {
+        switch apiVersion {
+        case .v0:
+            self = .v0
+        case .v1:
+            self = .v1
+        case .v2:
+            self = .v2
+        case .v3:
+            self = .v3
+        case .v4:
+            self = .v4
+        case .v5:
+            self = .v5
+        case .v6:
+            self = .v6
+        case .v7:
+            self = .v7
+        case .v8:
+            self = .v8
         }
     }
 
