@@ -184,7 +184,7 @@ public final class AccountImageView: UIView {
         initialsLabel.font = .systemFont(ofSize: 100, weight: .regular)
         initialsLabel.textAlignment = .center
         initialsLabel.adjustsFontSizeToFitWidth = true
-        initialsLabel.minimumScaleFactor = 0.1
+        initialsLabel.minimumScaleFactor = 0.001
         initialsLabel.translatesAutoresizingMaskIntoConstraints = false
         accountImageViewWrapper.addSubview(initialsLabel)
         accountImageViewWrapper.backgroundColor = .systemBackground
