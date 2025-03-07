@@ -23,6 +23,7 @@ import WireDesign
 final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
 
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
+
     var animationBlock: AnimationBlock?
     var isAnimationRunning = false
     var configuration: Configuration?

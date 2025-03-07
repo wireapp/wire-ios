@@ -43,6 +43,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var labelFont: UIFont? = .normalFont
     var labelTextColor: UIColor? = SemanticColors.Label.textDefault
@@ -187,6 +188,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLocationMessageCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?

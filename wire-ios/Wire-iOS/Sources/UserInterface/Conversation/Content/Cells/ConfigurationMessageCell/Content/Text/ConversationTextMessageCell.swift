@@ -53,14 +53,10 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
-    weak var menuPresenter: ConversationMessageCellMenuPresenter?
+    weak var actionController: ConversationMessageActionController?
 
     var ephemeralTimerTopInset: CGFloat {
-        guard let font = messageTextView.font else {
-            return 0
-        }
-
-        return font.lineHeight / 2
+        (messageTextView.font?.lineHeight ?? 0) / 2
     }
 
     var selectionView: UIView? {
@@ -152,6 +148,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -169,15 +166,6 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
 
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
         self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
-    }
-
-    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
-        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
-        cell.cellView.delegate = delegate
-        cell.cellView.message = message
-        cell.cellView.menuPresenter = cell
-        return cell
     }
 }
 

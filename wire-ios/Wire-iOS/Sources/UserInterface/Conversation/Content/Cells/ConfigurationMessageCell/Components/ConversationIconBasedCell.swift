@@ -38,6 +38,7 @@ class ConversationIconBasedCell: UIView {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -184,7 +185,6 @@ extension ConversationIconBasedCell: UITextViewDelegate {
         interaction: UITextItemInteraction
     ) -> Bool {
         // Fixes Swift 5.0 release build child class overridden method not called bug
-
         UIApplication.shared.open(url)
         return false
     }

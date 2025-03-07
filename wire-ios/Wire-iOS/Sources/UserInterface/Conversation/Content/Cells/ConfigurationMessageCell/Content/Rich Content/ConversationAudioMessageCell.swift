@@ -36,6 +36,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -122,6 +123,7 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
 
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationAudioMessageCell
+
     let configuration: View.Configuration
 
     var topMargin: CGFloat = 8
