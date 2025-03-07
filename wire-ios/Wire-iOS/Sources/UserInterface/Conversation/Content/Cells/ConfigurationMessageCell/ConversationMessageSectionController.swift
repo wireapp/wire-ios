@@ -170,7 +170,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         if let topContentCellDescription = contentCellDescriptions.first {
-            topContentCellDescription.showEphemeralTimer = message.isEphemeral && !message.isObfuscated
+            topContentCellDescription.showEphemeralTimer = message.isEphemeral && !message.isObfuscated // TODO: move this line up and inject showEphemeralTimer, then make it a read-only property
 
             if isSenderVisible, topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
                 // We only do this for text content since the text label already contains the spacing

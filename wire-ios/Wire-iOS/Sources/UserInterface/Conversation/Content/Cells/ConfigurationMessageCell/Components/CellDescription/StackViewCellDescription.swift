@@ -37,7 +37,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
 
     var showEphemeralTimer: Bool {
         get { cellDescriptions.contains(where: \.showEphemeralTimer) }
-        set { fatalError("TODO?") }
+        set { fatalError("TODO: make read-only property") }
     }
 
     var containsHighlightableContent: Bool {
