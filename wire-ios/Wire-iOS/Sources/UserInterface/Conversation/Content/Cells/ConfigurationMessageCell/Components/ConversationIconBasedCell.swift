@@ -39,6 +39,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
     weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 

@@ -106,4 +106,13 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
         self.configuration = cellDescriptions
     }
 
+    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
+        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
+        cell.cellView.delegate = delegate
+        cell.cellView.message = message
+        cell.cellView.actionController = actionController
+        return cell
+    }
+
 }

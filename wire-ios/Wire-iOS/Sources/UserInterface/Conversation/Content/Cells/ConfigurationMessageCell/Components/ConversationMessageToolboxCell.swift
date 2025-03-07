@@ -38,6 +38,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     weak var cellDescription: ConversationMessageToolboxCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     let toolboxView = MessageToolboxView()
     var observerToken: Any?

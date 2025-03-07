@@ -126,13 +126,12 @@ final class ConversationMessageCellTableViewAdapter<
         ])
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
 
-        // TODO: delete the gesture recognizers from here and move it to the ConversationTextMessageCell class
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
-        cellView.addGestureRecognizer(longPressGesture)
+        contentView.addGestureRecognizer(longPressGesture)
 
         self.doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
-        cellView.addGestureRecognizer(doubleTapGesture)
+        contentView.addGestureRecognizer(doubleTapGesture)
 
         self.singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
         cellView.addGestureRecognizer(singleTapGesture)
@@ -172,9 +171,7 @@ final class ConversationMessageCellTableViewAdapter<
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
-            if let textMessageCell = gestureRecognizer.view as? ConversationTextMessageCell {
-                textMessageCell.menuPresenter.showMenu()
-            }
+            cellView.menuPresenter?.showMenu()
         }
     }
 
@@ -182,7 +179,22 @@ final class ConversationMessageCellTableViewAdapter<
 
     @objc
     private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+        guard gestureRecognizer.state == .recognized else { return }
+
+        if
+            let cellView = cellView as? ConversationStackMessageContentView,
+            let cellDescription = cellDescription as? StackViewCellDescription {
+            for (index, cell) in cellView.conversationMessageCells.enumerated() {
+                let location = gestureRecognizer.location(in: cell)
+                if cell.bounds.contains(location) {
+                    let stackedCellDescription = cellDescription.cellDescriptions[index]
+                    if stackedCellDescription.supportsActions {
+                        stackedCellDescription.actionController?.performSingleTapAction()
+                    }
+                }
+            }
+
+        } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
     }
@@ -191,7 +203,22 @@ final class ConversationMessageCellTableViewAdapter<
 
     @objc
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+        guard gestureRecognizer.state == .recognized else { return }
+
+        if
+            let cellView = cellView as? ConversationStackMessageContentView,
+            let cellDescription = cellDescription as? StackViewCellDescription {
+            for (index, cell) in cellView.conversationMessageCells.enumerated() {
+                let location = gestureRecognizer.location(in: cell)
+                if cell.bounds.contains(location) {
+                    let stackedCellDescription = cellDescription.cellDescriptions[index]
+                    if stackedCellDescription.supportsActions {
+                        stackedCellDescription.actionController?.performDoubleTapAction()
+                    }
+                }
+            }
+
+        } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }
     }
