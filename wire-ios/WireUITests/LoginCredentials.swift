@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Demo user credentials for UI Tests
+// Generated file - DO NOT EDIT
 struct LoginCredentials {
-    static let email: String = "N/A"
-    static let password: String = "N/A"
+    static let email: String = "test@example.com"
+    static let password: String = "password123"
+    
+    private init() {}
 }

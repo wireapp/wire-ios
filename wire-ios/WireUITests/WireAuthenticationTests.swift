@@ -59,7 +59,7 @@ final class WireAuthenticationTests: XCTestCase {
         let nextButton = elementsQuery.buttons["Next"]
                 
         textField.tap()
-        textField.typeText("demo@wire.com")
+        textField.typeText(LoginCredentials.email)
         
         let errorAlert = app.alerts["Error"]
         XCTAssertFalse(errorAlert.exists)
