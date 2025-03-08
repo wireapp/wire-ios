@@ -22,13 +22,31 @@ set -Eeuo pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SOURCERY="$REPO_ROOT/WirePlugins/.build/artifacts/wireplugins/sourcery/sourcery/bin/sourcery"
 
-if [ ! -z "${CI-}" ]; then
-    echo "Skipping Sourcery in CI environment"
-    exit 0
-fi
+#if [ ! -z "${CI-}" ]; then
+#    echo "Skipping Sourcery in CI environment"
+#    exit 0
+#fi
 
 if [[ ! -f "$SOURCERY" ]]; then
     echo "❌ Executable is missing, please run the setup script!"
 fi
 
 "$SOURCERY" "$@"
+
+if [[ -n "${CI-}" ]]; then
+# Ensure the required environment variables are set
+if [[ -z "${UITESTS_LOGIN_EMAIL}" || -z "${UITESTS_LOGIN_PASSWORD}" ]]; then
+  echo "Error: UITESTS_LOGIN_EMAIL and UITESTS_LOGIN_PASSWORD must be set."
+  exit 1
+fi
+
+# Generate the template input file
+echo "{% set email = \"${UITESTS_LOGIN_EMAIL}\" %}" > TempVars.stencil
+echo "{% set password = \"${UITESTS_LOGIN_PASSWORD}\" %}" >> TempVars.stencil
+
+# Run Sourcery
+"$SOURCERY" --sources TempVars.stencil --templates Templates/LoginCredentials.stencil --output Generated/
+
+# Cleanup
+rm TempVars.stencil
+fi
