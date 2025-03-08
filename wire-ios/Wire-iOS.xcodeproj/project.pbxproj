@@ -463,7 +463,6 @@
 			membershipExceptions = (
 				Sourcery/AutoMockable.stencil,
 				Sourcery/config.yml,
-				Sourcery/test_credentials.stencil,
 				TestPlans/AllTests.xctestplan,
 				TestPlans/GermanLocaleTests.xctestplan,
 				TestPlans/SecurityTests.xctestplan,
@@ -476,7 +475,6 @@
 			membershipExceptions = (
 				Sourcery/AutoMockable.stencil,
 				Sourcery/config.yml,
-				Sourcery/test_credentials.stencil,
 				TestPlans/AllTests.xctestplan,
 				TestPlans/GermanLocaleTests.xctestplan,
 				TestPlans/SecurityTests.xctestplan,

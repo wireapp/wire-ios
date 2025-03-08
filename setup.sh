@@ -60,7 +60,7 @@ echo ""
 # Workaround for carthage "The file couldn’t be saved." error
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
-echo "ℹ️  Carthage bootstrap. This might take a while..."
+echo "ℹ️ Carthage bootstrap. This might take a while..."
 if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
 else
@@ -68,12 +68,12 @@ else
 fi
 echo ""
 
-echo "ℹ️  Resolve Swift Packages for Scripts..."
+echo "ℹ️ Resolve Swift Packages for Scripts..."
 xcrun --sdk macosx swift package --package-path scripts resolve
 xcrun --sdk macosx swift package --package-path WirePlugins resolve
 echo ""
 
-echo "ℹ️  Installing ImageMagick..."
+echo "ℹ️ Installing ImageMagick..."
 if [[ -n "${CI-}" ]]; then
     # CI
     which identify || brew install ImageMagick
@@ -83,7 +83,7 @@ else
 fi
 echo ""
 
-echo "ℹ️  Installing AWS CLI..."
+echo "ℹ️ Installing AWS CLI..."
 if [[ -n "${CI-}" ]]; then
     # CI
     which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
@@ -93,12 +93,12 @@ else
 fi
 echo ""
 
-echo "ℹ️  Fetching submodules..."
+echo "ℹ️ Fetching submodules..."
     git submodule update --init --recursive || true
     git submodule sync --recursive || true
 echo ""
 
-echo "ℹ️  Installing bundler and Ruby dependencies..."
+echo "ℹ️ Installing bundler and Ruby dependencies..."
 if [[ -n "${CI-}" ]]; then
     # CI
     echo "Skipping install since CI is defined"
@@ -109,11 +109,11 @@ else
 fi
 echo ""
 
-echo "ℹ️  Overriding configuration if specified..."
+echo "ℹ️ Overriding configuration if specified..."
 scripts/override-configuration_if_needed.sh "$@"
 echo ""
 
-echo "ℹ️  Generate Licenses"
+echo "ℹ️ Generate Licenses"
 if [[ -n "${CI-}" ]]; then
     # CI
     scripts/generate-licenses.sh
@@ -133,6 +133,9 @@ echo ""
     swift run --package-path ./Scripts/updateStylekit
     echo ""
 )
+
+echo "ℹ️ Generate UITests demo user credentials"
+scripts/generate_ui_tests_credentials.sh
 
 echo "✅  Wire project was set up, you can now open wire-ios-mono.xcworkspace"
 

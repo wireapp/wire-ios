@@ -32,21 +32,3 @@ if [[ ! -f "$SOURCERY" ]]; then
 fi
 
 "$SOURCERY" "$@"
-
-if [[ -n "${CI-}" ]]; then
-# Ensure the required environment variables are set
-if [[ -z "${UITESTS_LOGIN_EMAIL}" || -z "${UITESTS_LOGIN_PASSWORD}" ]]; then
-  echo "Error: UITESTS_LOGIN_EMAIL and UITESTS_LOGIN_PASSWORD must be set."
-  exit 1
-fi
-
-# Generate the template input file
-echo "{% set email = \"${UITESTS_LOGIN_EMAIL}\" %}" > TempVars.stencil
-echo "{% set password = \"${UITESTS_LOGIN_PASSWORD}\" %}" >> TempVars.stencil
-
-# Run Sourcery
-"$SOURCERY" --sources TempVars.stencil --templates Templates/LoginCredentials.stencil --output Generated/
-
-# Cleanup
-rm TempVars.stencil
-fi
