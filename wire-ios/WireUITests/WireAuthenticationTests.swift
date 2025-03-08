@@ -17,40 +17,47 @@
 //
 
 import XCTest
-import WireUtilities
 
-final class WireUITests: XCTestCase {
+final class WireAuthenticationTests: XCTestCase {
+
+    var app: XCUIApplication!
     
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-        
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-    
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
-   // @MainActor // comment @MainActor to use recorder
-    func test_Login_useWireAuthentication() throws {
-        let app = XCUIApplication()
+        app = XCUIApplication()
         app.launchArguments = [
             "-BackendEnvironmentTypeOverrideKey staging",
             "--preferred-api-version=8"
         ]
+        app.useWireAuthentication()
 
-        app.developerFlag(DeveloperFlag.useWireAuthentication, enabled: true)
         app.launch()
-                        
+
+        // In UI tests it is usually best to stop immediately when a failure occurs.
+        continueAfterFailure = false
+    }
+    
+    override func tearDownWithError() throws {
+        app = nil
+    }
+    
+    @MainActor
+    func test_Login_withWrongEmail_NextIsDisabled() throws {
         let elementsQuery = app.scrollViews.otherElements
         let textField = elementsQuery.textFields["Email or SSO code"]
         let nextButton = elementsQuery.buttons["Next"]
+                
+        textField.tap()
+        textField.typeText("notAnEmail.com")
         
         XCTAssertFalse(nextButton.isEnabled, "nextButton should be disabled if no email")
-        
+    }
+    
+    @MainActor // note: comment @MainActor to use recorder
+    func test_Login_withEmail() throws {
+        let elementsQuery = app.scrollViews.otherElements
+        let textField = elementsQuery.textFields["Email or SSO code"]
+        let nextButton = elementsQuery.buttons["Next"]
+                
         textField.tap()
         textField.typeText("demo@wire.com")
         
@@ -59,12 +66,5 @@ final class WireUITests: XCTestCase {
 
 //        let okButton = errorAlert.scrollViews.otherElements.buttons["OK"]
 //        okButton.tap()
-        
-    }
-}
-
-extension XCUIApplication {
-    func developerFlag(_ developerFlag: DeveloperFlag, enabled: Bool) {
-        launchArguments.append("--developer-flag=\(developerFlag.rawValue):\(enabled ? "true" : "false")")
     }
 }
