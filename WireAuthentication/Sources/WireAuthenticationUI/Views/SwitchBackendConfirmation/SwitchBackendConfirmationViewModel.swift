@@ -26,8 +26,8 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     private typealias Strings = L10n.SwitchBackendConfirmation
 
     package typealias Factory =
-    ResolveBackendMetadataUseCaseFactory &
-    FetchSSOURLUseCaseFactory
+        FetchSSOURLUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
 
     // MARK: - State
 
@@ -114,8 +114,8 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
             let backendMetadata: BackendMetadata
             do {
                 backendMetadata = try await resolveBackendMetadata()
-            } catch  {
-                // TODO: handle
+            } catch {
+                // TODO: [WPB-16415] handle unresolved api version
                 fatalError()
             }
 

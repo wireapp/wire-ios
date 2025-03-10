@@ -27,10 +27,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
         DetermineAuthMethodUseCaseFactory &
+        FetchBackendConfigUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory &
         SSOLinkGeneratorFactory &
-        ValidateEmailOrSSOCodeUseCaseFactory &
-        FetchBackendConfigUseCaseFactory
+        ValidateEmailOrSSOCodeUseCaseFactory
 
     package enum Alert: Hashable, Identifiable, Sendable {
         package var id: Self { self }

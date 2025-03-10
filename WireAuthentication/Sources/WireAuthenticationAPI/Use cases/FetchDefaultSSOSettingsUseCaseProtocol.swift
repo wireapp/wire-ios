@@ -45,6 +45,8 @@ public enum FetchDefaultSSOSettingsUseCaseFailure: Error {
 
 public protocol FetchDefaultSSOSettingsUseCaseFactory {
 
-    func fetchDefaultSSOSettingsUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchDefaultSSOSettingsUseCaseProtocol
+    func fetchDefaultSSOSettingsUseCase(
+        apiVersion: BackendMetadata.APIVersion
+    ) -> any FetchDefaultSSOSettingsUseCaseProtocol
 
 }

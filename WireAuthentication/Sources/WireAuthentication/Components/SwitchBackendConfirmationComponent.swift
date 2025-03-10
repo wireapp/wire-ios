@@ -51,13 +51,11 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
 
     // MARK: - View
 
-    @MainActor
-    var view: SwitchBackendConfirmationView {
+    @MainActor var view: SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(viewModel: viewModel)
     }
 
-    @MainActor
-    private var viewModel: SwitchBackendConfirmationViewModel {
+    @MainActor private var viewModel: SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
             router: dependency.router,
             factory: self,
@@ -96,7 +94,9 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
         )
     }
 
-    func fetchSSOURLUseCase(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol {
+    func fetchSSOURLUseCase(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any FetchSSOURLUseCaseProtocol {
         let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
             for: .init(apiVersion)
         )

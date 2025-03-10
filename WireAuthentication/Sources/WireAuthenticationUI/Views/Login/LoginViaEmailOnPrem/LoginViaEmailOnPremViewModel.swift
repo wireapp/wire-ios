@@ -25,8 +25,8 @@ import WireReusableUIComponents
 package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     package typealias Factory =
-    ResolveBackendMetadataUseCaseFactory &
-    LoginViaEmailUseCaseFactory
+        LoginViaEmailUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
 
     private let router: any Router
     private let factory: any Factory
@@ -96,7 +96,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
         } catch {
-            // TODO: handle
+            // TODO: [WPB-16415] handle unresolved api version
             fatalError()
         }
 

@@ -53,13 +53,11 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
 
     // MARK: - View
 
-    @MainActor
-    var view: LoginViaEmailOnPremView {
+    @MainActor var view: LoginViaEmailOnPremView {
         LoginViaEmailOnPremView(viewModel: viewModel)
     }
 
-    @MainActor
-    private var viewModel: LoginViaEmailOnPremViewModel {
+    @MainActor private var viewModel: LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: dependency.router,
             factory: self,
@@ -101,7 +99,9 @@ extension LoginViaEmailOnPremComponent: LoginViaEmailOnPremViewModel.Factory {
         )
     }
 
-    func loginViaEmailUseCase(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol {
+    func loginViaEmailUseCase(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any LoginViaEmailUseCaseProtocol {
         let api = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
             for: .init(apiVersion)
         )

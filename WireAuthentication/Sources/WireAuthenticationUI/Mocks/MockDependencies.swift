@@ -183,7 +183,9 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
 extension MockDependencies: FetchSSOURLUseCaseFactory {
 
     nonisolated
-    func fetchSSOURLUseCase(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol {
+    func fetchSSOURLUseCase(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any FetchSSOURLUseCaseProtocol {
         MockFetchSSOURLUseCase()
     }
 
@@ -192,7 +194,9 @@ extension MockDependencies: FetchSSOURLUseCaseFactory {
 extension MockDependencies: FetchDefaultSSOSettingsUseCaseFactory {
 
     nonisolated
-    func fetchDefaultSSOSettingsUseCase(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) -> any FetchDefaultSSOSettingsUseCaseProtocol {
+    func fetchDefaultSSOSettingsUseCase(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any FetchDefaultSSOSettingsUseCaseProtocol {
         MockFetchDefaultSSOSettingsUseCaseProtocol()
     }
 
