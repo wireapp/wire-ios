@@ -22,10 +22,10 @@ set -Eeuo pipefail
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SOURCERY="$REPO_ROOT/WirePlugins/.build/artifacts/wireplugins/sourcery/sourcery/bin/sourcery"
 
-#if [ ! -z "${CI-}" ]; then
-#    echo "Skipping Sourcery in CI environment"
-#    exit 0
-#fi
+if [ ! -z "${CI-}" ]; then
+    echo "Skipping Sourcery in CI environment"
+    exit 0
+fi
 
 if [[ ! -f "$SOURCERY" ]]; then
     echo "❌ Executable is missing, please run the setup script!"

@@ -40,7 +40,7 @@ final class WireAuthenticationTests: XCTestCase {
         app = nil
     }
 
-    // @MainActor
+    @MainActor
     func test_Login_withWrongEmail_NextIsDisabled() throws {
 
         let textField = emailTextField()

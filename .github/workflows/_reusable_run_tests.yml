@@ -121,6 +121,7 @@ jobs:
           bundle exec fastlane prepare_for_tests
 
       - name: "Test new critical flows"
+        if: ${{ inputs.test_dependencies == false }}
         run: |
           bundle exec fastlane run_uitests
 
@@ -128,7 +129,6 @@ jobs:
         if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
-          bundle exec fastlane run_uitests
           
       - name: "Test frameworks without dependencies"
         if: ${{ inputs.test_dependencies == false }}
