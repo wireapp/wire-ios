@@ -22,12 +22,18 @@ on:
         required: true
       DD_API_KEY:
         required: true
+      UI_LOGIN_EMAIL:
+        required: true
+      UI_LOGIN_PASSWORD:
+        required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
   REPO_ROOT: ${{ github.workspace }}
   PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+  UI_LOGIN_EMAIL: ${{ secrets.UI_LOGIN_EMAIL }}
+  UI_LOGIN_PASSWORD: ${{ secrets.UI_LOGIN_PASSWORD }}
 
 jobs:
   run-tests:

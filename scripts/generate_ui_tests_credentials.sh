@@ -10,7 +10,7 @@ mkdir -p "$(dirname "$OUTPUT_FILE")"
 if [[ -n "$CI" ]]; then
   # Ensure the required environment variables are set in CI
   if [[ -z "${UI_LOGIN_EMAIL}" || -z "${UI_LOGIN_PASSWORD}" ]]; then
-    echo "Error: LOGIN_EMAIL and LOGIN_PASSWORD must be set in CI."
+    echo "Error: UI_LOGIN_EMAIL and UI_LOGIN_PASSWORD must be set in CI."
     exit 1
   fi
 else
