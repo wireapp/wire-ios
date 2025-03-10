@@ -21,34 +21,11 @@ import XCTest
 
 @testable import Wire
 
-class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider {
-    var stableRandomParticipants: [UserType] = []
-
-    override required init() {}
-
-    static func createOneOnOneConversation<T: MockStableRandomParticipantsConversation>(otherUser: MockUserType) -> T {
-        SelfUser.setupMockSelfUser()
-        let otherUserConversation = T()
-
-        // avatar
-        otherUserConversation.stableRandomParticipants = [otherUser]
-        otherUserConversation.conversationType = .oneOnOne
-
-        // title
-        otherUserConversation.displayName = otherUser.name!
-
-        // subtitle
-        otherUserConversation.connectedUserType = otherUser
-
-        return otherUserConversation
-    }
-}
-
-final class ConversationAvatarViewTests: XCTestCase {
+final class ConversationGroupAvatarViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var sut: ConversationAvatarView!
+    private var sut: ConversationGroupAvatarView!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
@@ -56,7 +33,7 @@ final class ConversationAvatarViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        sut = ConversationAvatarView()
+        sut = ConversationGroupAvatarView()
     }
 
     // MARK: - tearDown
@@ -75,7 +52,10 @@ final class ConversationAvatarViewTests: XCTestCase {
         let conversation = MockStableRandomParticipantsConversation()
 
         // WHEN
-        sut.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
+        sut.configure(context: ConversationGroupAvatarView.Context(
+            conversation: conversation,
+            qualifiedID: nil
+        ))
 
         // THEN
         snapshotHelper.verify(matching: sut.prepareForSnapshots())
@@ -86,16 +66,21 @@ final class ConversationAvatarViewTests: XCTestCase {
         let otherUserConversation = MockStableRandomParticipantsConversation()
 
         // WHEN
-        sut.configure(context: .conversation(conversation: otherUserConversation, qualifiedID: nil))
+        sut.configure(context: ConversationGroupAvatarView.Context(
+            conversation: otherUserConversation,
+            qualifiedID: nil
+        ))
 
         // AND WHEN
         _ = sut.prepareForSnapshots()
 
         // AND WHEN
-
         let conversation = MockStableRandomParticipantsConversation()
 
-        sut.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
+        sut.configure(context: ConversationGroupAvatarView.Context(
+            conversation: conversation,
+            qualifiedID: nil
+        ))
 
         // THEN
         snapshotHelper.verify(matching: sut.prepareForSnapshots())
@@ -110,29 +95,15 @@ final class ConversationAvatarViewTests: XCTestCase {
         otherUserConversation.stableRandomParticipants = [otherUser]
 
         // WHEN
-        sut.configure(context: .conversation(conversation: otherUserConversation, qualifiedID: nil))
+        sut.configure(context: ConversationGroupAvatarView.Context(
+            conversation: otherUserConversation,
+            qualifiedID: nil
+        ))
 
         // THEN
         snapshotHelper
             .withPerceptualPrecision(0.98)
             .verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersPendingConnection() {
-        // GIVEN
-        let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.zmAccentColor = .green
-        otherUser.isConnected = false
-        otherUser.isPendingApprovalBySelfUser = true
-        let otherUserConversation = MockStableRandomParticipantsConversation()
-        otherUserConversation.conversationType = .connection
-        otherUserConversation.stableRandomParticipants = [otherUser]
-
-        // WHEN
-        sut.configure(context: .connect(users: [otherUser]))
-
-        // THEN
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersASingleServiceUser() {
@@ -150,7 +121,10 @@ final class ConversationAvatarViewTests: XCTestCase {
         otherUserConversation.stableRandomParticipants = [otherUser]
 
         // WHEN
-        sut.configure(context: .conversation(conversation: otherUserConversation, qualifiedID: nil))
+        sut.configure(context: ConversationGroupAvatarView.Context(
+            conversation: otherUserConversation,
+            qualifiedID: nil
+        ))
 
         // THEN
         snapshotHelper.verify(matching: sut.prepareForSnapshots())
@@ -165,7 +139,10 @@ final class ConversationAvatarViewTests: XCTestCase {
         conversation.stableRandomParticipants = [thirdUser, otherUser]
 
         // WHEN
-        sut.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
+        sut.configure(context: ConversationGroupAvatarView.Context(
+            conversation: conversation,
+            qualifiedID: nil
+        ))
 
         // THEN
         snapshotHelper
@@ -185,7 +162,10 @@ final class ConversationAvatarViewTests: XCTestCase {
         (conversation.stableRandomParticipants[3] as! MockUserType).zmAccentColor = .blue
 
         // WHEN
-        sut.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
+        sut.configure(context: ConversationGroupAvatarView.Context(
+            conversation: conversation,
+            qualifiedID: nil
+        ))
 
         // THEN
         snapshotHelper

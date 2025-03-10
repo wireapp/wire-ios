@@ -109,7 +109,7 @@ final class GroupConversationCell: UICollectionViewCell {
     }
 
     func configure(conversation: GroupConversationCellConversation) {
-        avatarView.configure(context: .conversation(conversation: conversation))
+        avatarView.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
 
         titleLabel.text = conversation.displayName
 

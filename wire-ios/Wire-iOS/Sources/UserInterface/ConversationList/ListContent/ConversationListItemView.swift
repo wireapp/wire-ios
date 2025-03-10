@@ -31,7 +31,10 @@ final class ConversationListItemView: UIView {
     static let minHeight: CGFloat = 64
 
     // Please use `updateForConversation:` to set conversation.
-    private var conversation: ConversationAvatarViewConversation?
+    private var conversation: (
+        ConversationGroupAvatarViewConversation &
+        ConversationConnectAvatarViewConversation
+    )?
 
     var titleText: NSAttributedString? {
         didSet {
@@ -301,7 +304,7 @@ final class ConversationListItemView: UIView {
         }
 
         // Configure the avatar
-        avatarView.configure(context: .conversation(conversation: conversation))
+        avatarView.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
 
         // Configure the accessory
         let statusIcon: ConversationStatusIcon? = if let appDelegate = UIApplication.shared.delegate as? AppDelegate,

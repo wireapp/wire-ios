@@ -19,46 +19,23 @@
 import XCTest
 @testable import Wire
 
-class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider {
-    var stableRandomParticipants: [UserType] = []
-
-    override required init() {}
-
-    static func createOneOnOneConversation<T: MockStableRandomParticipantsConversation>(otherUser: MockUserType) -> T {
-        SelfUser.setupMockSelfUser()
-        let otherUserConversation = T()
-
-        // avatar
-        otherUserConversation.stableRandomParticipants = [otherUser]
-        otherUserConversation.conversationType = .oneOnOne
-
-        // title
-        otherUserConversation.displayName = otherUser.name!
-
-        // subtitle
-        otherUserConversation.connectedUserType = otherUser
-
-        return otherUserConversation
-    }
-}
-
-final class ConversationAvatarViewModeTests: XCTestCase {
-    var sut: ConversationAvatarView!
+final class ConversationConnectAvatarViewModeTests: XCTestCase {
+    var sut: ConversationConnectAvatarView!
     var otherUser: MockUserType!
-    var mockConversation: MockStableRandomParticipantsConversation!
+    var users: [any UserType]!
 
     override func setUp() {
         super.setUp()
 
-        mockConversation = MockStableRandomParticipantsConversation()
+        users = []
 
         otherUser = MockUserType.createDefaultOtherUser()
-        sut = ConversationAvatarView()
+        sut = ConversationConnectAvatarView()
     }
 
     override func tearDown() {
         sut = nil
-        mockConversation = nil
+        users = []
         otherUser = nil
 
         super.tearDown()
@@ -71,10 +48,11 @@ final class ConversationAvatarViewModeTests: XCTestCase {
         mockServiceUser.providerIdentifier = "providerIdentifier"
         XCTAssert(mockServiceUser.isServiceUser)
 
-        mockConversation.stableRandomParticipants = [mockServiceUser]
+        users = [mockServiceUser]
 
         // WHEN
-        sut.configure(context: .conversation(conversation: mockConversation))
+        sut.configure(context: ConversationConnectAvatarView.Context(
+            users: users))
 
         // THEN
         XCTAssertEqual(sut.mode, .one(serviceUser: true))
@@ -82,10 +60,11 @@ final class ConversationAvatarViewModeTests: XCTestCase {
 
     func testThatModeIsFourWhenGroupConversationWithOneUser() {
         // GIVEN
-        mockConversation.stableRandomParticipants = [otherUser]
+        users = [otherUser]
 
         // WHEN
-        sut.configure(context: .conversation(conversation: mockConversation))
+        sut.configure(context: ConversationConnectAvatarView.Context(
+            users: users))
 
         // THEN
         XCTAssertEqual(sut.mode, .four)
@@ -95,7 +74,8 @@ final class ConversationAvatarViewModeTests: XCTestCase {
         // GIVEN
 
         // WHEN
-        sut.configure(context: .conversation(conversation: mockConversation))
+        sut.configure(context: ConversationConnectAvatarView.Context(
+            users: users))
 
         // THEN
         XCTAssertEqual(sut.mode, .none)

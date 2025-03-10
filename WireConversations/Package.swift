@@ -12,6 +12,7 @@ let package = Package(
         .library(name: "WireConversationsAPI", targets: ["WireConversationsAPI"]),
         .library(name: "WireConversationsBindings", targets: ["WireConversationsBindings"]),
         .library(name: "WireConversationsUI", targets: ["WireConversationsUI"]),
+        .library(name: "WireConversationsUIBindings", targets: ["WireConversationsUIBindings"]),
     ],
     dependencies: [
         .package(name: "WireFoundation", path: "../WireFoundation"),
