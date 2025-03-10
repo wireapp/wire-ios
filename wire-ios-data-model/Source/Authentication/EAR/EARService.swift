@@ -558,9 +558,9 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    private func performInAllContexts(_ block: (NSManagedObjectContext) -> Void) {
+    private func performInAllContexts(_ block: @escaping (NSManagedObjectContext) -> Void) {
         for context in databaseContexts {
-            context.performAndWait {
+            context.perform {
                 block(context)
             }
         }

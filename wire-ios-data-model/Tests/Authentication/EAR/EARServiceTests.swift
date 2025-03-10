@@ -243,6 +243,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Then EAR is enabled on the context
         XCTAssertTrue(uiMOC.encryptMessagesAtRest)
 
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         // Then all contexts have the database key.
         XCTAssertNotNil(uiMOC.databaseKey)
         syncMOC.performAndWait { XCTAssertNotNil(syncMOC.databaseKey) }
@@ -319,6 +321,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // When
         XCTAssertNoThrow(try sut.enableEncryptionAtRest(context: uiMOC))
 
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         // Then migration was run
         XCTAssertEqual(prepareForMigrationCalls, 1)
         XCTAssertTrue(messageData.isEncrypted)
@@ -381,6 +385,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertNoThrow(try sut.enableEncryptionAtRest(context: uiMOC))
 
         // Then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(conversation.hasEncryptedDraftMessageData)
         XCTAssertEqual(conversation.unencryptedDraftMessageContent, "Beep bloop")
         XCTAssertTrue(uiMOC.encryptMessagesAtRest)
@@ -444,6 +449,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertFalse(uiMOC.encryptMessagesAtRest)
 
         // Then all contexts no longer have the database key
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNil(uiMOC.databaseKey)
         syncMOC.performAndWait { XCTAssertNil(syncMOC.databaseKey) }
     }
@@ -591,6 +597,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         sut.lockDatabase()
 
         // Then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNil(uiMOC.databaseKey)
 
         syncMOC.performAndWait {
@@ -617,6 +624,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         XCTAssertNoThrow(try sut.unlockDatabase())
 
         // Then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(uiMOC.databaseKey?._storage, decryptedDatabaseKey)
 
         syncMOC.performAndWait {
@@ -809,6 +817,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         sut.setDatabaseKeyInAllContexts(databaseKey)
 
         // Then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(uiMOC.databaseKey, databaseKey)
 
         syncMOC.performAndWait {
@@ -819,6 +828,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         sut.setDatabaseKeyInAllContexts(nil)
 
         // Then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNil(uiMOC.databaseKey)
 
         syncMOC.performAndWait {
@@ -883,6 +893,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         try sut.enableEncryptionAtRest(context: uiMOC, skipMigration: true)
 
         // Then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertFalse(uiMOC.isLocked)
 
         let newPublicKeys = try XCTUnwrap(sut.fetchPublicKeys())
