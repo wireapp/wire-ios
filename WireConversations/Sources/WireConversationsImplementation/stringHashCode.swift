@@ -16,4 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol Placeholder {}
+func stringHashCode(_ str: String) -> Int32 {
+    var hash: Int32 = 0
+    for scalar in str.unicodeScalars {
+        // Use &* and &+ for 32-bit overflow arithmetic (like Java).
+        hash = (31 &* hash) &+ Int32(scalar.value)
+    }
+    return hash
+}
