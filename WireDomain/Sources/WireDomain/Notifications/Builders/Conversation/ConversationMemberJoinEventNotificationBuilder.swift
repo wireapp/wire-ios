@@ -21,9 +21,7 @@ import WireDataModel
 
 struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
 
-    private let context: Context
-
-    struct Context {
+    private struct Context {
         let senderName: String?
         let conversationName: String?
         let isGroupConversation: Bool
@@ -33,6 +31,18 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         let senderID: UUID
         let selfUserID: UUID
     }
+    
+    private struct Validator {
+        let addedUserIDs: Set<UUID>
+        let selfUserID: UUID
+        
+        func validate() -> Bool {
+            addedUserIDs.contains(selfUserID)
+        }
+    }
+    
+    private let context: Context
+    private let validator: Validator
 
     init(
         addedUserIDs: Set<UUID>,
@@ -41,6 +51,19 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) async {
+        
+        // Validation criteria
+        
+        let selfUser = await userLocalStore.fetchSelfUser()
+        let selfUserID = await userLocalStore.id(for: selfUser)
+        
+        self.validator = Validator(
+            addedUserIDs: addedUserIDs,
+            selfUserID: selfUserID
+        )
+        
+        // Context
+        
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
@@ -54,10 +77,8 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         let senderName = await userLocalStore.name(for: sender)
         let conversationName = await conversationLocalStore.name(for: conversation)
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
-        let selfUser = await userLocalStore.fetchSelfUser()
-        let teamName = await userLocalStore.teamName(for: selfUser)
 
-        let selfUserID = await userLocalStore.id(for: selfUser)
+        let teamName = await userLocalStore.teamName(for: selfUser)
 
         self.context = Context(
             senderName: senderName,
@@ -73,7 +94,7 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
     }
 
     func shouldBuildNotification() async -> Bool {
-        context.addedUserIDs.contains(context.selfUserID)
+        validator.validate()
     }
 
     func buildContent() async -> UserNotification {

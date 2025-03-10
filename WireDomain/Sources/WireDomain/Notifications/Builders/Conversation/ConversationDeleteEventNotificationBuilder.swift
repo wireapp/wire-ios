@@ -21,11 +21,7 @@ import WireDataModel
 
 struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
 
-    private let context: Context
-    private let userLocalStore: any UserLocalStoreProtocol
-    private let conversationLocalStore: any ConversationLocalStoreProtocol
-
-    struct Context {
+    private struct Context {
         let conversation: ZMConversation
         let senderName: String?
         let conversationName: String?
@@ -35,6 +31,21 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
         let senderID: UUID
         let selfUserID: UUID
     }
+    
+    private struct Validator {
+        let isGroupConversation: Bool
+
+        func validate() -> Bool {
+            isGroupConversation
+        }
+    }
+    
+    private let context: Context
+    private let validator: Validator
+    
+    private let userLocalStore: any UserLocalStoreProtocol
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
+
 
     init(
         conversationID: WireAPI.QualifiedID,
@@ -49,6 +60,16 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
             id: conversationID.uuid,
             domain: conversationID.domain
         )
+        
+        // Validation criteria
+        
+        let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
+        
+        self.validator = Validator(
+            isGroupConversation: isGroupConversation
+        )
+        
+        // Context
 
         let sender = await userLocalStore.fetchOrCreateUser(
             id: senderID.uuid,
@@ -57,7 +78,6 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
 
         let senderName = await userLocalStore.name(for: sender)
         let conversationName = await conversationLocalStore.name(for: conversation)
-        let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
         let selfUser = await userLocalStore.fetchSelfUser()
         let teamName = await userLocalStore.teamName(for: selfUser)
 
@@ -77,7 +97,7 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
     }
 
     func shouldBuildNotification() async -> Bool {
-        context.isGroupConversation
+        validator.validate()
     }
 
     func buildContent() async -> UserNotification {

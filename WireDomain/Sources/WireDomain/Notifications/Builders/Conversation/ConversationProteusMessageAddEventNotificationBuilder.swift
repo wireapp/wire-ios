@@ -28,23 +28,32 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         case fileUpload
     }
 
-    struct Context {
+    private struct Context {
         let conversation: ZMConversation
         let senderName: String?
         let conversationName: String?
         let isGroupConversation: Bool
         let teamName: String?
-        let isMessageSilenced: Bool
         let conversationID: WireAPI.QualifiedID
         let senderID: UUID
         let selfUserID: UUID
         let hidesNotificationContent: Bool
     }
+    
+    private struct Validator {
+        let isMessageSilenced: Bool
+        
+        func validate() -> Bool {
+            !isMessageSilenced
+        }
+    }
 
     private let message: GenericMessage
+    private let context: Context
+    private let validator: Validator
+    
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
-    private let context: Context
 
     init(
         message: GenericMessage,
@@ -62,6 +71,20 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             id: conversationID.uuid,
             domain: conversationID.domain
         )
+        
+        // Validation criteria
+        
+        let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
+            message,
+            senderID: senderID.uuid,
+            conversation: conversation
+        )
+        
+        self.validator = Validator(
+            isMessageSilenced: isMessageSilenced
+        )
+        
+        // Context
 
         let sender = await userLocalStore.fetchOrCreateUser(
             id: senderID.uuid,
@@ -73,11 +96,6 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
         let selfUser = await userLocalStore.fetchSelfUser()
         let teamName = await userLocalStore.teamName(for: selfUser)
-        let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
-            message,
-            senderID: senderID.uuid,
-            conversation: conversation
-        )
         let selfUserID = await userLocalStore.id(for: selfUser)
         let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
 
@@ -87,7 +105,6 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             conversationName: conversationName,
             isGroupConversation: isGroupConversation,
             teamName: teamName,
-            isMessageSilenced: isMessageSilenced,
             conversationID: conversationID,
             senderID: senderID.uuid,
             selfUserID: selfUserID,
@@ -96,7 +113,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
     }
 
     func shouldBuildNotification() async -> Bool {
-        !context.isMessageSilenced
+        validator.validate()
     }
 
     func buildContent() async -> UserNotification {

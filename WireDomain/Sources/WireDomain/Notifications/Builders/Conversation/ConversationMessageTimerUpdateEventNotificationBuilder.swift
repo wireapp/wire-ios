@@ -21,9 +21,7 @@ import WireDataModel
 
 struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuilder {
 
-    private let context: Context
-
-    struct Context {
+    private struct Context {
         let senderName: String?
         let conversationName: String?
         let isGroupConversation: Bool
@@ -33,6 +31,8 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
         let senderID: UUID
         let selfUserID: UUID
     }
+    
+    private let context: Context
 
     init(
         newTimer: Int64?,
@@ -42,6 +42,8 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) async {
 
+        // Context
+        
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
@@ -57,7 +59,6 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
         let selfUser = await userLocalStore.fetchSelfUser()
         let teamName = await userLocalStore.teamName(for: selfUser)
-
         let selfUserID = await userLocalStore.id(for: selfUser)
 
         self.context = Context(

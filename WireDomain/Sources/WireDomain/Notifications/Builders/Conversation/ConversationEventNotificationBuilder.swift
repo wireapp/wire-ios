@@ -30,17 +30,40 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
     private struct Context {
         let senderID: UserID
         let conversationID: ConversationID
+    }
+    
+    private struct Validator {
         let isSelfUser: Bool
         let isConversationMuted: Bool
         let eventTimeStamp: Date?
         let lastReadTimestamp: Date?
+        
+        func validate() -> Bool {
+            let isSelfUser = isSelfUser
+            let isConversationMuted = isConversationMuted
+            let eventTimeStamp = eventTimeStamp
+            let lastReadTimestamp = lastReadTimestamp
+
+            guard !isSelfUser,
+                  !isConversationMuted,
+                  let eventTimeStamp,
+                  let lastReadTimestamp,
+                  lastReadTimestamp.compare(eventTimeStamp) != .orderedAscending
+            else {
+                return false
+            }
+            
+            return true
+        }
     }
 
     private let event: ConversationEvent
+    private let context: Context
+    private let validator: Validator
+    
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
-    private let context: Context
 
     init(
         event: ConversationEvent,
@@ -52,34 +75,45 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         self.userLocalStore = userLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.messageLocalStore = messageLocalStore
-
-        let isSelfUser = try? await userLocalStore.isSelfUser(
-            id: event.senderID.uuid,
-            domain: event.senderID.domain
-        ).isSelfUser
-
+        
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: event.conversationID.uuid,
             domain: event.conversationID.domain
         )
+        
+        // Validation criteria
 
         let conversationMutedMessages = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(
             conversation
         )
 
         let isConversationMuted = conversationMutedMessages != .none
-
+        
+        let isSelfUser = try? await userLocalStore.isSelfUser(
+            id: event.senderID.uuid,
+            domain: event.senderID.domain
+        ).isSelfUser
+        
         let eventTimeStamp = event.timestamp
         let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
-
-        self.context = Context(
-            senderID: event.senderID,
-            conversationID: event.conversationID,
+        
+        self.validator = Validator(
             isSelfUser: isSelfUser == true,
             isConversationMuted: isConversationMuted,
             eventTimeStamp: eventTimeStamp,
             lastReadTimestamp: lastReadTimestamp
         )
+        
+        // Context
+
+        self.context = Context(
+            senderID: event.senderID,
+            conversationID: event.conversationID
+        )
+    }
+    
+    func shouldBuildNotification() async -> Bool {
+        validator.validate()
     }
 
     func buildContent() async throws -> UserNotification {
@@ -203,24 +237,6 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         }
 
         return try await builder.buildContent()
-    }
-
-    func shouldBuildNotification() async -> Bool {
-        let isSelfUser = context.isSelfUser
-        let isConversationMuted = context.isConversationMuted
-        let eventTimeStamp = context.eventTimeStamp
-        let lastReadTimestamp = context.lastReadTimestamp
-
-        guard !isSelfUser,
-              !isConversationMuted,
-              let eventTimeStamp,
-              let lastReadTimestamp,
-              lastReadTimestamp.compare(eventTimeStamp) != .orderedAscending
-        else {
-            return false
-        }
-
-        return true
     }
 
     private func callingBuilder(

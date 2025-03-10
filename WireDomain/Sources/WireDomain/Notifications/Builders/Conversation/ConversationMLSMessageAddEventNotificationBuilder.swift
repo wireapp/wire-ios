@@ -28,7 +28,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         case fileUpload
     }
 
-    struct Context {
+    private struct Context {
         let conversation: ZMConversation
         let senderName: String?
         let conversationName: String?
@@ -40,11 +40,21 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         let selfUserID: UUID
         let hidesNotificationContent: Bool
     }
+    
+    private struct Validator {
+        let isMessageSilenced: Bool
+        
+        func validate() -> Bool {
+            !isMessageSilenced
+        }
+    }
 
     private let message: GenericMessage
+    private let context: Context
+    private let validator: Validator
+    
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
-    private let context: Context
 
     init(
         message: GenericMessage,
@@ -57,11 +67,25 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         self.messageLocalStore = messageLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.message = message
-
+        
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
         )
+        
+        // Validation criteria
+        
+        let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
+            message,
+            senderID: senderID.uuid,
+            conversation: conversation
+        )
+        
+        self.validator = Validator(
+            isMessageSilenced: isMessageSilenced
+        )
+        
+        // Context
 
         let sender = await userLocalStore.fetchOrCreateUser(
             id: senderID.uuid,
@@ -73,11 +97,6 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
         let selfUser = await userLocalStore.fetchSelfUser()
         let teamName = await userLocalStore.teamName(for: selfUser)
-        let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
-            message,
-            senderID: senderID.uuid,
-            conversation: conversation
-        )
         let selfUserID = await userLocalStore.id(for: selfUser)
         let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
 
@@ -96,7 +115,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
     }
 
     func shouldBuildNotification() async -> Bool {
-        !context.isMessageSilenced
+        validator.validate()
     }
 
     func buildContent() async -> UserNotification {

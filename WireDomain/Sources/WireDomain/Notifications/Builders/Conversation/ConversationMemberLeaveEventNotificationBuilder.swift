@@ -21,18 +21,27 @@ import WireDataModel
 
 struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
 
-    private let context: Context
-
-    struct Context {
+    private struct Context {
         let senderName: String?
         let conversationName: String?
         let isGroupConversation: Bool
-        let removedUserIDs: Set<UUID>
         let teamName: String?
         let conversationID: WireAPI.QualifiedID
         let senderID: UUID
         let selfUserID: UUID
     }
+    
+    private struct Validator {
+        let removedUserIDs: Set<UUID>
+        let selfUserID: UUID
+        
+        func validate() -> Bool {
+            removedUserIDs.contains(selfUserID)
+        }
+    }
+    
+    private let context: Context
+    private let validator: Validator
 
     init(
         removedUserIDs: Set<UUID>,
@@ -41,6 +50,19 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) async {
+        
+        // Validation criteria
+        
+        let selfUser = await userLocalStore.fetchSelfUser()
+        let selfUserID = await userLocalStore.id(for: selfUser)
+        
+        self.validator = Validator(
+            removedUserIDs: removedUserIDs,
+            selfUserID: selfUserID
+        )
+        
+        // Context
+        
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
@@ -54,16 +76,12 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
         let senderName = await userLocalStore.name(for: sender)
         let conversationName = await conversationLocalStore.name(for: conversation)
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
-        let selfUser = await userLocalStore.fetchSelfUser()
         let teamName = await userLocalStore.teamName(for: selfUser)
-
-        let selfUserID = await userLocalStore.id(for: selfUser)
 
         self.context = Context(
             senderName: senderName,
             conversationName: conversationName,
             isGroupConversation: isGroupConversation,
-            removedUserIDs: removedUserIDs,
             teamName: teamName,
             conversationID: conversationID,
             senderID: senderID.uuid,
@@ -73,7 +91,7 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
     }
 
     func shouldBuildNotification() async -> Bool {
-        context.removedUserIDs.contains(context.selfUserID)
+        validator.validate()
     }
 
     func buildContent() async -> UserNotification {
