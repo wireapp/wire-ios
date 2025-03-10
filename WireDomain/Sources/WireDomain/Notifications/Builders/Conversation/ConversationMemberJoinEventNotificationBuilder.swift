@@ -31,16 +31,16 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         let senderID: UUID
         let selfUserID: UUID
     }
-    
+
     private struct Validator {
         let addedUserIDs: Set<UUID>
         let selfUserID: UUID
-        
+
         func validate() -> Bool {
             addedUserIDs.contains(selfUserID)
         }
     }
-    
+
     private let context: Context
     private let validator: Validator
 
@@ -51,19 +51,19 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) async {
-        
+
         // Validation criteria
-        
+
         let selfUser = await userLocalStore.fetchSelfUser()
         let selfUserID = await userLocalStore.id(for: selfUser)
-        
+
         self.validator = Validator(
             addedUserIDs: addedUserIDs,
             selfUserID: selfUserID
         )
-        
+
         // Context
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain

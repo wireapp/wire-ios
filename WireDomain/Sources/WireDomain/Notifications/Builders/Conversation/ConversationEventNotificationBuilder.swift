@@ -31,13 +31,13 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         let senderID: UserID
         let conversationID: ConversationID
     }
-    
+
     private struct Validator {
         let isSelfUser: Bool
         let isConversationMuted: Bool
         let eventTimeStamp: Date?
         let lastReadTimestamp: Date?
-        
+
         func validate() -> Bool {
             let isSelfUser = isSelfUser
             let isConversationMuted = isConversationMuted
@@ -52,7 +52,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             else {
                 return false
             }
-            
+
             return true
         }
     }
@@ -60,7 +60,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
     private let event: ConversationEvent
     private let context: Context
     private let validator: Validator
-    
+
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
@@ -75,12 +75,12 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         self.userLocalStore = userLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.messageLocalStore = messageLocalStore
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: event.conversationID.uuid,
             domain: event.conversationID.domain
         )
-        
+
         // Validation criteria
 
         let conversationMutedMessages = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(
@@ -88,22 +88,22 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         )
 
         let isConversationMuted = conversationMutedMessages != .none
-        
+
         let isSelfUser = try? await userLocalStore.isSelfUser(
             id: event.senderID.uuid,
             domain: event.senderID.domain
         ).isSelfUser
-        
+
         let eventTimeStamp = event.timestamp
         let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
-        
+
         self.validator = Validator(
             isSelfUser: isSelfUser == true,
             isConversationMuted: isConversationMuted,
             eventTimeStamp: eventTimeStamp,
             lastReadTimestamp: lastReadTimestamp
         )
-        
+
         // Context
 
         self.context = Context(
@@ -111,7 +111,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             conversationID: event.conversationID
         )
     }
-    
+
     func shouldBuildNotification() async -> Bool {
         validator.validate()
     }

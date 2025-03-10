@@ -31,7 +31,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
         let senderID: UUID
         let selfUserID: UUID
     }
-    
+
     private let context: Context
 
     init(
@@ -43,7 +43,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
     ) async {
 
         // Context
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain

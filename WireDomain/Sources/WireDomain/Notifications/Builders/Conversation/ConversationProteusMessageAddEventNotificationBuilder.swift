@@ -39,10 +39,10 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         let selfUserID: UUID
         let hidesNotificationContent: Bool
     }
-    
+
     private struct Validator {
         let isMessageSilenced: Bool
-        
+
         func validate() -> Bool {
             !isMessageSilenced
         }
@@ -51,7 +51,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
     private let message: GenericMessage
     private let context: Context
     private let validator: Validator
-    
+
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
 
@@ -71,19 +71,19 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
             id: conversationID.uuid,
             domain: conversationID.domain
         )
-        
+
         // Validation criteria
-        
+
         let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
             message,
             senderID: senderID.uuid,
             conversation: conversation
         )
-        
+
         self.validator = Validator(
             isMessageSilenced: isMessageSilenced
         )
-        
+
         // Context
 
         let sender = await userLocalStore.fetchOrCreateUser(

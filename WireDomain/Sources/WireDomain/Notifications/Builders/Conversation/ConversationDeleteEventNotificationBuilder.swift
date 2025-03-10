@@ -31,7 +31,7 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
         let senderID: UUID
         let selfUserID: UUID
     }
-    
+
     private struct Validator {
         let isGroupConversation: Bool
 
@@ -39,10 +39,10 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
             isGroupConversation
         }
     }
-    
+
     private let context: Context
     private let validator: Validator
-    
+
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
 
@@ -60,15 +60,15 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
             id: conversationID.uuid,
             domain: conversationID.domain
         )
-        
+
         // Validation criteria
-        
+
         let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
-        
+
         self.validator = Validator(
             isGroupConversation: isGroupConversation
         )
-        
+
         // Context
 
         let sender = await userLocalStore.fetchOrCreateUser(

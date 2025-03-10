@@ -40,10 +40,10 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         let selfUserID: UUID
         let hidesNotificationContent: Bool
     }
-    
+
     private struct Validator {
         let isMessageSilenced: Bool
-        
+
         func validate() -> Bool {
             !isMessageSilenced
         }
@@ -52,7 +52,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
     private let message: GenericMessage
     private let context: Context
     private let validator: Validator
-    
+
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
 
@@ -67,24 +67,24 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         self.messageLocalStore = messageLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.message = message
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
         )
-        
+
         // Validation criteria
-        
+
         let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
             message,
             senderID: senderID.uuid,
             conversation: conversation
         )
-        
+
         self.validator = Validator(
             isMessageSilenced: isMessageSilenced
         )
-        
+
         // Context
 
         let sender = await userLocalStore.fetchOrCreateUser(

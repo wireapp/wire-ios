@@ -30,16 +30,16 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
         let senderID: UUID
         let selfUserID: UUID
     }
-    
+
     private struct Validator {
         let removedUserIDs: Set<UUID>
         let selfUserID: UUID
-        
+
         func validate() -> Bool {
             removedUserIDs.contains(selfUserID)
         }
     }
-    
+
     private let context: Context
     private let validator: Validator
 
@@ -50,19 +50,19 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) async {
-        
+
         // Validation criteria
-        
+
         let selfUser = await userLocalStore.fetchSelfUser()
         let selfUserID = await userLocalStore.id(for: selfUser)
-        
+
         self.validator = Validator(
             removedUserIDs: removedUserIDs,
             selfUserID: selfUserID
         )
-        
+
         // Context
-        
+
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain

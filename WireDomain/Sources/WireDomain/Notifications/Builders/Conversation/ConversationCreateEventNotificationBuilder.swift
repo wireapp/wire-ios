@@ -30,7 +30,7 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
         let senderID: UUID
         let selfUserID: UUID
     }
-    
+
     private let context: Context
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
