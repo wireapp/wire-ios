@@ -377,6 +377,7 @@ extension EventDecoder {
                 await consumeBlock([])
             }
             WireLogger.updateEvent.debug("EventDecoder: process events finished", attributes: .safePublic)
+            isProcessing = false
             return
         }
 
