@@ -226,6 +226,8 @@ extension ConversationMessageCellDescription {
     func configureContentView(_ cellView: any UIView & ConversationMessageCell, animated: Bool = false) {
         guard let cellView = cellView as? View else { return }
         cellView.configure(with: configuration, animated: animated)
+        cellView.accessibilityLabel = accessibilityLabel
+        cellView.accessibilityIdentifier = accessibilityIdentifier
 
         if cellView.isVisible {
             _ = message?.startSelfDestructionIfNeeded()
