@@ -25,7 +25,7 @@ public struct FetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 
     public init() {}
 
-    public func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig {
+    public func invoke(at configURL: URL) async throws -> BackendConfig {
         do {
             let (data, _) = try await URLSession.shared.data(from: configURL)
 
@@ -40,7 +40,7 @@ public struct FetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
             throw FetchBackendConfigFailure.invalidResponse
         } catch {
             WireLogger.backend.error("Error fetching configuration from \(configURL): \(error)")
-            throw FetchBackendConfigFailure.requestFailed
+            throw error
         }
     }
 

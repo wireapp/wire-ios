@@ -165,7 +165,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     try await useCase.invoke(at: backendConfigURL)
                 }.value
                 modalDestination = .switchBackend(email: email, backendConfig: backendConfig)
+            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+                alert = .noInternet
+            } catch let error as LocalizedError where error.errorDescription != nil {
+                    // FIXME: Handle this error
             } catch {
+                alert = .unknownError
+
                 WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
             }
         }
