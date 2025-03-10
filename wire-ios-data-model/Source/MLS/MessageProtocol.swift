@@ -47,7 +47,7 @@ public enum MessageProtocol: String, Equatable, CaseIterable {
 
 extension MessageProtocol {
 
-    var int16Value: Int16 {
+    public var int16Value: Int16 {
         let index = Self.allCases.firstIndex(of: self)!
         return .init(index)
     }
