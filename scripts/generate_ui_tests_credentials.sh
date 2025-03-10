@@ -40,11 +40,9 @@ cat > "$OUTPUT_FILE" <<EOF
 //
 
 // Generated file - DO NOT EDIT
-struct LoginCredentials {
+enum LoginCredentials {
     static let email: String = "${UI_LOGIN_EMAIL}"
     static let password: String = "${UI_LOGIN_PASSWORD}"
-    
-    private init() {}
 }
 EOF
 

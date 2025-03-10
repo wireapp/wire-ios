@@ -21,7 +21,7 @@ import XCTest
 final class WireAuthenticationTests: XCTestCase {
 
     var app: XCUIApplication!
-    
+
     override func setUpWithError() throws {
         app = XCUIApplication()
         app.launchArguments = [
@@ -35,32 +35,32 @@ final class WireAuthenticationTests: XCTestCase {
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
     }
-    
+
     override func tearDownWithError() throws {
         app = nil
     }
-    
+
     @MainActor
     func test_Login_withWrongEmail_NextIsDisabled() throws {
         let elementsQuery = app.scrollViews.otherElements
         let textField = elementsQuery.textFields["Email or SSO code"]
         let nextButton = elementsQuery.buttons["Next"]
-                
+
         textField.tap()
         textField.typeText("notAnEmail.com")
-        
+
         XCTAssertFalse(nextButton.isEnabled, "nextButton should be disabled if no email")
     }
-    
+
     @MainActor // note: comment @MainActor to use recorder
     func test_Login_withEmail() throws {
         let elementsQuery = app.scrollViews.otherElements
         let textField = elementsQuery.textFields["Email or SSO code"]
         let nextButton = elementsQuery.buttons["Next"]
-                
+
         textField.tap()
         textField.typeText(LoginCredentials.email)
-        
+
         let errorAlert = app.alerts["Error"]
         XCTAssertFalse(errorAlert.exists)
 

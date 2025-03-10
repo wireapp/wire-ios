@@ -72,7 +72,7 @@ public final class AutomationHelper: NSObject {
     public let keepCallingOverlayVisible: Bool
 
     public let developerFlagArguments: [String]
-    
+
     public private(set) var preferredAPIVersion: APIVersion?
     public private(set) var allowMLSGroupCreation: Bool?
 
@@ -106,13 +106,13 @@ public final class AutomationHelper: NSObject {
            let apiVersion = Int32(value) {
             self.preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
-        
+
         if let flags = arguments.flagValueIfPresent(AutomationKey.developerFlag.rawValue) {
             self.developerFlagArguments = flags.split(separator: " ").map { "\($0)" }
         } else {
             self.developerFlagArguments = []
         }
-        
+
         self.allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
 
         super.init()

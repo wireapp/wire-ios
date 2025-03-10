@@ -17,9 +17,7 @@
 //
 
 // Generated file - DO NOT EDIT
-struct LoginCredentials {
+enum LoginCredentials {
     static let email: String = "test@example.com"
     static let password: String = "password123"
-    
-    private init() {}
 }

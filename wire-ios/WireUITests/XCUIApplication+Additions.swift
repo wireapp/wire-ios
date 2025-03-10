@@ -20,11 +20,11 @@ import WireUtilities
 import XCTest
 
 extension XCUIApplication {
-    
+
     func useWireAuthentication(_ enabled: Bool = true) {
         developerFlag(DeveloperFlag.useWireAuthentication, enabled: enabled)
     }
-    
+
     func developerFlag(_ developerFlag: DeveloperFlag, enabled: Bool) {
         launchArguments.append("--developer-flag=\(developerFlag.rawValue):\(enabled ? "true" : "false")")
     }
