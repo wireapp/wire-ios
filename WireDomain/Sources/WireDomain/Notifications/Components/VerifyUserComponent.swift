@@ -73,7 +73,7 @@ extension VerifyUserComponent {
             applicationIdentifier: dependency.applicationIdentifier
         )
     }
-    
+
     func makeCoreData(
         account: Account,
         applicationIdentifier: String

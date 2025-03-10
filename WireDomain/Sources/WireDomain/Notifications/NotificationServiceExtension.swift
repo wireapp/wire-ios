@@ -22,7 +22,7 @@ import WireLogging
 
 /// Receives push notifications, process the pending events through the `NotificationSession` to generate a notification
 /// content based on these events.
-final class NotificationServiceExtension: UNNotificationServiceExtension {
+public final class NotificationServiceExtension: NotificationServiceProtocol {
 
     enum Failure: Error {
         case noAccountFound
@@ -34,16 +34,13 @@ final class NotificationServiceExtension: UNNotificationServiceExtension {
     private var contentHandler: ((UNNotificationContent) -> Void)?
     private var onGoingTask: Task<Void, Never>?
 
-    // MARK: - Object lifecycle
-
-    override init() {
-        logger.info("initializing notification service")
-        super.init()
+    public init() {
+        WireLogger.notifications.info("initializing new notification service")
     }
 
     // MARK: - Notifications
 
-    override func didReceive(
+    public func didReceive(
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
@@ -84,8 +81,8 @@ final class NotificationServiceExtension: UNNotificationServiceExtension {
         }
     }
 
-    override func serviceExtensionTimeWillExpire() {
-        logger.warn("legacy service extension will expire")
+    public func serviceExtensionTimeWillExpire() {
+        logger.warn("new notification service will expire")
         finishWithEmptyNotification()
     }
 

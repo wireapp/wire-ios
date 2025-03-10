@@ -21,6 +21,7 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireLogging
 import WireNotificationEngine
 import WireRequestStrategy
@@ -44,7 +45,8 @@ final class CallEventHandler: CallEventHandlerProtocol {
 
 }
 
-final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
+final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate,
+    NotificationServiceProtocol {
 
     // MARK: - Properties
 

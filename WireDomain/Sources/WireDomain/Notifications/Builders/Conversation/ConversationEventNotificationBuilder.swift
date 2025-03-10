@@ -93,13 +93,13 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
                 decryptedMessage: decryptedMessage,
                 isProteus: false
             )
-            
+
             let callingBuilder = await callingBuilder(
                 calling: genericMessage.calling,
                 conversationID: mlsMessageEvent.conversationID,
                 senderID: mlsMessageEvent.senderID
             )
-            
+
             if let callingBuilder {
                 builder = callingBuilder
             } else {
@@ -122,14 +122,14 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
                 decryptedMessage: decryptedMessage,
                 external: external
             )
-            
+
             let callingBuilder = await callingBuilder(
                 calling: genericMessage.calling,
                 at: proteusMessageEvent.timestamp,
                 conversationID: proteusMessageEvent.conversationID,
                 senderID: proteusMessageEvent.senderID
             )
-            
+
             // If there's a call to handle, there will be some value, else, there is no call to handle.
             if let callingBuilder {
                 builder = callingBuilder
@@ -222,7 +222,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
 
         return true
     }
-    
+
     private func callingBuilder(
         calling: Calling,
         at date: Date? = nil,
@@ -237,7 +237,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore
         )
-        
+
         let callNotificationBuilder = await CallNotificationBuilder(
             calling: calling,
             at: date,
@@ -246,7 +246,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore
         )
-        
+
         // First, let's try to handle a call notification with CallKit.
         // If not, try fallback to regular push notification builder.
         // Else, this is not a call.
