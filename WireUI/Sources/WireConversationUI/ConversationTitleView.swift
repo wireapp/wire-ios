@@ -76,7 +76,7 @@ public class ConversationTitleView: UIView {
         accountImageView.imageBorderWidth = design.borderWidth
         accountImageView.imageBorderColor = design.borderColor
         accountImageView.initialsTextColor = .white
-        
+
         dropdownImage.tintColor = ColorTheme.Backgrounds.onSurfaceVariant
     }
 
