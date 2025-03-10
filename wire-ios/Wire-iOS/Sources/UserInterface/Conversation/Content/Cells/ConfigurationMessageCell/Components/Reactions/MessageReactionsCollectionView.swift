@@ -22,6 +22,9 @@ import UIKit
 /// needed.
 final class MessageReactionsCollectionView: UICollectionView {
 
+    // TODO: try https://stackoverflow.com/a/65237985
+    // or https://stackoverflow.com/a/61486811
+
     override var contentSize: CGSize {
         didSet { invalidateIntrinsicContentSize() }
     }
