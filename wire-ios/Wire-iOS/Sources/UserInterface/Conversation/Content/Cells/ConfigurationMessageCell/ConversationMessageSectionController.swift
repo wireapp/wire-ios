@@ -166,7 +166,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if let topContentCellDescription = contentCellDescriptions.first {
             if isSenderVisible, topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
                 // We only do this for text content since the text label already contains the spacing
-                topContentCellDescription.topMargin = 0
+                //topContentCellDescription.topMargin = 0 // TODO: can this be removed?
             }
         }
 
@@ -344,7 +344,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         if let topCellDescription = cellDescriptions.first {
-            topCellDescription.topMargin = context.spacing
+            // topCellDescription.topMargin = context.spacing // TODO: can this be removed?
         }
 
         self.cellDescriptions = Self.combineByStacking(cellDescriptions)

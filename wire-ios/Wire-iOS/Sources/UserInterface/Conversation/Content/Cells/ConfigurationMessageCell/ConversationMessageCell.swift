@@ -151,7 +151,7 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The top margin is used to configure the spacing between cells. This property will
     /// get updated by the ConversationMessageSectionController if necessary so any
     /// default value is just a recommendation.
-    var topMargin: CGFloat { get set }
+    var topMargin: CGFloat { get }
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
@@ -272,7 +272,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
     private let _canBeCombinedWithOtherCells: () -> Bool
-    private let _topMargin: AnyMutableProperty<CGFloat>
+    private let _topMargin: AnyConstantProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
     private let _showEphemeralTimer: AnyConstantProperty<Bool>
@@ -316,7 +316,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
         self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
-        self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
+        self._topMargin = AnyConstantProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
         self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
@@ -352,8 +352,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     }
 
     var topMargin: CGFloat {
-        get { _topMargin.getter() }
-        set { _topMargin.setter(newValue) }
+        _topMargin.getter()
     }
 
     var containsHighlightableContent: Bool {

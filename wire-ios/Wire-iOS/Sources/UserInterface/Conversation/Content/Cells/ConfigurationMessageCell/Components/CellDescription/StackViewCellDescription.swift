@@ -25,8 +25,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     var cellDescriptions: [AnyConversationMessageCellDescription] { configuration }
 
     var topMargin: CGFloat {
-        get { cellDescriptions.first?.topMargin ?? 0 }
-        set { fatalError() }
+        cellDescriptions.first?.topMargin ?? 0
     }
 
     static let isFullWidth = true
