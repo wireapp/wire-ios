@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationNewDeviceSystemMessageCell
+    typealias View = ConversationNewDeviceSystemMessageCell<ConversationIgnoredDeviceSystemMessageCellDescription>
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
