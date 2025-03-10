@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "8151CB8E-0EC8-4C9B-A840-DC65D0D48A83",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Wire-iOS.xcodeproj",
+        "identifier" : "01DFC4302D7B4C6F00D1962A",
+        "name" : "WireUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

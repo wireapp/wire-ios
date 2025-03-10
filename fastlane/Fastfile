@@ -51,7 +51,7 @@ platform :ios do
 
     before_all do |lane|
         ensure_xcode_version
-        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -63,7 +63,7 @@ platform :ios do
     end
 
     after_all do |lane|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks].include?(lane)
+        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
     end
 
     desc "Test frameworks given folders"
@@ -82,6 +82,7 @@ platform :ios do
        
        begin
            run_tests_frameworks(schemas, options)
+           run_tests_frameworks(["WireUITests"], options)
        rescue => e
            UI.test_failure!("Failing running tests #{e.to_s}")
        end
@@ -101,6 +102,18 @@ platform :ios do
             UI.test_failure!("Failing running tests #{e.to_s}")
         end
     end
+
+    desc "Run UITests"
+    lane :run_uitests do |options|
+        schemes = ["WireUITests"]
+        options[:testplan] = "UITests"
+        begin
+            run_tests_frameworks(schemes, options)
+        rescue => e
+            UI.test_failure!("Failing running tests #{e.to_s}")
+        end
+    end
+
 
     desc "Test one framework only"
     lane :select_framework do |options|

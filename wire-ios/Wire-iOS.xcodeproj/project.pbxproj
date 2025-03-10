@@ -466,6 +466,7 @@
 				TestPlans/AllTests.xctestplan,
 				TestPlans/GermanLocaleTests.xctestplan,
 				TestPlans/SecurityTests.xctestplan,
+				TestPlans/UITests.xctestplan,
 				TestPlans/UnitTests.xctestplan,
 			);
 			target = BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */;
@@ -478,6 +479,7 @@
 				TestPlans/AllTests.xctestplan,
 				TestPlans/GermanLocaleTests.xctestplan,
 				TestPlans/SecurityTests.xctestplan,
+				TestPlans/UITests.xctestplan,
 				TestPlans/UnitTests.xctestplan,
 			);
 			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
