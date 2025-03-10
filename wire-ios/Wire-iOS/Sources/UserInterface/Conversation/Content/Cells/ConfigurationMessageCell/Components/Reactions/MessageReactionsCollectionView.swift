@@ -22,20 +22,16 @@ import UIKit
 /// needed.
 final class MessageReactionsCollectionView: UICollectionView {
 
-    // TODO: try https://stackoverflow.com/a/65237985
-    // or https://stackoverflow.com/a/61486811
-
-//    override var contentSize: CGSize {
-//        didSet { invalidateIntrinsicContentSize() }
-//    }
-
     override var contentSize: CGSize {
-        get { super.contentSize }
-        set { super.contentSize = newValue }
+        didSet {
+            invalidateIntrinsicContentSize()
+            setNeedsLayout()
+        }
     }
 
     override var intrinsicContentSize: CGSize {
-        collectionViewLayout.collectionViewContentSize
+        let height = min(.infinity, contentSize.height)
+        return CGSize(width: contentSize.width, height: height)
     }
 
     init() {
@@ -50,14 +46,5 @@ final class MessageReactionsCollectionView: UICollectionView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        invalidateIntrinsicContentSize()
-    }
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//        let collectionHeight = self.yourCollectionView.collectionViewLayout.collectionViewContentSize.height
-//    }
 
 }
