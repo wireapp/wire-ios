@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationVerifiedSystemMessageSectionDescription>
 
     let configuration: View.Configuration
 

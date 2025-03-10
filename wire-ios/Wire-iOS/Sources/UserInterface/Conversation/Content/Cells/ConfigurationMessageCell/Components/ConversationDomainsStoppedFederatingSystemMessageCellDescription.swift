@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationDomainsStoppedFederatingSystemMessageCellDescription>
     typealias System = L10n.Localizable.Content.System
 
     let configuration: View.Configuration
