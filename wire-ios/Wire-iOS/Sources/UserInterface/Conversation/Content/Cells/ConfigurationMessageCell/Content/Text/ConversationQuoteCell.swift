@@ -285,7 +285,6 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     let contentView: ConversationReplyContentView
     var container: ReplyRoundCornersView
 
-    weak var cellDescription: ConversationReplyCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?

@@ -58,11 +58,8 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 /// A generic view that displays conversation contents.
 
 protocol ConversationMessageCell: UIView {
-    associatedtype CellDescription: ConversationMessageCellDescription
     /// The object that contains the configuration of the view.
     associatedtype Configuration
-
-    var cellDescription: CellDescription? { get set } // TODO: is it really needed?
 
     /// Whether the cell is selected.
     var isSelected: Bool { get set }
@@ -144,7 +141,7 @@ extension ConversationMessageCell {
 
 protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
-    associatedtype View: ConversationMessageCell, UIView where View.CellDescription == Self
+    associatedtype View: ConversationMessageCell, UIView
 
     /// The views of neighbouring cell descriptions which return `true` might be
     /// arranged in a vertical stack view inside a single table view cell.
@@ -160,7 +157,7 @@ protocol ConversationMessageCellDescription: AnyObject {
     var supportsActions: Bool { get }
 
     /// Whether the cell should display an ephemeral timer in the margin given it's an ephemeral message
-    var showEphemeralTimer: Bool { get set }
+    var showEphemeralTimer: Bool { get }
 
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
@@ -274,12 +271,11 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
-//    private let _menuPresenter: AnyConstantProperty<ConversationMessageCellMenuPresenter?>
     private let _canBeCombinedWithOtherCells: () -> Bool
     private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
-    private let _showEphemeralTimer: AnyMutableProperty<Bool>
+    private let _showEphemeralTimer: AnyConstantProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
 
@@ -319,12 +315,11 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
-//        self._menuPresenter = AnyConstantProperty(description, keyPath: \.menuPresenter)
         self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
         self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
-        self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
+        self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
@@ -352,10 +347,6 @@ final class AnyConversationMessageCellDescription: NSObject {
         set { _actionController.setter(newValue) }
     }
 
-//    var menuPresenter: ConversationMessageCellMenuPresenter? {
-//        _menuPresenter.getter()
-//    }
-
     var canBeCombinedWithOtherCells: Bool {
         _canBeCombinedWithOtherCells()
     }
@@ -374,8 +365,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     }
 
     var showEphemeralTimer: Bool {
-        get { _showEphemeralTimer.getter() }
-        set { _showEphemeralTimer.setter(newValue) }
+        _showEphemeralTimer.getter()
     }
 
     /// The accessibility identifier of the cell.
