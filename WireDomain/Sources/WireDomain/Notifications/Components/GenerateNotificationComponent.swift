@@ -19,9 +19,12 @@
 import NeedleFoundation
 import UserNotifications
 import WireAPI
+import WireDataModel
 
 protocol GenerateNotificationDependency: Dependency {
     var contentHandler: (UNNotificationContent) -> Void { get }
+    var accountManager: AccountManager { get }
+    var selectedAccount: Account { get }
     var messageLocalStore: any MessageLocalStoreProtocol { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
     var userLocalStore: any UserLocalStoreProtocol { get }
@@ -41,6 +44,8 @@ final class GenerateNotificationComponent: Component<GenerateNotificationDepende
         GenerateNotificationService(
             eventsStream: eventsStream,
             contentHandler: dependency.contentHandler,
+            accountManager: dependency.accountManager,
+            selectedAccount: dependency.selectedAccount,
             userLocalStore: dependency.userLocalStore,
             conversationLocalStore: dependency.conversationLocalStore,
             messageLocalStore: dependency.messageLocalStore

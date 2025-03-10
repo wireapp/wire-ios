@@ -90,8 +90,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     // the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
     private func finishWithEmptyNotification() {
         logger.info("finishing without showing notification")
-        let emptyNotification = UNNotificationContent()
-        contentHandler?(emptyNotification)
+        contentHandler?(.emptyNotification)
         terminate()
     }
 
@@ -120,6 +119,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         }
 
         return RootComponent(
+            accountManager: accountManager,
             userID: userID,
             applicationIdentifier: applicationIdentifier,
             applicationContainer: applicationContainer,

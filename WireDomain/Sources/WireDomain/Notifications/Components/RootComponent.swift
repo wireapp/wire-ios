@@ -22,6 +22,7 @@ import WireDataModel
 /// Root of the dependencies tree graph.
 final class RootComponent: BootstrapComponent {
 
+    public let accountManager: AccountManager
     public let userID: UUID
     public let applicationIdentifier: String
     public let applicationContainer: URL
@@ -29,12 +30,14 @@ final class RootComponent: BootstrapComponent {
     public let contentHandler: (UNNotificationContent) -> Void
 
     init(
+        accountManager: AccountManager,
         userID: UUID,
         applicationIdentifier: String,
         applicationContainer: URL,
         selectedAccount: Account,
         contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
+        self.accountManager = accountManager
         self.userID = userID
         self.applicationIdentifier = applicationIdentifier
         self.applicationContainer = applicationContainer

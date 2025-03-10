@@ -29,6 +29,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
     }
 
     struct Context {
+        let conversation: ZMConversation
         let senderName: String?
         let conversationName: String?
         let isGroupConversation: Bool
@@ -41,6 +42,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
     }
 
     private let message: GenericMessage
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
     private let context: Context
 
@@ -52,6 +54,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         conversationLocalStore: any ConversationLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
     ) async throws {
+        self.conversationLocalStore = conversationLocalStore
         self.messageLocalStore = messageLocalStore
         self.message = message
 
@@ -79,6 +82,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
 
         self.context = Context(
+            conversation: conversation,
             senderName: senderName,
             conversationName: conversationName,
             isGroupConversation: isGroupConversation,
@@ -99,6 +103,10 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         guard !context.hidesNotificationContent else {
             return buildHiddenNotification()
         }
+
+        await updateConversationUnreadCount(
+            content: message.content
+        )
 
         switch message.content {
         case .location:
@@ -128,7 +136,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         case .hidden:
             return buildHiddenNotification()
         default:
-            return .text(UNMutableNotificationContent())
+            return .text(.emptyNotification)
         }
     }
 
@@ -208,13 +216,13 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
 
     private func buildTextNotification(_ text: Text?) async -> UserNotification {
         guard let textMessageData = text else {
-            return .text(UNMutableNotificationContent())
+            return .text(.emptyNotification)
         }
 
         let text = textMessageData.content.removingExtremeCombiningCharacters
 
         guard !text.isEmpty else {
-            return .text(UNMutableNotificationContent())
+            return .text(.emptyNotification)
         }
 
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
@@ -251,6 +259,18 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
+
+        if isMention {
+            await conversationLocalStore.increaseUnreadSelfMentionCount(
+                for: context.conversation
+            )
+        }
+
+        if isReply {
+            await conversationLocalStore.increaseUnreadSelfReplyCount(
+                for: context.conversation
+            )
+        }
 
         return .text(content)
     }
@@ -320,6 +340,18 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
 
+        if isMention {
+            await conversationLocalStore.increaseUnreadSelfMentionCount(
+                for: context.conversation
+            )
+        }
+
+        if isReply {
+            await conversationLocalStore.increaseUnreadSelfReplyCount(
+                for: context.conversation
+            )
+        }
+
         return .text(content)
     }
 
@@ -373,6 +405,21 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid
 
         return userInfo
+    }
+
+    private func updateConversationUnreadCount(
+        content: GenericMessage.OneOf_Content?
+    ) async {
+        guard let content else { return }
+
+        switch content {
+        case .image, .asset, .location, .knock, .hidden, .ephemeral, .text:
+            await conversationLocalStore.increaseUnreadCount(
+                for: context.conversation
+            )
+        default:
+            return
+        }
     }
 
 }

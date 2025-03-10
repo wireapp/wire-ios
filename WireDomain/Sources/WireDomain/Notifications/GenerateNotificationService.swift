@@ -19,12 +19,15 @@
 import CallKit
 import UserNotifications
 import WireAPI
+import WireDataModel
 import WireLogging
 
 struct GenerateNotificationService {
 
     private let eventsStream: AsyncStream<[UpdateEvent]>
     private let contentHandler: (UNNotificationContent) -> Void
+    private let accountManager: AccountManager
+    private let selectedAccount: Account
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
@@ -32,12 +35,16 @@ struct GenerateNotificationService {
     init(
         eventsStream: AsyncStream<[UpdateEvent]>,
         contentHandler: @escaping (UNNotificationContent) -> Void,
+        accountManager: AccountManager,
+        selectedAccount: Account,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.eventsStream = eventsStream
         self.contentHandler = contentHandler
+        self.accountManager = accountManager
+        self.selectedAccount = selectedAccount
         self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
         self.messageLocalStore = messageLocalStore
@@ -54,7 +61,7 @@ struct GenerateNotificationService {
         for events: [UpdateEvent]
     ) async {
         guard !events.isEmpty else {
-            return contentHandler(UNMutableNotificationContent())
+            return contentHandler(.emptyNotification)
         }
 
         var notifications: [UNMutableNotificationContent] = []
@@ -99,20 +106,22 @@ struct GenerateNotificationService {
                 WireLogger.notifications.error(
                     "Failed to generate notification: \(error.localizedDescription)"
                 )
-                notifications.append(UNMutableNotificationContent())
+                notifications.append(.emptyNotification)
             }
         }
 
-        showNotifications(notifications)
+        await showNotifications(notifications)
     }
 
-    private func showNotifications(_ notifications: [UNMutableNotificationContent]) {
+    private func showNotifications(
+        _ notifications: [UNMutableNotificationContent]
+    ) async {
         var notification: UNMutableNotificationContent
 
         switch notifications.count {
         case 0:
             // Nothing to show
-            notification = UNMutableNotificationContent()
+            notification = .emptyNotification
         case 1:
             notification = notifications[0]
         default:
@@ -121,7 +130,18 @@ struct GenerateNotificationService {
             notification.body = body.make()
         }
 
+        notification.interruptionLevel = .timeSensitive
+        notification.badge = await getNotificationBadge()
+
         // Displays the notification to the user
         contentHandler(notification)
+    }
+
+    private func getNotificationBadge() async -> NSNumber {
+        let unreadConversationCount = await Int(conversationLocalStore.unreadConversationCount())
+        selectedAccount.unreadConversationCount = unreadConversationCount
+        let totalUnreadCount = accountManager.totalUnreadCount
+
+        return NSNumber(value: totalUnreadCount)
     }
 }

@@ -68,6 +68,12 @@ private class GenerateNotificationDependency56a07c37e817db4ed050Provider: Genera
     var contentHandler: (UNNotificationContent) -> Void {
         return rootComponent.contentHandler
     }
+    var accountManager: AccountManager {
+        return rootComponent.accountManager
+    }
+    var selectedAccount: Account {
+        return rootComponent.selectedAccount
+    }
     var messageLocalStore: any MessageLocalStoreProtocol {
         return verifyUserComponent.messageLocalStore
     }
@@ -127,6 +133,8 @@ extension PullEventsComponent: NeedleFoundation.Registration {
 extension GenerateNotificationComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\GenerateNotificationDependency.contentHandler] = "contentHandler-(UNNotificationContent) -> Void"
+        keyPathToName[\GenerateNotificationDependency.accountManager] = "accountManager-AccountManager"
+        keyPathToName[\GenerateNotificationDependency.selectedAccount] = "selectedAccount-Account"
         keyPathToName[\GenerateNotificationDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
@@ -135,6 +143,7 @@ extension GenerateNotificationComponent: NeedleFoundation.Registration {
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
+        localTable["accountManager-AccountManager"] = { [unowned self] in self.accountManager as Any }
         localTable["userID-UUID"] = { [unowned self] in self.userID as Any }
         localTable["applicationIdentifier-String"] = { [unowned self] in self.applicationIdentifier as Any }
         localTable["applicationContainer-URL"] = { [unowned self] in self.applicationContainer as Any }

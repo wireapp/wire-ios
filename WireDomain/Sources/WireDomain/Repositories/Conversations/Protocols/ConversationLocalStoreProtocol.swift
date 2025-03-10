@@ -419,4 +419,22 @@ public protocol ConversationLocalStoreProtocol {
         _ conversation: ZMConversation
     ) async -> Bool
 
+    func increaseUnreadCount(
+        for conversation: ZMConversation
+    ) async
+
+    func decreaseUnreadCount(
+        for conversation: ZMConversation
+    ) async
+
+    func increaseUnreadSelfMentionCount(
+        for conversation: ZMConversation
+    ) async
+
+    func increaseUnreadSelfReplyCount(
+        for conversation: ZMConversation
+    ) async
+
+    func unreadConversationCount() async -> UInt
+
 }

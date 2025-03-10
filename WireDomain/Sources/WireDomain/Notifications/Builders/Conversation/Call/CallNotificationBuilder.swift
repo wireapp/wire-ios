@@ -44,6 +44,7 @@ struct CallNotificationBuilder: NotificationBuilder {
     }
 
     private struct Context {
+        let conversation: ZMConversation
         let callState: CallState
         let callerID: UUID?
         let callerName: String?
@@ -68,6 +69,7 @@ struct CallNotificationBuilder: NotificationBuilder {
         }
     }
 
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let context: Context
     private let validator: Validator
 
@@ -82,6 +84,8 @@ struct CallNotificationBuilder: NotificationBuilder {
         guard let callContent: CallContent = .decode(from: calling) else {
             return nil
         }
+
+        self.conversationLocalStore = conversationLocalStore
 
         let callState = CallState(callContent: callContent)
 
@@ -121,6 +125,7 @@ struct CallNotificationBuilder: NotificationBuilder {
         let callerID = callContent.callerUserID.flatMap(UUID.init(transportString:))
 
         self.context = Context(
+            conversation: conversation,
             callState: callState,
             callerID: callerID,
             callerName: callerName,
@@ -141,7 +146,7 @@ struct CallNotificationBuilder: NotificationBuilder {
         case let .incomingCall(isVideo):
             buildIncomingCallNotification(isVideo: isVideo)
         case .missedCall:
-            buildMissedCallNotification()
+            await buildMissedCallNotification()
         case .unhandled:
             fatalError()
         }
@@ -172,7 +177,7 @@ struct CallNotificationBuilder: NotificationBuilder {
         return .text(content)
     }
 
-    private func buildMissedCallNotification() -> UserNotification {
+    private func buildMissedCallNotification() async -> UserNotification {
         let content = UNMutableNotificationContent()
         let senderName = context.callerName
 
@@ -187,6 +192,10 @@ struct CallNotificationBuilder: NotificationBuilder {
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
+
+        await conversationLocalStore.increaseUnreadCount(
+            for: context.conversation
+        )
 
         return .text(content)
     }

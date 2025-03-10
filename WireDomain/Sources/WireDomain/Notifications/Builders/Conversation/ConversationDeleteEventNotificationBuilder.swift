@@ -26,6 +26,7 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
     private let conversationLocalStore: any ConversationLocalStoreProtocol
 
     struct Context {
+        let conversation: ZMConversation
         let senderName: String?
         let conversationName: String?
         let isGroupConversation: Bool
@@ -61,9 +62,9 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
         let teamName = await userLocalStore.teamName(for: selfUser)
 
         let selfUserID = await userLocalStore.id(for: selfUser)
-        let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
 
         self.context = Context(
+            conversation: conversation,
             senderName: senderName,
             conversationName: conversationName,
             isGroupConversation: isGroupConversation,
@@ -80,12 +81,12 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
     }
 
     func buildContent() async -> UserNotification {
-        buildDeletedConversationNotification()
+        await buildDeletedConversationNotification()
     }
 
     // MARK: - Build notifications
 
-    private func buildDeletedConversationNotification() -> UserNotification {
+    private func buildDeletedConversationNotification() async -> UserNotification {
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle() {
@@ -103,6 +104,10 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
         content.sound = makeSound()
         content.userInfo = makeUserInfo()
         content.threadIdentifier = context.conversationID.uuid.transportString()
+
+        await conversationLocalStore.decreaseUnreadCount(
+            for: context.conversation
+        )
 
         return .text(content)
     }
