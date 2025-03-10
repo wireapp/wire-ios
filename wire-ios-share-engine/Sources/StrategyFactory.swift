@@ -123,7 +123,10 @@ final class StrategyFactory {
     }
 
     private func createLinkPreviewUpdateRequestStrategy() -> LinkPreviewUpdateRequestStrategy {
-        LinkPreviewUpdateRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
+        LinkPreviewUpdateRequestStrategy(
+            managedObjectContext: syncContext,
+            messageSender: messageSender
+        )
     }
 
     // MARK: - Asset V3
@@ -152,6 +155,9 @@ final class StrategyFactory {
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
-        AssetClientMessageRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
+        AssetClientMessageRequestStrategy(
+            managedObjectContext: syncContext,
+            messageSender: messageSender
+        )
     }
 }

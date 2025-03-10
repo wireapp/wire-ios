@@ -16,35 +16,61 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import NeedleFoundation
+import SwiftUI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
-class NoHistoryComponent {
+protocol NoHistoryComponentDependency: Dependency {
 
-    let onFlowCompletion: (AuthenticationResult) -> Void
+    var howToChangeEmailURL: URL { get }
+    var howToDeleteAccountURL: URL { get }
 
-    init(onFlowCompletion: @escaping (AuthenticationResult) -> Void) {
-        self.onFlowCompletion = onFlowCompletion
-    }
+}
+
+class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     @MainActor
     private func viewModel(
         userID: UUID,
         cookies: [HTTPCookie],
+        accessToken: AccessToken?,
+        didDetectDomainConflict: Bool,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) -> NoHistoryViewModel {
         NoHistoryViewModel(
             userID: userID,
             cookies: cookies,
+            accessToken: accessToken,
+            didDetectDomainConflict: didDetectDomainConflict,
+            howToChangeEmailURL: howToChangeEmailURL,
+            howToDeleteAccountURL: howToDeleteAccountURL,
             onFlowCompletion: onFlowCompletion
         )
     }
 
     @MainActor
-    func view(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+    func view(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        accessToken: AccessToken?,
+        didDetectDomainConflict: Bool,
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+    ) -> NoHistoryView {
         NoHistoryView(
-            viewModel: viewModel(userID: userID, cookies: cookies, onFlowCompletion: onFlowCompletion)
+            viewModel: viewModel(
+                userID: userID,
+                cookies: cookies,
+                accessToken: accessToken,
+                didDetectDomainConflict: didDetectDomainConflict,
+                howToChangeEmailURL: dependency.howToChangeEmailURL,
+                howToDeleteAccountURL: dependency.howToDeleteAccountURL,
+                onFlowCompletion: onFlowCompletion
+            )
         )
     }
 

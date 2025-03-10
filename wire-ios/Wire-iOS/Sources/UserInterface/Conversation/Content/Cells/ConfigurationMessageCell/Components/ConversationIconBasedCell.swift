@@ -38,6 +38,7 @@ class ConversationIconBasedCell: UIView {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -113,6 +114,8 @@ class ConversationIconBasedCell: UIView {
             lessThanOrEqualTo: trailingAnchor,
             constant: trailingTextMargin
         )
+        let topContentViewWidthConstraint = topContentView.widthAnchor.constraint(equalToConstant: 0)
+        topContentViewWidthConstraint.priority = .defaultLow
         containerWidthConstraint = imageContainer.widthAnchor
             .constraint(equalToConstant: conversationHorizontalMargins.left)
         textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
@@ -143,6 +146,7 @@ class ConversationIconBasedCell: UIView {
             topContentView.topAnchor.constraint(equalTo: topAnchor),
             topContentView.leadingAnchor.constraint(equalTo: textLabel.leadingAnchor),
             topContentViewTrailingConstraint,
+            topContentViewWidthConstraint,
 
             // textLabel
             textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
@@ -181,7 +185,6 @@ extension ConversationIconBasedCell: UITextViewDelegate {
         interaction: UITextItemInteraction
     ) -> Bool {
         // Fixes Swift 5.0 release build child class overridden method not called bug
-
         UIApplication.shared.open(url)
         return false
     }

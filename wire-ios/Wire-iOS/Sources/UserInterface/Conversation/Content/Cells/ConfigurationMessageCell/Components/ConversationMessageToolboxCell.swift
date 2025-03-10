@@ -38,6 +38,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     let toolboxView = MessageToolboxView()
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var observerToken: Any?
     var isSelected: Bool = false
@@ -104,6 +105,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationMessageToolboxCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
@@ -111,9 +113,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 2
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
+    var topMargin: CGFloat = 2
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = "MessageToolbox"

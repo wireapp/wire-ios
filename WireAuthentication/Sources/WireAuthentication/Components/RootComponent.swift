@@ -29,6 +29,8 @@ class RootComponent: BootstrapComponent {
     public let defaultAPIVersion: APIVersion
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
+    public let howToChangeEmailURL: URL
+    public let howToDeleteAccountURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
@@ -40,6 +42,8 @@ class RootComponent: BootstrapComponent {
         defaultAPIVersion: APIVersion,
         minTLSVersion: TLSVersion,
         accountsURL: URL,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
@@ -50,6 +54,8 @@ class RootComponent: BootstrapComponent {
         self.defaultAPIVersion = defaultAPIVersion
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
@@ -96,7 +102,15 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor var noHistoryComponent: NoHistoryComponent {
-        NoHistoryComponent(onFlowCompletion: bridge.onFlowCompletion)
+        NoHistoryComponent(parent: self)
+    }
+
+    var loginViaEmailOnPremComponent: LoginViaEmailOnPremComponent {
+        LoginViaEmailOnPremComponent(parent: self)
+    }
+
+    var loginViaSSOComponent: LoginViaSSOComponent {
+        LoginViaSSOComponent()
     }
 
 }
@@ -108,8 +122,31 @@ extension RootComponent: RootView.Factory {
     }
 
     @MainActor
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
-        noHistoryComponent.view(userID: userID, cookies: cookies)
+    func noHistoryView(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        accessToken: WireAuthenticationAPI.AccessToken?,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryView {
+        noHistoryComponent.view(
+            userID: userID,
+            cookies: cookies,
+            accessToken: accessToken,
+            didDetectDomainConflict: didDetectDomainConflict,
+            onFlowCompletion: bridge.onFlowCompletion
+        )
+    }
+
+    @MainActor
+    func loginViaEmailOnPremView(
+        email: String,
+        backendConfig: BackendConfig
+    ) -> LoginViaEmailOnPremView {
+        loginViaEmailOnPremComponent.view(email: email, backendConfig: backendConfig)
+    }
+
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
 }

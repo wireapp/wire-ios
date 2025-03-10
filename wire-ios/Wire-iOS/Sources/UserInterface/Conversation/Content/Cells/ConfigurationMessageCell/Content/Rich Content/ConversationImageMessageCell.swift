@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationImageMessageCell: UIView,
-    ConversationMessageCell,
-    ContextMenuDelegate {
+final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
         let image: ZMImageMessageData
@@ -51,6 +49,7 @@ final class ConversationImageMessageCell: UIView,
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -70,24 +69,26 @@ final class ConversationImageMessageCell: UIView,
     }
 
     private func configureView() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.masksToBounds = true
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func createConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor)
-        let trailing = containerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
+        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let bottom = containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        let trailing = containerView.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: -margins.right
+        )
+        let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
         heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
@@ -175,9 +176,8 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

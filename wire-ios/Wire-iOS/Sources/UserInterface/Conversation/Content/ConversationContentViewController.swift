@@ -83,7 +83,7 @@ final class ConversationContentViewController: UIViewController {
 
     let mentionsSearchResultsViewController: UserSearchResultsViewController = .init()
 
-    lazy var dataSource: ConversationTableViewDataSource = .init(
+    lazy var dataSource = ConversationTableViewDataSource(
         conversation: conversation,
         tableView: tableView,
         actionResponder: self,
@@ -168,11 +168,11 @@ final class ConversationContentViewController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func loadView() {
-        super.loadView()
+        view = .init()
 
         view.addSubview(tableView)
 

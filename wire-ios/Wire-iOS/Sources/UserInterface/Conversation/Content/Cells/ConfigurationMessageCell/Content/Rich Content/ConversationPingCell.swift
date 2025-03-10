@@ -23,6 +23,7 @@ import WireDesign
 final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
 
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
+
     var animationBlock: AnimationBlock?
     var isAnimationRunning = false
     var configuration: Configuration?
@@ -139,8 +140,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
         set { /* pings doesn't support the ephemeral timer */ }
     }
 
-    var topMargin: Float = 0
-    let isFullWidth: Bool = true
+    var topMargin: CGFloat = 0
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 

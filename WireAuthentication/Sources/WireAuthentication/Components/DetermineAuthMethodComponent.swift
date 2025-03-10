@@ -47,6 +47,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
+    private var fetchBackendConfigUseCase: some FetchBackendConfigUseCaseProtocol {
+        FetchBackendConfigUseCase()
+    }
+
     private var ssoLinkGenerator: SSOLinkGeneratorProtocol {
         SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
@@ -61,6 +65,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             router: dependency.router,
             validateEmailOrSSOCode: validateEmailOrSSOCode,
             determineAuthMethod: determineAuthMethodUseCase,
+            fetchBackendConfig: fetchBackendConfigUseCase,
             ssoLinkGenerator: ssoLinkGenerator
         )
     }
@@ -91,19 +96,33 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         LoginViaSSOComponent()
     }
 
+    func switchBackendConfirmationComponent(backendConfig: BackendConfig) -> SwitchBackendConfirmationComponent {
+        SwitchBackendConfirmationComponent(parent: self, backendConfig: backendConfig)
+    }
+
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
-    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+    @MainActor
+    func loginViaEmailView(
+        email: String,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool
+    ) -> LoginViaEmailView {
         loginViaEmailComponent.view(
             email: email,
-            canCreateAccount: canCreateAccount
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent.view(ssoURL: ssoURL)
+    }
+
+    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
+        switchBackendConfirmationComponent(backendConfig: environment).view(email: email)
     }
 
 }

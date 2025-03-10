@@ -27,15 +27,22 @@ final class MockDependencies {
         RootViewModel()
     }
 
-    private var backendEnvironment: LocalBackendEnvironment {
-        _backendEnvironment
+    private var backendConfig: BackendConfig {
+        _backendConfig
     }
 
-    var _backendEnvironment = LocalBackendEnvironment(
+    var _backendConfig = BackendConfig(
         title: "backen name",
-        url: URL(string: "https://example.com")!,
-        accountsURL: URL(string: "https://example.com")!,
-        proxySettings: nil
+        endpoints: Endpoints(
+            backendURL: URL(string: "https://example.com")!,
+            backendWSURL: URL(string: "https://example.com")!,
+            blackListURL: URL(string: "https://example.com")!,
+            teamsURL: URL(string: "https://example.com")!,
+            accountsURL: URL(string: "https://example.com")!,
+            websiteURL: URL(string: "https://example.com")!
+        ),
+        proxySettings: nil,
+        pinnedKeys: nil
     )
 
     var rootView: RootView {
@@ -55,6 +62,7 @@ final class MockDependencies {
                 router: rootViewModel,
                 validateEmailOrSSOCode: self,
                 determineAuthMethod: self,
+                fetchBackendConfig: self,
                 ssoLinkGenerator: self,
                 emailOrSSOCode: emailOrSSOCode,
                 isLoading: isLoading,
@@ -86,7 +94,26 @@ extension MockDependencies: DetermineAuthMethodUseCaseProtocol {
     ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
         try! await Task.sleep(for: .seconds(3))
 
-        return .loginViaEmail(email: emailOrSSOCode)
+        return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
+    }
+}
+
+extension MockDependencies: FetchBackendConfigUseCaseProtocol {
+
+    func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig {
+        BackendConfig(
+            title: "backend name",
+            endpoints: Endpoints(
+                backendURL: URL(string: "example")!,
+                backendWSURL: URL(string: "example")!,
+                blackListURL: URL(string: "example")!,
+                teamsURL: URL(string: "example")!,
+                accountsURL: URL(string: "example")!,
+                websiteURL: URL(string: "example")!
+            ),
+            proxySettings: nil,
+            pinnedKeys: nil
+        )
     }
 }
 
@@ -102,6 +129,14 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
 }
 
+extension MockDependencies: RequestLoginVerificationCodeUseCaseProtocol {
+
+    func invoke(email: String) async throws(WireAuthenticationAPI.RequestLoginVerificationCodeUseCaseFailure) {
+        try! await Task.sleep(for: .seconds(3))
+    }
+
+}
+
 extension MockDependencies: DetermineAuthMethodBuilder {
 
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
@@ -109,6 +144,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             validateEmailOrSSOCode: self,
             determineAuthMethod: self,
+            fetchBackendConfig: self,
             ssoLinkGenerator: self
         )
     }
@@ -122,13 +158,72 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 }
 
+extension MockDependencies: FetchDefaultSSOSettingsUseCaseProtocol {
+
+    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
+        nil
+    }
+
+}
+
+extension MockDependencies: SwitchBackendConfirmationBuilder {
+
+    private func switchBackendConfirmationViewModel(
+        email: String,
+        environment: BackendConfig
+    ) -> SwitchBackendConfirmationViewModel {
+        SwitchBackendConfirmationViewModel(
+            router: rootViewModel,
+            email: email,
+            fetchDefaultSSOSettings: self,
+            ssoLinkGenerator: self,
+            environment: BackendConfig(
+                title: environment.title,
+                endpoints: Endpoints(
+                    backendURL: environment.endpoints.backendURL,
+                    backendWSURL: environment.endpoints.backendWSURL,
+                    blackListURL: environment.endpoints.blackListURL,
+                    teamsURL: environment.endpoints.teamsURL,
+                    accountsURL: environment.endpoints.accountsURL,
+                    websiteURL: environment.endpoints.websiteURL
+                ),
+                proxySettings: nil,
+                pinnedKeys: nil
+            )
+        )
+    }
+
+    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(
+            viewModel: switchBackendConfirmationViewModel(
+                email: email,
+                environment: environment
+            )
+        )
+    }
+
+}
+
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
-        NoHistoryViewModel(userID: UUID(), cookies: [], onFlowCompletion: { _ in })
+        NoHistoryViewModel(
+            userID: UUID(),
+            cookies: [],
+            accessToken: nil,
+            didDetectDomainConflict: false,
+            howToChangeEmailURL: URL(string: "https://wire.com")!,
+            howToDeleteAccountURL: URL(string: "https://wire.com")!,
+            onFlowCompletion: { _ in }
+        )
     }
 
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
+    func noHistoryView(
+        userID: UUID,
+        cookies: [HTTPCookie],
+        accessToken: AccessToken?,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 
@@ -154,11 +249,16 @@ extension MockDependencies: LoginViaEmailBuilder {
             accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: false,
             onCreateAccount: {}
         )
     }
 
-    func loginViaEmailView(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+    func loginViaEmailView(
+        email: String,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool
+    ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: loginViewModel(email: email, canCreateAccount: canCreateAccount),
             factory: self
@@ -169,30 +269,63 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 extension MockDependencies: VerificationCodeBuilder {
 
-    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
+    func previewVerificationCodeView(
+        email: String,
+        password: String,
+        code: [String] = ["", "", "", "", "", ""]
+    ) -> VerificationCodeView {
+        let viewModel = VerificationCodeViewModel(
+            email: email,
+            password: password,
+            loginViaEmailUseCase: self,
+            requestLoginVerificationCodeUseCase: self,
+            router: rootViewModel,
+            numberOfDigits: code.count,
+            didDetectDomainConflict: false
+        )
+        viewModel.code = code
+
+        return VerificationCodeView(viewModel: viewModel)
+    }
+
+    func verificationCodeView(
+        email: String,
+        password: String,
+        didDetectDomainConflict: Bool
+    ) -> VerificationCodeView {
         VerificationCodeView(
-            viewModel: VerificationCodeViewModel(email: email, password: password)
+            viewModel: VerificationCodeViewModel(
+                email: email,
+                password: password,
+                loginViaEmailUseCase: self,
+                requestLoginVerificationCodeUseCase: self,
+                router: rootViewModel,
+                didDetectDomainConflict: false
+            )
         )
     }
 
 }
 
-extension MockDependencies: LoginViaEmailOnPremViewBuilder {
+extension MockDependencies: LoginViaEmailOnPremBuilder {
 
-    private func loginViaEmailOnPremViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremViewModel {
+    private func loginViaEmailOnPremViewModel(
+        email: String,
+        backendConfig: BackendConfig
+    ) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
             email: email,
-            backendEnvironment: backendEnvironment,
+            backendConfig: backendConfig,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: canCreateAccount
+            canCreateAccount: false
         )
     }
 
-    func loginViaEmailOnPremView(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremView {
+    func loginViaEmailOnPremView(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremView {
         LoginViaEmailOnPremView(
-            viewModel: loginViaEmailOnPremViewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
         )
     }
 }

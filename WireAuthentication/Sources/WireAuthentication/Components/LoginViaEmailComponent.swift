@@ -36,12 +36,24 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
+    public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
+        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
+    }
+
     // MARK: - View
 
     @MainActor
-    func view(email: String, canCreateAccount: Bool) -> LoginViaEmailView {
+    func view(
+        email: String,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool
+    ) -> LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: viewModel(email: email, canCreateAccount: canCreateAccount),
+            viewModel: viewModel(
+                email: email,
+                canCreateAccount: canCreateAccount,
+                didDetectDomainConflict: didDetectDomainConflict
+            ),
             factory: self
         )
     }
@@ -49,7 +61,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     @MainActor
     private func viewModel(
         email: String,
-        canCreateAccount: Bool
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
@@ -58,16 +71,11 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: { [weak dependency] in
                 dependency?.bridge.registerAccount()
             }
         )
-    }
-
-    // MARK: - Private dependencies
-
-    private var loginViaEmailUseCase: some LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
     }
 
     // MARK: - Children
@@ -80,8 +88,16 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
 extension LoginViaEmailComponent: LoginViaEmailView.Factory {
 
-    func verificationCodeView(email: String, password: String) -> VerificationCodeView {
-        verificationCodeComponent.view(email: email, password: password)
+    func verificationCodeView(
+        email: String,
+        password: String,
+        didDetectDomainConflict: Bool
+    ) -> VerificationCodeView {
+        verificationCodeComponent.view(
+            email: email,
+            password: password,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
     }
 
 }

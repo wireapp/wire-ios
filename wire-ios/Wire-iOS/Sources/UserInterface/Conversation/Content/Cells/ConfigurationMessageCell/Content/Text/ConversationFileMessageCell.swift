@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -29,13 +29,14 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         }
     }
 
-    private var containerView = UIView()
+    private var containerView = RoundedView()
     private let fileTransferView = FileTransferView(frame: .zero)
     private let obfuscationView = ObfuscationView(icon: .paperclip)
     private let restrictionView = FileMessageRestrictionView()
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -51,8 +52,8 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        shape = .rounded(radius: 12)
-        backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.shape = .rounded(radius: 12)
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
@@ -61,19 +62,20 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         fileTransferView.delegate = self
         setup(fileTransferView)
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func configureConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
-            // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
+            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 
@@ -123,12 +125,12 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
+
     let configuration: View.Configuration
 
-    var topMargin: Float = 8
+    var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

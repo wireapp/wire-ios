@@ -277,7 +277,9 @@ final class ConversationReplyContentView: UIView {
 }
 
 final class ConversationReplyCell: UIView, ConversationMessageCell {
+
     typealias Configuration = ConversationReplyContentView.Configuration
+
     var isSelected: Bool = false
 
     let contentView: ConversationReplyContentView
@@ -285,6 +287,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     override init(frame: CGRect) {
         self.contentView = ConversationReplyContentView()
@@ -301,12 +304,14 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     private func configureSubviews() {
         container.addTarget(self, action: #selector(onTap), for: .touchUpInside)
+        container.translatesAutoresizingMaskIntoConstraints = false
         addSubview(container)
     }
 
     private func configureConstraints() {
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        container.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -322,11 +327,11 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationReplyCell
+
     let configuration: View.Configuration
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
-    let isFullWidth = false
+    var topMargin: CGFloat = 8
     let supportsActions = false
     let containsHighlightableContent: Bool = true
 

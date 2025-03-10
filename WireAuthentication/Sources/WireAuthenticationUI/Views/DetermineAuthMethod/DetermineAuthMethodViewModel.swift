@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+import WireLogging
 
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
@@ -30,20 +31,21 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case noInternet
         case invalidResponse
         case unknownError
-        case onPremLoginNotPossible(recovery: AuthenticationMethod)
         case invalidSSOLink
 
     }
 
-    package enum ModalDestination: Hashable, Identifiable {
+    package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
         case ssoLogin(url: URL)
+        case switchBackend(email: String, environment: BackendConfig)
     }
 
     private let router: any Router
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
+    private let fetchBackendConfig: any FetchBackendConfigUseCaseProtocol
     private let ssoLinkGenerator: SSOLinkGeneratorProtocol
 
     @Published var emailOrSSOCode: String = ""
@@ -59,6 +61,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         router: any Router,
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
         determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
+        fetchBackendConfig: any FetchBackendConfigUseCaseProtocol,
         ssoLinkGenerator: any SSOLinkGeneratorProtocol,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
@@ -67,6 +70,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.router = router
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.determineAuthMethod = determineAuthMethod
+        self.fetchBackendConfig = fetchBackendConfig
         self.ssoLinkGenerator = ssoLinkGenerator
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
@@ -78,15 +82,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         do {
             let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
-            handleAuthenticationMethod(method)
+            await handleAuthenticationMethod(method)
         } catch {
             switch error {
             case .invalidEmailOrSSOCode:
                 // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
                 // things a little to make this error impossible to happen.
                 break
-            case let .onPremNotPossible(recovery):
-                alert = .onPremLoginNotPossible(recovery: recovery)
             case .invalidResponse:
                 alert = .invalidResponse
             case let .urlError(urlError):
@@ -104,15 +106,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         isLoading = false
     }
 
-    func didDismissAlert(alert: Alert) {
-        switch alert {
-        case let .onPremLoginNotPossible(method):
-            handleAuthenticationMethod(method)
-        default:
-            break
-        }
-    }
-
     func dismissmodalView() {
         ssoLinkGenerator.flushToken()
         modalDestination = nil
@@ -120,10 +113,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func handleAuthenticationMethod(_ method: AuthenticationMethod) {
+    private func handleAuthenticationMethod(_ method: AuthenticationMethod) async {
         switch method {
-        case let .loginViaEmail(email):
-            router.navigate(to: DetermineAuthMethodView.Destination.login(email: email))
+        case let .loginViaEmail(email, didDetectDomainConflict):
+            router.navigate(to: DetermineAuthMethodView.Destination.login(
+                email: email,
+                didDetectDomainConflict: didDetectDomainConflict
+            ))
 
         case let .loginOrRegisterViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
@@ -143,8 +139,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             }
 
         case let .onPremLogin(email, backendConfig):
-            // TODO: [WPB-15944] Handle on-prem login
-            break
+            do {
+                let environmentInfo = try await Task.detached {
+                    try await self.fetchBackendConfig.invoke(at: backendConfig)
+                }.value
+                modalDestination = .switchBackend(email: email, environment: environmentInfo)
+            } catch {
+                WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
+            }
         }
     }
 

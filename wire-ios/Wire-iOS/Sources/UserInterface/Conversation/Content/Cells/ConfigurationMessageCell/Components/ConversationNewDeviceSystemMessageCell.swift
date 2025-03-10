@@ -21,7 +21,9 @@ import WireDataModel
 
 final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
-    static let userClientURL: URL = .init(string: "settings://user-client")!
+    static var userClientURL: URL {
+        URL(string: "settings://user-client")!
+    }
 
     var linkTarget: LinkTarget?
 

@@ -25,7 +25,8 @@ package protocol LoginViaEmailBuilder {
     @MainActor
     func loginViaEmailView(
         email: String,
-        canCreateAccount: Bool
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool
     ) -> LoginViaEmailView
 
 }
@@ -69,8 +70,8 @@ package struct LoginViaEmailView: View {
         }
         .alert(
             item: $viewModel.alert,
-            title: titleForAlert,
-            message: messageForAlert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
             actions: { _ in
                 Button(L10n.Authentication.Error.confirm, action: {})
             }
@@ -78,7 +79,11 @@ package struct LoginViaEmailView: View {
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
             case let .verifyLogin(email, password):
-                factory.verificationCodeView(email: email, password: password)
+                factory.verificationCodeView(
+                    email: email,
+                    password: password,
+                    didDetectDomainConflict: viewModel.didDetectDomainConflict
+                )
             }
         }
         .presentationDetents([.medium, .large])
@@ -177,41 +182,15 @@ package struct LoginViaEmailView: View {
 
     }
 
-    private func titleForAlert(_ alert: LoginViaEmailViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Title.noInternet)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Title.general)
-        case .invalidCredentials:
-            Text(L10n.Authentication.Error.Title.invalidCredentials)
-        case .accountPendingActivation:
-            Text(L10n.Authentication.Error.Title.accountPendingActivation)
-        case .accountSuspended:
-            Text(L10n.Authentication.Error.Title.accountSuspended)
-        }
-    }
-
-    private func messageForAlert(_ alert: LoginViaEmailViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Message.noInternet)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Message.general)
-        case .invalidCredentials:
-            Text(L10n.Authentication.Error.Message.invalidCredentials)
-        case .accountPendingActivation:
-            Text(L10n.Authentication.Error.Message.accountPendingActivation)
-        case .accountSuspended:
-            Text(L10n.Authentication.Error.Message.accountSuspended)
-        }
-    }
-
 }
 
 #Preview() {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            MockDependencies().loginViaEmailView(email: "foo@bar.com", canCreateAccount: false)
+            MockDependencies().loginViaEmailView(
+                email: "foo@bar.com",
+                canCreateAccount: false,
+                didDetectDomainConflict: false
+            )
         }
 }

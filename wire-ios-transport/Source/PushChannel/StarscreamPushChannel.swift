@@ -56,7 +56,9 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     var canOpenConnection: Bool {
-        keepOpen && websocketURL != nil && consumer != nil
+        // This is a legacy push channel, so don't open it if we should use the new one.
+        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        return keepOpen && websocketURL != nil && consumer != nil
     }
 
     var websocketURL: URL? {
