@@ -55,6 +55,8 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
         ))
 
         snapshotHelper.verify(matching: sut)
+        sut.overrideUserInterfaceStyle = .dark
+        snapshotHelper.verify(matching: sut, named: "dark")
     }
 
     @MainActor
@@ -75,7 +77,8 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
             canAnimate: false
         )
 
-        sut.updateAccentColor(.systemGreen)
+        sut.updateOtherUserAccentColor(.systemGreen)
+        sut.updateSelfUserAccentColor(.blue)
 
         sut.frame = CGRect(x: 0, y: 0, width: 150, height: 44)
         return sut

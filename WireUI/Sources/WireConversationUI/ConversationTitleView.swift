@@ -76,6 +76,8 @@ public class ConversationTitleView: UIView {
         accountImageView.imageBorderWidth = design.borderWidth
         accountImageView.imageBorderColor = design.borderColor
         accountImageView.initialsTextColor = .white
+        
+        dropdownImage.tintColor = ColorTheme.Backgrounds.onSurfaceVariant
     }
 
     private func configureLayout() {
@@ -167,6 +169,15 @@ public class ConversationTitleView: UIView {
 }
 
 @available(iOS 17, *)
+#Preview("Account with Image Dark") {
+    makeVC(source: ConversationTitleSource(
+        accountImageSource: .image(.checkmark),
+        title: "Paul Nagel",
+        subtitle: "GUEST"
+    ), isDark: true)
+}
+
+@available(iOS 17, *)
 #Preview("No subtitle") {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
@@ -184,8 +195,17 @@ public class ConversationTitleView: UIView {
     ))
 }
 
+@available(iOS 17, *)
+#Preview("Dark") {
+    makeVC(source: ConversationTitleSource(
+        accountImageSource: .image(.checkmark),
+        title: "Paul Nagel NagelNagelNagelNagelNagelNagel",
+        subtitle: nil
+    ))
+}
+
 @MainActor
-private func makeVC(source: ConversationTitleSource) -> UIViewController {
+private func makeVC(source: ConversationTitleSource, isDark: Bool = false) -> UIViewController {
     let vc = UIViewController()
     vc.navigationItem.titleView = ConversationTitleView(
         source: source,
@@ -194,6 +214,9 @@ private func makeVC(source: ConversationTitleSource) -> UIViewController {
     vc.view.backgroundColor = .systemBackground
     let navigationController = UINavigationController(rootViewController: vc)
     let navBar = navigationController.navigationBar
+    if isDark {
+        navigationController.overrideUserInterfaceStyle = .dark
+    }
     addBottomBorder(to: navBar)
     return navigationController
 }
