@@ -46,7 +46,12 @@ package final class SSOLinkGenerator: SSOLinkGeneratorProtocol {
     }
 
     package func generateSSOLink(ssoCode: UUID) async throws -> URL {
-        try await authenticationAPI.validateLoginToken(ssoCode: ssoCode)
+        do {
+            try await authenticationAPI.validateLoginToken(ssoCode: ssoCode)
+        } catch AuthenticationAPIError.SSOLoginError.invalidSSOCode {
+            throw SSOLinkGeneratorFailure.invalidSSOCode
+        }
+
         return try await buildSSOLink(ssoCode: ssoCode)
     }
 

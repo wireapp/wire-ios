@@ -41,3 +41,15 @@ public protocol SSOLinkGeneratorFactory {
     func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
 
 }
+
+public enum SSOLinkGeneratorFailure: Error {
+
+    /// The SSO code is invalid.
+
+    case invalidSSOCode
+
+    /// The SSO URL is invalid.
+
+    case invalidSSOURL
+
+}

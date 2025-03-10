@@ -146,17 +146,23 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             let generator = factory.ssoLinkGenerator(apiVersion: backendMetadata.apiVersion)
             ssoLinkGenerator = generator
 
-            Task.detached { [generator] in
-                do {
-                    let url = try await generator.generateSSOLink(ssoCode: code)
-                    await MainActor.run {
-                        self.modalDestination = .ssoLogin(url: url)
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.alert = .invalidSSOLink
-                    }
-                }
+            do {
+                let url = try await Task.detached { [generator] in
+                    try await generator.generateSSOLink(ssoCode: code)
+                }.value
+                modalDestination = .ssoLogin(url: url)
+            } catch SSOLinkGeneratorFailure.invalidSSOCode {
+                // FIXME: Handle this error
+            } catch SSOLinkGeneratorFailure.invalidSSOURL {
+                alert = .invalidSSOLink
+            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+                alert = .noInternet
+            } catch let error as LocalizedError where error.errorDescription != nil {
+                    // FIXME: Handle this error
+            } catch {
+                alert = .unknownError
+
+                WireLogger.authentication.error("Unexpected error while generating SSO link: \(error)")
             }
 
         case let .onPremLogin(email, backendConfigURL):
