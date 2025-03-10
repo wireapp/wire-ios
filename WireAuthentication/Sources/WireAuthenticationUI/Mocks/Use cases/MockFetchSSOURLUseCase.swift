@@ -17,3 +17,12 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
+
+struct MockFetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
+
+    func invoke() async throws -> URL? {
+        URL(string: "https://example.com/login/\(UUID().uuidString)")!
+    }
+
+}

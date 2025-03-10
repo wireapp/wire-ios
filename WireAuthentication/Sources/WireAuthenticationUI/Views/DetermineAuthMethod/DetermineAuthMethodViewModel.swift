@@ -46,7 +46,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL)
-        case switchBackend(email: String, environment: BackendConfig)
+        case switchBackend(email: String, backendConfig: BackendConfig)
     }
 
     private let router: any Router
@@ -155,13 +155,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 }
             }
 
-        case let .onPremLogin(email, backendConfig):
+        case let .onPremLogin(email, backendConfigURL):
             do {
                 let useCase = factory.fetchBackendConfigUseCase()
-                let environmentInfo = try await Task.detached {
-                    try await useCase.invoke(at: backendConfig)
+                let backendConfig = try await Task.detached {
+                    try await useCase.invoke(at: backendConfigURL)
                 }.value
-                modalDestination = .switchBackend(email: email, environment: environmentInfo)
+                modalDestination = .switchBackend(email: email, backendConfig: backendConfig)
             } catch {
                 WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
             }

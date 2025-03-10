@@ -21,8 +21,11 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory = DetermineAuthMethodBuilder & LoginViaEmailOnPremBuilder & LoginViaSSOBuilder &
-        NoHistoryViewBuilder
+    package typealias Factory =
+    DetermineAuthMethodBuilder &
+    LoginViaEmailOnPremBuilder &
+    LoginViaSSOBuilder &
+    NoHistoryViewBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -51,16 +54,32 @@ package struct RootView: View {
                                 }
                             )
                     }
-                case let .noHistory(userID, cookies, accessToken, didDetectDomainConflict):
+                case let .noHistory(
+                    userID,
+                    cookies,
+                    accessToken,
+                    didDetectDomainConflict
+                ):
                     factory.noHistoryView(
                         userID: userID,
                         cookies: cookies,
                         accessToken: accessToken,
                         didDetectDomainConflict: didDetectDomainConflict
                     )
-                case let .onPremiseLogin(email, environment):
-                    factory.loginViaEmailOnPremView(email: email, backendConfig: environment)
-                case let .ssoLogin(url: ssoURL):
+                case let .onPremiseLogin(
+                    email,
+                    backendConfig,
+                    backendMetadata
+                ):
+                    factory.loginViaEmailOnPremView(
+                        email: email,
+                        backendConfig: backendConfig,
+                        backendMetadata: backendMetadata
+                    )
+                case let .ssoLogin(
+                    ssoURL,
+                    backendMetadata
+                ):
                     factory.loginViaSSOView(ssoURL: ssoURL)
                 }
             }
@@ -90,8 +109,15 @@ package struct RootView: View {
             accessToken: AccessToken?,
             didDetectDomainConflict: Bool
         )
-        case onPremiseLogin(email: String, environment: BackendConfig)
-        case ssoLogin(url: URL)
+        case onPremiseLogin(
+            email: String,
+            environment: BackendConfig,
+            backendMetadata: BackendMetadata?
+        )
+        case ssoLogin(
+            url: URL,
+            BackendMetadata: BackendMetadata
+        )
     }
 
 }

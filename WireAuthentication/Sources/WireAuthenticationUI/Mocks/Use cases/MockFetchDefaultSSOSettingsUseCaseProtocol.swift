@@ -17,3 +17,12 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
+
+struct MockFetchDefaultSSOSettingsUseCaseProtocol: FetchDefaultSSOSettingsUseCaseProtocol {
+
+    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
+        nil
+    }
+
+}

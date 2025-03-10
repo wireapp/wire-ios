@@ -18,6 +18,18 @@
 
 import Foundation
 
+public protocol FetchSSOURLUseCaseProtocol: Sendable {
+
+    func invoke() async throws -> URL?
+
+}
+
+public protocol FetchSSOURLUseCaseFactory {
+
+    func fetchSSOURLUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol
+
+}
+
 public protocol FetchDefaultSSOSettingsUseCaseProtocol: Sendable {
 
     func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID?
@@ -28,5 +40,11 @@ public enum FetchDefaultSSOSettingsUseCaseFailure: Error {
 
     case noInternet
     case unknown
+
+}
+
+public protocol FetchDefaultSSOSettingsUseCaseFactory {
+
+    func fetchDefaultSSOSettingsUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchDefaultSSOSettingsUseCaseProtocol
 
 }

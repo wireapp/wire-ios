@@ -140,34 +140,25 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 }
 
-extension MockDependencies: FetchDefaultSSOSettingsUseCaseProtocol {
-
-    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
-        nil
-    }
-
-}
-
 extension MockDependencies: SwitchBackendConfirmationBuilder {
 
     private func switchBackendConfirmationViewModel(
         email: String,
-        environment: BackendConfig
+        backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
             router: rootViewModel,
+            factory: self,
             email: email,
-            fetchDefaultSSOSettings: self,
-            ssoLinkGenerator: self,
-            environment: BackendConfig(
-                title: environment.title,
+            backendConfig: BackendConfig(
+                title: backendConfig.title,
                 endpoints: Endpoints(
-                    backendURL: environment.endpoints.backendURL,
-                    backendWSURL: environment.endpoints.backendWSURL,
-                    blackListURL: environment.endpoints.blackListURL,
-                    teamsURL: environment.endpoints.teamsURL,
-                    accountsURL: environment.endpoints.accountsURL,
-                    websiteURL: environment.endpoints.websiteURL
+                    backendURL: backendConfig.endpoints.backendURL,
+                    backendWSURL: backendConfig.endpoints.backendWSURL,
+                    blackListURL: backendConfig.endpoints.blackListURL,
+                    teamsURL: backendConfig.endpoints.teamsURL,
+                    accountsURL: backendConfig.endpoints.accountsURL,
+                    websiteURL: backendConfig.endpoints.websiteURL
                 ),
                 proxySettings: nil,
                 pinnedKeys: nil
@@ -175,13 +166,34 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
         )
     }
 
-    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
+    func switchBackendView(
+        email: String,
+        backendConfig: BackendConfig
+    ) -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(
             viewModel: switchBackendConfirmationViewModel(
                 email: email,
-                environment: environment
+                backendConfig: backendConfig
             )
         )
+    }
+
+}
+
+extension MockDependencies: FetchSSOURLUseCaseFactory {
+
+    nonisolated
+    func fetchSSOURLUseCase(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol {
+        MockFetchSSOURLUseCase()
+    }
+
+}
+
+extension MockDependencies: FetchDefaultSSOSettingsUseCaseFactory {
+
+    nonisolated
+    func fetchDefaultSSOSettingsUseCase(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) -> any FetchDefaultSSOSettingsUseCaseProtocol {
+        MockFetchDefaultSSOSettingsUseCaseProtocol()
     }
 
 }
@@ -296,19 +308,33 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
     ) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: rootViewModel,
-            loginViaEmailUseCase: self,
+            factory: self,
             email: email,
             backendConfig: backendConfig,
+            backendMetadata: nil,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: false
         )
     }
 
-    func loginViaEmailOnPremView(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremView {
+    func loginViaEmailOnPremView(
+        email: String,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?
+    ) -> LoginViaEmailOnPremView {
         LoginViaEmailOnPremView(
             viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
         )
     }
+}
+
+extension MockDependencies: LoginViaEmailUseCaseFactory {
+
+    nonisolated
+    func loginViaEmailUseCase(apiVersion: BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol {
+        MockMockLoginViaEmailUseCase()
+    }
+
 }
 
 extension MockDependencies: LoginViaSSOBuilder {

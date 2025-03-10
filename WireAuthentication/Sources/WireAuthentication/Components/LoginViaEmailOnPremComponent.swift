@@ -27,8 +27,7 @@ import WireReusableUIComponents
 protocol LoginViaEmailOnPremComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var defaultBackendEnvironment: BackendEnvironment { get }
-    var defaultAPIVersion: APIVersion { get }
+    var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var passwordValidator: any PasswordValidator { get }
 
@@ -36,44 +35,77 @@ protocol LoginViaEmailOnPremComponentDependency: Dependency {
 
 class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDependency> {
 
-    public var authenticationAPI: AuthenticationAPI {
-        AuthenticationAPIBuilder(
-            networkService: NetworkService.make(
-                backendEnvironment: dependency.defaultBackendEnvironment,
-                minTLSVersion: dependency.minTLSVersion
-            )
-        ).makeAPI(for: dependency.defaultAPIVersion)
-    }
+    private let email: String
+    private let backendConfig: BackendConfig
+    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
 
-    public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+    init(
+        parent: any Scope,
+        email: String,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) {
+        self.email = email
+        self.backendConfig = backendConfig
+        self.backendMetadata = backendMetadata
+        super.init(parent: parent)
     }
 
     // MARK: - View
 
     @MainActor
-    func view(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremView {
-        LoginViaEmailOnPremView(
-            viewModel: viewModel(
-                email: email,
-                backendConfig: backendConfig
-            )
-        )
+    var view: LoginViaEmailOnPremView {
+        LoginViaEmailOnPremView(viewModel: viewModel)
     }
 
     @MainActor
-    private func viewModel(
-        email: String,
-        backendConfig: BackendConfig
-    ) -> LoginViaEmailOnPremViewModel {
+    private var viewModel: LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: dependency.router,
-            loginViaEmailUseCase: loginViaEmailUseCase,
+            factory: self,
             email: email,
             backendConfig: backendConfig,
+            backendMetadata: backendMetadata,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: false
         )
+    }
+
+    // MARK: - Private dependencies
+
+    private var backendEnvironment: BackendEnvironment {
+        shared {
+            BackendEnvironment(backendConfig)
+        }
+    }
+
+    private var networkService: NetworkService {
+        shared {
+            NetworkService.make(
+                backendEnvironment: backendEnvironment,
+                minTLSVersion: dependency.minTLSVersion
+            )
+        }
+    }
+
+}
+
+extension LoginViaEmailOnPremComponent: LoginViaEmailOnPremViewModel.Factory {
+
+    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
+        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
+        return ResolveBackendMetadataUseCase(
+            backendMetadataAPI: api,
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
+    }
+
+    func loginViaEmailUseCase(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol {
+        let api = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
+            for: .init(apiVersion)
+        )
+        return LoginViaEmailUseCase(authenticationAPI: api)
     }
 
 }

@@ -20,6 +20,29 @@ import Foundation
 import WireAPI
 import WireAuthenticationAPI
 
+package struct FetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
+
+    private let authenticationAPI: any AuthenticationAPI
+    private let linkGenerator: any SSOLinkGeneratorProtocol
+
+    package init(
+        authenticationAPI: any AuthenticationAPI,
+        linkGenerator: any SSOLinkGeneratorProtocol
+    ) {
+        self.authenticationAPI = authenticationAPI
+        self.linkGenerator = linkGenerator
+    }
+
+    package func invoke() async throws -> URL? {
+        guard let ssoCode = try await authenticationAPI.getSSOCode() else {
+            return nil
+        }
+
+        return try await linkGenerator.generateSSOLink(ssoCode: ssoCode)
+    }
+
+}
+
 package struct FetchDefaultSSOSettingsUseCase: FetchDefaultSSOSettingsUseCaseProtocol {
 
     private let authenticationAPI: AuthenticationAPI
