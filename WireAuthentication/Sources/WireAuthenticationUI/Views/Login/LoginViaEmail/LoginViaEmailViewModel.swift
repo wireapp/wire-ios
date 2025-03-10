@@ -112,10 +112,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
             case URLError.notConnectedToInternet, URLError.networkConnectionLost:
                 alert = .noInternet
             default:
-                if let error = error as? LocalizedError, error.errorDescription != nil {
-                    // FIXME: Handle this error
-                }
-
                 WireLogger.authentication.error("Unexpected error during login via email: \(error)")
                 alert = .unknownError
             }
@@ -144,7 +140,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
 package extension LoginViaEmailViewModel {
 
-    package struct Alert: Hashable, Identifiable, Sendable {
+    struct Alert: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
         let title: String

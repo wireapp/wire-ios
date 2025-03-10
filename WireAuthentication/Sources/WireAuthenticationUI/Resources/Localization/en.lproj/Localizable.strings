@@ -73,6 +73,7 @@
 "authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
 "authentication.error.title.account_pending_activation" = "Pending activation";
 "authentication.error.title.account_suspended" = "Unauthorized";
+"authentication.error.title.incorrect_sso_code" = "Incorrect SSO access code";
 
 "authentication.error.message.no_internet" = "You are not connected to the internet.";
 "authentication.error.message.general" = "Something went wrong";
@@ -82,6 +83,7 @@
 "authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
 "authentication.error.message.account_pending_activation" = "The account you are trying to access is pending activation. Please verify your details.";
 "authentication.error.message.account_suspended" = "This account is no longer authorized to log in.";
+"authentication.error.message.incorrect_sso_code" = "Please verify your company SSO access code and try again.";
 
 "authentication.error.confirm" = "OK";
 

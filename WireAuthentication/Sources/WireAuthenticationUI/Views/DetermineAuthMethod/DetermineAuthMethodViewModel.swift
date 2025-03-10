@@ -38,6 +38,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case noInternet
         case unknownError
         case invalidSSOLink
+        case incorrectSSOCode
 
     }
 
@@ -107,8 +108,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             // It is probably worth restructuring the code to avoid this.
         } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
             alert = .noInternet
-        } catch let error as LocalizedError where error.errorDescription != nil {
-            // FIXME: Handle this error
         } catch {
             alert = .unknownError
         }
@@ -152,13 +151,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 }.value
                 modalDestination = .ssoLogin(url: url)
             } catch SSOLinkGeneratorFailure.invalidSSOCode {
-                // FIXME: Handle this error
+                alert = .incorrectSSOCode
             } catch SSOLinkGeneratorFailure.invalidSSOURL {
                 alert = .invalidSSOLink
             } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
                 alert = .noInternet
-            } catch let error as LocalizedError where error.errorDescription != nil {
-                    // FIXME: Handle this error
             } catch {
                 alert = .unknownError
 
@@ -174,8 +171,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 modalDestination = .switchBackend(email: email, backendConfig: backendConfig)
             } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
                 alert = .noInternet
-            } catch let error as LocalizedError where error.errorDescription != nil {
-                    // FIXME: Handle this error
             } catch {
                 alert = .unknownError
 

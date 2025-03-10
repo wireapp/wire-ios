@@ -155,6 +155,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Title.general)
         case .invalidSSOLink:
             Text(L10n.Authentication.Error.Title.invalidSsoLink)
+        case .incorrectSSOCode:
+            Text(L10n.Authentication.Error.Title.incorrectSsoCode)
         }
     }
 
@@ -166,6 +168,8 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Message.general)
         case .invalidSSOLink:
             Text(L10n.Authentication.Error.Message.invalidSsoLink)
+        case .incorrectSSOCode:
+            Text(L10n.Authentication.Error.Message.incorrectSsoCode)
         }
     }
 

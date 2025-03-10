@@ -86,9 +86,6 @@ struct RequestLoginVerificationCodeUseCaseTests {
 
             // Then
             #expect(error is SomeError)
-
-            Issue.record("Unexpected error: " + String(reflecting: error))
-
         }
     }
 

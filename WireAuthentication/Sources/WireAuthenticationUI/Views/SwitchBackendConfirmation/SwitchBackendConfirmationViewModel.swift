@@ -116,8 +116,6 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                 backendMetadata = try await resolveBackendMetadata()
             } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
                 alert = .noInternet
-            } catch let error as LocalizedError where error.errorDescription != nil {
-                // FIXME: Handle this error
             } catch  {
                 alert = .unknownError
                 WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
