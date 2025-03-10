@@ -146,7 +146,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
                 WireLogger.authentication.error("Unexpected invalid email when resending 2FA login code: \(error)")
-            case let RequestLoginVerificationCodeUseCaseFailure.unexpected(underlying) where underlying.isNoInternet:
+            case URLError.notConnectedToInternet, URLError.networkConnectionLost:
                 alert = .noInternet
             default:
                 WireLogger.authentication.error("Unexpected error when resending 2FA login code: \(error)")
