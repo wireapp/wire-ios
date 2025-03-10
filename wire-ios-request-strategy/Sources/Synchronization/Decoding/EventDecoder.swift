@@ -41,7 +41,7 @@ public protocol EventDecoderProtocol {
 }
 
 /// Decodes and stores events from various sources to be processed later
-public final class EventDecoder: NSObject, EventDecoderProtocol {
+public final actor EventDecoder: EventDecoderProtocol {
 
     public typealias ConsumeBlock = ([ZMUpdateEvent]) async -> Void
 
@@ -68,7 +68,6 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
         self.eventMOC = eventMOC
         self.syncMOC = syncMOC
         self.lastEventIDRepository = lastEventIDRepository
-        super.init()
     }
 
     /// Guarantee to get proteusProvider from correct context
@@ -80,6 +79,8 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
     }
 
     private let lastEventIDRepository: LastEventIDRepositoryInterface
+    
+    private var isProcessing = false
 }
 
 // MARK: - Process events
@@ -332,7 +333,7 @@ extension EventDecoder {
     // incrementing from the highest index currently stored in the database.
     // The encryptedPayload property is encrypted using the public key.
 
-    private func storeUpdateEvents(
+    nonisolated private func storeUpdateEvents(
         _ decryptedEvents: [ZMUpdateEvent],
         startingAtIndex startIndex: Int64,
         publicKeys: EARPublicKeys?
@@ -365,7 +366,10 @@ extension EventDecoder {
         _ consumeBlock: ConsumeBlock,
         firstCall: Bool,
         callEventsOnly: Bool
-    ) async {
+    ) async {        
+        guard !isProcessing else { return }
+        isProcessing = true
+        
         let events = await fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
 
         guard !events.storedEvents.isEmpty else {
@@ -382,6 +386,7 @@ extension EventDecoder {
         )
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
 
+        isProcessing = false
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
     }
 
