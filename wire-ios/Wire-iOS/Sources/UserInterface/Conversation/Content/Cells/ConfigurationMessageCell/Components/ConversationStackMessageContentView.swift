@@ -76,7 +76,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
             stackView.layoutIfNeeded()
         }
 
-        // set ephemeralTimerTopInset
         if
             let index = configuration.firstIndex(where: \.showEphemeralTimer),
             let contentView = stackView.arrangedSubviews[index] as? any ConversationMessageCell {
