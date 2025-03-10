@@ -152,7 +152,7 @@ protocol ConversationMessageCellDescription: AnyObject {
     var supportsActions: Bool { get }
 
     /// Whether the cell should display an ephemeral timer in the margin given it's an ephemeral message
-    var showEphemeralTimer: Bool { get set }
+    var showEphemeralTimer: Bool { get }
 
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
@@ -265,7 +265,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
-    private let _showEphemeralTimer: AnyMutableProperty<Bool>
+    private let _showEphemeralTimer: AnyConstantProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
 
@@ -308,7 +308,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
-        self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
+        self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
@@ -350,8 +350,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     }
 
     var showEphemeralTimer: Bool {
-        get { _showEphemeralTimer.getter() }
-        set { _showEphemeralTimer.setter(newValue) }
+        _showEphemeralTimer.getter()
     }
 
     /// The accessibility identifier of the cell.
