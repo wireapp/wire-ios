@@ -98,28 +98,22 @@ public struct PasswordField: View {
     // MARK: - Helper
 
     private var shouldShowPasswordRules: Bool {
-        !isValidPassword(password)
+        !isValidPassword(password) && !password.isEmpty
     }
 
     private var titleColor: Color {
-        switch (password.isEmpty, isValidPassword(password)) {
-        case (_, false):
-            ColorTheme.Base.error.color
-        case (true, _):
+        if password.isEmpty {
             ColorTheme.Base.labelTitle.color
-        case (false, true):
-            ColorTheme.Base.primary.color
+        } else {
+            isValidPassword(password) ? ColorTheme.Base.primary.color : ColorTheme.Base.error.color
         }
     }
 
     private var borderColor: Color {
-        switch (password.isEmpty, isValidPassword(password)) {
-        case (_, false):
-            ColorTheme.Base.error.color
-        case (true, _):
+        if password.isEmpty {
             ColorTheme.Strokes.outline.color
-        case (false, true):
-            ColorTheme.Base.primary.color
+        } else {
+            isValidPassword(password) ? ColorTheme.Base.primary.color : ColorTheme.Base.error.color
         }
     }
 

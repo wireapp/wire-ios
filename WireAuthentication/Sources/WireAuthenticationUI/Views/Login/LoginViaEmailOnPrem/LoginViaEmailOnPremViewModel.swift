@@ -27,7 +27,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let passwordValidator: any PasswordValidator
-    private let backendEnvironment: LocalBackendEnvironment
+    private let backendConfig: BackendConfig
 
     let email: String
     let canCreateAccount: Bool
@@ -38,7 +38,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         email: String,
-        backendEnvironment: LocalBackendEnvironment,
+        backendConfig: BackendConfig,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool
     ) {
@@ -47,15 +47,15 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
-        self.backendEnvironment = backendEnvironment
+        self.backendConfig = backendConfig
     }
 
     private var forgotPasswordURL: URL {
-        backendEnvironment.accountsURL.appendingPathComponent("forgot")
+        backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
     }
 
     var backendName: String {
-        backendEnvironment.title
+        backendConfig.title
     }
 
     var backendInfo: String {
@@ -64,7 +64,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             backendName,
             "",
             L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendEnvironment.url.absoluteString
+            backendConfig.endpoints.backendURL.absoluteString
         ].joined(separator: "\n")
     }
 
@@ -73,11 +73,11 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     var hasProxySupport: Bool {
-        backendEnvironment.proxySettings != nil
+        backendConfig.proxySettings != nil
     }
 
     var proxyServer: String {
-        backendEnvironment.url.absoluteString
+        backendConfig.endpoints.backendURL.absoluteString
     }
 
     func isValidPassword(_ password: String) -> Bool {

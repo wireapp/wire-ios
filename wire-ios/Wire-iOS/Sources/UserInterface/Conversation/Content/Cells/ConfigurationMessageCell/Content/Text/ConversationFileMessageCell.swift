@@ -34,7 +34,6 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
     private let obfuscationView = ObfuscationView(icon: .paperclip)
     private let restrictionView = FileMessageRestrictionView()
 
-    weak var cellDescription: ConversationFileMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?

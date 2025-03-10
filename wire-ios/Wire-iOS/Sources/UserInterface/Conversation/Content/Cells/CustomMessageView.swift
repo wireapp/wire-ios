@@ -24,7 +24,6 @@ import WireDesign
 final class CustomMessageView: UIView, UITextViewDelegate {
     var isSelected: Bool = false
 
-    weak var cellDescription: UnknownMessageCellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?

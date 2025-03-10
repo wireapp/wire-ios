@@ -37,7 +37,6 @@ final class FailedUsersSystemMessageCell<
 
     // MARK: - Properties
 
-    weak var cellDescription: CellDescription?
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?

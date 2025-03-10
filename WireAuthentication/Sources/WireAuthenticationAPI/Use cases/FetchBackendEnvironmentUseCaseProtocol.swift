@@ -18,35 +18,15 @@
 
 import Foundation
 
-// TODO: [WPB-16272] Remove duplication
-public struct LocalBackendEnvironment {
+public protocol FetchBackendConfigUseCaseProtocol: Sendable {
 
-    public init(
-        title: String,
-        url: URL,
-        accountsURL: URL,
-        proxySettings: LocalProxySettings? = nil
-    ) {
-        self.title = title
-        self.url = url
-        self.accountsURL = accountsURL
-        self.proxySettings = proxySettings
-    }
+    func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig
 
-    /// The  name of the backend.
+}
 
-    public let title: String
+public enum FetchBackendConfigFailure: Error, Equatable {
 
-    /// The `URL` of the backend.
-
-    public let url: URL
-
-    /// The `URL` of the accounts.
-
-    public let accountsURL: URL
-
-    /// The proxy settings for the backend if any.
-
-    public let proxySettings: LocalProxySettings?
+    case requestFailed
+    case invalidResponse
 
 }
