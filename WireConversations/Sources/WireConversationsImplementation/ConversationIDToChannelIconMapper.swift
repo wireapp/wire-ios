@@ -21,7 +21,7 @@ package import WireConversationsResources
 
 package final class ConversationIDToChannelIconMapper: ConversationIDToPaletteMapper {
 
-    let palette: [WireConversationChannelIconAsset] = .all
+    let palette: [WireConversationChannelIconAsset] = WireConversationChannelIconAsset.all
 
     package init() {}
 
