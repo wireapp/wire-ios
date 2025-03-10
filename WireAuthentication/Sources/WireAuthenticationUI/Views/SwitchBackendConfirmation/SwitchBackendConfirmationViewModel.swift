@@ -23,6 +23,12 @@ import WireLogging
 @MainActor
 public class SwitchBackendConfirmationViewModel: ObservableObject {
 
+    package enum ModalDestination: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        case ssoLogin(url: URL)
+    }
+
     private typealias Strings = L10n.SwitchBackendConfirmation
 
     // MARK: - State
@@ -37,6 +43,7 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
+    @Published var modalDestination: ModalDestination?
 
     // MARK: - Life cycle
 
@@ -89,7 +96,7 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
         do {
             let url = try await task.value
             if let url {
-                router.presentSheet(RootView.ModalDestination.ssoLogin(url: url))
+                modalDestination = .ssoLogin(url: url)
             } else {
                 router.presentSheet(
                     RootView.ModalDestination.onPremiseLogin(

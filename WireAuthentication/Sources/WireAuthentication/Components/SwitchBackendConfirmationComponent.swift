@@ -50,7 +50,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
 
     @MainActor
     func view(email: String) -> SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(viewModel: viewModel(email: email))
+        SwitchBackendConfirmationView(viewModel: viewModel(email: email), factory: self)
     }
 
     @MainActor
@@ -117,6 +117,19 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
         )
+    }
+
+    // MARK: - Children
+    
+    var loginViaSSOComponent: LoginViaSSOComponent {
+        LoginViaSSOComponent()
+    }
+
+}
+
+extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationView.Factory {
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
 }
