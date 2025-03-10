@@ -126,7 +126,9 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
-      
+      UI_LOGIN_EMAIL: "test@example.com"
+      UI_LOGIN_PASSWORD: "12345"
+
     steps:
       - name: Add Masks
         run: |
