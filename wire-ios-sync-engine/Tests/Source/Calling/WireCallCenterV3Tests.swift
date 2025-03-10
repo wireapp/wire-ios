@@ -988,7 +988,7 @@ final class WireCallCenterV3Tests: MessagingTest {
                 waitForCustomExpectations(withTimeout: 0.5)
             )
 
-            // then, once subgroup has been joined and epoch has been set, avs answer call should be triggered
+            // then, once subgroup has been joined, avs answer call should be triggered
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
         }
     }
@@ -1086,7 +1086,7 @@ final class WireCallCenterV3Tests: MessagingTest {
                 waitForCustomExpectations(withTimeout: 0.5)
             )
 
-            // then, once subgroup has been joined, epoch has been set, avs start call should be triggered
+            // then, once subgroup has been joined avs start call should be triggered
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.mlsConference)
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
         }
