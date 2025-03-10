@@ -608,7 +608,7 @@ public extension WireCallCenterV3 {
                conversationType == .mlsConference {
                 try setUpMLSConference(
                     in: conversation,
-                    completion: avsAnswerCallHandler
+                    avsCallHandler: avsAnswerCallHandler
                 )
             } else {
                 try avsAnswerCallHandler()
@@ -699,7 +699,7 @@ public extension WireCallCenterV3 {
             if conversationType == .mlsConference {
                 try setUpMLSConference(
                     in: conversation,
-                    completion: avsStartCallHandler
+                    avsCallHandler: avsStartCallHandler
                 )
             } else {
                 try avsStartCallHandler()
@@ -719,13 +719,14 @@ public extension WireCallCenterV3 {
     /// Sets up the MLS conference for a given conversation.
     ///
     /// - Parameter conversation: The conversation to set up the MLS conference for.
+    /// - Parameter avsCallHandler: Triggers `wcall_start` or `wcall_answer` from AVS.
     ///
     /// See documentation:
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/692027483/Use+case+Join+conference+sub-conversation+MLS
 
     private func setUpMLSConference(
         in conversation: ZMConversation,
-        completion: @escaping () throws -> Void
+        avsCallHandler: @escaping () throws -> Void
     ) throws {
         guard let conversationID = conversation.avsIdentifier else {
             throw Failure.failedToSetupMLSConference
@@ -757,7 +758,7 @@ public extension WireCallCenterV3 {
                         parentID: parentGroupID
                     )
 
-                    try completion()
+                    try avsCallHandler()
 
                     // Generate and set the conference information for the subgroup
                     let initialConferenceInfo = try await mlsService.generateConferenceInfo(
