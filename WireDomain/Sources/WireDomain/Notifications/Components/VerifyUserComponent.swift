@@ -49,7 +49,7 @@ final class VerifyUserComponent: Component<VerifyUserDependency> {
 extension VerifyUserComponent {
 
     public var cookieStorage: any CookieStorageProtocol {
-        CoreStorageFactory.makeCookieStorage(
+        makeCookieStorage(
             userID: dependency.userID
         )
     }
@@ -68,9 +68,56 @@ extension VerifyUserComponent {
     }
 
     public var coreData: CoreDataStack {
-        CoreStorageFactory.makeCoreData(
+        makeCoreData(
             account: dependency.selectedAccount,
             applicationIdentifier: dependency.applicationIdentifier
         )
+    }
+    
+    func makeCoreData(
+        account: Account,
+        applicationIdentifier: String
+    ) -> CoreDataStack {
+        let applicationContainer = makeApplicationContainer(
+            applicationIdentifier: applicationIdentifier
+        )
+
+        return CoreDataStack(
+            account: account,
+            applicationContainer: applicationContainer
+        )
+    }
+
+    func makeCookieStorage(userID: UUID) -> any CookieStorageProtocol {
+        let cookiesEncryptionKey: Data = {
+            let cookieKey = "ZMCookieKey"
+            let sharedDefaults = UserDefaults.standard
+            if let key = sharedDefaults.data(forKey: "cookieKeyKey") {
+                return key
+            }
+
+            // Creates a new key
+            do {
+                let newKey = try AES256Crypto.generateRandomEncryptionKey()
+                sharedDefaults.set(newKey, forKey: cookieKey)
+                return newKey
+            } catch {
+                fatalError()
+            }
+        }()
+
+        return CookieStorage(
+            userID: userID,
+            cookieEncryptionKey: cookiesEncryptionKey,
+            keychain: makeKeychain()
+        )
+    }
+
+    func makeApplicationContainer(applicationIdentifier: String) -> URL {
+        FileManager.sharedContainerDirectory(for: applicationIdentifier)
+    }
+
+    func makeKeychain() -> any KeychainProtocol {
+        Keychain()
     }
 }
