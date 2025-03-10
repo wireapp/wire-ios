@@ -17,36 +17,28 @@
 //
 
 import Foundation
+import WireAPI
+import WireAuthenticationAPI
 
-public protocol FetchSSOURLUseCaseProtocol: Sendable {
+package struct FetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
 
-    func invoke() async throws -> URL?
+    private let authenticationAPI: any AuthenticationAPI
+    private let linkGenerator: any SSOLinkGeneratorProtocol
 
-}
+    package init(
+        authenticationAPI: any AuthenticationAPI,
+        linkGenerator: any SSOLinkGeneratorProtocol
+    ) {
+        self.authenticationAPI = authenticationAPI
+        self.linkGenerator = linkGenerator
+    }
 
-public protocol FetchSSOURLUseCaseFactory {
+    package func invoke() async throws -> URL? {
+        guard let ssoCode = try await authenticationAPI.getSSOCode() else {
+            return nil
+        }
 
-    func fetchSSOURLUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol
-
-}
-
-public protocol FetchDefaultSSOSettingsUseCaseProtocol: Sendable {
-
-    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID?
-
-}
-
-public enum FetchDefaultSSOSettingsUseCaseFailure: Error {
-
-    case noInternet
-    case unknown
-
-}
-
-public protocol FetchDefaultSSOSettingsUseCaseFactory {
-
-    func fetchDefaultSSOSettingsUseCase(
-        apiVersion: BackendMetadata.APIVersion
-    ) -> any FetchDefaultSSOSettingsUseCaseProtocol
+        return try await linkGenerator.generateSSOLink(ssoCode: ssoCode)
+    }
 
 }

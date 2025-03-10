@@ -191,17 +191,6 @@ extension MockDependencies: FetchSSOURLUseCaseFactory {
 
 }
 
-extension MockDependencies: FetchDefaultSSOSettingsUseCaseFactory {
-
-    nonisolated
-    func fetchDefaultSSOSettingsUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any FetchDefaultSSOSettingsUseCaseProtocol {
-        MockFetchDefaultSSOSettingsUseCaseProtocol()
-    }
-
-}
-
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
