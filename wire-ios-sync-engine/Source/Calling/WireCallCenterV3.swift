@@ -756,7 +756,7 @@ public extension WireCallCenterV3 {
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
-                    
+
                     try completion()
 
                     // Generate and set the conference information for the subgroup

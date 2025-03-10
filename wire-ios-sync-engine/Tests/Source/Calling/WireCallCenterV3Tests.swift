@@ -1072,8 +1072,6 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
-    var subscription: AnyCancellable?
-
     func testThatItStartsACall_conference_mls() throws {
         try assertMLSConference(
             expectedCallState: .outgoing(isVideo: false, degraded: false),
