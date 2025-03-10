@@ -100,6 +100,7 @@ package struct DetermineAuthMethodView: View {
             message: messageForAlert,
             actions: { _ in
                 Button {
+                    // FIXME: What is needed here?
                     dismiss()
                 } label: {
                     Text(L10n.Authentication.Error.confirm)
