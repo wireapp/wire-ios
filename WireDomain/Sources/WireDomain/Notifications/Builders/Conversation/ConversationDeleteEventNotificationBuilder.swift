@@ -46,7 +46,6 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
 
-
     init(
         conversationID: WireAPI.QualifiedID,
         senderID: UserID,
