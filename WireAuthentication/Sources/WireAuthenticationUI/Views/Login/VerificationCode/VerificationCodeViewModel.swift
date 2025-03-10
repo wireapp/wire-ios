@@ -112,14 +112,14 @@ public final class VerificationCodeViewModel: ObservableObject {
             WireLogger.authentication.info("2FA login via email failed: \(error)")
 
             switch error {
-            case LoginViaEmailUseCaseFailure.noInternet:
-                alert = .noInternet
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed:
                 alert = .invalid2FACode
             case LoginViaEmailUseCaseFailure.accountPendingActivation:
                 alert = .accountPendingActivation
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
+            case URLError.notConnectedToInternet, URLError.networkConnectionLost:
+                alert = .noInternet
             default:
                 WireLogger.authentication.error("Unexpected error during 2FA login via email: \(error)")
                 alert = .unknownError

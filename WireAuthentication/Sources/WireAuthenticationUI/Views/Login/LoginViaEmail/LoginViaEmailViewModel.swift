@@ -109,9 +109,13 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .accountPendingActivation
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
-            case LoginViaEmailUseCaseFailure.noInternet:
+            case URLError.notConnectedToInternet, URLError.networkConnectionLost:
                 alert = .noInternet
             default:
+                if let error = error as? LocalizedError, error.errorDescription != nil {
+                    // FIXME: Handle this error
+                }
+
                 WireLogger.authentication.error("Unexpected error during login via email: \(error)")
                 alert = .unknownError
             }

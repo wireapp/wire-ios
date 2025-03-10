@@ -114,7 +114,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
     @MainActor
     func testSubmitPassword_withInvalidCredentials() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .invalidCredentials
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.invalidCredentials
 
         // when
         await sut.submitPassword()
@@ -127,7 +128,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
     @MainActor
     func testSubmitPassword_when2FARequired() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .twoFactorAuthenticationRequired
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired
         sut.password = "password"
 
         // when
@@ -146,7 +148,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
     @MainActor
     func testSubmitPassword_whenAccountPendingActivation() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .accountPendingActivation
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.accountPendingActivation
 
         // when
         await sut.submitPassword()
@@ -159,7 +162,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
     @MainActor
     func testSubmitPassword_whenAccountSuspended() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .accountSuspended
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.accountSuspended
 
         // when
         await sut.submitPassword()
@@ -172,20 +176,25 @@ class LoginViaEmailViewModelTests: XCTestCase {
     @MainActor
     func testSubmitPassword_whenNoInternet() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .noInternet
+        let testCases: [URLError] = [URLError(.notConnectedToInternet), URLError(.networkConnectionLost)]
 
-        // when
-        await sut.submitPassword()
+        for error in testCases {
+            isLoadingCalls = []
+            loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = error
 
-        // then
-        XCTAssertEqual(sut.alert, .noInternet)
-        XCTAssertEqual(isLoadingCalls, [true, false])
+            // when
+            await sut.submitPassword()
+
+            // then
+            XCTAssertEqual(sut.alert, .noInternet)
+            XCTAssertEqual(isLoadingCalls, [true, false])
+        }
     }
 
     @MainActor
     func testSubmitPassword_whenUnknownErrorOccurs() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .other
+        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = URLError(.badURL)
 
         // when
         await sut.submitPassword()

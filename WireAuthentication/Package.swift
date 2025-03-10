@@ -43,7 +43,10 @@ let package = Package(
         ),
         .target(
             name: "WireAuthenticationAPISupport",
-            dependencies: ["WireAuthenticationAPI"]
+            dependencies: ["WireAuthenticationAPI"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
         ),
 
         .target(

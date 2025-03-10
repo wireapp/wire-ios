@@ -117,7 +117,8 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test
     func submitPassword_withInvalidCode() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .twoFactorAuthenticationFailed
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed
 
         // when
         await sut.confirm()
@@ -127,10 +128,14 @@ final class VerificationCodeViewModelTests {
         #expect(isLoadingCalls == [true, false])
     }
 
-    @MainActor @Test
-    func submitPassword_whenNoInternet() async {
+    @MainActor
+    @Test(arguments: [
+        URLError(.notConnectedToInternet),
+        URLError(.networkConnectionLost)
+    ])
+    func submitPassword_whenNoInternet(error: Error) async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .noInternet
+        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = error
 
         // when
         await sut.confirm()
@@ -143,7 +148,8 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test
     func submitPassword_whenAccountPendingActivation() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .accountPendingActivation
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.accountPendingActivation
 
         // when
         await sut.confirm()
@@ -156,7 +162,8 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test
     func submitPassword_whenAccountSuspended() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .accountSuspended
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.accountSuspended
 
         // when
         await sut.confirm()
@@ -168,7 +175,7 @@ final class VerificationCodeViewModelTests {
 
     @MainActor @Test(arguments: [
         LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired,
-        LoginViaEmailUseCaseFailure.other,
+//        LoginViaEmailUseCaseFailure.other,
         LoginViaEmailUseCaseFailure.invalidCredentials
     ])
     func submitPassword_whenAnUnhandledError(error: LoginViaEmailUseCaseFailure) async {
