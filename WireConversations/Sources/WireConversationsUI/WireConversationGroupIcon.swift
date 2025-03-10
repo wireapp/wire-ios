@@ -16,4 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol Placeholder {}
+package import SwiftUI
+package import WireConversationsResources
+
+package struct WireConversationGroupIcon: View {
+    let groupIcon: WireConversationGroupIconAsset
+
+    package init(asset: WireConversationGroupIconAsset) {
+        self.groupIcon = asset
+    }
+
+    package var body: some View {
+        groupIcon.image
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+    }
+}
