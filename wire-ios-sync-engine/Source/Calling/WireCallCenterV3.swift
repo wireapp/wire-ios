@@ -756,6 +756,8 @@ public extension WireCallCenterV3 {
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
+                    
+                    try completion()
 
                     // Generate and set the conference information for the subgroup
                     let initialConferenceInfo = try await mlsService.generateConferenceInfo(
@@ -767,8 +769,6 @@ public extension WireCallCenterV3 {
                         conversationId: conversationID,
                         info: initialConferenceInfo
                     )
-
-                    try completion()
 
                     // Set up a task to observe changes in the conference information
                     // and update AVS accordingly
