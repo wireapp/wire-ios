@@ -32,3 +32,7 @@ package struct WireConversationChannelIcon: View {
             .aspectRatio(contentMode: .fit)
     }
 }
+
+#Preview {
+    WireConversationChannelIcon(asset: .amber)
+}

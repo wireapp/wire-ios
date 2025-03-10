@@ -18,26 +18,14 @@
 
 package import SwiftUI
 
-package enum WireConversationChannelIconAsset {
-    case blue
-    case purple
-    case red
-    case green
-    case amber
-    case petrol
-    case gray
-
-    package var index: UInt {
-        switch self {
-        case .blue: 1
-        case .purple: 2
-        case .red: 3
-        case .green: 4
-        case .amber: 5
-        case .petrol: 6
-        case .gray: 7
-        }
-    }
+package enum WireConversationChannelIconAsset: String {
+    case blue = "blue"
+    case purple = "purple"
+    case red = "red"
+    case green = "green"
+    case amber = "amber"
+    case petrol = "petrol"
+    case gray = "gray"
 
     package static var all: [WireConversationChannelIconAsset] {
         [
@@ -52,7 +40,7 @@ package enum WireConversationChannelIconAsset {
     }
 
     package var imageName: String {
-        "channel-icon-\(index)"
+        "channel-icon-\(rawValue)"
     }
 
     package var image: Image {

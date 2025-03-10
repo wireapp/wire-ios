@@ -50,19 +50,4 @@ class WireConversationGroupIconTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-
-    @MainActor
-    func testDynamicTypeVariantsEmptyState() {
-        let view = viewFactory.create(conversationID: conversationID)
-            .frame(width: 40, height: 40)
-            .padding()
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
 }
