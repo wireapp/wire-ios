@@ -62,14 +62,13 @@ final class FetchSSOURLUseCaseTests: XCTestCase {
     }
 
     func testInvoke_whenFailure() async throws {
-        // mock
-        authenticationAPI.getSSOCode_MockValue = .some(nil)
+        // given
+        authenticationAPI.getSSOCode_MockError = URLError(.badURL)
 
-        // when
-        let ssoURL = try await sut.invoke()
-
-        // then
-        XCTAssertNil(ssoURL)
+        // when, then it forwards the error
+        await XCTAssertThrowsErrorAsync(URLError(.badURL)) { [self] in
+            _ = try await sut.invoke()
+        }
     }
 
 }

@@ -114,9 +114,13 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
             let backendMetadata: BackendMetadata
             do {
                 backendMetadata = try await resolveBackendMetadata()
-            } catch {
-                // TODO: [WPB-16415] handle unresolved api version
-                fatalError()
+            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+                alert = .noInternet
+            } catch let error as LocalizedError where error.errorDescription != nil {
+                // FIXME: Handle this error
+            } catch  {
+                alert = .unknownError
+                WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
             }
 
             do {
@@ -181,6 +185,7 @@ package extension SwitchBackendConfirmationViewModel {
         private typealias Message = L10n.Authentication.Error.Message
 
         static let unknownError = Alert(title: Title.general, message: Message.general)
+        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
     }
 
 }
