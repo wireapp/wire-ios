@@ -367,7 +367,10 @@ extension EventDecoder {
         firstCall: Bool,
         callEventsOnly: Bool
     ) async {        
-        guard !isProcessing else { return }
+        guard !isProcessing else {
+            WireLogger.updateEvent.debug("⚠️ process called before end of processing, abort")
+            return
+        }
         isProcessing = true
         
         let events = await fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
