@@ -16,12 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
+import WireSyncEngine
 
-// sourcery: AutoMockable
-public protocol ServerConnection {
+class GetParticipantImageSourceRepository: GetParticipantImageSourceRepositoryProtocol {
 
-    var isMobileConnection: Bool { get }
-    var isOffline: Bool { get }
+    private let userSession: UserSession
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+    }
+
+    @MainActor
+    func invoke(user: any UserType) async -> UIImage? {
+        await withCheckedContinuation { continuation in
+            user.fetchProfileImage(
+                session: userSession,
+                imageCache: UIImage.defaultUserImageCache,
+                sizeLimit: 32,
+                isDesaturated: false
+            ) { image, _ in
+                continuation.resume(returning: image)
+            }
+        }
+    }
 
 }

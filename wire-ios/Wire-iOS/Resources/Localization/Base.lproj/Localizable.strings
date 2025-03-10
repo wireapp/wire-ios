@@ -1649,21 +1649,10 @@
 "error.user.account_suspended" = "This account is no longer authorized to log in.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Couldn’t update your password.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Too many people to call";
 "error.group_call.too_many_members_in_conversation" = "Calls work in conversations with up to %d people.";
 "error.group_call.too_many_participants_in_the_call.title" = "The call is full";
 "error.group_call.too_many_participants_in_the_call" = "There’s only room for %d participants in here.";
-"error.call.gsm_ongoing.title" = "Cellular call";
-"error.call.gsm_ongoing" = "Please cancel the cellular call before calling on Wire.";
-"error.call.general.title" = "Call error";
-"error.call.general" = "Please try calling again in several minutes.";
-"error.call.slow_connection.title" = "Slow connection";
-"error.call.slow_connection" = "You might experience issues during the call";
-"error.call.slow_connection.call_anyway" = "Call anyway";
 
 "error.invite.no_email_provider" = "Please configure your email client to be able to send the invites via email";
 "error.invite.no_messaging_provider" = "Please configure your SMS to be able to send the invites via SMS";

@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import WireDataModel
 
-@testable import WireConversationListUI
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() {}
+// sourcery: AutoMockable
+protocol GetParticipantImageSourceRepositoryProtocol {
+    func invoke(user: UserType) async -> UIImage?
 }

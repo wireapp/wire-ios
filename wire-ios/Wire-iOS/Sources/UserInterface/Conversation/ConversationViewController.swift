@@ -97,6 +97,7 @@ final class ConversationViewController: UIViewController {
     private var conversationObserverToken: Any?
     private var conversationListObserverToken: Any?
     private var userObservationToken: NSObjectProtocol?
+    private var selfUserObservationToken: NSObjectProtocol?
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
@@ -175,6 +176,11 @@ final class ConversationViewController: UIViewController {
         definesPresentationContext = true
 
         update(conversation: conversation)
+
+        if let user = conversation.firstActiveParticipantOtherThanSelf {
+            titleView.updateOtherUserAccentColor(user.accentColor)
+        }
+        titleView.updateSelfUserAccentColor(userSession.selfUser.accentColor)
     }
 
     @available(*, unavailable)
@@ -201,7 +207,10 @@ final class ConversationViewController: UIViewController {
             userObservationToken = userSession.addUserObserver(self, for: participant)
         }
 
+        selfUserObservationToken = userSession.addUserObserver(self, for: userSession.selfUser)
+
         startCallController = ConversationCallController(conversation: conversation, target: self)
+
     }
 
     override func viewDidLoad() {
@@ -428,7 +437,7 @@ final class ConversationViewController: UIViewController {
         titleView.menuProvider = { menu }
     }
 
-    private func setupNavigationItem() {
+    private func setupNavigationItem(isAfterTitleRelatedDataChanged: Bool = false) {
         setupTitleViewTap()
 
         if conversation.conversationType == .oneOnOne {
@@ -441,7 +450,9 @@ final class ConversationViewController: UIViewController {
                 }
                 let imageSource = await getParticipantImageSourceUseCase
                     .invoke(user: user)
-                if imageSource == nil, titleView.source.accountImageSource != nil {
+                if isAfterTitleRelatedDataChanged,
+                   case .text = imageSource,
+                   case .image = titleView.source.accountImageSource {
                     // no need to update because of the way updates come when avatar is changed (in several events)
                     // if we get empty image after update but previously there was an image, we need to skip
                     // so with next update event (which comes right after) we get updated image
@@ -645,7 +656,7 @@ extension ConversationViewController: ZMConversationObserver {
             note.securityLevelChanged ||
             note.connectionStateChanged ||
             note.legalHoldStatusChanged {
-            setupNavigationItem()
+            setupNavigationItem(isAfterTitleRelatedDataChanged: true)
         }
 
         if note.mlsVerificationStatusChanged {
@@ -674,9 +685,17 @@ extension ConversationViewController: ZMConversationListObserver {
 extension ConversationViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.accentColorValueChanged {
+            if changeInfo.user.isSelfUser {
+                titleView.updateSelfUserAccentColor(changeInfo.user.accentColor)
+            } else {
+                titleView.updateOtherUserAccentColor(changeInfo.user.accentColor)
+            }
+        }
+
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged ||
             changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
-            setupNavigationItem()
+            setupNavigationItem(isAfterTitleRelatedDataChanged: true)
         }
     }
 }

@@ -22,27 +22,19 @@ import WireSyncEngine
 
 class GetParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol {
 
-    private let userSession: UserSession
+    private let repository: GetParticipantImageSourceRepositoryProtocol
 
-    init(userSession: UserSession) {
-        self.userSession = userSession
+    init(repository: GetParticipantImageSourceRepositoryProtocol) {
+        self.repository = repository
     }
 
     @MainActor
     func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
-        await withCheckedContinuation { continuation in
-            user.fetchProfileImage(
-                session: userSession,
-                imageCache: UIImage.defaultUserImageCache,
-                sizeLimit: 32,
-                isDesaturated: false
-            ) { image, _ in
-                if let image {
-                    continuation.resume(returning: WireAccountImageUI.AccountImageSource.image(image))
-                } else {
-                    continuation.resume(returning: nil)
-                }
-            }
+        let image = await repository.invoke(user: user)
+        if let image {
+            return WireAccountImageUI.AccountImageSource.image(image)
+        } else {
+            return WireAccountImageUI.AccountImageSource.text(user.initials ?? "")
         }
     }
 }

@@ -60,7 +60,9 @@ final class ConversationRootViewController: UIViewController {
             classificationProvider: ZMUserSession.shared(),
             networkStatusObservable: NetworkStatus.shared,
             getParticipantImageSourceUseCase: GetParticipantImageSourceUseCase(
-                userSession: userSession
+                repository: GetParticipantImageSourceRepository(
+                    userSession: userSession
+                )
             )
         )
 

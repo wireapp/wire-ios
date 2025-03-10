@@ -17,13 +17,7 @@
 //
 
 import Foundation
-import class WireTransport.ZMReachability
 
-extension ZMReachability: ServerConnection {
-
-    public var isOffline: Bool {
-        !mayBeReachable
-    }
-
-    // isMobileConnection is declared already
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .path

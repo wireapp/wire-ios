@@ -61,7 +61,7 @@ public class ConversationTitleView: UIView {
         nameLabel.text = source.title
 
         subtitleLabel.font = .boldSystemFont(ofSize: 9)
-        subtitleLabel.textColor = SemanticColors.Accent.blue
+        subtitleLabel.textColor = .white
         subtitleLabel.text = source.subtitle
         subtitleLabel.isHidden = source.subtitle == nil
 
@@ -71,6 +71,11 @@ public class ConversationTitleView: UIView {
         }
         accountImageView.hideProfileNotificationsBadge = true
         accountImageView.isHidden = source.accountImageSource == nil
+
+        let design = AccountImageViewDesign()
+        accountImageView.imageBorderWidth = design.borderWidth
+        accountImageView.imageBorderColor = design.borderColor
+        accountImageView.initialsTextColor = .white
     }
 
     private func configureLayout() {
@@ -113,6 +118,14 @@ public class ConversationTitleView: UIView {
         accountImageView.isHidden = source.accountImageSource == nil
         nameLabel.text = source.title
         subtitleLabel.text = source.subtitle
+    }
+
+    public func updateOtherUserAccentColor(_ color: UIColor) {
+        accountImageView.initialsBackgroundColor = color
+    }
+
+    public func updateSelfUserAccentColor(_ color: UIColor) {
+        subtitleLabel.textColor = color
     }
 
     private func updateAvatar(source: AccountImageSource, animated: Bool) {
