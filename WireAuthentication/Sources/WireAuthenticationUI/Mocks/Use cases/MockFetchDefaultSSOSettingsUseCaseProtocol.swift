@@ -17,19 +17,3 @@
 //
 
 import Foundation
-
-// TODO: [WPB-16272] Remove duplication
-
-/// Proxy settings for communicating with a backend server.
-
-public enum LocalProxySettings {
-
-    /// Settings for an unauthenticated proxy.
-
-    case unauthenticated(host: String, port: Int)
-
-    /// Settings for an authenticated proxy.
-
-    case authenticated(host: String, port: Int, username: String, password: String)
-
-}

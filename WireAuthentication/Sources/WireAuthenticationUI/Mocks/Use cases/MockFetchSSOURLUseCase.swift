@@ -16,18 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-
-public struct SwitchBackendConfirmationPreview: View {
-    public init() {}
-
-    public var body: some View {
-        VStack {
-            MockDependencies().switchBackendView(
-                email: "email.com",
-                environment: MockDependencies()._backendConfig
-            )
-        }
-    }
-
-}
+import Foundation

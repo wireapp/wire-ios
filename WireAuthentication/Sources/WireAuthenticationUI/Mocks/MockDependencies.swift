@@ -27,15 +27,22 @@ final class MockDependencies {
         RootViewModel()
     }
 
-    private var backendEnvironment: LocalBackendEnvironment {
-        _backendEnvironment
+    private var backendConfig: BackendConfig {
+        _backendConfig
     }
 
-    var _backendEnvironment = LocalBackendEnvironment(
+    var _backendConfig = BackendConfig(
         title: "backen name",
-        url: URL(string: "https://example.com")!,
-        accountsURL: URL(string: "https://example.com")!,
-        proxySettings: nil
+        endpoints: Endpoints(
+            backendURL: URL(string: "https://example.com")!,
+            backendWSURL: URL(string: "https://example.com")!,
+            blackListURL: URL(string: "https://example.com")!,
+            teamsURL: URL(string: "https://example.com")!,
+            accountsURL: URL(string: "https://example.com")!,
+            websiteURL: URL(string: "https://example.com")!
+        ),
+        proxySettings: nil,
+        pinnedKeys: nil
     )
 
     var rootView: RootView {
@@ -88,6 +95,11 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
         MockSSOLinkGenerator()
     }
 
+    nonisolated
+    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
+        MockFetchBackendConfigUseCase()
+    }
+
 }
 
 extension MockDependencies: LoginViaEmailUseCaseProtocol {
@@ -123,6 +135,52 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
             factory: self
+        )
+    }
+
+}
+
+extension MockDependencies: FetchDefaultSSOSettingsUseCaseProtocol {
+
+    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
+        nil
+    }
+
+}
+
+extension MockDependencies: SwitchBackendConfirmationBuilder {
+
+    private func switchBackendConfirmationViewModel(
+        email: String,
+        environment: BackendConfig
+    ) -> SwitchBackendConfirmationViewModel {
+        SwitchBackendConfirmationViewModel(
+            router: rootViewModel,
+            email: email,
+            fetchDefaultSSOSettings: self,
+            ssoLinkGenerator: self,
+            environment: BackendConfig(
+                title: environment.title,
+                endpoints: Endpoints(
+                    backendURL: environment.endpoints.backendURL,
+                    backendWSURL: environment.endpoints.backendWSURL,
+                    blackListURL: environment.endpoints.blackListURL,
+                    teamsURL: environment.endpoints.teamsURL,
+                    accountsURL: environment.endpoints.accountsURL,
+                    websiteURL: environment.endpoints.websiteURL
+                ),
+                proxySettings: nil,
+                pinnedKeys: nil
+            )
+        )
+    }
+
+    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(
+            viewModel: switchBackendConfirmationViewModel(
+                email: email,
+                environment: environment
+            )
         )
     }
 
@@ -230,22 +288,25 @@ extension MockDependencies: VerificationCodeBuilder {
 
 }
 
-extension MockDependencies: LoginViaEmailOnPremViewBuilder {
+extension MockDependencies: LoginViaEmailOnPremBuilder {
 
-    private func loginViaEmailOnPremViewModel(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremViewModel {
+    private func loginViaEmailOnPremViewModel(
+        email: String,
+        backendConfig: BackendConfig
+    ) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
             email: email,
-            backendEnvironment: backendEnvironment,
+            backendConfig: backendConfig,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: canCreateAccount
+            canCreateAccount: false
         )
     }
 
-    func loginViaEmailOnPremView(email: String, canCreateAccount: Bool) -> LoginViaEmailOnPremView {
+    func loginViaEmailOnPremView(email: String, backendConfig: BackendConfig) -> LoginViaEmailOnPremView {
         LoginViaEmailOnPremView(
-            viewModel: loginViaEmailOnPremViewModel(email: email, canCreateAccount: canCreateAccount)
+            viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
         )
     }
 }

@@ -72,6 +72,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         LoginViaSSOComponent()
     }
 
+    func switchBackendConfirmationComponent(backendConfig: BackendConfig) -> SwitchBackendConfirmationComponent {
+        SwitchBackendConfirmationComponent(parent: self, backendConfig: backendConfig)
+    }
+
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
@@ -115,6 +119,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
+    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
+        FetchBackendConfigUseCase()
+    }
+
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
@@ -135,6 +143,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent.view(ssoURL: ssoURL)
+    }
+
+    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView {
+        switchBackendConfirmationComponent(backendConfig: environment).view(email: email)
     }
 
 }

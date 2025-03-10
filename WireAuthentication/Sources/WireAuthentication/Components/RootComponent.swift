@@ -105,6 +105,14 @@ class RootComponent: BootstrapComponent {
         NoHistoryComponent(parent: self)
     }
 
+    var loginViaEmailOnPremComponent: LoginViaEmailOnPremComponent {
+        LoginViaEmailOnPremComponent(parent: self)
+    }
+
+    var loginViaSSOComponent: LoginViaSSOComponent {
+        LoginViaSSOComponent()
+    }
+
 }
 
 extension RootComponent: RootView.Factory {
@@ -127,6 +135,18 @@ extension RootComponent: RootView.Factory {
             didDetectDomainConflict: didDetectDomainConflict,
             onFlowCompletion: bridge.onFlowCompletion
         )
+    }
+
+    @MainActor
+    func loginViaEmailOnPremView(
+        email: String,
+        backendConfig: BackendConfig
+    ) -> LoginViaEmailOnPremView {
+        loginViaEmailOnPremComponent.view(email: email, backendConfig: backendConfig)
+    }
+
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
 }

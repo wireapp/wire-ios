@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-public struct SwitchBackendConfirmationPreview: View {
-    public init() {}
+public protocol FetchDefaultSSOSettingsUseCaseProtocol: Sendable {
 
-    public var body: some View {
-        VStack {
-            MockDependencies().switchBackendView(
-                email: "email.com",
-                environment: MockDependencies()._backendConfig
-            )
-        }
-    }
+    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID?
+
+}
+
+public enum FetchDefaultSSOSettingsUseCaseFailure: Error {
+
+    case noInternet
+    case unknown
 
 }
