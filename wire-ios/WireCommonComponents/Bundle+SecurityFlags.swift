@@ -29,6 +29,7 @@ public enum SecurityFlags {
     case locationSharing
     case forceCallKitDisabled
     case clipboard
+    case collapseOwnMessages
 
     /// Whether encryption at rest is enabled and can't be disabled.
 
@@ -62,6 +63,8 @@ public enum SecurityFlags {
             "MinTLSVersion"
         case .clipboard:
             "ClipboardEnabled"
+        case .collapseOwnMessages:
+            "CollapseOwnMessages"
         }
     }
 

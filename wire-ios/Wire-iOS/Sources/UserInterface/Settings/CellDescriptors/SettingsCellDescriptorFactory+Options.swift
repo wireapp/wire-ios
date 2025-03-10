@@ -42,7 +42,8 @@ extension SettingsCellDescriptorFactory {
             popularDemandSendButtonSection,
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
-            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil
+            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
+            collapseSelfMessageSection
         ].compactMap { $0 }
 
         return SettingsGroupCellDescriptor(
@@ -258,6 +259,18 @@ extension SettingsCellDescriptorFactory {
             cellDescriptors: [linkPreviewToggle],
             header: nil,
             footer: L10n.Localizable.Self.Settings.PrivacySecurity.DisableLinkPreviews.footer
+        )
+    }
+
+    private var collapseSelfMessageSection: SettingsSectionDescriptorType {
+        let collapseToggle = SettingsPropertyToggleCellDescriptor(
+            settingsProperty: settingsPropertyFactory.property(.collapseOwnMessages)
+        )
+
+        return SettingsSectionDescriptor(
+            cellDescriptors: [collapseToggle],
+            header: nil,
+            footer: L10n.Localizable.Self.Settings.PrivacySecurity.CollapseOwnMessages.footer
         )
     }
 

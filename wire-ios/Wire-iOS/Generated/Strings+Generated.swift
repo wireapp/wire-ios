@@ -5653,6 +5653,12 @@ internal enum L10n {
         internal enum PrivacySecurity {
           /// Lock With Passcode
           internal static let lockApp = L10n.tr("Localizable", "self.settings.privacy_security.lock_app", fallback: "Lock With Passcode")
+          internal enum CollapseOwnMessages {
+            /// If this is enabled, all your messages are collapsed to a single line.
+            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "If this is enabled, all your messages are collapsed to a single line.")
+            /// Collapse own messages
+            internal static let title = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.title", fallback: "Collapse own messages")
+          }
           internal enum DisableLinkPreviews {
             /// Previews may still be shown for links from other people.
             internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.disable_link_previews.footer", fallback: "Previews may still be shown for links from other people.")
