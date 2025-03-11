@@ -19,47 +19,57 @@
 import WireAPI
 import WireAPISupport
 import WireAuthenticationAPI
+import WireAuthenticationAPISupport
 import WireTestingPackage
 import XCTest
 
 @testable import WireAuthenticationLogic
 
-final class FetchDefaultSSOSettingsUseCaseTests: XCTestCase {
+final class FetchSSOURLUseCaseTests: XCTestCase {
 
-    private var mockAuthenticationAPI: MockAuthenticationAPI!
-    private var sut: FetchDefaultSSOSettingsUseCase!
+    private var authenticationAPI: MockAuthenticationAPI!
+    private var linkGenerator: MockSSOLinkGeneratorProtocol!
+    private var sut: FetchSSOURLUseCase!
 
     override func setUp() {
-        mockAuthenticationAPI = MockAuthenticationAPI()
-
-        sut = FetchDefaultSSOSettingsUseCase(authenticationAPI: mockAuthenticationAPI)
+        authenticationAPI = MockAuthenticationAPI()
+        linkGenerator = MockSSOLinkGeneratorProtocol()
+        sut = FetchSSOURLUseCase(
+            authenticationAPI: authenticationAPI,
+            linkGenerator: linkGenerator
+        )
     }
 
     override func tearDown() {
-        mockAuthenticationAPI = nil
+        authenticationAPI = nil
+        linkGenerator = nil
         sut = nil
     }
 
     func testInvoke_whenSuccess() async throws {
         // given
-        let expectedCode = UUID(uuidString: "234-123-567")
-        mockAuthenticationAPI.getSSOCode_MockValue = expectedCode
+        let ssoCode = UUID()
+
+        // mock
+        authenticationAPI.getSSOCode_MockValue = ssoCode
+        linkGenerator.generateSSOLinkSSOCode_MockValue = URL(string: "www.wire.com/ssoURL/\(ssoCode.uuidString)")!
 
         // when
-        let ssoCode = try await sut.invoke()
+        let ssoURL = try await sut.invoke()
 
         // then
-        XCTAssertEqual(ssoCode, expectedCode)
+        XCTAssertEqual(ssoURL, URL(string: "www.wire.com/ssoURL/\(ssoCode.uuidString)"))
     }
 
     func testInvoke_whenFailure() async throws {
-        // given
-        mockAuthenticationAPI.getSSOCode_MockError = FetchDefaultSSOSettingsUseCaseFailure.unknown
+        // mock
+        authenticationAPI.getSSOCode_MockValue = .some(nil)
 
-        // when, then
-        await XCTAssertThrowsErrorAsync(FetchDefaultSSOSettingsUseCaseFailure.unknown) { [self] in
-            _ = try await sut.invoke()
-        }
+        // when
+        let ssoURL = try await sut.invoke()
+
+        // then
+        XCTAssertNil(ssoURL)
     }
 
 }

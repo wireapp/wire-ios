@@ -157,3 +157,15 @@ extension UIImage {
         }
     }
 }
+
+extension UIImage {
+
+    func verticallyInverted() -> UIImage {
+        UIGraphicsImageRenderer(size: size).image { rendererContext in
+            rendererContext.cgContext.translateBy(x: size.width / 2, y: size.height / 2)
+            rendererContext.cgContext.scaleBy(x: 1.0, y: -1.0)
+            rendererContext.cgContext.translateBy(x: -size.width / 2, y: -size.height / 2)
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+}

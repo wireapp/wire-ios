@@ -16,14 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import class WireTransport.ZMReachability
+import WireDataModel
 
-extension ZMReachability: ServerConnection {
-
-    public var isOffline: Bool {
-        !mayBeReachable
-    }
-
-    // isMobileConnection is declared already
+// sourcery: AutoMockable
+protocol GetParticipantImageSourceRepositoryProtocol {
+    func invoke(user: UserType) async -> UIImage?
 }

@@ -30,9 +30,7 @@ typedef void (^ReachabilityObserverBlock)(id<ReachabilityProvider> provider);
 @protocol ReachabilityProvider
 
 @property (atomic, readonly) BOOL mayBeReachable;
-@property (atomic, readonly) BOOL isMobileConnection;
 @property (atomic, readonly) BOOL oldMayBeReachable;
-@property (atomic, readonly) BOOL oldIsMobileConnection;
 
 /// Register to observe when reachability status changes.
 /// Returns a token which should be retained as long as the observer should be active.
@@ -54,9 +52,7 @@ typedef void (^ReachabilityObserverBlock)(id<ReachabilityProvider> provider);
 /// When this returns @c NO some of the named servers are definetly not reachable.
 /// In reverse, this returns @c YES when there's a chance that we may be able to connect to at least one of the named servers.
 @property (atomic, readonly) BOOL mayBeReachable;
-@property (atomic, readonly) BOOL isMobileConnection;
 @property (atomic, readonly) BOOL oldMayBeReachable;
-@property (atomic, readonly) BOOL oldIsMobileConnection;
 
 @end
 

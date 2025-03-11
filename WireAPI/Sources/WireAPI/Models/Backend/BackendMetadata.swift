@@ -38,4 +38,16 @@ public struct BackendMetadata: Equatable, Sendable {
 
     public let developmentVersions: Set<APIVersion>
 
+    public init(
+        domain: String,
+        isFederationEnabled: Bool,
+        supportedVersions: Set<APIVersion>,
+        developmentVersions: Set<APIVersion>
+    ) {
+        self.domain = domain
+        self.isFederationEnabled = isFederationEnabled
+        self.supportedVersions = supportedVersions
+        self.developmentVersions = developmentVersions
+    }
+
 }
