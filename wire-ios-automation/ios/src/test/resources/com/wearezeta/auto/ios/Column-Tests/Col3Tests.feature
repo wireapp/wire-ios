@@ -332,7 +332,7 @@ Feature: Col 3 Tests
     And I open conversation "<GroupConversationWithClassified>" in conversation list
     And I tap Audio Message button from input tools
     And I accept alert
-    And I tap Audio Call button
+    When I start a call
     And I accept alert
     And <TeamOwner2>,<Member3> verify that waiting instance status is changed to active in 30 seconds
     When I see Calling overlay
@@ -368,7 +368,7 @@ Feature: Col 3 Tests
     And I open conversation "<GroupConversationWithOwnUnclassifiedOwnDomain>" in conversation list
     And I tap Audio Message button from input tools
     And I accept alert
-    And I tap Audio Call button
+    When I start a call
     And <Member1>,<Member2> verify that waiting instance status is changed to active in 30 seconds
     When I see Calling overlay
     Then I see SECURITY LEVEL: UNCLASSIFIED label on calling overlay
@@ -474,7 +474,7 @@ Feature: Col 3 Tests
     And I open conversation "<GroupChat>" in conversation list
     And <TeamOwner1>,<Member1>,<Member2> starts 2FA instance using <CallBackend>
     And <TeamOwner1>,<Member1>,<Member2> accepts next incoming call automatically
-    When I tap Audio Call button
+    When I start a call
     And I accept alert if visible
     And I accept alert if visible
     Then I see SECURITY LEVEL: UNCLASSIFIED label on calling overlay
@@ -559,7 +559,7 @@ Feature: Col 3 Tests
     And I open conversation "<TeamOwner2>" in conversation list
     And <TeamOwner2> starts 2FA instance using <CallBackend>
     And <TeamOwner2> accepts next incoming call automatically
-    When I tap Audio Call button
+    When I start a call
     And I accept alert if visible
     Then I see SECURITY LEVEL: UNCLASSIFIED label on calling overlay
     When <TeamOwner2> verifies that waiting instance status is changed to active in 20 seconds

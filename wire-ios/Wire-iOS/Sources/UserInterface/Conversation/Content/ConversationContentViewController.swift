@@ -500,6 +500,77 @@ extension ConversationContentViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         willSelectRow(at: indexPath, tableView: tableView)
     }
+
+    func tableView(
+        _ tableView: UITableView,
+        leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+
+        let sections = dataSource.currentSections
+        guard
+            sections.indices.contains(indexPath.section),
+            sections[indexPath.section].elements.indices.contains(indexPath.row),
+            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
+            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
+            actionController.message.canAddReaction
+        else { return nil }
+
+        // setting an empty title string since it would be displayed upside down
+        // TODO: [WPB-16341] set "Reply" as text for accessibility reasons
+        let replyAction = UIContextualAction(style: .normal, title: "") { _, _, completionHandler in
+            actionController.perform(action: .reply)
+            completionHandler(true)
+        }
+
+        // since the table view is flipped vertically we also render the image flipped
+        // TODO: [WPB-16341] use the arrowImage, remove the upsideDownImage
+        let arrowImage = UIImage(systemName: "arrowshape.turn.up.backward.fill")!
+            .withTintColor(.white, renderingMode: .alwaysTemplate)
+            .verticallyInverted()
+
+        replyAction.image = arrowImage
+        replyAction.backgroundColor = UIColor.accent()
+        return UISwipeActionsConfiguration(actions: [replyAction])
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        let sections = dataSource.currentSections
+        guard
+            sections.indices.contains(indexPath.section),
+            sections[indexPath.section].elements.indices.contains(indexPath.row),
+            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
+            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
+            actionController.canPerformAction(action: .react("❤️"))
+        else { return nil }
+
+        // since the table view is flipped vertically we also render the image flipped
+        // TODO: [WPB-16341] use the real image, remove the upsideDownImage
+        let reactImage = UIImage(resource: .addEmojis)
+            .withTintColor(.white, renderingMode: .alwaysTemplate)
+            .verticallyInverted()
+
+        let reactAction = UIContextualAction(style: .normal, title: "") { [weak self] _, _, completionHandler in
+            guard let delegate = self?.delegate else {
+                completionHandler(false)
+                return
+            }
+            completionHandler(true)
+            // Since view is swipable, we need to wait for it to go back
+            // so we can show popover from cell's original place and not from swiped position
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                let popoverInfo = tableView.cellForRow(at: indexPath).map {
+                    (sourceView: tableView, frame: $0.frame)
+                }
+                delegate.didSwipeToReact(actionController: actionController, popoverPresentationInfo: popoverInfo)
+            }
+        }
+        reactAction.image = reactImage
+        reactAction.backgroundColor = UIColor.accent()
+        return UISwipeActionsConfiguration(actions: [reactAction])
+    }
 }
 
 extension ConversationContentViewController: UITableViewDataSourcePrefetching {

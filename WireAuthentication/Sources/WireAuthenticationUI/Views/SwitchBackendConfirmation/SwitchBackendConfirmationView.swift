@@ -23,7 +23,10 @@ import WireDesign
 package protocol SwitchBackendConfirmationBuilder {
 
     @MainActor
-    func switchBackendView(email: String, environment: BackendConfig) -> SwitchBackendConfirmationView
+    func switchBackendView(
+        email: String,
+        backendConfig: BackendConfig
+    ) -> SwitchBackendConfirmationView
 
 }
 
@@ -200,7 +203,7 @@ package func makeSwitchBackendConfirmationViewPreview(
 ) -> some View {
     MockDependencies().switchBackendView(
         email: "email.com",
-        environment: BackendConfig(
+        backendConfig: BackendConfig(
             title: backendName,
             endpoints: Endpoints(
                 backendURL: backendURL,

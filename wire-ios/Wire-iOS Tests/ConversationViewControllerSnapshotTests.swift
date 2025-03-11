@@ -78,7 +78,8 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
-            networkStatusObservable: MockNetworkStatusObservable()
+            networkStatusObservable: MockNetworkStatusObservable(),
+            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol()
         )
     }
 

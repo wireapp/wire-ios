@@ -17,11 +17,18 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-// sourcery: AutoMockable
-public protocol ServerConnection {
+struct MockValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
 
-    var isMobileConnection: Bool { get }
-    var isOffline: Bool { get }
+    func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if input.contains("@") {
+            return .email(email: input, domain: input.components(separatedBy: "@").last!)
+        } else if input.hasSuffix("wire") {
+            return .ssoCode(UUID())
+        } else {
+            throw ValidatedEmailOrSSOCodeFailure.invalidInput
+        }
+    }
 
 }
