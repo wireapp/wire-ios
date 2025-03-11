@@ -28,9 +28,6 @@ public class ConversationViewPage extends IOSPage {
     @iOSXCUITFindBy(accessibility = "Call")
     private WebElement startCallButton;
 
-    @iOSXCUITFindBy(accessibility = "audioCallBarButton")
-    private WebElement audioCallButton;
-
     @iOSXCUITFindBy(accessibility = "videoCallBarButton")
     private WebElement videoCallButton;
 
@@ -807,16 +804,12 @@ public class ConversationViewPage extends IOSPage {
         return waitUntilNumberOfElementsToBe(namePlaceholderImageCell, expectedCount);
     }
 
-    public void tapAudioButton() {
-        audioCallButton.click();
-    }
-
     public void tapStartCallButton() {
         startCallButton.click();
     }
 
-    public void tapVideoCallButton() {
-        tapAtTheCenterOfElement(videoCallButton);
+    public void startCall() {
+        videoCallButton.click();
     }
 
     public void tapCancelButton() {

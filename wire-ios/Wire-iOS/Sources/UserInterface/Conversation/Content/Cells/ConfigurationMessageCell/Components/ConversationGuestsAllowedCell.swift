@@ -61,8 +61,6 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     typealias Configuration = Void
 
-    weak var cellDescription: GuestsAllowedCellDescription?
-
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?

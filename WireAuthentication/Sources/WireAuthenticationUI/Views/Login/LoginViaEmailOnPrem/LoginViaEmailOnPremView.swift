@@ -17,15 +17,17 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
-package protocol LoginViaEmailOnPremViewBuilder {
+package protocol LoginViaEmailOnPremBuilder {
 
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
-        canCreateAccount: Bool
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremView
 
 }
@@ -135,7 +137,9 @@ package struct LoginViaEmailOnPremView: View {
     // TODO: [WPB-16256] Implement proxy support
     @ViewBuilder private var submitButton: some View {
         Button(action: {
-            viewModel.submitPassword(password)
+            Task {
+                await viewModel.submitPassword(password)
+            }
         }, label: {
             Text(L10n.CloudUserLogin.submit)
                 .lineLimit(nil)
@@ -230,7 +234,8 @@ package struct LoginViaEmailOnPremView: View {
         .sheet(isPresented: .constant(true)) {
             MockDependencies().loginViaEmailOnPremView(
                 email: "foo@bar.com",
-                canCreateAccount: false
+                backendConfig: MockDependencies()._backendConfig,
+                backendMetadata: nil
             )
         }
 }

@@ -47,7 +47,6 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
-    weak var cellDescription: ConversationImageMessageCellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
@@ -188,6 +187,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
     }
 
+    let isAccessibilityElement = true
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, image: ZMImageMessageData) {

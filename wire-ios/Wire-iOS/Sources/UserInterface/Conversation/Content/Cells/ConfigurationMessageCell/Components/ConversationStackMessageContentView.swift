@@ -29,8 +29,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
 
     var isSelected = false
 
-    weak var cellDescription: StackViewCellDescription?
-
     var message: (any ZMConversationMessage)? {
         didSet { conversationMessageCells.forEach { $0.message = message } }
     }
@@ -64,6 +62,9 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         for cellDescription in configuration {
             let contentView = cellDescription.makeView(frame: .zero)
             cellDescription.configureContentView(contentView)
+            contentView.isAccessibilityElement = cellDescription.cellIsAccessibilityElement
+            contentView.accessibilityLabel = cellDescription.cellAccessibilityLabel
+            contentView.accessibilityIdentifier = cellDescription.cellAccessibilityIdentifier
 
             let lastArrangedSubview = stackView.arrangedSubviews.last
 
@@ -78,7 +79,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
             stackView.layoutIfNeeded()
         }
 
-        // set ephemeralTimerTopInset
         if
             let index = configuration.firstIndex(where: \.showEphemeralTimer),
             let contentView = stackView.arrangedSubviews[index] as? any ConversationMessageCell {

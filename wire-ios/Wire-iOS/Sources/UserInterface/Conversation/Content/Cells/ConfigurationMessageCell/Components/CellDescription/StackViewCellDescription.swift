@@ -36,8 +36,7 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
     }
 
     var showEphemeralTimer: Bool {
-        get { cellDescriptions.contains(where: \.showEphemeralTimer) }
-        set { fatalError("TODO?") }
+        cellDescriptions.contains(where: \.showEphemeralTimer)
     }
 
     var containsHighlightableContent: Bool {
@@ -104,15 +103,6 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
 
     init(cellDescriptions: [AnyConversationMessageCellDescription]) {
         self.configuration = cellDescriptions
-    }
-
-    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
-        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
-        cell.cellView.delegate = delegate
-        cell.cellView.message = message
-        cell.cellView.actionController = actionController
-        return cell
     }
 
 }

@@ -17,68 +17,144 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
+import WireLogging
 
-public class SwitchBackendConfirmationViewModel {
+@MainActor
+package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     private typealias Strings = L10n.SwitchBackendConfirmation
+
+    package typealias Factory =
+        FetchSSOURLUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
 
     // MARK: - State
 
     let items: [ItemUIModel]
 
-    private let action: (Event) -> Void
+    private let router: any Router
+    private let factory: any Factory
+    private let email: String
+    private let backendConfig: BackendConfig
+
+    @Published private(set) var isLoading = false
+    @Published var alert: Alert?
 
     // MARK: - Life cycle
 
-    convenience init(
-        environment: BackendEnvironmentInfo,
-        action: @escaping (Event) -> Void
+    package init(
+        router: any Router,
+        factory: any Factory,
+        email: String,
+        backendConfig: BackendConfig
     ) {
-        self.init(
-            backendName: environment.title,
-            backendURL: environment.backendURL.absoluteString,
-            backendWSURL: environment.backendWSURL.absoluteString,
-            blacklistURL: environment.blacklistURL.absoluteString,
-            teamsURL: environment.teamsURL.absoluteString,
-            accountsURL: environment.accountsURL.absoluteString,
-            websiteURL: environment.websiteURL.absoluteString,
-            action: action
-        )
-    }
-
-    public init(
-        backendName: String,
-        backendURL: String,
-        backendWSURL: String,
-        blacklistURL: String,
-        teamsURL: String,
-        accountsURL: String,
-        websiteURL: String,
-        action: @escaping (Event) -> Void
-    ) {
-        self.action = action
+        self.router = router
+        self.factory = factory
+        self.email = email
+        self.backendConfig = backendConfig
         self.items = [
-            ItemUIModel(title: Strings.backendName, value: backendName, isURL: false),
-            ItemUIModel(title: Strings.backendUrl, value: backendURL, isURL: true),
-            ItemUIModel(title: Strings.backendWsurl, value: backendWSURL, isURL: true),
-            ItemUIModel(title: Strings.blacklistUrl, value: blacklistURL, isURL: true),
-            ItemUIModel(title: Strings.teamsUrl, value: teamsURL, isURL: true),
-            ItemUIModel(title: Strings.accountsUrl, value: accountsURL, isURL: true),
-            ItemUIModel(title: Strings.websiteUrl, value: websiteURL, isURL: true)
+            ItemUIModel(
+                title: Strings.backendName,
+                value: backendConfig.title,
+                isURL: false
+            ),
+            ItemUIModel(
+                title: Strings.backendUrl,
+                value: backendConfig.endpoints.backendURL.absoluteString,
+                isURL: true
+            ),
+            ItemUIModel(
+                title: Strings.backendWsurl,
+                value: backendConfig.endpoints.backendWSURL.absoluteString,
+                isURL: true
+            ),
+            ItemUIModel(
+                title: Strings.blacklistUrl,
+                value: backendConfig.endpoints.blackListURL.absoluteString,
+                isURL: true
+            ),
+            ItemUIModel(
+                title: Strings.teamsUrl,
+                value: backendConfig.endpoints.teamsURL.absoluteString,
+                isURL: true
+            ),
+            ItemUIModel(
+                title: Strings.accountsUrl,
+                value: backendConfig.endpoints.accountsURL.absoluteString,
+                isURL: true
+            ),
+            ItemUIModel(
+                title: Strings.websiteUrl,
+                value: backendConfig.endpoints.websiteURL.absoluteString,
+                isURL: true
+            )
         ]
     }
 
-    // MARK: - Events
+    func confirm() async {
+        isLoading = true
 
-    public enum Event {
+        defer {
+            isLoading = false
+        }
 
-        case didCancel
-        case didConfirm
+        // If authenticated proxy is required, go straight to email login because we need to
+        // get proxy credentials first.
+        if let proxySettings = backendConfig.proxySettings, proxySettings.needsAuthentication {
+            router.presentSheet(
+                RootView.ModalDestination.onPremiseLogin(
+                    email: email,
+                    environment: backendConfig,
+                    backendMetadata: nil
+                )
+            )
+        } else {
+            // Before we can make requests we need to resolve the api version.
+            let backendMetadata: BackendMetadata
+            do {
+                backendMetadata = try await resolveBackendMetadata()
+            } catch {
+                // TODO: [WPB-16415] handle unresolved api version
+                fatalError()
+            }
 
+            do {
+                if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
+                    router.presentSheet(
+                        RootView.ModalDestination.ssoLogin(
+                            url: ssoURL,
+                            BackendMetadata: backendMetadata
+                        )
+                    )
+                } else {
+                    router.presentSheet(
+                        RootView.ModalDestination.onPremiseLogin(
+                            email: email,
+                            environment: backendConfig,
+                            backendMetadata: backendMetadata
+                        )
+                    )
+                }
+            } catch {
+                WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
+                alert = .unknownError
+            }
+        }
     }
 
-    func handleEvent(_ event: Event) {
-        action(event)
+    private func resolveBackendMetadata() async throws -> BackendMetadata {
+        let useCase = factory.resolveBackendMetadataUseCase()
+        return try await Task.detached {
+            try await useCase.invoke()
+        }.value
+    }
+
+    private func fetchSSOURL(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) async throws -> URL? {
+        let useCase = factory.fetchSSOURLUseCase(apiVersion: apiVersion)
+        return try await Task.detached {
+            try await useCase.invoke()
+        }.value
     }
 
     // MARK: - Model
@@ -87,6 +163,24 @@ public class SwitchBackendConfirmationViewModel {
         let title: String
         let value: String
         let isURL: Bool
+    }
+
+}
+
+// MARK: Alerts
+
+package extension SwitchBackendConfirmationViewModel {
+
+    struct Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        let title: String
+        let message: String
+
+        private typealias Title = L10n.Authentication.Error.Title
+        private typealias Message = L10n.Authentication.Error.Message
+
+        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }

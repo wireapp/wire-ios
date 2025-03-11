@@ -23,12 +23,12 @@ extension UITableViewCell {
 
     @objc
     func willDisplayCell() {
-        // to be overriden in subclasses
+        // to be overridden in subclasses
     }
 
     @objc
     func didEndDisplayingCell() {
-        // to be overriden in subclasses
+        // to be overridden in subclasses
     }
 
 }
@@ -40,7 +40,6 @@ final class ConversationMessageCellTableViewAdapter<
     let cellView: C.View
     let ephemeralCountdownView: EphemeralCountdownView
 
-    // TODO: [WPB-16380] delete if possible
     var cellDescription: C? {
         didSet {
             longPressGesture.isEnabled = cellDescription?.supportsActions == true
@@ -52,26 +51,6 @@ final class ConversationMessageCellTableViewAdapter<
     var topMargin: CGFloat = 0 {
         didSet {
             top.constant = CGFloat(topMargin)
-        }
-    }
-
-    override var accessibilityIdentifier: String? {
-        get {
-            cellDescription?.accessibilityIdentifier
-        }
-
-        set {
-            super.accessibilityIdentifier = newValue
-        }
-    }
-
-    override var accessibilityLabel: String? {
-        get {
-            cellDescription?.accessibilityLabel
-        }
-
-        set {
-            super.accessibilityLabel = newValue
         }
     }
 
@@ -146,6 +125,8 @@ final class ConversationMessageCellTableViewAdapter<
 
     func configure(with object: C.View.Configuration, topMargin: CGFloat) {
         cellView.configure(with: object, animated: false)
+        cellView.accessibilityLabel = cellDescription?.accessibilityLabel
+        cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
@@ -308,7 +289,6 @@ extension UITableView {
             with: description.configuration,
             topMargin: description.topMargin
         )
-        cell.cellView.cellDescription = description
 
         return cell
     }

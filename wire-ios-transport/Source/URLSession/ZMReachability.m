@@ -38,9 +38,7 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 @property (nonatomic) NSMapTable *referenceToFlag;
 @property (nonatomic) NSMapTable *referenceToName;
 @property (atomic) BOOL mayBeReachable;
-@property (atomic) BOOL isMobileConnection;
 @property (atomic) BOOL oldMayBeReachable;
-@property (atomic) BOOL oldIsMobileConnection;
 @property (nonatomic) ZMAtomicInteger *tornDownFlag;
 
 @end
@@ -184,7 +182,6 @@ static CFStringRef copyDescription(const void *info)
                                                                0);
 
     BOOL globalReachable = YES;
-    BOOL isMobileConnection = NO;
     
     for(id obj in self.referenceToFlag.keyEnumerator) {
         NSString *name = [self.referenceToName objectForKey:obj];
@@ -199,18 +196,13 @@ static CFStringRef copyDescription(const void *info)
         else {
             ZMLogInfo(@"REACHABILITY: %@ reachable", name);
         }
-        if (0 != (flags & kSCNetworkReachabilityFlagsIsWWAN)) {
-            isMobileConnection = YES;
-        }
         globalReachable &= serverReachable;
 
         ZMLogInfo(@"FINAL REACHABILITY: %d", globalReachable);
     }
     
     self.oldMayBeReachable = self.mayBeReachable;
-    self.oldIsMobileConnection = self.isMobileConnection;
     self.mayBeReachable = globalReachable;
-    self.isMobileConnection = isMobileConnection;
     [self notifyReachabilityDidChange];
 }
 

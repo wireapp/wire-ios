@@ -17,7 +17,18 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
+
+package protocol SwitchBackendConfirmationBuilder {
+
+    @MainActor
+    func switchBackendView(
+        email: String,
+        backendConfig: BackendConfig
+    ) -> SwitchBackendConfirmationView
+
+}
 
 package struct SwitchBackendConfirmationView: View {
 
@@ -25,15 +36,14 @@ package struct SwitchBackendConfirmationView: View {
 
     @Environment(\.dismiss) var dismiss
     @State private var showFullDetails: Bool = false
+    @StateObject var viewModel: SwitchBackendConfirmationViewModel
 
     private typealias Strings = L10n.SwitchBackendConfirmation
-
-    private let viewModel: SwitchBackendConfirmationViewModel
 
     package init(
         viewModel: SwitchBackendConfirmationViewModel
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     package var body: some View {
@@ -154,7 +164,6 @@ package struct SwitchBackendConfirmationView: View {
 
     private var cancelButton: some View {
         Button {
-            viewModel.handleEvent(.didCancel)
             dismiss()
         } label: {
             Text(Strings.cancel)
@@ -165,11 +174,15 @@ package struct SwitchBackendConfirmationView: View {
 
     private var proceedButton: some View {
         Button {
-            viewModel.handleEvent(.didConfirm)
-            dismiss()
+            Task { await viewModel.confirm() }
         } label: {
-            Text(Strings.proceed)
-                .font(.textStyle(.buttonBig))
+            HStack {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+                Text(Strings.proceed)
+                    .font(.textStyle(.buttonBig))
+            }
         }
         .wireButtonStyle(.primary)
     }
@@ -177,6 +190,34 @@ package struct SwitchBackendConfirmationView: View {
 }
 
 // MARK: - Previews
+
+@MainActor
+package func makeSwitchBackendConfirmationViewPreview(
+    backendName: String,
+    backendURL: URL,
+    backendWSURL: URL,
+    blackListURL: URL,
+    teamsURL: URL,
+    accountsURL: URL,
+    websiteURL: URL
+) -> some View {
+    MockDependencies().switchBackendView(
+        email: "email.com",
+        backendConfig: BackendConfig(
+            title: backendName,
+            endpoints: Endpoints(
+                backendURL: backendURL,
+                backendWSURL: backendWSURL,
+                blackListURL: blackListURL,
+                teamsURL: teamsURL,
+                accountsURL: accountsURL,
+                websiteURL: websiteURL
+            ),
+            proxySettings: nil,
+            pinnedKeys: nil
+        )
+    )
+}
 
 #Preview("Regular fonts") {
     BackgroundView()
@@ -187,18 +228,4 @@ package struct SwitchBackendConfirmationView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         )
-}
-
-#Preview("Large fonts") {
-    VStack {
-        BackgroundView()
-            .overlay(
-                ZStack {
-                    SwitchBackendConfirmationPreview()
-                        .padding()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            )
-    }
-    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 }

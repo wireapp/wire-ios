@@ -23,7 +23,6 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     var isSelected: Bool = false
 
-    weak var cellDescription: ConversationButtonMessageCellDescription?
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?

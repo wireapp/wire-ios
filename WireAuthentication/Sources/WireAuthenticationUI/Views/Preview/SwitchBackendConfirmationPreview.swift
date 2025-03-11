@@ -23,17 +23,9 @@ public struct SwitchBackendConfirmationPreview: View {
 
     public var body: some View {
         VStack {
-            SwitchBackendConfirmationView(
-                viewModel: SwitchBackendConfirmationViewModel(
-                    backendName: "Staging",
-                    backendURL: "www.staging.com",
-                    backendWSURL: "www.ws.staging.com",
-                    blacklistURL: "www.blacklist.staging.com",
-                    teamsURL: "www.teams.staging.com",
-                    accountsURL: "www.accounts.staging.com",
-                    websiteURL: "www.wire.com",
-                    action: { _ in }
-                )
+            MockDependencies().switchBackendView(
+                email: "email.com",
+                backendConfig: MockDependencies()._backendConfig
             )
         }
     }
