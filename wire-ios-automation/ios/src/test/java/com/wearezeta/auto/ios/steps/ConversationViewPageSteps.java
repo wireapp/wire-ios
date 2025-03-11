@@ -413,9 +413,9 @@ public class ConversationViewPageSteps {
         }
     }
 
-    @When("^I tap Audio Call button$")
-    public void ITapAudioCallButton() {
-        getConversationViewPage().tapAudioButton();
+    @When("^I start a call$")
+    public void iStartCall() {
+        getConversationViewPage().startCall();
     }
 
     @When(("I tap call button on start call alert"))
@@ -425,7 +425,7 @@ public class ConversationViewPageSteps {
 
     @When("^I tap Video Call button$")
     public void ITapVideoCallButton() {
-        getConversationViewPage().tapVideoCallButton();
+        getConversationViewPage().startCall();
     }
 
     @When("^I tap call anyway on degradation alert$")

@@ -500,6 +500,43 @@ extension ConversationContentViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         willSelectRow(at: indexPath, tableView: tableView)
     }
+
+    func tableView(
+        _ tableView: UITableView,
+        leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+
+        let sections = dataSource.currentSections
+        guard
+            sections.indices.contains(indexPath.section),
+            sections[indexPath.section].elements.indices.contains(indexPath.row),
+            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
+            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
+            actionController.canPerformAction(action: .reply)
+        else { return nil }
+
+        // setting an empty title string since it would be displayed upside down
+        // TODO: [WPB-16341] set "Reply" as text for accessibility reasons
+        let replyAction = UIContextualAction(style: .normal, title: "") { _, _, completionHandler in
+            actionController.perform(action: .reply)
+            completionHandler(true)
+        }
+
+        let arrowImage = UIImage(systemName: "arrowshape.turn.up.backward.fill")!
+            .withTintColor(.white, renderingMode: .alwaysTemplate)
+        // since the table view is flipped vertically we also render the image flipped
+        // TODO: [WPB-16341] use the arrowImage, remove the upsideDownImage
+        let upsideDownImage = UIGraphicsImageRenderer(size: arrowImage.size).image { rendererContext in
+            rendererContext.cgContext.translateBy(x: arrowImage.size.width / 2, y: arrowImage.size.height / 2)
+            rendererContext.cgContext.scaleBy(x: 1.0, y: -1.0)
+            rendererContext.cgContext.translateBy(x: -arrowImage.size.width / 2, y: -arrowImage.size.height / 2)
+            arrowImage.draw(in: CGRect(origin: .zero, size: arrowImage.size))
+        }
+
+        replyAction.image = upsideDownImage
+        replyAction.backgroundColor = UIColor.accent()
+        return UISwipeActionsConfiguration(actions: [replyAction])
+    }
 }
 
 extension ConversationContentViewController: UITableViewDataSourcePrefetching {
