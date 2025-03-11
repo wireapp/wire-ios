@@ -207,7 +207,7 @@ package func makeDetermineAuthMethodViewPreview(
 
 private struct TransparentBackgroundView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
-        return InnerView()
+        InnerView()
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {}
