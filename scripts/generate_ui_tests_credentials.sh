@@ -9,14 +9,14 @@ mkdir -p "$(dirname "$OUTPUT_FILE")"
 # Check if running in CI
 if [[ -n "$CI" ]]; then
   # Ensure the required environment variables are set in CI
-  if [[ -z "${UI_LOGIN_EMAIL}" || -z "${UI_LOGIN_PASSWORD}" ]]; then
-    echo "Error: UI_LOGIN_EMAIL and UI_LOGIN_PASSWORD must be set in CI."
+  if [[ -z "${UI_TEST_LOGIN_EMAIL}" || -z "${UI_TEST_LOGIN_PASSWORD}" ]]; then
+    echo "Error: UI_TEST_LOGIN_EMAIL and UI_TEST_LOGIN_PASSWORD must be set in CI."
     exit 1
   fi
 else
   # Provide dummy values for local development
-  UI_LOGIN_EMAIL="test@example.com"
-  UI_LOGIN_PASSWORD="password123"
+  UI_TEST_LOGIN_EMAIL="test@example.com"
+  UI_TEST_LOGIN_PASSWORD="password123"
 fi
 
 # Generate the Swift file
@@ -41,8 +41,8 @@ cat > "$OUTPUT_FILE" <<EOF
 
 // Generated file - DO NOT EDIT
 enum LoginCredentials {
-    static let email: String = "${UI_LOGIN_EMAIL}"
-    static let password: String = "${UI_LOGIN_PASSWORD}"
+    static let email: String = "${UI_TEST_LOGIN_EMAIL}"
+    static let password: String = "${UI_TEST_LOGIN_PASSWORD}"
 }
 EOF
 
