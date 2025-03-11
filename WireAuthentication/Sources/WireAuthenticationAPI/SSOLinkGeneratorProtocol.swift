@@ -20,6 +20,7 @@ import Foundation
 
 /// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
 
+// sourcery: AutoMockable
 public protocol SSOLinkGeneratorProtocol: Sendable {
 
     /// Generates the URL for the SSO authentication screen.

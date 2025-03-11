@@ -52,7 +52,7 @@ final class FetchSSOURLUseCaseTests: XCTestCase {
 
         // mock
         authenticationAPI.getSSOCode_MockValue = ssoCode
-        linkGenerator.generateSSOLinkSSOCode_MockValue = URL(string: "www.wire.com/ssoURL/\(ssoCode.uuidString)")!
+        linkGenerator.generateSSOLinkSsoCode_MockValue = URL(string: "www.wire.com/ssoURL/\(ssoCode.uuidString)")!
 
         // when
         let ssoURL = try await sut.invoke()
