@@ -76,10 +76,7 @@ package struct RootView: View {
                         backendConfig: backendConfig,
                         backendMetadata: backendMetadata
                     )
-                case let .ssoLogin(
-                    ssoURL,
-                    backendMetadata
-                ):
+                case let .ssoLogin(ssoURL):
                     factory.loginViaSSOView(ssoURL: ssoURL)
                 }
             }
@@ -114,10 +111,7 @@ package struct RootView: View {
             environment: BackendConfig,
             backendMetadata: BackendMetadata?
         )
-        case ssoLogin(
-            url: URL,
-            BackendMetadata: BackendMetadata
-        )
+        case ssoLogin(url: URL)
     }
 
 }
