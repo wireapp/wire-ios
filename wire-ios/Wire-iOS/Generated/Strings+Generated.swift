@@ -1668,6 +1668,12 @@ internal enum L10n {
       }
     }
     internal enum Content {
+      internal enum Collapsed {
+        internal enum File {
+          /// You shared a file
+          internal static let title = L10n.tr("Localizable", "content.collapsed.file.title", fallback: "You shared a file")
+        }
+      }
       internal enum File {
         /// Browse
         internal static let browse = L10n.tr("Localizable", "content.file.browse", fallback: "Browse")

@@ -641,6 +641,8 @@
 
 "content.message.delete_ellipsis" = "Delete…";
 
+"content.collapsed.file.title" = "You shared a file";
+
 "content.message.like" = "Like";
 "content.message.unlike" = "Unlike";
 "content.message.go_to_conversation" = "Reveal";

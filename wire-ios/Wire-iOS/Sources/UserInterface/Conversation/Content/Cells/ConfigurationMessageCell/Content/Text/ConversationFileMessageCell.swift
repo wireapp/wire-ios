@@ -125,7 +125,7 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
-
+    
     let configuration: View.Configuration
 
     var topMargin: CGFloat = 8
@@ -145,7 +145,8 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message)
     }
 
 }

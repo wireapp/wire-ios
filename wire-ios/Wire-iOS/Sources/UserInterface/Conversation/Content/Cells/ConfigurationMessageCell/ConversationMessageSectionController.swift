@@ -158,7 +158,16 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else if message.isVideo {
             [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
         } else if message.isFile {
-            [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
+            if isCollapsed {
+                [AnyConversationMessageCellDescription(ConversationCollapsedFileMessageCellDescription(
+                    message: message,
+                    collapseExpandAction: { [weak self] in
+                        self?.handleCollapseExpand()
+                    }))]
+            } else {
+                [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
+            }
+            
         } else if message.isSystem {
             ConversationSystemMessageCellDescription.cells(
                 for: message,
@@ -184,6 +193,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func buttonAction() {
         isCollapsed = !isCollapsed
         cellDelegate?.conversationMessageShouldUpdate()
+    }
+    
+    private func handleCollapseExpand() {
+        isCollapsed = !isCollapsed
+        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 
     // MARK: - Content Cells
@@ -334,7 +348,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
-        guard !message.isSystem || message.isMissedCall else {
+        guard (!message.isSystem || message.isMissedCall) && !isCollapsed else {
             return false
         }
 
@@ -342,7 +356,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
-        guard message.senderUser != nil else {
+        guard message.senderUser != nil, !isCollapsed else {
             return false
         }
 
