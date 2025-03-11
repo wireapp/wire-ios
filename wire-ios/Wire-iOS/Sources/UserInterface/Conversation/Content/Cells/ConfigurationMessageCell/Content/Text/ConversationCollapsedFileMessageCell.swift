@@ -106,13 +106,16 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
                 avatar.wrapInView(leadingInset: 20),
                 titleLabel,
                 [typeIcon, collapseButton.wrapInView(trailingInset: 16)]
-                    .hStack(spacing: 5)],
+                    .horizontalStack(spacing: 5)],
             spacing: 10,
             alignment: .center)
-        stack.translatesAutoresizingMaskIntoConstraints = false
+        
         addSubview(stack)
-        stack.fitIn(view: self)
-        stack.heightAnchor.constraint(equalToConstant: 38).isActive = true
+        
+        stack
+            .setTranslatesAutoresizingMaskIntoConstraints(true)
+            .fitIn(view: self)
+            .heightConstraint(38)
         
         typeIcon.constraintToSquare(sideLength: 16)
     }

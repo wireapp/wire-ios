@@ -20,20 +20,55 @@ import UIKit
 
 public extension UIStackView {
 
-    convenience init(axis: NSLayoutConstraint.Axis, spacing: CGFloat = 0) {
-        self.init(frame: .zero)
-        self.axis = axis
-        self.spacing = spacing
-        self.alignment = .fill
-        setContentCompressionResistancePriority(.required, for: .vertical)
-        setContentCompressionResistancePriority(.required, for: .horizontal)
+    static func horizontal(
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(spacing: spacing, axis: .horizontal, alignment: alignment, distribution: distribution)
     }
 
-    static func horizontal(spacing: CGFloat = 0) -> UIStackView {
-        UIStackView(axis: .horizontal, spacing: spacing)
+    static func vertical(
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(spacing: spacing, axis: .vertical, alignment: alignment, distribution: distribution)
     }
+    
+    static func make(
+        views: [UIView] = [],
+        spacing: CGFloat,
+        axis: NSLayoutConstraint.Axis,
+        alignment: UIStackView.Alignment,
+        distribution: UIStackView.Distribution
+    ) -> UIStackView {
+        let stackView = UIStackView(arrangedSubviews: views)
+        stackView.alignment = alignment
+        stackView.distribution = distribution
+        stackView.spacing = spacing
+        stackView.axis = axis
+        return stackView
+    }
+}
 
-    static func vertical(spacing: CGFloat = 0) -> UIStackView {
-        UIStackView(axis: .vertical, spacing: spacing)
+
+extension Array where Element: UIView {
+    
+    @MainActor
+    public func horizontalStack(
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill) -> UIStackView {
+            UIStackView.make(views: self, spacing: spacing, axis: .horizontal, alignment: alignment, distribution: distribution)
+        }
+    
+    @MainActor
+    public func verticalStack(
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(views: self, spacing: spacing, axis: .vertical, alignment: alignment, distribution: distribution)
     }
 }
