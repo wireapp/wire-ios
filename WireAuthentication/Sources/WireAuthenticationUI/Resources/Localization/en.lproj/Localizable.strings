@@ -73,7 +73,7 @@
 "authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
 "authentication.error.title.account_pending_activation" = "Pending activation";
 "authentication.error.title.account_suspended" = "Unauthorized";
-"authentication.error.title.incorrect_sso_code" = "Incorrect SSO access code";
+"authentication.error.title.incorrect_sso_code" = "Invalid SSO code";
 
 "authentication.error.message.no_internet" = "You are not connected to the internet.";
 "authentication.error.message.general" = "Something went wrong";
