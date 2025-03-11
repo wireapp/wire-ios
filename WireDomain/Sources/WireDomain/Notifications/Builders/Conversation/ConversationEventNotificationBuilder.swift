@@ -137,7 +137,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             if let callingBuilder {
                 builder = callingBuilder
             } else {
-                builder = try await ConversationMLSMessageAddEventNotificationBuilder(
+                builder = await ConversationMLSMessageAddEventNotificationBuilder(
                     message: genericMessage,
                     conversationID: mlsMessageEvent.conversationID,
                     senderID: mlsMessageEvent.senderID,
@@ -168,7 +168,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             if let callingBuilder {
                 builder = callingBuilder
             } else {
-                builder = try await ConversationProteusMessageAddEventNotificationBuilder(
+                builder = await ConversationProteusMessageAddEventNotificationBuilder(
                     message: genericMessage,
                     conversationID: proteusMessageEvent.conversationID,
                     senderID: proteusMessageEvent.senderID,
