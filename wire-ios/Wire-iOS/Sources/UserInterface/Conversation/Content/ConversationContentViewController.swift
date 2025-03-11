@@ -494,7 +494,7 @@ extension ConversationContentViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        cachedRowHeights[indexPath] ?? UITableView.automaticDimension
+        cachedRowHeights[indexPath] ?? UITableView.automaticDimension // TODO: check
     }
 
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {

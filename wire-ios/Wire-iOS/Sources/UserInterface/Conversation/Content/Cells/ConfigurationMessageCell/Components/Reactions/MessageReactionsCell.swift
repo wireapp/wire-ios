@@ -27,7 +27,11 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
     var message: ZMConversationMessage?
 
     private var reactions = [MessageReaction]()
-    private let collectionView = MessageReactionsCollectionView()
+    private let collectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: MessageReactionsCollectionViewFlowLayout()
+    )
+    private var collectionViewHeightConstraint: NSLayoutConstraint!
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
@@ -63,6 +67,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
 
     private func configureSubviews() {
 
+        collectionView.clipsToBounds = false
         collectionView.backgroundColor = .clear
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellReuseIdentifier)
@@ -73,6 +78,9 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
         let horizontalMargins = conversationHorizontalMargins
         let insets = UIEdgeInsets(top: 7, left: horizontalMargins.left, bottom: 0, right: horizontalMargins.right)
         collectionView.fitIn(view: self, insets: insets)
+
+        collectionViewHeightConstraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
+        collectionViewHeightConstraint.isActive = true
 
     }
 
@@ -94,6 +102,12 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
         var snapshot = MessageReactionsDiffableDataSourceSnapshot()
         snapshot.appendSections([.single])
         snapshot.appendItems(reactions.map(\.emojiID))
-        dataSource.applySnapshotUsingReloadData(snapshot)
+        dataSource.applySnapshotUsingReloadData(snapshot) { [weak self] in
+            guard let self else { return }
+
+            let layout = collectionView.collectionViewLayout
+            collectionViewHeightConstraint.constant = layout.collectionViewContentSize.height
+            print("collectionViewHeightConstraint.constant", collectionViewHeightConstraint.constant)
+        }
     }
 }
