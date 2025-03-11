@@ -21,7 +21,11 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory = DetermineAuthMethodBuilder & NoHistoryViewBuilder
+    package typealias Factory =
+        DetermineAuthMethodBuilder &
+        LoginViaEmailOnPremBuilder &
+        LoginViaSSOBuilder &
+        NoHistoryViewBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -50,14 +54,36 @@ package struct RootView: View {
                                 }
                             )
                     }
-                case let .noHistory(userID, cookies, emailCredentials):
+                case let .noHistory(
+                    userID,
+                    cookies,
+                    accessToken,
+                    emailCredentials,
+                    didDetectDomainConflict
+                ):
                     factory.noHistoryView(
                         userID: userID,
                         cookies: cookies,
-                        emailCredentials: emailCredentials
+                        accessToken: accessToken,
+                        emailCredentials: emailCredentials,
+                        didDetectDomainConflict: didDetectDomainConflict
                     )
+                case let .onPremiseLogin(
+                    email,
+                    backendConfig,
+                    backendMetadata
+                ):
+                    factory.loginViaEmailOnPremView(
+                        email: email,
+                        backendConfig: backendConfig,
+                        backendMetadata: backendMetadata
+                    )
+                case let .ssoLogin(
+                    ssoURL,
+                    backendMetadata
+                ):
+                    factory.loginViaSSOView(ssoURL: ssoURL)
                 }
-
             }
     }
 
@@ -79,7 +105,22 @@ package struct RootView: View {
         public var id: Self { self }
 
         case authFlow
-        case noHistory(userID: UUID, cookies: [HTTPCookie], emailCredentials: EmailCredentials?)
+        case noHistory(
+            userID: UUID,
+            cookies: [HTTPCookie],
+            accessToken: AccessToken?,
+            emailCredentials: EmailCredentials?,
+            didDetectDomainConflict: Bool
+        )
+        case onPremiseLogin(
+            email: String,
+            environment: BackendConfig,
+            backendMetadata: BackendMetadata?
+        )
+        case ssoLogin(
+            url: URL,
+            BackendMetadata: BackendMetadata
+        )
     }
 
 }

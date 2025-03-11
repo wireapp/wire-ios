@@ -24,10 +24,15 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
+    package typealias Factory =
+        LoginViaEmailUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
+
     private let router: any Router
-    private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let factory: any Factory
     private let passwordValidator: any PasswordValidator
-    private let backendEnvironment: LocalBackendEnvironment
+    private let backendConfig: BackendConfig
+    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
 
     let email: String
     let canCreateAccount: Bool
@@ -36,26 +41,28 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     package init(
         router: any Router,
-        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
+        factory: any Factory,
         email: String,
-        backendEnvironment: LocalBackendEnvironment,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool
     ) {
         self.router = router
-        self.loginViaEmailUseCase = loginViaEmailUseCase
+        self.factory = factory
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
-        self.backendEnvironment = backendEnvironment
+        self.backendConfig = backendConfig
+        self.backendMetadata = backendMetadata
     }
 
     private var forgotPasswordURL: URL {
-        backendEnvironment.endpoints.accountsURL.appendingPathComponent("forgot")
+        backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
     }
 
     var backendName: String {
-        backendEnvironment.title
+        backendConfig.title
     }
 
     var backendInfo: String {
@@ -64,7 +71,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             backendName,
             "",
             L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendEnvironment.endpoints.restAPIURL.absoluteString
+            backendConfig.endpoints.backendURL.absoluteString
         ].joined(separator: "\n")
     }
 
@@ -73,30 +80,50 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     var hasProxySupport: Bool {
-        backendEnvironment.proxySettings != nil
+        backendConfig.proxySettings != nil
     }
 
     var proxyServer: String {
-        backendEnvironment.endpoints.restAPIURL.absoluteString
+        backendConfig.endpoints.backendURL.absoluteString
     }
 
     func isValidPassword(_ password: String) -> Bool {
         passwordValidator.isPasswordValid(password)
     }
 
-    func submitPassword(_ password: String) {
-        Task.detached {
-            do {
-                try await self.loginViaEmailUseCase.invoke(
-                    email: self.email,
-                    password: password,
-                    verificationCode: ""
-                )
-            } catch {
-                // TODO: [WPB-15944] Error handling
-                print("error: \(error)")
-            }
+    func submitPassword(_ password: String) async {
+        let backendMetadata: WireAuthenticationAPI.BackendMetadata
+        do {
+            backendMetadata = try await resolveBackendMetadataIfNeeded()
+        } catch {
+            // TODO: [WPB-16415] handle unresolved api version
+            fatalError()
         }
+
+        let (cookies, accessToken): ([HTTPCookie], AccessToken)
+        do {
+            (cookies, accessToken) = try await login(
+                password: password,
+                backendMetadata: backendMetadata
+            )
+        } catch {
+            // TODO: [WPB-15944] Error handling
+            fatalError("error: \(error)")
+        }
+
+        let emailCredentials = EmailCredentials(
+            email: email,
+            password: password,
+            verificationCode: nil
+        )
+
+        router.navigate(to: RootView.ModalDestination.noHistory(
+            userID: accessToken.userID,
+            cookies: cookies,
+            accessToken: accessToken,
+            emailCredentials: emailCredentials,
+            didDetectDomainConflict: false
+        ))
     }
 
     func recoverPassword() {
@@ -105,6 +132,33 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     func createAccount() {
         // TODO: [WPB-15926] Initiate account registration flow
+    }
+
+    private func resolveBackendMetadataIfNeeded() async throws -> WireAuthenticationAPI.BackendMetadata {
+        if let backendMetadata {
+            return backendMetadata
+        }
+
+        let useCase = factory.resolveBackendMetadataUseCase()
+
+        return try await Task.detached {
+            try await useCase.invoke()
+        }.value
+    }
+
+    private func login(
+        password: String,
+        backendMetadata: BackendMetadata
+    ) async throws -> ([HTTPCookie], AccessToken) {
+        let useCase = factory.loginViaEmailUseCase(apiVersion: backendMetadata.apiVersion)
+
+        return try await Task.detached { [email] in
+            try await useCase.invoke(
+                email: email,
+                password: password,
+                verificationCode: ""
+            )
+        }.value
     }
 
 }

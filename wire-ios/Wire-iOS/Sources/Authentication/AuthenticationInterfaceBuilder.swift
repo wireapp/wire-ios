@@ -95,8 +95,10 @@ final class AuthenticationInterfaceBuilder {
                     proxySettings: nil
                 ),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
-                defaultAPIVersion: .v8,
+                preferredAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
+                howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
+                howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 userDefaults: .shared(),

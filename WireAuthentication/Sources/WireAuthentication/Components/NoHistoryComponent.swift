@@ -16,29 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import NeedleFoundation
+import SwiftUI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
-class NoHistoryComponent {
+protocol NoHistoryComponentDependency: Dependency {
 
-    let onFlowCompletion: (AuthenticationResult) -> Void
+    var howToChangeEmailURL: URL { get }
+    var howToDeleteAccountURL: URL { get }
 
-    init(onFlowCompletion: @escaping (AuthenticationResult) -> Void) {
-        self.onFlowCompletion = onFlowCompletion
-    }
+}
+
+class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     @MainActor
     private func viewModel(
         userID: UUID,
         cookies: [HTTPCookie],
+        accessToken: AccessToken?,
         emailCredentials: EmailCredentials?,
+        didDetectDomainConflict: Bool,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) -> NoHistoryViewModel {
         NoHistoryViewModel(
             userID: userID,
             cookies: cookies,
+            accessToken: accessToken,
             emailCredentials: emailCredentials,
+            didDetectDomainConflict: didDetectDomainConflict,
+            howToChangeEmailURL: howToChangeEmailURL,
+            howToDeleteAccountURL: howToDeleteAccountURL,
             onFlowCompletion: onFlowCompletion
         )
     }
@@ -47,13 +59,20 @@ class NoHistoryComponent {
     func view(
         userID: UUID,
         cookies: [HTTPCookie],
-        emailCredentials: EmailCredentials?
+        accessToken: AccessToken?,
+        emailCredentials: EmailCredentials?,
+        didDetectDomainConflict: Bool,
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) -> NoHistoryView {
         NoHistoryView(
             viewModel: viewModel(
                 userID: userID,
                 cookies: cookies,
+                accessToken: accessToken,
                 emailCredentials: emailCredentials,
+                didDetectDomainConflict: didDetectDomainConflict,
+                howToChangeEmailURL: dependency.howToChangeEmailURL,
+                howToDeleteAccountURL: dependency.howToDeleteAccountURL,
                 onFlowCompletion: onFlowCompletion
             )
         )

@@ -49,6 +49,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -173,6 +174,8 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+
+    var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 8

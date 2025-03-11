@@ -36,6 +36,7 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -56,7 +57,7 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        clipsToBounds = true
+        containerView.clipsToBounds = true
 
         fileTransferView.delegate = self
         setup(fileTransferView)
@@ -124,7 +125,10 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
+
     let configuration: View.Configuration
+
+    var canBeCombinedWithOtherCells: Bool { true }
 
     var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false

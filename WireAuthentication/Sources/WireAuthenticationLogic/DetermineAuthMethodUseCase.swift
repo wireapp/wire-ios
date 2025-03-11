@@ -22,10 +22,13 @@ import WireAuthenticationAPI
 
 package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
-    private let validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase
+    private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let authenticationAPI: AuthenticationAPI
 
-    package init(validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase, authenticationAPI: AuthenticationAPI) {
+    package init(
+        validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
+        authenticationAPI: AuthenticationAPI
+    ) {
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.authenticationAPI = authenticationAPI
     }
@@ -83,13 +86,15 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
         switch configuration.domainRedirect {
         case .none where configuration.isCloudAccountAlreadyRegistered == true:
-            throw DetermineAuthMethodUseCaseFailure.onPremNotPossible(recovery: .loginViaEmail(email: email))
+            // The email domain has been claimed by an on-prem backend,
+            // but there's already an existing cloud account registered.
+            return .loginViaEmail(email: email, didDetectDomainConflict: true)
 
         case .none, .locked, .preAuthorized:
             return .loginOrRegisterViaEmail(email: email)
 
         case .noRegistration:
-            return .loginViaEmail(email: email)
+            return .loginViaEmail(email: email, didDetectDomainConflict: false)
 
         case .sso:
             guard let ssoCode = configuration.ssoCode else {

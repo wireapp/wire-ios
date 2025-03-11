@@ -26,9 +26,11 @@ import WireAuthenticationAPI
 class RootComponent: BootstrapComponent {
 
     public let defaultBackendEnvironment: BackendEnvironment
-    public let defaultAPIVersion: APIVersion
+    public let preferredAPIVersion: APIVersion?
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
+    public let howToChangeEmailURL: URL
+    public let howToDeleteAccountURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
@@ -37,9 +39,11 @@ class RootComponent: BootstrapComponent {
 
     init(
         defaultBackendEnvironment: BackendEnvironment,
-        defaultAPIVersion: APIVersion,
+        preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         accountsURL: URL,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
@@ -47,9 +51,11 @@ class RootComponent: BootstrapComponent {
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
         self.defaultBackendEnvironment = defaultBackendEnvironment
-        self.defaultAPIVersion = defaultAPIVersion
+        self.preferredAPIVersion = preferredAPIVersion
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
@@ -96,7 +102,24 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor var noHistoryComponent: NoHistoryComponent {
-        NoHistoryComponent(onFlowCompletion: bridge.onFlowCompletion)
+        NoHistoryComponent(parent: self)
+    }
+
+    func loginViaEmailOnPremComponent(
+        email: String,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) -> LoginViaEmailOnPremComponent {
+        LoginViaEmailOnPremComponent(
+            parent: self,
+            email: email,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        )
+    }
+
+    var loginViaSSOComponent: LoginViaSSOComponent {
+        LoginViaSSOComponent()
     }
 
 }
@@ -111,13 +134,35 @@ extension RootComponent: RootView.Factory {
     func noHistoryView(
         userID: UUID,
         cookies: [HTTPCookie],
-        emailCredentials: EmailCredentials?
+        accessToken: WireAuthenticationAPI.AccessToken?,
+        emailCredentials: EmailCredentials?,
+        didDetectDomainConflict: Bool
     ) -> NoHistoryView {
         noHistoryComponent.view(
             userID: userID,
             cookies: cookies,
-            emailCredentials: emailCredentials
+            accessToken: accessToken,
+            emailCredentials: emailCredentials,
+            didDetectDomainConflict: didDetectDomainConflict,
+            onFlowCompletion: bridge.onFlowCompletion
         )
+    }
+
+    @MainActor
+    func loginViaEmailOnPremView(
+        email: String,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) -> LoginViaEmailOnPremView {
+        loginViaEmailOnPremComponent(
+            email: email,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        ).view
+    }
+
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent.view(ssoURL: ssoURL)
     }
 
 }

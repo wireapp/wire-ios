@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationDomainsStoppedFederatingSystemMessageCellDescription>
     typealias System = L10n.Localizable.Content.System
 
     let configuration: View.Configuration
@@ -30,7 +30,6 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 0
 
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

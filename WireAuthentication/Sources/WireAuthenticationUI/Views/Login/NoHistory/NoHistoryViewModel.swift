@@ -24,20 +24,41 @@ import WireAuthenticationAPI
 @MainActor
 package final class NoHistoryViewModel: ObservableObject {
 
+    package enum Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        case cloudAccountAlreadyRegistered
+    }
+
+    @Published var alert: Alert?
+
     private let userID: UUID
     private let cookies: [HTTPCookie]
+    private let accessToken: AccessToken?
     private let emailCredentials: EmailCredentials?
+    private let howToChangeEmailURL: URL
+    private let howToDeleteAccountURL: URL
     private let onFlowCompletion: (AuthenticationResult) -> Void
+
+    let didDetectDomainConflict: Bool
 
     package init(
         userID: UUID,
         cookies: [HTTPCookie],
+        accessToken: AccessToken?,
         emailCredentials: EmailCredentials?,
+        didDetectDomainConflict: Bool,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
         self.userID = userID
         self.cookies = cookies
+        self.accessToken = accessToken
         self.emailCredentials = emailCredentials
+        self.didDetectDomainConflict = didDetectDomainConflict
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
         self.onFlowCompletion = onFlowCompletion
     }
 
@@ -46,9 +67,24 @@ package final class NoHistoryViewModel: ObservableObject {
             AuthenticationResult(
                 userID: userID,
                 cookies: cookies,
-                accessToken: nil,
+                accessToken: accessToken,
                 emailCredentials: emailCredentials
             )
         )
     }
+
+    func onAppear() {
+        if didDetectDomainConflict {
+            alert = .cloudAccountAlreadyRegistered
+        }
+    }
+
+    func howToChangeEmail() {
+        UIApplication.shared.open(howToChangeEmailURL)
+    }
+
+    func howToDeleteAccount() {
+        UIApplication.shared.open(howToDeleteAccountURL)
+    }
+
 }

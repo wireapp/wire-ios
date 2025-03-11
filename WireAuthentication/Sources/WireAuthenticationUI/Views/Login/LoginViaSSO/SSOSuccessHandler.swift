@@ -35,7 +35,9 @@ package struct SSOSuccessHandler {
             RootView.ModalDestination.noHistory(
                 userID: userID,
                 cookies: cookies,
-                emailCredentials: nil
+                accessToken: nil,
+                emailCredentials: nil,
+                didDetectDomainConflict: false
             )
         )
     }

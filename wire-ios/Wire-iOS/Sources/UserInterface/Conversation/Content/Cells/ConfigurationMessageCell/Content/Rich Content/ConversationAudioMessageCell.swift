@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -29,13 +29,14 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
         }
     }
 
-    private var containerView = UIView()
+    private var containerView = RoundedView()
     private let transferView = AudioMessageView()
     private let obfuscationView = ObfuscationView(icon: .microphone)
     private let restrictionView = AudioMessageRestrictionView()
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -51,12 +52,12 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        shape = .rounded(radius: 12)
-        backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.shape = .rounded(radius: 12)
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        clipsToBounds = true
+        containerView.clipsToBounds = true
         setup(transferView)
 
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -122,7 +123,10 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
 
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationAudioMessageCell
+
     let configuration: View.Configuration
+
+    var canBeCombinedWithOtherCells: Bool { true }
 
     var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false

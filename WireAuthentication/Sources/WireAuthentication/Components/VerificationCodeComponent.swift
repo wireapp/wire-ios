@@ -24,25 +24,44 @@ internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
 
-protocol VerificationCodeComponentDependency: Dependency {}
+protocol VerificationCodeComponentDependency: Dependency {
+
+    @MainActor var router: any Router { get }
+    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
+    var authenticationAPI: any AuthenticationAPI { get }
+
+}
 
 class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
+    private var requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol {
+        RequestLoginVerificationCodeUseCase(authenticationAPI: dependency.authenticationAPI)
+    }
+
     @MainActor
-    func view(email: String, password: String) -> VerificationCodeView {
+    func view(email: String, password: String, didDetectDomainConflict: Bool) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: viewModel(
                 email: email,
-                password: password
+                password: password,
+                didDetectDomainConflict: didDetectDomainConflict
             )
         )
     }
 
     @MainActor
-    private func viewModel(email: String, password: String) -> VerificationCodeViewModel {
+    private func viewModel(
+        email: String,
+        password: String,
+        didDetectDomainConflict: Bool
+    ) -> VerificationCodeViewModel {
         VerificationCodeViewModel(
             email: email,
-            password: password
+            password: password,
+            loginViaEmailUseCase: dependency.loginViaEmailUseCase,
+            requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
+            router: dependency.router,
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

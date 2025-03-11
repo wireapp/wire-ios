@@ -22,23 +22,37 @@ import WireUtilities
 
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
-    func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
+    func conversationMessageCell(
+        _ contentView: any ConversationMessageCell,
+        present viewController: UIViewController
+    )
+
+    func conversationMessageWantsToOpenUserDetails(
+        _ cell: UIView,
+        user: UserType,
+        sourceView: UIView,
+        frame: CGRect
+    )
+
     func conversationMessageWantsToOpenMessageDetails(
         _ cell: UIView,
         for message: ZMConversationMessage,
         preferredDisplayMode: MessageDetailsDisplayMode
     )
-    func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView)
+
+    func conversationMessageWantsToOpenGuestOptionsFromView(
+        _ cell: UIView,
+        sourceView: UIView
+    )
+
     func conversationMessageWantsToOpenParticipantsDetails(
         _ cell: UIView,
         selectedUsers: [UserType],
         sourceView: UIView
     )
-    func conversationMessageWantsToShowActionsController(
-        _ cell: UIView,
-        actionsController: MessageActionsViewController
-    )
+
     func conversationMessageShouldUpdate()
+
 }
 
 /// A generic view that displays conversation contents.
@@ -64,6 +78,11 @@ protocol ConversationMessageCell: UIView {
 
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
+
+    var actionController: ConversationMessageActionController? { get set }
+
+    /// Creates an alert controller for available message actions.
+    var menuPresenter: ConversationMessageCellMenuPresenter? { get }
 
     /// Configures the cell with the specified configuration object.
     /// - parameter object: The view model for the cell.
@@ -94,6 +113,14 @@ extension ConversationMessageCell {
         8
     }
 
+    var menuPresenter: ConversationMessageCellMenuPresenter? {
+        ConversationMessageCellMenuPresenter(
+            contentView: self,
+            actionController: actionController,
+            conversationMessageCellDelegate: delegate
+        )
+    }
+
     func willDisplay() {
         // to be overriden
     }
@@ -116,6 +143,11 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
     associatedtype View: ConversationMessageCell, UIView
 
+    /// The views of neighbouring cell descriptions which return `true` might be
+    /// arranged in a vertical stack view inside a single table view cell.
+    /// If `false` the resulting view will always end up in a single table view cell.
+    var canBeCombinedWithOtherCells: Bool { get }
+
     /// The top margin is used to configure the spacing between cells. This property will
     /// get updated by the ConversationMessageSectionController if necessary so any
     /// default value is just a recommendation.
@@ -125,7 +157,7 @@ protocol ConversationMessageCellDescription: AnyObject {
     var supportsActions: Bool { get }
 
     /// Whether the cell should display an ephemeral timer in the margin given it's an ephemeral message
-    var showEphemeralTimer: Bool { get set }
+    var showEphemeralTimer: Bool { get }
 
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
@@ -159,6 +191,14 @@ protocol ConversationMessageCellDescription: AnyObject {
 
 extension ConversationMessageCellDescription {
 
+    var canBeCombinedWithOtherCells: Bool {
+        false
+    }
+
+    var supportsActions: Bool {
+        false
+    }
+
     func willDisplayCell() {
         _ = message?.startSelfDestructionIfNeeded()
     }
@@ -173,6 +213,7 @@ extension ConversationMessageCellDescription {
         let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
         cell.cellView.delegate = delegate
         cell.cellView.message = message
+        cell.cellView.actionController = actionController
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         return cell
     }
@@ -185,6 +226,8 @@ extension ConversationMessageCellDescription {
     func configureContentView(_ cellView: any UIView & ConversationMessageCell, animated: Bool = false) {
         guard let cellView = cellView as? View else { return }
         cellView.configure(with: configuration, animated: animated)
+        cellView.accessibilityLabel = accessibilityLabel
+        cellView.accessibilityIdentifier = accessibilityIdentifier
 
         if cellView.isVisible {
             _ = message?.startSelfDestructionIfNeeded()
@@ -230,9 +273,11 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
+    private let _canBeCombinedWithOtherCells: () -> Bool
     private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
-    private let _showEphemeralTimer: AnyMutableProperty<Bool>
+    private let _supportsActions: () -> Bool
+    private let _showEphemeralTimer: AnyConstantProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
 
@@ -272,9 +317,11 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
+        self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
         self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
-        self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
+        self._supportsActions = { description.supportsActions }
+        self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
@@ -302,6 +349,10 @@ final class AnyConversationMessageCellDescription: NSObject {
         set { _actionController.setter(newValue) }
     }
 
+    var canBeCombinedWithOtherCells: Bool {
+        _canBeCombinedWithOtherCells()
+    }
+
     var topMargin: CGFloat {
         get { _topMargin.getter() }
         set { _topMargin.setter(newValue) }
@@ -311,9 +362,12 @@ final class AnyConversationMessageCellDescription: NSObject {
         _containsHighlightableContent.getter()
     }
 
+    var supportsActions: Bool {
+        _supportsActions()
+    }
+
     var showEphemeralTimer: Bool {
-        get { _showEphemeralTimer.getter() }
-        set { _showEphemeralTimer.setter(newValue) }
+        _showEphemeralTimer.getter()
     }
 
     /// The accessibility identifier of the cell.

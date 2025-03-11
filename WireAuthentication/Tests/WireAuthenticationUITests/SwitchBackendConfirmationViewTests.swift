@@ -39,8 +39,16 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
     func testColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = SwitchBackendConfirmationPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = makeSwitchBackendConfirmationViewPreview(
+            backendName: "Staging",
+            backendURL: URL(string: "www.staging.com")!,
+            backendWSURL: URL(string: "www.staging.com")!,
+            blackListURL: URL(string: "www.staging.com")!,
+            teamsURL: URL(string: "www.staging.com")!,
+            accountsURL: URL(string: "www.staging.com")!,
+            websiteURL: URL(string: "www.staging.com")!
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -54,8 +62,16 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = SwitchBackendConfirmationPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = makeSwitchBackendConfirmationViewPreview(
+            backendName: "Staging",
+            backendURL: URL(string: "www.staging.com")!,
+            backendWSURL: URL(string: "www.staging.com")!,
+            blackListURL: URL(string: "www.staging.com")!,
+            teamsURL: URL(string: "www.staging.com")!,
+            accountsURL: URL(string: "www.staging.com")!,
+            websiteURL: URL(string: "www.staging.com")!
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

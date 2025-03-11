@@ -30,12 +30,16 @@ struct ContentView: View {
         WireAuthenticationAssembly().assemble(
             defaultBackendEnvironment: configuration.defaultBackendEnvironment,
             minTLSVersion: configuration.minTLSVersion,
-            defaultAPIVersion: configuration.defaultAPIVersion,
+            preferredAPIVersion: .v8,
             accountsURL: configuration.accountsURL,
+            howToChangeEmailURL: URL(string: "www.example.com")!,
+            howToDeleteAccountURL: URL(string: "www.example.com")!,
             passwordValidator: configuration.passwordValidator,
+            ssoCallbackURLScheme: "some scheme",
+            userDefaults: .standard,
             onFlowCompletion: { _ in },
             onRegisterAccount: {}
-        )
+        ).view
     }
 
 }

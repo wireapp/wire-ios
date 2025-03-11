@@ -19,29 +19,23 @@
 import UIKit
 import WireDataModel
 
-protocol ConversationMessageCellMenuPresenter: AnyObject {
-    func showMenu()
-    func showSecuredMenu()
-}
-
 extension UITableViewCell {
 
     @objc
     func willDisplayCell() {
-        // to be overriden in subclasses
+        // to be overridden in subclasses
     }
 
     @objc
     func didEndDisplayingCell() {
-        // to be overriden in subclasses
+        // to be overridden in subclasses
     }
 
 }
 
 final class ConversationMessageCellTableViewAdapter<
     C: ConversationMessageCellDescription
->: UITableViewCell,
-    SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
+>: UITableViewCell, SelectableView, HighlightableView {
 
     let cellView: C.View
     let ephemeralCountdownView: EphemeralCountdownView
@@ -57,26 +51,6 @@ final class ConversationMessageCellTableViewAdapter<
     var topMargin: CGFloat = 0 {
         didSet {
             top.constant = CGFloat(topMargin)
-        }
-    }
-
-    override var accessibilityIdentifier: String? {
-        get {
-            cellDescription?.accessibilityIdentifier
-        }
-
-        set {
-            super.accessibilityIdentifier = newValue
-        }
-    }
-
-    override var accessibilityLabel: String? {
-        get {
-            cellDescription?.accessibilityLabel
-        }
-
-        set {
-            super.accessibilityLabel = newValue
         }
     }
 
@@ -116,9 +90,13 @@ final class ConversationMessageCellTableViewAdapter<
             constant: cellView.ephemeralTimerTopInset
         )
 
+        let countdownViewLeftInset = conversationHorizontalMargins.left
         NSLayoutConstraint.activate([
             ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            ephemeralCountdownView.trailingAnchor.constraint(equalTo: cellView.leadingAnchor),
+            ephemeralCountdownView.trailingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: countdownViewLeftInset
+            ),
             ephemeralTop,
             leading,
             trailing,
@@ -147,6 +125,9 @@ final class ConversationMessageCellTableViewAdapter<
 
     func configure(with object: C.View.Configuration, topMargin: CGFloat) {
         cellView.configure(with: object, animated: false)
+        cellView.accessibilityLabel = cellDescription?.accessibilityLabel
+        cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
+        ephemeralTop.constant = cellView.ephemeralTimerTopInset
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
@@ -160,68 +141,41 @@ final class ConversationMessageCellTableViewAdapter<
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        UIView.animate(withDuration: 0.35, animations: {
+        UIView.animate(withDuration: 0.35) {
             self.cellView.isSelected = selected
             self.layoutIfNeeded()
-        })
+        }
     }
 
     // MARK: - Menu
 
-    func showMenu() {
-        guard let controller = messageActionsMenuController(with: MessageAction.allCases) else { return }
-        display(messageActionsController: controller)
-    }
-
-    func showSecuredMenu() {
-        let actions = [
-            MessageAction.visitLink,
-            MessageAction.reply,
-            MessageAction.edit,
-            MessageAction.openDetails,
-            MessageAction.delete,
-            MessageAction.cancel
-        ]
-        guard let controller = messageActionsMenuController(with: actions) else { return }
-        display(messageActionsController: controller)
-    }
-
-    private func display(messageActionsController: MessageActionsViewController) {
-        cellView.delegate?.conversationMessageWantsToShowActionsController(
-            cellView,
-            actionsController: messageActionsController
-        )
-    }
-
     @objc
     private func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         if gestureRecognizer.state == .began {
-            showMenu()
+            cellView.menuPresenter?.showMenu()
         }
-    }
-
-    func messageActionsMenuController(
-        with actions: [MessageAction] = MessageAction
-            .allCases
-    ) -> MessageActionsViewController? {
-        guard let actionController = cellDescription?.actionController else { return nil }
-        let actionsMenuController = MessageActionsViewController.controller(
-            withActions: actions,
-            actionController: actionController
-        )
-
-        if let popoverPresentationController = actionsMenuController.popoverPresentationController {
-            popoverPresentationController.sourceView = cellView
-        }
-
-        return actionsMenuController
     }
 
     // MARK: - Single Tap Action
 
     @objc
     private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+        guard gestureRecognizer.state == .recognized else { return }
+
+        if
+            let cellView = cellView as? ConversationStackMessageContentView,
+            let cellDescription = cellDescription as? StackViewCellDescription {
+            for (index, cell) in cellView.conversationMessageCells.enumerated() {
+                let location = gestureRecognizer.location(in: cell)
+                if cell.bounds.contains(location) {
+                    let stackedCellDescription = cellDescription.cellDescriptions[index]
+                    if stackedCellDescription.supportsActions {
+                        stackedCellDescription.actionController?.performSingleTapAction()
+                    }
+                }
+            }
+
+        } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
     }
@@ -230,7 +184,22 @@ final class ConversationMessageCellTableViewAdapter<
 
     @objc
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+        guard gestureRecognizer.state == .recognized else { return }
+
+        if
+            let cellView = cellView as? ConversationStackMessageContentView,
+            let cellDescription = cellDescription as? StackViewCellDescription {
+            for (index, cell) in cellView.conversationMessageCells.enumerated() {
+                let location = gestureRecognizer.location(in: cell)
+                if cell.bounds.contains(location) {
+                    let stackedCellDescription = cellDescription.cellDescriptions[index]
+                    if stackedCellDescription.supportsActions {
+                        stackedCellDescription.actionController?.performDoubleTapAction()
+                    }
+                }
+            }
+
+        } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }
     }

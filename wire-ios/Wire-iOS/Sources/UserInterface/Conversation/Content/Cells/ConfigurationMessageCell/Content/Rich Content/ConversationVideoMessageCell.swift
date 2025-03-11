@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -29,13 +29,14 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
         }
     }
 
-    private var containerView = UIView()
+    private var containerView = RoundedView()
     private let transferView = VideoMessageView(frame: .zero)
     private let obfuscationView = ObfuscationView(icon: .videoMessage)
     private let restrictionView = VideoMessageRestrictionView()
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -51,12 +52,12 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        shape = .rounded(radius: 12)
-        backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.shape = .rounded(radius: 12)
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        clipsToBounds = true
+        containerView.clipsToBounds = true
 
         transferView.delegate = self
         setup(transferView)
@@ -139,6 +140,8 @@ extension ConversationVideoMessageCell: TransferViewDelegate {
 final class ConversationVideoMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationVideoMessageCell
     let configuration: View.Configuration
+
+    var canBeCombinedWithOtherCells: Bool { true }
 
     var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false

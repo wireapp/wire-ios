@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
@@ -28,8 +29,9 @@ package protocol DetermineAuthMethodBuilder {
 
 package struct DetermineAuthMethodView: View {
 
-    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder
+    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
 
+    @Environment(\.dismiss) var dismiss
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let factory: any Factory
@@ -96,9 +98,9 @@ package struct DetermineAuthMethodView: View {
             item: $viewModel.alert,
             title: titleForAlert,
             message: messageForAlert,
-            actions: { alert in
+            actions: { _ in
                 Button {
-                    viewModel.didDismissAlert(alert: alert)
+                    dismiss()
                 } label: {
                     Text(L10n.Authentication.Error.confirm)
                 }
@@ -106,16 +108,28 @@ package struct DetermineAuthMethodView: View {
         )
         .navigationDestination(for: Destination.self) {
             switch $0 {
-            case let .login(email):
-                factory.loginViaEmailView(email: email, canCreateAccount: false)
-            case let .loginOrRegister(email):
-                factory.loginViaEmailView(email: email, canCreateAccount: true)
+            case let .login(email, didDetectDomainConflict, backendMetadata):
+                factory.loginViaEmailView(
+                    email: email,
+                    canCreateAccount: false,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendMetadata: backendMetadata
+                )
+            case let .loginOrRegister(email, backendMetadata):
+                factory.loginViaEmailView(
+                    email: email,
+                    canCreateAccount: true,
+                    didDetectDomainConflict: false,
+                    backendMetadata: backendMetadata
+                )
             }
         }
         .sheet(item: $viewModel.modalDestination, content: {
             switch $0 {
             case let .ssoLogin(url: ssoURL):
                 factory.loginViaSSOView(ssoURL: ssoURL)
+            case let .switchBackend(email: email, backendConfig: backendConfig):
+                factory.switchBackendView(email: email, backendConfig: backendConfig)
             }
         })
         .presentationDetents([.medium, .large])
@@ -125,8 +139,8 @@ package struct DetermineAuthMethodView: View {
 
     package enum Destination: Hashable {
 
-        case login(email: String)
-        case loginOrRegister(email: String)
+        case login(email: String, didDetectDomainConflict: Bool, backendMetadata: BackendMetadata)
+        case loginOrRegister(email: String, backendMetadata: BackendMetadata)
 
     }
 
@@ -140,8 +154,6 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Title.general)
         case .unknownError:
             Text(L10n.Authentication.Error.Title.general)
-        case .onPremLoginNotPossible:
-            Text(L10n.Authentication.Error.Title.onPremNotPossible)
         case .invalidSSOLink:
             Text(L10n.Authentication.Error.Title.invalidSsoLink)
         }
@@ -155,8 +167,6 @@ package struct DetermineAuthMethodView: View {
             Text(L10n.Authentication.Error.Message.general)
         case .unknownError:
             Text(L10n.Authentication.Error.Message.general)
-        case .onPremLoginNotPossible:
-            Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
         case .invalidSSOLink:
             Text(L10n.Authentication.Error.Message.invalidSsoLink)
         }

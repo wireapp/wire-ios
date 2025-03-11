@@ -44,7 +44,11 @@ class NoHistoryViewTests: XCTestCase {
         let viewModel = NoHistoryViewModel(
             userID: UUID(),
             cookies: [],
+            accessToken: nil,
             emailCredentials: nil,
+            didDetectDomainConflict: false,
+            howToChangeEmailURL: URL(string: "https://wire.com")!,
+            howToDeleteAccountURL: URL(string: "https://wire.com")!,
             onFlowCompletion: { _ in }
         )
         let view = NoHistoryView(viewModel: viewModel)
@@ -65,7 +69,11 @@ class NoHistoryViewTests: XCTestCase {
         let viewModel = NoHistoryViewModel(
             userID: UUID(),
             cookies: [],
+            accessToken: nil,
             emailCredentials: nil,
+            didDetectDomainConflict: false,
+            howToChangeEmailURL: URL(string: "https://wire.com")!,
+            howToDeleteAccountURL: URL(string: "https://wire.com")!,
             onFlowCompletion: { _ in }
         )
         let view = NoHistoryView(viewModel: viewModel)

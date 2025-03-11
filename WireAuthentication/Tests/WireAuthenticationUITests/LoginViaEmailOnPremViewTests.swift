@@ -41,8 +41,12 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testColorSchemeVariantsWithoutProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = MockDependencies().loginViaEmailOnPremView(
+            email: "foo@bar.com",
+            backendConfig: MockDependencies()._backendConfig,
+            backendMetadata: nil
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -56,8 +60,12 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testDynamicTypeVariantsWithoutProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = MockDependencies().loginViaEmailOnPremView(
+            email: "foo@bar.com",
+            backendConfig: MockDependencies()._backendConfig,
+            backendMetadata: nil
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -72,23 +80,26 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testColorSchemeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let dependencies = MockDependencies()
-        dependencies._backendEnvironment = LocalBackendEnvironment(
-            title: "<backend name>",
-            domain: "example.com",
-            resolvedAPIVersion: 8,
-            isFederationEnabled: false,
-            isMLSEnabled: false,
-            endpoints: LocalBackendEnvironment.Endpoints(
-                restAPIURL: URL(string: "https://example.com")!,
-                websocketURL: URL(string: "https://example.com")!,
-                accountsURL: URL(string: "https://example.com")!
+        let backendConfig = BackendConfig(
+            title: "<backen name>",
+            endpoints: Endpoints(
+                backendURL: URL(string: "https://example.com")!,
+                backendWSURL: URL(string: "https://example.com")!,
+                blackListURL: URL(string: "https://example.com")!,
+                teamsURL: URL(string: "https://example.com")!,
+                accountsURL: URL(string: "https://example.com")!,
+                websiteURL: URL(string: "https://example.com")!
             ),
-            pinnedKeys: [],
-            proxySettings: .unauthenticated(host: "socks-test.net", port: 10)
+            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
+            pinnedKeys: nil
         )
-        let view = dependencies.loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        let view = MockDependencies().loginViaEmailOnPremView(
+            email: "foo@bar.com",
+            backendConfig: backendConfig,
+            backendMetadata: nil
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -102,23 +113,25 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
     func testDynamicTypeVariantsWithProxySettings() {
         let screenBounds = UIScreen.main.bounds
 
-        let dependencies = MockDependencies()
-        dependencies._backendEnvironment = LocalBackendEnvironment(
+        let backendConfig = BackendConfig(
             title: "<backend name>",
-            domain: "example.com",
-            resolvedAPIVersion: 8,
-            isFederationEnabled: false,
-            isMLSEnabled: false,
-            endpoints: LocalBackendEnvironment.Endpoints(
-                restAPIURL: URL(string: "https://example.com")!,
-                websocketURL: URL(string: "https://example.com")!,
-                accountsURL: URL(string: "https://example.com")!
+            endpoints: Endpoints(
+                backendURL: URL(string: "https://example.com")!,
+                backendWSURL: URL(string: "https://example.com")!,
+                blackListURL: URL(string: "https://example.com")!,
+                teamsURL: URL(string: "https://example.com")!,
+                accountsURL: URL(string: "https://example.com")!,
+                websiteURL: URL(string: "https://example.com")!
             ),
-            pinnedKeys: [],
-            proxySettings: .unauthenticated(host: "socks-test.net", port: 10)
+            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
+            pinnedKeys: nil
         )
-        let view = dependencies.loginViaEmailOnPremView(email: "foo@bar.com", canCreateAccount: false)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = MockDependencies().loginViaEmailOnPremView(
+            email: "foo@bar.com",
+            backendConfig: backendConfig,
+            backendMetadata: nil
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
