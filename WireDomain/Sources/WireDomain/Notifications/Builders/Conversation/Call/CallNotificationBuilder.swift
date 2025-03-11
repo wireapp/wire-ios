@@ -161,7 +161,7 @@ struct CallNotificationBuilder: NotificationBuilder {
         if let title = makeTitle() {
             content.title = title
         }
-        
+
         let body = if context.isGroupConversation, let senderName {
             isVideo ? "\(senderName) is calling with video" : "\(senderName) is calling"
         } else {

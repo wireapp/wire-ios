@@ -29,15 +29,15 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
     private var sut: ConversationMessageTimerUpdateEventNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
-    
+
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
-    
+
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
-    
+
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
@@ -45,7 +45,7 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
     }
-    
+
     override func tearDown() async throws {
         stack = nil
         sut = nil
@@ -55,19 +55,20 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         modelHelper = nil
         coreDataStackHelper = nil
     }
-    
-    
-    func testGenerateConversationMessageTimerUpdateEventNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
-        
+
+
+    func testGenerateConversationMessageTimerUpdateEventNotification_Is_Group_Conversation_And_Is_Team_User(
+    ) async throws {
+
         // Mock
-        
+
         let isGroup = true
         let isTeam = true
-        
+
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        
+
         let timerEnabledTestCases = [true, false]
-        
+
         for timerEnabledTestCase in timerEnabledTestCases {
             sut = await ConversationMessageTimerUpdateEventNotificationBuilder(
                 newTimer: timerEnabledTestCase ? 10_000 : nil,
@@ -76,12 +77,12 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
                 userLocalStore: userLocalStore,
                 conversationLocalStore: conversationLocalStore
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
-            
+
             let userNotification = await sut.buildContent()
-                
+
             try await internalTest_assertNotificationContent(
                 userNotification,
                 enableTimer: timerEnabledTestCase,
@@ -90,18 +91,19 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
             )
         }
     }
-    
-    func testGenerateConversationMessageTimerUpdateEventNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
-        
+
+    func testGenerateConversationMessageTimerUpdateEventNotification_Is_Group_Conversation_And_Is_Personal_User(
+    ) async throws {
+
         // Mock
-        
+
         let isGroup = true
         let isTeam = false
-        
+
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        
+
         let timerEnabledTestCases = [true, false]
-        
+
         for timerEnabledTestCase in timerEnabledTestCases {
             sut = await ConversationMessageTimerUpdateEventNotificationBuilder(
                 newTimer: timerEnabledTestCase ? 10_000 : nil,
@@ -110,12 +112,12 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
                 userLocalStore: userLocalStore,
                 conversationLocalStore: conversationLocalStore
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
-            
+
             let userNotification = await sut.buildContent()
-            
+
             try await internalTest_assertNotificationContent(
                 userNotification,
                 enableTimer: timerEnabledTestCase,
@@ -124,18 +126,18 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
             )
         }
     }
-    
+
     func testGenerateConversationMessageTimerUpdateEventNotification_Is_OneOnOne_Conversation_And_Team() async throws {
-        
+
         // Mock
-        
+
         let isGroup = false
         let isTeam = true
-        
+
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        
+
         let timerEnabledTestCases = [true, false]
-        
+
         for timerEnabledTestCase in timerEnabledTestCases {
             sut = await ConversationMessageTimerUpdateEventNotificationBuilder(
                 newTimer: timerEnabledTestCase ? 10_000 : nil,
@@ -144,12 +146,12 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
                 userLocalStore: userLocalStore,
                 conversationLocalStore: conversationLocalStore
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
-            
+
             let userNotification = await sut.buildContent()
-            
+
             try await internalTest_assertNotificationContent(
                 userNotification,
                 enableTimer: timerEnabledTestCase,
@@ -157,20 +159,20 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
                 isTeam: isTeam
             )
         }
-    
+
     }
-    
+
     private func internalTest_assertNotificationContent(
         _ userNotification: UserNotification,
         enableTimer: Bool,
         isGroup: Bool,
         isTeam: Bool
     ) async throws {
-        
-        guard case .text(let notificationContent) = userNotification else {
+
+        guard case let .text(notificationContent) = userNotification else {
             return XCTFail()
         }
-        
+
         // Title
         if isGroup {
             XCTAssertEqual(
@@ -188,34 +190,35 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         // Body
         XCTAssertEqual(
             notificationContent.body,
-            enableTimer ? "\(Scaffolding.senderName) set the message timer to 10 seconds" : "\(Scaffolding.senderName) turned off the message timer"
+            enableTimer ? "\(Scaffolding.senderName) set the message timer to 10 seconds" :
+                "\(Scaffolding.senderName) turned off the message timer"
         )
-        
+
         // Category
         XCTAssertEqual(
             notificationContent.categoryIdentifier,
             NotificationCategory.unmutedConversation.rawValue
         )
-        
+
         // Sound
         XCTAssertEqual(
             notificationContent.sound,
             UNNotificationSound(named: .init("default"))
         )
-        
+
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,
             Scaffolding.conversationID.uuid.uuidString.lowercased()
         )
-        
+
         // User info
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! UUID, .mockID1)
         XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! UUID, .mockID3)
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! UUID, .mockID2)
     }
-    
-    
+
+
     private func setupMock(isGroup: Bool, isTeam: Bool) async {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
@@ -239,7 +242,7 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         conversationLocalStore.shouldHideNotification_MockValue = false
         conversationLocalStore.decreaseUnreadCountFor_MockMethod = { _ in }
     }
-    
+
     private enum Scaffolding {
         static let senderName = "User1"
         static let conversationName = "Conversation1"
@@ -248,6 +251,6 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
     }
-    
+
 }
 

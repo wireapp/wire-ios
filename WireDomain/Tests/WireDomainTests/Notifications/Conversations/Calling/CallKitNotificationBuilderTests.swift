@@ -215,8 +215,8 @@ final class CallKitNotificationBuilderTests: XCTestCase {
         isGroup: Bool,
         isTeam: Bool
     ) async throws {
-        
-        guard case .callKit(let callKitPayload) = content else {
+
+        guard case let .callKit(callKitPayload) = content else {
             return XCTFail()
         }
 

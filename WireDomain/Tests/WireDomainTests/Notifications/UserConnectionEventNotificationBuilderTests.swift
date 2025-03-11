@@ -16,12 +16,12 @@
 //// along with this program. If not, see http://www.gnu.org/licenses/.
 ////
 //
-//import WireTesting
-//import XCTest
-//@testable import WireAPI
-//@testable import WireDomain
+// import WireTesting
+// import XCTest
+// @testable import WireAPI
+// @testable import WireDomain
 //
-//final class UserConnectionEventNotificationBuilderTests: XCTestCase {
+// final class UserConnectionEventNotificationBuilderTests: XCTestCase {
 //    private var sut: UserConnectionEventNotificationBuilder!
 //
 //    func testGenerateUserConnectionNotifications() async {
@@ -43,7 +43,8 @@
 //
 //            case .pending:
 //                XCTAssertEqual(notification.body, "\(Scaffolding.username) wants to connect")
-//                XCTAssertEqual(notification.categoryIdentifier, NotificationCategory.incomingConnectionRequest.rawValue)
+//                XCTAssertEqual(notification.categoryIdentifier,
+//                NotificationCategory.incomingConnectionRequest.rawValue)
 //
 //            case .accepted:
 //                XCTAssertEqual(notification.body, "You and \(Scaffolding.username) are now connected")
@@ -87,4 +88,4 @@
 //        )
 //    }
 //
-//}
+// }

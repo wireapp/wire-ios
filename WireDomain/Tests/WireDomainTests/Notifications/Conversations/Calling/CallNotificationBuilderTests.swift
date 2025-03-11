@@ -209,7 +209,7 @@ final class CallNotificationBuilderTests: XCTestCase {
         isGroup: Bool,
         isTeam: Bool
     ) async throws {
-        guard case .text(let notificationContent) = content else {
+        guard case let .text(notificationContent) = content else {
             return XCTFail()
         }
 

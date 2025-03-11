@@ -16,16 +16,16 @@
 //// along with this program. If not, see http://www.gnu.org/licenses/.
 ////
 //
-//import WireAPISupport
-//import WireDataModel
-//import WireDataModelSupport
-//import WireTestingPackage
-//import XCTest
-//@testable import WireAPI
-//@testable import WireDomain
-//@testable import WireDomainSupport
+// import WireAPISupport
+// import WireDataModel
+// import WireDataModelSupport
+// import WireTestingPackage
+// import XCTest
+// @testable import WireAPI
+// @testable import WireDomain
+// @testable import WireDomainSupport
 //
-//final class NewMessageNotificationBuilderTests: XCTestCase {
+// final class NewMessageNotificationBuilderTests: XCTestCase {
 //    private var sut: NewMessageNotificationBuilder!
 //    private var conversationLocalStore: MockConversationLocalStoreProtocol!
 //    private var messageLocalStore: MockMessageLocalStoreProtocol!
@@ -336,4 +336,4 @@
 //        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
 //        static let userID = UserID(uuid: .mockID3, domain: "domain.com")
 //    }
-//}
+// }

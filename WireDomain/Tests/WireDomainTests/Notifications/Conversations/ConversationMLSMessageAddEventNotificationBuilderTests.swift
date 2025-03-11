@@ -79,7 +79,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
                 conversationLocalStore: conversationLocalStore,
                 messageLocalStore: messageLocalStore
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
@@ -115,7 +115,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
                 conversationLocalStore: conversationLocalStore,
                 messageLocalStore: messageLocalStore
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
@@ -151,7 +151,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
                 conversationLocalStore: conversationLocalStore,
                 messageLocalStore: messageLocalStore
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
@@ -166,7 +166,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
 
         }
     }
-    
+
     func testGenerateMLSMessageNotification_It_Should_Not_Build_Notification() async throws {
 
         // Mock
@@ -179,7 +179,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
             isTeam: isTeam,
             isMessageSilenced: true
         )
-        
+
         let messagesCapable = getAllMessagesCapable()
 
         for messageCapable in messagesCapable {
@@ -192,7 +192,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
                 conversationLocalStore: conversationLocalStore,
                 messageLocalStore: messageLocalStore
             )
-            
+
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, false)
         }
@@ -204,8 +204,8 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         isGroup: Bool,
         isTeam: Bool
     ) async throws {
-        
-        guard case .text(let notificationContent) = userNotification else {
+
+        guard case let .text(notificationContent) = userNotification else {
             return XCTFail()
         }
 
@@ -347,7 +347,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
-        
+
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
         conversationLocalStore.lastReadServerTimestamp_MockValue = .now
