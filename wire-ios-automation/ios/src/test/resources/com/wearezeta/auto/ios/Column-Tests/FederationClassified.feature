@@ -92,7 +92,7 @@ Feature: Federation Classified
     And I see classified domain label in the conversation
     And I tap Audio Message button from input tools
     And I accept alert if visible
-    And I tap Audio Call button
+    When I start a call
     And <Member1>,<Member2> verify that waiting instance status is changed to active in 30 seconds
     And I see Calling overlay
     And I see SECURITY LEVEL: VS-NfD label on calling overlay
@@ -236,7 +236,7 @@ Feature: Federation Classified
     And I open conversation "<TeamOwner2>" in conversation list
     And <TeamOwner2> starts 2FA instance using <CallBackend>
     And <TeamOwner2> accepts next incoming call automatically
-    When I tap Audio Call button
+    When I start a call
     And I accept alert if visible
     Then I see SECURITY LEVEL: VS-NfD label on calling overlay
     When <TeamOwner2> verifies that waiting instance status is changed to active in 20 seconds
@@ -269,7 +269,7 @@ Feature: Federation Classified
     And I open conversation "<GroupChat>" in conversation list
     And <TeamOwner1>,<Member1>,<Member2> starts 2FA instance using <CallBackend>
     And <TeamOwner1>,<Member1>,<Member2> accepts next incoming call automatically
-    When I tap Audio Call button
+    When I start a call
     And I accept alert if visible
     And I accept alert if visible
     Then I see SECURITY LEVEL: VS-NfD label on calling overlay
