@@ -110,18 +110,9 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                 )
             )
         } else {
-            // Before we can make requests we need to resolve the api version.
-            let backendMetadata: BackendMetadata
             do {
-                backendMetadata = try await resolveBackendMetadata()
-            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-                alert = .noInternet
-            } catch  {
-                alert = .unknownError
-                WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
-            }
-
-            do {
+                // Before we can make requests we need to resolve the api version.
+                let backendMetadata = try await resolveBackendMetadata()
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
                     router.presentSheet(
                         RootView.ModalDestination.ssoLogin(
@@ -138,10 +129,13 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                         )
                     )
                 }
-            } catch {
-                WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
+            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
+                alert = .noInternet
+            } catch  {
                 alert = .unknownError
+                WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
             }
+
         }
     }
 
