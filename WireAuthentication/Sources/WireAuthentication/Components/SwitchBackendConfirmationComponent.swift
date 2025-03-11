@@ -66,9 +66,9 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
 
     // MARK: - Children
 
-        var loginViaSSOComponent: LoginViaSSOComponent {
-            LoginViaSSOComponent()
-        }
+    var loginViaSSOComponent: LoginViaSSOComponent {
+        LoginViaSSOComponent()
+    }
 
     // MARK: - Private dependencies
 
@@ -121,11 +121,11 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
 }
 
 extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationView.Factory {
-    
+
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent.view(ssoURL: ssoURL)
     }
-    
+
 }
 
 private extension PinnedKey {
