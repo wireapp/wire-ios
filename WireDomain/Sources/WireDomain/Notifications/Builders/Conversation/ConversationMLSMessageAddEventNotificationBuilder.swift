@@ -63,7 +63,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
-    ) async throws {
+    ) async {
         self.messageLocalStore = messageLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.message = message

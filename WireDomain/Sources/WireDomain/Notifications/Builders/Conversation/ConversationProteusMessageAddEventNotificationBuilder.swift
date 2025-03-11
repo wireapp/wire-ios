@@ -62,7 +62,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
-    ) async throws {
+    ) async {
         self.conversationLocalStore = conversationLocalStore
         self.messageLocalStore = messageLocalStore
         self.message = message
