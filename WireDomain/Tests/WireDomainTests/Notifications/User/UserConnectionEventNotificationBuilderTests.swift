@@ -25,44 +25,44 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
- final class UserConnectionEventNotificationBuilderTests: XCTestCase {
-     private var sut: UserConnectionEventNotificationBuilder!
-     private var userLocalStore: MockUserLocalStoreProtocol!
+final class UserConnectionEventNotificationBuilderTests: XCTestCase {
+    private var sut: UserConnectionEventNotificationBuilder!
+    private var userLocalStore: MockUserLocalStoreProtocol!
 
-     private var stack: CoreDataStack!
-     private var coreDataStackHelper: CoreDataStackHelper!
-     private var modelHelper: ModelHelper!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-     private var context: NSManagedObjectContext {
-         stack.syncContext
-     }
+    private var context: NSManagedObjectContext {
+        stack.syncContext
+    }
 
-     override func setUp() async throws {
-         userLocalStore = MockUserLocalStoreProtocol()
-         modelHelper = ModelHelper()
-         coreDataStackHelper = CoreDataStackHelper()
-         stack = try await coreDataStackHelper.createStack()
-     }
+    override func setUp() async throws {
+        userLocalStore = MockUserLocalStoreProtocol()
+        modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
+        stack = try await coreDataStackHelper.createStack()
+    }
 
-     override func tearDown() async throws {
-         stack = nil
-         sut = nil
-         userLocalStore = nil
-         try coreDataStackHelper.cleanupDirectory()
-         modelHelper = nil
-         coreDataStackHelper = nil
-     }
+    override func tearDown() async throws {
+        stack = nil
+        sut = nil
+        userLocalStore = nil
+        try coreDataStackHelper.cleanupDirectory()
+        modelHelper = nil
+        coreDataStackHelper = nil
+    }
 
     func testGenerateUserConnectionNotifications() async {
         // Given
         let connectionEvents = [Scaffolding.userPendingConnectionEvent, Scaffolding.userAcceptedConnectionEvent]
-        
+
         // Mock
-        
+
         userLocalStore.fetchSelfUser_MockValue = await context.perform { [self] in
             modelHelper.createSelfUser(in: context)
         }
-        
+
         userLocalStore.idFor_MockValue = .mockID1
 
         for connectionEvent in connectionEvents {
@@ -75,8 +75,8 @@ import XCTest
             )
 
             let userNotification = await sut.buildContent()
-            
-            guard case .text(let notificationContent) = userNotification else {
+
+            guard case let .text(notificationContent) = userNotification else {
                 return
             }
 
@@ -88,8 +88,10 @@ import XCTest
 
             case .pending:
                 XCTAssertEqual(notificationContent.body, "\(Scaffolding.username) wants to connect")
-                XCTAssertEqual(notificationContent.categoryIdentifier,
-                NotificationCategory.incomingConnectionRequest.rawValue)
+                XCTAssertEqual(
+                    notificationContent.categoryIdentifier,
+                    NotificationCategory.incomingConnectionRequest.rawValue
+                )
 
             case .accepted:
                 XCTAssertEqual(notificationContent.body, "You and \(Scaffolding.username) are now connected")
@@ -133,4 +135,4 @@ import XCTest
         )
     }
 
- }
+}
