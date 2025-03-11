@@ -17,30 +17,16 @@
 //
 
 import Foundation
-import WireAPI
 import WireAuthenticationAPI
 
-package struct FetchDefaultSSOSettingsUseCase: FetchDefaultSSOSettingsUseCaseProtocol {
+struct MockMockLoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
 
-    private let authenticationAPI: AuthenticationAPI
-
-    package init(authenticationAPI: AuthenticationAPI) {
-        self.authenticationAPI = authenticationAPI
-    }
-
-    package func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
-        do {
-            return try await authenticationAPI.getSSOCode()
-        } catch let error as URLError {
-            switch error.code {
-            case .notConnectedToInternet, .networkConnectionLost:
-                throw .noInternet
-            default:
-                throw .unknown
-            }
-        } catch {
-            throw .unknown
-        }
+    func invoke(
+        email: String,
+        password: String,
+        verificationCode: String?
+    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken) {
+        ([], AccessToken(userID: UUID(), token: "token", type: "Bearer", expirationDate: .distantFuture))
     }
 
 }

@@ -28,7 +28,7 @@ protocol VerificationCodeComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
-    var authenticationAPI: AuthenticationAPI { get }
+    var authenticationAPI: any AuthenticationAPI { get }
 
 }
 

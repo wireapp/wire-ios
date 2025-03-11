@@ -18,26 +18,14 @@
 
 import Foundation
 
-/// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
+public protocol FetchSSOURLUseCaseProtocol: Sendable {
 
-public protocol SSOLinkGeneratorProtocol: Sendable {
-
-    /// Generates the URL for the SSO authentication screen.
-    ///
-    /// - Parameters:
-    ///   - ssoCode: SSO code.
-    /// - Returns: URL to the SSO authentication screen.
-
-    func generateSSOLink(ssoCode: UUID) async throws -> URL
-
-    /// Flushes the temporary SSO login token stored in the user defaults.
-
-    func flushToken()
+    func invoke() async throws -> URL?
 
 }
 
-public protocol SSOLinkGeneratorFactory {
+public protocol FetchSSOURLUseCaseFactory {
 
-    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
+    func fetchSSOURLUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol
 
 }

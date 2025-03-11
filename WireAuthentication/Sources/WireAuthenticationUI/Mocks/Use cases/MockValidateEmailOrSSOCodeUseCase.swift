@@ -17,16 +17,18 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-public protocol FetchDefaultSSOSettingsUseCaseProtocol: Sendable {
+struct MockValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
 
-    func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID?
-
-}
-
-public enum FetchDefaultSSOSettingsUseCaseFailure: Error {
-
-    case noInternet
-    case unknown
+    func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if input.contains("@") {
+            return .email(email: input, domain: input.components(separatedBy: "@").last!)
+        } else if input.hasSuffix("wire") {
+            return .ssoCode(UUID())
+        } else {
+            throw ValidatedEmailOrSSOCodeFailure.invalidInput
+        }
+    }
 
 }
