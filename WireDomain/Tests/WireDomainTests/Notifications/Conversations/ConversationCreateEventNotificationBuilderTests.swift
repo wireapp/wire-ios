@@ -73,6 +73,9 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
             conversationLocalStore: conversationLocalStore
         )
         
+        let shouldBuildNotification = await sut.shouldBuildNotification()
+        XCTAssertEqual(shouldBuildNotification, true)
+        
         let userNotification = await sut.buildContent()
             
         try await internalTest_assertNotificationContent(
@@ -98,6 +101,9 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
             conversationLocalStore: conversationLocalStore
         )
         
+        let shouldBuildNotification = await sut.shouldBuildNotification()
+        XCTAssertEqual(shouldBuildNotification, true)
+        
         let userNotification = await sut.buildContent()
             
         try await internalTest_assertNotificationContent(
@@ -122,6 +128,9 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
             userLocalStore: userLocalStore,
             conversationLocalStore: conversationLocalStore
         )
+        
+        let shouldBuildNotification = await sut.shouldBuildNotification()
+        XCTAssertEqual(shouldBuildNotification, true)
         
         let userNotification = await sut.buildContent()
             

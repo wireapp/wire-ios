@@ -73,6 +73,9 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
             conversationLocalStore: conversationLocalStore
         )
         
+        let shouldBuildNotification = await sut.shouldBuildNotification()
+        XCTAssertEqual(shouldBuildNotification, true)
+        
         let userNotification = await sut.buildContent()
             
         try await internalTest_assertNotificationContent(
@@ -98,6 +101,9 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
             conversationLocalStore: conversationLocalStore
         )
         
+        let shouldBuildNotification = await sut.shouldBuildNotification()
+        XCTAssertEqual(shouldBuildNotification, true)
+        
         let userNotification = await sut.buildContent()
             
         try await internalTest_assertNotificationContent(
@@ -107,10 +113,11 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
         )
     }
     
-    func testGenerateConversationDeleteEventNotification_Is_OneOnOne_Conversation_And_Team() async throws {
+    func testGenerateConversationDeleteEventNotification_It_Should_Not_Build_Notification() async throws {
         
         // Mock
         
+        // this event doesn't pass the validation for a group conversation
         let isGroup = false
         let isTeam = true
         
@@ -123,14 +130,8 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
             conversationLocalStore: conversationLocalStore
         )
         
-        let userNotification = await sut.buildContent()
-            
-        try await internalTest_assertNotificationContent(
-            userNotification,
-            isGroup: isGroup,
-            isTeam: isTeam
-        )
-    
+        let shouldBuildNotification = await sut.shouldBuildNotification()
+        XCTAssertEqual(shouldBuildNotification, false)
     }
     
     private func internalTest_assertNotificationContent(
