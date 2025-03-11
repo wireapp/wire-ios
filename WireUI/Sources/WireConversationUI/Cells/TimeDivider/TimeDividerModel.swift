@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiteral {
+struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiteral { // TODO: maybe ExpressibleByStringLiteral is not needed
 
     var text = ""
 
@@ -24,8 +24,16 @@ struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiter
         self.text = text
     }
 
+    public init(text: String) {
+        self.init(text)
+    }
+
+    public init(_ text: String) {
+        self.init(stringLiteral: text)
+    }
+
     public init() {
-        self.init(stringLiteral: "")
+        self.init("")
     }
 
 }

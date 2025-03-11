@@ -16,36 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+struct AnyConversationCellModel: ConversationCellModelProtocol {
 
-final class ConversationCell<ContentView: ConversationCellContentViewProtocol>: UITableViewCell {
+    let base: Any
 
-    var model = ContentView.Model() {
-        didSet { updateConfiguration() }
+    init<M: ConversationCellModelProtocol>(_ base: M) {
+        self.base = base
     }
 
-    private func updateConfiguration() {
-        contentConfiguration = UIHostingConfiguration {
-            ContentView(model: model)
-        }.margins(.all, 0)
+    init() {
+        base = ()
     }
 
-}
-
-// MARK: - Previews
-
-@available(iOS 17, *)
-#Preview {
-    ConversationCellPreviews(
-        models: [
-            TimeDividerModel(text: "Friday")
-        ]
-    )
-}
-
-@MainActor
-func ConversationCellPreviews(
-    models: [any ConversationCellModelProtocol]
-) -> UIViewController {
-    UIViewController()
 }
