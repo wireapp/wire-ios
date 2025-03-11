@@ -30,6 +30,7 @@ package protocol SwitchBackendConfirmationBuilder {
 package struct SwitchBackendConfirmationView: View {
 
     // MARK: - Properties
+
     package typealias Factory = LoginViaSSOBuilder
 
     @Environment(\.dismiss) var dismiss
@@ -37,7 +38,7 @@ package struct SwitchBackendConfirmationView: View {
     @StateObject var viewModel: SwitchBackendConfirmationViewModel
 
     private typealias Strings = L10n.SwitchBackendConfirmation
-    let factory: any Factory
+    private let factory: any Factory
 
     package init(
         viewModel: SwitchBackendConfirmationViewModel,
@@ -61,6 +62,7 @@ package struct SwitchBackendConfirmationView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
         )
+        .frame(width: 350)
         .fixedSize(horizontal: false, vertical: true)
         .sheet(item: $viewModel.modalDestination, content: {
             switch $0 {

@@ -125,7 +125,15 @@ package struct DetermineAuthMethodView: View {
             case let .ssoLogin(url: ssoURL):
                 factory.loginViaSSOView(ssoURL: ssoURL)
             case let .switchBackend(email: email, environment: environment):
-                factory.switchBackendView(email: email, environment: environment)
+                if #available(iOS 16.4, *) {
+                    factory.switchBackendView(email: email, environment: environment)
+                        .presentationBackground(Color.black.opacity(0.7))
+                } else {
+                    factory.switchBackendView(email: email, environment: environment)
+                        .background(
+                            TransparentBackgroundView()
+                        )
+                }
             }
         })
         .presentationDetents([.medium, .large])
@@ -192,4 +200,21 @@ package func makeDetermineAuthMethodViewPreview(
                 alert: .unknownError
             )
         }
+}
+
+private struct TransparentBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        return InnerView()
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+
+    private class InnerView: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+
+            superview?.superview?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        }
+
+    }
 }
