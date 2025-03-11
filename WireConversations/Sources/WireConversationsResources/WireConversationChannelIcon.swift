@@ -19,13 +19,13 @@
 package import SwiftUI
 
 package enum WireConversationChannelIconAsset: String {
-    case blue = "blue"
-    case purple = "purple"
-    case red = "red"
-    case green = "green"
-    case amber = "amber"
-    case petrol = "petrol"
-    case gray = "gray"
+    case blue
+    case purple
+    case red
+    case green
+    case amber
+    case petrol
+    case gray
 
     package static var all: [WireConversationChannelIconAsset] {
         [
