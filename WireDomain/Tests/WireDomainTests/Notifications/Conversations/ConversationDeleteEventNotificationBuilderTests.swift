@@ -25,8 +25,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
-    private var sut: ConversationCreateEventNotificationBuilder!
+final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
+    private var sut: ConversationDeleteEventNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
     
@@ -57,7 +57,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
     }
     
     
-    func testGenerateConversationCreateEventNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
+    func testGenerateConversationDeleteEventNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
         
         // Mock
         
@@ -66,7 +66,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         
-        sut = await ConversationCreateEventNotificationBuilder(
+        sut = await ConversationDeleteEventNotificationBuilder(
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
             userLocalStore: userLocalStore,
@@ -82,7 +82,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         )
     }
     
-    func testGenerateConversationCreateEventNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
+    func testGenerateConversationDeleteEventNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
         
         // Mock
         
@@ -91,7 +91,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         
-        sut = await ConversationCreateEventNotificationBuilder(
+        sut = await ConversationDeleteEventNotificationBuilder(
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
             userLocalStore: userLocalStore,
@@ -107,7 +107,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         )
     }
     
-    func testGenerateConversationCreateEventNotification_Is_OneOnOne_Conversation_And_Team() async throws {
+    func testGenerateConversationDeleteEventNotification_Is_OneOnOne_Conversation_And_Team() async throws {
         
         // Mock
         
@@ -116,7 +116,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         
         await setupMock(isGroup: isGroup, isTeam: isTeam)
         
-        sut = await ConversationCreateEventNotificationBuilder(
+        sut = await ConversationDeleteEventNotificationBuilder(
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
             userLocalStore: userLocalStore,
@@ -160,7 +160,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         // Body
         XCTAssertEqual(
             notificationContent.body,
-            "\(Scaffolding.senderName) created a conversation"
+            "\(Scaffolding.senderName) deleted the group"
         )
         
         // Category
@@ -209,6 +209,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         userLocalStore.idFor_MockValue = .mockID1
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)
         conversationLocalStore.shouldHideNotification_MockValue = false
+        conversationLocalStore.decreaseUnreadCountFor_MockMethod = { _ in }
     }
     
     private enum Scaffolding {

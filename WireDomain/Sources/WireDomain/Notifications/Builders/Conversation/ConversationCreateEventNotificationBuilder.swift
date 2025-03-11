@@ -92,7 +92,7 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = if context.isGroupConversation, let senderName = context.senderName {
+        let body = if let senderName = context.senderName {
             "\(senderName) created a conversation"
         } else {
             "Someone created a conversation"
