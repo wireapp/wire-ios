@@ -19,6 +19,8 @@
 import UIKit
 import WireDataModel
 
+// MARK: - MessageReactionsCellDescription
+
 final class MessageReactionsCellDescription: ConversationMessageCellDescription {
 
     // MARK: - Properties
@@ -28,16 +30,20 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     init(message: ZMConversationMessage) {
         self.message = message
-        self.configuration = message.reactionsSortedByCreationDate().compactMap { reaction in
 
-            guard !reaction.users.isEmpty else { return nil }
+        let reactions: [MessageReactionMetadata] = message.reactionsSortedByCreationDate().compactMap { reaction in
+            guard !reaction.users.isEmpty else {
+                return nil
+            }
 
-            return MessageReaction(
-                emojiID: reaction.reactionString,
+            return MessageReactionMetadata(
+                emoji: reaction.reactionString,
                 count: UInt(reaction.users.count),
                 isSelfUserReacting: reaction.users.contains(where: \.isSelfUser)
             )
         }
+
+        self.configuration = reactions
     }
 
     var canBeCombinedWithOtherCells: Bool { true }

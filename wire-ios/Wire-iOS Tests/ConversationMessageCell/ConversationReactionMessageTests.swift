@@ -52,7 +52,7 @@ final class ConversationReactionMessageTests: XCTestCase {
 
     func testThatItConfiguresWithSelfReaction() {
         // GIVEN
-        let reaction = MessageReaction(emojiID: .like, count: 1, isSelfUserReacting: true)
+        let reaction = MessageReactionMetadata(emoji: .like, count: 1, isSelfUserReacting: true)
         let configuration = [reaction]
 
         sut.configure(with: configuration, animated: false)
@@ -63,32 +63,32 @@ final class ConversationReactionMessageTests: XCTestCase {
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        let likeReaction = MessageReaction(
-            emojiID: .like,
+        let likeReaction = MessageReactionMetadata(
+            emoji: .like,
             count: 4,
             isSelfUserReacting: false
         )
 
-        let thumbsUpReaction = MessageReaction(
-            emojiID: .thumbsUp,
+        let thumbsUpReaction = MessageReactionMetadata(
+            emoji: .thumbsUp,
             count: 1,
             isSelfUserReacting: false
         )
 
-        let thumbsDownReaction = MessageReaction(
-            emojiID: .thumbsDown,
+        let thumbsDownReaction = MessageReactionMetadata(
+            emoji: .thumbsDown,
             count: 6,
             isSelfUserReacting: false
         )
 
-        let slightlySmilingReaction = MessageReaction(
-            emojiID: .smile,
+        let slightlySmilingReaction = MessageReactionMetadata(
+            emoji: .smile,
             count: 8,
             isSelfUserReacting: false
         )
 
-        let frowningFaceReaction = MessageReaction(
-            emojiID: .frown,
+        let frowningFaceReaction = MessageReactionMetadata(
+            emoji: .frown,
             count: 10,
             isSelfUserReacting: false
         )
