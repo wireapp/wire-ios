@@ -566,16 +566,6 @@ public extension WireCallCenterV3 {
             isConferenceCall: isConferenceCall(conversationId: conversationId)
         )
 
-        let answered = avsWrapper.answerCall(
-            conversationId: conversationId,
-            callType: callType,
-            useCBR: useConstantBitRateAudio
-        )
-
-        guard answered else {
-            throw Failure.unknown
-        }
-
         let callState: CallState = .answered(degraded: isDegraded(conversationId: conversationId))
 
         let previousSnapshot = callSnapshots[conversationId]
@@ -595,18 +585,34 @@ public extension WireCallCenterV3 {
             ).post(in: context.notificationContext)
         }
 
+        let avsAnswerCallHandler: () throws -> Void = { [weak self] in
+            guard let self else { return }
+
+            let answered = avsWrapper.answerCall(
+                conversationId: conversationId,
+                callType: callType,
+                useCBR: useConstantBitRateAudio
+            )
+
+            guard answered else {
+                throw Failure.unknown
+            }
+        }
+
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            break
+            try avsAnswerCallHandler()
 
         case .mls:
-            guard
-                let conversationType = getAVSConversationType(for: conversation),
-                conversationType == .mlsConference
-            else {
-                return
+            if let conversationType = getAVSConversationType(for: conversation),
+               conversationType == .mlsConference {
+                try setUpMLSConference(
+                    in: conversation,
+                    avsCallHandler: avsAnswerCallHandler
+                )
+            } else {
+                try avsAnswerCallHandler()
             }
-            try setUpMLSConference(in: conversation)
         }
     }
 
@@ -648,17 +654,6 @@ public extension WireCallCenterV3 {
             throw Failure.missingConferencingPermission
         }
 
-        let started = avsWrapper.startCall(
-            conversationId: conversationId,
-            callType: callType,
-            conversationType: conversationType,
-            useCBR: useConstantBitRateAudio
-        )
-
-        guard started else {
-            throw Failure.unknown
-        }
-
         let callState: CallState = .outgoing(isVideo: isVideo, degraded: isDegraded(conversationId: conversationId))
         let previousCallState = callSnapshots[conversationId]?.callState
 
@@ -682,12 +677,33 @@ public extension WireCallCenterV3 {
             ).post(in: context.notificationContext)
         }
 
+        let avsStartCallHandler: () throws -> Void = { [weak self] in
+            guard let self else { return }
+
+            let started = avsWrapper.startCall(
+                conversationId: conversationId,
+                callType: callType,
+                conversationType: conversationType,
+                useCBR: useConstantBitRateAudio
+            )
+
+            guard started else {
+                throw Failure.unknown
+            }
+        }
+
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            break
+            try avsStartCallHandler()
         case .mls:
-            guard conversationType == .mlsConference else { return }
-            try setUpMLSConference(in: conversation)
+            if conversationType == .mlsConference {
+                try setUpMLSConference(
+                    in: conversation,
+                    avsCallHandler: avsStartCallHandler
+                )
+            } else {
+                try avsStartCallHandler()
+            }
         }
     }
 
@@ -703,11 +719,15 @@ public extension WireCallCenterV3 {
     /// Sets up the MLS conference for a given conversation.
     ///
     /// - Parameter conversation: The conversation to set up the MLS conference for.
+    /// - Parameter avsCallHandler: Triggers `wcall_start` or `wcall_answer` from AVS.
     ///
     /// See documentation:
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/692027483/Use+case+Join+conference+sub-conversation+MLS
 
-    private func setUpMLSConference(in conversation: ZMConversation) throws {
+    private func setUpMLSConference(
+        in conversation: ZMConversation,
+        avsCallHandler: @escaping () throws -> Void
+    ) throws {
         guard let conversationID = conversation.avsIdentifier else {
             throw Failure.failedToSetupMLSConference
         }
@@ -737,6 +757,8 @@ public extension WireCallCenterV3 {
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
+
+                    try avsCallHandler()
 
                     // Generate and set the conference information for the subgroup
                     let initialConferenceInfo = try await mlsService.generateConferenceInfo(
