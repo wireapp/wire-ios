@@ -162,22 +162,3 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     }
 
 }
-
-// MARK: Alerts
-
-package extension SwitchBackendConfirmationViewModel {
-
-    struct Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        let title: String
-        let message: String
-
-        private typealias Title = L10n.Authentication.Error.Title
-        private typealias Message = L10n.Authentication.Error.Message
-
-        static let unknownError = Alert(title: Title.general, message: Message.general)
-        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
-    }
-
-}
