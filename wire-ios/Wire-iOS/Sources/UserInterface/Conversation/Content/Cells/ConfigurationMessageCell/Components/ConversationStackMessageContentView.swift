@@ -89,6 +89,25 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         stackView.fitIn(view: self)
     }
 
+    override func systemLayoutSizeFitting(
+        _ targetSize: CGSize,
+        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
+        verticalFittingPriority: UILayoutPriority
+    ) -> CGSize {
+        for conversationMessageCell in conversationMessageCells {
+            _ = conversationMessageCell.systemLayoutSizeFitting(
+                targetSize,
+                withHorizontalFittingPriority: horizontalFittingPriority,
+                verticalFittingPriority: verticalFittingPriority
+            )
+        }
+        return super.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: horizontalFittingPriority,
+            verticalFittingPriority: verticalFittingPriority
+        )
+    }
+
     // MARK: - ConversationMessageCell
 
     var selectionView: UIView? {
