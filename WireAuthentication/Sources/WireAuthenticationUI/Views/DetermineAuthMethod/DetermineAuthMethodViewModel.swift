@@ -91,16 +91,19 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 authMethod,
                 backendMetadata: backendMetadata
             )
-        } catch DetermineAuthMethodUseCaseFailure.invalidEmailOrSSOCode {
-            // No need to do anything here. In general this shouldn't happen because we validate before submitting.
-            // It is probably worth restructuring the code to avoid this.
-        } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-            alert = .noInternet
         } catch {
-            alert = .unknownError
-        }
+            switch error {
+            case DetermineAuthMethodUseCaseFailure.invalidEmailOrSSOCode:
+                // No need to do anything here. In general this shouldn't happen because we validate before submitting.
+                // It is probably worth restructuring the code to avoid this.
+                break
+            default:
+                alert = .general(for: error)
+            }
 
-        isLoading = false
+            let log = alert == .unknownError ? WireLogger.authentication.error : WireLogger.authentication.info
+            log("Error determining authentication method: \(error)")
+        }
     }
 
     func dismissmodalView() {
@@ -138,16 +141,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     try await generator.generateSSOLink(ssoCode: code)
                 }.value
                 modalDestination = .ssoLogin(url: url)
-            } catch SSOLinkGeneratorFailure.invalidSSOCode {
-                alert = .incorrectSSOCode
-            } catch SSOLinkGeneratorFailure.invalidSSOURL {
-                alert = .invalidSSOLink
-            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-                alert = .noInternet
             } catch {
-                alert = .unknownError
+                switch error {
+                case SSOLinkGeneratorFailure.invalidSSOCode:
+                    alert = .incorrectSSOCode
+                case SSOLinkGeneratorFailure.invalidSSOURL:
+                    alert = .invalidSSOLink
+                default:
+                    alert = .general(for: error)
+                }
 
-                WireLogger.authentication.error("Unexpected error while generating SSO link: \(error)")
+                let log = alert == .unknownError ? WireLogger.authentication.error : WireLogger.authentication.info
+                log("Error while generating SSO link: \(error)")
             }
 
         case let .onPremLogin(email, backendConfigURL):
@@ -157,12 +162,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     try await useCase.invoke(at: backendConfigURL)
                 }.value
                 modalDestination = .switchBackend(email: email, backendConfig: backendConfig)
-            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-                alert = .noInternet
             } catch {
-                alert = .unknownError
+                alert = .general(for: error)
 
-                WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
+                let log = alert == .unknownError ? WireLogger.authentication.error : WireLogger.authentication.info
+                log("Error fetching backend config: \(error)")
             }
         }
     }
@@ -176,5 +180,4 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return false
         }
     }
-
 }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 
 /// Identifies an alert and provides it's title and message.
 
@@ -45,5 +46,20 @@ extension Alert {
     )
     static let accountSuspended = Alert(title: Title.accountSuspended, message: Message.accountSuspended)
     static let unknownError = Alert(title: Title.general, message: Message.general)
+
+}
+
+extension Alert {
+
+    /// Returns a suitable alert for the given error. This is intended to be used used in the unhandled alert case.
+
+    static func general(for error: Error) -> Self {
+        switch error {
+        case URLError.notConnectedToInternet, URLError.networkConnectionLost:
+            .noInternet
+        default:
+            .unknownError
+        }
+    }
 
 }
