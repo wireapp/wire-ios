@@ -30,3 +30,9 @@ public enum FetchBackendConfigFailure: Error, Equatable {
     case invalidResponse
 
 }
+
+public protocol FetchBackendConfigUseCaseFactory {
+
+    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol
+
+}

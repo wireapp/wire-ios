@@ -26,7 +26,7 @@ import WireAuthenticationAPI
 class RootComponent: BootstrapComponent {
 
     public let defaultBackendEnvironment: BackendEnvironment
-    public let defaultAPIVersion: APIVersion
+    public let preferredAPIVersion: APIVersion?
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let howToChangeEmailURL: URL
@@ -39,7 +39,7 @@ class RootComponent: BootstrapComponent {
 
     init(
         defaultBackendEnvironment: BackendEnvironment,
-        defaultAPIVersion: APIVersion,
+        preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         accountsURL: URL,
         howToChangeEmailURL: URL,
@@ -51,7 +51,7 @@ class RootComponent: BootstrapComponent {
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
         self.defaultBackendEnvironment = defaultBackendEnvironment
-        self.defaultAPIVersion = defaultAPIVersion
+        self.preferredAPIVersion = preferredAPIVersion
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.howToChangeEmailURL = howToChangeEmailURL
@@ -105,8 +105,17 @@ class RootComponent: BootstrapComponent {
         NoHistoryComponent(parent: self)
     }
 
-    var loginViaEmailOnPremComponent: LoginViaEmailOnPremComponent {
-        LoginViaEmailOnPremComponent(parent: self)
+    func loginViaEmailOnPremComponent(
+        email: String,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) -> LoginViaEmailOnPremComponent {
+        LoginViaEmailOnPremComponent(
+            parent: self,
+            email: email,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        )
     }
 
     var loginViaSSOComponent: LoginViaSSOComponent {
@@ -140,9 +149,14 @@ extension RootComponent: RootView.Factory {
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
-        backendConfig: BackendConfig
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremView {
-        loginViaEmailOnPremComponent.view(email: email, backendConfig: backendConfig)
+        loginViaEmailOnPremComponent(
+            email: email,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        ).view
     }
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {

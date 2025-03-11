@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationMissingMessagesSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
 

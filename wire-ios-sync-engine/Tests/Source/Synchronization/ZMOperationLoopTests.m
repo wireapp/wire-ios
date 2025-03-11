@@ -305,7 +305,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedEvents, expectedEvents);
+    XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedLivedEvents, expectedEvents);
 }
 
 - (void)testThatProcessSyncDataIsNotForwardedToAllSyncObjectsIfItIsNotAnArray

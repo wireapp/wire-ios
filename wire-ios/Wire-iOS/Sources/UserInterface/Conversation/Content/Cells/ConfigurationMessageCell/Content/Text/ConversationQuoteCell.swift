@@ -330,6 +330,8 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
 
     let configuration: View.Configuration
 
+    var canBeCombinedWithOtherCells: Bool { true }
+
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 8
     let supportsActions = false

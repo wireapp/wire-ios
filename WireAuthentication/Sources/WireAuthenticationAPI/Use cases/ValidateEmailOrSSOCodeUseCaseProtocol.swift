@@ -36,3 +36,9 @@ package enum ValidatedEmailOrSSOCodeFailure: Error {
     case invalidInput
 
 }
+
+package protocol ValidateEmailOrSSOCodeUseCaseFactory {
+
+    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol
+
+}
