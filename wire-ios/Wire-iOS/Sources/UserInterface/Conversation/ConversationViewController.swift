@@ -30,6 +30,7 @@ final class ConversationViewController: UIViewController {
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let visibleMessage: ZMConversationMessage?
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
+    var actionControllerForSelectedEmoji: ConversationMessageActionController?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
