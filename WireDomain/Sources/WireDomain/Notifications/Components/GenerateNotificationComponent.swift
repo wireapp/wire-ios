@@ -33,14 +33,14 @@ protocol GenerateNotificationDependency: Dependency {
 protocol GenerateNotificationProvider {
     func generateNotificationService(
         eventsStream: AsyncStream<[UpdateEvent]>
-    ) -> GenerateNotificationService
+    ) -> GenerateNotificationServiceProtocol
 }
 
 final class GenerateNotificationComponent: Component<GenerateNotificationDependency>, GenerateNotificationProvider {
 
     func generateNotificationService(
         eventsStream: AsyncStream<[UpdateEvent]>
-    ) -> GenerateNotificationService {
+    ) -> GenerateNotificationServiceProtocol {
         GenerateNotificationService(
             eventsStream: eventsStream,
             contentHandler: dependency.contentHandler,

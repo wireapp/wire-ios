@@ -47,7 +47,7 @@ final class PullEventsComponent: Component<PullEventsDependency>, PullEventsServ
         selfClientID: String
     ) async -> any PullEventsServiceProtocol {
 
-        let pullEventsSync = await pullEventsSync(
+        let pullPendingEventsSync = await pullEventsSync(
             selfUserID: selfUserID,
             selfClientID: selfClientID
         )
@@ -56,7 +56,7 @@ final class PullEventsComponent: Component<PullEventsDependency>, PullEventsServ
             coreData: dependency.coreData,
             userClientsLocalStore: userClientsLocalStore,
             updateEventsLocalStore: updateEventsLocalStore,
-            eventsSync: pullEventsSync,
+            pendingEventsSync: pullPendingEventsSync,
             generateNotificationProvider: generateNotificationComponent
         )
     }
@@ -81,7 +81,7 @@ extension PullEventsComponent {
     private func pullEventsSync(
         selfUserID: UUID,
         selfClientID: String
-    ) async -> any PullUpdateEventsSyncProtocol {
+    ) async -> any PullPendingUpdateEventsSyncProtocol {
         let updateEventsAPI = await updateEventsAPI(
             cookieStorage: dependency.cookieStorage,
             selfClientID: selfClientID,
@@ -92,7 +92,7 @@ extension PullEventsComponent {
             selfUserID: selfUserID
         )
 
-        return PullUpdateEventsSync(
+        return PullPendingUpdateEventsSync(
             selfClientID: selfClientID,
             api: updateEventsAPI,
             store: updateEventsLocalStore,

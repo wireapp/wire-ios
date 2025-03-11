@@ -31,7 +31,7 @@ struct PullEventsService: PullEventsServiceProtocol {
     private let coreData: CoreDataStack
     private let userClientsLocalStore: any UserClientsLocalStoreProtocol
     private let updateEventsLocalStore: any UpdateEventsLocalStoreProtocol
-    private let eventsSync: any PullUpdateEventsSyncProtocol
+    private let pendingEventsSync: any PullPendingUpdateEventsSyncProtocol
     private let generateNotificationProvider: any GenerateNotificationProvider
 
     enum Failure: Error {
@@ -43,13 +43,13 @@ struct PullEventsService: PullEventsServiceProtocol {
         coreData: CoreDataStack,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         updateEventsLocalStore: any UpdateEventsLocalStoreProtocol,
-        eventsSync: any PullUpdateEventsSyncProtocol,
+        pendingEventsSync: any PullPendingUpdateEventsSyncProtocol,
         generateNotificationProvider: any GenerateNotificationProvider
     ) {
         self.coreData = coreData
         self.userClientsLocalStore = userClientsLocalStore
         self.updateEventsLocalStore = updateEventsLocalStore
-        self.eventsSync = eventsSync
+        self.pendingEventsSync = pendingEventsSync
         self.generateNotificationProvider = generateNotificationProvider
     }
 
@@ -60,7 +60,6 @@ struct PullEventsService: PullEventsServiceProtocol {
     ) async throws {
         try setup()
 
-        let selfClientID = await userClientsLocalStore.fetchSelfClientID()
         let lastEventID = updateEventsLocalStore.lastEventID()
 
         if lastEventID == nil {
@@ -68,7 +67,7 @@ struct PullEventsService: PullEventsServiceProtocol {
         }
 
         do {
-            let decodedEventsStream = try await eventsSync.pull()
+            let decodedEventsStream = try await pendingEventsSync.pull()
 
             let generateNotificationService = generateNotificationProvider.generateNotificationService(
                 eventsStream: decodedEventsStream

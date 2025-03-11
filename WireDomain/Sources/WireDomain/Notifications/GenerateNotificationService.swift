@@ -22,7 +22,12 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-struct GenerateNotificationService {
+// sourcery: AutoMockable
+protocol GenerateNotificationServiceProtocol {
+    func process() async
+}
+
+struct GenerateNotificationService: GenerateNotificationServiceProtocol {
 
     private let eventsStream: AsyncStream<[UpdateEvent]>
     private let contentHandler: (UNNotificationContent) -> Void

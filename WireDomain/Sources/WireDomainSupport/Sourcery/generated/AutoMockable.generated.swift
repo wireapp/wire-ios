@@ -1367,6 +1367,29 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
 }
 
+class MockGenerateNotificationServiceProtocol: GenerateNotificationServiceProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - process
+
+    var process_Invocations: [Void] = []
+    var process_MockMethod: (() async -> Void)?
+
+    func process() async {
+        process_Invocations.append(())
+
+        guard let mock = process_MockMethod else {
+            fatalError("no mock for `process`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -2110,20 +2133,23 @@ public class MockPullPendingUpdateEventsSyncProtocol: PullPendingUpdateEventsSyn
 
     public var pull_Invocations: [Void] = []
     public var pull_MockError: Error?
-    public var pull_MockMethod: (() async throws -> Void)?
+    public var pull_MockMethod: (() async throws -> AsyncStream<[UpdateEvent]>)?
+    public var pull_MockValue: AsyncStream<[UpdateEvent]>?
 
-    public func pull() async throws {
+    public func pull() async throws -> AsyncStream<[UpdateEvent]> {
         pull_Invocations.append(())
 
         if let error = pull_MockError {
             throw error
         }
 
-        guard let mock = pull_MockMethod else {
+        if let mock = pull_MockMethod {
+            return try await mock()
+        } else if let mock = pull_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `pull`")
         }
-
-        try await mock()
     }
 
 }

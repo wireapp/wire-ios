@@ -32,9 +32,12 @@ final class VerifyUserSessionTests: XCTestCase {
         userLocalStore = MockUserLocalStoreProtocol()
         cookieStorage = MockCookieStorageProtocol()
         pullEventsService = MockPullEventsServiceProtocol()
+        let mockPullEventsServiceProvider = MockPullEventsServiceProvider(
+            pullEventsService: pullEventsService
+        )
         
         sut = VerifyUserSession(
-            pullEventsServiceProvider: MockPullEventsServiceProvider(pullEventsService: pullEventsService),
+            pullEventsServiceProvider: mockPullEventsServiceProvider,
             userLocalStore: userLocalStore,
             cookieStorage: cookieStorage
         )
@@ -47,7 +50,7 @@ final class VerifyUserSessionTests: XCTestCase {
         pullEventsService = nil
     }
     
-    func testItVerifiesSessionSuccessfullyAndStartSyncingEvents() async throws {
+    func testVerify_It_Invokes_Methods_And_Call_Completion_Block() async throws {
         
         // Mock
         
@@ -68,10 +71,11 @@ final class VerifyUserSessionTests: XCTestCase {
         
         // Then
         XCTAssertEqual(completionCalledCount, 1)
+        XCTAssertEqual(cookieStorage.fetchCookies_Invocations.count, 1)
         
     }
     
-    func testItFailsWithUserUnauthenticatedError() async throws {
+    func testVerify_It_Throws_User_Unauthenticated_Error() async throws {
         
         // Mock
         
@@ -86,6 +90,30 @@ final class VerifyUserSessionTests: XCTestCase {
             )
         }
         
+    }
+    
+    func testStartSyncingEvents_It_Invokes_Methods() async throws {
+        // Mock
+        userLocalStore.selfUserInfo_MockValue = (UUID.mockID1, UUID.mockID1.uuidString)
+        pullEventsService.startSyncNewEventID_MockMethod = { _ in }
+        
+        // When
+        try await sut.startSyncingEvents(eventID: .mockID1)
+        
+        // Then
+        XCTAssertEqual(userLocalStore.selfUserInfo_Invocations.count, 1)
+        XCTAssertEqual(pullEventsService.startSyncNewEventID_Invocations.count, 1)
+    }
+    
+    func testStartSyncingEvents_It_Throws_Missing_User_Client_Error() async throws {
+        // Mock
+        userLocalStore.selfUserInfo_MockValue = (UUID.mockID1, nil)
+        
+        // Then
+        await XCTAssertThrowsErrorAsync(VerifyUserSession.Failure.missingUserClient) { [self] in
+            // When
+            try await sut.startSyncingEvents(eventID: .mockID1)
+        }
     }
     
     private struct MockPullEventsServiceProvider: PullEventsServiceProvider {
