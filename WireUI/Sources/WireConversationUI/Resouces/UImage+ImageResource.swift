@@ -16,14 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import class WireTransport.ZMReachability
+import UIKit
 
-extension ZMReachability: ServerConnection {
-
-    public var isOffline: Bool {
-        !mayBeReachable
-    }
-
-    // isMobileConnection is declared already
+public extension UIImage {
+    static let dropdown = UIImage(resource: .dropdown)
 }

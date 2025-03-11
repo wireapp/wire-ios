@@ -41,17 +41,6 @@ extension ZMConversation {
         joinVoiceChannel(video: false)
     }
 
-    func startVideoCall() {
-        if warnAboutNoInternetConnection() {
-            return
-        }
-
-        warnAboutSlowConnection { abortCall in
-            guard !abortCall else { return }
-            self.joinVoiceChannel(video: true)
-        }
-    }
-
     func joinCall() {
         if conversationType == .group {
             voiceChannel?.muted = true
@@ -82,43 +71,6 @@ extension ZMConversation {
             }
         }
 
-    }
-
-    func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {
-
-        typealias ErrorCallSlowCallLocale = L10n.Localizable.Error.Call
-
-        guard let sessionManager = SessionManager.shared else {
-            assertionFailure("requires session manager to init NetworkConditionHelper!")
-            handler(false)
-            return
-        }
-
-        let reachability = sessionManager.environment.reachability
-        let networkInfo = NetworkInfo(serverConnection: reachability)
-        if networkInfo.qualityType() == .type2G {
-
-            let badConnectionController = UIAlertController(
-                title: ErrorCallSlowCallLocale.SlowConnection.title,
-                message: ErrorCallSlowCallLocale.slowConnection,
-                preferredStyle: .alert
-            )
-            badConnectionController.addAction(UIAlertAction(
-                title: ErrorCallSlowCallLocale.SlowConnection.callAnyway,
-                style: .default
-            ) { _ in
-                handler(false)
-            })
-            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
-                handler(true)
-            })
-
-            badConnectionController.presentOverAll(animated: true)
-        } else {
-            handler(false)
-        }
-
-        reachability.tearDown()
     }
 
     func warnAboutNoInternetConnection() -> Bool {
