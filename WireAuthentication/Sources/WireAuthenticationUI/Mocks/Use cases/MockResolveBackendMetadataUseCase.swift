@@ -16,28 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAuthenticationAPI
 
-/// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
+struct MockResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
 
-public protocol SSOLinkGeneratorProtocol: Sendable {
-
-    /// Generates the URL for the SSO authentication screen.
-    ///
-    /// - Parameters:
-    ///   - ssoCode: SSO code.
-    /// - Returns: URL to the SSO authentication screen.
-
-    func generateSSOLink(ssoCode: UUID) async throws -> URL
-
-    /// Flushes the temporary SSO login token stored in the user defaults.
-
-    func flushToken()
-
-}
-
-public protocol SSOLinkGeneratorFactory {
-
-    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
+    func invoke() async throws -> BackendMetadata {
+        BackendMetadata(
+            apiVersion: .v8,
+            domain: "wire.com",
+            isFederationEnabled: true
+        )
+    }
 
 }

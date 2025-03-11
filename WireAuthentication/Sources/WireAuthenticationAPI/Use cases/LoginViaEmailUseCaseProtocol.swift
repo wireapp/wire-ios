@@ -39,3 +39,9 @@ public enum LoginViaEmailUseCaseFailure: Error, Equatable {
     case other
 
 }
+
+public protocol LoginViaEmailUseCaseFactory {
+
+    func loginViaEmailUseCase(apiVersion: BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol
+
+}
