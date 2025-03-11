@@ -32,16 +32,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         SSOLinkGeneratorFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
 
-    package enum Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        case noInternet
-        case unknownError
-        case invalidSSOLink
-        case incorrectSSOCode
-
-    }
-
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
@@ -66,14 +56,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         emailOrSSOCode: String = "",
-        isLoading: Bool = false,
-        alert: Alert? = nil
+        isLoading: Bool = false
     ) {
         self.router = router
         self.factory = factory
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
-        self.alert = alert
     }
 
     func submitEmailOrSSOCode() async {

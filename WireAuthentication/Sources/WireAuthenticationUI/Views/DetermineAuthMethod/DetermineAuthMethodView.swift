@@ -96,8 +96,8 @@ package struct DetermineAuthMethodView: View {
         }
         .alert(
             item: $viewModel.alert,
-            title: titleForAlert,
-            message: messageForAlert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
             actions: { _ in
                 Button {
                     // FIXME: What is needed here?
@@ -145,41 +145,23 @@ package struct DetermineAuthMethodView: View {
 
     }
 
-    // MARK: - Private helpers
+}
 
-    private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Title.noInternet)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Title.general)
-        case .invalidSSOLink:
-            Text(L10n.Authentication.Error.Title.invalidSsoLink)
-        case .incorrectSSOCode:
-            Text(L10n.Authentication.Error.Title.incorrectSsoCode)
-        }
-    }
+extension Alert {
 
-    private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Message.noInternet)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Message.general)
-        case .invalidSSOLink:
-            Text(L10n.Authentication.Error.Message.invalidSsoLink)
-        case .incorrectSSOCode:
-            Text(L10n.Authentication.Error.Message.incorrectSsoCode)
-        }
-    }
+    private typealias Title = L10n.Authentication.Error.Title
+    private typealias Message = L10n.Authentication.Error.Message
+
+    static let invalidSSOLink = Alert(title: Title.invalidSsoLink, message: Message.invalidSsoLink)
+    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Title.incorrectSsoCode)
 
 }
 
 @MainActor
-package func makeDetermineAuthMethodViewPreview(
+func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
     isLoading: Bool = false,
-    alert: DetermineAuthMethodViewModel.Alert? = nil
+    alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,

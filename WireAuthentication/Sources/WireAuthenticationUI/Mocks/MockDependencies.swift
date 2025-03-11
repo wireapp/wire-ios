@@ -55,15 +55,15 @@ final class MockDependencies {
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
         isLoading: Bool,
-        alert: DetermineAuthMethodViewModel.Alert?
+        alert: Alert?
     ) -> DetermineAuthMethodView {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
             emailOrSSOCode: emailOrSSOCode,
-            isLoading: isLoading,
-            alert: alert
+            isLoading: isLoading
         )
+        viewModel.alert = alert
 
         return DetermineAuthMethodView(
             viewModel: viewModel,
