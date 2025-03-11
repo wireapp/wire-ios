@@ -17,27 +17,24 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-/// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
+struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 
-public protocol SSOLinkGeneratorProtocol: Sendable {
-
-    /// Generates the URL for the SSO authentication screen.
-    ///
-    /// - Parameters:
-    ///   - ssoCode: SSO code.
-    /// - Returns: URL to the SSO authentication screen.
-
-    func generateSSOLink(ssoCode: UUID) async throws -> URL
-
-    /// Flushes the temporary SSO login token stored in the user defaults.
-
-    func flushToken()
-
-}
-
-public protocol SSOLinkGeneratorFactory {
-
-    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
+    func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig {
+        BackendConfig(
+            title: "backend name",
+            endpoints: Endpoints(
+                backendURL: URL(string: "example")!,
+                backendWSURL: URL(string: "example")!,
+                blackListURL: URL(string: "example")!,
+                teamsURL: URL(string: "example")!,
+                accountsURL: URL(string: "example")!,
+                websiteURL: URL(string: "example")!
+            ),
+            proxySettings: nil,
+            pinnedKeys: nil
+        )
+    }
 
 }

@@ -17,27 +17,28 @@
 //
 
 import Foundation
+import WireAPI
+import WireAuthenticationAPI
 
-/// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
+package struct FetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
 
-public protocol SSOLinkGeneratorProtocol: Sendable {
+    private let authenticationAPI: any AuthenticationAPI
+    private let linkGenerator: any SSOLinkGeneratorProtocol
 
-    /// Generates the URL for the SSO authentication screen.
-    ///
-    /// - Parameters:
-    ///   - ssoCode: SSO code.
-    /// - Returns: URL to the SSO authentication screen.
+    package init(
+        authenticationAPI: any AuthenticationAPI,
+        linkGenerator: any SSOLinkGeneratorProtocol
+    ) {
+        self.authenticationAPI = authenticationAPI
+        self.linkGenerator = linkGenerator
+    }
 
-    func generateSSOLink(ssoCode: UUID) async throws -> URL
+    package func invoke() async throws -> URL? {
+        guard let ssoCode = try await authenticationAPI.getSSOCode() else {
+            return nil
+        }
 
-    /// Flushes the temporary SSO login token stored in the user defaults.
-
-    func flushToken()
-
-}
-
-public protocol SSOLinkGeneratorFactory {
-
-    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
+        return try await linkGenerator.generateSSOLink(ssoCode: ssoCode)
+    }
 
 }

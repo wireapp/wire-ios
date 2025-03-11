@@ -17,27 +17,14 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-/// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
+struct MockSSOLinkGenerator: SSOLinkGeneratorProtocol {
 
-public protocol SSOLinkGeneratorProtocol: Sendable {
+    func generateSSOLink(ssoCode: UUID) async throws -> URL {
+        URL(string: "https://example.com/login/\(ssoCode)")!
+    }
 
-    /// Generates the URL for the SSO authentication screen.
-    ///
-    /// - Parameters:
-    ///   - ssoCode: SSO code.
-    /// - Returns: URL to the SSO authentication screen.
-
-    func generateSSOLink(ssoCode: UUID) async throws -> URL
-
-    /// Flushes the temporary SSO login token stored in the user defaults.
-
-    func flushToken()
-
-}
-
-public protocol SSOLinkGeneratorFactory {
-
-    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
+    func flushToken() {}
 
 }
