@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
-public protocol ServerConnection {
-
-    var isMobileConnection: Bool { get }
-    var isOffline: Bool { get }
-
+protocol GetParticipantImageSourceRepositoryProtocol {
+    func invoke(user: UserType) async -> UIImage?
 }
