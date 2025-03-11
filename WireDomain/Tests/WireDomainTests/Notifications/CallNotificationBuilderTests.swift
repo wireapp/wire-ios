@@ -44,7 +44,6 @@ final class CallNotificationBuilderTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
-        registerDependencies()
     }
 
     override func tearDown() async throws {
@@ -55,16 +54,6 @@ final class CallNotificationBuilderTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         modelHelper = nil
         coreDataStackHelper = nil
-    }
-
-    private func registerDependencies() {
-        Injector.register(ConversationLocalStoreProtocol.self) {
-            self.conversationLocalStore
-        }
-
-        Injector.register(UserLocalStoreProtocol.self) {
-            self.userLocalStore
-        }
     }
 
     func testGenerateCallNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
@@ -85,7 +74,9 @@ final class CallNotificationBuilderTests: XCTestCase {
                 calling: calling,
                 at: .now,
                 conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID
+                senderID: Scaffolding.userID,
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
             )
 
             let shouldBuildNotification = await sut.shouldBuildNotification()
@@ -120,7 +111,9 @@ final class CallNotificationBuilderTests: XCTestCase {
                 calling: calling,
                 at: .now,
                 conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID
+                senderID: Scaffolding.userID,
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
             )
 
             let shouldBuildNotification = await sut.shouldBuildNotification()
@@ -156,7 +149,9 @@ final class CallNotificationBuilderTests: XCTestCase {
                 calling: calling,
                 at: .now,
                 conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID
+                senderID: Scaffolding.userID,
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
             )
 
             let shouldBuildNotification = await sut.shouldBuildNotification()
@@ -199,7 +194,9 @@ final class CallNotificationBuilderTests: XCTestCase {
             calling: calling,
             at: .now,
             conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID
+            senderID: Scaffolding.userID,
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore
         )
 
         let shouldBuildNotification = await sut.shouldBuildNotification()
@@ -207,11 +204,14 @@ final class CallNotificationBuilderTests: XCTestCase {
     }
 
     private func internalTest_assertNotificationContent(
-        _ notificationContent: UNMutableNotificationContent,
+        _ content: UserNotification,
         callingTestUsecase: CallingTestUseCase,
         isGroup: Bool,
         isTeam: Bool
     ) async throws {
+        guard case .text(let notificationContent) = content else {
+            return XCTFail()
+        }
 
         // Title
         if isGroup {
@@ -356,6 +356,7 @@ final class CallNotificationBuilderTests: XCTestCase {
         userLocalStore.idFor_MockValue = .mockID1
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)
         conversationLocalStore.shouldHideNotification_MockValue = false
+        conversationLocalStore.increaseUnreadCountFor_MockMethod = { _ in }
     }
 
     private enum Scaffolding {

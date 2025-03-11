@@ -46,7 +46,6 @@ final class CallKitNotificationBuilderTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
-        registerDependencies()
     }
 
     override func tearDown() async throws {
@@ -59,16 +58,6 @@ final class CallKitNotificationBuilderTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         modelHelper = nil
         coreDataStackHelper = nil
-    }
-
-    private func registerDependencies() {
-        Injector.register(ConversationLocalStoreProtocol.self) {
-            self.conversationLocalStore
-        }
-
-        Injector.register(UserLocalStoreProtocol.self) {
-            self.userLocalStore
-        }
     }
 
     func testGenerateCallKitNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
@@ -91,16 +80,18 @@ final class CallKitNotificationBuilderTests: XCTestCase {
                 senderID: Scaffolding.userID,
                 accountID: Scaffolding.accountID,
                 userDefaults: defaults,
-                callKitReporting: MockCallKitReporting.self
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
             )
 
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
-            _ = await sut.buildContent()
+            let content = await sut.buildContent()
 
             try await internalTest_assertNotificationContent(
-                callKitTestUsecase: callKitTestUsecase,
+                testUsecase: callKitTestUsecase,
+                content: content,
                 isGroup: isGroup,
                 isTeam: isTeam
             )
@@ -127,16 +118,18 @@ final class CallKitNotificationBuilderTests: XCTestCase {
                 senderID: Scaffolding.userID,
                 accountID: Scaffolding.accountID,
                 userDefaults: defaults,
-                callKitReporting: MockCallKitReporting.self
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
             )
 
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
-            _ = await sut.buildContent()
+            let content = await sut.buildContent()
 
             try await internalTest_assertNotificationContent(
-                callKitTestUsecase: callKitTestUsecase,
+                testUsecase: callKitTestUsecase,
+                content: content,
                 isGroup: isGroup,
                 isTeam: isTeam
             )
@@ -163,16 +156,18 @@ final class CallKitNotificationBuilderTests: XCTestCase {
                 senderID: Scaffolding.userID,
                 accountID: Scaffolding.accountID,
                 userDefaults: defaults,
-                callKitReporting: MockCallKitReporting.self
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
             )
 
             let shouldBuildNotification = await sut.shouldBuildNotification()
             XCTAssertEqual(shouldBuildNotification, true)
 
-            _ = await sut.buildContent()
+            let content = await sut.buildContent()
 
             try await internalTest_assertNotificationContent(
-                callKitTestUsecase: callKitTestUsecase,
+                testUsecase: callKitTestUsecase,
+                content: content,
                 isGroup: isGroup,
                 isTeam: isTeam
             )
@@ -206,7 +201,8 @@ final class CallKitNotificationBuilderTests: XCTestCase {
             senderID: Scaffolding.userID,
             accountID: Scaffolding.accountID,
             userDefaults: defaults,
-            callKitReporting: MockCallKitReporting.self
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore
         )
 
         let shouldBuildNotification = await sut.shouldBuildNotification()
@@ -214,23 +210,27 @@ final class CallKitNotificationBuilderTests: XCTestCase {
     }
 
     private func internalTest_assertNotificationContent(
-        callKitTestUsecase: CallKitTestUseCase,
+        testUsecase: CallKitTestUseCase,
+        content: UserNotification,
         isGroup: Bool,
         isTeam: Bool
     ) async throws {
-        let callKitPayload = try XCTUnwrap(MockCallKitReporting.payload)
+        
+        guard case .callKit(let callKitPayload) = content else {
+            return XCTFail()
+        }
 
         XCTAssertEqual(callKitPayload["accountID"] as! String, Scaffolding.accountID.uuidString)
         XCTAssertEqual(callKitPayload["conversationID"] as! String, Scaffolding.conversationID.uuid.uuidString)
 
-        switch callKitTestUsecase {
-        case let .incomingAudioCall(string):
+        switch testUsecase {
+        case .incomingAudioCall:
             XCTAssertEqual(callKitPayload["shouldRing"] as! Bool, true)
             XCTAssertEqual(callKitPayload["hasVideo"] as! Bool, false)
-        case let .incomingVideoCall(string):
+        case .incomingVideoCall:
             XCTAssertEqual(callKitPayload["shouldRing"] as! Bool, true)
             XCTAssertEqual(callKitPayload["hasVideo"] as! Bool, true)
-        case let .endingCall(string):
+        case .endingCall:
             XCTAssertEqual(callKitPayload["shouldRing"] as! Bool, false)
             XCTAssertEqual(callKitPayload["hasVideo"] as! Bool, false)
         }
@@ -280,14 +280,6 @@ final class CallKitNotificationBuilderTests: XCTestCase {
     }
 
     // MARK: - Mocks
-
-    struct MockCallKitReporting: CallKitReporting {
-        nonisolated(unsafe) static var payload: [AnyHashable: Any]!
-
-        static func reportIncomingCall(payload: [AnyHashable: Any]) async throws {
-            Self.payload = payload
-        }
-    }
 
     private func setupCallingContentMock(
         type: String,

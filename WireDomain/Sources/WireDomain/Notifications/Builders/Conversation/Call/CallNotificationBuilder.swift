@@ -161,11 +161,11 @@ struct CallNotificationBuilder: NotificationBuilder {
         if let title = makeTitle() {
             content.title = title
         }
-
-        let body = if isVideo {
-            senderName != nil ? "\(senderName!) is calling with video" : "Incoming video call"
+        
+        let body = if context.isGroupConversation, let senderName {
+            isVideo ? "\(senderName) is calling with video" : "\(senderName) is calling"
         } else {
-            senderName != nil ? "\(senderName!) is calling" : "Incoming call"
+            isVideo ? "Incoming video call" : "Incoming call"
         }
 
         content.body = body
@@ -185,7 +185,11 @@ struct CallNotificationBuilder: NotificationBuilder {
             content.title = title
         }
 
-        let body = senderName != nil ? "\(senderName!) called" : "Missed call"
+        let body = if context.isGroupConversation, let senderName {
+            "\(senderName) called"
+        } else {
+            "Missed call"
+        }
 
         content.body = body
         content.categoryIdentifier = makeCategory()

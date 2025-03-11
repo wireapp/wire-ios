@@ -49,7 +49,7 @@ final class UserLocalStoreTests: XCTestCase {
 
         sut = UserLocalStore(
             context: context,
-            conversationLocalStore: conversationLocalStore,
+            messageLocalStore: MockMessageLocalStoreProtocol(),
             userDefaults: mockUserDefaults
         )
     }

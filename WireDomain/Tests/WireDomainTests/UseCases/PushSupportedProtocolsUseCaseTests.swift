@@ -59,13 +59,9 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
                 featureConfigsAPI: MockFeatureConfigsAPI(),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: context)
             ),
-            userRepository: UserRepository(
-                usersAPI: MockUsersAPI(),
-                selfUserAPI: mockSelfUserAPI,
-                conversationLabelsRepository: MockConversationLabelsRepositoryProtocol(),
-                userLocalStore: userLocalStore
-            ),
-            userClientsRepository: userClientsRepository
+            pushSupportedProtocolsSync: mockPushSupportedProtocolsSync,
+            userClientsLocalStore: userClientsLocalStore,
+            userLocalStore: userLocalStore
         )
 
         selfUser = await context.perform { [context] in

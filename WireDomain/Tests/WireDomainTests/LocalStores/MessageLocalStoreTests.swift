@@ -122,7 +122,11 @@ final class MessageLocalStoreTests: XCTestCase {
             return modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
 
-        let conversation = await makeConversation(creator: user)
+        let conversation = await makeConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain,
+            creator: user
+        )
 
         for messageType in Scaffolding.allSystemMessageTypes {
             await context.perform {
