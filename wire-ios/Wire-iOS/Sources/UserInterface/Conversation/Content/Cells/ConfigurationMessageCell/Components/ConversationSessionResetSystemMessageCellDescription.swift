@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationSessionResetSystemMessageCellDescription>
 
     var message: ZMConversationMessage?
     var delegate: ConversationMessageCellDelegate?
@@ -36,7 +36,7 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
 
-    var configuration: ConversationSystemMessageCell.Configuration
+    var configuration: View.Configuration
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)

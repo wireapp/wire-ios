@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-class ConversationIconBasedCell: UIView {
+class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescription>: UIView, UITextViewDelegate {
 
     let imageContainer = UIView()
     let imageView = UIImageView()
@@ -175,9 +175,8 @@ class ConversationIconBasedCell: UIView {
         topContentViewTrailingConstraint.constant = trailingTextMargin
     }
 
-}
+    // MARK: - UITextViewDelegate
 
-extension ConversationIconBasedCell: UITextViewDelegate {
     func textView(
         _ textView: UITextView,
         shouldInteractWith url: URL,

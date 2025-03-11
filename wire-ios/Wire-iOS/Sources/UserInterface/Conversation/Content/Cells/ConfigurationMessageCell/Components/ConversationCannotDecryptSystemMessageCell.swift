@@ -18,7 +18,10 @@
 
 import UIKit
 
-final class ConversationCannotDecryptSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationCannotDecryptSystemMessageCell:
+    ConversationIconBasedCell<
+        ConversationCannotDecryptSystemMessageCellDescription
+    >, ConversationMessageCell {
 
     struct Configuration {
         let icon: UIImage?
@@ -37,11 +40,8 @@ final class ConversationCannotDecryptSystemMessageCell: ConversationIconBasedCel
         attributedText = object.attributedText
         textLabel.linkTextAttributes = [:]
     }
-}
 
-// MARK: - UITextViewDelegate
-
-extension ConversationCannotDecryptSystemMessageCell {
+    // MARK: - UITextViewDelegate
 
     override func textView(
         _ textView: UITextView,
