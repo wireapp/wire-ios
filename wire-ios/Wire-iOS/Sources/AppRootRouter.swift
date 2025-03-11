@@ -109,7 +109,7 @@ final class AppRootRouter {
     }
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
-        urlActionRouter.open(url: deepLinkURL)
+        urlActionRouter.open(url: deepLinkURL)//
     }
 
     func performQuickAction(

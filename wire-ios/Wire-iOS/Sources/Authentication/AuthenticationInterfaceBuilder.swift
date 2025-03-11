@@ -113,9 +113,16 @@ final class AuthenticationInterfaceBuilder {
                 }
             )
 
-            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
+            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(
+                action: { userID, cookieData in
                 bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
-            })
+            },
+                action1: { url in
+                    // completeSSOSuccess backend switch
+                    // errors ??
+                    //bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
+                }
+            )
             authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)
 
             return AuthenticationHostingController(rootView: rootView)

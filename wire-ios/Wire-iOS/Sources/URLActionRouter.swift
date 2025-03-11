@@ -208,7 +208,7 @@ extension URLActionRouter: PresentationDelegate {
                 message: UrlAction.ConnectToBot.message,
                 decisionHandler: decisionHandler
             )
-        case let .accessBackend(url):
+        case let .accessBackend(url): //?
             // Switching backend is handled below, so pass false here.
             decisionHandler(false)
             switchBackend(configURL: url)
