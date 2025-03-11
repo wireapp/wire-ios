@@ -175,17 +175,4 @@ extension BackendEnvironment {
         )
     }
 
-    // MARK: - Children
-    
-    var loginViaSSOComponent: LoginViaSSOComponent {
-        LoginViaSSOComponent()
-    }
-
 }
-
-//extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationView.Factory {
-//    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-//        loginViaSSOComponent.view(ssoURL: ssoURL)
-//    }
-//
-//}

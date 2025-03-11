@@ -34,21 +34,16 @@ package struct SwitchBackendConfirmationView: View {
 
     // MARK: - Properties
 
-    package typealias Factory = LoginViaSSOBuilder
-
     @Environment(\.dismiss) var dismiss
     @State private var showFullDetails: Bool = false
     @StateObject var viewModel: SwitchBackendConfirmationViewModel
 
     private typealias Strings = L10n.SwitchBackendConfirmation
-   // private let factory: any Factory
 
     package init(
         viewModel: SwitchBackendConfirmationViewModel
-       // factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        //self.factory = factory
     }
 
     package var body: some View {
@@ -67,12 +62,6 @@ package struct SwitchBackendConfirmationView: View {
         )
         .frame(width: 350)
         .fixedSize(horizontal: false, vertical: true)
-//        .sheet(item: $viewModel.modalDestination, content: {
-//            switch $0 {
-//            case let .ssoLogin(url: ssoURL):
-//                factory.loginViaSSOView(ssoURL: ssoURL)
-//            }
-//        })
     }
 
     private var title: some View {

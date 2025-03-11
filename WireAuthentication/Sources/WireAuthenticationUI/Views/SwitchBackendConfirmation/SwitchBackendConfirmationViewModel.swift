@@ -23,12 +23,6 @@ import WireLogging
 @MainActor
 package class SwitchBackendConfirmationViewModel: ObservableObject {
 
-//    package enum ModalDestination: Hashable, Identifiable, Sendable {
-//        package var id: Self { self }
-//
-//        case ssoLogin(url: URL)
-//    }
-
     private typealias Strings = L10n.SwitchBackendConfirmation
 
     package typealias Factory =
@@ -46,7 +40,6 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
-   // @Published var modalDestination: ModalDestination?
 
     // MARK: - Life cycle
 
@@ -128,7 +121,6 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
             do {
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
-                    //modalDestination = .ssoLogin(url: url)
                     router.presentSheet(
                         RootView.ModalDestination.ssoLogin(
                             url: ssoURL,
