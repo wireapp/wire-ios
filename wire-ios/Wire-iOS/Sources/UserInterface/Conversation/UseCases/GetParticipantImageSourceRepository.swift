@@ -16,15 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum NetworkQualityType: Int, Comparable {
+import WireDataModel
+import WireSyncEngine
 
-    case unknown = 0
-    case type2G
-    case type3G
-    case type4G
-    case typeWifi
+class GetParticipantImageSourceRepository: GetParticipantImageSourceRepositoryProtocol {
 
-    static func < (lhs: NetworkQualityType, rhs: NetworkQualityType) -> Bool {
-        lhs.rawValue < rhs.rawValue
+    private let userSession: UserSession
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
     }
+
+    @MainActor
+    func invoke(user: any UserType) async -> UIImage? {
+        await withCheckedContinuation { continuation in
+            user.fetchProfileImage(
+                session: userSession,
+                imageCache: UIImage.defaultUserImageCache,
+                sizeLimit: 32,
+                isDesaturated: false
+            ) { image, _ in
+                continuation.resume(returning: image)
+            }
+        }
+    }
+
 }
