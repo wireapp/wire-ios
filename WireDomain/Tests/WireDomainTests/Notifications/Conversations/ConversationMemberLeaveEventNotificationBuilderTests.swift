@@ -56,7 +56,6 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         coreDataStackHelper = nil
     }
 
-
     func testGenerateConversationMemberLeaveEventNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
 
         // Mock
@@ -220,7 +219,6 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! UUID, .mockID2)
     }
 
-
     private func setupMock(isGroup: Bool, isTeam: Bool) async {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
@@ -255,4 +253,3 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
     }
 
 }
-

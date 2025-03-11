@@ -56,7 +56,6 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         coreDataStackHelper = nil
     }
 
-
     func testGenerateConversationMessageTimerUpdateEventNotification_Is_Group_Conversation_And_Is_Team_User(
     ) async throws {
 
@@ -218,7 +217,6 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! UUID, .mockID2)
     }
 
-
     private func setupMock(isGroup: Bool, isTeam: Bool) async {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
@@ -253,4 +251,3 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
     }
 
 }
-

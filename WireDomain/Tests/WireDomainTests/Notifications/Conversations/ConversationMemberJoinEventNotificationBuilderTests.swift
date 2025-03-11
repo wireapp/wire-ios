@@ -56,7 +56,6 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         coreDataStackHelper = nil
     }
 
-
     func testGenerateConversationMemberJoinEventNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
 
         // Mock
@@ -219,7 +218,6 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! UUID, .mockID3)
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! UUID, .mockID2)
     }
-
 
     private func setupMock(isGroup: Bool, isTeam: Bool) async {
         let conversation = await context.perform { [self] in
