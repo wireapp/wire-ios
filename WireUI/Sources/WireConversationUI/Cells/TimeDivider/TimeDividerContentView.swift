@@ -22,12 +22,16 @@ import WireDesign
 struct TimeDividerContentView: View, ConversationCellContentViewProtocol {
     typealias Model = TimeDividerModel
 
+    private let dividerColor = ColorTheme.Strokes.outline.color
+
     private(set) var model: Model
 
     var body: some View {
         HStack(spacing: 0) {
             VStack {
-                Divider() // TODO: thickness 1pt
+                Divider()
+                    .frame(minHeight: 1)
+                    .overlay { dividerColor }
             }
             .padding(.horizontal, 12)
             Text(model.text)
@@ -35,6 +39,8 @@ struct TimeDividerContentView: View, ConversationCellContentViewProtocol {
                 .fontWeight(.semibold)
             VStack {
                 Divider()
+                    .frame(minHeight: 1)
+                    .overlay { dividerColor }
             }
             .padding(.horizontal, 12)
         }
