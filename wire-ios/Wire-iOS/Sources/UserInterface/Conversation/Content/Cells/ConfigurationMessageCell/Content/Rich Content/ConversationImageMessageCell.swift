@@ -175,6 +175,8 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
+    var canBeCombinedWithOtherCells: Bool { true }
+
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 8
 
@@ -185,6 +187,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
     }
 
+    let isAccessibilityElement = true
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, image: ZMImageMessageData) {

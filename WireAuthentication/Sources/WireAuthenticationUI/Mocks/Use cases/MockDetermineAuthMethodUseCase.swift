@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum NetworkQualityType: Int, Comparable {
+import WireAuthenticationAPI
 
-    case unknown = 0
-    case type2G
-    case type3G
-    case type4G
-    case typeWifi
+struct MockDetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
-    static func < (lhs: NetworkQualityType, rhs: NetworkQualityType) -> Bool {
-        lhs.rawValue < rhs.rawValue
+    func invoke(
+        emailOrSSOCode: String
+    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
+        try! await Task.sleep(for: .seconds(3))
+
+        return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
     }
+
 }

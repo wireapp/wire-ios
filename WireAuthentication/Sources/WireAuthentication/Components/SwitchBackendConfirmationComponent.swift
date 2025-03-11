@@ -27,7 +27,7 @@ import WireLogging
 protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var defaultAPIVersion: APIVersion { get }
+    var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
@@ -36,86 +36,142 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
 class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationComponentDependency> {
 
+    private let email: String
     public let backendConfig: BackendConfig
 
     init(
         parent: any Scope,
+        email: String,
         backendConfig: BackendConfig
     ) {
+        self.email = email
         self.backendConfig = backendConfig
         super.init(parent: parent)
     }
 
     // MARK: - View
 
-    @MainActor
-    func view(email: String) -> SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(viewModel: viewModel(email: email))
+    @MainActor var view: SwitchBackendConfirmationView {
+        SwitchBackendConfirmationView(viewModel: viewModel)
     }
 
-    @MainActor
-    private func viewModel(email: String) -> SwitchBackendConfirmationViewModel {
+    @MainActor private var viewModel: SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
             router: dependency.router,
+            factory: self,
             email: email,
-            fetchDefaultSSOSettings: fetchDefaultSSOSettings(environment: backendConfig),
-            ssoLinkGenerator: ssoLinkGenerator(environment: backendConfig),
-            environment: backendConfig
+            backendConfig: backendConfig
         )
     }
 
     // MARK: - Private dependencies
 
-    private var authenticationAPI: AuthenticationAPI {
-        AuthenticationAPIBuilder(
-            networkService: NetworkService.make(
-                backendEnvironment: BackendEnvironment(
-                    url: backendConfig.endpoints.backendURL,
-                    webSocketURL: backendConfig.endpoints.backendWSURL,
-                    pinnedKeys: backendConfig.pinnedKeys?.compactMap { trustData in
-                        do {
-                            return try PinnedKey(
-                                key: trustData.certificateKey,
-                                hosts: trustData.hosts.map { host in
-                                    switch host.rule {
-                                    case .equals:
-                                        .equals(host.value)
-                                    case .endsWith:
-                                        .endsWith(host.value)
-                                    }
-                                }
-                            )
-                        } catch {
-                            WireLogger.authentication.error("Failed to create PinnedKey: \(error)")
-                            return nil
-                        }
-                    } ?? [],
-                    proxySettings: convertProxySettings(from: backendConfig.proxySettings)
-                ),
+    private var backendEnvironment: BackendEnvironment {
+        shared {
+            BackendEnvironment(backendConfig)
+        }
+    }
+
+    private var networkService: NetworkService {
+        shared {
+            NetworkService.make(
+                backendEnvironment: backendEnvironment,
                 minTLSVersion: dependency.minTLSVersion
             )
-        ).makeAPI(for: dependency.defaultAPIVersion)
-    }
-
-    private func convertProxySettings(from proxySettings: WireAuthenticationAPI.ProxySettings?) -> WireAPI
-        .ProxySettings? {
-        guard let proxySettings else {
-            return nil
         }
-
-        return .unauthenticated(host: proxySettings.host, port: proxySettings.port)
     }
 
-    private func fetchDefaultSSOSettings(environment: BackendConfig) -> any FetchDefaultSSOSettingsUseCaseProtocol {
-        FetchDefaultSSOSettingsUseCase(authenticationAPI: authenticationAPI)
+}
+
+extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel.Factory {
+
+    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
+        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
+        return ResolveBackendMetadataUseCase(
+            backendMetadataAPI: api,
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
     }
 
-    private func ssoLinkGenerator(environment: BackendConfig) -> SSOLinkGeneratorProtocol {
-        SSOLinkGenerator(
+    func fetchSSOURLUseCase(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any FetchSSOURLUseCaseProtocol {
+        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
+            for: .init(apiVersion)
+        )
+        let linkGenerator = SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
-            baseURL: environment.endpoints.backendURL,
+            baseURL: backendEnvironment.url,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
+        )
+        return FetchSSOURLUseCase(
+            authenticationAPI: authenticationAPI,
+            linkGenerator: linkGenerator
+        )
+    }
+
+}
+
+private extension PinnedKey {
+
+    init(_ trustData: TrustData) throws {
+        try self.init(
+            key: trustData.certificateKey,
+            hosts: trustData.hosts.map { host in
+                switch host.rule {
+                case .equals:
+                    .equals(host.value)
+                case .endsWith:
+                    .endsWith(host.value)
+                }
+            }
+        )
+    }
+
+}
+
+private extension WireAPI.ProxySettings {
+
+    init(_ proxySettings: WireAuthenticationAPI.ProxySettings) {
+
+        // TODO: [WPB-16266] add credentials
+        if proxySettings.needsAuthentication {
+            self = .authenticated(
+                host: proxySettings.host,
+                port: proxySettings.port,
+                username: "",
+                password: ""
+            )
+        } else {
+            self = .unauthenticated(
+                host: proxySettings.host,
+                port: proxySettings.port
+            )
+        }
+    }
+
+}
+
+extension BackendEnvironment {
+
+    init(_ backendConfig: BackendConfig) {
+        var pinnedKeys = [PinnedKey]()
+        do {
+            for trustData in backendConfig.pinnedKeys ?? [] {
+                pinnedKeys.append(try PinnedKey(trustData))
+            }
+        } catch {
+            WireLogger.authentication.error("Failed to create PinnedKey: \(error)")
+            pinnedKeys.removeAll()
+        }
+
+        self.init(
+            url: backendConfig.endpoints.backendURL,
+            webSocketURL: backendConfig.endpoints.backendWSURL,
+            pinnedKeys: pinnedKeys,
+            proxySettings: backendConfig.proxySettings.map(WireAPI.ProxySettings.init)
         )
     }
 

@@ -2336,6 +2336,8 @@ internal enum L10n {
     }
     internal enum Conversation {
       internal enum Action {
+        /// Conversation Details
+        internal static let conversationDetails = L10n.tr("Localizable", "conversation.action.conversationDetails", fallback: "Conversation Details")
         /// Search
         internal static let search = L10n.tr("Localizable", "conversation.action.search", fallback: "Search")
       }
@@ -3161,30 +3163,6 @@ internal enum L10n {
       internal static let fullName = L10n.tr("Localizable", "error.full_name", fallback: "Please enter your full name")
       /// Please enter your full name and a valid email address
       internal static let nameAndEmail = L10n.tr("Localizable", "error.name_and_email", fallback: "Please enter your full name and a valid email address")
-      /// Couldn’t update your password.
-      internal static let updatingPassword = L10n.tr("Localizable", "error.updating_password", fallback: "Couldn’t update your password.")
-      internal enum Call {
-        /// Please try calling again in several minutes.
-        internal static let general = L10n.tr("Localizable", "error.call.general", fallback: "Please try calling again in several minutes.")
-        /// Please cancel the cellular call before calling on Wire.
-        internal static let gsmOngoing = L10n.tr("Localizable", "error.call.gsm_ongoing", fallback: "Please cancel the cellular call before calling on Wire.")
-        /// You might experience issues during the call
-        internal static let slowConnection = L10n.tr("Localizable", "error.call.slow_connection", fallback: "You might experience issues during the call")
-        internal enum General {
-          /// Call error
-          internal static let title = L10n.tr("Localizable", "error.call.general.title", fallback: "Call error")
-        }
-        internal enum GsmOngoing {
-          /// Cellular call
-          internal static let title = L10n.tr("Localizable", "error.call.gsm_ongoing.title", fallback: "Cellular call")
-        }
-        internal enum SlowConnection {
-          /// Call anyway
-          internal static let callAnyway = L10n.tr("Localizable", "error.call.slow_connection.call_anyway", fallback: "Call anyway")
-          /// Slow connection
-          internal static let title = L10n.tr("Localizable", "error.call.slow_connection.title", fallback: "Slow connection")
-        }
-      }
       internal enum Connection {
         /// Your backend does not federate with the backend of %@. You can not connect with them.
         internal static func federationDeniedMessage(_ p1: Any) -> String {

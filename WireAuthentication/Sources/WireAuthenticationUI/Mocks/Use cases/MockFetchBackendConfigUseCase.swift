@@ -17,30 +17,24 @@
 //
 
 import Foundation
-import WireAPI
 import WireAuthenticationAPI
 
-package struct FetchDefaultSSOSettingsUseCase: FetchDefaultSSOSettingsUseCaseProtocol {
+struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 
-    private let authenticationAPI: AuthenticationAPI
-
-    package init(authenticationAPI: AuthenticationAPI) {
-        self.authenticationAPI = authenticationAPI
-    }
-
-    package func invoke() async throws(FetchDefaultSSOSettingsUseCaseFailure) -> UUID? {
-        do {
-            return try await authenticationAPI.getSSOCode()
-        } catch let error as URLError {
-            switch error.code {
-            case .notConnectedToInternet, .networkConnectionLost:
-                throw .noInternet
-            default:
-                throw .unknown
-            }
-        } catch {
-            throw .unknown
-        }
+    func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig {
+        BackendConfig(
+            title: "backend name",
+            endpoints: Endpoints(
+                backendURL: URL(string: "example")!,
+                backendWSURL: URL(string: "example")!,
+                blackListURL: URL(string: "example")!,
+                teamsURL: URL(string: "example")!,
+                accountsURL: URL(string: "example")!,
+                websiteURL: URL(string: "example")!
+            ),
+            proxySettings: nil,
+            pinnedKeys: nil
+        )
     }
 
 }
