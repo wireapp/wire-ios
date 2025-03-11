@@ -18,16 +18,27 @@
 
 import Foundation
 
-package struct SSOFailureHandler {
+public struct WireAuthenticationBackendEnvironment: Sendable, Equatable, Hashable {
 
-    private let router: any Router
+    /// The name of the backend.
 
-    package init(router: Router) {
-        self.router = router
+    public let title: String
+
+    /// The data needed to connect to the backend.
+
+    public let config: BackendConfig
+
+    /// Information about the connected backend.
+
+    public let metadata: BackendMetadata
+
+    public init(
+        config: BackendConfig,
+        metadata: BackendMetadata
+    ) {
+        self.title = config.title
+        self.config = config
+        self.metadata = metadata
     }
 
-    @MainActor
-    package func handleFailure() {
-        router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
-    }
 }

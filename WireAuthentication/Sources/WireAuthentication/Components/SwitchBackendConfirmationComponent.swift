@@ -28,6 +28,7 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     var preferredAPIVersion: APIVersion? { get }
+    var productionVersions: Set<APIVersion> { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
@@ -89,7 +90,7 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
         let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
         return ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
+            clientProductionVersions: dependency.productionVersions,
             preferredAPIVersion: dependency.preferredAPIVersion
         )
     }

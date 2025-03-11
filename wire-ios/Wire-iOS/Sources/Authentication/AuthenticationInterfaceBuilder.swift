@@ -76,24 +76,7 @@ final class AuthenticationInterfaceBuilder {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
             let (rootView, bridge) = assembly.assemble(
-                defaultBackendEnvironment: BackendEnvironment(
-                    url: environment.backendURL,
-                    webSocketURL: environment.backendWSURL,
-                    pinnedKeys: environment.trustData.map { trustData in
-                        PinnedKey(
-                            key: trustData.certificateKey,
-                            hosts: trustData.hosts.map { host in
-                                switch host.rule {
-                                case .equals:
-                                    .equals(host.value)
-                                case .endsWith:
-                                    .endsWith(host.value)
-                                }
-                            }
-                        )
-                    },
-                    proxySettings: nil
-                ),
+                backendConfig: BackendConfig(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 preferredAPIVersion: .v8,
                 accountsURL: environment.accountsURL,

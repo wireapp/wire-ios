@@ -45,13 +45,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
-        case ssoLogin(url: URL)
+        case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
         case switchBackend(email: String, backendConfig: BackendConfig)
     }
 
     private let router: any Router
     private let factory: any Factory
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
+    private let backendConfig: BackendConfig
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -65,12 +66,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
+        backendConfig: BackendConfig,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
         alert: Alert? = nil
     ) {
         self.router = router
         self.factory = factory
+        self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
         self.alert = alert
@@ -142,11 +145,19 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             let generator = factory.ssoLinkGenerator(apiVersion: backendMetadata.apiVersion)
             ssoLinkGenerator = generator
 
+            let backendEnvironment = WireAuthenticationBackendEnvironment(
+                config: backendConfig,
+                metadata: backendMetadata
+            )
+
             Task.detached { [generator] in
                 do {
                     let url = try await generator.generateSSOLink(ssoCode: code)
                     await MainActor.run {
-                        self.modalDestination = .ssoLogin(url: url)
+                        self.modalDestination = .ssoLogin(
+                            url: url,
+                            backendEnvironment: backendEnvironment
+                        )
                     }
                 } catch {
                     await MainActor.run {

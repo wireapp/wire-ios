@@ -30,6 +30,7 @@ public struct TrustData: Decodable {
     }
 
     public let certificateKey: SecKey
+    public let rawCertificateKey: Data
     public let hosts: [Host]
 
     enum CodingKeys: String, CodingKey {
@@ -57,6 +58,7 @@ public struct TrustData: Decodable {
             )
         }
         self.certificateKey = certificateKey
+        self.rawCertificateKey = certificateKeyData
         self.hosts = try container.decode([TrustData.Host].self, forKey: .hosts)
     }
 }

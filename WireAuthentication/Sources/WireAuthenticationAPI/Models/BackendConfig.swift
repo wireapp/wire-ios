@@ -86,10 +86,26 @@ public struct TrustData: Decodable, Sendable, Hashable {
 
         public let rule: Rule
         public let value: String
+
+        public init(
+            rule: Rule,
+            value: String
+        ) {
+            self.rule = rule
+            self.value = value
+        }
     }
 
     public let certificateKey: Data
     public let hosts: [Host]
+
+    public init(
+        certificateKey: Data,
+        hosts: [Host]
+    ) {
+        self.certificateKey = certificateKey
+        self.hosts = hosts
+    }
 
     enum CodingKeys: String, CodingKey {
         case certificateKey
@@ -104,7 +120,7 @@ public struct ProxySettings: Decodable, Sendable, Hashable {
     public let port: Int
     public let needsAuthentication: Bool
 
-    init(
+    public init(
         host: String,
         port: Int,
         needsAuthentication: Bool = false

@@ -117,11 +117,21 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             verificationCode: nil
         )
 
-        router.navigate(to: RootView.ModalDestination.noHistory(
+        let backendEnvironment = WireAuthenticationBackendEnvironment(
+            config: backendConfig,
+            metadata: backendMetadata
+        )
+
+        let authenticationResult = AuthenticationResult(
             userID: accessToken.userID,
             cookies: cookies,
             accessToken: accessToken,
             emailCredentials: emailCredentials,
+            backendEnvironment: backendEnvironment
+        )
+
+        router.navigate(to: RootView.ModalDestination.noHistory(
+            authenticationResult: authenticationResult,
             didDetectDomainConflict: false
         ))
     }

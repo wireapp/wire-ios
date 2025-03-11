@@ -29,6 +29,7 @@ protocol VerificationCodeComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
     var authenticationAPI: any AuthenticationAPI { get }
+    var backendEnvironment: WireAuthenticationBackendEnvironment { get }
 
 }
 
@@ -61,6 +62,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: dependency.router,
+            backendEnvironment: dependency.backendEnvironment,
             didDetectDomainConflict: didDetectDomainConflict
         )
     }

@@ -55,17 +55,11 @@ package struct RootView: View {
                             )
                     }
                 case let .noHistory(
-                    userID,
-                    cookies,
-                    accessToken,
-                    emailCredentials,
+                    authenticationResult,
                     didDetectDomainConflict
                 ):
                     factory.noHistoryView(
-                        userID: userID,
-                        cookies: cookies,
-                        accessToken: accessToken,
-                        emailCredentials: emailCredentials,
+                        authenticationResult: authenticationResult,
                         didDetectDomainConflict: didDetectDomainConflict
                     )
                 case let .onPremiseLogin(
@@ -80,9 +74,12 @@ package struct RootView: View {
                     )
                 case let .ssoLogin(
                     ssoURL,
-                    backendMetadata
+                    backendEnvironment
                 ):
-                    factory.loginViaSSOView(ssoURL: ssoURL)
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
                 }
             }
     }
@@ -106,10 +103,7 @@ package struct RootView: View {
 
         case authFlow
         case noHistory(
-            userID: UUID,
-            cookies: [HTTPCookie],
-            accessToken: AccessToken?,
-            emailCredentials: EmailCredentials?,
+            authenticationResult: AuthenticationResult,
             didDetectDomainConflict: Bool
         )
         case onPremiseLogin(
@@ -119,7 +113,7 @@ package struct RootView: View {
         )
         case ssoLogin(
             url: URL,
-            BackendMetadata: BackendMetadata
+            backendEnvironment: WireAuthenticationBackendEnvironment
         )
     }
 

@@ -40,6 +40,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol
     private let router: any Router
+    private let backendEnvironment: WireAuthenticationBackendEnvironment
 
     package init(
         email: String,
@@ -47,6 +48,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol,
         router: any Router,
+        backendEnvironment: WireAuthenticationBackendEnvironment,
         numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits,
         didDetectDomainConflict: Bool
     ) {
@@ -57,6 +59,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.requestLoginVerificationCodeUseCase = requestLoginVerificationCodeUseCase
         self.router = router
+        self.backendEnvironment = backendEnvironment
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
         self.didDetectDomainConflict = didDetectDomainConflict
@@ -108,12 +111,17 @@ public final class VerificationCodeViewModel: ObservableObject {
                 verificationCode: verificationCode
             )
 
+            let authenticationResult = AuthenticationResult(
+                userID: token.userID,
+                cookies: cookies,
+                accessToken: token,
+                emailCredentials: emailCredentials,
+                backendEnvironment: backendEnvironment
+            )
+
             router.presentSheet(
                 RootView.ModalDestination.noHistory(
-                    userID: token.userID,
-                    cookies: cookies,
-                    accessToken: token,
-                    emailCredentials: emailCredentials,
+                    authenticationResult: authenticationResult,
                     didDetectDomainConflict: didDetectDomainConflict
                 )
             )

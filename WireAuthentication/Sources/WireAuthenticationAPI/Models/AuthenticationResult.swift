@@ -20,7 +20,7 @@ import Foundation
 
 /// The result of an authentication flow.
 
-public struct AuthenticationResult: Equatable {
+public struct AuthenticationResult: Equatable, Hashable {
 
     /// The user id of whom the token belongs.
 
@@ -38,16 +38,22 @@ public struct AuthenticationResult: Equatable {
 
     public let emailCredentials: EmailCredentials?
 
+    /// The connected backend.
+
+    public let backendEnvironment: WireAuthenticationBackendEnvironment
+
     public init(
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
-        emailCredentials: EmailCredentials?
+        emailCredentials: EmailCredentials?,
+        backendEnvironment: WireAuthenticationBackendEnvironment
     ) {
         self.userID = userID
         self.cookies = cookies
         self.accessToken = accessToken
         self.emailCredentials = emailCredentials
+        self.backendEnvironment = backendEnvironment
     }
 
 }

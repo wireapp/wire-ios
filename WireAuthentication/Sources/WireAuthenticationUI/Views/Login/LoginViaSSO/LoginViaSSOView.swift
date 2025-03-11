@@ -17,11 +17,15 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 
 package protocol LoginViaSSOBuilder {
 
     @MainActor
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOView
 
 }
 

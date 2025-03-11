@@ -32,30 +32,18 @@ package final class NoHistoryViewModel: ObservableObject {
 
     @Published var alert: Alert?
 
-    private let userID: UUID
-    private let cookies: [HTTPCookie]
-    private let accessToken: AccessToken?
-    private let emailCredentials: EmailCredentials?
     private let howToChangeEmailURL: URL
     private let howToDeleteAccountURL: URL
-    private let onFlowCompletion: (AuthenticationResult) -> Void
+    private let onFlowCompletion: () -> Void
 
     let didDetectDomainConflict: Bool
 
     package init(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        emailCredentials: EmailCredentials?,
         didDetectDomainConflict: Bool,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+        onFlowCompletion: @escaping () -> Void
     ) {
-        self.userID = userID
-        self.cookies = cookies
-        self.accessToken = accessToken
-        self.emailCredentials = emailCredentials
         self.didDetectDomainConflict = didDetectDomainConflict
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
@@ -63,14 +51,7 @@ package final class NoHistoryViewModel: ObservableObject {
     }
 
     func confirm() {
-        onFlowCompletion(
-            AuthenticationResult(
-                userID: userID,
-                cookies: cookies,
-                accessToken: accessToken,
-                emailCredentials: emailCredentials
-            )
-        )
+        onFlowCompletion()
     }
 
     func onAppear() {

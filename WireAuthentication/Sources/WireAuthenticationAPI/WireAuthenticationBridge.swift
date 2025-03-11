@@ -22,23 +22,19 @@ import Foundation
 /// (from outside into this module) and **outbound** (from inside this module
 /// to the external world).
 
-public struct WireAuthenticationBridge {
+public final class WireAuthenticationBridge {
 
     public let onFlowCompletion: (AuthenticationResult) -> Void
     private let onRegisterAccount: () -> Void
-    private let onSSOSuccess: (UUID, [HTTPCookie]) -> Void
-    private let onSSOFailure: () -> Void
+    package var onSSOSuccess: ((UUID, [HTTPCookie]) -> Void)?
+    package var onSSOFailure: (() -> Void)?
 
     public init(
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        onRegisterAccount: @escaping () -> Void,
-        onSSOSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
-        onSSOFailure: @escaping () -> Void
+        onRegisterAccount: @escaping () -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
         self.onRegisterAccount = onRegisterAccount
-        self.onSSOSuccess = onSSOSuccess
-        self.onSSOFailure = onSSOFailure
     }
 
     // MARK: - Methods are called within the module, but their implementations exist outside of it.
@@ -60,13 +56,13 @@ public struct WireAuthenticationBridge {
     /// Completes the SSO process successfully.
 
     public func completeSSOSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        onSSOSuccess(userID, cookies)
+        onSSOSuccess?(userID, cookies)
     }
 
     /// Handles the failure of the SSO process.
 
     public func completeSSOFailure() {
-        onSSOFailure()
+        onSSOFailure?()
     }
 
 }

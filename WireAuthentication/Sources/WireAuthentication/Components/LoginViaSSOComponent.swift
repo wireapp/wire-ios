@@ -17,20 +17,64 @@
 //
 
 import Foundation
+import NeedleFoundation
+import WireAuthenticationAPI
 internal import WireAuthenticationUI
 
-class LoginViaSSOComponent {
+protocol LoginViaSSODependency: Dependency {
+
+    @MainActor var router: any Router { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
+
+}
+
+class LoginViaSSOComponent: Component<LoginViaSSODependency> {
+
+    private let ssoURL: URL
+    private let backendEnvironment: WireAuthenticationBackendEnvironment
+
+    init(
+        parent: any Scope,
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) {
+        self.ssoURL = ssoURL
+        self.backendEnvironment = backendEnvironment
+        super.init(parent: parent)
+    }
 
     // MARK: - View
 
     @MainActor
-    func view(ssoURL: URL) -> LoginViaSSOView {
-        LoginViaSSOView(viewModel: viewModel(ssoURL: ssoURL))
+    var view: LoginViaSSOView {
+        LoginViaSSOView(viewModel: viewModel)
     }
 
     @MainActor
-    private func viewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoURL: ssoURL)
+    private var viewModel: LoginViaSSOViewModel {
+        let router = dependency.router
+        dependency.bridge.onSSOSuccess = { [router, backendEnvironment] userID, cookies in
+            let authenticationResult = AuthenticationResult(
+                userID: userID,
+                cookies: cookies,
+                accessToken: nil,
+                emailCredentials: nil,
+                backendEnvironment: backendEnvironment
+            )
+
+            router.presentSheet(
+                RootView.ModalDestination.noHistory(
+                    authenticationResult: authenticationResult,
+                    didDetectDomainConflict: false
+                )
+            )
+        }
+
+        dependency.bridge.onSSOFailure = { [router] in
+            router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
+        }
+
+        return LoginViaSSOViewModel(ssoURL: ssoURL)
     }
 
 }

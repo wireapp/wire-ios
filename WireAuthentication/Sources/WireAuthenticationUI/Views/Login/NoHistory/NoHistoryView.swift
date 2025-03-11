@@ -23,10 +23,7 @@ package protocol NoHistoryViewBuilder {
 
     @MainActor
     func noHistoryView(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        emailCredentials: EmailCredentials?,
+        authenticationResult: AuthenticationResult,
         didDetectDomainConflict: Bool
     ) -> NoHistoryView
 
@@ -99,14 +96,10 @@ package struct NoHistoryView: View {
 
 #Preview {
     let viewModel = NoHistoryViewModel(
-        userID: UUID(),
-        cookies: [],
-        accessToken: nil,
-        emailCredentials: nil,
         didDetectDomainConflict: false,
         howToChangeEmailURL: URL(string: "https://wire.com")!,
         howToDeleteAccountURL: URL(string: "https://wire.com")!,
-        onFlowCompletion: { _ in }
+        onFlowCompletion: {}
     )
     NoHistoryView(viewModel: viewModel)
 }
@@ -115,14 +108,10 @@ package struct NoHistoryView: View {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
             let viewModel = NoHistoryViewModel(
-                userID: UUID(),
-                cookies: [],
-                accessToken: nil,
-                emailCredentials: nil,
                 didDetectDomainConflict: false,
                 howToChangeEmailURL: URL(string: "https://wire.com")!,
                 howToDeleteAccountURL: URL(string: "https://wire.com")!,
-                onFlowCompletion: { _ in }
+                onFlowCompletion: {}
             )
             NoHistoryView(viewModel: viewModel)
         }

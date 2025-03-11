@@ -121,10 +121,15 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
             do {
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
+                    let backendEnvironment = WireAuthenticationBackendEnvironment(
+                        config: backendConfig,
+                        metadata: backendMetadata
+                    )
+
                     router.presentSheet(
                         RootView.ModalDestination.ssoLogin(
                             url: ssoURL,
-                            BackendMetadata: backendMetadata
+                            backendEnvironment: backendEnvironment
                         )
                     )
                 } else {

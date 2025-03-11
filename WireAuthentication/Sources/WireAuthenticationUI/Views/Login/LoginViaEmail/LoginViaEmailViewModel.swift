@@ -35,6 +35,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let backendEnvironment: WireAuthenticationBackendEnvironment
     private let forgotPasswordURL: URL
     private let passwordValidator: any PasswordValidator
     private let onCreateAccount: () -> Void
@@ -48,6 +49,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     package init(
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
+        backendEnvironment: WireAuthenticationBackendEnvironment,
         email: String,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
@@ -57,6 +59,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
+        self.backendEnvironment = backendEnvironment
         self.email = email
         self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
@@ -93,12 +96,17 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 verificationCode: nil
             )
 
+            let authenticationResult = AuthenticationResult(
+                userID: token.userID,
+                cookies: cookies,
+                accessToken: token,
+                emailCredentials: emailCredentials,
+                backendEnvironment: backendEnvironment
+            )
+
             router.presentSheet(
                 RootView.ModalDestination.noHistory(
-                    userID: token.userID,
-                    cookies: cookies,
-                    accessToken: token,
-                    emailCredentials: emailCredentials,
+                    authenticationResult: authenticationResult,
                     didDetectDomainConflict: didDetectDomainConflict
                 )
             )
