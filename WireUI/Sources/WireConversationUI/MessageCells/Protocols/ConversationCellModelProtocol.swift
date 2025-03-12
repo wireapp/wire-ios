@@ -16,16 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-
-struct AnyConversationCellContentView: ConversationCellContentViewProtocol {
-
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-
-}
-
-#Preview {
-    AnyConversationCellContentView()
+protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
+    init()
 }

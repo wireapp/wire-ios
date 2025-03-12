@@ -17,7 +17,6 @@
 //
 
 struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiteral { // TODO: maybe ExpressibleByStringLiteral is not needed
-    typealias ContentView = TimeDividerContentView
 
     var id: String { text }
 

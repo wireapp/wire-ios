@@ -18,15 +18,15 @@
 
 import SwiftUI
 
-final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewCell {
+final class ConversationCell<ContentView: ConversationCellContentViewProtocol>: UITableViewCell {
 
-    var model = Model() {
+    var model = ContentView.Model() {
         didSet { updateConfiguration() }
     }
 
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
-            Model.ContentView(model: model)
+            ContentView(model: model)
         }.margins(.all, 0)
     }
 

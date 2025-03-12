@@ -16,10 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/*
 import SwiftUI
 
-protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
-    associatedtype ContentView: ConversationCellContentViewProtocol
+struct AnyConversationCellContentView: ConversationCellContentViewProtocol {
+    init(model: some ConversationCellContentViewProtocol) {
+        <#code#>
+    }
+    
 
-    init()
+//    let model: Model
+
+    var body: some View {
+//        Model.ContentView(model: model)
+        EmptyView()
+    }
+
+//    init(model: Model) {
+//        self.model = model
+//    }
+
 }
+
+#Preview {
+    AnyConversationCellContentView(
+//        model: AnyConversationCellModel()
+    )
+}
+*/
