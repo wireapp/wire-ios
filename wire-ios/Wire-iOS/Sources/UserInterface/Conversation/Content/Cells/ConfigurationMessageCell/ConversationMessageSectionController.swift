@@ -97,7 +97,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var selected: Bool
 
     /// Whether this section is collapsed
-    private var isCollapsed: Bool
+    private(set) var isCollapsed: Bool {
+        didSet {
+            actionController?.isCollapsed = isCollapsed
+        }
+    }
 
     private var changeObservers: [Any] = []
 
@@ -117,7 +121,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.message = message
         self.context = context
         self.selected = selected
-        self.isCollapsed = true
+        self.isCollapsed = Self.isCollapsedInitialValue(message: message)
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
 
@@ -130,6 +134,25 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if let quotedMessage = message.textMessageData?.quoteMessage {
             startObservingChanges(for: quotedMessage)
         }
+    }
+    
+    private static func isCollapsedInitialValue(message: ZMConversationMessage) -> Bool {
+        let collapseOwnMessagesSetting = true
+        let isSystemMessage = message.isSystem
+        guard !isSystemMessage else {
+            // by default if system message is shown, show it in collapsed state
+            // (applies not for all system message types)
+            // e.g. ConversationMessageFailedRecipientsCellDescription or ConversationFailedToAddParticipantsSystemMessageCellDescription
+            return true
+        }
+        
+        // then if in settings user allowed to collapse own messages
+        guard collapseOwnMessagesSetting else {
+            return false
+        }
+        let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message.isLocation || message.isImage // TODO: long text
+        let result = message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse
+        return result
     }
 
     // MARK: - Content Types
@@ -184,8 +207,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
     
     func collapse() {
-        isCollapsed = !isCollapsed
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        handleCollapseExpand()
     }
 
     // MARK: - Content Cells

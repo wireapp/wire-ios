@@ -185,16 +185,20 @@ final class ConversationTableViewDataSource: NSObject {
         currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
     }
 
-    func actionController(for message: ZMConversationMessage) -> ConversationMessageActionController {
+    func actionController(
+        for message: ZMConversationMessage,
+        sectionController: ConversationMessageSectionController
+    ) -> ConversationMessageActionController {
         if let cachedEntry = actionControllers[message.objectIdentifier] {
             return cachedEntry
         }
-
+        
         let actionController = ConversationMessageActionController(
             responder: messageActionResponder,
             message: message,
             context: .content,
-            view: tableView
+            view: tableView,
+            isCollapsed: sectionController.isCollapsed
         )
 
         actionControllers[message.objectIdentifier] = actionController
@@ -222,8 +226,8 @@ final class ConversationTableViewDataSource: NSObject {
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
-        sectionController.actionController = actionController(for: message)
-
+        sectionController.actionController = actionController(for: message, sectionController: sectionController)
+        
         sectionControllers[message.objectIdentifier] = sectionController
 
         return sectionController

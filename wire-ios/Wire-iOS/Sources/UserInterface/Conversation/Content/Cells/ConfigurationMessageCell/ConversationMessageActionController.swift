@@ -29,6 +29,9 @@ final class ConversationMessageActionController {
 
     let message: ZMConversationMessage
     let context: Context
+    // weather message collapsed or normal\expanded
+    // nil if not applicable
+    var isCollapsed: Bool?
     weak var responder: MessageActionResponder?
     weak var view: UIView!
 
@@ -36,12 +39,14 @@ final class ConversationMessageActionController {
         responder: MessageActionResponder?,
         message: ZMConversationMessage,
         context: Context,
-        view: UIView
+        view: UIView,
+        isCollapsed: Bool? = nil
     ) {
         self.responder = responder
         self.message = message
         self.context = context
         self.view = view
+        self.isCollapsed = isCollapsed
     }
 
     // MARK: - List of Actions
@@ -88,40 +93,48 @@ final class ConversationMessageActionController {
     func canPerformAction(action: MessageAction) -> Bool {
         switch action {
         case .copy:
-            message.canBeCopied
+            return message.canBeCopied
         case .digitallySign:
-            message.canBeDigitallySigned
+            return message.canBeDigitallySigned
         case .reply:
-            message.canBeQuoted
+            return message.canBeQuoted
         case .openDetails:
-            message.areMessageDetailsAvailable
+            return message.areMessageDetailsAvailable
         case .edit:
-            message.canBeEdited
+            return message.canBeEdited
         case .delete:
-            message.canBeDeleted
+            return message.canBeDeleted
         case .save:
-            message.canBeSaved
+            return message.canBeSaved
         case .cancel:
-            message.canCancelDownload
+            return message.canCancelDownload
         case .download:
-            message.canBeDownloaded
+            return message.canBeDownloaded
         case .resend:
-            message.canBeResent
+            return message.canBeResent
         case .showInConversation:
-            context == .collection
+            return context == .collection
         case .sketchDraw,
              .sketchEmoji:
-            message.isImage
+            return message.isImage
         case .react:
-            message.canAddReaction
+            return message.canAddReaction
         case .visitLink:
-            message.canVisitLink
+            return message.canVisitLink
         case .collapse:
-            message.isSentBySelfUser // TODO: use settings
+            let collapseOwnMessagesSetting = true // TODO
+            guard collapseOwnMessagesSetting, let isCollapsed, !isCollapsed else {
+                return false
+            }
+            
+            let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message.isLocation || message.isImage // TODO: long text
+
+            let result = message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse // TODO: use settings
+            return result
         case .present,
              .openQuote,
              .resetSession:
-            false
+            return false
         }
     }
 
