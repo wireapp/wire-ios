@@ -35,7 +35,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
-    private let email: String
+    private let email: String?
     private let backendConfig: BackendConfig
 
     @Published private(set) var isLoading = false
@@ -46,7 +46,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) {
         self.router = router
@@ -104,7 +104,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         if let proxySettings = backendConfig.proxySettings, proxySettings.needsAuthentication {
             router.presentSheet(
                 RootView.ModalDestination.onPremiseLogin(
-                    email: email,
+                    email: email ?? "",
                     environment: backendConfig,
                     backendMetadata: nil
                 )
@@ -128,13 +128,17 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                         )
                     )
                 } else {
-                    router.presentSheet(
-                        RootView.ModalDestination.onPremiseLogin(
-                            email: email,
-                            environment: backendConfig,
-                            backendMetadata: backendMetadata
+                    if let email {
+                        router.presentSheet(
+                            RootView.ModalDestination.onPremiseLogin(
+                                email: email,
+                                environment: backendConfig,
+                                backendMetadata: backendMetadata
+                            )
                         )
-                    )
+                    } else {
+                        router.presentSheet(RootView.ModalDestination.authFlow)
+                    }
                 }
             } catch {
                 WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")

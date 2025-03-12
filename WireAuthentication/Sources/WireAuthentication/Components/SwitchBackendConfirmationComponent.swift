@@ -36,12 +36,12 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
 class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationComponentDependency> {
 
-    private let email: String
+    private let email: String?
     public let backendConfig: BackendConfig
 
     init(
         parent: any Scope,
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) {
         self.email = email

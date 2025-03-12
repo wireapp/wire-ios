@@ -73,7 +73,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     }
 
     func switchBackendConfirmationComponent(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationComponent {
         SwitchBackendConfirmationComponent(
@@ -153,7 +153,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
     }
 
     func switchBackendView(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView {
         switchBackendConfirmationComponent(

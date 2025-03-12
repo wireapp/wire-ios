@@ -25,7 +25,8 @@ package struct RootView: View {
         DetermineAuthMethodBuilder &
         LoginViaEmailOnPremBuilder &
         LoginViaSSOBuilder &
-        NoHistoryViewBuilder
+        NoHistoryViewBuilder &
+        SwitchBackendConfirmationBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -82,7 +83,7 @@ package struct RootView: View {
                 ):
                     factory.loginViaSSOView(ssoURL: ssoURL)
                 case let .switchBackend(backendConfig):
-                    factory.determineAuthMethodView
+                    factory.switchBackendView(email: nil, backendConfig: backendConfig)
                 }
             }
     }

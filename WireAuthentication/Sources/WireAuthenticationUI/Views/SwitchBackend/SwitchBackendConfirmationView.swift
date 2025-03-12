@@ -24,7 +24,7 @@ package protocol SwitchBackendConfirmationBuilder {
 
     @MainActor
     func switchBackendView(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView
 

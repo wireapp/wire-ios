@@ -87,9 +87,9 @@ class RootComponent: BootstrapComponent {
             onSSOFailure: {
                 SSOFailureHandler(router: self.router).handleFailure()
             },
-            onSwitchBackend: { url in
+            onSwitchBackend: { backendConfigURL in
                 Task {
-                    await BackendSwitchHandler(router: self.router, useCase: FetchBackendConfigUseCase()).handleSuccess(backendConfigURL: url)
+                    await SwitchBackendHandler(router: self.router, factory: self).invoke(backendConfigURL)
                 }
             }
         )
@@ -126,6 +126,17 @@ class RootComponent: BootstrapComponent {
 
     var loginViaSSOComponent: LoginViaSSOComponent {
         LoginViaSSOComponent()
+    }
+
+    func switchBackendConfirmationComponent(
+        email: String?,
+        backendConfig: BackendConfig
+    ) -> SwitchBackendConfirmationComponent {
+        SwitchBackendConfirmationComponent(
+            parent: self,
+            email: email,
+            backendConfig: backendConfig
+        )
     }
 
 }
@@ -167,6 +178,21 @@ extension RootComponent: RootView.Factory {
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent.view(ssoURL: ssoURL)
+    }
+
+    func switchBackendView(email: String?, backendConfig: BackendConfig) -> SwitchBackendConfirmationView {
+        switchBackendConfirmationComponent(
+            email: email,
+            backendConfig: backendConfig
+        ).view
+    }
+
+}
+
+extension RootComponent: SwitchBackendHandler.Factory {
+
+    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
+        FetchBackendConfigUseCase()
     }
 
 }

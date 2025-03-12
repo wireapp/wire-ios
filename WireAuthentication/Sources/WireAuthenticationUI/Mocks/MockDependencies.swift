@@ -143,7 +143,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 extension MockDependencies: SwitchBackendConfirmationBuilder {
 
     private func switchBackendConfirmationViewModel(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
@@ -167,7 +167,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
     }
 
     func switchBackendView(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(
