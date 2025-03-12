@@ -142,30 +142,19 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = config
 
             // when, then
-            await XCTAssertThrowsErrorAsync(DetermineAuthMethodUseCaseFailure.invalidResponse) { [self] in
+            await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidResponse) { [self] in
                 _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
             }
         }
     }
 
-    func testInvoke_mapsErrors() async throws {
+    func testInvoke_forwardsUnderlyingErrors() async throws {
         // given
-        let noInternetError = URLError(.notConnectedToInternet)
-        let someError = NSError(domain: "SomeDomain", code: 0, userInfo: nil)
+        mockAuthenticationAPI.getDomainRegistrationForEmail_MockError = URLError(.notConnectedToInternet)
 
-        let testCases: [(underlyingError: any Error, expected: DetermineAuthMethodUseCaseFailure)] = [
-            (underlyingError: AuthenticationAPIError.invalidResponse, expected: .invalidResponse),
-            (underlyingError: noInternetError, expected: .urlError(noInternetError)),
-            (underlyingError: someError, expected: .unknown)
-        ]
-
-        for testCase in testCases {
-            mockAuthenticationAPI.getDomainRegistrationForEmail_MockError = testCase.underlyingError
-
-            // when, then
-            await XCTAssertThrowsErrorAsync(testCase.expected) { [self] in
-                _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
-            }
+        // when, then
+        await XCTAssertThrowsErrorAsync(URLError(.notConnectedToInternet)) { [self] in
+            _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
         }
     }
 

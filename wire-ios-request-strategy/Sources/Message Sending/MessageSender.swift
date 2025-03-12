@@ -76,7 +76,7 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
-        await quickSyncObserver.waitForQuickSyncToFinish()
+        await quickSyncObserver.waitForDecryptionOfEventsToFinish()
 
         do {
             guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
@@ -92,7 +92,7 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
-        await quickSyncObserver.waitForQuickSyncToFinish()
+        await quickSyncObserver.waitForDecryptionOfEventsToFinish()
         WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
 
         do {
