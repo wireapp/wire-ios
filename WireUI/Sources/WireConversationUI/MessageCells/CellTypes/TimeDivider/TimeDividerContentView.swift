@@ -34,18 +34,21 @@ struct TimeDividerContentView: View, ConversationCellContentViewProtocol {
                     .frame(minHeight: 1)
                     .overlay { dividerColor }
             }
-            .padding(.horizontal, 12)
+            .padding(.leading, 12)
 
-            Text(model.text)
-                .font(.footnote)
-                .fontWeight(.semibold)
+            if !model.text.isEmpty {
+                Text(model.text)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .padding(.horizontal, 12)
+            }
 
             VStack {
                 Divider()
                     .frame(minHeight: 1)
                     .overlay { dividerColor }
             }
-            .padding(.horizontal, 12)
+            .padding(.trailing, 12)
 
         }
         .padding(.vertical, 8)
@@ -58,4 +61,8 @@ struct TimeDividerContentView: View, ConversationCellContentViewProtocol {
 
 #Preview {
     TimeDividerContentView(model: "Friday")
+}
+
+#Preview("empty") {
+    TimeDividerContentView(model: "")
 }

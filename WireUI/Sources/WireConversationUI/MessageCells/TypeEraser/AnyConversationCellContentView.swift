@@ -32,6 +32,6 @@ struct AnyConversationCellContentView<Model: ConversationCellModelProtocol>: Con
 
 }
 
-#Preview {
-    AnyConversationCellContentView(model: TimeDividerModel())
+#Preview("TimeDivider") {
+    AnyConversationCellContentView(model: TimeDividerModel("Date/Time"))
 }
