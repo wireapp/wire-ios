@@ -129,7 +129,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             backendMetadata: backendMetadata
                         )
                     )
-                    WireLogger.authentication.info("No SSO URL")
+                    WireLogger.authentication.info("No default SSO URL")
                 }
 
             } catch {
