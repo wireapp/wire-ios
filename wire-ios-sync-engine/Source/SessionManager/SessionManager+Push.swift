@@ -20,6 +20,7 @@ import Foundation
 import PushKit
 import UserNotifications
 import WireRequestStrategy
+import WireDomain
 
 private let pushLog = ZMSLog(tag: "Push")
 
@@ -76,7 +77,11 @@ extension SessionManager: UNUserNotificationCenterDelegate {
     public func configureUserNotifications() {
         guard (application as? NotificationSettingsRegistrable)?.shouldRegisterUserNotificationSettings ?? true
         else { return }
-        notificationCenter.setNotificationCategories(PushNotificationCategory.allCategories)
+        if DeveloperFlag.newInitialSync.isOn {
+            notificationCenter.setNotificationCategories(WireDomain.NotificationCategory.allCategories)
+        } else {
+            notificationCenter.setNotificationCategories(PushNotificationCategory.allCategories)
+        }
         notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { _, _ in })
         notificationCenter.delegate = self
     }
