@@ -92,6 +92,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 backendMetadata: backendMetadata
             )
         } catch {
+            WireLogger.authentication.error("Error determining authentication method: \(error)")
+
             switch error {
             case DetermineAuthMethodUseCaseFailure.invalidEmailOrSSOCode:
                 // No need to do anything here. In general this shouldn't happen because we validate before submitting.
@@ -100,9 +102,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             default:
                 alert = .general(for: error)
             }
-
-            let log = alert == .unknownError ? WireLogger.authentication.error : WireLogger.authentication.info
-            log("Error determining authentication method: \(error)")
         }
     }
 
@@ -142,6 +141,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 }.value
                 modalDestination = .ssoLogin(url: url)
             } catch {
+                WireLogger.authentication.error("Error while generating SSO link: \(error)")
+
                 switch error {
                 case SSOLinkGeneratorFailure.invalidSSOCode:
                     alert = .incorrectSSOCode
@@ -150,9 +151,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 default:
                     alert = .general(for: error)
                 }
-
-                let log = alert == .unknownError ? WireLogger.authentication.error : WireLogger.authentication.info
-                log("Error while generating SSO link: \(error)")
             }
 
         case let .onPremLogin(email, backendConfigURL):
@@ -163,10 +161,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 }.value
                 modalDestination = .switchBackend(email: email, backendConfig: backendConfig)
             } catch {
-                alert = .general(for: error)
+                WireLogger.authentication.error("Error fetching backend config: \(error)")
 
-                let log = alert == .unknownError ? WireLogger.authentication.error : WireLogger.authentication.info
-                log("Error fetching backend config: \(error)")
+                alert = .general(for: error)
             }
         }
     }
