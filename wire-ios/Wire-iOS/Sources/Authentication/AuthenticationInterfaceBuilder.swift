@@ -114,13 +114,11 @@ final class AuthenticationInterfaceBuilder {
             )
 
             authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(
-                action: { userID, cookieData in
-                bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
-            },
-                action1: { url in
-                    // completeSSOSuccess backend switch
-                    // errors ??
-                    //bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
+                handleCompanyLoginSuccess: { userID, cookieData in
+                    bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
+                },
+                handleBackendSwitch: { url in
+                    bridge.switchBackend(configURL: url)
                 }
             )
             authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)

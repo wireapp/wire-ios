@@ -20,24 +20,23 @@ import Foundation
 
 class AuthenticationModuleURLActionProcessor: URLActionProcessor {
 
-    let action: (UUID, [HTTPCookie]) -> Void
-    let action1: (URL) -> Void
+    let handleCompanyLoginSuccess: (UUID, [HTTPCookie]) -> Void
+    let handleBackendSwitch: (URL) -> Void
 
     init(
-        action: @escaping (UUID, [HTTPCookie]) -> Void,
-        action1: @escaping (URL) -> Void
+        handleCompanyLoginSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
+        handleBackendSwitch: @escaping (URL) -> Void
     ) {
-        self.action = action
-        self.action1 = action1
+        self.handleCompanyLoginSuccess = handleCompanyLoginSuccess
+        self.handleBackendSwitch = handleBackendSwitch
     }
 
     func process(urlAction: URLAction, delegate: (any PresentationDelegate)?) {
         switch urlAction {
-        case let .companyLoginSuccess(userInfo)://
-            action(userInfo.identifier, userInfo.cookies)
+        case let .companyLoginSuccess(userInfo):
+            handleCompanyLoginSuccess(userInfo.identifier, userInfo.cookies)
         case let .accessBackend(configurationURL):
-//SecurityFlags.customBackend.isEnabled, ????
-            action1(configurationURL)
+            handleBackendSwitch(configurationURL)
         default:
             break
         }

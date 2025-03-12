@@ -28,17 +28,20 @@ public struct WireAuthenticationBridge {
     private let onRegisterAccount: () -> Void
     private let onSSOSuccess: (UUID, [HTTPCookie]) -> Void
     private let onSSOFailure: () -> Void
+    private let onSwitchBackend: (URL) -> Void
 
     public init(
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         onRegisterAccount: @escaping () -> Void,
         onSSOSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
-        onSSOFailure: @escaping () -> Void
+        onSSOFailure: @escaping () -> Void,
+        onSwitchBackend: @escaping (URL) -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
         self.onRegisterAccount = onRegisterAccount
         self.onSSOSuccess = onSSOSuccess
         self.onSSOFailure = onSSOFailure
+        self.onSwitchBackend = onSwitchBackend
     }
 
     // MARK: - Methods are called within the module, but their implementations exist outside of it.
@@ -67,6 +70,10 @@ public struct WireAuthenticationBridge {
 
     public func completeSSOFailure() {
         onSSOFailure()
+    }
+
+    public func switchBackend(configURL: URL) {
+        onSwitchBackend(configURL)
     }
 
 }

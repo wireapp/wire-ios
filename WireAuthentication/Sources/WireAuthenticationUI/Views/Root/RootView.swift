@@ -81,6 +81,8 @@ package struct RootView: View {
                     backendMetadata
                 ):
                     factory.loginViaSSOView(ssoURL: ssoURL)
+                case let .switchBackend(backendConfig):
+                    factory.determineAuthMethodView
                 }
             }
     }
@@ -118,6 +120,7 @@ package struct RootView: View {
             url: URL,
             BackendMetadata: BackendMetadata
         )
+        case switchBackend(backendConfig: BackendConfig)
     }
 
 }

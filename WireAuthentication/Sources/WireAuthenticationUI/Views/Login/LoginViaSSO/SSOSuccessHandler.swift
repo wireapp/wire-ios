@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
+import WireLogging
 
 package struct SSOSuccessHandler {
 
@@ -36,6 +38,34 @@ package struct SSOSuccessHandler {
                 didDetectDomainConflict: false
             )
         )
+    }
+
+}
+
+package struct BackendSwitchHandler {
+
+    package typealias Factory = FetchBackendConfigUseCaseFactory
+
+    private let router: any Router
+    //private let factory: any Factory
+    private let useCase: FetchBackendConfigUseCaseProtocol
+
+    package init(router: Router, useCase: FetchBackendConfigUseCaseProtocol /*factory: any Factory*/) {
+        self.router = router
+        self.useCase = useCase
+    }
+
+    @MainActor
+    package func handleSuccess(backendConfigURL: URL) async {
+        do {
+            //let useCase = factory.fetchBackendConfigUseCase()
+            let backendConfig = try await Task.detached {
+                try await useCase.invoke(at: backendConfigURL)
+            }.value
+            router.presentSheet(RootView.ModalDestination.switchBackend(backendConfig: backendConfig))
+        } catch {
+            WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
+        }
     }
 
 }

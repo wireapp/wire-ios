@@ -22,6 +22,7 @@ import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+internal import WireAuthenticationLogic
 
 class RootComponent: BootstrapComponent {
 
@@ -85,6 +86,11 @@ class RootComponent: BootstrapComponent {
             },
             onSSOFailure: {
                 SSOFailureHandler(router: self.router).handleFailure()
+            },
+            onSwitchBackend: { url in
+                Task {
+                    await BackendSwitchHandler(router: self.router, useCase: FetchBackendConfigUseCase()).handleSuccess(backendConfigURL: url)
+                }
             }
         )
     }

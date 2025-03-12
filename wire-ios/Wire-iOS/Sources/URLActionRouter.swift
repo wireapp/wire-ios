@@ -74,7 +74,7 @@ class URLActionRouter: URLActionRouterProtocol {
     @discardableResult
     func open(url: URL) -> Bool {
         do {
-            return try sessionManager?.openURL(url) ?? false
+            return try sessionManager?.openURL(url) ?? false//
         } catch let error as LocalizedError {
             if error is CompanyLoginError {
                 if DeveloperFlag.useWireAuthentication.isOn {
@@ -208,10 +208,14 @@ extension URLActionRouter: PresentationDelegate {
                 message: UrlAction.ConnectToBot.message,
                 decisionHandler: decisionHandler
             )
-        case let .accessBackend(url): //?
+        case let .accessBackend(url):
             // Switching backend is handled below, so pass false here.
-            decisionHandler(false)
-            switchBackend(configURL: url)
+            if DeveloperFlag.useWireAuthentication.isOn {
+                decisionHandler(SecurityFlags.customBackend.isEnabled)
+            } else {
+                decisionHandler(false)
+                switchBackend(configURL: url)
+            }
         default:
             decisionHandler(true)
         }
@@ -281,6 +285,7 @@ extension URLActionRouter: PresentationDelegate {
             return
         }
 
+        sessionManager.activeUnauthenticatedSession//
         sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
             guard let self else { return }
 
