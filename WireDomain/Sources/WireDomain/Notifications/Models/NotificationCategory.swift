@@ -56,7 +56,7 @@ public enum NotificationCategory: String, CaseIterable {
 }
 
 extension NotificationCategory {
-    static var allCategories: Set<UNNotificationCategory> {
+    public static var allCategories: Set<UNNotificationCategory> {
         let categories = NotificationCategory.allCases.map { $0.make() }
         return Set(categories)
     }

@@ -28,8 +28,7 @@ protocol PullEventsDependency: Dependency {
     var selectedAccount: Account { get }
     var applicationContainer: URL { get }
     var applicationIdentifier: String { get }
-    var messageLocalStore: any MessageLocalStoreProtocol { get }
-    var userLocalStore: any UserLocalStoreProtocol { get }
+    var sharedUserDefaults: UserDefaults { get }
 }
 
 protocol PullEventsServiceProvider {
@@ -53,7 +52,6 @@ final class PullEventsComponent: Component<PullEventsDependency>, PullEventsServ
         )
 
         return PullEventsService(
-            coreData: dependency.coreData,
             userClientsLocalStore: userClientsLocalStore,
             updateEventsLocalStore: updateEventsLocalStore,
             pendingEventsSync: pullPendingEventsSync,
@@ -74,7 +72,20 @@ extension PullEventsComponent {
         ConversationLocalStore(
             context: dependency.coreData.syncContext,
             mlsService: nil,
-            messageLocalStore: dependency.messageLocalStore
+            messageLocalStore: messageLocalStore
+        )
+    }
+    
+    public var messageLocalStore: any MessageLocalStoreProtocol {
+        MessageLocalStore(
+            context: dependency.coreData.syncContext
+        )
+    }
+    
+    public var userLocalStore: any UserLocalStoreProtocol {
+        UserLocalStore(
+            context: dependency.coreData.syncContext,
+            messageLocalStore: messageLocalStore
         )
     }
 
@@ -83,9 +94,7 @@ extension PullEventsComponent {
         selfClientID: String
     ) async -> any PullPendingUpdateEventsSyncProtocol {
         let updateEventsAPI = await updateEventsAPI(
-            cookieStorage: dependency.cookieStorage,
-            selfClientID: selfClientID,
-            applicationIdentifier: dependency.applicationIdentifier
+            selfClientID: selfClientID
         )
 
         let updateEventDecryptor = updateEventDecryptor(
@@ -113,7 +122,7 @@ extension PullEventsComponent {
         return UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
-            messageLocalStore: dependency.messageLocalStore
+            messageLocalStore: messageLocalStore
         )
     }
 
@@ -144,7 +153,7 @@ extension PullEventsComponent {
         return ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
-            userLocalStore: dependency.userLocalStore
+            userLocalStore: userLocalStore
         )
     }
 
@@ -154,9 +163,9 @@ extension PullEventsComponent {
 
     private var updateEventsLocalStore: any UpdateEventsLocalStoreProtocol {
         UpdateEventsLocalStore(
-            context: dependency.coreData.syncContext,
+            context: dependency.coreData.eventContext,
             userID: dependency.userID,
-            sharedUserDefaults: .standard
+            sharedUserDefaults: dependency.sharedUserDefaults
         )
     }
 
@@ -206,42 +215,35 @@ extension PullEventsComponent {
 
 extension PullEventsComponent {
     func updateEventsAPI(
-        cookieStorage: any CookieStorageProtocol,
-        selfClientID: String,
-        applicationIdentifier: String
+        selfClientID: String
     ) async -> any UpdateEventsAPI {
-        let userDefaults = makeUserDefaults(
-            applicationIdentifier: applicationIdentifier
-        )
-
         let authenticationManager = await makeAuthenticationManager(
-            cookieStorage: cookieStorage,
-            userDefaults: userDefaults,
             selfClientID: selfClientID
         )
 
-        let networkService = await makeNetworkService(userDefaults: userDefaults)
+        let networkService = await makeNetworkService()
 
         let apiService = APIService(
             networkService: networkService,
             authenticationManager: authenticationManager
         )
 
-        let apiVersion = makeApiVersion(userDefaults: userDefaults)
+        let apiVersion = makeApiVersion()
 
         return UpdateEventsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
     }
 
-    func makeApiVersion(userDefaults: UserDefaults) -> WireAPI.APIVersion {
+    func makeApiVersion() -> WireAPI.APIVersion {
         let key = "SelectedAPIVersion"
+        let sharedUserDefaults = dependency.sharedUserDefaults
 
-        guard userDefaults.object(forKey: key) != nil else {
+        guard sharedUserDefaults.object(forKey: key) != nil else {
             fatalError("API version not found")
         }
 
-        let storedValue = userDefaults.integer(forKey: key)
+        let storedValue = sharedUserDefaults.integer(forKey: key)
         let legacyAPIVersion = APIVersion(rawValue: Int32(storedValue))
 
         guard let legacyAPIVersion,
@@ -253,30 +255,29 @@ extension PullEventsComponent {
     }
 
     func makeAuthenticationManager(
-        cookieStorage: any CookieStorageProtocol,
-        userDefaults: UserDefaults,
         selfClientID: String
     ) async -> any AuthenticationManagerProtocol {
         await AuthenticationManager(
             clientID: selfClientID,
-            cookieStorage: cookieStorage,
-            networkService: makeNetworkService(userDefaults: userDefaults)
+            cookieStorage: dependency.cookieStorage,
+            networkService: makeNetworkService()
         )
     }
 
-    func makeLegacyBackendEnvironment(userDefaults: UserDefaults) -> WireDataModel.BackendEnvironment {
-        let backendEnvironmentTypeOverride = userDefaults.string(forKey: "BackendEnvironmentTypeOverrideKey")
+    func makeLegacyBackendEnvironment() -> WireDataModel.BackendEnvironment {
+        let sharedUserDefaults = dependency.sharedUserDefaults
+        let backendEnvironmentTypeOverride = sharedUserDefaults.string(forKey: "BackendEnvironmentTypeOverrideKey")
 
-        guard let backendEnvironmentTypeOverride else {
-            fatalError()
+        let environmentType = if let backendEnvironmentTypeOverride {
+            EnvironmentType(
+                stringValue: backendEnvironmentTypeOverride
+            )
+        } else {
+            EnvironmentType(userDefaults: sharedUserDefaults)
         }
 
-        let environmentType = EnvironmentType(
-            stringValue: backendEnvironmentTypeOverride
-        )
-
         guard let backendEnvironment = BackendEnvironment(
-            userDefaults: userDefaults,
+            userDefaults: sharedUserDefaults,
             configurationBundle: backendBundle,
             environmentType: environmentType
         ) else {
@@ -286,15 +287,9 @@ extension PullEventsComponent {
         return backendEnvironment
     }
 
-    func makeUserDefaults(applicationIdentifier: String) -> UserDefaults {
-        let userDefaults = UserDefaults.standard
-        userDefaults.addSuite(named: applicationIdentifier)
-        return userDefaults
-    }
-
-    func makeBackendEnvironment(userDefaults: UserDefaults) async -> WireAPI.BackendEnvironment {
-        let legacyBackendEnvironment = makeLegacyBackendEnvironment(userDefaults: userDefaults)
-        let proxySettings = await makeProxySettings(userDefaults: userDefaults)
+    func makeBackendEnvironment() async -> WireAPI.BackendEnvironment {
+        let legacyBackendEnvironment = makeLegacyBackendEnvironment()
+        let proxySettings = await makeProxySettings()
 
         return BackendEnvironment(
             url: legacyBackendEnvironment.backendURL,
@@ -316,8 +311,8 @@ extension PullEventsComponent {
         )
     }
 
-    func makeProxySettings(userDefaults: UserDefaults) async -> ProxySettings? {
-        let legacyBackendEnvironment = makeLegacyBackendEnvironment(userDefaults: userDefaults)
+    func makeProxySettings() async -> ProxySettings? {
+        let legacyBackendEnvironment = makeLegacyBackendEnvironment()
         guard let proxy = legacyBackendEnvironment.proxy else { return nil }
 
         let keychain = WireFoundation.Keychain()
@@ -363,10 +358,8 @@ extension PullEventsComponent {
         }
     }
 
-    func makeNetworkService(
-        userDefaults: UserDefaults
-    ) async -> NetworkService {
-        let backendEnvironment = await makeBackendEnvironment(userDefaults: userDefaults)
+    func makeNetworkService() async -> NetworkService {
+        let backendEnvironment = await makeBackendEnvironment()
 
         let service = NetworkService(
             baseURL: backendEnvironment.url,
@@ -378,7 +371,7 @@ extension PullEventsComponent {
         let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
         let config = await URLSessionConfigurationFactory(
             minTLSVersion: minTLSVersion,
-            proxySettings: makeProxySettings(userDefaults: userDefaults)
+            proxySettings: makeProxySettings()
         )
 
         let session = URLSession(

@@ -17,7 +17,7 @@
 //
 
 import WireAPI
-import WireDataModel
+import Foundation
 import WireLogging
 
 // sourcery: AutoMockable
@@ -28,25 +28,21 @@ protocol PullEventsServiceProtocol {
 }
 
 struct PullEventsService: PullEventsServiceProtocol {
-    private let coreData: CoreDataStack
     private let userClientsLocalStore: any UserClientsLocalStoreProtocol
     private let updateEventsLocalStore: any UpdateEventsLocalStoreProtocol
     private let pendingEventsSync: any PullPendingUpdateEventsSyncProtocol
     private let generateNotificationProvider: any GenerateNotificationProvider
 
     enum Failure: Error {
-        case unableToLoadStores(Error)
         case unableToPullPendingEvents(Error)
     }
 
     init(
-        coreData: CoreDataStack,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         updateEventsLocalStore: any UpdateEventsLocalStoreProtocol,
         pendingEventsSync: any PullPendingUpdateEventsSyncProtocol,
         generateNotificationProvider: any GenerateNotificationProvider
     ) {
-        self.coreData = coreData
         self.userClientsLocalStore = userClientsLocalStore
         self.updateEventsLocalStore = updateEventsLocalStore
         self.pendingEventsSync = pendingEventsSync
@@ -58,38 +54,24 @@ struct PullEventsService: PullEventsServiceProtocol {
     func startSync(
         newEventID id: UUID
     ) async throws {
-        try setup()
-
+        
         let lastEventID = updateEventsLocalStore.lastEventID()
-
+        
         if lastEventID == nil {
             updateEventsLocalStore.storeLastEventID(id: id)
         }
-
+        
         do {
             let decodedEventsStream = try await pendingEventsSync.pull()
-
+            
             let generateNotificationService = generateNotificationProvider.generateNotificationService(
                 eventsStream: decodedEventsStream
             )
-
+            
             await generateNotificationService.process()
-
+            
         } catch {
             throw Failure.unableToPullPendingEvents(error)
-        }
-    }
-
-    /// Setup core data stores and its dependencies.
-    private func setup() throws {
-        var loadStoresError: Error?
-
-        coreData.loadStores { error in
-            loadStoresError = error
-        }
-
-        if let loadStoresError {
-            throw Failure.unableToLoadStores(loadStoresError)
         }
     }
 

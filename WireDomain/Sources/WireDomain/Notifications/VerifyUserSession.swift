@@ -32,8 +32,11 @@ struct VerifyUserSession {
     // MARK: - Error
 
     enum Failure: Error {
+        case coreDataMissingSharedContainer
+        case coreDataMigrationRequired
         case userUnauthenticated
         case missingUserClient
+        case unableToLoadStores(Error)
     }
 
     // MARK: - Properties
@@ -41,17 +44,17 @@ struct VerifyUserSession {
     typealias NotificationHandler = (UNMutableNotificationContent) -> Void
 
     private let pullEventsServiceProvider: any PullEventsServiceProvider
-    private let userLocalStore: any UserLocalStoreProtocol
     private let cookieStorage: any CookieStorageProtocol
+    private let coreData: CoreDataStack
 
     init(
         pullEventsServiceProvider: any PullEventsServiceProvider,
-        userLocalStore: any UserLocalStoreProtocol,
-        cookieStorage: any CookieStorageProtocol
+        cookieStorage: any CookieStorageProtocol,
+        coreData: CoreDataStack
     ) {
         self.pullEventsServiceProvider = pullEventsServiceProvider
-        self.userLocalStore = userLocalStore
         self.cookieStorage = cookieStorage
+        self.coreData = coreData
     }
 
     /// Ensures user is properly authenticated.
@@ -73,7 +76,8 @@ struct VerifyUserSession {
         guard hasExpirationDate else {
             throw Failure.userUnauthenticated
         }
-
+        
+        try await setupCoreData()
         try await completion()
     }
 
@@ -83,6 +87,13 @@ struct VerifyUserSession {
     func startSyncingEvents(
         eventID: UUID
     ) async throws {
+        let syncContext = coreData.syncContext
+        let messageLocalStore = MessageLocalStore(context: syncContext)
+        let userLocalStore = UserLocalStore(
+            context: syncContext,
+            messageLocalStore: messageLocalStore
+        )
+        
         let selfUserInfo = await userLocalStore.selfUserInfo()
 
         guard let selfClientID = selfUserInfo.clientId else {
@@ -97,5 +108,27 @@ struct VerifyUserSession {
         try await pullEventsService.startSync(
             newEventID: eventID
         )
+    }
+    
+    /// Setup core data stores and its dependencies.
+    private func setupCoreData() async throws {
+        guard coreData.storesExists else {
+            throw Failure.coreDataMissingSharedContainer
+        }
+
+        guard !coreData.needsMigration  else {
+            throw Failure.coreDataMigrationRequired
+        }
+        
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) -> Void in
+            coreData.loadStores { error in
+                if let error {
+                    continuation.resume(throwing: Failure.unableToLoadStores(error))
+                } else {
+                    continuation.resume()
+                }
+            }
+
+        }
     }
 }

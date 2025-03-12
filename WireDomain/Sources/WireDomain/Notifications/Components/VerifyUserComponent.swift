@@ -34,8 +34,8 @@ final class VerifyUserComponent: Component<VerifyUserDependency> {
     var verifyUserSession: VerifyUserSession {
         VerifyUserSession(
             pullEventsServiceProvider: pullEventsComponent,
-            userLocalStore: userLocalStore,
-            cookieStorage: cookieStorage
+            cookieStorage: cookieStorage,
+            coreData: coreData
         )
     }
 
@@ -47,6 +47,10 @@ final class VerifyUserComponent: Component<VerifyUserDependency> {
 }
 
 extension VerifyUserComponent {
+    
+    public var sharedUserDefaults: UserDefaults {
+        UserDefaults(suiteName: dependency.applicationIdentifier)!
+    }
 
     public var cookieStorage: any CookieStorageProtocol {
         makeCookieStorage(
@@ -54,24 +58,13 @@ extension VerifyUserComponent {
         )
     }
 
-    public var userLocalStore: any UserLocalStoreProtocol {
-        UserLocalStore(
-            context: coreData.syncContext,
-            messageLocalStore: messageLocalStore
-        )
-    }
-
-    public var messageLocalStore: any MessageLocalStoreProtocol {
-        MessageLocalStore(
-            context: coreData.syncContext
-        )
-    }
-
     public var coreData: CoreDataStack {
-        makeCoreData(
-            account: dependency.selectedAccount,
-            applicationIdentifier: dependency.applicationIdentifier
-        )
+        shared {
+            makeCoreData(
+                account: dependency.selectedAccount,
+                applicationIdentifier: dependency.applicationIdentifier
+            )
+        }
     }
 
     func makeCoreData(
@@ -91,15 +84,14 @@ extension VerifyUserComponent {
     func makeCookieStorage(userID: UUID) -> any CookieStorageProtocol {
         let cookiesEncryptionKey: Data = {
             let cookieKey = "ZMCookieKey"
-            let sharedDefaults = UserDefaults.standard
-            if let key = sharedDefaults.data(forKey: "cookieKeyKey") {
+            if let key = sharedUserDefaults.data(forKey: cookieKey) {
                 return key
             }
 
             // Creates a new key
             do {
                 let newKey = try AES256Crypto.generateRandomEncryptionKey()
-                sharedDefaults.set(newKey, forKey: cookieKey)
+                sharedUserDefaults.set(newKey, forKey: cookieKey)
                 return newKey
             } catch {
                 fatalError()

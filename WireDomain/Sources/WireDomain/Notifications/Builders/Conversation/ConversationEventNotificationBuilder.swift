@@ -45,11 +45,13 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             let lastReadTimestamp = lastReadTimestamp
 
             guard !isSelfUser,
-                  !isConversationMuted,
-                  let eventTimeStamp,
-                  let lastReadTimestamp,
-                  lastReadTimestamp.compare(eventTimeStamp) != .orderedAscending
-            else {
+                  !isConversationMuted else {
+                return false
+            }
+            
+            if let timeStamp = eventTimeStamp,
+               let lastRead = lastReadTimestamp, lastRead.compare(timeStamp) != .orderedAscending {
+                // don't show notifications that have already been read
                 return false
             }
 

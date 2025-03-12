@@ -138,6 +138,7 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
         notification.interruptionLevel = .timeSensitive
         notification.badge = await getNotificationBadge()
 
+        WireLogger.notifications.info("Displaying push notification")
         // Displays the notification to the user
         contentHandler(notification)
     }

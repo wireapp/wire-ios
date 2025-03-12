@@ -19,6 +19,7 @@
 import UserNotifications
 import WireDataModel
 import WireLogging
+import NeedleFoundation
 
 /// Receives push notifications, process the pending events through the `NotificationSession` to generate a notification
 /// content based on these events.
@@ -35,6 +36,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private var onGoingTask: Task<Void, Never>?
 
     public init() {
+        registerProviderFactories()
         WireLogger.notifications.info("initializing new notification service")
     }
 
@@ -161,13 +163,21 @@ extension NotificationServiceExtension {
                 WireLogger.notifications.error(
                     "Not displaying notification because user client is missing"
                 )
-            }
-        case let pullEventsServiceError as PullEventsService.Failure:
-            switch pullEventsServiceError {
+            case .coreDataMissingSharedContainer:
+                WireLogger.notifications.error(
+                    "Core data missing shared container"
+                )
+            case .coreDataMigrationRequired:
+                WireLogger.notifications.error(
+                    "Core data migration required"
+                )
             case let .unableToLoadStores(error):
                 WireLogger.notifications.error(
                     "Loading coreDataStack with error: \(error.localizedDescription)"
                 )
+            }
+        case let pullEventsServiceError as PullEventsService.Failure:
+            switch pullEventsServiceError {
             case let .unableToPullPendingEvents(error):
                 logger.error(
                     "failed to process notification: could not pull pending events: \(error.localizedDescription)"
