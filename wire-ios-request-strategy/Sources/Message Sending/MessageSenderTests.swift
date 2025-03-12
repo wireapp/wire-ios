@@ -541,7 +541,7 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.messageProtocol = .mls
         }
         let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
-        let networkError = NetworkError.errorDecodingResponse(response)
+        let networkError = SendMLSMessageFailure(from: response)!
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
             context: syncMOC,
@@ -764,7 +764,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withBroadcastProteusMessage(returning result: Result<
             (Payload.MessageSendingStatus, ZMTransportResponse),
-            NetworkError
+                                         Error
         >) -> Arrangement {
 
             switch result {
@@ -778,7 +778,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withSendProteusMessage(returning result: Result<
             (Payload.MessageSendingStatus, ZMTransportResponse),
-            NetworkError
+            Error
         >) -> Arrangement {
 
             switch result {
@@ -791,8 +791,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withSendMlsMessage(returning result: Result<
-            (Payload.MLSMessageSendingStatus, ZMTransportResponse),
-            NetworkError
+            (Payload.MLSMessageSendingStatus, ZMTransportResponse), Error
         >) -> Arrangement {
 
             switch result {
