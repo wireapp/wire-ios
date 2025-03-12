@@ -16,24 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*
 import SwiftUI
 
-struct AnyConversationCellContentView<Model: ConversationCellModelProtocol>: ConversationCellContentViewProtocol {
-
-    let model: Model
-
-    var body: some View {
-        Model.ContentView(model: model)
-    }
-
-    init(model: Model) {
-        self.model = model
-    }
-
+@MainActor
+protocol ConversationCellContentViewProtocol: View {
+    associatedtype Model
+    init(model: Model)
 }
-
-#Preview("TimeDivider") {
-    AnyConversationCellContentView(model: TimeDividerModel("Date/Time"))
-}
-*/

@@ -16,15 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct GuestsAllowedModel: ConversationCellModelProtocol { // TODO: delete / replace by enum
-    typealias ContentView = GuestsAllowedContentView
+import SwiftUI
+import WireDesign
 
-    var id: MessageCellModelID { self }
+struct GuestsAllowedContentView: ConversationCellContentViewProtocol {
 
-    init() {}
+    let model: GuestsAllowedModel
 
-    func buildView() -> ContentView {
-        ContentView()
+    var body: some View {
+        Text(verbatim: "TODO")
     }
 
+    init(model: GuestsAllowedModel) {
+        self.model = model
+    }
+
+}
+
+// MARK: - Previews
+
+#Preview {
+    GuestsAllowedContentView(model: .init())
 }

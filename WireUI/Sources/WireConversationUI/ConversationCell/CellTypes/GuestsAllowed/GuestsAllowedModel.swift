@@ -16,5 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Use the model itself as the id.
-typealias MessageCellModelID = AnyHashable
+struct GuestsAllowedModel: ConversationCellModelProtocol {
+    typealias ContentView = GuestsAllowedContentView
+
+    var id: AnyHashable { self }
+
+}

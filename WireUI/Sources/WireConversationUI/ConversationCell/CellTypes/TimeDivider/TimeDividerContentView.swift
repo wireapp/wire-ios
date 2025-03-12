@@ -19,7 +19,7 @@
 import SwiftUI
 import WireDesign
 
-struct TimeDividerContentView: View {
+struct TimeDividerContentView: ConversationCellContentViewProtocol {
 
     private let dividerColor = ColorTheme.Strokes.outline.color
 
@@ -59,9 +59,9 @@ struct TimeDividerContentView: View {
 // MARK: - Previews
 
 #Preview {
-    TimeDividerContentView(model: "Friday")
+    TimeDividerContentView(model: TimeDividerModel("Friday"))
 }
 
 #Preview("empty") {
-    TimeDividerContentView(model: "")
+    TimeDividerContentView(model: TimeDividerModel())
 }

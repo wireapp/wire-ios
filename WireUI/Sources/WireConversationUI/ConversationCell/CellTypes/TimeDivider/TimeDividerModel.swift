@@ -16,19 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireDesign
+struct TimeDividerModel: ConversationCellModelProtocol {
+    typealias ContentView = TimeDividerContentView
 
-struct GuestsAllowedContentView: View {
+    var id: AnyHashable { self }
 
-    var body: some View {
-        Text(verbatim: "TODO")
+    var text = ""
+
+    init(text: String) {
+        self.init(text)
+    }
+
+    init(_ text: String) {
+        self.init(text: text)
+    }
+
+    init() {
+        self.init("")
+    }
+
+    @MainActor
+    func buildView() -> ContentView {
+        ContentView(model: self)
     }
 
 }
 
-// MARK: - Previews
+extension MessageCellModel {
 
-#Preview {
-    GuestsAllowedContentView()
+    static func timeDivider(text: String) -> Self {
+        .timeDivider(TimeDividerModel(text: text))
+    }
 }

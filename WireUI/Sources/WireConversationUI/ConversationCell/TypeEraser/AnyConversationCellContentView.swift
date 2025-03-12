@@ -18,12 +18,24 @@
 
 import SwiftUI
 
-protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
-    associatedtype ContentView: View
+struct AnyConversationCellContentView: ConversationCellContentViewProtocol {
+    typealias Model = AnyConversationCellModel
 
-    init()
+    let model: Model
 
-    @MainActor
-    func buildView() -> ContentView
+    var body: some View {
+        Model.ContentView(model: model)
+    }
 
+    init(model: Model) {
+        self.model = model
+    }
+
+}
+
+#Preview("TimeDivider") {
+    let model = TimeDividerModel("Date/Time")
+    AnyConversationCellContentView(
+        model: AnyConversationCellModel(model)
+    )
 }

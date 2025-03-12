@@ -23,7 +23,7 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
     var id: AnyHashable { _id() }
 
     private let _id: @Sendable () -> AnyHashable
-    private let _buildView: @MainActor @Sendable () -> any View
+    private let _buildView: @MainActor @Sendable () -> AnyConversationCellContentView
     private let _hash: @Sendable (inout Hasher) -> Void
     private let _isEqual: @Sendable (Any) -> Bool
 
@@ -32,7 +32,9 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
             base.id
         }
         _buildView = {
-            base.buildView()
+            AnyConversationCellContentView(
+                model: AnyConversationCellModel(base)
+            )
         }
         _hash = { hasher in
             base.hash(into: &hasher)
@@ -44,16 +46,12 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
     }
 
     init() {
-        struct Empty: ConversationCellModelProtocol {
-            let id = false
-            func buildView() -> some View { EmptyView() }
-        }
-        self.init(Empty())
+        self.init(DummyModel())
     }
 
     @MainActor
-    func buildView() -> some View {
-        AnyView(_buildView())
+    func buildView() -> AnyConversationCellContentView {
+        _buildView()
     }
 
     func hash(into hasher: inout Hasher) {
@@ -64,4 +62,28 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
         lhs._isEqual(rhs)
     }
 
+}
+
+private struct DummyModel: ConversationCellModelProtocol {
+    typealias ContentView = DummyView
+
+    let id = false
+
+    func buildView() -> ContentView {
+        ContentView(model: self)
+    }
+}
+
+private struct DummyView: ConversationCellContentViewProtocol {
+    typealias Model = DummyModel
+
+    let model: DummyModel
+
+    init(model: DummyModel) {
+        self.model = model
+    }
+
+    var body: some View {
+        EmptyView()
+    }
 }
