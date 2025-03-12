@@ -20,13 +20,12 @@ import Foundation
 
 public protocol FetchBackendConfigUseCaseProtocol: Sendable {
 
-    func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig
+    func invoke(at configURL: URL) async throws -> BackendConfig
 
 }
 
 public enum FetchBackendConfigFailure: Error, Equatable {
 
-    case requestFailed
     case invalidResponse
 
 }
