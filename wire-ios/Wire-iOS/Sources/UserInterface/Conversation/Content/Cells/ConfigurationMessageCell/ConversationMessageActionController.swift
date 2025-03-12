@@ -122,7 +122,7 @@ final class ConversationMessageActionController {
         case .visitLink:
             return message.canVisitLink
         case .collapse:
-            let collapseOwnMessagesSetting = true // TODO
+            let collapseOwnMessagesSetting = false // TODO
             guard collapseOwnMessagesSetting, let isCollapsed, !isCollapsed else {
                 return false
             }

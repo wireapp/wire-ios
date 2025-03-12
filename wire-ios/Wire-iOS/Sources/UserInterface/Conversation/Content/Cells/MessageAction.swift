@@ -136,13 +136,12 @@ enum MessageAction: CaseIterable, Equatable {
             .emoji
         case .visitLink:
             .externalLink
-        case .collapse:
-            .brush
         case .present,
              .openQuote,
              .digitallySign,
              .resetSession,
-             .react:
+             .react,
+             .collapse:
             nil
         }
     }

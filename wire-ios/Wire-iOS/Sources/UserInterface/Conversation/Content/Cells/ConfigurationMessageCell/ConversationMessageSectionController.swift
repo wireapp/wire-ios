@@ -136,13 +136,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
     }
     
-    private static func isCollapsedInitialValue(message: ZMConversationMessage) -> Bool {
-        let collapseOwnMessagesSetting = true
-        let isSystemMessage = message.isSystem
-        guard !isSystemMessage else {
-            // by default if system message is shown, show it in collapsed state
-            // (applies not for all system message types)
-            // e.g. ConversationMessageFailedRecipientsCellDescription or ConversationFailedToAddParticipantsSystemMessageCellDescription
+    private static func isCollapsedInitialValue(message: ConversationMessage) -> Bool {
+        let collapseOwnMessagesSetting = false
+        // cases when isCollapsed should be true by default
+        if message.isSystem || !message.failedToSendUsers.isEmpty {
             return true
         }
         
@@ -443,7 +440,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
-        guard (!message.isSystem || message.isMissedCall) && !isCollapsed else {
+//        guard (!message.isSystem || message.isMissedCall) && !isCollapsed else {
+        guard !message.isSystem || message.isMissedCall else {
             return false
         }
 
@@ -451,7 +449,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
-        guard message.senderUser != nil, !isCollapsed else {
+        guard message.senderUser != nil else {
+//        guard message.senderUser != nil, !isCollapsed else {
             return false
         }
 
