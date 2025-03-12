@@ -38,7 +38,7 @@ final class ConversationCell<ContentView: ConversationCellContentViewProtocol>: 
 #Preview {
     ConversationCellPreviews(
         models: [
-            TimeDividerModel(text: "Friday"),
+            TimeDividerModel(text: "Friday")/*.using(TimeDividerContentView.self)*/,
             TimeDividerModel(text: "Saturday"),
             TimeDividerModel(text: "Sunday")
         ]
@@ -47,7 +47,7 @@ final class ConversationCell<ContentView: ConversationCellContentViewProtocol>: 
 
 @MainActor
 func ConversationCellPreviews(
-    models: [any ConversationCellModelProtocol]
+    models: [any ConversationCellContentViewMappedModel]
 ) -> UIViewController {
 
     enum Section { case single }
@@ -57,6 +57,7 @@ func ConversationCellPreviews(
     let dataSource = UITableViewDiffableDataSource<Section, AnyConversationCellModel>(
         tableView: tableViewController.tableView!
     ) { tableView, indexPath, itemIdentifier in
+
         fatalError()
     }
     tableViewController.dataSource = dataSource

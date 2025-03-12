@@ -21,3 +21,7 @@ protocol ConversationCellContentViewMappedModel: ConversationCellModelProtocol {
     associatedtype Model: ConversationCellModelProtocol
     associatedtype ContentView: ConversationCellContentViewProtocol where ContentView.Model == Model
 }
+
+enum ConversationCellModelContentViewMapping {
+    case timeDivider(TimeDividerModel, TimeDividerContentView)
+}
