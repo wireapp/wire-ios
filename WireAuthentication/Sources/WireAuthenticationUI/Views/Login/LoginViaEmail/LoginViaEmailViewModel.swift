@@ -138,8 +138,16 @@ package final class LoginViaEmailViewModel: ObservableObject {
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
         } catch {
-            // TODO: [WPB-16415] handle unresolved api version
-            return
+            WireLogger.authentication.error("Resolving backend metadata failed: \(error)")
+
+            switch error {
+            case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
+                // TODO: [WPB-16415] handle unresolved api version
+            case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
+                // TODO: [WPB-16415] handle unresolved api version
+            default:
+                alert = .general(for: error)
+            }
         }
 
         do {
