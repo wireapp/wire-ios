@@ -16,14 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import UIKit
 
-protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
-    associatedtype ContentView: View
+extension MessageCellModel {
 
-    init()
+    var cellReuseIdentifier: String {
+        switch self {
 
-    @MainActor
-    func buildView() -> ContentView
+        case .guestsAllowed:
+            "guestsAllowed"
+
+        case .timeDivider:
+            "timeDivider"
+
+        }
+    }
 
 }

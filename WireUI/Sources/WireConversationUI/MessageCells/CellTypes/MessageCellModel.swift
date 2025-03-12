@@ -25,18 +25,3 @@ enum MessageCellModel: Hashable, Sendable {
     case timeDivider(TimeDividerModel)
 
 }
-
-extension MessageCellModel: Identifiable {
-
-    var id: MessageCellModelID {
-        switch self {
-        case .guestsAllowed:
-            "guestsAllowed"
-        case .timeDivider(let timeDivider):
-            timeDivider.id
-        }
-    }
-
-    //
-
-}

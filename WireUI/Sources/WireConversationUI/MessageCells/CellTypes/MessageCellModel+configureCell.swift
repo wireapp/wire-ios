@@ -16,14 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import UIKit
 
-protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
-    associatedtype ContentView: View
-
-    init()
+extension MessageCellModel {
 
     @MainActor
-    func buildView() -> ContentView
+    func configureCell(_ cell: UITableViewCell) {
+        switch self {
+
+        case .guestsAllowed:
+            return
+
+        case .timeDivider(let timeDivider):
+            guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
+            return cell.model = timeDivider
+
+        }
+
+        assertionFailure("unexpected cell: \(cell)")
+    }
 
 }
