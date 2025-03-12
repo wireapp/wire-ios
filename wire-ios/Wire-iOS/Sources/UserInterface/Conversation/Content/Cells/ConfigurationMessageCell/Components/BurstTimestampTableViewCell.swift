@@ -32,25 +32,13 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     typealias View = BurstTimestampSenderMessageCell
 
     var conversationCellModel: ConversationCellModel? {
-        fatalError("TODO")
-
-        /*
-        func configure(with timestamp: Date, includeDayOfWeek: Bool, showUnreadDot: Bool, accentColor: UIColor) {
-            if includeDayOfWeek {
-                isSeparatorHidden = false
-                label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
-            } else {
-                isSeparatorHidden = false
-                label.text = timestamp.formattedDate
-            }
-
-            label.font = burstBoldFont
-            leftSeparator.backgroundColor = color
-            rightSeparator.backgroundColor = color
-            isShowingUnreadDot = showUnreadDot
-            unreadDot.backgroundColor = accentColor
+        let text: String
+        if configuration.includeDayOfWeek {
+            text = configuration.date.olderThanOneWeekdateFormatter.string(from: configuration.date)
+        } else {
+            text = configuration.date.formattedDate
         }
-         */
+        return .timeDivider(text: text)
     }
 
     let configuration: View.Configuration

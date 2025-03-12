@@ -20,7 +20,7 @@ import UIKit
 
 extension ConversationCellModel {
 
-    var cellReuseIdentifier: String {
+    public var cellReuseIdentifier: String {
         switch self {
 
         case .guestsAllowed:

@@ -37,9 +37,11 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
 
             if !model.text.isEmpty {
                 Text(model.text)
+                    .multilineTextAlignment(.center)
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .padding(.horizontal, 12)
+                    .layoutPriority(1)
             }
 
             VStack {
@@ -59,7 +61,7 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
 // MARK: - Previews
 
 #Preview {
-    TimeDividerContentView(model: TimeDividerModel(text: "Friday"))
+    TimeDividerContentView(model: TimeDividerModel(text: "Friday Lorem Ipsum Dolor"))
 }
 
 #Preview("empty") {

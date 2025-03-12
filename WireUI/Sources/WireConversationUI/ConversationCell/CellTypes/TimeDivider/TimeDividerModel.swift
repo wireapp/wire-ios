@@ -35,7 +35,7 @@ public struct TimeDividerModel: ConversationCellModelProtocol {
 
 extension ConversationCellModel {
 
-    static func timeDivider(text: String) -> Self {
+    public static func timeDivider(text: String) -> Self {
         .timeDivider(TimeDividerModel(text: text))
     }
 }

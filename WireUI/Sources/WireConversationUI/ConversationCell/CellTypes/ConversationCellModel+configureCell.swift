@@ -21,7 +21,7 @@ import UIKit
 extension ConversationCellModel {
 
     @MainActor
-    func configureCell(_ cell: UITableViewCell) {
+    public func configureCell(_ cell: UITableViewCell) {
         switch self {
 
         case .guestsAllowed:
