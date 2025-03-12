@@ -128,7 +128,7 @@ package struct LoginViaEmailView: View {
         )
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isPasswordValid || viewModel.isLoading)
+        .disabled(!viewModel.isSubmitButtonEnabled)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {

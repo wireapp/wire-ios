@@ -36,14 +36,6 @@ package protocol LoginViaEmailOnPremBuilder {
 package struct LoginViaEmailOnPremView: View {
     @StateObject var viewModel: LoginViaEmailViewModel
 
-    @State private var password: String = ""
-    @State private var proxyPassword: String = ""
-    @State private var showPasswordRules: Bool = false
-    @State private var showCustomBackendAlert = false
-
-    // TODO: [WPB-16256] Implement proxy support
-    private var proxyEmail: String = ""
-
     package init(
         viewModel: LoginViaEmailViewModel
     ) {
@@ -53,7 +45,7 @@ package struct LoginViaEmailOnPremView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-                if viewModel.hasProxySupport {
+                if viewModel.requiresProxyCredentials {
                     welcomeMessage
                     emailField
                     passwordField
@@ -81,7 +73,7 @@ package struct LoginViaEmailOnPremView: View {
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
         }
-        .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
+        .presentationDetents(viewModel.requiresProxyCredentials ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
@@ -89,7 +81,7 @@ package struct LoginViaEmailOnPremView: View {
     @ViewBuilder private var welcomeMessage: some View {
         VStack(spacing: 14) {
             Button(action: {
-                showCustomBackendAlert.toggle()
+                viewModel.showCustomBackendAlert.toggle()
             }, label: {
                 Text(L10n.OnPremUserLogin.title(viewModel.backendName) + " ")
                     .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
@@ -100,7 +92,7 @@ package struct LoginViaEmailOnPremView: View {
             .font(.textStyle(.h2))
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
-            .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $showCustomBackendAlert) {
+            .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $viewModel.showCustomBackendAlert) {
                 Button(L10n.OnPremUserLogin.Alert.button, role: .cancel) {}
             } message: {
                 Text(viewModel.backendInfo)
@@ -124,7 +116,7 @@ package struct LoginViaEmailOnPremView: View {
 
     @ViewBuilder private var passwordField: some View {
         PasswordField(
-            password: $password,
+            password: $viewModel.password,
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
             passwordRules: viewModel.localizedPasswordRules,
@@ -144,7 +136,7 @@ package struct LoginViaEmailOnPremView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isPasswordValid || viewModel.isLoading)
+        .disabled(!viewModel.isSubmitButtonEnabled)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -212,14 +204,14 @@ package struct LoginViaEmailOnPremView: View {
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: L10n.ProxyCredentials.InputEmail.title,
-                string: .constant(proxyEmail)
+                string: $viewModel.proxyUsername
             )
 
             PasswordField(
-                password: $proxyPassword,
+                password: $viewModel.proxyPassword,
                 placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
                 title: L10n.CloudUserLogin.InputPassword.title,
-                passwordRules: viewModel.localizedPasswordRules,
+                passwordRules: nil,
                 isValidPassword: { _ in viewModel.isProxyPasswordValid }
             )
             Spacer()

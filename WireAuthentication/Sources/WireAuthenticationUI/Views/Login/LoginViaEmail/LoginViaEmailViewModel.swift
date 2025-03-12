@@ -36,6 +36,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published private(set) var showPasswordRules = false
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
+    @Published var proxyUsername: String = ""
+    @Published var proxyPassword: String = ""
+    @Published var showCustomBackendAlert = false
 
     private let router: any Router
     private let factory: any Factory
@@ -97,12 +100,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription
     }
 
-    var hasProxySupport: Bool {
-        backendConfig.proxySettings != nil
+    var requiresProxyCredentials: Bool {
+        backendConfig.proxySettings?.needsAuthentication ?? false
     }
 
     var proxyServer: String {
-        backendConfig.endpoints.backendURL.absoluteString
+        backendConfig.proxySettings?.host ?? ""
     }
 
     var isPasswordValid: Bool {
@@ -110,7 +113,21 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var isProxyPasswordValid: Bool {
-        false // FIXME:
+        // We don't know the individual password requirements for proxies so we just check for non-empty.
+        !proxyPassword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    var isProxyUsernameValid: Bool {
+        // We don't know the individual username requirements for proxies so we just check for non-empty.
+        !proxyUsername.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    var isSubmitButtonEnabled: Bool {
+        if requiresProxyCredentials {
+            isPasswordValid && isProxyPasswordValid && isProxyUsernameValid && !isLoading
+        } else {
+            isPasswordValid && !isLoading
+        }
     }
 
     func submitPassword() async {
@@ -197,6 +214,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     private func login(backendMetadata: BackendMetadata) async throws -> ([HTTPCookie], AccessToken) {
+        // FIXME: Pass in proxy username and password if necessary
         let useCase = factory.loginViaEmailUseCase(apiVersion: backendMetadata.apiVersion)
 
         return try await Task.detached { [email, trimmedPassword] in
