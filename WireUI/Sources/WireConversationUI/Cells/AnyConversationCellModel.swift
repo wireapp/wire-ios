@@ -18,14 +18,43 @@
 
 struct AnyConversationCellModel: ConversationCellModelProtocol {
 
-    let base: Any
+    var id: AnyHashable { _id() }
+
+    private let _id: @Sendable () -> AnyHashable
+    private let _hash: @Sendable (inout Hasher) -> Void
+    private let _isEqual: @Sendable (Any) -> Bool
 
     init<M: ConversationCellModelProtocol>(_ base: M) {
-        self.base = base
+        _id = {
+            AnyHashable(base.id)
+        }
+        _hash = { hasher in
+            base.hash(into: &hasher)
+        }
+        _isEqual = { other in
+            guard let otherBase = other as? M else { return false }
+            return base == otherBase
+        }
     }
 
+    func hash(into hasher: inout Hasher) {
+        _hash(&hasher)
+    }
+
+    static func == (lhs: AnyConversationCellModel, rhs: AnyConversationCellModel) -> Bool {
+        lhs._isEqual(rhs)
+    }
+
+}
+
+extension AnyConversationCellModel {
+
     init() {
-        base = ()
+        self.init(M())
+    }
+
+    private struct M: ConversationCellModelProtocol {
+        let id = false
     }
 
 }

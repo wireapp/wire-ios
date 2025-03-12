@@ -18,6 +18,8 @@
 
 struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiteral { // TODO: maybe ExpressibleByStringLiteral is not needed
 
+    var id: String { text }
+
     var text = ""
 
     init(stringLiteral text: String = "") {
