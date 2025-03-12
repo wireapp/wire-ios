@@ -60,6 +60,20 @@ final class MockDependencies {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            backendConfig: BackendConfig(
+                title: backendConfig.title,
+                endpoints: Endpoints(
+                    backendURL: backendConfig.endpoints.backendURL,
+                    backendWSURL: backendConfig.endpoints.backendWSURL,
+                    blackListURL: backendConfig.endpoints.blackListURL,
+                    teamsURL: backendConfig.endpoints.teamsURL,
+                    accountsURL: backendConfig.endpoints.accountsURL,
+                    websiteURL: backendConfig.endpoints.websiteURL
+                ),
+                proxySettings: nil,
+                pinnedKeys: nil
+            ),
+            backendMetadata: nil,
             emailOrSSOCode: emailOrSSOCode,
             isLoading: isLoading,
             alert: alert
@@ -127,11 +141,28 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
-            factory: self
+            factory: self,
+            backendConfig: BackendConfig(
+                title: backendConfig.title,
+                endpoints: Endpoints(
+                    backendURL: backendConfig.endpoints.backendURL,
+                    backendWSURL: backendConfig.endpoints.backendWSURL,
+                    blackListURL: backendConfig.endpoints.blackListURL,
+                    teamsURL: backendConfig.endpoints.teamsURL,
+                    accountsURL: backendConfig.endpoints.accountsURL,
+                    websiteURL: backendConfig.endpoints.websiteURL
+                ),
+                proxySettings: nil,
+                pinnedKeys: nil
+            ),
+            backendMetadata: nil
         )
     }
 
-    var determineAuthMethodView: DetermineAuthMethodView {
+    func determineAuthMethodView(
+        backendConfig: BackendConfig?,
+        backendMetadata: BackendMetadata?
+    ) -> DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
             factory: self

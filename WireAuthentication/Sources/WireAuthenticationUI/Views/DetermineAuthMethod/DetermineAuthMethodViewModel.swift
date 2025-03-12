@@ -52,6 +52,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let router: any Router
     private let factory: any Factory
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
+    private let backendConfig: BackendConfig?
+    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -65,12 +67,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
+        backendConfig: BackendConfig?,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
         alert: Alert? = nil
     ) {
         self.router = router
         self.factory = factory
+        self.backendConfig = backendConfig
+        self.backendMetadata = backendMetadata
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
         self.alert = alert
@@ -116,6 +122,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func dismissmodalView() {
         ssoLinkGenerator?.flushToken()
         modalDestination = nil
+    }
+
+    var isOnPremBackend: Bool {
+        backendConfig != nil
+    }
+
+    var backendName: String? {
+        backendConfig?.title
+    }
+
+    var backendURL: URL? {
+        backendConfig?.endpoints.backendURL
     }
 
     // MARK: - Private

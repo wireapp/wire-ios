@@ -39,6 +39,7 @@ package struct SwitchBackendHandler {
             let backendConfig = try await Task.detached {
                 try await useCase.invoke(at: backendConfigURL)
             }.value
+            // TODO: add to navigation stack
             router.presentSheet(RootView.ModalDestination.switchBackend(backendConfig: backendConfig))
         } catch {
             WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")

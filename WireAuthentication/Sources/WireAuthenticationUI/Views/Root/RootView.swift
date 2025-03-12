@@ -45,7 +45,22 @@ package struct RootView: View {
                 switch sheet {
                 case .authFlow:
                     NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView
+                        factory.determineAuthMethodView(backendConfig: nil, backendMetadata: nil)
+                            .alert(
+                                item: $viewModel.alert,
+                                title: titleForAlert,
+                                message: messageForAlert,
+                                actions: { _ in
+                                    Button(L10n.Authentication.Error.confirm, action: {})
+                                }
+                            )
+                    }
+                case let .onPremiseAuthFlow(backendConfig, backendMetadata):
+                    NavigationStack(path: $viewModel.path) {
+                        factory.determineAuthMethodView(
+                            backendConfig: backendConfig,
+                            backendMetadata: backendMetadata
+                        )
                             .alert(
                                 item: $viewModel.alert,
                                 title: titleForAlert,
@@ -106,6 +121,10 @@ package struct RootView: View {
         public var id: Self { self }
 
         case authFlow
+        case onPremiseAuthFlow(
+            backendConfig: BackendConfig,
+            backendMetadata: BackendMetadata
+        )
         case noHistory(
             userID: UUID,
             cookies: [HTTPCookie],

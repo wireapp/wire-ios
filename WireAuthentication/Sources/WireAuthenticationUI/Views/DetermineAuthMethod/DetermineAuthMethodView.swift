@@ -23,7 +23,11 @@ import WireReusableUIComponents
 
 package protocol DetermineAuthMethodBuilder {
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView { get }
+    @MainActor
+    func determineAuthMethodView(
+        backendConfig: BackendConfig?,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) -> DetermineAuthMethodView
 
 }
 
@@ -50,9 +54,21 @@ package struct DetermineAuthMethodView: View {
                 HStack {
                     Spacer()
                         .frame(maxWidth: .infinity)
-                    Logo()
+                    if viewModel.isOnPremBackend,
+                        let backendName = viewModel.backendName,
+                        let backendURL = viewModel.backendURL {
+                        OnPremHeaderView(viewModel: OnPremHeaderViewModel(
+                            backendName: backendName,
+                            backendURL: backendURL)
+                        )
                         .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
                         .frame(width: 164, height: 95)
+                    } else {
+                        Logo()
+                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                            .frame(width: 164, height: 95)
+                    }
+
                     Spacer()
                         .frame(maxWidth: .infinity)
                 }

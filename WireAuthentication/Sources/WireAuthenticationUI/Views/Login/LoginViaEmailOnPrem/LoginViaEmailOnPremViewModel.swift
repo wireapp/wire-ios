@@ -65,14 +65,8 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         backendConfig.title
     }
 
-    var backendInfo: String {
-        [
-            L10n.OnPremUserLogin.Alert.Message.backendName,
-            backendName,
-            "",
-            L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendConfig.endpoints.backendURL.absoluteString
-        ].joined(separator: "\n")
+    var backendURL: URL {
+        backendConfig.endpoints.backendURL
     }
 
     var localizedPasswordRules: String? {

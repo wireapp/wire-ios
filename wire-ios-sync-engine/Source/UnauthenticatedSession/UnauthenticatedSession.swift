@@ -118,9 +118,11 @@ public class UnauthenticatedSession: NSObject {
         handleCompanyLoginSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
         handleBackendSwitch: @escaping (URL) -> Void
     ) {
-        urlActionProcessors.append(AuthenticationModuleURLActionProcessor(
-            handleCompanyLoginSuccess: handleCompanyLoginSuccess,
-            handleBackendSwitch: handleBackendSwitch)
+        urlActionProcessors.append(
+            AuthenticationModuleURLActionProcessor(
+                handleCompanyLoginSuccess: handleCompanyLoginSuccess,
+                handleBackendSwitch: handleBackendSwitch
+            )
         )
     }
 }

@@ -90,23 +90,10 @@ package struct LoginViaEmailOnPremView: View {
 
     @ViewBuilder private var welcomeMessage: some View {
         VStack(spacing: 14) {
-            Button(action: {
-                showCustomBackendAlert.toggle()
-            }, label: {
-                Text(L10n.OnPremUserLogin.title(viewModel.backendName) + " ")
-                    .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
-                    + Text(Image(systemName: "info.circle"))
-                    .foregroundColor(.gray)
-            })
-            .multilineTextAlignment(.center)
-            .font(.textStyle(.h2))
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
-            .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $showCustomBackendAlert) {
-                Button(L10n.OnPremUserLogin.Alert.button, role: .cancel) {}
-            } message: {
-                Text(viewModel.backendInfo)
-            }
+            OnPremHeaderView(viewModel: OnPremHeaderViewModel(
+                backendName: viewModel.backendName,
+                backendURL: viewModel.backendURL)
+            )
             Text(L10n.OnPremUserLogin.message)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)

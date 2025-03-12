@@ -137,7 +137,10 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             )
                         )
                     } else {
-                        router.presentSheet(RootView.ModalDestination.authFlow)
+                        router.presentSheet(RootView.ModalDestination.onPremiseAuthFlow(
+                            backendConfig: backendConfig,
+                            backendMetadata: backendMetadata)
+                        )
                     }
                 }
             } catch {

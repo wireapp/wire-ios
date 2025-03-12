@@ -103,8 +103,15 @@ class RootComponent: BootstrapComponent {
 
     // MARK: - Children
 
-    var determineAuthMethodComponent: DetermineAuthMethodComponent {
-        DetermineAuthMethodComponent(parent: self)
+    func determineAuthMethodComponent(
+        backendConfig: BackendConfig?,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) -> DetermineAuthMethodComponent {
+        DetermineAuthMethodComponent(
+            parent: self,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        )
     }
 
     @MainActor var noHistoryComponent: NoHistoryComponent {
@@ -143,8 +150,15 @@ class RootComponent: BootstrapComponent {
 
 extension RootComponent: RootView.Factory {
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
-        determineAuthMethodComponent.view
+    @MainActor
+    func determineAuthMethodView(
+        backendConfig: BackendConfig?,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) -> DetermineAuthMethodView {
+        determineAuthMethodComponent(
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        ).view
     }
 
     @MainActor

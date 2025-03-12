@@ -36,17 +36,34 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
-            router: dependency.router,
-            factory: self
-        )
+    private let backendConfig: BackendConfig?
+    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+
+    init(
+        parent: any Scope,
+        backendConfig: BackendConfig?,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) {
+        self.backendConfig = backendConfig
+        self.backendMetadata = backendMetadata
+        super.init(parent: parent)
     }
+
+    // MARK: - View
 
     @MainActor var view: DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: viewModel,
             factory: self
+        )
+    }
+
+    @MainActor private var viewModel: DetermineAuthMethodViewModel {
+        DetermineAuthMethodViewModel(
+            router: dependency.router,
+            factory: self,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
         )
     }
 
