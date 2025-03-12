@@ -296,6 +296,20 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 unauthenticatedSession.continueAfterBackupImportStep()
 
             case let .completeWireAuthenticationLogin(result):
+                // Make sure we use the same backend from the authentication flow.
+                let backendEnvironment = BackendEnvironment(
+                    type: result.backendEnvironment.environmentType,
+                    backendConfig: result.backendEnvironment.config
+                )
+
+                BackendEnvironment.shared = backendEnvironment
+                SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
+
+                // Make sure we persist and backend info gathered during authentication.
+                let backendMetadata = result.backendEnvironment.metadata
+                BackendInfo.apiVersion = APIVersion(backendMetadata.apiVersion)
+                BackendInfo.domain = backendMetadata.domain
+                BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
 
                 if let emailCredentials = result.emailCredentials {
                     // Set credentials so we can register a new client via registration status.
