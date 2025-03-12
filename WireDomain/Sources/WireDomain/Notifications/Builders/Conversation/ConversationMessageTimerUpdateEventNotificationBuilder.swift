@@ -103,9 +103,9 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
 
         let body = if let timeout {
             if let senderName = context.senderName {
-                String.formated(key: "push.notification.body.senderSetTimerOn", senderName)
+                String.formated(key: "push.notification.body.senderSetTimerOn", senderName, timeout)
             } else {
-                String.localized(key: "push.notification.body.setTimerOn")
+                String.formated(key: "push.notification.body.setTimerOn", timeout)
             }
         } else {
             if let senderName = context.senderName {
@@ -168,9 +168,9 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
     private func makeUserInfo() -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID
-        userInfo[NotificationUserInfoKey.senderID] = context.senderID
-        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid
+        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID.uuidString
+        userInfo[NotificationUserInfoKey.senderID] = context.senderID.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid.uuidString
 
         return userInfo
     }

@@ -419,9 +419,9 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
     private func makeUserInfo() -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID
-        userInfo[NotificationUserInfoKey.senderID] = context.senderID
-        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid
+        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID.uuidString
+        userInfo[NotificationUserInfoKey.senderID] = context.senderID.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid.uuidString
 
         return userInfo
     }
