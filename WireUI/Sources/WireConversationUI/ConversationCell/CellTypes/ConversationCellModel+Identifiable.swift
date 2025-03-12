@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension MessageCellModel: Identifiable {
+extension ConversationCellModel: Identifiable {
 
-    var id: AnyHashable {
+    public var id: AnyHashable {
         switch self {
 
         case .guestsAllowed:

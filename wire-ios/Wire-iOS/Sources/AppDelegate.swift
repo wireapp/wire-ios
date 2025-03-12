@@ -26,8 +26,6 @@ import WireCountly
 import WireLogging
 import WireSyncEngine
 
-import WireConversationUI
-
 enum ApplicationLaunchType {
     case unknown
     case direct
@@ -111,12 +109,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             fatalError("Expected a single scene of type `UIWindowScene`")
         }
         mainWindow = .init(windowScene: windowScene)
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(8)) {
-            // self.mainWindow.rootViewController?.present(testtt0(), animated: true)
-            self.mainWindow.rootViewController?.present(testtt1(), animated: true)
-            // self.mainWindow.rootViewController?.present(testtt2(), animated: true)
-        }
 
         setNavigationAppearance()
         // enable logs

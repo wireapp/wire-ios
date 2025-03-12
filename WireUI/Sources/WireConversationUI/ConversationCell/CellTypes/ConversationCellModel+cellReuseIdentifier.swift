@@ -16,12 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum MessageCellModel: Hashable, Sendable {
+import UIKit
 
-    /// Info text for the user to tell that guests are allowed in the conversation.
-    case guestsAllowed
+extension ConversationCellModel {
 
-    /// Used to group messages.
-    case timeDivider(TimeDividerModel)
+    var cellReuseIdentifier: String {
+        switch self {
+
+        case .guestsAllowed:
+            "guestsAllowed"
+
+        case .timeDivider:
+            "timeDivider"
+
+        }
+    }
 
 }

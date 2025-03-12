@@ -20,7 +20,7 @@ import SwiftUI
 
 @MainActor
 func ConversationCellPreviews(
-    models: [MessageCellModel]
+    models: [ConversationCellModel]
 ) -> UIViewController {
 
     let tableViewController = UITableViewController(style: .plain)
@@ -28,7 +28,7 @@ func ConversationCellPreviews(
         model.registerIfNeeded(in: tableViewController.tableView)
     }
     enum Section { case single }
-    let dataSource = UITableViewDiffableDataSource<Section, [MessageCellModel].Index>(
+    let dataSource = UITableViewDiffableDataSource<Section, [ConversationCellModel].Index>(
         tableView: tableViewController.tableView!
     ) { tableView, indexPath, modelIndex in
         let model = models[modelIndex]

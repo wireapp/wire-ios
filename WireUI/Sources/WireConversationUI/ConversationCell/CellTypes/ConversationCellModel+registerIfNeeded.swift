@@ -18,18 +18,30 @@
 
 import UIKit
 
-extension MessageCellModel {
+extension ConversationCellModel {
 
-    var cellReuseIdentifier: String {
-        switch self {
+    @MainActor
+    public func registerIfNeeded(in tableView: UITableView) {
+        guard !tableView.registeredIdentifiers.contains(cellReuseIdentifier) else { return }
 
+        let cellType = switch self {
         case .guestsAllowed:
-            "guestsAllowed"
-
+            ConversationCell<GuestsAllowedModel>.self
         case .timeDivider:
-            "timeDivider"
-
+            ConversationCell<TimeDividerModel>.self
         }
+        tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)
     }
 
 }
+
+private extension UITableView {
+
+    var registeredIdentifiers: Set<String> {
+        get { objc_getAssociatedObject(self, &registeredIdentifiersKey) as? Set<String> ?? [] }
+        set { objc_setAssociatedObject(self, &registeredIdentifiersKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+}
+
+@MainActor private var registeredIdentifiersKey = 0

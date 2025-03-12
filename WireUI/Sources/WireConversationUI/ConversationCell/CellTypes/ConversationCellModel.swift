@@ -16,24 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+public enum ConversationCellModel: Hashable, Sendable {
 
-extension MessageCellModel {
+    /// Info text for the user to tell that guests are allowed in the conversation.
+    case guestsAllowed
 
-    @MainActor
-    func configureCell(_ cell: UITableViewCell) {
-        switch self {
-
-        case .guestsAllowed:
-            return
-
-        case .timeDivider(let timeDivider):
-            guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
-            return cell.model = timeDivider
-
-        }
-
-        assertionFailure("unexpected cell: \(cell)")
-    }
+    /// Used to group messages.
+    case timeDivider(TimeDividerModel)
 
 }

@@ -489,7 +489,11 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let cellDescription = section.elements[indexPath.row]
 
-        registerCellIfNeeded(with: cellDescription, in: tableView)
+        if let conversationCellModel = cellDescription.conversationCellModel {
+            conversationCellModel.registerIfNeeded(in: tableView)
+        } else {
+            registerCellIfNeeded(with: cellDescription, in: tableView)
+        }
 
         return cellDescription.makeCell(for: tableView, at: indexPath)
     }

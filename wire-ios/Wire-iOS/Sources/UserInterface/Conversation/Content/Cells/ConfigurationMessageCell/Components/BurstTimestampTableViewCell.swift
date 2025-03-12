@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireConversationUI
 import WireDataModel
 import WireSyncEngine
 
@@ -29,6 +30,28 @@ struct BurstTimestampSenderMessageCellConfiguration {
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
+
+    var conversationCellModel: ConversationCellModel? {
+        fatalError("TODO")
+
+        /*
+        func configure(with timestamp: Date, includeDayOfWeek: Bool, showUnreadDot: Bool, accentColor: UIColor) {
+            if includeDayOfWeek {
+                isSeparatorHidden = false
+                label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
+            } else {
+                isSeparatorHidden = false
+                label.text = timestamp.formattedDate
+            }
+
+            label.font = burstBoldFont
+            leftSeparator.backgroundColor = color
+            rightSeparator.backgroundColor = color
+            isShowingUnreadDot = showUnreadDot
+            unreadDot.backgroundColor = accentColor
+        }
+         */
+    }
 
     let configuration: View.Configuration
 
