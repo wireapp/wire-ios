@@ -146,8 +146,9 @@ package struct DetermineAuthMethodView: View {
                         environmentType: environmentType,
                         backendConfig: backendConfig
                     )
+                }
             }
-        })
+        )
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)

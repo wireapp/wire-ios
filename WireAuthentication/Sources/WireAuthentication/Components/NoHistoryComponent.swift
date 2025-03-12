@@ -46,8 +46,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
         super.init(parent: parent)
     }
 
-    @MainActor
-    private var viewModel: NoHistoryViewModel {
+    @MainActor private var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
             didDetectDomainConflict: didDetectDomainConflict,
             howToChangeEmailURL: dependency.howToChangeEmailURL,
@@ -58,8 +57,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
         )
     }
 
-    @MainActor
-    var view: NoHistoryView {
+    @MainActor var view: NoHistoryView {
         NoHistoryView(viewModel: viewModel)
     }
 

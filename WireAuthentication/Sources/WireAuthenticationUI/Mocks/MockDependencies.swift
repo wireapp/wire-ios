@@ -253,8 +253,7 @@ extension MockDependencies: LoginViaEmailBuilder {
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: false,
-            onCreateAccount: {
-            }
+            onCreateAccount: {}
         )
     }
 

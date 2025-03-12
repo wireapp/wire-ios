@@ -102,7 +102,8 @@ class RootComponent: BootstrapComponent {
         DetermineAuthMethodComponent(parent: self)
     }
 
-    @MainActor func noHistoryComponent(
+    @MainActor
+    func noHistoryComponent(
         authenticationResult: AuthenticationResult,
         didDetectDomainConflict: Bool
     ) -> NoHistoryComponent {

@@ -45,13 +45,11 @@ class LoginViaSSOComponent: Component<LoginViaSSODependency> {
 
     // MARK: - View
 
-    @MainActor
-    var view: LoginViaSSOView {
+    @MainActor var view: LoginViaSSOView {
         LoginViaSSOView(viewModel: viewModel)
     }
 
-    @MainActor
-    private var viewModel: LoginViaSSOViewModel {
+    @MainActor private var viewModel: LoginViaSSOViewModel {
         let router = dependency.router
         dependency.bridge.onSSOSuccess = { [router, backendEnvironment] userID, cookies in
             let authenticationResult = AuthenticationResult(
