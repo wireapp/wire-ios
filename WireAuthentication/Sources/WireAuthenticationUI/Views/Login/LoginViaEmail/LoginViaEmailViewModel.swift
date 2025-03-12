@@ -25,6 +25,10 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
+    package typealias Factory =
+        LoginViaEmailUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
+
     @Published var password: String = "" {
         didSet { showPasswordRules = !isPasswordValid }
     }
@@ -34,10 +38,11 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published var alert: Alert?
 
     private let router: any Router
-    private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let factory: any Factory
     private let backendEnvironment: WireAuthenticationBackendEnvironment
-    private let forgotPasswordURL: URL
     private let passwordValidator: any PasswordValidator
+    private let backendConfig: BackendConfig
+    private let backendMetadata: BackendMetadata?
     private let onCreateAccount: () -> Void
 
     let email: String
@@ -48,47 +53,80 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     package init(
         router: any Router,
-        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
+        factory: any Factory,
         backendEnvironment: WireAuthenticationBackendEnvironment,
         email: String,
-        accountsURL: URL,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         onCreateAccount: @escaping () -> Void
     ) {
         self.router = router
-        self.loginViaEmailUseCase = loginViaEmailUseCase
+        self.factory = factory
         self.backendEnvironment = backendEnvironment
         self.email = email
-        self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
+        self.backendConfig = backendConfig
+        self.backendMetadata = backendMetadata
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.onCreateAccount = onCreateAccount
     }
 
+    private var forgotPasswordURL: URL {
+        backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
+    }
+
+    var backendName: String {
+        backendConfig.title
+    }
+
+    var backendInfo: String {
+        [
+            L10n.OnPremUserLogin.Alert.Message.backendName,
+            backendName,
+            "",
+            L10n.OnPremUserLogin.Alert.Message.backendUrl,
+            backendConfig.endpoints.backendURL.absoluteString
+        ].joined(separator: "\n")
+    }
+
     var localizedPasswordRules: String? {
         passwordValidator.localizedRulesDescription
+    }
+
+    var hasProxySupport: Bool {
+        backendConfig.proxySettings != nil
+    }
+
+    var proxyServer: String {
+        backendConfig.endpoints.backendURL.absoluteString
     }
 
     var isPasswordValid: Bool {
         passwordValidator.isPasswordValid(trimmedPassword)
     }
 
+    var isProxyPasswordValid: Bool {
+        false // FIXME:
+    }
+
     func submitPassword() async {
         isLoading = true
+        defer { isLoading = false }
 
-        let loginTask = Task.detached { [loginViaEmailUseCase, email, trimmedPassword] in
-            try await loginViaEmailUseCase.invoke(
-                email: email,
-                password: trimmedPassword,
-                verificationCode: nil
-            )
+        let backendMetadata: BackendMetadata
+        do {
+            backendMetadata = try await resolveBackendMetadataIfNeeded()
+        } catch {
+            // TODO: [WPB-16415] handle unresolved api version
+            return
         }
 
         do {
-            let (cookies, token) = try await loginTask.value
+            let (cookies, token) = try await login(backendMetadata: backendMetadata)
 
             let emailCredentials = EmailCredentials(
                 email: email,
@@ -130,8 +168,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .general(for: error)
             }
         }
-
-        isLoading = false
     }
 
     func recoverPassword() {
@@ -146,6 +182,30 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     private var trimmedPassword: String {
         password.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func resolveBackendMetadataIfNeeded() async throws -> WireAuthenticationAPI.BackendMetadata {
+        if let backendMetadata {
+            return backendMetadata
+        }
+
+        let useCase = factory.resolveBackendMetadataUseCase()
+
+        return try await Task.detached {
+            try await useCase.invoke()
+        }.value
+    }
+
+    private func login(backendMetadata: BackendMetadata) async throws -> ([HTTPCookie], AccessToken) {
+        let useCase = factory.loginViaEmailUseCase(apiVersion: backendMetadata.apiVersion)
+
+        return try await Task.detached { [email, trimmedPassword] in
+            try await useCase.invoke(
+                email: email,
+                password: trimmedPassword,
+                verificationCode: ""
+            )
+        }.value
     }
 
 }

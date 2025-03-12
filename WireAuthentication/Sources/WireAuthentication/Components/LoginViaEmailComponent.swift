@@ -27,11 +27,12 @@ import WireReusableUIComponents
 protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    var preferredAPIVersion: APIVersion? { get }
+    var backendConfig: BackendConfig { get }
     var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
     var networkService: NetworkService { get }
     var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
@@ -84,10 +85,11 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
-            loginViaEmailUseCase: loginViaEmailUseCase,
+            factory: self,
             backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: dependency.accountsURL,
+            backendConfig: dependency.backendConfig,
+            backendMetadata: backendMetadata,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
@@ -127,6 +129,28 @@ extension LoginViaEmailComponent: LoginViaEmailView.Factory {
             password: password,
             didDetectDomainConflict: didDetectDomainConflict
         )
+    }
+
+}
+
+extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
+
+    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
+        let api = BackendMetadataAPIBuilder(networkService: dependency.networkService).makeAPI()
+        return ResolveBackendMetadataUseCase(
+            backendMetadataAPI: api,
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
+    }
+
+    func loginViaEmailUseCase(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any LoginViaEmailUseCaseProtocol {
+        let api = AuthenticationAPIBuilder(networkService: dependency.networkService).makeAPI(
+            for: .init(apiVersion)
+        )
+        return LoginViaEmailUseCase(authenticationAPI: api)
     }
 
 }

@@ -248,10 +248,11 @@ extension MockDependencies: LoginViaEmailBuilder {
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
-            loginViaEmailUseCase: self,
+            factory: self,
             backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: URL(string: "https://example.com")!,
+            backendConfig: backendConfig,
+            backendMetadata: nil,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: false,
@@ -324,16 +325,18 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
     private func loginViaEmailOnPremViewModel(
         email: String,
         backendConfig: BackendConfig
-    ) -> LoginViaEmailOnPremViewModel {
-        LoginViaEmailOnPremViewModel(
+    ) -> LoginViaEmailViewModel {
+        LoginViaEmailViewModel(
             router: rootViewModel,
             factory: self,
+            backendEnvironment: backendEnvironment,
             email: email,
-            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: false
+            canCreateAccount: false,
+            didDetectDomainConflict: false,
+            onCreateAccount: {}
         )
     }
 

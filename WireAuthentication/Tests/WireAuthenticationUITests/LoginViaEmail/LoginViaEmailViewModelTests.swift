@@ -27,9 +27,10 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class LoginViaEmailViewModelTests: XCTestCase {
+final class LoginViaEmailViewModelTests: XCTestCase {
 
     private var router: MockRouter!
+    private var mockResolveBackendMetadataUseCase: MockResolveBackendMetadataUseCaseProtocol!
     private var loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
     private var passwordValidator: MockPasswordValidator!
     private var sut: LoginViaEmailViewModel!
@@ -41,15 +42,35 @@ class LoginViaEmailViewModelTests: XCTestCase {
     override func setUp() async throws {
         router = MockRouter()
         loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
+        mockResolveBackendMetadataUseCase = MockResolveBackendMetadataUseCaseProtocol()
+        mockResolveBackendMetadataUseCase.invoke_MockValue = BackendMetadata(
+            apiVersion: .v8,
+            domain: "some-domain",
+            isFederationEnabled: false
+        )
         passwordValidator = MockPasswordValidator()
         passwordValidator.isPasswordValid_MockMethod = { _ in true }
 
         sut = LoginViaEmailViewModel(
             router: router,
-            loginViaEmailUseCase: loginViaEmailUseCase,
+            factory: self,
             backendEnvironment: Fixture.backendEnvironment,
             email: "mika@example.com",
-            accountsURL: URL(string: "https://www.example.com")!,
+            backendConfig: BackendConfig(
+                title: "backend name",
+                endpoints: Endpoints(
+                    backendURL: URL(string: "example")!,
+                    backendWSURL: URL(string: "example")!,
+                    blackListURL: URL(string: "example")!,
+                    teamsURL: URL(string: "example")!,
+                    accountsURL: URL(string: "example")!,
+                    websiteURL: URL(string: "example")!,
+                    countlyURL: URL(string: "example")!
+                ),
+                proxySettings: nil,
+                pinnedKeys: nil
+            ),
+            backendMetadata: nil,
             passwordValidator: passwordValidator,
             canCreateAccount: true,
             didDetectDomainConflict: false,
@@ -267,6 +288,18 @@ class LoginViaEmailViewModelTests: XCTestCase {
 
         // then
         XCTAssertFalse(sut.showPasswordRules)
+    }
+
+}
+
+extension LoginViaEmailViewModelTests: LoginViaEmailViewModel.Factory {
+
+    func loginViaEmailUseCase(apiVersion: BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol {
+        loginViaEmailUseCase
+    }
+    
+    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
+        mockResolveBackendMetadataUseCase
     }
 
 }

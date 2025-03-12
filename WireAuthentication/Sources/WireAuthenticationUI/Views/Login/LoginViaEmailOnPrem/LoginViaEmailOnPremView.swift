@@ -34,7 +34,7 @@ package protocol LoginViaEmailOnPremBuilder {
 }
 
 package struct LoginViaEmailOnPremView: View {
-    @StateObject var viewModel: LoginViaEmailOnPremViewModel
+    @StateObject var viewModel: LoginViaEmailViewModel
 
     @State private var password: String = ""
     @State private var proxyPassword: String = ""
@@ -45,7 +45,7 @@ package struct LoginViaEmailOnPremView: View {
     private var proxyEmail: String = ""
 
     package init(
-        viewModel: LoginViaEmailOnPremViewModel
+        viewModel: LoginViaEmailViewModel
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -84,9 +84,6 @@ package struct LoginViaEmailOnPremView: View {
         .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
-        .onChange(of: password) { newPassword in
-            showPasswordRules = !viewModel.isValidPassword(newPassword)
-        }
     }
 
     @ViewBuilder private var welcomeMessage: some View {
@@ -131,7 +128,7 @@ package struct LoginViaEmailOnPremView: View {
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
             passwordRules: viewModel.localizedPasswordRules,
-            isValidPassword: viewModel.isValidPassword
+            isValidPassword: { _ in viewModel.isPasswordValid }
         )
     }
 
@@ -139,7 +136,7 @@ package struct LoginViaEmailOnPremView: View {
     @ViewBuilder private var submitButton: some View {
         Button(action: {
             Task {
-                await viewModel.submitPassword(password)
+                await viewModel.submitPassword()
             }
         }, label: {
             Text(L10n.CloudUserLogin.submit)
@@ -147,7 +144,7 @@ package struct LoginViaEmailOnPremView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password))
+        .disabled(!viewModel.isPasswordValid || viewModel.isLoading)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -223,7 +220,7 @@ package struct LoginViaEmailOnPremView: View {
                 placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
                 title: L10n.CloudUserLogin.InputPassword.title,
                 passwordRules: viewModel.localizedPasswordRules,
-                isValidPassword: viewModel.isValidPassword
+                isValidPassword: { _ in viewModel.isProxyPasswordValid }
             )
             Spacer()
         }

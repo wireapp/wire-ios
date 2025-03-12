@@ -35,6 +35,9 @@ private class LoginViaEmailOnPremComponentDependencyf7e724456bf0a882da0aProvider
     var router: any Router {
         return rootComponent.router
     }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
     var preferredAPIVersion: APIVersion? {
         return rootComponent.preferredAPIVersion
     }
@@ -179,6 +182,12 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var router: any Router {
         return rootComponent.router
     }
+    var preferredAPIVersion: APIVersion? {
+        return rootComponent.preferredAPIVersion
+    }
+    var backendConfig: BackendConfig {
+        return rootComponent.backendConfig
+    }
     var accountsURL: URL {
         return rootComponent.accountsURL
     }
@@ -190,9 +199,6 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     }
     var environmentType: BackendEnvironmentType {
         return rootComponent.environmentType
-    }
-    var backendConfig: BackendConfig {
-        return rootComponent.backendConfig
     }
     var bridge: WireAuthenticationBridge {
         return rootComponent.bridge
@@ -213,6 +219,7 @@ private func factory9bda312c16141c932061c770221f242f9204cf85(_ component: Needle
 extension LoginViaEmailOnPremComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailOnPremComponentDependency.router] = "router-any Router"
+        keyPathToName[\LoginViaEmailOnPremComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
@@ -283,11 +290,12 @@ extension NoHistoryComponent: NeedleFoundation.Registration {
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
+        keyPathToName[\LoginViaEmailComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
+        keyPathToName[\LoginViaEmailComponentDependency.backendConfig] = "backendConfig-BackendConfig"
         keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-NetworkService"
         keyPathToName[\LoginViaEmailComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"
-        keyPathToName[\LoginViaEmailComponentDependency.backendConfig] = "backendConfig-BackendConfig"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         localTable["backendMetadata-WireAuthenticationAPI.BackendMetadata"] = { [unowned self] in self.backendMetadata as Any }
         localTable["authenticationAPI-any AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
