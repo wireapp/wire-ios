@@ -40,6 +40,8 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
         }
     }
 
+    var canBeCombinedWithOtherCells: Bool { true }
+
     var topMargin: CGFloat = 0
 
     var supportsActions: Bool = false

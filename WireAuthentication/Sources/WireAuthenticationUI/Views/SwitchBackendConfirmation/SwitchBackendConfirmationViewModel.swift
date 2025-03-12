@@ -21,91 +21,138 @@ import WireAuthenticationAPI
 import WireLogging
 
 @MainActor
-public class SwitchBackendConfirmationViewModel: ObservableObject {
+package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     private typealias Strings = L10n.SwitchBackendConfirmation
+
+    package typealias Factory =
+        FetchSSOURLUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
 
     // MARK: - State
 
     let items: [ItemUIModel]
 
     private let router: any Router
+    private let factory: any Factory
     private let email: String
-    private let environment: BackendConfig
-    private let fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol
-    private let ssoLinkGenerator: SSOLinkGeneratorProtocol
+    private let backendConfig: BackendConfig
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
 
     // MARK: - Life cycle
 
-    public init(
+    package init(
         router: any Router,
+        factory: any Factory,
         email: String,
-        fetchDefaultSSOSettings: any FetchDefaultSSOSettingsUseCaseProtocol,
-        ssoLinkGenerator: SSOLinkGeneratorProtocol,
-        environment: BackendConfig
+        backendConfig: BackendConfig
     ) {
         self.router = router
+        self.factory = factory
         self.email = email
-        self.environment = environment
-        self.fetchDefaultSSOSettings = fetchDefaultSSOSettings
-        self.ssoLinkGenerator = ssoLinkGenerator
+        self.backendConfig = backendConfig
         self.items = [
-            ItemUIModel(title: Strings.backendName, value: environment.title, isURL: false),
-            ItemUIModel(title: Strings.backendUrl, value: environment.endpoints.backendURL.absoluteString, isURL: true),
+            ItemUIModel(
+                title: Strings.backendName,
+                value: backendConfig.title,
+                isURL: false
+            ),
+            ItemUIModel(
+                title: Strings.backendUrl,
+                value: backendConfig.endpoints.backendURL.absoluteString,
+                isURL: true
+            ),
             ItemUIModel(
                 title: Strings.backendWsurl,
-                value: environment.endpoints.backendWSURL.absoluteString,
+                value: backendConfig.endpoints.backendWSURL.absoluteString,
                 isURL: true
             ),
             ItemUIModel(
                 title: Strings.blacklistUrl,
-                value: environment.endpoints.blackListURL.absoluteString,
+                value: backendConfig.endpoints.blackListURL.absoluteString,
                 isURL: true
             ),
-            ItemUIModel(title: Strings.teamsUrl, value: environment.endpoints.teamsURL.absoluteString, isURL: true),
+            ItemUIModel(
+                title: Strings.teamsUrl,
+                value: backendConfig.endpoints.teamsURL.absoluteString,
+                isURL: true
+            ),
             ItemUIModel(
                 title: Strings.accountsUrl,
-                value: environment.endpoints.accountsURL.absoluteString,
+                value: backendConfig.endpoints.accountsURL.absoluteString,
                 isURL: true
             ),
-            ItemUIModel(title: Strings.websiteUrl, value: environment.endpoints.websiteURL.absoluteString, isURL: true)
+            ItemUIModel(
+                title: Strings.websiteUrl,
+                value: backendConfig.endpoints.websiteURL.absoluteString,
+                isURL: true
+            )
         ]
     }
 
     func confirm() async {
         isLoading = true
 
-        let task = Task.detached { [fetchDefaultSSOSettings] () -> URL? in
-            guard let ssoCode = try await fetchDefaultSSOSettings.invoke() else {
-                return nil
-            }
-
-            return try await self.ssoLinkGenerator.generateSSOLink(ssoCode: ssoCode)
+        defer {
+            isLoading = false
         }
 
-        do {
-            let url = try await task.value
-            if let url {
-                router.presentSheet(RootView.ModalDestination.ssoLogin(url: url))
-            } else {
-                router.presentSheet(
-                    RootView.ModalDestination.onPremiseLogin(
-                        email: email,
-                        environment: environment
-                    )
+        // If authenticated proxy is required, go straight to email login because we need to
+        // get proxy credentials first.
+        if let proxySettings = backendConfig.proxySettings, proxySettings.needsAuthentication {
+            router.presentSheet(
+                RootView.ModalDestination.onPremiseLogin(
+                    email: email,
+                    environment: backendConfig,
+                    backendMetadata: nil
                 )
-            }
-        } catch {
-            await MainActor.run {
-                self.alert = .unknownError
-            }
-            WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
-        }
+            )
+        } else {
+            do {
+                // Before we can make requests we need to resolve the api version.
+                let backendMetadata = try await resolveBackendMetadata()
+                if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
+                    router.presentSheet(
+                        RootView.ModalDestination.ssoLogin(
+                            url: ssoURL,
+                            BackendMetadata: backendMetadata
+                        )
+                    )
+                    WireLogger.authentication.info("Fetching default SSO URL succeed")
+                } else {
+                    router.presentSheet(
+                        RootView.ModalDestination.onPremiseLogin(
+                            email: email,
+                            environment: backendConfig,
+                            backendMetadata: backendMetadata
+                        )
+                    )
+                    WireLogger.authentication.info("No default SSO URL")
+                }
 
-        isLoading = false
+            } catch {
+                WireLogger.authentication.error("Fetching default SSO URL failed: \(error)")
+
+                alert = .general(for: error)
+            }
+
+        }
+    }
+
+    private func resolveBackendMetadata() async throws -> BackendMetadata {
+        let useCase = factory.resolveBackendMetadataUseCase()
+        return try await Task.detached {
+            try await useCase.invoke()
+        }.value
+    }
+
+    private func fetchSSOURL(apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) async throws -> URL? {
+        let useCase = factory.fetchSSOURLUseCase(apiVersion: apiVersion)
+        return try await Task.detached {
+            try await useCase.invoke()
+        }.value
     }
 
     // MARK: - Model
@@ -114,24 +161,6 @@ public class SwitchBackendConfirmationViewModel: ObservableObject {
         let title: String
         let value: String
         let isURL: Bool
-    }
-
-}
-
-// MARK: Alerts
-
-package extension SwitchBackendConfirmationViewModel {
-
-    struct Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        let title: String
-        let message: String
-
-        private typealias Title = L10n.Authentication.Error.Title
-        private typealias Message = L10n.Authentication.Error.Message
-
-        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }

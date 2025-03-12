@@ -43,7 +43,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: MockDependencies()._backendConfig
+            backendConfig: MockDependencies()._backendConfig,
+            backendMetadata: nil
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +62,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: MockDependencies()._backendConfig
+            backendConfig: MockDependencies()._backendConfig,
+            backendMetadata: nil
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -94,7 +96,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: backendConfig
+            backendConfig: backendConfig,
+            backendMetadata: nil
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -111,7 +114,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let backendConfig = BackendConfig(
-            title: "<backen name>",
+            title: "<backend name>",
             endpoints: Endpoints(
                 backendURL: URL(string: "https://example.com")!,
                 backendWSURL: URL(string: "https://example.com")!,
@@ -125,7 +128,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
         )
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: backendConfig
+            backendConfig: backendConfig,
+            backendMetadata: nil
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

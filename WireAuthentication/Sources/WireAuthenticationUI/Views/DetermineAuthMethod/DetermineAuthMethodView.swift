@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
@@ -95,8 +96,8 @@ package struct DetermineAuthMethodView: View {
         }
         .alert(
             item: $viewModel.alert,
-            title: titleForAlert,
-            message: messageForAlert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
             actions: { _ in
                 Button {
                     dismiss()
@@ -107,17 +108,19 @@ package struct DetermineAuthMethodView: View {
         )
         .navigationDestination(for: Destination.self) {
             switch $0 {
-            case let .login(email, didDetectDomainConflict):
+            case let .login(email, didDetectDomainConflict, backendMetadata):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: false,
-                    didDetectDomainConflict: didDetectDomainConflict
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendMetadata: backendMetadata
                 )
-            case let .loginOrRegister(email):
+            case let .loginOrRegister(email, backendMetadata):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: true,
-                    didDetectDomainConflict: false
+                    didDetectDomainConflict: false,
+                    backendMetadata: backendMetadata
                 )
             }
         }
@@ -125,8 +128,8 @@ package struct DetermineAuthMethodView: View {
             switch $0 {
             case let .ssoLogin(url: ssoURL):
                 factory.loginViaSSOView(ssoURL: ssoURL)
-            case let .switchBackend(email: email, environment: environment):
-                factory.switchBackendView(email: email, environment: environment)
+            case let .switchBackend(email: email, backendConfig: backendConfig):
+                factory.switchBackendView(email: email, backendConfig: backendConfig)
             }
         })
         .presentationDetents([.medium, .large])
@@ -136,46 +139,28 @@ package struct DetermineAuthMethodView: View {
 
     package enum Destination: Hashable {
 
-        case login(email: String, didDetectDomainConflict: Bool)
-        case loginOrRegister(email: String)
+        case login(email: String, didDetectDomainConflict: Bool, backendMetadata: BackendMetadata)
+        case loginOrRegister(email: String, backendMetadata: BackendMetadata)
 
-    }
-
-    // MARK: - Private helpers
-
-    private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Title.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Title.general)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Title.general)
-        case .invalidSSOLink:
-            Text(L10n.Authentication.Error.Title.invalidSsoLink)
-        }
-    }
-
-    private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Message.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Message.general)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Message.general)
-        case .invalidSSOLink:
-            Text(L10n.Authentication.Error.Message.invalidSsoLink)
-        }
     }
 
 }
 
+extension Alert {
+
+    private typealias Title = L10n.Authentication.Error.Title
+    private typealias Message = L10n.Authentication.Error.Message
+
+    static let invalidSSOLink = Alert(title: Title.invalidSsoLink, message: Message.invalidSsoLink)
+    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Title.incorrectSsoCode)
+
+}
+
 @MainActor
-package func makeDetermineAuthMethodViewPreview(
+func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
     isLoading: Bool = false,
-    alert: DetermineAuthMethodViewModel.Alert? = nil
+    alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,

@@ -52,16 +52,8 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
         safeReachability?.mayBeReachable == true
     }
 
-    var isMobileConnection: Bool {
-        safeReachability?.isMobileConnection == true
-    }
-
     var oldMayBeReachable: Bool {
         safeReachability?.oldMayBeReachable == true
-    }
-
-    var oldIsMobileConnection: Bool {
-        safeReachability?.oldIsMobileConnection == true
     }
 
     func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
@@ -99,9 +91,9 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
     private var safeReachability: Reachability? {
         didSet {
             if safeReachability == nil {
-                WireLogger.backend.debug("did clear reachbility provider")
+                WireLogger.backend.debug("did clear reachability provider")
             } else {
-                WireLogger.backend.debug("did set reachbility provider")
+                WireLogger.backend.debug("did set reachability provider")
             }
         }
     }

@@ -22,7 +22,7 @@ import WireDesign
 
 final class MLSMigrationSupportCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<MLSMigrationSupportCellDescription>
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
 
     let configuration: View.Configuration
