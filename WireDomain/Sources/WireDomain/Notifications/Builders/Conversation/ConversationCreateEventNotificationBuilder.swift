@@ -93,9 +93,9 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
         }
 
         let body = if let senderName = context.senderName {
-            "\(senderName) created a conversation"
+            String.formated(key: "push.notification.body.senderCreatedConversation", senderName)
         } else {
-            "Someone created a conversation"
+            String.localized(key: "push.notification.body.createdConversation")
         }
 
         content.body = body

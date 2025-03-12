@@ -29,17 +29,16 @@ enum NotificationTitle {
         }
     }
 
-    // TODO: [WPB-15153] - Localize strings
     private func make(titleDescriptor: MessageTitleDescriptor) -> String {
         switch titleDescriptor {
         case let .sender(sender):
             "\(sender)"
         case let .senderInTeam(sender, team):
-            "\(sender) in \(team)"
+            String.formated(key: "push.notification.title", sender, team)
         case let .conversation(conversation):
             "\(conversation)"
         case let .conversationInTeam(conversation, team):
-            "\(conversation) in \(team)"
+            String.formated(key: "push.notification.title", conversation, team)
         }
     }
 

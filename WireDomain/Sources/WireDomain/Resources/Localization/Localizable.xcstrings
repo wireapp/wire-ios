@@ -1,0 +1,466 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "push.notification.body.addedYou" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone added you"
+          }
+        }
+      }
+    },
+    "push.notification.body.audioCall" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incoming call"
+          }
+        }
+      }
+    },
+    "push.notification.body.audioCallFromSender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is calling"
+          }
+        }
+      }
+    },
+    "push.notification.body.bundledMessages" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ new messages"
+          }
+        }
+      }
+    },
+    "push.notification.body.connectionAccepted" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You and %@ are now connected"
+          }
+        }
+      }
+    },
+    "push.notification.body.connectionPending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ wants to connect"
+          }
+        }
+      }
+    },
+    "push.notification.body.contactJoined" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ just joined Wire"
+          }
+        }
+      }
+    },
+    "push.notification.body.createdConversation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone created a conversation"
+          }
+        }
+      }
+    },
+    "push.notification.body.deletedGroup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone deleted the group"
+          }
+        }
+      }
+    },
+    "push.notification.body.hidden" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New message"
+          }
+        }
+      }
+    },
+    "push.notification.body.mentionedWithUnknownSender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone mentioned you"
+          }
+        }
+      }
+    },
+    "push.notification.body.ping" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pinged you"
+          }
+        }
+      }
+    },
+    "push.notification.body.push.notification.body.senderSharedFile" : {
+
+    },
+    "push.notification.body.push.notification.body.sharedFile" : {
+
+    },
+    "push.notification.body.push.notification.body.textWithMentionFromSender" : {
+
+    },
+    "push.notification.body.removedYou" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone removed you"
+          }
+        }
+      }
+    },
+    "push.notification.body.repliedWithUnknownSender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone replied to you"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderAddedYou" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ added you"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderCreatedConversation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ created a conversation"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderDeletedGroup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ deleted the group"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderPingedYou" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ pinged you"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderRemovedYou" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ removed you"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderSetTimerOff" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ turned off the message timer"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderSetTimerOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ set the message timer to %@"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderSharedAudio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ shared an audio message"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderSharedFile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ shared a file"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderSharedLocation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ shared a location"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderSharedPicture" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ shared a picture"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderSharedVideo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ shared a video"
+          }
+        }
+      }
+    },
+    "push.notification.body.sentWithUnknownSender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone sent a message"
+          }
+        }
+      }
+    },
+    "push.notification.body.setTimerOff" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone turned off the timer"
+          }
+        }
+      }
+    },
+    "push.notification.body.setTimerOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Someone set the timer to %@"
+          }
+        }
+      }
+    },
+    "push.notification.body.sharedAudio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared an audio message"
+          }
+        }
+      }
+    },
+    "push.notification.body.sharedFile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared a file"
+          }
+        }
+      }
+    },
+    "push.notification.body.sharedLocation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared a location"
+          }
+        }
+      }
+    },
+    "push.notification.body.sharedPicture" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared a picture"
+          }
+        }
+      }
+    },
+    "push.notification.body.sharedVideo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared a video"
+          }
+        }
+      }
+    },
+    "push.notification.body.textWithMention" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mention: %@"
+          }
+        }
+      }
+    },
+    "push.notification.body.textWithMentionFromSender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mention from %@: %@"
+          }
+        }
+      }
+    },
+    "push.notification.body.textWithReply" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reply: %@"
+          }
+        }
+      }
+    },
+    "push.notification.body.textWithReplyFromSender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reply from %@: %@"
+          }
+        }
+      }
+    },
+    "push.notification.body.videoCall" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incoming video call"
+          }
+        }
+      }
+    },
+    "push.notification.body.videoCallFromSender" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is calling with video"
+          }
+        }
+      }
+    },
+    "push.notification.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " %@ in %@"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -108,9 +108,9 @@ struct ConversationMemberLeaveEventNotificationBuilder: NotificationBuilder {
         }
 
         let body = if let senderName = context.senderName {
-            "\(senderName) removed you"
+            String.formated(key: "push.notification.body.senderRemovedYou", senderName)
         } else {
-            "Someone removed you"
+            String.localized(key: "push.notification.body.removedYou")
         }
 
         content.body = body

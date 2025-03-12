@@ -163,9 +163,13 @@ struct CallNotificationBuilder: NotificationBuilder {
         }
 
         let body = if context.isGroupConversation, let senderName {
-            isVideo ? "\(senderName) is calling with video" : "\(senderName) is calling"
+            String.formated(
+                key: isVideo ? "push.notification.body.videoCallFromSender" : "push.notification.body.audioCallFromSender" , senderName
+            )
         } else {
-            isVideo ? "Incoming video call" : "Incoming call"
+            String.localized(
+                key: isVideo ? "push.notification.body.videoCall" : "push.notification.body.audioCall"
+            )
         }
 
         content.body = body

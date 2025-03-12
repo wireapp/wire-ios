@@ -290,6 +290,25 @@
 			knownRegions = (
 				en,
 				Base,
+				ar,
+				"zh-Hans",
+				"zh-Hant",
+				da,
+				nl,
+				et,
+				fi,
+				fr,
+				de,
+				it,
+				ja,
+				lt,
+				pl,
+				"pt-BR",
+				ru,
+				sl,
+				es,
+				tr,
+				uk,
 			);
 			mainGroup = 01D0DC9C2C1C8C870076CB1C;
 			packageReferences = (

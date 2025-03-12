@@ -80,9 +80,9 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
 
         let body = switch connectionStatus {
         case .pending:
-            "\(context.username) wants to connect"
+            String.formated(key: "push.notification.body.connectionPending", context.username)
         case .accepted:
-            "You and \(context.username) are now connected"
+            String.formated(key: "push.notification.body.connectionAccepted", context.username)
         }
 
         content.body = body

@@ -28,38 +28,74 @@ enum NotificationBody {
         case let .singleMessage(newMessageBodyDescriptor):
             make(bodyDescriptor: newMessageBodyDescriptor)
         case let .bundled(count):
-            "\(count) new messages."
+            String.formated(key: "push.notification.body.bundledMessages", count)
         }
     }
 
     private func make(bodyDescriptor: NewMessageBodyDescriptor) -> String {
         switch bodyDescriptor {
         case .sentWithUnknownSender:
-            "Someone sent a message"
+            String.localized(key: "push.notification.body.sentWithUnknownSender")
         case .mentionedWithUnknownSender:
-            "Someone mentioned you"
+            String.localized(key: "push.notification.body.mentionedWithUnknownSender")
         case .repliedWithUnknownSender:
-            "Someone replied to you"
+            String.localized(key: "push.notification.body.repliedWithUnknownSender")
         case let .text(content, senderName):
-            senderName != nil ? "\(senderName!): \(content)" : content
+            if let senderName {
+                "\(senderName): \(content)"
+            } else {
+                content
+            }
         case let .textWithMention(content, senderName):
-            senderName != nil ? "Mention from \(senderName!): \(content)" : "Mention: \(content)"
+            if let senderName {
+                String.formated(key: "push.notification.body.push.notification.body.textWithMentionFromSender", senderName, content)
+            } else {
+                String.formated(key: "push.notification.body.textWithMention", content)
+            }
         case let .textWithReply(content, senderName):
-            senderName != nil ? "Reply from \(senderName!): \(content)" : "Reply: \(content)"
+            if let senderName {
+                String.formated(key: "push.notification.body.textWithReplyFromSender", senderName, content)
+            } else {
+                String.formated(key: "push.notification.body.textWithReply", content)
+            }
         case let .sharedPicture(senderName):
-            senderName != nil ? "\(senderName!) shared a picture" : "Shared a picture"
+            if let senderName {
+                String.formated(key: "push.notification.body.senderSharedPicture", senderName)
+            } else {
+                String.localized(key: "push.notification.body.sharedPicture")
+            }
         case let .sharedVideo(senderName):
-            senderName != nil ? "\(senderName!) shared a video" : "Shared a video"
+            if let senderName {
+                String.formated(key: "push.notification.body.senderSharedVideo", senderName)
+            } else {
+                String.localized(key: "push.notification.body.sharedVideo")
+            }
         case let .sharedAudio(senderName):
-            senderName != nil ? "\(senderName!) shared an audio message" : "Shared an audio message"
+            if let senderName {
+                String.formated(key: "push.notification.body.senderSharedAudio", senderName)
+            } else {
+                String.localized(key: "push.notification.body.sharedAudio")
+            }
         case let .sharedFile(senderName):
-            senderName != nil ? "\(senderName!) shared a file" : "Shared a file"
+            if let senderName {
+                String.formated(key: "push.notification.body.push.notification.body.senderSharedFile", senderName)
+            } else {
+                String.localized(key: "push.notification.body.push.notification.body.sharedFile")
+            }
         case let .sharedLocation(senderName):
-            senderName != nil ? "\(senderName!) shared a location" : "Shared a location"
+            if let senderName {
+                String.formated(key: "push.notification.body.senderSharedLocation", senderName)
+            } else {
+                String.localized(key: "push.notification.body.sharedLocation")
+            }
         case let .ping(senderName):
-            senderName != nil ? "\(senderName!) pinged you" : "Pinged you"
+            if let senderName {
+                String.formated(key: "push.notification.body.senderPingedYou", senderName)
+            } else {
+                String.localized(key: "push.notification.body.ping")
+            }
         case .hidden:
-            "New message"
+            String.localized(key: "push.notification.body.hidden")
         }
     }
 

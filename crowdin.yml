@@ -120,5 +120,11 @@ files: [
     "source" : "/WireUI/Sources/WireSettingsUI/Resources/Localization/en.lproj/Localizable.strings",
     "dest" : "/App/WireSettingsUI/Resources/Localizable.strings",
     "translation" : "/WireUI/Sources/WireSettingsUI/Resources/Localization/%osx_code%/%original_file_name%",
-  }
+  },
+  {
+      "source" : "/WireDomain/Sources/WireDomain/Resources/Localization/Localizable.xcstrings",
+      "dest" : "/App/WireDomain/Resources/Localizable.xcstrings",
+      "translation" : "%original_path%/%original_file_name%",
+      "multilingual": true,
+  },
 ]
