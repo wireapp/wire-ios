@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
+
 struct AnyConversationCellModel: ConversationCellModelProtocol {
+    typealias ContentView = AnyView
 
     var id: AnyHashable { _id() }
 
@@ -54,6 +57,7 @@ extension AnyConversationCellModel {
     }
 
     private struct M: ConversationCellModelProtocol {
+        typealias ContentView = AnyView
         let id = false
     }
 

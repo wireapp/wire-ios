@@ -16,27 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiteral { // TODO: maybe ExpressibleByStringLiteral is not needed
-    typealias ContentView = TimeDividerContentView
+import SwiftUI
 
-    var id: String { text }
+struct AnyConversationCellContentView: ConversationCellContentViewProtocol {
 
-    var text = ""
-
-    init(stringLiteral text: String = "") {
-        self.text = text
+    var body: some View {
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 
-    public init(text: String) {
-        self.init(text)
-    }
+}
 
-    public init(_ text: String) {
-        self.init(stringLiteral: text)
-    }
-
-    public init() {
-        self.init("")
-    }
-
+#Preview {
+    AnyConversationCellContentView()
 }
