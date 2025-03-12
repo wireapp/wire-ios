@@ -22,10 +22,10 @@ import XCTest
 
 import WireConversationsUIBindings
 
-class WireConversationGroupIconTests: XCTestCase {
+class WireConversationChannelIconTests: XCTestCase {
 
     private let conversationID = "12345"
-    private let viewFactory = WireConversationGroupIconFactory()
+    private let viewFactory = WireConversationChannelIconFactory()
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
