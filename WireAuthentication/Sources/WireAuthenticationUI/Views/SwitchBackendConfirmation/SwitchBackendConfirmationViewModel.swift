@@ -120,6 +120,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             BackendMetadata: backendMetadata
                         )
                     )
+                    WireLogger.authentication.info("Fetching SSO URL succeed")
                 } else {
                     router.presentSheet(
                         RootView.ModalDestination.onPremiseLogin(
@@ -128,12 +129,13 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             backendMetadata: backendMetadata
                         )
                     )
+                    WireLogger.authentication.info("No SSO URL")
                 }
-            } catch URLError.notConnectedToInternet, URLError.networkConnectionLost {
-                alert = .noInternet
+
             } catch  {
-                alert = .unknownError
-                WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
+                WireLogger.authentication.error("Fetching SSO URL failed: \(error)")
+
+                alert = .general(for: error)
             }
 
         }

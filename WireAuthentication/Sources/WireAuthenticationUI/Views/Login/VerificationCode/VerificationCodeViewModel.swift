@@ -109,7 +109,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             )
             WireLogger.authentication.info("2FA login via email succeeded")
         } catch {
-            WireLogger.authentication.info("2FA login via email failed: \(error)")
+            WireLogger.authentication.error("2FA login via email failed: \(error)")
 
             switch error {
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed:
@@ -118,11 +118,8 @@ public final class VerificationCodeViewModel: ObservableObject {
                 alert = .accountPendingActivation
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
-            case URLError.notConnectedToInternet, URLError.networkConnectionLost:
-                alert = .noInternet
             default:
-                WireLogger.authentication.error("Unexpected error during 2FA login via email: \(error)")
-                alert = .unknownError
+                alert = .general(for: error)
             }
         }
 
@@ -138,31 +135,20 @@ public final class VerificationCodeViewModel: ObservableObject {
 
         do {
             try await requestTask.value
+
             WireLogger.authentication.info("Resend 2FA code succeeded")
         } catch {
-            WireLogger.authentication.info("Resend 2FA login failed: \(error)")
+            WireLogger.authentication.error("Resend 2FA login failed: \(error)")
 
             switch error {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
-                WireLogger.authentication.error("Unexpected invalid email when resending 2FA login code: \(error)")
-            case URLError.notConnectedToInternet, URLError.networkConnectionLost:
-                alert = .noInternet
             default:
-                WireLogger.authentication.error("Unexpected error when resending 2FA login code: \(error)")
-                alert = .unknownError
+                alert = .general(for: error)
             }
         }
 
         isResending = false
     }
 
-}
-
-private extension Error {
-    var isNoInternet: Bool {
-        guard let urlError = self as? URLError else { return false }
-
-        return urlError.code == .notConnectedToInternet || urlError.code == .networkConnectionLost
-    }
 }

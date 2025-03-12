@@ -86,6 +86,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         do {
             let (cookies, token) = try await loginTask.value
+            WireLogger.authentication.error("Login via email succeeded")
+
             router.presentSheet(
                 RootView.ModalDestination.noHistory(
                     userID: token.userID,
@@ -94,9 +96,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
                     didDetectDomainConflict: didDetectDomainConflict
                 )
             )
-            WireLogger.authentication.info("login via email succeeded")
         } catch {
-            WireLogger.authentication.info("login via email returned an error: \(error)")
+            WireLogger.authentication.error("Login via email failed: \(error)")
 
             switch error {
             case LoginViaEmailUseCaseFailure.invalidCredentials:
@@ -109,11 +110,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .accountPendingActivation
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
-            case URLError.notConnectedToInternet, URLError.networkConnectionLost:
-                alert = .noInternet
             default:
-                WireLogger.authentication.error("Unexpected error during login via email: \(error)")
-                alert = .unknownError
+                alert = .general(for: error)
             }
         }
 

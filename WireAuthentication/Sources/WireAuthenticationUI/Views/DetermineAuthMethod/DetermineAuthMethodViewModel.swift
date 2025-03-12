@@ -139,9 +139,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 let url = try await Task.detached { [generator] in
                     try await generator.generateSSOLink(ssoCode: code)
                 }.value
+                WireLogger.authentication.error("Generating SSO link succeeded")
+
                 modalDestination = .ssoLogin(url: url)
             } catch {
-                WireLogger.authentication.error("Error while generating SSO link: \(error)")
+                WireLogger.authentication.error("Generating SSO link failed: \(error)")
 
                 switch error {
                 case SSOLinkGeneratorFailure.invalidSSOCode:
@@ -159,9 +161,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 let backendConfig = try await Task.detached {
                     try await useCase.invoke(at: backendConfigURL)
                 }.value
+                WireLogger.authentication.info("Fetching backend config succeeded")
+
                 modalDestination = .switchBackend(email: email, backendConfig: backendConfig)
             } catch {
-                WireLogger.authentication.error("Error fetching backend config: \(error)")
+                WireLogger.authentication.error("Fetching backend config failed: \(error)")
 
                 alert = .general(for: error)
             }
