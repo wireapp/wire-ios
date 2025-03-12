@@ -145,14 +145,14 @@ enum MessageAction: CaseIterable, Equatable {
             nil
         }
     }
-    
+
     var image: UIImage? {
         switch self {
         case .collapse:
-            return UIImage(resource: .collapse)
+            UIImage(resource: .collapse)
                 .resizeMaintainingAspectRatio(targetSize: StyleKitIcon.Size.small.cgSize)
         default:
-            return nil
+            nil
         }
     }
 

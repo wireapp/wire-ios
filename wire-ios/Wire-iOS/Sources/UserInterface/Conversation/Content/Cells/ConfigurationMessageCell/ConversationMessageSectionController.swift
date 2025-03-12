@@ -135,21 +135,21 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             startObservingChanges(for: quotedMessage)
         }
     }
-    
+
     private static func isCollapsedInitialValue(message: ConversationMessage) -> Bool {
         let collapseOwnMessagesSetting = false
         // cases when isCollapsed should be true by default
         if message.isSystem || !message.failedToSendUsers.isEmpty {
             return true
         }
-        
+
         // then if in settings user allowed to collapse own messages
         guard collapseOwnMessagesSetting else {
             return false
         }
-        let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message.isLocation || message.isImage // TODO: long text
-        let result = message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse
-        return result
+        let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message
+            .isLocation || message.isImage // TODO: long text
+        return message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse
     }
 
     // MARK: - Content Types
@@ -197,12 +197,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         isCollapsed = !isCollapsed
         cellDelegate?.conversationMessageShouldUpdate()
     }
-    
+
     private func handleCollapseExpand() {
         isCollapsed = !isCollapsed
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
-    
+
     func collapse() {
         handleCollapseExpand()
     }
@@ -257,7 +257,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 message: message,
                 collapseExpandAction: { [weak self] in
                     self?.handleCollapseExpand()
-                })
+                }
+            )
             cellDescriptions.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(cellDescriptions)]
         } else {

@@ -25,8 +25,8 @@ public protocol Anchorable {
     var bottomAnchor: NSLayoutYAxisAnchor { get }
 }
 
-extension UIView: Anchorable { }
-extension UILayoutGuide: Anchorable { }
+extension UIView: Anchorable {}
+extension UILayoutGuide: Anchorable {}
 
 public extension UIView {
 
@@ -69,14 +69,14 @@ public extension UIView {
             centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
-    
+
     @discardableResult
     func widthConstraint(_ value: CGFloat) -> Self {
         translatesAutoresizingMaskIntoConstraints = false
         widthAnchor.constraint(equalToConstant: value).isActive = true
         return self
     }
-    
+
     @discardableResult
     func heightConstraint(_ value: CGFloat) -> Self {
         translatesAutoresizingMaskIntoConstraints = false
@@ -84,7 +84,7 @@ public extension UIView {
         heightAnchor.constraint(equalToConstant: value).isActive = true
         return self
     }
-    
+
     @discardableResult
     func setTranslatesAutoresizingMaskIntoConstraints(_ value: Bool) -> Self {
         translatesAutoresizingMaskIntoConstraints = value
@@ -93,7 +93,7 @@ public extension UIView {
 }
 
 public extension UIView {
-    
+
     func wrapInView(
         topInset: CGFloat = 0,
         leadingInset: CGFloat = 0,
@@ -108,30 +108,42 @@ public extension UIView {
         constraints.append(view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: trailingInset))
         constraints.append(topAnchor.constraint(equalTo: view.topAnchor, constant: topInset))
         constraints.append(view.bottomAnchor.constraint(equalTo: bottomAnchor, constant: bottomInset))
-        
+
         NSLayoutConstraint.activate(constraints)
-        
+
         return view
     }
 }
 
-extension UIStackView {
-    
-    public static func horizontal(
+public extension UIStackView {
+
+    static func horizontal(
         views: [UIView] = [],
         spacing: CGFloat = 0,
         alignment: UIStackView.Alignment = .fill,
         distribution: UIStackView.Distribution = .fill
     ) -> UIStackView {
-        return UIStackView.make(views: views, spacing: spacing, axis: .horizontal, alignment: alignment, distribution: distribution)
+        UIStackView.make(
+            views: views,
+            spacing: spacing,
+            axis: .horizontal,
+            alignment: alignment,
+            distribution: distribution
+        )
     }
-    
-    public static func vertical(
+
+    static func vertical(
         views: [UIView] = [],
         spacing: CGFloat = 0,
         alignment: UIStackView.Alignment = .fill,
-        distribution: UIStackView.Distribution = .fill) -> UIStackView {
-            return UIStackView.make(views: views, spacing: spacing, axis: .vertical, alignment: alignment, distribution: distribution)
-        }
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(
+            views: views,
+            spacing: spacing,
+            axis: .vertical,
+            alignment: alignment,
+            distribution: distribution
+        )
+    }
 }
-

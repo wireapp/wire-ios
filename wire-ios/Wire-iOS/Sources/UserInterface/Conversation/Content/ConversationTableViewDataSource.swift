@@ -192,7 +192,7 @@ final class ConversationTableViewDataSource: NSObject {
         if let cachedEntry = actionControllers[message.objectIdentifier] {
             return cachedEntry
         }
-        
+
         let actionController = ConversationMessageActionController(
             responder: messageActionResponder,
             message: message,
@@ -227,7 +227,7 @@ final class ConversationTableViewDataSource: NSObject {
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
         sectionController.actionController = actionController(for: message, sectionController: sectionController)
-        
+
         sectionControllers[message.objectIdentifier] = sectionController
 
         return sectionController
@@ -459,7 +459,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         let sectionController = sectionController(at: section, in: tableView)
         sectionController.highlight(in: tableView, sectionIndex: section)
     }
-    
+
     func collapse(message: ZMConversationMessage) {
         guard let section = sectionControllers[message.objectIdentifier] else {
             return

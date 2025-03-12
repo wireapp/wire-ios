@@ -122,15 +122,15 @@ final class ConversationMessageActionController {
         case .visitLink:
             return message.canVisitLink
         case .collapse:
-            let collapseOwnMessagesSetting = false // TODO
+            let collapseOwnMessagesSetting = false // TODO:
             guard collapseOwnMessagesSetting, let isCollapsed, !isCollapsed else {
                 return false
             }
-            
-            let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message.isLocation || message.isImage // TODO: long text
 
-            let result = message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse // TODO: use settings
-            return result
+            let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message
+                .isLocation || message.isImage // TODO: long text
+
+            return message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse // TODO: use settings
         case .present,
              .openQuote,
              .resetSession:
@@ -281,7 +281,7 @@ final class ConversationMessageActionController {
     func visitLink() {
         perform(action: .visitLink)
     }
-    
+
     @objc
     func collapse() {
         perform(action: .collapse)

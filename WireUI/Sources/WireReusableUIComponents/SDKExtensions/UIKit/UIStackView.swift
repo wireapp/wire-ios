@@ -35,7 +35,7 @@ public extension UIStackView {
     ) -> UIStackView {
         UIStackView.make(spacing: spacing, axis: .vertical, alignment: alignment, distribution: distribution)
     }
-    
+
     static func make(
         views: [UIView] = [],
         spacing: CGFloat,
@@ -52,23 +52,35 @@ public extension UIStackView {
     }
 }
 
+public extension Array where Element: UIView {
 
-extension Array where Element: UIView {
-    
     @MainActor
-    public func horizontalStack(
-        spacing: CGFloat = 0,
-        alignment: UIStackView.Alignment = .fill,
-        distribution: UIStackView.Distribution = .fill) -> UIStackView {
-            UIStackView.make(views: self, spacing: spacing, axis: .horizontal, alignment: alignment, distribution: distribution)
-        }
-    
-    @MainActor
-    public func verticalStack(
+    func horizontalStack(
         spacing: CGFloat = 0,
         alignment: UIStackView.Alignment = .fill,
         distribution: UIStackView.Distribution = .fill
     ) -> UIStackView {
-        UIStackView.make(views: self, spacing: spacing, axis: .vertical, alignment: alignment, distribution: distribution)
+        UIStackView.make(
+            views: self,
+            spacing: spacing,
+            axis: .horizontal,
+            alignment: alignment,
+            distribution: distribution
+        )
+    }
+
+    @MainActor
+    func verticalStack(
+        spacing: CGFloat = 0,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill
+    ) -> UIStackView {
+        UIStackView.make(
+            views: self,
+            spacing: spacing,
+            axis: .vertical,
+            alignment: alignment,
+            distribution: distribution
+        )
     }
 }

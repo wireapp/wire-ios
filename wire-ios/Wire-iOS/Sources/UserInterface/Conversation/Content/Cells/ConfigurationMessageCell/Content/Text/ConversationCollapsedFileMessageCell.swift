@@ -20,19 +20,19 @@ import WireDesign
 import WireSyncEngine
 
 final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCell {
-    
+
     struct Configuration {
         let message: ZMConversationMessage
         let user: UserType?
         let collapseExpandAction: () -> Void
     }
-    
+
     var isSelected: Bool = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-    
+
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
         view.userSession = ZMUserSession.shared()
@@ -48,8 +48,8 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         view.isUserInteractionEnabled = true
         return view
     }()
-    
-    private lazy var titleLabel : UILabel = {
+
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.italicSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize)
         label.textColor = ColorTheme.Backgrounds.onSurfaceVariant
@@ -59,7 +59,7 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         label.isUserInteractionEnabled = false
         return label
     }()
-    
+
     private lazy var typeIcon: UIImageView = {
         let view = UIImageView(image: .init(resource: .file))
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -69,7 +69,7 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         view.tintColor = ColorTheme.Backgrounds.onSurfaceVariant
         return view
     }()
-    
+
     private lazy var collapseButton: UIButton = {
         let button = UIButton()
         let image = UIImage(resource: .collapse)
@@ -81,9 +81,9 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         button.tintColor = SemanticColors.Label.baseSecondaryText
         return button
     }()
-    
+
     private lazy var wholeViewTapButton = UIButton()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubviews()
@@ -98,7 +98,7 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         let user = object.user
         avatar.user = user
         titleLabel.text = L10n.Localizable.Content.Collapsed.File.title
-        
+
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
 
         let action = UIAction { _ in
@@ -107,33 +107,35 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
 
         wholeViewTapButton.addAction(action, for: .touchUpInside)
     }
-    
+
     private func configureSubviews() {
-        
+
         addSubview(wholeViewTapButton)
         wholeViewTapButton.pin(to: self)
-        
+
         let stack = UIStackView.horizontal(
             views: [
                 avatar.wrapInView(leadingInset: 20, bottomInset: -7),
                 titleLabel,
                 [typeIcon, collapseButton.wrapInView(trailingInset: 16)]
-                    .horizontalStack(spacing: 8)],
+                    .horizontalStack(spacing: 8)
+            ],
             spacing: 10,
-            alignment: .center)
-        
+            alignment: .center
+        )
+
         addSubview(stack)
-        
+
         stack
             .setTranslatesAutoresizingMaskIntoConstraints(false)
             .pin(to: self)
             .heightConstraint(38)
-        
+
         stack.isUserInteractionEnabled = false
-        
+
         typeIcon.constraintToSquare(sideLength: 16)
     }
-    
+
     // MARK: - Tap gesture of avatar
 
     @objc
@@ -145,7 +147,7 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
 }
 
 final class ConversationCollapsedFileMessageCellDescription: ConversationMessageCellDescription {
-    
+
     typealias View = ConversationCollapsedFileMessageCell
 
     let configuration: View.Configuration
