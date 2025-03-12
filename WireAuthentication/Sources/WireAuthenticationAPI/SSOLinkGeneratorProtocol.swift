@@ -18,8 +18,8 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
-
 public protocol SSOLinkGeneratorProtocol: Sendable {
 
     /// Generates the URL for the SSO authentication screen.
@@ -39,5 +39,17 @@ public protocol SSOLinkGeneratorProtocol: Sendable {
 public protocol SSOLinkGeneratorFactory {
 
     func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
+
+}
+
+public enum SSOLinkGeneratorFailure: Error {
+
+    /// The SSO code is invalid.
+
+    case invalidSSOCode
+
+    /// The SSO URL is invalid.
+
+    case invalidSSOURL
 
 }

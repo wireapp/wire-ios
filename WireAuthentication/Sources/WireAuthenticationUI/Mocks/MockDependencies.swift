@@ -55,15 +55,15 @@ final class MockDependencies {
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
         isLoading: Bool,
-        alert: DetermineAuthMethodViewModel.Alert?
+        alert: Alert?
     ) -> DetermineAuthMethodView {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
             emailOrSSOCode: emailOrSSOCode,
-            isLoading: isLoading,
-            alert: alert
+            isLoading: isLoading
         )
+        viewModel.alert = alert
 
         return DetermineAuthMethodView(
             viewModel: viewModel,
@@ -108,7 +108,7 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken) {
+    ) async throws -> ([HTTPCookie], AccessToken) {
         ([], AccessToken(userID: UUID(), token: "", type: "", expirationDate: Date()))
     }
 
@@ -116,7 +116,7 @@ extension MockDependencies: LoginViaEmailUseCaseProtocol {
 
 extension MockDependencies: RequestLoginVerificationCodeUseCaseProtocol {
 
-    func invoke(email: String) async throws(WireAuthenticationAPI.RequestLoginVerificationCodeUseCaseFailure) {
+    func invoke(email: String) async throws {
         try! await Task.sleep(for: .seconds(3))
     }
 

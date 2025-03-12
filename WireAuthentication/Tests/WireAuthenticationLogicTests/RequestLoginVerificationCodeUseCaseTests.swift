@@ -69,7 +69,7 @@ struct RequestLoginVerificationCodeUseCaseTests {
         }
     }
 
-    @Test("UseCase maps any other error to .unexpected")
+    @Test("UseCase forwards any other error")
     func mapUnexpectedError() async throws {
         // Given
         let mockAuthenticationAPI = MockAuthenticationAPI()
@@ -82,15 +82,10 @@ struct RequestLoginVerificationCodeUseCaseTests {
             try await sut.invoke(email: "email value")
             Issue.record("Error isn't thrown")
 
-        } catch RequestLoginVerificationCodeUseCaseFailure.unexpected(SomeError.some) {
-
-            // Then
-            // ok
-
         } catch {
 
-            Issue.record("Unexpected error: " + String(reflecting: error))
-
+            // Then
+            #expect(error is SomeError)
         }
     }
 

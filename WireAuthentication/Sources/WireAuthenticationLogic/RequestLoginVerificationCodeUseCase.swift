@@ -29,13 +29,11 @@ package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCode
 
     package func invoke(
         email: String
-    ) async throws(RequestLoginVerificationCodeUseCaseFailure) {
+    ) async throws {
         do {
             try await authenticationAPI.requestVerificationCode(for: email)
         } catch AuthenticationAPIError.invalidEmail {
-            throw .invalidEmail
-        } catch {
-            throw .unexpected(error)
+            throw RequestLoginVerificationCodeUseCaseFailure.invalidEmail
         }
     }
 

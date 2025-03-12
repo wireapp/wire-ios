@@ -25,7 +25,7 @@ struct MockMockLoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken) {
+    ) async throws -> ([HTTPCookie], AccessToken) {
         ([], AccessToken(userID: UUID(), token: "token", type: "Bearer", expirationDate: .distantFuture))
     }
 
