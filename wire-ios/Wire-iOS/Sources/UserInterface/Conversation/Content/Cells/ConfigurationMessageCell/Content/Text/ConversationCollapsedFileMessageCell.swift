@@ -118,7 +118,7 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
                 avatar.wrapInView(leadingInset: 20, bottomInset: -7),
                 titleLabel,
                 [typeIcon, collapseButton.wrapInView(trailingInset: 16)]
-                    .horizontalStack(spacing: 5)],
+                    .horizontalStack(spacing: 8)],
             spacing: 10,
             alignment: .center)
         
