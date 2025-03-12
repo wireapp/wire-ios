@@ -16,7 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
+
 protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
-    associatedtype ContentView: ConversationCellContentViewProtocol where ContentView.Model == Self
+    associatedtype ContentView: View
+
     init()
+
+    func buildView() -> ContentView
+
 }

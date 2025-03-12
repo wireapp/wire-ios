@@ -19,12 +19,11 @@
 import SwiftUI
 import WireDesign
 
-struct TimeDividerContentView: View, ConversationCellContentViewProtocol {
-    typealias Model = TimeDividerModel
+struct TimeDividerContentView: View {
 
     private let dividerColor = ColorTheme.Strokes.outline.color
 
-    private(set) var model: Model
+    private(set) var model: TimeDividerModel
 
     var body: some View {
         HStack(spacing: 0) {

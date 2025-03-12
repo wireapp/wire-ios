@@ -26,7 +26,7 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
 
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
-            Model.ContentView(model: model)
+            model.buildView()
         }.margins(.all, 0)
     }
 
@@ -54,16 +54,12 @@ func ConversationCellPreviews(
 
     let tableViewController = UITableViewController(style: .plain)
 
-    models.forEach { model in
-        model.id
+    let dataSource = UITableViewDiffableDataSource<Section, AnyConversationCellModel>(
+        tableView: tableViewController.tableView!
+    ) { tableView, indexPath, itemIdentifier in
+        fatalError()
     }
-
-//    let dataSource = UITableViewDiffableDataSource<Section, AnyConversationCellModel>(
-//        tableView: tableViewController.tableView!
-//    ) { tableView, indexPath, itemIdentifier in
-//        fatalError()
-//    }
-//    tableViewController.dataSource = dataSource
+    tableViewController.dataSource = dataSource
 
     return tableViewController
 }

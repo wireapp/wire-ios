@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+/// Use the model itself as the id.
+typealias MessageCellModelID = AnyHashable
 
-@MainActor
-protocol ConversationCellContentViewProtocol: View {
-    associatedtype Model: ConversationCellModelProtocol
-    init(model: Model)
+enum MessageCellModel: Hashable, Sendable {
+
+    /// Used to group messages.
+    case timeDivider(TimeDividerModel)
+
+}
+
+extension MessageCellModel: Identifiable {
+
+    var id: MessageCellModelID {
+        switch self {
+        case .timeDivider(let timeDivider):
+            timeDivider
+        }
+    }
 }

@@ -39,4 +39,8 @@ struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiter
         self.init("")
     }
 
+    func buildView() -> TimeDividerContentView {
+        TimeDividerContentView(model: self)
+    }
+
 }

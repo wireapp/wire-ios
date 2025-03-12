@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/*
 import SwiftUI
 
 struct AnyConversationCellContentView<Model: ConversationCellModelProtocol>: ConversationCellContentViewProtocol {
@@ -35,3 +36,4 @@ struct AnyConversationCellContentView<Model: ConversationCellModelProtocol>: Con
 #Preview("TimeDivider") {
     AnyConversationCellContentView(model: TimeDividerModel("Date/Time"))
 }
+*/
