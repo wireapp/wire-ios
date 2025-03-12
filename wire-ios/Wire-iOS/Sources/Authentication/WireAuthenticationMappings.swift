@@ -60,7 +60,7 @@ extension WireAuthentication.BackendConfig {
         )
 
         let proxySettings = backendEnvironment.proxy.map { proxy in
-            ProxySettings(
+            WireAuthentication.ProxySettings(
                 host: proxy.host,
                 port: proxy.port,
                 needsAuthentication: proxy.needsAuthentication
@@ -102,6 +102,126 @@ extension WireAuthentication.TrustData {
             certificateKey: trustData.rawCertificateKey,
             hosts: hosts
         )
+    }
+
+}
+
+extension WireTransport.BackendEnvironment {
+
+    convenience init(
+        type: WireAuthentication.BackendEnvironmentType,
+        backendConfig: WireAuthentication.BackendConfig
+    ) {
+        let endpoints = BackendEndpoints(
+            backendURL: backendConfig.endpoints.backendURL,
+            backendWSURL: backendConfig.endpoints.backendWSURL,
+            blackListURL: backendConfig.endpoints.blackListURL,
+            teamsURL: backendConfig.endpoints.teamsURL,
+            accountsURL: backendConfig.endpoints.accountsURL,
+            websiteURL: backendConfig.endpoints.websiteURL,
+            countlyURL: nil // backendConfig.endpoints.countlyURL
+        )
+        let proxySettings = backendConfig.proxySettings.map {
+            WireTransport.ProxySettings(
+                host: $0.host,
+                port: $0.port,
+                needsAuthentication: $0.needsAuthentication
+            )
+        }
+
+        var trustData = [WireTransport.TrustData]()
+        if let pinnedKeys = backendConfig.pinnedKeys {
+            trustData = pinnedKeys.compactMap {
+                try? TrustData(
+                    rawCertificateKey: $0.certificateKey,
+                    hosts: $0.hosts.map { host in
+                        let rule: WireTransport.TrustData.Host.Rule = switch host.rule {
+                        case .endsWith:
+                            .endsWith
+                        case .equals:
+                            .equals
+                        }
+                        return TrustData.Host(
+                            rule: rule,
+                            value: host.value
+                        )
+                    }
+                )
+            }
+        }
+
+        let certificateTrust = ServerCertificateTrust(trustData: trustData)
+
+        self.init(
+            title: backendConfig.title,
+            trustData: trustData,
+            environmentType: EnvironmentType(type),
+            endpoints: endpoints,
+            proxySettings: proxySettings,
+            certificateTrust: certificateTrust
+        )
+    }
+
+}
+
+extension WireTransport.EnvironmentType {
+
+    init(_ environmentType: WireAuthentication.BackendEnvironmentType) {
+        switch environmentType {
+        case .production:
+            self = .production
+        case .staging:
+            self = .staging
+        case .qaDemo:
+            self = .qaDemo
+        case .qaDemo2:
+            self = .qaDemo2
+        case .anta:
+            self = .anta
+        case .bella:
+            self = .bella
+        case .chala:
+            self = .chala
+        case .diya:
+            self = .diya
+        case .elna:
+            self = .elna
+        case .foma:
+            self = .foma
+        case let .custom(url):
+            self = .custom(url: url)
+        }
+    }
+
+}
+
+extension WireAuthentication.BackendEnvironmentType {
+
+    init(_ environmentType: WireTransport.EnvironmentType) {
+        switch environmentType {
+        case .production:
+            self = .production
+        case .staging:
+            self = .staging
+        case .qaDemo:
+            self = .qaDemo
+        case .qaDemo2:
+            self = .qaDemo2
+        case .anta:
+            self = .anta
+        case .bella:
+            self = .bella
+        case .chala:
+            self = .chala
+        case .diya:
+            self = .diya
+        case .elna:
+            self = .elna
+        case .foma:
+            self = .foma
+        case let .custom(url):
+            self = .custom(url: url)
+        }
     }
 
 }
