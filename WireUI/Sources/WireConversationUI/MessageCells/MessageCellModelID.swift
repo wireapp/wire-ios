@@ -16,27 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum MessageCellModel: Hashable, Sendable {
-
-    /// Info text for the user to tell that guests are allowed in the conversation.
-    case guestsAllowed
-
-    /// Used to group messages.
-    case timeDivider(TimeDividerModel)
-
-}
-
-extension MessageCellModel: Identifiable {
-
-    var id: MessageCellModelID {
-        switch self {
-        case .guestsAllowed:
-            "guestsAllowed"
-        case .timeDivider(let timeDivider):
-            timeDivider.id
-        }
-    }
-
-    //
-
-}
+/// Use the model itself as the id.
+typealias MessageCellModelID = AnyHashable

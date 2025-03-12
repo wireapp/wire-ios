@@ -21,8 +21,26 @@ import SwiftUI
 protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
     associatedtype ContentView: View
 
+    var cellType: UITableViewCell.Type { get }
+
     init()
 
+    @MainActor
     func buildView() -> ContentView
+
+//    @MainActor
+//    func buildCell() -> UITableViewCell
+
+}
+
+extension ConversationCellModelProtocol {
+
+    var cellReuseIdentifier: String {
+        String(describing: Self.self)
+    }
+
+    var cellType: UITableViewCell.Type {
+        ConversationCell<Self>.self
+    }
 
 }

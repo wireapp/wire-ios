@@ -16,27 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum MessageCellModel: Hashable, Sendable {
+struct GuestsAllowedModel: ConversationCellModelProtocol { // TODO: delete / replace by enum
+    typealias ContentView = GuestsAllowedContentView
 
-    /// Info text for the user to tell that guests are allowed in the conversation.
-    case guestsAllowed
+    var id: MessageCellModelID { self }
 
-    /// Used to group messages.
-    case timeDivider(TimeDividerModel)
+    init() {}
 
-}
-
-extension MessageCellModel: Identifiable {
-
-    var id: MessageCellModelID {
-        switch self {
-        case .guestsAllowed:
-            "guestsAllowed"
-        case .timeDivider(let timeDivider):
-            timeDivider.id
-        }
+    func buildView() -> ContentView {
+        ContentView()
     }
-
-    //
 
 }

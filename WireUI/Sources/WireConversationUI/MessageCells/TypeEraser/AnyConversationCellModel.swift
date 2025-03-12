@@ -23,7 +23,7 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
     var id: AnyHashable { _id() }
 
     private let _id: @Sendable () -> AnyHashable
-    private let _buildView: @Sendable () -> any View
+    private let _buildView: @MainActor @Sendable () -> any View
     private let _hash: @Sendable (inout Hasher) -> Void
     private let _isEqual: @Sendable (Any) -> Bool
 
@@ -51,6 +51,7 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
         self.init(Empty())
     }
 
+    @MainActor
     func buildView() -> some View {
         AnyView(_buildView())
     }

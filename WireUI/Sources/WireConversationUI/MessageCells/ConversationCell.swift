@@ -38,16 +38,17 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
 #Preview {
     ConversationCellPreviews(
         models: [
-            TimeDividerModel(text: "Friday"),
-            TimeDividerModel(text: "Saturday"),
-            TimeDividerModel(text: "Sunday")
+            .guestsAllowed,
+            .timeDivider(text: "Friday"),
+            .timeDivider(text: "Saturday"),
+            .timeDivider(text: "Sunday")
         ]
     )
 }
 
 @MainActor
 func ConversationCellPreviews(
-    models: [any ConversationCellModelProtocol]
+    models: [MessageCellModel]
 ) -> UIViewController {
 
     enum Section { case single }

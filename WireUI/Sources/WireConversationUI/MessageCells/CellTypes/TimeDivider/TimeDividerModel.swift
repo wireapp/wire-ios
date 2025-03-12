@@ -19,7 +19,7 @@
 struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiteral { // TODO: maybe ExpressibleByStringLiteral is not needed
     typealias ContentView = TimeDividerContentView
 
-    var id: String { text }
+    var id: MessageCellModelID { self }
 
     var text = ""
 
@@ -27,20 +27,28 @@ struct TimeDividerModel: ConversationCellModelProtocol, ExpressibleByStringLiter
         self.text = text
     }
 
-    public init(text: String) {
+    init(text: String) {
         self.init(text)
     }
 
-    public init(_ text: String) {
+    init(_ text: String) {
         self.init(stringLiteral: text)
     }
 
-    public init() {
+    init() {
         self.init("")
     }
 
-    func buildView() -> TimeDividerContentView {
-        TimeDividerContentView(model: self)
+    @MainActor
+    func buildView() -> ContentView {
+        ContentView(model: self)
     }
 
+}
+
+extension MessageCellModel {
+
+    static func timeDivider(text: String) -> Self {
+        .timeDivider(TimeDividerModel(text: text))
+    }
 }

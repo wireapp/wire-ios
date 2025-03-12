@@ -16,27 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum MessageCellModel: Hashable, Sendable {
+import SwiftUI
+import WireDesign
 
-    /// Info text for the user to tell that guests are allowed in the conversation.
-    case guestsAllowed
+struct GuestsAllowedContentView: View {
 
-    /// Used to group messages.
-    case timeDivider(TimeDividerModel)
+    var body: some View {
+        Text(verbatim: "TODO")
+    }
 
 }
 
-extension MessageCellModel: Identifiable {
+// MARK: - Previews
 
-    var id: MessageCellModelID {
-        switch self {
-        case .guestsAllowed:
-            "guestsAllowed"
-        case .timeDivider(let timeDivider):
-            timeDivider.id
-        }
-    }
-
-    //
-
+#Preview {
+    GuestsAllowedContentView()
 }
