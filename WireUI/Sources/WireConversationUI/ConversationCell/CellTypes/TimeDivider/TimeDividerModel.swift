@@ -24,20 +24,11 @@ struct TimeDividerModel: ConversationCellModelProtocol {
     var text = ""
 
     init(text: String) {
-        self.init(text)
-    }
-
-    init(_ text: String) {
-        self.init(text: text)
+        self.text = text
     }
 
     init() {
-        self.init("")
-    }
-
-    @MainActor
-    func buildView() -> ContentView {
-        ContentView(model: self)
+        self.init(text: "")
     }
 
 }

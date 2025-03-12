@@ -18,24 +18,53 @@
 
 import SwiftUI
 
+//struct AnyConversationCellContentView: ConversationCellContentViewProtocol {
+//
+//
+//}
+/*
 struct AnyConversationCellContentView: ConversationCellContentViewProtocol {
-    typealias Model = AnyConversationCellModel
 
     let model: Model
+    let _body: () -> any View
 
     var body: some View {
-        Model.ContentView(model: model)
+        //Model.ContentView(model: model)
+        _body()
     }
 
-    init(model: Model) {
-        self.model = model
+    init<Model: ConversationCellModelProtocol>(model: Model) {
+        _body = {
+            model.buildView()
+        }
     }
 
 }
+ */
 
+/*
 #Preview("TimeDivider") {
-    let model = TimeDividerModel("Date/Time")
+    let model = TimeDividerModel(text: "Date/Time")
     AnyConversationCellContentView(
         model: AnyConversationCellModel(model)
+    )
+}
+ */
+
+@MainActor
+public func testtt0() -> UIViewController {
+    let model = TimeDividerModel(text: "Date/Time")
+    return UIHostingController(rootView: AnyConversationCellModel(model).buildView())
+}
+
+@MainActor
+public func testtt1() -> UIViewController {
+    ConversationCellPreviews(
+        models: [
+            .guestsAllowed,
+            .timeDivider(text: "Friday"),
+            .timeDivider(text: "Saturday"),
+            .timeDivider(text: "Sunday")
+        ]
     )
 }

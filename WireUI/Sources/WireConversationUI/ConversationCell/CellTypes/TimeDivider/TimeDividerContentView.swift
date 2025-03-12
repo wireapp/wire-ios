@@ -59,7 +59,7 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
 // MARK: - Previews
 
 #Preview {
-    TimeDividerContentView(model: TimeDividerModel("Friday"))
+    TimeDividerContentView(model: TimeDividerModel(text: "Friday"))
 }
 
 #Preview("empty") {

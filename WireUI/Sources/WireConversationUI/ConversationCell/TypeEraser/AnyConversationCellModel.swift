@@ -23,7 +23,7 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
     var id: AnyHashable { _id() }
 
     private let _id: @Sendable () -> AnyHashable
-    private let _buildView: @MainActor @Sendable () -> AnyConversationCellContentView
+    private let _buildView: @MainActor @Sendable () -> ContentView
     private let _hash: @Sendable (inout Hasher) -> Void
     private let _isEqual: @Sendable (Any) -> Bool
 
@@ -32,8 +32,9 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
             base.id
         }
         _buildView = {
-            AnyConversationCellContentView(
-                model: AnyConversationCellModel(base)
+            ContentView(
+                model: AnyConversationCellModel(base),
+                content: base.buildView
             )
         }
         _hash = { hasher in
@@ -45,12 +46,8 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
         }
     }
 
-    init() {
-        self.init(DummyModel())
-    }
-
     @MainActor
-    func buildView() -> AnyConversationCellContentView {
+    func buildView() -> ContentView {
         _buildView()
     }
 
@@ -64,14 +61,47 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
 
 }
 
+extension AnyConversationCellModel {
+
+    struct ContentView: ConversationCellContentViewProtocol {
+        typealias Model = AnyConversationCellModel
+
+        let content: () -> AnyView
+
+        var body: some View {
+            content()
+        }
+
+        init<V: View>(model _: Model, content: @escaping () -> V) {
+            self.content = {
+                AnyView(content())
+            }
+        }
+
+        init(model: Model) {
+            fatalError()
+//            content = {
+//                AnyView(EmptyView())
+//            }
+        }
+
+    }
+
+}
+
+// MARK: - AnyConversationCellModel.init()
+
+extension AnyConversationCellModel {
+
+    init() {
+        self.init(DummyModel())
+    }
+
+}
+
 private struct DummyModel: ConversationCellModelProtocol {
     typealias ContentView = DummyView
-
     let id = false
-
-    func buildView() -> ContentView {
-        ContentView(model: self)
-    }
 }
 
 private struct DummyView: ConversationCellContentViewProtocol {
@@ -79,11 +109,8 @@ private struct DummyView: ConversationCellContentViewProtocol {
 
     let model: DummyModel
 
-    init(model: DummyModel) {
-        self.model = model
-    }
-
     var body: some View {
         EmptyView()
     }
+
 }
