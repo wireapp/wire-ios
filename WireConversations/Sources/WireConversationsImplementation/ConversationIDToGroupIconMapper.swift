@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-import WireConversationsImplementation
-import WireConversationsUI
+import WireConversationsAPI
+package import WireConversationsResources
 
-public final class WireConversationGroupIconFactory {
+package final class ConversationIDToGroupIconMapper: ConversationIDToPaletteMapper {
 
-    private let mapper = ConversationIDToGroupIconMapper()
+    let palette: [WireConversationGroupIconAsset] = WireConversationGroupIconAsset.all
 
-    public init() {}
+    package init() {}
 
-    @MainActor
-    public func create(conversationID: String) -> some View {
-        WireConversationGroupIcon(asset: mapper.palette(for: conversationID))
+    package func palette(for conversationID: String) -> WireConversationGroupIconAsset {
+        // Calculate the combined hash
+        let hashValue = stringHashCode(conversationID)
+        // Convert to positive Int for indexing
+        let index = abs(Int(hashValue)) % palette.count
+        return palette[index]
     }
 }
