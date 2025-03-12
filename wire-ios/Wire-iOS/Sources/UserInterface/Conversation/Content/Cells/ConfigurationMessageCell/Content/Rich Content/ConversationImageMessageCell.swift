@@ -187,6 +187,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
     }
 
+    let isAccessibilityElement = true
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, image: ZMImageMessageData) {

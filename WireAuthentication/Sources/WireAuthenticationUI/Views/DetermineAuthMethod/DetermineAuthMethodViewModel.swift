@@ -32,16 +32,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         SSOLinkGeneratorFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
 
-    package enum Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        case noInternet
-        case invalidResponse
-        case unknownError
-        case invalidSSOLink
-
-    }
-
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
@@ -70,8 +60,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         emailOrSSOCode: String = "",
-        isLoading: Bool = false,
-        alert: Alert? = nil
+        isLoading: Bool = false
     ) {
         self.router = router
         self.factory = factory
@@ -79,7 +68,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
-        self.alert = alert
     }
 
     func submitEmailOrSSOCode() async {
@@ -109,14 +97,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 authMethod,
                 backendMetadata: backendMetadata
             )
-        } catch let error as DetermineAuthMethodUseCaseFailure {
-            handleAuthenticationMethodError(error)
         } catch {
-            // We won't arrive here because the only error thrown is handled above.
-            // It would be nice to eliminate this impossible state.
-        }
+            WireLogger.authentication.error("Error determining authentication method: \(error)")
 
-        isLoading = false
+            switch error {
+            case DetermineAuthMethodUseCaseFailure.invalidEmailOrSSOCode:
+                // No need to do anything here. In general this shouldn't happen because we validate before submitting.
+                // It is probably worth restructuring the code to avoid this.
+                break
+            default:
+                alert = .general(for: error)
+            }
+        }
     }
 
     func dismissmodalView() {
@@ -148,25 +140,32 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             let generator = factory.ssoLinkGenerator(apiVersion: backendMetadata.apiVersion)
             ssoLinkGenerator = generator
 
-            let backendEnvironment = WireAuthenticationBackendEnvironment(
-                environmentType: environmentType,
-                config: backendConfig,
-                metadata: backendMetadata
-            )
+            do {
+                let url = try await Task.detached { [generator] in
+                    try await generator.generateSSOLink(ssoCode: code)
+                }.value
+                WireLogger.authentication.error("Generating SSO link succeeded")
 
-            Task.detached { [generator] in
-                do {
-                    let url = try await generator.generateSSOLink(ssoCode: code)
-                    await MainActor.run {
-                        self.modalDestination = .ssoLogin(
-                            url: url,
-                            backendEnvironment: backendEnvironment
-                        )
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.alert = .invalidSSOLink
-                    }
+                let backendEnvironment = WireAuthenticationBackendEnvironment(
+                    environmentType: environmentType,
+                    config: backendConfig,
+                    metadata: backendMetadata
+                )
+
+                modalDestination = .ssoLogin(
+                    url: url,
+                    backendEnvironment: backendEnvironment
+                )
+            } catch {
+                WireLogger.authentication.error("Generating SSO link failed: \(error)")
+
+                switch error {
+                case SSOLinkGeneratorFailure.invalidSSOCode:
+                    alert = .incorrectSSOCode
+                case SSOLinkGeneratorFailure.invalidSSOURL:
+                    alert = .invalidSSOLink
+                default:
+                    alert = .general(for: error)
                 }
             }
 
@@ -177,34 +176,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     try await useCase.invoke(at: backendConfigURL)
                 }.value
 
+                WireLogger.authentication.info("Fetching backend config succeeded")
+
                 modalDestination = .switchBackend(
                     email: email,
                     environmentType: .custom(url: backendConfigURL),
                     backendConfig: backendConfig
                 )
             } catch {
-                WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
-            }
-        }
-    }
+                WireLogger.authentication.error("Fetching backend config failed: \(error)")
 
-    private func handleAuthenticationMethodError(_ error: DetermineAuthMethodUseCaseFailure) {
-        switch error {
-        case .invalidEmailOrSSOCode:
-            // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
-            // things a little to make this error impossible to happen.
-            break
-        case .invalidResponse:
-            alert = .invalidResponse
-        case let .urlError(urlError):
-            switch urlError.code {
-            case .notConnectedToInternet, .networkConnectionLost:
-                alert = .noInternet
-            default:
-                alert = .unknownError
+                alert = .general(for: error)
             }
-        case .unknown:
-            alert = .unknownError
         }
     }
 
@@ -217,5 +200,4 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return false
         }
     }
-
 }

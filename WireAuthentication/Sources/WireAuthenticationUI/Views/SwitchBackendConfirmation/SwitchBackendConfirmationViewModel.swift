@@ -114,16 +114,9 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                 )
             )
         } else {
-            // Before we can make requests we need to resolve the api version.
-            let backendMetadata: BackendMetadata
             do {
-                backendMetadata = try await resolveBackendMetadata()
-            } catch {
-                // TODO: [WPB-16415] handle unresolved api version
-                fatalError()
-            }
-
-            do {
+                // Before we can make requests we need to resolve the api version.
+                let backendMetadata = try await resolveBackendMetadata()
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
                     let backendEnvironment = WireAuthenticationBackendEnvironment(
                         environmentType: environmentType,
@@ -137,6 +130,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             backendEnvironment: backendEnvironment
                         )
                     )
+                    WireLogger.authentication.info("Fetching default SSO URL succeed")
                 } else {
                     router.presentSheet(
                         RootView.ModalDestination.onPremiseLogin(
@@ -146,11 +140,15 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             backendMetadata: backendMetadata
                         )
                     )
+                    WireLogger.authentication.info("No default SSO URL")
                 }
+
             } catch {
-                WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
-                alert = .unknownError
+                WireLogger.authentication.error("Fetching default SSO URL failed: \(error)")
+
+                alert = .general(for: error)
             }
+
         }
     }
 
@@ -174,24 +172,6 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         let title: String
         let value: String
         let isURL: Bool
-    }
-
-}
-
-// MARK: Alerts
-
-package extension SwitchBackendConfirmationViewModel {
-
-    struct Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        let title: String
-        let message: String
-
-        private typealias Title = L10n.Authentication.Error.Title
-        private typealias Message = L10n.Authentication.Error.Message
-
-        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }
