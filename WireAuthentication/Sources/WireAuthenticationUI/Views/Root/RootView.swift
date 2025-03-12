@@ -64,11 +64,13 @@ package struct RootView: View {
                     )
                 case let .onPremiseLogin(
                     email,
+                    environmentType,
                     backendConfig,
                     backendMetadata
                 ):
                     factory.loginViaEmailOnPremView(
                         email: email,
+                        environmentType: environmentType,
                         backendConfig: backendConfig,
                         backendMetadata: backendMetadata
                     )
@@ -108,6 +110,7 @@ package struct RootView: View {
         )
         case onPremiseLogin(
             email: String,
+            environmentType: BackendEnvironmentType,
             environment: BackendConfig,
             backendMetadata: BackendMetadata?
         )

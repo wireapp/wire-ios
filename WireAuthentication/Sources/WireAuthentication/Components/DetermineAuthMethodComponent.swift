@@ -26,6 +26,7 @@ internal import WireAuthenticationLogic
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
@@ -40,6 +41,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
+            environmentType: dependency.environmentType,
             backendConfig: dependency.backendConfig
         )
     }
@@ -82,11 +84,13 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     func switchBackendConfirmationComponent(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationComponent {
         SwitchBackendConfirmationComponent(
             parent: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
         )
     }
@@ -168,10 +172,12 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
     func switchBackendView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView {
         switchBackendConfirmationComponent(
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
         ).view
     }

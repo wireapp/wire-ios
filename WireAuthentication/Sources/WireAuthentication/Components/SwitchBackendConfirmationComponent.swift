@@ -38,14 +38,17 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationComponentDependency> {
 
     private let email: String
+    private let environmentType: BackendEnvironmentType
     public let backendConfig: BackendConfig
 
     init(
         parent: any Scope,
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
         self.email = email
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         super.init(parent: parent)
     }
@@ -61,6 +64,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
             router: dependency.router,
             factory: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
         )
     }

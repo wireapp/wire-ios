@@ -24,6 +24,10 @@ public struct WireAuthenticationBackendEnvironment: Sendable, Equatable, Hashabl
 
     public let title: String
 
+    /// An identifier for the type of backend.
+
+    public let environmentType: BackendEnvironmentType
+
     /// The data needed to connect to the backend.
 
     public let config: BackendConfig
@@ -33,10 +37,12 @@ public struct WireAuthenticationBackendEnvironment: Sendable, Equatable, Hashabl
     public let metadata: BackendMetadata
 
     public init(
+        environmentType: BackendEnvironmentType,
         config: BackendConfig,
         metadata: BackendMetadata
     ) {
         self.title = config.title
+        self.environmentType = environmentType
         self.config = config
         self.metadata = metadata
     }

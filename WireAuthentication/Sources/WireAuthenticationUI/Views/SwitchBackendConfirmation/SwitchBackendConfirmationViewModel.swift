@@ -36,6 +36,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     private let router: any Router
     private let factory: any Factory
     private let email: String
+    private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
 
     @Published private(set) var isLoading = false
@@ -47,11 +48,13 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
         self.router = router
         self.factory = factory
         self.email = email
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.items = [
             ItemUIModel(
@@ -105,6 +108,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
             router.presentSheet(
                 RootView.ModalDestination.onPremiseLogin(
                     email: email,
+                    environmentType: environmentType,
                     environment: backendConfig,
                     backendMetadata: nil
                 )
@@ -122,6 +126,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
             do {
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
                     let backendEnvironment = WireAuthenticationBackendEnvironment(
+                        environmentType: environmentType,
                         config: backendConfig,
                         metadata: backendMetadata
                     )
@@ -136,6 +141,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                     router.presentSheet(
                         RootView.ModalDestination.onPremiseLogin(
                             email: email,
+                            environmentType: environmentType,
                             environment: backendConfig,
                             backendMetadata: backendMetadata
                         )

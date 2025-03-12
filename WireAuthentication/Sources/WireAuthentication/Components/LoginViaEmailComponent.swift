@@ -30,6 +30,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
     var networkService: NetworkService { get }
+    var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
@@ -99,6 +100,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     public var backendEnvironment: WireAuthenticationBackendEnvironment {
         shared {
             WireAuthenticationBackendEnvironment(
+                environmentType: dependency.environmentType,
                 config: dependency.backendConfig,
                 metadata: backendMetadata
             )

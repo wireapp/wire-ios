@@ -27,6 +27,10 @@ final class MockDependencies {
         RootViewModel()
     }
 
+    var environmentType: BackendEnvironmentType {
+        .production
+    }
+
     private var backendConfig: BackendConfig {
         _backendConfig
     }
@@ -41,6 +45,7 @@ final class MockDependencies {
 
     var backendEnvironment: WireAuthenticationBackendEnvironment {
         WireAuthenticationBackendEnvironment(
+            environmentType: environmentType,
             config: backendConfig,
             metadata: backendMetadata
         )
@@ -75,6 +80,7 @@ final class MockDependencies {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             emailOrSSOCode: emailOrSSOCode,
             isLoading: isLoading,
@@ -144,6 +150,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            environmentType: environmentType,
             backendConfig: backendConfig
         )
     }
@@ -167,6 +174,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
             router: rootViewModel,
             factory: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: BackendConfig(
                 title: backendConfig.title,
                 endpoints: Endpoints(
@@ -185,6 +193,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
 
     func switchBackendView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(
@@ -319,6 +328,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
             router: rootViewModel,
             factory: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
@@ -328,6 +338,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
 
     func loginViaEmailOnPremView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata?
     ) -> LoginViaEmailOnPremView {

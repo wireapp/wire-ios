@@ -46,12 +46,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
-        case switchBackend(email: String, backendConfig: BackendConfig)
+        case switchBackend(email: String, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
     }
 
     private let router: any Router
     private let factory: any Factory
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
+    private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
 
     @Published var emailOrSSOCode: String = ""
@@ -66,6 +67,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         emailOrSSOCode: String = "",
         isLoading: Bool = false,
@@ -73,6 +75,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     ) {
         self.router = router
         self.factory = factory
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
@@ -146,6 +149,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             ssoLinkGenerator = generator
 
             let backendEnvironment = WireAuthenticationBackendEnvironment(
+                environmentType: environmentType,
                 config: backendConfig,
                 metadata: backendMetadata
             )
@@ -172,7 +176,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 let backendConfig = try await Task.detached {
                     try await useCase.invoke(at: backendConfigURL)
                 }.value
-                modalDestination = .switchBackend(email: email, backendConfig: backendConfig)
+
+                modalDestination = .switchBackend(
+                    email: email,
+                    environmentType: .custom(url: backendConfigURL),
+                    backendConfig: backendConfig
+                )
             } catch {
                 WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
             }

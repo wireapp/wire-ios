@@ -31,6 +31,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     private let router: any Router
     private let factory: any Factory
     private let passwordValidator: any PasswordValidator
+    private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
 
@@ -43,6 +44,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         passwordValidator: any PasswordValidator,
@@ -53,6 +55,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.backendMetadata = backendMetadata
     }
@@ -118,6 +121,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         )
 
         let backendEnvironment = WireAuthenticationBackendEnvironment(
+            environmentType: environmentType,
             config: backendConfig,
             metadata: backendMetadata
         )

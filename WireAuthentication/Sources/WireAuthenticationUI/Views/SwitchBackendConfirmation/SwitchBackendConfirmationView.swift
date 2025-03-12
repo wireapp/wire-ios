@@ -25,6 +25,7 @@ package protocol SwitchBackendConfirmationBuilder {
     @MainActor
     func switchBackendView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView
 
@@ -203,6 +204,7 @@ package func makeSwitchBackendConfirmationViewPreview(
 ) -> some View {
     MockDependencies().switchBackendView(
         email: "email.com",
+        environmentType: .anta,
         backendConfig: BackendConfig(
             title: backendName,
             endpoints: Endpoints(

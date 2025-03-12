@@ -25,6 +25,7 @@ import WireAuthenticationAPI
 
 class RootComponent: BootstrapComponent {
 
+    public let environmentType: BackendEnvironmentType
     public let backendConfig: BackendConfig
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
@@ -39,6 +40,7 @@ class RootComponent: BootstrapComponent {
     let onFlowCompletion: (AuthenticationResult) -> Void
 
     init(
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
@@ -51,6 +53,7 @@ class RootComponent: BootstrapComponent {
         onRegisterAccount: @escaping () -> Void,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
@@ -112,12 +115,14 @@ class RootComponent: BootstrapComponent {
 
     func loginViaEmailOnPremComponent(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremComponent {
         LoginViaEmailOnPremComponent(
             parent: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         )
@@ -156,11 +161,13 @@ extension RootComponent: RootView.Factory {
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremView {
         loginViaEmailOnPremComponent(
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         ).view

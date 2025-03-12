@@ -16,19 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-public struct SwitchBackendConfirmationPreview: View {
-    public init() {}
+public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
 
-    public var body: some View {
-        VStack {
-            MockDependencies().switchBackendView(
-                email: "email.com",
-                environmentType: MockDependencies().environmentType,
-                backendConfig: MockDependencies()._backendConfig
-            )
-        }
-    }
+    case production
+    case staging
+    case qaDemo
+    case qaDemo2
+    case anta
+    case bella
+    case chala
+    case diya
+    case elna
+    case foma
+    case custom(url: URL)
 
 }

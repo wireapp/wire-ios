@@ -124,12 +124,28 @@ package struct DetermineAuthMethodView: View {
                 )
             }
         }
-        .sheet(item: $viewModel.modalDestination, content: {
-            switch $0 {
-            case let .ssoLogin(ssoURL, backendEnvironment):
-                factory.loginViaSSOView(ssoURL: ssoURL, backendEnvironment: backendEnvironment)
-            case let .switchBackend(email: email, backendConfig: backendConfig):
-                factory.switchBackendView(email: email, backendConfig: backendConfig)
+        .sheet(
+            item: $viewModel.modalDestination,
+            content: {
+                switch $0 {
+                case let .ssoLogin(
+                    ssoURL,
+                    backendEnvironment
+                ):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
+                case let .switchBackend(
+                    email,
+                    environmentType,
+                    backendConfig
+                ):
+                    factory.switchBackendView(
+                        email: email,
+                        environmentType: environmentType,
+                        backendConfig: backendConfig
+                    )
             }
         })
         .presentationDetents([.medium, .large])

@@ -25,6 +25,7 @@ import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
+public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
 public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
 public typealias Endpoints = WireAuthenticationAPI.Endpoints
 public typealias ProxySettings = WireAuthenticationAPI.ProxySettings
@@ -39,6 +40,7 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
@@ -52,6 +54,7 @@ public struct WireAuthenticationAssembly {
         onRegisterAccount: @escaping () -> Void
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
+            environmentType: environmentType,
             backendConfig: backendConfig,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,

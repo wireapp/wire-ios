@@ -36,16 +36,19 @@ protocol LoginViaEmailOnPremComponentDependency: Dependency {
 class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDependency> {
 
     private let email: String
+    private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
 
     init(
         parent: any Scope,
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) {
         self.email = email
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.backendMetadata = backendMetadata
         super.init(parent: parent)
@@ -62,6 +65,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
             router: dependency.router,
             factory: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata,
             passwordValidator: dependency.passwordValidator,
