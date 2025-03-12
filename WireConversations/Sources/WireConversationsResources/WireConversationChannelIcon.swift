@@ -16,26 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireConversationsResources
+package import SwiftUI
 
-extension [WireConversationGroupIconAsset] {
-    static var all: [WireConversationGroupIconAsset] {
+package enum WireConversationChannelIconAsset: String {
+    case blue
+    case purple
+    case red
+    case green
+    case amber
+    case petrol
+    case gray
+
+    package static var all: [WireConversationChannelIconAsset] {
         [
-            ._1,
-            ._2,
-            ._3,
-            ._4,
-            ._5,
-            ._6,
-            ._7,
-            ._8,
-            ._9,
-            ._10,
-            ._11,
-            ._12,
-            ._13,
-            ._14,
-            ._15
+            .blue,
+            .purple,
+            .red,
+            .green,
+            .amber,
+            .petrol,
+            .gray
         ]
+    }
+
+    package var imageName: String {
+        "channel-icon-\(rawValue)"
+    }
+
+    package var image: Image {
+        Image(imageName, bundle: .module)
     }
 }

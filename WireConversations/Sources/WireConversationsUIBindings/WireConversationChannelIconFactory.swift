@@ -20,14 +20,14 @@ public import SwiftUI
 import WireConversationsImplementation
 import WireConversationsUI
 
-public final class WireConversationGroupIconFactory {
+public final class WireConversationChannelIconFactory {
 
-    private let mapper = ConversationIDToGroupIconMapper()
+    private let mapper = ConversationIDToChannelIconMapper()
 
     public init() {}
 
     @MainActor
     public func create(conversationID: String) -> some View {
-        WireConversationGroupIcon(asset: mapper.palette(for: conversationID))
+        WireConversationChannelIcon(asset: mapper.palette(for: conversationID))
     }
 }
