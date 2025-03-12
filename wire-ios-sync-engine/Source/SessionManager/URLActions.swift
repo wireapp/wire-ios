@@ -42,7 +42,7 @@ public enum URLAction: Equatable {
     case openUserProfile(id: UUID)
 
     /// Switch to a custom backend
-    case accessBackend(configurationURL: URL)//
+    case accessBackend(configurationURL: URL)
 
     /// Import external events
     case importEvents
@@ -139,7 +139,7 @@ extension URLAction {
             }
             self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
 
-        case URL.Host.accessBackend://
+        case URL.Host.accessBackend:
             guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config),
                   let url = URL(string: config) else {
                 throw DeepLinkRequestError.malformedLink

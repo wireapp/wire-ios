@@ -229,7 +229,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             "application:openURL:options",
             attributes: .safePublic
         )
-        return appRootRouter?.openDeepLinkURL(url) ?? false//
+        return appRootRouter?.openDeepLinkURL(url) ?? false
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
