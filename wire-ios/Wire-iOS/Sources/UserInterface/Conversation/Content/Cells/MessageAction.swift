@@ -146,6 +146,16 @@ enum MessageAction: CaseIterable, Equatable {
             nil
         }
     }
+    
+    var image: UIImage? {
+        switch self {
+        case .collapse:
+            return UIImage(resource: .collapse)
+                .resizeMaintainingAspectRatio(targetSize: StyleKitIcon.Size.small.cgSize)
+        default:
+            return nil
+        }
+    }
 
     func systemIcon() -> UIImage? {
         imageSystemName().flatMap(UIImage.init(systemName:))
@@ -177,14 +187,13 @@ enum MessageAction: CaseIterable, Equatable {
             "scribble"
         case .sketchEmoji:
             "smiley.fill"
-        case .collapse:
-            "collapse"
         case .present,
              .openQuote,
              .digitallySign,
              .resetSession,
              .react,
-             .visitLink:
+             .visitLink,
+             .collapse:
             nil
         }
     }
@@ -245,6 +254,8 @@ enum MessageAction: CaseIterable, Equatable {
             return MessageAction.RevealButton.description
         case .delete:
             return MessageAction.DeleteButton.description
+        case .collapse:
+            return MessageAction.CollapseButton.description
         default:
             return nil
         }

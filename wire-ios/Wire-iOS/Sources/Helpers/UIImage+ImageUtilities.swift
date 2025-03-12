@@ -152,8 +152,29 @@ extension UIImage {
 extension UIImage {
 
     func resize(for size: StyleKitIcon.Size) -> UIImage {
-        UIGraphicsImageRenderer(size: size.cgSize).image { _ in
-            draw(in: CGRect(origin: .zero, size: size.cgSize))
+        resize(size: size.cgSize)
+    }
+    
+    func resize(size: CGSize) -> UIImage {
+        UIGraphicsImageRenderer(size: size).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+    
+    func resizeMaintainingAspectRatio(targetSize: CGSize) -> UIImage {
+        
+        let originalSize = size
+        let scaleFactor = min(targetSize.width / originalSize.width, targetSize.height / originalSize.height)
+        
+        let newSize = CGSize(width: originalSize.width * scaleFactor, height: originalSize.height * scaleFactor)
+        let origin = CGPoint(
+            x: (targetSize.width - newSize.width) / 2,
+            y: (targetSize.height - newSize.height) / 2
+        )
+        
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { context in
+            draw(in: CGRect(origin: origin, size: newSize))
         }
     }
 }

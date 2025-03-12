@@ -852,6 +852,10 @@ internal enum L10n {
       }
     }
     internal enum MessageAction {
+      internal enum CollapseButton {
+        /// Collapse
+        internal static let description = L10n.tr("Accessibility", "messageAction.collapseButton.description", fallback: "Collapse")
+      }
       internal enum CopyButton {
         /// Copy picture
         internal static let description = L10n.tr("Accessibility", "messageAction.copyButton.description", fallback: "Copy picture")

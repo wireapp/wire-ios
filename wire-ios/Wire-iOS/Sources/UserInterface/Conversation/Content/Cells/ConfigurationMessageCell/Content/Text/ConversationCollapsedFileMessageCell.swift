@@ -45,17 +45,18 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         view.accessibilityTraits = .button
         view.accessibilityLabel = L10n.Accessibility.Conversation.ProfileImage.description
         view.accessibilityHint = L10n.Accessibility.Conversation.ProfileImage.hint
-
+        view.isUserInteractionEnabled = true
         return view
     }()
     
     private lazy var titleLabel : UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .body)
+        label.font = UIFont.italicSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize)
         label.textColor = ColorTheme.Backgrounds.onSurfaceVariant
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.isUserInteractionEnabled = false
         return label
     }()
     
@@ -64,6 +65,8 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         view.translatesAutoresizingMaskIntoConstraints = false
         view.setContentHuggingPriority(.required, for: .horizontal)
         view.setContentCompressionResistancePriority(.required, for: .horizontal)
+        view.isUserInteractionEnabled = false
+        view.tintColor = ColorTheme.Backgrounds.onSurfaceVariant
         return view
     }()
     
@@ -72,10 +75,14 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         let image = UIImage(resource: .collapse)
         button.setImage(image, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.isUserInteractionEnabled = false
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
+        button.tintColor = SemanticColors.Label.baseSecondaryText
         return button
     }()
+    
+    private lazy var wholeViewTapButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -92,20 +99,23 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         avatar.user = user
         titleLabel.text = L10n.Localizable.Content.Collapsed.File.title
         
-        collapseButton.removeTarget(nil, action: nil, for: .allEvents)
+        wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
 
         let action = UIAction { _ in
             object.collapseExpandAction()
         }
 
-        collapseButton.addAction(action, for: .touchUpInside)
-        
+        wholeViewTapButton.addAction(action, for: .touchUpInside)
     }
     
     private func configureSubviews() {
+        
+        addSubview(wholeViewTapButton)
+        wholeViewTapButton.pin(to: self)
+        
         let stack = UIStackView.horizontal(
             views: [
-                avatar.wrapInView(leadingInset: 20),
+                avatar.wrapInView(leadingInset: 20, bottomInset: -7),
                 titleLabel,
                 [typeIcon, collapseButton.wrapInView(trailingInset: 16)]
                     .horizontalStack(spacing: 5)],
@@ -115,9 +125,11 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         addSubview(stack)
         
         stack
-            .setTranslatesAutoresizingMaskIntoConstraints(true)
+            .setTranslatesAutoresizingMaskIntoConstraints(false)
             .pin(to: self)
             .heightConstraint(38)
+        
+        stack.isUserInteractionEnabled = false
         
         typeIcon.constraintToSquare(sideLength: 16)
     }
