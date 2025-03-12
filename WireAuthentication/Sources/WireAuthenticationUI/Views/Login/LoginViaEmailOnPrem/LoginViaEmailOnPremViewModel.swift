@@ -134,7 +134,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             backendEnvironment: backendEnvironment
         )
 
-        router.navigate(to: RootView.ModalDestination.noHistory(
+        router.presentSheet(RootView.ModalDestination.noHistory(
             authenticationResult: authenticationResult,
             didDetectDomainConflict: false
         ))
