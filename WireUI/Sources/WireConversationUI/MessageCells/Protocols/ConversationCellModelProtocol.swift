@@ -17,5 +17,6 @@
 //
 
 protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
+    associatedtype ContentView: ConversationCellContentViewProtocol where ContentView.Model == Self
     init()
 }

@@ -18,8 +18,8 @@
 
 import SwiftUI
 
-struct AnyConversationCellModel: ConversationCellModelProtocol {
-    typealias ContentView = AnyView
+struct AnyConversationCellModel<Model: ConversationCellModelProtocol>: ConversationCellModelProtocol {
+    typealias ContentView = AnyConversationCellContentView<AnyConversationCellModel<Model>>
 
     var id: AnyHashable { _id() }
 
@@ -27,7 +27,7 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
     private let _hash: @Sendable (inout Hasher) -> Void
     private let _isEqual: @Sendable (Any) -> Bool
 
-    init<M: ConversationCellModelProtocol>(_ base: M) {
+    init(_ base: Model) {
         _id = {
             AnyHashable(base.id)
         }
@@ -35,9 +35,13 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
             base.hash(into: &hasher)
         }
         _isEqual = { other in
-            guard let otherBase = other as? M else { return false }
+            guard let otherBase = other as? Model else { return false }
             return base == otherBase
         }
+    }
+
+    init() {
+        self.init(Model())
     }
 
     func hash(into hasher: inout Hasher) {
@@ -46,19 +50,6 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
 
     static func == (lhs: AnyConversationCellModel, rhs: AnyConversationCellModel) -> Bool {
         lhs._isEqual(rhs)
-    }
-
-}
-
-extension AnyConversationCellModel {
-
-    init() {
-        self.init(M())
-    }
-
-    private struct M: ConversationCellModelProtocol {
-        typealias ContentView = AnyView
-        let id = false
     }
 
 }

@@ -28,21 +28,25 @@ struct TimeDividerContentView: View, ConversationCellContentViewProtocol {
 
     var body: some View {
         HStack(spacing: 0) {
+
             VStack {
                 Divider()
                     .frame(minHeight: 1)
                     .overlay { dividerColor }
             }
             .padding(.horizontal, 12)
+
             Text(model.text)
                 .font(.footnote)
                 .fontWeight(.semibold)
+
             VStack {
                 Divider()
                     .frame(minHeight: 1)
                     .overlay { dividerColor }
             }
             .padding(.horizontal, 12)
+
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)

@@ -18,15 +18,15 @@
 
 import SwiftUI
 
-final class ConversationCell<ContentView: ConversationCellContentViewProtocol>: UITableViewCell {
+final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewCell {
 
-    var model = ContentView.Model() {
+    var model = Model() {
         didSet { updateConfiguration() }
     }
 
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
-            ContentView(model: model)
+            Model.ContentView(model: model)
         }.margins(.all, 0)
     }
 
@@ -38,7 +38,7 @@ final class ConversationCell<ContentView: ConversationCellContentViewProtocol>: 
 #Preview {
     ConversationCellPreviews(
         models: [
-            TimeDividerModel(text: "Friday")/*.using(TimeDividerContentView.self)*/,
+            TimeDividerModel(text: "Friday"),
             TimeDividerModel(text: "Saturday"),
             TimeDividerModel(text: "Sunday")
         ]
@@ -47,20 +47,23 @@ final class ConversationCell<ContentView: ConversationCellContentViewProtocol>: 
 
 @MainActor
 func ConversationCellPreviews(
-    models: [any ConversationCellContentViewMappedModel]
+    models: [any ConversationCellModelProtocol]
 ) -> UIViewController {
 
     enum Section { case single }
 
     let tableViewController = UITableViewController(style: .plain)
 
-    let dataSource = UITableViewDiffableDataSource<Section, AnyConversationCellModel>(
-        tableView: tableViewController.tableView!
-    ) { tableView, indexPath, itemIdentifier in
-
-        fatalError()
+    models.forEach { model in
+        model.id
     }
-    tableViewController.dataSource = dataSource
+
+//    let dataSource = UITableViewDiffableDataSource<Section, AnyConversationCellModel>(
+//        tableView: tableViewController.tableView!
+//    ) { tableView, indexPath, itemIdentifier in
+//        fatalError()
+//    }
+//    tableViewController.dataSource = dataSource
 
     return tableViewController
 }

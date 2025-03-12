@@ -21,6 +21,5 @@ import SwiftUI
 @MainActor
 protocol ConversationCellContentViewProtocol: View {
     associatedtype Model: ConversationCellModelProtocol
-
     init(model: Model)
 }
