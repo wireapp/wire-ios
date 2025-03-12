@@ -112,9 +112,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         mainWindow = .init(windowScene: windowScene)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(8)) {
             // self.mainWindow.rootViewController?.present(testtt0(), animated: true)
             self.mainWindow.rootViewController?.present(testtt1(), animated: true)
+            // self.mainWindow.rootViewController?.present(testtt2(), animated: true)
         }
 
         setNavigationAppearance()

@@ -18,39 +18,6 @@
 
 import SwiftUI
 
-//struct AnyConversationCellContentView: ConversationCellContentViewProtocol {
-//
-//
-//}
-/*
-struct AnyConversationCellContentView: ConversationCellContentViewProtocol {
-
-    let model: Model
-    let _body: () -> any View
-
-    var body: some View {
-        //Model.ContentView(model: model)
-        _body()
-    }
-
-    init<Model: ConversationCellModelProtocol>(model: Model) {
-        _body = {
-            model.buildView()
-        }
-    }
-
-}
- */
-
-/*
-#Preview("TimeDivider") {
-    let model = TimeDividerModel(text: "Date/Time")
-    AnyConversationCellContentView(
-        model: AnyConversationCellModel(model)
-    )
-}
- */
-
 @MainActor
 public func testtt0() -> UIViewController {
     let model = TimeDividerModel(text: "Date/Time")
@@ -67,4 +34,11 @@ public func testtt1() -> UIViewController {
             .timeDivider(text: "Sunday")
         ]
     )
+}
+
+@MainActor
+public func testtt2() -> UIViewController {
+    let model = TimeDividerModel(text: "Date/Time")
+    let rootView = AnyConversationCellModel.ContentView(model: AnyConversationCellModel(model))
+    return UIHostingController(rootView: rootView)
 }

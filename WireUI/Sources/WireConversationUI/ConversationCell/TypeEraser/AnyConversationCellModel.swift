@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+// TODO: is this type-erasing type even needed?
 struct AnyConversationCellModel: ConversationCellModelProtocol {
 
     var id: AnyHashable { _id() }
@@ -79,10 +80,9 @@ extension AnyConversationCellModel {
         }
 
         init(model: Model) {
-            fatalError()
-//            content = {
-//                AnyView(EmptyView())
-//            }
+            content = {
+                AnyView(model.buildView())
+            }
         }
 
     }
