@@ -83,7 +83,7 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
                 expected: .twoFactorAuthenticationFailed
             ),
             (underlyingError: AuthenticationAPIError.accountPendingActivation, expected: .accountPendingActivation),
-            (underlyingError: AuthenticationAPIError.accountSuspended, expected: .accountSuspended),
+            (underlyingError: AuthenticationAPIError.accountSuspended, expected: .accountSuspended)
         ]
 
         for testCase in testCases {

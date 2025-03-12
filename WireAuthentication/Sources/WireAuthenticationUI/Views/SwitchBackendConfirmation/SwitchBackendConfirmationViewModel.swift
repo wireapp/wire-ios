@@ -132,7 +132,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                     WireLogger.authentication.info("No SSO URL")
                 }
 
-            } catch  {
+            } catch {
                 WireLogger.authentication.error("Fetching SSO URL failed: \(error)")
 
                 alert = .general(for: error)
