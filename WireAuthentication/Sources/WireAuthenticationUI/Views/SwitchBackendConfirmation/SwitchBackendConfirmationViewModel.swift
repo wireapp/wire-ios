@@ -120,7 +120,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             BackendMetadata: backendMetadata
                         )
                     )
-                    WireLogger.authentication.info("Fetching SSO URL succeed")
+                    WireLogger.authentication.info("Fetching default SSO URL succeed")
                 } else {
                     router.presentSheet(
                         RootView.ModalDestination.onPremiseLogin(
