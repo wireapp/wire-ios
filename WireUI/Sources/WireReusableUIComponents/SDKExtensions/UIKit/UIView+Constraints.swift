@@ -34,7 +34,8 @@ public extension UIView {
     /// - Parameters:
     ///   - view: The container view in which to fit `self`.
     ///   - insets: Insets to apply on each side of `self` relative to the container.
-    func pin(to view: any Anchorable, insets: UIEdgeInsets = .zero) {
+    @discardableResult
+    func pin(to view: any Anchorable, insets: UIEdgeInsets = .zero) -> Self {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.left),
@@ -42,6 +43,7 @@ public extension UIView {
             topAnchor.constraint(equalTo: view.topAnchor, constant: insets.top),
             bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -insets.bottom)
         ])
+        return self
     }
 
     func constraintToSize(_ size: CGSize) {

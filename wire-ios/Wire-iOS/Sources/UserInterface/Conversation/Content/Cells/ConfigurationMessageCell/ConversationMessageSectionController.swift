@@ -182,6 +182,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         isCollapsed = !isCollapsed
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
+    
+    func collapse() {
+        isCollapsed = !isCollapsed
+        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+    }
 
     // MARK: - Content Cells
 

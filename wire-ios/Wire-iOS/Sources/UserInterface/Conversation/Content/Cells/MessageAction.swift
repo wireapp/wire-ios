@@ -27,6 +27,7 @@ enum MessageAction: CaseIterable, Equatable {
         .visitLink,
         .digitallySign,
         .copy,
+        .collapse,
         .reply,
         .openDetails,
         .edit,
@@ -63,7 +64,8 @@ enum MessageAction: CaseIterable, Equatable {
         openQuote,
         resetSession,
         react(Emoji.ID),
-        visitLink
+        visitLink,
+        collapse
 
     var title: String? {
         typealias MessageActionLocale = L10n.Localizable.Content.Message
@@ -96,6 +98,8 @@ enum MessageAction: CaseIterable, Equatable {
             return L10n.Localizable.Image.addEmoji
         case .visitLink:
             return MessageActionLocale.OpenLinkAlert.title
+        case .collapse:
+            return MessageActionLocale.collapse
         case .present,
              .openQuote,
              .resetSession,
@@ -132,6 +136,8 @@ enum MessageAction: CaseIterable, Equatable {
             .emoji
         case .visitLink:
             .externalLink
+        case .collapse:
+            .brush
         case .present,
              .openQuote,
              .digitallySign,
@@ -171,6 +177,8 @@ enum MessageAction: CaseIterable, Equatable {
             "scribble"
         case .sketchEmoji:
             "smiley.fill"
+        case .collapse:
+            "collapse"
         case .present,
              .openQuote,
              .digitallySign,
@@ -209,6 +217,8 @@ enum MessageAction: CaseIterable, Equatable {
             #selector(ConversationMessageActionController.addReaction(reaction:))
         case .visitLink:
             #selector(ConversationMessageActionController.visitLink)
+        case .collapse:
+            #selector(ConversationMessageActionController.collapse)
         case .present,
              .sketchDraw,
              .sketchEmoji,

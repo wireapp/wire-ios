@@ -92,12 +92,14 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         avatar.user = user
         titleLabel.text = L10n.Localizable.Content.Collapsed.File.title
         
+        collapseButton.removeTarget(nil, action: nil, for: .allEvents)
+
         let action = UIAction { _ in
             object.collapseExpandAction()
         }
 
         collapseButton.addAction(action, for: .touchUpInside)
-
+        
     }
     
     private func configureSubviews() {
@@ -114,7 +116,7 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         
         stack
             .setTranslatesAutoresizingMaskIntoConstraints(true)
-            .fitIn(view: self)
+            .pin(to: self)
             .heightConstraint(38)
         
         typeIcon.constraintToSquare(sideLength: 16)

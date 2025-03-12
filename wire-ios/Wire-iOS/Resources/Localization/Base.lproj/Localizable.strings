@@ -654,6 +654,7 @@
 "content.message.download" = "Download";
 "content.message.details" = "Details";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Reply";

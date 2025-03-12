@@ -455,6 +455,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         let sectionController = sectionController(at: section, in: tableView)
         sectionController.highlight(in: tableView, sectionIndex: section)
     }
+    
+    func collapse(message: ZMConversationMessage) {
+        guard let section = sectionControllers[message.objectIdentifier] else {
+            return
+        }
+        section.collapse()
+    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard currentSections.indices.contains(section) else { return 0 }

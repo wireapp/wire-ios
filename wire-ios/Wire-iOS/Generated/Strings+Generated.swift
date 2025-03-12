@@ -1703,6 +1703,8 @@ internal enum L10n {
         internal static let saveImage = L10n.tr("Localizable", "content.image.save_image", fallback: "Save")
       }
       internal enum Message {
+        /// Collapse
+        internal static let collapse = L10n.tr("Localizable", "content.message.collapse", fallback: "Collapse")
         /// Copy
         internal static let copy = L10n.tr("Localizable", "content.message.copy", fallback: "Copy")
         /// Delete

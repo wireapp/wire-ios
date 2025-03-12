@@ -116,6 +116,8 @@ final class ConversationMessageActionController {
             message.canAddReaction
         case .visitLink:
             message.canVisitLink
+        case .collapse:
+            message.isSentBySelfUser // TODO: use settings
         case .present,
              .openQuote,
              .resetSession:
@@ -265,5 +267,10 @@ final class ConversationMessageActionController {
     @objc
     func visitLink() {
         perform(action: .visitLink)
+    }
+    
+    @objc
+    func collapse() {
+        perform(action: .collapse)
     }
 }
