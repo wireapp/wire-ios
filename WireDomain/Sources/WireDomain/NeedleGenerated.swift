@@ -47,11 +47,8 @@ private class PullEventsDependency2fd4ab45fd1c7ccdf95cProvider: PullEventsDepend
     var applicationIdentifier: String {
         return rootComponent.applicationIdentifier
     }
-    var messageLocalStore: any MessageLocalStoreProtocol {
-        return verifyUserComponent.messageLocalStore
-    }
-    var userLocalStore: any UserLocalStoreProtocol {
-        return verifyUserComponent.userLocalStore
+    var sharedUserDefaults: UserDefaults {
+        return verifyUserComponent.sharedUserDefaults
     }
     private let rootComponent: RootComponent
     private let verifyUserComponent: VerifyUserComponent
@@ -75,26 +72,24 @@ private class GenerateNotificationDependency56a07c37e817db4ed050Provider: Genera
         return rootComponent.selectedAccount
     }
     var messageLocalStore: any MessageLocalStoreProtocol {
-        return verifyUserComponent.messageLocalStore
+        return pullEventsComponent.messageLocalStore
     }
     var conversationLocalStore: any ConversationLocalStoreProtocol {
         return pullEventsComponent.conversationLocalStore
     }
     var userLocalStore: any UserLocalStoreProtocol {
-        return verifyUserComponent.userLocalStore
+        return pullEventsComponent.userLocalStore
     }
     private let pullEventsComponent: PullEventsComponent
     private let rootComponent: RootComponent
-    private let verifyUserComponent: VerifyUserComponent
-    init(pullEventsComponent: PullEventsComponent, rootComponent: RootComponent, verifyUserComponent: VerifyUserComponent) {
+    init(pullEventsComponent: PullEventsComponent, rootComponent: RootComponent) {
         self.pullEventsComponent = pullEventsComponent
         self.rootComponent = rootComponent
-        self.verifyUserComponent = verifyUserComponent
     }
 }
 /// ^->RootComponent->VerifyUserComponent->PullEventsComponent->GenerateNotificationComponent
-private func factoryfc879bce2c4eef2d1ee9a7fc6d23d327fda6264f(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return GenerateNotificationDependency56a07c37e817db4ed050Provider(pullEventsComponent: parent1(component) as! PullEventsComponent, rootComponent: parent3(component) as! RootComponent, verifyUserComponent: parent2(component) as! VerifyUserComponent)
+private func factoryfc879bce2c4eef2d1ee92a54d0ea1c25b8dabded(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return GenerateNotificationDependency56a07c37e817db4ed050Provider(pullEventsComponent: parent1(component) as! PullEventsComponent, rootComponent: parent3(component) as! RootComponent)
 }
 private class VerifyUserDependency1ae953de4ac1a2a84a5dProvider: VerifyUserDependency {
     var userID: UUID {
@@ -125,9 +120,10 @@ extension PullEventsComponent: NeedleFoundation.Registration {
         keyPathToName[\PullEventsDependency.selectedAccount] = "selectedAccount-Account"
         keyPathToName[\PullEventsDependency.applicationContainer] = "applicationContainer-URL"
         keyPathToName[\PullEventsDependency.applicationIdentifier] = "applicationIdentifier-String"
-        keyPathToName[\PullEventsDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
-        keyPathToName[\PullEventsDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
+        keyPathToName[\PullEventsDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
         localTable["conversationLocalStore-any ConversationLocalStoreProtocol"] = { [unowned self] in self.conversationLocalStore as Any }
+        localTable["messageLocalStore-any MessageLocalStoreProtocol"] = { [unowned self] in self.messageLocalStore as Any }
+        localTable["userLocalStore-any UserLocalStoreProtocol"] = { [unowned self] in self.userLocalStore as Any }
     }
 }
 extension GenerateNotificationComponent: NeedleFoundation.Registration {
@@ -156,9 +152,8 @@ extension VerifyUserComponent: NeedleFoundation.Registration {
         keyPathToName[\VerifyUserDependency.userID] = "userID-UUID"
         keyPathToName[\VerifyUserDependency.selectedAccount] = "selectedAccount-Account"
         keyPathToName[\VerifyUserDependency.applicationIdentifier] = "applicationIdentifier-String"
+        localTable["sharedUserDefaults-UserDefaults"] = { [unowned self] in self.sharedUserDefaults as Any }
         localTable["cookieStorage-any CookieStorageProtocol"] = { [unowned self] in self.cookieStorage as Any }
-        localTable["userLocalStore-any UserLocalStoreProtocol"] = { [unowned self] in self.userLocalStore as Any }
-        localTable["messageLocalStore-any MessageLocalStoreProtocol"] = { [unowned self] in self.messageLocalStore as Any }
         localTable["coreData-CoreDataStack"] = { [unowned self] in self.coreData as Any }
     }
 }
@@ -179,7 +174,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->VerifyUserComponent->PullEventsComponent", factoryb76115b3e674a8bbffc00e4ca4825856fdf1a57c)
-    registerProviderFactory("^->RootComponent->VerifyUserComponent->PullEventsComponent->GenerateNotificationComponent", factoryfc879bce2c4eef2d1ee9a7fc6d23d327fda6264f)
+    registerProviderFactory("^->RootComponent->VerifyUserComponent->PullEventsComponent->GenerateNotificationComponent", factoryfc879bce2c4eef2d1ee92a54d0ea1c25b8dabded)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->VerifyUserComponent", factoryd5eeee80e5892aa86d18b3a8f24c1d289f2c0f2e)
 }

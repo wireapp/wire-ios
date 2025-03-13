@@ -212,7 +212,6 @@
 				01D0DCA22C1C8C870076CB1C /* Sources */,
 				01D0DCA32C1C8C870076CB1C /* Frameworks */,
 				01D0DCA42C1C8C870076CB1C /* Resources */,
-				C9A6CCA92D3E4BED0058D4A4 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -368,23 +367,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "../scripts/run-sourcery.sh --config ./Sources/WireDomainSupport/Sourcery/config.yml\n";
-		};
-		C9A6CCA92D3E4BED0058D4A4 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export SOURCEKIT_LOGGING=0 && /opt/homebrew/bin/needle generate ../WireDomain/Sources/NeedleGenerated.swift ../WireDomain/Sources/\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
