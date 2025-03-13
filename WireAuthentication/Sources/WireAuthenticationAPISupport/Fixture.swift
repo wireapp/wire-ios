@@ -21,6 +21,28 @@ import WireAuthenticationAPI
 
 public enum Fixture {
 
+    public static let backendEnvironment = WireAuthenticationBackendEnvironment(
+        environmentType: .production,
+        config: BackendConfig(
+            title: "Mock backend",
+            endpoints: Endpoints(
+                backendURL: URL(string: "www.mock.com")!,
+                backendWSURL: URL(string: "www.mock.com")!,
+                blackListURL: URL(string: "www.mock.com")!,
+                teamsURL: URL(string: "www.mock.com")!,
+                accountsURL: URL(string: "www.mock.com")!,
+                websiteURL: URL(string: "www.mock.com")!
+            ),
+            proxySettings: nil,
+            pinnedKeys: nil
+        ),
+        metadata: BackendMetadata(
+            apiVersion: .v8,
+            domain: "mock.com",
+            isFederationEnabled: true
+        )
+    )
+
     public static let someCookie = HTTPCookie(properties: [
         .name: "some name",
         .path: "some path",

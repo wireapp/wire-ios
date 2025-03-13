@@ -45,6 +45,7 @@ final class VerificationCodeViewModelTests {
             loginViaEmailUseCase: loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: router,
+            backendEnvironment: Fixture.backendEnvironment,
             numberOfDigits: 3, // Lets use a 3 digit code for simplicity
             didDetectDomainConflict: false
         )
@@ -106,10 +107,17 @@ final class VerificationCodeViewModelTests {
         #expect(
             router.modalPresent_Invocations.first as? RootView.ModalDestination ==
                 RootView.ModalDestination.noHistory(
-                    userID: Fixture.someAccessToken.userID,
-                    cookies: [Fixture.someCookie],
-                    accessToken: Fixture.someAccessToken,
-                    emailCredentials: nil,
+                    authenticationResult: AuthenticationResult(
+                        userID: Fixture.someAccessToken.userID,
+                        cookies: [Fixture.someCookie],
+                        accessToken: Fixture.someAccessToken,
+                        emailCredentials: EmailCredentials(
+                            email: "abc@example.com",
+                            password: "aaaaaa",
+                            verificationCode: "123"
+                        ),
+                        backendEnvironment: Fixture.backendEnvironment
+                    ),
                     didDetectDomainConflict: false
                 )
         )

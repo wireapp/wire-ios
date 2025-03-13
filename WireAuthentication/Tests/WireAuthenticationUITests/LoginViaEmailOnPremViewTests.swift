@@ -43,6 +43,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
+            environmentType: MockDependencies().environmentType,
             backendConfig: MockDependencies()._backendConfig,
             backendMetadata: nil
         )
@@ -62,6 +63,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
+            environmentType: MockDependencies().environmentType,
             backendConfig: MockDependencies()._backendConfig,
             backendMetadata: nil
         )
@@ -96,6 +98,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
+            environmentType: MockDependencies().environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil
         )
@@ -128,6 +131,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
         )
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
+            environmentType: MockDependencies().environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil
         )
