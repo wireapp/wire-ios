@@ -27,21 +27,20 @@ import XCTest
 
 final class VerifyUserSessionTests: XCTestCase {
     private var sut: VerifyUserSession!
-    private var userLocalStore: MockUserLocalStoreProtocol!
     private var cookieStorage: MockCookieStorageProtocol!
     private var pullEventsService: MockPullEventsServiceProtocol!
-    
-    private var stack: CoreDataStack!
-    private var coreDataStackHelper: CoreDataStackHelper!
+    private var userLocalStore: MockUserLocalStoreProtocol!
+    private var stack: MockCoreDataStackProtocol!
     
     override func setUp() async throws {
-        coreDataStackHelper = CoreDataStackHelper()
-        stack = try await coreDataStackHelper.createStack()
-        userLocalStore = MockUserLocalStoreProtocol()
+        stack = MockCoreDataStackProtocol()
         cookieStorage = MockCookieStorageProtocol()
         pullEventsService = MockPullEventsServiceProtocol()
+        userLocalStore = MockUserLocalStoreProtocol()
+        
         let mockPullEventsServiceProvider = MockPullEventsServiceProvider(
-            pullEventsService: pullEventsService
+            pullEventsService: pullEventsService,
+            mockUserLocalStore: userLocalStore
         )
         
         sut = VerifyUserSession(
@@ -53,12 +52,10 @@ final class VerifyUserSessionTests: XCTestCase {
     
     override func tearDown() async throws {
         sut = nil
-        userLocalStore = nil
         cookieStorage = nil
         pullEventsService = nil
         stack = nil
-        try coreDataStackHelper.cleanupDirectory()
-        coreDataStackHelper = nil
+        userLocalStore = nil
     }
     
     func testVerify_It_Invokes_Methods_And_Call_Completion_Block() async throws {
@@ -105,6 +102,9 @@ final class VerifyUserSessionTests: XCTestCase {
     
     func testStartSyncingEvents_It_Invokes_Methods() async throws {
         // Mock
+        stack.storesExists = true
+        stack.needsMigration = false
+        stack.loadStoresCompletionHandler_MockMethod = { $0(nil) }
         userLocalStore.selfUserInfo_MockValue = (UUID.mockID1, UUID.mockID1.uuidString)
         pullEventsService.startSyncNewEventID_MockMethod = { _ in }
         
@@ -112,12 +112,14 @@ final class VerifyUserSessionTests: XCTestCase {
         try await sut.startSyncingEvents(eventID: .mockID1)
         
         // Then
-        XCTAssertEqual(userLocalStore.selfUserInfo_Invocations.count, 1)
         XCTAssertEqual(pullEventsService.startSyncNewEventID_Invocations.count, 1)
     }
     
     func testStartSyncingEvents_It_Throws_Missing_User_Client_Error() async throws {
         // Mock
+        stack.storesExists = true
+        stack.needsMigration = false
+        stack.loadStoresCompletionHandler_MockMethod = { $0(nil) }
         userLocalStore.selfUserInfo_MockValue = (UUID.mockID1, nil)
         
         // Then
@@ -127,8 +129,32 @@ final class VerifyUserSessionTests: XCTestCase {
         }
     }
     
+    func testStartSyncingEvents_It_Throws_Core_Data_Missing_Shared_Container() async throws {
+        // Mock
+        stack.storesExists = false
+        
+        // Then
+        await XCTAssertThrowsErrorAsync(VerifyUserSession.Failure.coreDataMissingSharedContainer) { [self] in
+            // When
+            try await sut.startSyncingEvents(eventID: .mockID1)
+        }
+    }
+    
+    func testStartSyncingEvents_It_Throws_Core_Data_Migration_Required() async throws {
+        // Mock
+        stack.storesExists = true
+        stack.needsMigration = true
+        
+        // Then
+        await XCTAssertThrowsErrorAsync(VerifyUserSession.Failure.coreDataMigrationRequired) { [self] in
+            // When
+            try await sut.startSyncingEvents(eventID: .mockID1)
+        }
+    }
+    
     private struct MockPullEventsServiceProvider: PullEventsServiceProvider {
         let pullEventsService: MockPullEventsServiceProtocol
+        let mockUserLocalStore: MockUserLocalStoreProtocol
         
         func pullEventsService(
             selfUserID: UUID,
@@ -136,6 +162,11 @@ final class VerifyUserSessionTests: XCTestCase {
         ) async -> any WireDomain.PullEventsServiceProtocol {
             pullEventsService
         }
+        
+        var userLocalStore: any WireDomain.UserLocalStoreProtocol {
+            mockUserLocalStore
+        }
+        
     }
     
     private enum Scaffolding {
