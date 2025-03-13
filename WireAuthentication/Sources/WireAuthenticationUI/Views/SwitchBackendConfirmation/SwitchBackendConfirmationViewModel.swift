@@ -35,6 +35,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
+    private let bridge: WireAuthenticationBridge
     private let email: String
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
@@ -47,12 +48,14 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
+        bridge: WireAuthenticationBridge,
         email: String,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
         self.router = router
         self.factory = factory
+        self.bridge = bridge
         self.email = email
         self.environmentType = environmentType
         self.backendConfig = backendConfig
@@ -130,6 +133,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
             do {
                 // Before we can make requests we need to resolve the api version.
                 let backendMetadata = try await resolveBackendMetadata()
+
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
                     let backendEnvironment = WireAuthenticationBackendEnvironment(
                         environmentType: environmentType,
@@ -155,13 +159,16 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                     )
                     WireLogger.authentication.info("No default SSO URL")
                 }
-
+            } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+                WireLogger.authentication.error("detected obsolete client")
+                bridge.sendOutboundEvent(.obsoleteClientDetected)
+            } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+                WireLogger.authentication.error("detected obsolete backend")
+                bridge.sendOutboundEvent(.obsoleteBackendDetected)
             } catch {
                 WireLogger.authentication.error("Fetching default SSO URL failed: \(error)")
-
                 alert = .general(for: error)
             }
-
         }
     }
 

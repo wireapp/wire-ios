@@ -26,6 +26,7 @@ internal import WireAuthenticationLogic
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
     var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
@@ -41,6 +42,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
+            bridge: dependency.bridge,
             environmentType: dependency.environmentType,
             backendConfig: dependency.backendConfig
         )

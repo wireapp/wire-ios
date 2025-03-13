@@ -27,6 +27,7 @@ import WireReusableUIComponents
 protocol LoginViaEmailOnPremComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var passwordValidator: any PasswordValidator { get }
@@ -64,6 +65,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
         LoginViaEmailOnPremViewModel(
             router: dependency.router,
             factory: self,
+            bridge: dependency.bridge,
             email: email,
             environmentType: environmentType,
             backendConfig: backendConfig,

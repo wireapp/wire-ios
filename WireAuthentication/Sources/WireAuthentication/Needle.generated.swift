@@ -35,6 +35,9 @@ private class LoginViaEmailOnPremComponentDependencyf7e724456bf0a882da0aProvider
     var router: any Router {
         return rootComponent.router
     }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
     var preferredAPIVersion: APIVersion? {
         return rootComponent.preferredAPIVersion
     }
@@ -81,6 +84,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var router: any Router {
         return rootComponent.router
     }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
     var environmentType: BackendEnvironmentType {
         return rootComponent.environmentType
     }
@@ -111,6 +117,9 @@ private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: Needle
 private class SwitchBackendConfirmationComponentDependency7a1956d88810c08ef169Provider: SwitchBackendConfirmationComponentDependency {
     var router: any Router {
         return rootComponent.router
+    }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
     }
     var preferredAPIVersion: APIVersion? {
         return rootComponent.preferredAPIVersion
@@ -213,6 +222,7 @@ private func factory9bda312c16141c932061c770221f242f9204cf85(_ component: Needle
 extension LoginViaEmailOnPremComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailOnPremComponentDependency.router] = "router-any Router"
+        keyPathToName[\LoginViaEmailOnPremComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
@@ -229,6 +239,7 @@ extension VerificationCodeComponent: NeedleFoundation.Registration {
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
+        keyPathToName[\DetermineAuthMethodComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\DetermineAuthMethodComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"
         keyPathToName[\DetermineAuthMethodComponentDependency.backendConfig] = "backendConfig-BackendConfig"
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
@@ -241,6 +252,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
 extension SwitchBackendConfirmationComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\SwitchBackendConfirmationComponentDependency.router] = "router-any Router"
+        keyPathToName[\SwitchBackendConfirmationComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.productionVersions] = "productionVersions-Set<APIVersion>"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
@@ -268,7 +280,6 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["userDefaults-UserDefaults"] = { [unowned self] in self.userDefaults as Any }
-        localTable["onRegisterAccount-() -> Void"] = { [unowned self] in self.onRegisterAccount as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }

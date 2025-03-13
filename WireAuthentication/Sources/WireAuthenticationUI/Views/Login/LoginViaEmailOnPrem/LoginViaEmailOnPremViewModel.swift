@@ -30,6 +30,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
+    private let bridge: WireAuthenticationBridge
     private let passwordValidator: any PasswordValidator
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
@@ -38,11 +39,14 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     let email: String
     let canCreateAccount: Bool
 
+    @Published var alert: Alert?
+
     // MARK: - Life cycle
 
     package init(
         router: any Router,
         factory: any Factory,
+        bridge: WireAuthenticationBridge,
         email: String,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
@@ -52,6 +56,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     ) {
         self.router = router
         self.factory = factory
+        self.bridge = bridge
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
@@ -98,9 +103,15 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         let backendMetadata: WireAuthenticationAPI.BackendMetadata
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            bridge.sendOutboundEvent(.obsoleteClientDetected)
+            return
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            bridge.sendOutboundEvent(.obsoleteBackendDetected)
+            return
         } catch {
-            // TODO: [WPB-16415] handle unresolved api version
-            fatalError()
+            alert = .general(for: error)
+            return
         }
 
         let (cookies, accessToken): ([HTTPCookie], AccessToken)

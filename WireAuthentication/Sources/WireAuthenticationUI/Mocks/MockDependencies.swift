@@ -81,6 +81,7 @@ final class MockDependencies {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
             emailOrSSOCode: emailOrSSOCode,
@@ -151,6 +152,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig
         )
@@ -174,6 +176,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
         SwitchBackendConfirmationViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             email: email,
             environmentType: environmentType,
             backendConfig: BackendConfig(
@@ -328,6 +331,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
         LoginViaEmailOnPremViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             email: email,
             environmentType: environmentType,
             backendConfig: backendConfig,
