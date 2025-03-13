@@ -25,6 +25,7 @@ import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
+public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
 public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
 public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
 public typealias Endpoints = WireAuthenticationAPI.Endpoints
@@ -49,9 +50,7 @@ public struct WireAuthenticationAssembly {
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        onRegisterAccount: @escaping () -> Void
+        userDefaults: UserDefaults
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
             environmentType: environmentType,
@@ -63,9 +62,7 @@ public struct WireAuthenticationAssembly {
             howToDeleteAccountURL: howToDeleteAccountURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
-            userDefaults: userDefaults,
-            onRegisterAccount: onRegisterAccount,
-            onFlowCompletion: onFlowCompletion
+            userDefaults: userDefaults
         )
 
         return (view: rootComponent.view, bridge: rootComponent.bridge)

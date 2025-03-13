@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
+import WireAuthentication
 import SwiftUI
 
 // A temporary bridging object to allow the new WireAuthentication flow inside
@@ -25,7 +27,49 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
     AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
+    private var cancellable: AnyCancellable?
 
+    init(
+        rootView: Content,
+        bridge: WireAuthenticationBridge,
+        authenticationCoordinator: AuthenticationCoordinator?
+    ) {
+        self.authenticationCoordinator = authenticationCoordinator
+        super.init(rootView: rootView)
+
+        self.cancellable = bridge.outboundEvents.sink { event in
+            switch event {
+            case let .userAuthenticated(authenticationResult):
+                authenticationCoordinator?.eventResponderChain.handleEvent(
+                    ofType: .wireAuthenticationModuleComplete(authenticationResult)
+                )
+            case .accountRegistrationRequested:
+                // TODO: [WPB-16279] Navigate to the account registration flow
+                break
+
+            case .obsoleteClientDetected:
+                // TODO: [WPB-16415]
+                break
+
+            case .obsoleteBackendDetected:
+                // TODO: [WPB-16415]
+                break
+            }
+        }
+
+        authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookies in
+            bridge.sendInboundEvent(.ssoAuthenticationSuccess(userID: userID, cookies: cookies))
+        })
+
+        authenticationCoordinator?.unauthenticatedSession.setErrorHandler({
+            bridge.sendInboundEvent(.ssoAutheticationFailure)
+        })
+    }
+    
+    @MainActor @preconcurrency required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {
         // no op
     }

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import Combine
 
 /// A object that facilitates intermodule communication, both **inbound**
 /// (from outside into this module) and **outbound** (from inside this module
@@ -24,45 +25,47 @@ import Foundation
 
 public final class WireAuthenticationBridge {
 
-    public let onFlowCompletion: (AuthenticationResult) -> Void
-    private let onRegisterAccount: () -> Void
-    package var onSSOSuccess: ((UUID, [HTTPCookie]) -> Void)?
-    package var onSSOFailure: (() -> Void)?
+    private let inboundSubject = PassthroughSubject<InboundEvent, Never>()
+    private let outboundSubject = PassthroughSubject<OutboundEvent, Never>()
 
-    public init(
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        onRegisterAccount: @escaping () -> Void
-    ) {
-        self.onFlowCompletion = onFlowCompletion
-        self.onRegisterAccount = onRegisterAccount
+    public var inboundEvents: AnyPublisher<InboundEvent, Never> {
+        inboundSubject.eraseToAnyPublisher()
     }
 
-    // MARK: - Methods are called within the module, but their implementations exist outside of it.
-
-    /// Completes the authentication flow with the given result.
-
-    public func completeFlow(_ result: AuthenticationResult) {
-        onFlowCompletion(result)
+    public var outboundEvents: AnyPublisher<OutboundEvent, Never> {
+        outboundSubject.eraseToAnyPublisher()
     }
 
-    /// Initiates the account registration process.
+    public init() {}
 
-    public func registerAccount() {
-        onRegisterAccount()
+    public func sendOutboundEvent(_ event: OutboundEvent) {
+        outboundSubject.send(event)
     }
 
-    // MARK: - Methods are implemented inside the module and are meant to be invoked externally.
-
-    /// Completes the SSO process successfully.
-
-    public func completeSSOSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        onSSOSuccess?(userID, cookies)
+    public func sendInboundEvent(_ event: InboundEvent) {
+        inboundSubject.send(event)
     }
 
-    /// Handles the failure of the SSO process.
+    /// Events originating within the feature module and
+    /// communicated outside.
 
-    public func completeSSOFailure() {
-        onSSOFailure?()
+    public enum OutboundEvent {
+
+        case userAuthenticated(AuthenticationResult)
+        case accountRegistrationRequested
+        case obsoleteClientDetected
+        case obsoleteBackendDetected
+
+    }
+
+    /// Events originating outside the feature module and
+    /// communicated inside.
+
+    public enum InboundEvent {
+
+        case ssoAuthenticationSuccess(userID: UUID, cookies: [HTTPCookie])
+        case ssoAutheticationFailure
+
     }
 
 }

@@ -25,9 +25,43 @@ import WireAuthenticationAPI
 package final class LoginViaSSOViewModel: ObservableObject {
 
     let ssoURL: URL
+    private let bridge: WireAuthenticationBridge
+    private let router: any Router
+    private let backendEnvironment: WireAuthenticationBackendEnvironment
+    private var cancellable: AnyCancellable?
 
-    package init(ssoURL: URL) {
+    package init(
+        ssoURL: URL,
+        bridge: WireAuthenticationBridge,
+        router: any Router,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) {
         self.ssoURL = ssoURL
+        self.bridge = bridge
+        self.router = router
+        self.backendEnvironment = backendEnvironment
+
+        cancellable = bridge.inboundEvents.sink { event in
+            switch event {
+            case let .ssoAuthenticationSuccess(userID, cookies):
+                let authenticationResult = AuthenticationResult(
+                    userID: userID,
+                    cookies: cookies,
+                    accessToken: nil,
+                    emailCredentials: nil,
+                    backendEnvironment: backendEnvironment
+                )
+
+                router.presentSheet(
+                    RootView.ModalDestination.noHistory(
+                        authenticationResult: authenticationResult,
+                        didDetectDomainConflict: false
+                    )
+                )
+            case .ssoAutheticationFailure:
+                router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
+            }
+        }
     }
 
 }

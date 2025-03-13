@@ -36,8 +36,6 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
-    public let onRegisterAccount: () -> Void
-    let onFlowCompletion: (AuthenticationResult) -> Void
 
     init(
         environmentType: BackendEnvironmentType,
@@ -49,9 +47,7 @@ class RootComponent: BootstrapComponent {
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults,
-        onRegisterAccount: @escaping () -> Void,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+        userDefaults: UserDefaults
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig
@@ -64,8 +60,6 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
-        self.onRegisterAccount = onRegisterAccount
-        self.onFlowCompletion = onFlowCompletion
     }
 
     // MARK: - View
@@ -83,10 +77,7 @@ class RootComponent: BootstrapComponent {
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
-            WireAuthenticationBridge(
-                onFlowCompletion: onFlowCompletion,
-                onRegisterAccount: onRegisterAccount
-            )
+            WireAuthenticationBridge()
         }
     }
 
