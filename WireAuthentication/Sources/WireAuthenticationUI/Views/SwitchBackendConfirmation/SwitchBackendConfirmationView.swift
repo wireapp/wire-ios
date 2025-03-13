@@ -60,6 +60,7 @@ package struct SwitchBackendConfirmationView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
         )
+        .frame(width: 350)
         .fixedSize(horizontal: false, vertical: true)
     }
 
