@@ -143,11 +143,14 @@ package final class LoginViaEmailViewModel: ObservableObject {
             switch error {
             case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
                 // TODO: [WPB-16415] handle unresolved api version
+                break
             case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
                 // TODO: [WPB-16415] handle unresolved api version
+                break
             default:
                 alert = .general(for: error)
             }
+            return
         }
 
         do {
