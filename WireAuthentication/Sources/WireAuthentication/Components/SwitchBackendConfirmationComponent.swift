@@ -27,6 +27,7 @@ import WireLogging
 protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
     var productionVersions: Set<APIVersion> { get }
     var minTLSVersion: TLSVersion { get }
@@ -60,7 +61,16 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
     }
 
     @MainActor private var viewModel: SwitchBackendConfirmationViewModel {
-        SwitchBackendConfirmationViewModel(
+        let router = dependency.router
+        let switchBackendHandler = SwitchBackendHandler(router: router, factory: self)
+
+        dependency.bridge.onSwitchBackend = { [switchBackendHandler] backendConfigURL in
+            Task {
+                await switchBackendHandler.invoke(backendConfigURL)
+            }
+        }
+
+        return SwitchBackendConfirmationViewModel(
             router: dependency.router,
             factory: self,
             email: email,
@@ -128,6 +138,10 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
             authenticationAPI: authenticationAPI,
             linkGenerator: linkGenerator
         )
+    }
+
+    func fetchBackendConfigUseCase() -> any WireAuthenticationAPI.FetchBackendConfigUseCaseProtocol {
+        FetchBackendConfigUseCase()
     }
 
 }

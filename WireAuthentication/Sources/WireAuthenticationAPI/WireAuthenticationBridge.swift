@@ -28,16 +28,14 @@ public final class WireAuthenticationBridge {
     private let onRegisterAccount: () -> Void
     package var onSSOSuccess: ((UUID, [HTTPCookie]) -> Void)?
     package var onSSOFailure: (() -> Void)?
-    package let onSwitchBackend: (URL) -> Void
+    package var onSwitchBackend: ((URL) -> Void)?
 
     public init(
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        onRegisterAccount: @escaping () -> Void,
-        onSwitchBackend: @escaping (URL) -> Void
+        onRegisterAccount: @escaping () -> Void
     ) {
         self.onFlowCompletion = onFlowCompletion
         self.onRegisterAccount = onRegisterAccount
-        self.onSwitchBackend = onSwitchBackend
     }
 
     // MARK: - Methods are called within the module, but their implementations exist outside of it.
@@ -71,7 +69,7 @@ public final class WireAuthenticationBridge {
     /// Handles the backend switch
 
     public func switchBackend(configURL: URL) {
-        onSwitchBackend(configURL)
+        onSwitchBackend?(configURL)
     }
 
 }

@@ -33,7 +33,8 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     package typealias Factory =
         FetchSSOURLUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory
+        ResolveBackendMetadataUseCaseFactory &
+        FetchBackendConfigUseCaseFactory
 
     // MARK: - State
 
@@ -127,7 +128,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         if let proxySettings = backendConfig.proxySettings, proxySettings.needsAuthentication {
             router.presentSheet(
                 RootView.ModalDestination.onPremiseLogin(
-                    email: email ?? "",
+                    email: email,
                     environmentType: environmentType,
                     environment: backendConfig,
                     backendMetadata: nil

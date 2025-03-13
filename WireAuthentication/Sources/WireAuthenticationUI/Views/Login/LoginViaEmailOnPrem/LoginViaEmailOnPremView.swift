@@ -25,7 +25,7 @@ package protocol LoginViaEmailOnPremBuilder {
 
     @MainActor
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
@@ -104,9 +104,9 @@ package struct LoginViaEmailOnPremView: View {
         LabeledTextField(
             placeholder: nil,
             title: L10n.CloudUserLogin.InputEmail.title,
-            string: .constant(viewModel.email)
+            string: .constant(viewModel.email ?? "")
         )
-        .disabled(!viewModel.email.isEmpty)
+        .disabled(!viewModel.isValidEmail)
     }
 
     @ViewBuilder private var passwordField: some View {
@@ -131,7 +131,7 @@ package struct LoginViaEmailOnPremView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password))
+        .disabled(!viewModel.isValidPassword(password) && viewModel.email != nil )
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {

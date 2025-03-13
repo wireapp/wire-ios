@@ -328,7 +328,7 @@ extension MockDependencies: VerificationCodeBuilder {
 extension MockDependencies: LoginViaEmailOnPremBuilder {
 
     private func loginViaEmailOnPremViewModel(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
@@ -344,7 +344,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
     }
 
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata?

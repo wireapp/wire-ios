@@ -39,14 +39,20 @@ package struct SwitchBackendHandler {
             let backendConfig = try await Task.detached {
                 try await useCase.invoke(at: backendConfigURL)
             }.value
-            router.presentSheet(
-                RootView.ModalDestination.switchBackend(
-                    backendConfig: backendConfig,
-                    environmentType: .custom(url: backendConfigURL)
+            await MainActor.run {
+                router.presentSheet(
+                    RootView.ModalDestination.switchBackend(
+                        backendConfig: backendConfig,
+                        environmentType: .custom(url: backendConfigURL)
+                    )
                 )
-            )
+            }
         } catch {
             WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
+
+            await MainActor.run {
+                router.presentAlert(Alert.unknownError)
+            }
         }
     }
 

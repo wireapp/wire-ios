@@ -86,17 +86,10 @@ class RootComponent: BootstrapComponent {
         shared {
             WireAuthenticationBridge(
                 onFlowCompletion: onFlowCompletion,
-                onRegisterAccount: onRegisterAccount,
-                onSwitchBackend: { _ in }
+                onRegisterAccount: onRegisterAccount
             )
         }
     }
-
-//    onSwitchBackend: { backendConfigURL in
-//        Task {
-//            await SwitchBackendHandler(router: self.router, factory: self).invoke(backendConfigURL)
-//        }
-//    }
 
     // MARK: - Public dependencies
 
@@ -126,7 +119,7 @@ class RootComponent: BootstrapComponent {
     }
 
     func loginViaEmailOnPremComponent(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
@@ -192,7 +185,7 @@ extension RootComponent: RootView.Factory {
 
     @MainActor
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?

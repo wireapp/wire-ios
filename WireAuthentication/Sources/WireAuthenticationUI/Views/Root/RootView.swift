@@ -45,29 +45,16 @@ package struct RootView: View {
                 switch sheet {
                 case .authFlow:
                     NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView(backendConfig: nil, backendMetadata: nil)
-                            .alert(
-                                item: $viewModel.alert,
-                                title: titleForAlert,
-                                message: messageForAlert,
-                                actions: { _ in
-                                    Button(L10n.Authentication.Error.confirm, action: {})
-                                }
-                            )
+                        factory.determineAuthMethodView(
+                            backendConfig: nil,
+                            backendMetadata: nil
+                        )
                     }
                 case let .onPremiseAuthFlow(backendConfig, backendMetadata):
                     NavigationStack(path: $viewModel.path) {
                         factory.determineAuthMethodView(
                             backendConfig: backendConfig,
                             backendMetadata: backendMetadata
-                        )
-                        .alert(
-                            item: $viewModel.alert,
-                            title: titleForAlert,
-                            message: messageForAlert,
-                            actions: { _ in
-                                Button(L10n.Authentication.Error.confirm, action: {})
-                            }
                         )
                     }
                 case let .noHistory(
@@ -108,20 +95,6 @@ package struct RootView: View {
             }
     }
 
-    private func titleForAlert(_ alert: RootViewModel.Alert) -> Text {
-        switch alert {
-        case .ssoLoginFailed:
-            Text(L10n.Authentication.Error.Title.ssoLoginFailed)
-        }
-    }
-
-    private func messageForAlert(_ alert: RootViewModel.Alert) -> Text {
-        switch alert {
-        case .ssoLoginFailed:
-            Text(L10n.Authentication.Error.Message.ssoLoginFailed)
-        }
-    }
-
     package enum ModalDestination: Identifiable, Hashable {
         public var id: Self { self }
 
@@ -135,7 +108,7 @@ package struct RootView: View {
             didDetectDomainConflict: Bool
         )
         case onPremiseLogin(
-            email: String,
+            email: String?,
             environmentType: BackendEnvironmentType,
             environment: BackendConfig,
             backendMetadata: BackendMetadata?

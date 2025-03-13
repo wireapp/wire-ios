@@ -69,7 +69,7 @@ class LoginViaSSOComponent: Component<LoginViaSSODependency> {
         }
 
         dependency.bridge.onSSOFailure = { [router] in
-            router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
+            router.presentAlert(Alert.ssoLoginFailed)
         }
 
         return LoginViaSSOViewModel(ssoURL: ssoURL)
