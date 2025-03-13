@@ -17,6 +17,9 @@
 //
 
 import WireAPISupport
+import WireDataModel
+import WireDataModelSupport
+import WireTestingPackage
 import XCTest
 @testable import WireAPI
 @testable import WireDomain
@@ -28,7 +31,12 @@ final class VerifyUserSessionTests: XCTestCase {
     private var cookieStorage: MockCookieStorageProtocol!
     private var pullEventsService: MockPullEventsServiceProtocol!
     
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    
     override func setUp() async throws {
+        coreDataStackHelper = CoreDataStackHelper()
+        stack = try await coreDataStackHelper.createStack()
         userLocalStore = MockUserLocalStoreProtocol()
         cookieStorage = MockCookieStorageProtocol()
         pullEventsService = MockPullEventsServiceProtocol()
@@ -38,8 +46,8 @@ final class VerifyUserSessionTests: XCTestCase {
         
         sut = VerifyUserSession(
             pullEventsServiceProvider: mockPullEventsServiceProvider,
-            userLocalStore: userLocalStore,
-            cookieStorage: cookieStorage
+            cookieStorage: cookieStorage,
+            coreData: stack
         )
     }
     
@@ -48,6 +56,9 @@ final class VerifyUserSessionTests: XCTestCase {
         userLocalStore = nil
         cookieStorage = nil
         pullEventsService = nil
+        stack = nil
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
     }
     
     func testVerify_It_Invokes_Methods_And_Call_Completion_Block() async throws {

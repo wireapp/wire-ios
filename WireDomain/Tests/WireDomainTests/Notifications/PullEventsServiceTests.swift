@@ -17,9 +17,6 @@
 //
 
 import WireAPISupport
-import WireDataModel
-import WireDataModelSupport
-import WireTestingPackage
 import XCTest
 @testable import WireAPI
 @testable import WireDomain
@@ -32,23 +29,18 @@ final class PullEventsServiceTests: XCTestCase {
     private var eventsSync: MockPullPendingUpdateEventsSyncProtocol!
     private var generateNotificationService: MockGenerateNotificationServiceProtocol!
 
-    private var stack: CoreDataStack!
-    private var coreDataStackHelper: CoreDataStackHelper!
     
     override func setUp() async throws {
         updateEventsLocalStore = MockUpdateEventsLocalStoreProtocol()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
         eventsSync = MockPullPendingUpdateEventsSyncProtocol()
         generateNotificationService = MockGenerateNotificationServiceProtocol()
-        coreDataStackHelper = CoreDataStackHelper()
-        stack = try await coreDataStackHelper.createStack()
         
         let generateNotificationProvider = MockenerateNotificationProvider(
             mockGenerateNotificationService: generateNotificationService
         )
         
         sut = PullEventsService(
-            coreData: stack,
             userClientsLocalStore: userClientsLocalStore,
             updateEventsLocalStore: updateEventsLocalStore,
             pendingEventsSync: eventsSync,
@@ -57,14 +49,11 @@ final class PullEventsServiceTests: XCTestCase {
     }
     
     override func tearDown() async throws {
-        stack = nil
         sut = nil
         eventsSync = nil
         generateNotificationService = nil
         updateEventsLocalStore = nil
         userClientsLocalStore = nil
-        try coreDataStackHelper.cleanupDirectory()
-        coreDataStackHelper = nil
     }
     
     func testStartsSync_It_Invokes_Methods() async throws {
