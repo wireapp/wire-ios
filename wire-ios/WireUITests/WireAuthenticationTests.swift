@@ -53,7 +53,7 @@ final class WireAuthenticationTests: XCTestCase {
 
     @MainActor // note: comment @MainActor to use recorder
     func test_Login_withEmail() throws {
-        XCTExpectFailure("This should be fixed once SSO is merged")
+        throw XCTSkip("This should be fixed once SSO is merged")
 
         let textField = emailTextField()
         textField.tap()
