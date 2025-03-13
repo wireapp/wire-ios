@@ -21,19 +21,33 @@ import UIKit
 public extension UIStackView {
 
     static func horizontal(
+        views: [UIView] = [],
         spacing: CGFloat = 0,
         alignment: UIStackView.Alignment = .fill,
         distribution: UIStackView.Distribution = .fill
     ) -> UIStackView {
-        UIStackView.make(spacing: spacing, axis: .horizontal, alignment: alignment, distribution: distribution)
+        UIStackView.make(
+            views: views,
+            spacing: spacing,
+            axis: .horizontal,
+            alignment: alignment,
+            distribution: distribution
+        )
     }
 
     static func vertical(
+        views: [UIView] = [],
         spacing: CGFloat = 0,
         alignment: UIStackView.Alignment = .fill,
         distribution: UIStackView.Distribution = .fill
     ) -> UIStackView {
-        UIStackView.make(spacing: spacing, axis: .vertical, alignment: alignment, distribution: distribution)
+        UIStackView.make(
+            views: views,
+            spacing: spacing,
+            axis: .vertical,
+            alignment: alignment,
+            distribution: distribution
+        )
     }
 
     static func make(

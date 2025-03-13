@@ -147,7 +147,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         
         // then if in settings user allowed to collapse own messages
         guard let selfUserId = userSession.selfUser.remoteIdentifier,
-              PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapse) else {
+              PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages) else {
             return false
         }
         let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message

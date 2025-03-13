@@ -128,11 +128,10 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
 
         stack
             .setTranslatesAutoresizingMaskIntoConstraints(false)
+            .setIsUserInteractionEnabled(false)
             .pin(to: self)
             .heightConstraint(38)
-
-        stack.isUserInteractionEnabled = false
-
+        
         typeIcon.constraintToSquare(sideLength: 16)
     }
 

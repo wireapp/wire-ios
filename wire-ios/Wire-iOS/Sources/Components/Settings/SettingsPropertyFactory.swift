@@ -18,9 +18,9 @@
 
 import avs
 import WireCommonComponents
+import WireFoundation
 import WireSyncEngine
 import WireUtilities
-import WireFoundation
 
 protocol TrackingInterface {
 
@@ -423,7 +423,7 @@ final class SettingsPropertyFactory {
                     try? self?.userSession?.setEncryptionAtRest(enabled: enabled.boolValue, skipMigration: false)
                 }
             )
-            
+
         case .collapseOwnMessages:
             guard let userId = selfUser?.remoteIdentifier else {
                 fatalError()
@@ -432,11 +432,11 @@ final class SettingsPropertyFactory {
             return SettingsBlockProperty(
                 propertyName: propertyName,
                 getAction: { _ in
-                    return SettingsPropertyValue(storage.bool(forKey: .collapse))
+                    SettingsPropertyValue(storage.bool(forKey: .collapseOwnMessages))
                 },
                 setAction: { _, value, _ in
                     guard case let .number(enabled) = value else { return }
-                    storage.set(enabled.boolValue, forKey: .collapse)
+                    storage.set(enabled.boolValue, forKey: .collapseOwnMessages)
                 }
             )
 
@@ -455,5 +455,5 @@ final class SettingsPropertyFactory {
 }
 
 enum CollapseKey: String, DefaultsKey {
-    case collapse
+    case collapseOwnMessages
 }

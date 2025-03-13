@@ -131,7 +131,7 @@ final class ConversationMessageActionController {
         case .collapse:
             guard let selfUserId,
                   let isCollapsed,
-                  PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapse),
+                  PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages),
                   !isCollapsed else {
                 return false
             }
@@ -139,7 +139,7 @@ final class ConversationMessageActionController {
             let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message
                 .isLocation || message.isImage // TODO: long text
 
-            return message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse // TODO: use settings
+            return message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse
         case .present,
              .openQuote,
              .resetSession:

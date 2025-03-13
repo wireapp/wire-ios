@@ -18,16 +18,6 @@
 
 import UIKit
 
-public protocol Anchorable {
-    var leadingAnchor: NSLayoutXAxisAnchor { get }
-    var trailingAnchor: NSLayoutXAxisAnchor { get }
-    var topAnchor: NSLayoutYAxisAnchor { get }
-    var bottomAnchor: NSLayoutYAxisAnchor { get }
-}
-
-extension UIView: Anchorable {}
-extension UILayoutGuide: Anchorable {}
-
 public extension UIView {
 
     /// Fits `self` within a specified container view with optional insets.
@@ -35,7 +25,7 @@ public extension UIView {
     ///   - view: The container view in which to fit `self`.
     ///   - insets: Insets to apply on each side of `self` relative to the container.
     @discardableResult
-    func pin(to view: any Anchorable, insets: UIEdgeInsets = .zero) -> Self {
+    func pin(to view: UIView, insets: UIEdgeInsets = .zero) -> Self {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.left),
@@ -90,6 +80,12 @@ public extension UIView {
         translatesAutoresizingMaskIntoConstraints = value
         return self
     }
+
+    @discardableResult
+    func setIsUserInteractionEnabled(_ value: Bool) -> Self {
+        isUserInteractionEnabled = value
+        return self
+    }
 }
 
 public extension UIView {
@@ -112,38 +108,5 @@ public extension UIView {
         NSLayoutConstraint.activate(constraints)
 
         return view
-    }
-}
-
-public extension UIStackView {
-
-    static func horizontal(
-        views: [UIView] = [],
-        spacing: CGFloat = 0,
-        alignment: UIStackView.Alignment = .fill,
-        distribution: UIStackView.Distribution = .fill
-    ) -> UIStackView {
-        UIStackView.make(
-            views: views,
-            spacing: spacing,
-            axis: .horizontal,
-            alignment: alignment,
-            distribution: distribution
-        )
-    }
-
-    static func vertical(
-        views: [UIView] = [],
-        spacing: CGFloat = 0,
-        alignment: UIStackView.Alignment = .fill,
-        distribution: UIStackView.Distribution = .fill
-    ) -> UIStackView {
-        UIStackView.make(
-            views: views,
-            spacing: spacing,
-            axis: .vertical,
-            alignment: alignment,
-            distribution: distribution
-        )
     }
 }
