@@ -25,6 +25,8 @@ protocol GenerateNotificationDependency: Dependency {
     var contentHandler: (UNNotificationContent) -> Void { get }
     var accountManager: AccountManager { get }
     var selectedAccount: Account { get }
+    var sharedUserDefaults: UserDefaults { get }
+    var userID: UUID { get }
     var messageLocalStore: any MessageLocalStoreProtocol { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
     var userLocalStore: any UserLocalStoreProtocol { get }
@@ -46,6 +48,8 @@ final class GenerateNotificationComponent: Component<GenerateNotificationDepende
             contentHandler: dependency.contentHandler,
             accountManager: dependency.accountManager,
             selectedAccount: dependency.selectedAccount,
+            accountID: dependency.userID,
+            userDefaults: dependency.sharedUserDefaults,
             userLocalStore: dependency.userLocalStore,
             conversationLocalStore: dependency.conversationLocalStore,
             messageLocalStore: dependency.messageLocalStore

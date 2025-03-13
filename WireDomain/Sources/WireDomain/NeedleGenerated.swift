@@ -71,6 +71,12 @@ private class GenerateNotificationDependency56a07c37e817db4ed050Provider: Genera
     var selectedAccount: Account {
         return rootComponent.selectedAccount
     }
+    var sharedUserDefaults: UserDefaults {
+        return verifyUserComponent.sharedUserDefaults
+    }
+    var userID: UUID {
+        return rootComponent.userID
+    }
     var messageLocalStore: any MessageLocalStoreProtocol {
         return pullEventsComponent.messageLocalStore
     }
@@ -82,14 +88,16 @@ private class GenerateNotificationDependency56a07c37e817db4ed050Provider: Genera
     }
     private let pullEventsComponent: PullEventsComponent
     private let rootComponent: RootComponent
-    init(pullEventsComponent: PullEventsComponent, rootComponent: RootComponent) {
+    private let verifyUserComponent: VerifyUserComponent
+    init(pullEventsComponent: PullEventsComponent, rootComponent: RootComponent, verifyUserComponent: VerifyUserComponent) {
         self.pullEventsComponent = pullEventsComponent
         self.rootComponent = rootComponent
+        self.verifyUserComponent = verifyUserComponent
     }
 }
 /// ^->RootComponent->VerifyUserComponent->PullEventsComponent->GenerateNotificationComponent
-private func factoryfc879bce2c4eef2d1ee92a54d0ea1c25b8dabded(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return GenerateNotificationDependency56a07c37e817db4ed050Provider(pullEventsComponent: parent1(component) as! PullEventsComponent, rootComponent: parent3(component) as! RootComponent)
+private func factoryfc879bce2c4eef2d1ee9a7fc6d23d327fda6264f(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return GenerateNotificationDependency56a07c37e817db4ed050Provider(pullEventsComponent: parent1(component) as! PullEventsComponent, rootComponent: parent3(component) as! RootComponent, verifyUserComponent: parent2(component) as! VerifyUserComponent)
 }
 private class VerifyUserDependency1ae953de4ac1a2a84a5dProvider: VerifyUserDependency {
     var userID: UUID {
@@ -131,6 +139,8 @@ extension GenerateNotificationComponent: NeedleFoundation.Registration {
         keyPathToName[\GenerateNotificationDependency.contentHandler] = "contentHandler-(UNNotificationContent) -> Void"
         keyPathToName[\GenerateNotificationDependency.accountManager] = "accountManager-AccountManager"
         keyPathToName[\GenerateNotificationDependency.selectedAccount] = "selectedAccount-Account"
+        keyPathToName[\GenerateNotificationDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
+        keyPathToName[\GenerateNotificationDependency.userID] = "userID-UUID"
         keyPathToName[\GenerateNotificationDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
@@ -174,7 +184,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->VerifyUserComponent->PullEventsComponent", factoryb76115b3e674a8bbffc00e4ca4825856fdf1a57c)
-    registerProviderFactory("^->RootComponent->VerifyUserComponent->PullEventsComponent->GenerateNotificationComponent", factoryfc879bce2c4eef2d1ee92a54d0ea1c25b8dabded)
+    registerProviderFactory("^->RootComponent->VerifyUserComponent->PullEventsComponent->GenerateNotificationComponent", factoryfc879bce2c4eef2d1ee9a7fc6d23d327fda6264f)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->VerifyUserComponent", factoryd5eeee80e5892aa86d18b3a8f24c1d289f2c0f2e)
 }

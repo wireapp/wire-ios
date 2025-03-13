@@ -30,6 +30,8 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
     private struct Context {
         let senderID: UserID
         let conversationID: ConversationID
+        let userID: UUID
+        let userDefaults: UserDefaults
     }
 
     private struct Validator {
@@ -69,6 +71,8 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
 
     init(
         event: ConversationEvent,
+        userID: UUID,
+        userDefaults: UserDefaults,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
@@ -110,7 +114,9 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
 
         self.context = Context(
             senderID: event.senderID,
-            conversationID: event.conversationID
+            conversationID: event.conversationID,
+            userID: userID,
+            userDefaults: userDefaults
         )
     }
 
@@ -251,7 +257,8 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
             calling: calling,
             conversationID: conversationID,
             senderID: senderID,
-            accountID: UUID(),
+            accountID: context.userID,
+            userDefaults: context.userDefaults,
             conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore
         )

@@ -33,6 +33,8 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
     private let contentHandler: (UNNotificationContent) -> Void
     private let accountManager: AccountManager
     private let selectedAccount: Account
+    private let accountID: UUID
+    private let userDefaults: UserDefaults
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
@@ -42,6 +44,8 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
         contentHandler: @escaping (UNNotificationContent) -> Void,
         accountManager: AccountManager,
         selectedAccount: Account,
+        accountID: UUID,
+        userDefaults: UserDefaults,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
@@ -50,6 +54,8 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
         self.contentHandler = contentHandler
         self.accountManager = accountManager
         self.selectedAccount = selectedAccount
+        self.accountID = accountID
+        self.userDefaults = userDefaults
         self.conversationLocalStore = conversationLocalStore
         self.userLocalStore = userLocalStore
         self.messageLocalStore = messageLocalStore
@@ -78,6 +84,8 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
             case let .conversation(conversationEvent):
                 notificationBuilder = await ConversationEventNotificationBuilder(
                     event: conversationEvent,
+                    userID: accountID,
+                    userDefaults: userDefaults,
                     userLocalStore: userLocalStore,
                     conversationLocalStore: conversationLocalStore,
                     messageLocalStore: messageLocalStore
@@ -104,14 +112,19 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
                 case let .text(notificationContent):
                     notifications.append(notificationContent)
                 case let .callKit(callKitContent):
-                    try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
+                    do {
+                        try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
+                    } catch let error {
+                        WireLogger.calling.error(
+                            "failed to wake up main app: \(error.localizedDescription)"
+                        )
+                    }
                 }
 
             } catch {
                 WireLogger.notifications.error(
                     "Failed to generate notification: \(error.localizedDescription)"
                 )
-                notifications.append(.emptyNotification)
             }
         }
 
