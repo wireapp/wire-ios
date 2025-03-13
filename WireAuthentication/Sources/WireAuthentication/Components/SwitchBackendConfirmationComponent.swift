@@ -56,7 +56,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
     // MARK: - View
 
     @MainActor var view: SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(viewModel: viewModel)
+        SwitchBackendConfirmationView(viewModel: viewModel, factory: self)
     }
 
     @MainActor private var viewModel: SwitchBackendConfirmationViewModel {
@@ -66,6 +66,19 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
             email: email,
             environmentType: environmentType,
             backendConfig: backendConfig
+        )
+    }
+
+    // MARK: - Children
+
+    func loginViaSSOComponent(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOComponent {
+        LoginViaSSOComponent(
+            parent: self,
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
         )
     }
 
@@ -115,6 +128,20 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
             authenticationAPI: authenticationAPI,
             linkGenerator: linkGenerator
         )
+    }
+
+}
+
+extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationView.Factory {
+
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOView {
+        loginViaSSOComponent(
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        ).view
     }
 
 }
