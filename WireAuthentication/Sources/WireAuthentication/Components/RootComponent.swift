@@ -97,6 +97,7 @@ class RootComponent: BootstrapComponent {
 //            await SwitchBackendHandler(router: self.router, factory: self).invoke(backendConfigURL)
 //        }
 //    }
+
     // MARK: - Public dependencies
 
     @MainActor public var router: any Router {
