@@ -37,7 +37,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
 
             if isIncomingCall && !wasCallHandleReported {
                 self = .initiatesRinging
-            } else if isEndCall || isAnsweredElsewhere || isRejected {
+            } else if (isEndCall || isAnsweredElsewhere || isRejected) && wasCallHandleReported {
                 self = .terminatesRinging
             } else {
                 self = .unhandled
@@ -85,7 +85,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         conversationID: ConversationID,
         senderID: UserID,
         accountID: UUID,
-        userDefaults: UserDefaults = .standard,
+        userDefaults: UserDefaults,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol
     ) async {
