@@ -41,7 +41,7 @@ package final class LoginViaSSOViewModel: ObservableObject {
         self.router = router
         self.backendEnvironment = backendEnvironment
 
-        cancellable = bridge.inboundEvents.sink { event in
+        self.cancellable = bridge.inboundEvents.sink { event in
             switch event {
             case let .ssoAuthenticationSuccess(userID, cookies):
                 let authenticationResult = AuthenticationResult(

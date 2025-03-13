@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 /// A object that facilitates intermodule communication, both **inbound**
 /// (from outside into this module) and **outbound** (from inside this module
