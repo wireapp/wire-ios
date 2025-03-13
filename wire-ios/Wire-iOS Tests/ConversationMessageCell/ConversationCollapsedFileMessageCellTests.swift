@@ -1,0 +1,70 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import XCTest
+import WireFoundation
+@testable import Wire
+
+final class ConversationCollapsedFileMessageCellTests: ConversationMessageSnapshotTestCase {
+    
+    var message: MockMessage!
+    var mockSelfUser: MockUserType!
+    lazy var collapseOwnMessagesStorage = PrivateUserDefaults<CollapseKey>(
+        userID: userSession.selfUser.remoteIdentifier)
+    
+    override func setUp() {
+        super.setUp()
+        
+        UIColor.setAccentOverride(.red)
+        
+        mockSelfUser = MockUserType.createDefaultSelfUser()
+        message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
+        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+    }
+    
+    override func tearDown() {
+        message = nil
+        mockSelfUser = nil
+        MediaAssetCache.defaultImageCache.cache.removeAllObjects()
+        
+        super.tearDown()
+    }
+    
+    func testUploadedCell_fromThisDevice() {
+        message.backingFileMessageData.transferState = .uploaded
+        message.backingFileMessageData.fileURL = Bundle.main.bundleURL
+        
+        verify(message: message)
+    }
+    
+    func testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
+        message.backingFileMessageData.transferState = .uploaded
+        message.backingFileMessageData.fileURL = Bundle.main.bundleURL
+        collapseOwnMessagesStorage.set(false, forKey: .collapseOwnMessages)
+
+        verify(message: message)
+    }
+    
+    func testUploadedCell_fromOtherUser() {
+        message.senderUser = SwiftMockLoader.mockUsers().first!
+        message.backingFileMessageData.transferState = .uploaded
+        message.backingFileMessageData.fileURL = nil
+        
+        verify(message: message)
+    }
+}

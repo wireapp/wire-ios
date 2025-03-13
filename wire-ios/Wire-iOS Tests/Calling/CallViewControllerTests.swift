@@ -19,24 +19,6 @@
 import XCTest
 @testable import Wire
 
-extension XCTestCase {
-    func verifyDeallocation<T: AnyObject>(of instanceGenerator: () -> (T)) {
-        weak var weakInstance: T?
-        var instance: T?
-
-        autoreleasepool {
-            instance = instanceGenerator()
-            // then
-            weakInstance = instance
-            XCTAssertNotNil(weakInstance)
-            // when
-            instance = nil
-        }
-
-        XCTAssertNil(instance)
-        XCTAssertNil(weakInstance)
-    }
-}
 
 final class CallViewControllerTests: ZMSnapshotTestCase {
 
