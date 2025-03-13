@@ -136,7 +136,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
 
 }
 
-extension LoginViaEmailOnPremComponent: LoginViaEmailOnPremViewModel.Factory {
+extension LoginViaEmailOnPremComponent: LoginViaEmailViewModel.Factory {
 
     func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
         let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
