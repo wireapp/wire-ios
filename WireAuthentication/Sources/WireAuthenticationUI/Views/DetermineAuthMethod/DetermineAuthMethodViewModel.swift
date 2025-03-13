@@ -43,7 +43,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let factory: any Factory
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
+    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    package let backendConfig: BackendConfig
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -54,10 +55,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         !isValidEmailOrSSOCode()
     }
 
+    var isOnPremiseBackend: Bool {
+        environmentType != .production
+    }
+
     package init(
         router: any Router,
         factory: any Factory,
         environmentType: BackendEnvironmentType,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         backendConfig: BackendConfig,
         emailOrSSOCode: String = "",
         isLoading: Bool = false
@@ -65,6 +71,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.router = router
         self.factory = factory
         self.environmentType = environmentType
+        self.backendMetadata = backendMetadata
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading

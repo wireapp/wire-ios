@@ -98,8 +98,12 @@ package struct RootView: View {
                         ssoURL: ssoURL,
                         backendEnvironment: backendEnvironment
                     )
-                case let .switchBackend(backendConfig):
-                    factory.switchBackendView(email: nil, backendConfig: backendConfig)
+                case let .switchBackend(backendConfig, environmentType):
+                    factory.switchBackendView(
+                        email: nil,
+                        environmentType: environmentType,
+                        backendConfig: backendConfig
+                    )
                 }
             }
     }
@@ -140,7 +144,7 @@ package struct RootView: View {
             url: URL,
             backendEnvironment: WireAuthenticationBackendEnvironment
         )
-        case switchBackend(backendConfig: BackendConfig)
+        case switchBackend(backendConfig: BackendConfig, environmentType: BackendEnvironmentType)
     }
 
 }

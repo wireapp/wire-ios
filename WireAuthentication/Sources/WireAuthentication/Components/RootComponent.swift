@@ -86,7 +86,8 @@ class RootComponent: BootstrapComponent {
         shared {
             WireAuthenticationBridge(
                 onFlowCompletion: onFlowCompletion,
-                onRegisterAccount: onRegisterAccount
+                onRegisterAccount: onRegisterAccount,
+                onSwitchBackend: { _ in }
             )
         }
     }
@@ -108,11 +109,7 @@ class RootComponent: BootstrapComponent {
         backendConfig: BackendConfig?,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> DetermineAuthMethodComponent {
-        DetermineAuthMethodComponent(
-            parent: self,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
-        )
+        DetermineAuthMethodComponent(parent: self)
     }
 
     @MainActor
@@ -155,11 +152,13 @@ class RootComponent: BootstrapComponent {
 
     func switchBackendConfirmationComponent(
         email: String?,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationComponent {
         SwitchBackendConfirmationComponent(
             parent: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
         )
     }
@@ -215,9 +214,14 @@ extension RootComponent: RootView.Factory {
         ).view
     }
 
-    func switchBackendView(email: String?, backendConfig: BackendConfig) -> SwitchBackendConfirmationView {
+    func switchBackendView(
+        email: String?,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig
+    ) -> SwitchBackendConfirmationView {
         switchBackendConfirmationComponent(
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
         ).view
     }

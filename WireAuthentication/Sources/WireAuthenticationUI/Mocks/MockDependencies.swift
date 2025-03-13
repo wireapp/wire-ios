@@ -82,6 +82,7 @@ final class MockDependencies {
             router: rootViewModel,
             factory: self,
             environmentType: environmentType,
+            backendMetadata: nil,
             backendConfig: backendConfig,
             emailOrSSOCode: emailOrSSOCode,
             isLoading: isLoading
@@ -152,6 +153,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             factory: self,
             environmentType: environmentType,
+            backendMetadata: nil,
             backendConfig: backendConfig
         )
     }

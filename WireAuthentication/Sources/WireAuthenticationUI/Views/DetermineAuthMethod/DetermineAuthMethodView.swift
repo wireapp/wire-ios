@@ -53,11 +53,11 @@ package struct DetermineAuthMethodView: View {
                 HStack {
                     Spacer()
                         .frame(maxWidth: .infinity)
-                    if let backendConfig = viewModel.backendConfig {
+                    if viewModel.isOnPremiseBackend {
                         OnPremHeaderView(
                             viewModel: OnPremHeaderViewModel(
-                                backendName: backendConfig.title,
-                                backendURL: backendConfig.endpoints.backendURL
+                                backendName: viewModel.backendConfig.title,
+                                backendURL: viewModel.backendConfig.endpoints.backendURL
                             )
                         )
                         .foregroundColor(ColorTheme.Backgrounds.onBackground.color)

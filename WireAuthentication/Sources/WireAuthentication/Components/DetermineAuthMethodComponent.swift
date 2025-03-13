@@ -36,15 +36,8 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 }
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
-
-    @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
-            router: dependency.router,
-            factory: self,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig
-        )
-    }
+//    let backendConfig: backendConfig,
+//    let backendMetadata: backendMetadata
 
     // MARK: - View
 
@@ -59,8 +52,9 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            environmentType: dependency.environmentType,
+            backendMetadata: nil,
+            backendConfig: dependency.backendConfig
         )
     }
 
