@@ -99,7 +99,7 @@ package struct DetermineAuthMethodView: View {
             message: { Text($0.message) },
             actions: { _ in
                 Button {
-                    viewModel.dismiss()
+                    viewModel.onAlertDismiss()
                 } label: {
                     Text(L10n.Authentication.Error.confirm)
                 }
