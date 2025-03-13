@@ -30,6 +30,7 @@ package final class NoHistoryViewModel: ObservableObject {
         case cloudAccountAlreadyRegistered
     }
 
+    @Published var isLoading = false
     @Published var alert: Alert?
 
     private let howToChangeEmailURL: URL
@@ -52,6 +53,11 @@ package final class NoHistoryViewModel: ObservableObject {
 
     func confirm() {
         onFlowCompletion()
+
+        // For now, the flow will continue outside this module and operations
+        // may happen while we still see this view. Show the loading indicator
+        // so the user will know something is happening.
+        isLoading = true
     }
 
     func onAppear() {

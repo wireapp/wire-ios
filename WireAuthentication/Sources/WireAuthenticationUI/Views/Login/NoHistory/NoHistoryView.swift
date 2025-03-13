@@ -51,9 +51,22 @@ package struct NoHistoryView: View {
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Button(L10n.Authentication.NoHistory.confirm, action: viewModel.confirm)
-                .wireButtonStyle(.primary)
-                .bold()
+
+            Button {
+                viewModel.confirm()
+            } label: {
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+
+                    Text(L10n.Authentication.NoHistory.confirm)
+                        .lineLimit(nil)
+                }
+            }
+            .wireButtonStyle(.primary)
+            .bold()
+            .disabled(viewModel.isLoading)
         }
         .alert(
             item: $viewModel.alert,
