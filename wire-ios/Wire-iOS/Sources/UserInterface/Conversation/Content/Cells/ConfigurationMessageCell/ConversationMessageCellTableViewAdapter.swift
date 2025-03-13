@@ -162,19 +162,8 @@ final class ConversationMessageCellTableViewAdapter<
     private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
 
-        if
-            let cellView = cellView as? ConversationStackMessageContentView,
-            let cellDescription = cellDescription as? StackViewCellDescription {
-            for (index, cell) in cellView.conversationMessageCells.enumerated() {
-                let location = gestureRecognizer.location(in: cell)
-                if cell.bounds.contains(location) {
-                    let stackedCellDescription = cellDescription.cellDescriptions[index]
-                    if stackedCellDescription.supportsActions {
-                        stackedCellDescription.actionController?.performSingleTapAction()
-                    }
-                }
-            }
-
+        if let actionController = actionController(for: gestureRecognizer.location(in:)) {
+            actionController.performSingleTapAction()
         } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
@@ -186,22 +175,28 @@ final class ConversationMessageCellTableViewAdapter<
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
 
+        if let actionController = actionController(for: gestureRecognizer.location(in:)) {
+            actionController.performDoubleTapAction()
+        } else if cellDescription?.supportsActions == true {
+            cellDescription?.actionController?.performDoubleTapAction()
+        }
+    }
+
+    private func actionController(for locationInCell: (UIView?) -> CGPoint) -> ConversationMessageActionController? {
         if
             let cellView = cellView as? ConversationStackMessageContentView,
             let cellDescription = cellDescription as? StackViewCellDescription {
             for (index, cell) in cellView.conversationMessageCells.enumerated() {
-                let location = gestureRecognizer.location(in: cell)
+                let location = locationInCell(cell)
                 if cell.bounds.contains(location) {
                     let stackedCellDescription = cellDescription.cellDescriptions[index]
                     if stackedCellDescription.supportsActions {
-                        stackedCellDescription.actionController?.performDoubleTapAction()
+                        return stackedCellDescription.actionController
                     }
                 }
             }
-
-        } else if cellDescription?.supportsActions == true {
-            cellDescription?.actionController?.performDoubleTapAction()
         }
+        return nil
     }
 
     // MARK: - SelectableView
@@ -240,7 +235,11 @@ final class ConversationMessageCellTableViewAdapter<
 
         // We fail the single tap gesture recognizer if there's no single tap action to perform, which gives
         // other gesture recognizers the opportunity to fire.
-        return cellDescription?.actionController?.singleTapAction != nil
+        if let actionController = actionController(for: gestureRecognizer.location(in:)) {
+            return actionController.singleTapAction != nil
+        } else {
+            return cellDescription?.actionController?.singleTapAction != nil
+        }
     }
 
     override func prepareForReuse() {
