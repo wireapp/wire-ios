@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireFoundation
+import WireSyncEngine
 
 struct ConversationMessageContext: Equatable {
     var isSameSenderAsPrevious: Bool = false
@@ -139,12 +139,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func isCollapsedInitialValue() -> Bool {
-        
+
         // cases when isCollapsed should be true by default
         if isMessageWithCollapsedByDefault() {
             return true
         }
-        
+
         // then if in settings user allowed to collapse own messages
         guard let selfUserId = userSession.selfUser.remoteIdentifier,
               PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages) else {
@@ -454,20 +454,20 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         return message.deliveryState == .failedToSend || message.isSentBySelfUser
     }
-    
+
     private func isMessageWithCollapsedByDefault() -> Bool {
-        message.isSystem || message.failedToSendUsers.count > 0
+        message.isSystem || !message.failedToSendUsers.isEmpty
     }
 
     func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
         guard message.senderUser != nil else {
             return false
         }
-        
+
         if !isMessageWithCollapsedByDefault() && isCollapsed {
             return false
         }
-        
+
         if message.isKnock || message.isSystem {
             return false
         }
@@ -496,7 +496,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if context.isSameSenderAsPrevious, !context.isTimestampInSameMinuteAsPreviousMessage {
             return true
         }
-        
+
         return false
     }
 

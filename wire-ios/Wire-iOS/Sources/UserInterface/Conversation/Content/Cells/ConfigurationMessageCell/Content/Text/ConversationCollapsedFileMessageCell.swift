@@ -131,7 +131,7 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
             .setIsUserInteractionEnabled(false)
             .pin(to: self)
             .heightConstraint(38)
-        
+
         typeIcon.constraintToSquare(sideLength: 16)
     }
 

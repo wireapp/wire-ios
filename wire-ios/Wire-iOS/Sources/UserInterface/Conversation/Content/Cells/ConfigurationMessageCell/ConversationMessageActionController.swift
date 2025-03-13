@@ -30,7 +30,7 @@ final class ConversationMessageActionController {
 
     let message: ZMConversationMessage
     let context: Context
-    
+
     // weather message collapsed or normal\expanded
     // nil if not applicable
     var isCollapsed: Bool?
