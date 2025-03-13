@@ -17,25 +17,34 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
+public struct WireAuthenticationBackendEnvironment: Sendable, Equatable, Hashable {
 
-    func invoke(at configURL: URL) async throws -> BackendConfig {
-        BackendConfig(
-            title: "backend name",
-            endpoints: Endpoints(
-                backendURL: URL(string: "example")!,
-                backendWSURL: URL(string: "example")!,
-                blackListURL: URL(string: "example")!,
-                teamsURL: URL(string: "example")!,
-                accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!,
-                countlyURL: URL(string: "example")!
-            ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        )
+    /// The name of the backend.
+
+    public let title: String
+
+    /// An identifier for the type of backend.
+
+    public let environmentType: BackendEnvironmentType
+
+    /// The data needed to connect to the backend.
+
+    public let config: BackendConfig
+
+    /// Information about the connected backend.
+
+    public let metadata: BackendMetadata
+
+    public init(
+        environmentType: BackendEnvironmentType,
+        config: BackendConfig,
+        metadata: BackendMetadata
+    ) {
+        self.title = config.title
+        self.environmentType = environmentType
+        self.config = config
+        self.metadata = metadata
     }
 
 }

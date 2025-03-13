@@ -31,6 +31,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     private let router: any Router
     private let factory: any Factory
     private let passwordValidator: any PasswordValidator
+    private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
 
@@ -43,6 +44,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         passwordValidator: any PasswordValidator,
@@ -53,6 +55,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.backendMetadata = backendMetadata
     }
@@ -111,10 +114,28 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             fatalError("error: \(error)")
         }
 
-        router.navigate(to: RootView.ModalDestination.noHistory(
+        let emailCredentials = EmailCredentials(
+            email: email,
+            password: password,
+            verificationCode: nil
+        )
+
+        let backendEnvironment = WireAuthenticationBackendEnvironment(
+            environmentType: environmentType,
+            config: backendConfig,
+            metadata: backendMetadata
+        )
+
+        let authenticationResult = AuthenticationResult(
             userID: accessToken.userID,
             cookies: cookies,
             accessToken: accessToken,
+            emailCredentials: emailCredentials,
+            backendEnvironment: backendEnvironment
+        )
+
+        router.presentSheet(RootView.ModalDestination.noHistory(
+            authenticationResult: authenticationResult,
             didDetectDomainConflict: false
         ))
     }
