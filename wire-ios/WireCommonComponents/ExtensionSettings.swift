@@ -23,7 +23,6 @@ private enum ExtensionSettingsKey: String, CaseIterable {
 
     case disableAnalyticsSharing
     case disableLinkPreviews
-    case collapseOwnMessages
 
     private var defaultValue: Any? {
         switch self {
@@ -31,8 +30,6 @@ private enum ExtensionSettingsKey: String, CaseIterable {
             // No default value because the user needs to decide.
             nil
         case .disableLinkPreviews:
-            false
-        case .collapseOwnMessages:
             false
         }
     }
@@ -74,10 +71,5 @@ public final class ExtensionSettings: NSObject {
     public var disableLinkPreviews: Bool {
         get { defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
-    }
-
-    public var collapseOwnMessages: Bool {
-        get { defaults.bool(forKey: ExtensionSettingsKey.collapseOwnMessages.rawValue) }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.collapseOwnMessages.rawValue) }
     }
 }
