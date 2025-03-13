@@ -34,10 +34,6 @@ struct GuestsAllowedContentView: ConversationCellContentViewProtocol {
         .frame(height: 11)
     }
 
-    init(model: GuestsAllowedModel) {
-        self.model = model
-    }
-
 }
 
 // MARK: - Previews

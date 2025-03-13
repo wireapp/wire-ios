@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: move ConversationTitleView.swift and ConversationTitleSource.swift into subdirectory
-
 import SwiftUI
 import WireAccountImageUI
 import WireDesign

@@ -31,12 +31,6 @@ func ConversationCellPreviews(
     let dataSource = TableViewDataSource(tableViewController, models)
     tableViewController.dataSource = dataSource
     tableViewController.delegate = TableViewDelegate()
-
-//    let backgroundView = UIView()
-//    backgroundView.backgroundColor = .green
-//    tableViewController.tableView!.backgroundView = backgroundView
-//    tableViewController.tableView!.rowHeight
-    tableViewController.tableView!.backgroundColor = .red
     tableViewController.tableView!.separatorStyle = .none
 
     var snapshot = dataSource.snapshot()
@@ -65,18 +59,7 @@ private func TableViewDataSource(
 }
 private enum TableViewSection { case single }
 
-private final class TableViewDelegate: NSObject, UITableViewDelegate {
-
-//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-//        //UITableView.automaticDimension
-//        10
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        //10
-//        UITableView.automaticDimension
-//    }
-}
+private final class TableViewDelegate: NSObject, UITableViewDelegate {}
 
 private extension UITableViewController {
 
