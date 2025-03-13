@@ -50,7 +50,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
                   !isConversationMuted else {
                 return false
             }
-            
+
             if let timeStamp = eventTimeStamp,
                let lastRead = lastReadTimestamp, lastRead.compare(timeStamp) != .orderedAscending {
                 // don't show notifications that have already been read

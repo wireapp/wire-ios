@@ -31,22 +31,22 @@ final class GenerateNotificationServiceTests: XCTestCase {
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var didCallNotificationContentHandler = false
-    
+
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
         messageLocalStore = MockMessageLocalStoreProtocol()
-        
+
         let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let url = applicationSupport.appendingPathComponent(
             "GenerateNotificationServiceTests"
         )
-        
+
         let asyncStream = AsyncStream<[UpdateEvent]> {
             $0.yield([])
             $0.finish()
         }
-        
+
         sut = GenerateNotificationService(
             eventsStream: asyncStream,
             contentHandler: { [self] _ in didCallNotificationContentHandler = true },
@@ -59,22 +59,20 @@ final class GenerateNotificationServiceTests: XCTestCase {
             messageLocalStore: messageLocalStore
         )
     }
-    
+
     override func tearDown() async throws {
         sut = nil
         conversationLocalStore = nil
         userLocalStore = nil
         messageLocalStore = nil
     }
-    
+
     func testProcess_It_Invokes_Notification_Content_Handler() async throws {
         // When
         await sut.process()
-        
+
         // Then
         XCTAssertEqual(didCallNotificationContentHandler, true)
     }
-    
+
 }
-
-

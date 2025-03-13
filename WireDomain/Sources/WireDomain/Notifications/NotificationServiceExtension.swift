@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import NeedleFoundation
 import UserNotifications
 import WireDataModel
 import WireLogging
-import NeedleFoundation
 
 /// Receives push notifications, process the pending events through the `NotificationSession` to generate a notification
 /// content based on these events.

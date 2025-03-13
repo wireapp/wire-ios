@@ -35,9 +35,9 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             let isAnsweredElsewhere = isStartCall && callContent.resp
             let isRejected = callContent.type == "REJECT"
 
-            if isIncomingCall && !wasCallHandleReported {
+            if isIncomingCall, !wasCallHandleReported {
                 self = .initiatesRinging
-            } else if (isEndCall || isAnsweredElsewhere || isRejected) && wasCallHandleReported {
+            } else if isEndCall || isAnsweredElsewhere || isRejected, wasCallHandleReported {
                 self = .terminatesRinging
             } else {
                 self = .unhandled

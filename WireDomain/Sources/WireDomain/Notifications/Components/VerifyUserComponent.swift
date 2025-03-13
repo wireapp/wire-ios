@@ -47,7 +47,7 @@ final class VerifyUserComponent: Component<VerifyUserDependency> {
 }
 
 extension VerifyUserComponent {
-    
+
     public var sharedUserDefaults: UserDefaults {
         UserDefaults(suiteName: dependency.applicationIdentifier)!
     }

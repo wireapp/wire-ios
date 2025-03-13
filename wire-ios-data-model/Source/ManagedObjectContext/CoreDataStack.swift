@@ -107,7 +107,7 @@ public extension NSURL {
 public protocol CoreDataStackProtocol: ContextProvider {
     var storesExists: Bool { get }
     var needsMigration: Bool { get }
-    
+
     func loadStores(completionHandler: @escaping (Error?) -> Void)
 }
 

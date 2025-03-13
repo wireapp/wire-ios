@@ -164,7 +164,8 @@ struct CallNotificationBuilder: NotificationBuilder {
 
         let body = if context.isGroupConversation, let senderName {
             String.formated(
-                key: isVideo ? "push.notification.body.videoCallFromSender" : "push.notification.body.audioCallFromSender", bundle: .module, senderName
+                key: isVideo ? "push.notification.body.videoCallFromSender" :
+                    "push.notification.body.audioCallFromSender", bundle: .module, senderName
             )
         } else {
             String.localized(

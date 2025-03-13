@@ -76,7 +76,7 @@ struct VerifyUserSession {
         guard hasExpirationDate else {
             throw Failure.userUnauthenticated
         }
-        
+
         try await completion()
     }
 
@@ -87,7 +87,7 @@ struct VerifyUserSession {
         eventID: UUID
     ) async throws {
         try await setupCoreData()
-        
+
         let userLocalStore = pullEventsServiceProvider.userLocalStore
         let selfUserInfo = await userLocalStore.selfUserInfo()
 
@@ -104,7 +104,7 @@ struct VerifyUserSession {
             newEventID: eventID
         )
     }
-    
+
     /// Setup core data stores and its dependencies.
     private func setupCoreData() async throws {
         guard coreData.storesExists else {
@@ -114,8 +114,8 @@ struct VerifyUserSession {
         guard !coreData.needsMigration  else {
             throw Failure.coreDataMigrationRequired
         }
-        
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) -> Void in
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             coreData.loadStores { error in
                 if error != nil {
                     continuation.resume(throwing: Failure.unableToLoadStores)

@@ -48,13 +48,23 @@ enum NotificationBody {
             }
         case let .textWithMention(content, senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.textWithMentionFromSender", bundle: .module, senderName, content)
+                String.formated(
+                    key: "push.notification.body.textWithMentionFromSender",
+                    bundle: .module,
+                    senderName,
+                    content
+                )
             } else {
                 String.formated(key: "push.notification.body.textWithMention", bundle: .module, content)
             }
         case let .textWithReply(content, senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.textWithReplyFromSender", bundle: .module, senderName, content)
+                String.formated(
+                    key: "push.notification.body.textWithReplyFromSender",
+                    bundle: .module,
+                    senderName,
+                    content
+                )
             } else {
                 String.formated(key: "push.notification.body.textWithReply", bundle: .module, content)
             }

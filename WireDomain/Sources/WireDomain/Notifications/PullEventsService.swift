@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import Foundation
+import WireAPI
 import WireLogging
 
 // sourcery: AutoMockable
@@ -54,22 +54,22 @@ struct PullEventsService: PullEventsServiceProtocol {
     func startSync(
         newEventID id: UUID
     ) async throws {
-        
+
         let lastEventID = updateEventsLocalStore.lastEventID()
-        
+
         if lastEventID == nil {
             updateEventsLocalStore.storeLastEventID(id: id)
         }
-        
+
         do {
             let decodedEventsStream = try await pendingEventsSync.pull()
-            
+
             let generateNotificationService = generateNotificationProvider.generateNotificationService(
                 eventsStream: decodedEventsStream
             )
-            
+
             await generateNotificationService.process()
-            
+
         } catch {
             throw Failure.unableToPullPendingEvents(error)
         }

@@ -29,17 +29,16 @@ final class PullEventsServiceTests: XCTestCase {
     private var eventsSync: MockPullPendingUpdateEventsSyncProtocol!
     private var generateNotificationService: MockGenerateNotificationServiceProtocol!
 
-    
     override func setUp() async throws {
         updateEventsLocalStore = MockUpdateEventsLocalStoreProtocol()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
         eventsSync = MockPullPendingUpdateEventsSyncProtocol()
         generateNotificationService = MockGenerateNotificationServiceProtocol()
-        
+
         let generateNotificationProvider = MockenerateNotificationProvider(
             mockGenerateNotificationService: generateNotificationService
         )
-        
+
         sut = PullEventsService(
             userClientsLocalStore: userClientsLocalStore,
             updateEventsLocalStore: updateEventsLocalStore,
@@ -47,7 +46,7 @@ final class PullEventsServiceTests: XCTestCase {
             generateNotificationProvider: generateNotificationProvider
         )
     }
-    
+
     override func tearDown() async throws {
         sut = nil
         eventsSync = nil
@@ -55,9 +54,9 @@ final class PullEventsServiceTests: XCTestCase {
         updateEventsLocalStore = nil
         userClientsLocalStore = nil
     }
-    
+
     func testStartsSync_It_Invokes_Methods() async throws {
-        
+
         // Mock
         updateEventsLocalStore.lastEventID_MockValue = .some(nil)
         updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
@@ -65,12 +64,12 @@ final class PullEventsServiceTests: XCTestCase {
             []
         }
         generateNotificationService.process_MockMethod = {}
-        
+
         // When
         try await sut.startSync(
             newEventID: Scaffolding.newEventID
         )
-        
+
         // Then
         XCTAssertEqual(updateEventsLocalStore.lastEventID_Invocations.count, 1)
         XCTAssertEqual(updateEventsLocalStore.lastEventID_Invocations.count, 1)
@@ -78,44 +77,42 @@ final class PullEventsServiceTests: XCTestCase {
         XCTAssertEqual(eventsSync.pull_Invocations.count, 1)
         XCTAssertEqual(generateNotificationService.process_Invocations.count, 1)
     }
-    
+
     func testStartsSync_It_Throws_Error() async throws {
         // Mock
-        
+
         enum MockError: Error {
             case someError
         }
-        
+
         updateEventsLocalStore.lastEventID_MockValue = .some(nil)
         updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
         eventsSync.pull_MockError = MockError.someError
         generateNotificationService.process_MockMethod = {}
-        
+
         do {
             // When
             try await sut.startSync(
                 newEventID: Scaffolding.newEventID
             )
-            
+
         } catch {
             XCTAssert(error is PullEventsService.Failure)
         }
     }
-    
+
     struct MockenerateNotificationProvider: GenerateNotificationProvider {
         let mockGenerateNotificationService: MockGenerateNotificationServiceProtocol
-        
+
         func generateNotificationService(
             eventsStream: AsyncStream<[WireAPI.UpdateEvent]>
         ) -> WireDomain.GenerateNotificationServiceProtocol {
             mockGenerateNotificationService
         }
     }
-    
+
     private enum Scaffolding {
         static let newEventID = UUID.mockID2
     }
-    
+
 }
-
-

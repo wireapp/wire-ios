@@ -114,7 +114,7 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
                 case let .callKit(callKitContent):
                     do {
                         try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
-                    } catch let error {
+                    } catch {
                         WireLogger.calling.error(
                             "failed to wake up main app: \(error.localizedDescription)"
                         )

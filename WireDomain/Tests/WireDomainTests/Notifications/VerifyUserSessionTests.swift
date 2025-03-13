@@ -31,25 +31,25 @@ final class VerifyUserSessionTests: XCTestCase {
     private var pullEventsService: MockPullEventsServiceProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var stack: MockCoreDataStackProtocol!
-    
+
     override func setUp() async throws {
         stack = MockCoreDataStackProtocol()
         cookieStorage = MockCookieStorageProtocol()
         pullEventsService = MockPullEventsServiceProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
-        
+
         let mockPullEventsServiceProvider = MockPullEventsServiceProvider(
             pullEventsService: pullEventsService,
             mockUserLocalStore: userLocalStore
         )
-        
+
         sut = VerifyUserSession(
             pullEventsServiceProvider: mockPullEventsServiceProvider,
             cookieStorage: cookieStorage,
             coreData: stack
         )
     }
-    
+
     override func tearDown() async throws {
         sut = nil
         cookieStorage = nil
@@ -57,38 +57,38 @@ final class VerifyUserSessionTests: XCTestCase {
         stack = nil
         userLocalStore = nil
     }
-    
+
     func testVerify_It_Invokes_Methods_And_Call_Completion_Block() async throws {
-        
+
         // Mock
-        
+
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
         cookieStorage.fetchCookies_MockValue = [validCookie]
-              
+
         var completionCalledCount = 0
-        
+
         let completion: () async throws -> Void = {
             completionCalledCount += 1
         }
-        
+
         // When
         try await sut.verify(
             userID: Scaffolding.userID,
             then: completion
         )
-        
+
         // Then
         XCTAssertEqual(completionCalledCount, 1)
         XCTAssertEqual(cookieStorage.fetchCookies_Invocations.count, 1)
-        
+
     }
-    
+
     func testVerify_It_Throws_User_Unauthenticated_Error() async throws {
-        
+
         // Mock
-        
+
         cookieStorage.fetchCookies_MockValue = [.init()]
-        
+
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSession.Failure.userUnauthenticated) { [self] in
             // When
@@ -97,9 +97,9 @@ final class VerifyUserSessionTests: XCTestCase {
                 then: {}
             )
         }
-        
+
     }
-    
+
     func testStartSyncingEvents_It_Invokes_Methods() async throws {
         // Mock
         stack.storesExists = true
@@ -107,68 +107,68 @@ final class VerifyUserSessionTests: XCTestCase {
         stack.loadStoresCompletionHandler_MockMethod = { $0(nil) }
         userLocalStore.selfUserInfo_MockValue = (UUID.mockID1, UUID.mockID1.uuidString)
         pullEventsService.startSyncNewEventID_MockMethod = { _ in }
-        
+
         // When
         try await sut.startSyncingEvents(eventID: .mockID1)
-        
+
         // Then
         XCTAssertEqual(pullEventsService.startSyncNewEventID_Invocations.count, 1)
     }
-    
+
     func testStartSyncingEvents_It_Throws_Missing_User_Client_Error() async throws {
         // Mock
         stack.storesExists = true
         stack.needsMigration = false
         stack.loadStoresCompletionHandler_MockMethod = { $0(nil) }
         userLocalStore.selfUserInfo_MockValue = (UUID.mockID1, nil)
-        
+
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSession.Failure.missingUserClient) { [self] in
             // When
             try await sut.startSyncingEvents(eventID: .mockID1)
         }
     }
-    
+
     func testStartSyncingEvents_It_Throws_Core_Data_Missing_Shared_Container() async throws {
         // Mock
         stack.storesExists = false
-        
+
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSession.Failure.coreDataMissingSharedContainer) { [self] in
             // When
             try await sut.startSyncingEvents(eventID: .mockID1)
         }
     }
-    
+
     func testStartSyncingEvents_It_Throws_Core_Data_Migration_Required() async throws {
         // Mock
         stack.storesExists = true
         stack.needsMigration = true
-        
+
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSession.Failure.coreDataMigrationRequired) { [self] in
             // When
             try await sut.startSyncingEvents(eventID: .mockID1)
         }
     }
-    
+
     private struct MockPullEventsServiceProvider: PullEventsServiceProvider {
         let pullEventsService: MockPullEventsServiceProtocol
         let mockUserLocalStore: MockUserLocalStoreProtocol
-        
+
         func pullEventsService(
             selfUserID: UUID,
             selfClientID: String
         ) async -> any WireDomain.PullEventsServiceProtocol {
             pullEventsService
         }
-        
+
         var userLocalStore: any WireDomain.UserLocalStoreProtocol {
             mockUserLocalStore
         }
-        
+
     }
-    
+
     private enum Scaffolding {
         static let userID = UUID.mockID1
         static let validCookie = HTTPCookie(properties: [
@@ -179,7 +179,5 @@ final class VerifyUserSessionTests: XCTestCase {
             .expires: Date.distantFuture
         ])
     }
-    
+
 }
-
-

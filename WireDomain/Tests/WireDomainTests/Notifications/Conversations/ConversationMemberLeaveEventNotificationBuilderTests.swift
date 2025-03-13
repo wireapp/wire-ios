@@ -217,7 +217,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)
         XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! String, UUID.mockID3.uuidString)
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! String, UUID.mockID2.uuidString)
-        
+
     }
 
     private func setupMock(isGroup: Bool, isTeam: Bool) async {

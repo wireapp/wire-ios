@@ -18,10 +18,10 @@
 
 import Foundation
 import UserNotifications
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireTransport
-import WireDomain
 
 struct PushTokenMetadata {
     let isSandbox: Bool
@@ -190,7 +190,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         case CallNotificationAction.accept.rawValue:
             acceptCall(with: userInfo, completionHandler: completionHandler)
         case ConversationNotificationAction.mute.rawValue,
-            NotificationActionIdentifier.muteConversationIdentifier:
+             NotificationActionIdentifier.muteConversationIdentifier:
             muteConversation(with: userInfo, completionHandler: completionHandler)
         case ConversationNotificationAction.like.rawValue:
             likeMessage(with: userInfo, completionHandler: completionHandler)
@@ -198,7 +198,8 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
             if let textInput = userText {
                 reply(with: userInfo, message: textInput, completionHandler: completionHandler)
             }
-        case ConversationNotificationAction.connect.rawValue, NotificationActionIdentifier.acceptConnectionRequestIdentifier:
+        case ConversationNotificationAction.connect.rawValue,
+             NotificationActionIdentifier.acceptConnectionRequestIdentifier:
             acceptConnectionRequest(with: userInfo, completionHandler: completionHandler)
         case NotificationActionIdentifier.callbackIdentifier:
             callback(with: userInfo, completionHandler: completionHandler)
