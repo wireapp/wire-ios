@@ -18,6 +18,13 @@
 
 import UserNotifications
 
+public enum NotificationActionIdentifier {
+    public static let muteConversationIdentifier = "muteConversationAction"
+    public static let ignoreCallIdentifier = "ignoreCallAction"
+    public static let startCallIdentifier = "startCallAction"
+    public static let acceptConnectionRequestIdentifier = "acceptConnectionRequestAction"
+}
+
 struct NotificationAction {
 
     /// The identifier of the action.
@@ -39,7 +46,7 @@ struct NotificationAction {
 extension NotificationAction {
 
     static let muteConversation = NotificationAction(
-        identifier: "muteConversationAction",
+        identifier: NotificationActionIdentifier.muteConversationIdentifier,
         title: "conversation.mute",
         isDestructive: false,
         opensApplication: false,
@@ -47,7 +54,7 @@ extension NotificationAction {
     )
 
     static let ignoreCall = NotificationAction(
-        identifier: "ignoreCallAction",
+        identifier: NotificationActionIdentifier.ignoreCallIdentifier,
         title: "call.ignore",
         isDestructive: true,
         opensApplication: false,
@@ -55,15 +62,15 @@ extension NotificationAction {
     )
 
     static let startCall = NotificationAction(
-        identifier: "startCallAction",
-        title: "call.callback",
+        identifier: NotificationActionIdentifier.startCallIdentifier,
+        title: "call.accept",
         isDestructive: false,
         opensApplication: true,
         requiresAuthentication: false
     )
 
     static let acceptConnectionRequest = NotificationAction(
-        identifier: "acceptConnectionRequestAction",
+        identifier: NotificationActionIdentifier.acceptConnectionRequestIdentifier,
         title: "connection.accept",
         isDestructive: false,
         opensApplication: false,
