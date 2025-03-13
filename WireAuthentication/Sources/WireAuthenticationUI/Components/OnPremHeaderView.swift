@@ -61,17 +61,20 @@ package struct OnPremHeaderView: View {
 }
 
 #Preview {
-    OnPremHeaderView(backendConfig: BackendConfig(
-        title: "<backend name>",
-        endpoints: Endpoints(
-            backendURL: URL(string: "example")!,
-            backendWSURL: URL(string: "example")!,
-            blackListURL: URL(string: "example")!,
-            teamsURL: URL(string: "example")!,
-            accountsURL: URL(string: "example")!,
-            websiteURL: URL(string: "example")!,
-            countlyURL: nil),
-        proxySettings: nil,
-        pinnedKeys: nil)
+    OnPremHeaderView(
+        backendConfig: BackendConfig(
+            title: "<backend name>",
+            endpoints: Endpoints(
+                backendURL: URL(string: "example")!,
+                backendWSURL: URL(string: "example")!,
+                blackListURL: URL(string: "example")!,
+                teamsURL: URL(string: "example")!,
+                accountsURL: URL(string: "example")!,
+                websiteURL: URL(string: "example")!,
+                countlyURL: nil
+            ),
+            proxySettings: nil,
+            pinnedKeys: nil
+        )
     )
 }
