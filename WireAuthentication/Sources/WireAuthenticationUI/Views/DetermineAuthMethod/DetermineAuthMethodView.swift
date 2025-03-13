@@ -31,7 +31,6 @@ package struct DetermineAuthMethodView: View {
 
     package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
 
-    @Environment(\.dismiss) var dismiss
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let factory: any Factory
@@ -100,7 +99,7 @@ package struct DetermineAuthMethodView: View {
             message: { Text($0.message) },
             actions: { _ in
                 Button {
-                    dismiss()
+                    viewModel.onAlertDismiss()
                 } label: {
                     Text(L10n.Authentication.Error.confirm)
                 }
@@ -141,11 +140,19 @@ package struct DetermineAuthMethodView: View {
                     environmentType,
                     backendConfig
                 ):
-                    factory.switchBackendView(
-                        email: email,
-                        environmentType: environmentType,
-                        backendConfig: backendConfig
-                    )
+                    if #available(iOS 16.4, *) {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).presentationBackground(Color.black.opacity(0.7))
+                    } else {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).background(TransparentBackgroundView())
+                    }
                 }
             }
         )
@@ -195,4 +202,21 @@ func makeDetermineAuthMethodViewPreview(
                 alert: .unknownError
             )
         }
+}
+
+private struct TransparentBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        InnerView()
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+
+    private class InnerView: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+
+            superview?.superview?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        }
+
+    }
 }
