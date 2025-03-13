@@ -19,7 +19,7 @@
 public enum ConversationCellModel: Hashable, Sendable {
 
     /// Info text for the user to tell that guests are allowed in the conversation.
-    case guestsAllowed
+    case guestsAllowed(GuestsAllowedModel)
 
     /// Used to group messages.
     case timeDivider(TimeDividerModel)

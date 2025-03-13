@@ -27,16 +27,16 @@ func ConversationCellPreviews(
     models.forEach { model in
         model.registerIfNeeded(in: tableViewController.tableView)
     }
-    enum Section { case single }
-    let dataSource = UITableViewDiffableDataSource<Section, [ConversationCellModel].Index>(
-        tableView: tableViewController.tableView!
-    ) { tableView, indexPath, modelIndex in
-        let model = models[modelIndex]
-        let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-        model.configureCell(cell)
-        return cell
-    }
+
+    let dataSource = TableViewDataSource(tableViewController, models)
     tableViewController.dataSource = dataSource
+    tableViewController.delegate = TableViewDelegate()
+
+//    let backgroundView = UIView()
+//    backgroundView.backgroundColor = .green
+//    tableViewController.tableView!.backgroundView = backgroundView
+//    tableViewController.tableView!.rowHeight
+    tableViewController.tableView!.backgroundColor = .red
     tableViewController.tableView!.separatorStyle = .none
 
     var snapshot = dataSource.snapshot()
@@ -47,7 +47,39 @@ func ConversationCellPreviews(
     return tableViewController
 }
 
+@MainActor
+private func TableViewDataSource(
+    _ tableViewController: UITableViewController,
+    _ models: [ConversationCellModel]
+) -> UITableViewDiffableDataSource<TableViewSection, [ConversationCellModel].Index> {
+    .init(tableView: tableViewController.tableView!) { tableView, indexPath, modelIndex in
+        let model = models[modelIndex]
+        let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
+        model.configureCell(cell)
+
+        let color = [UIColor.systemPink, .red, .blue, .brown, .cyan, .gray, .magenta]
+        cell.backgroundColor = color.randomElement()
+
+        return cell
+    }
+}
+private enum TableViewSection { case single }
+
+private final class TableViewDelegate: NSObject, UITableViewDelegate {
+
+//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+//        //UITableView.automaticDimension
+//        10
+//    }
+//
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        //10
+//        UITableView.automaticDimension
+//    }
+}
+
 private extension UITableViewController {
+
     @MainActor
     var dataSource: (any UITableViewDataSource)? {
         get { objc_getAssociatedObject(self, &dataSourceKey) as? any UITableViewDataSource }
@@ -56,6 +88,17 @@ private extension UITableViewController {
             tableView.dataSource = newValue
         }
     }
+
+    @MainActor
+    var delegate: (any UITableViewDelegate)? {
+        get { objc_getAssociatedObject(self, &delegateKey) as? any UITableViewDelegate }
+        set {
+            objc_setAssociatedObject(self, &delegateKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            tableView.delegate = newValue
+        }
+    }
+
 }
 
 @MainActor private var dataSourceKey = 0
+@MainActor private var delegateKey = 0

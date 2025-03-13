@@ -27,7 +27,9 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
             model.buildView()
-        }.margins(.all, 0)
+        }
+        .margins(.all, 0)
+        .minSize(width: 0, height: 0)
     }
 
 }

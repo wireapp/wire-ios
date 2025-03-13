@@ -16,9 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct GuestsAllowedModel: ConversationCellModelProtocol {
+public struct GuestsAllowedModel: ConversationCellModelProtocol {
     typealias ContentView = GuestsAllowedContentView
 
-    var id: AnyHashable { self }
+    public var id: AnyHashable { self }
 
+}
+
+extension ConversationCellModel {
+
+    public static var guestsAllowed: Self {
+        .guestsAllowed(GuestsAllowedModel())
+    }
 }

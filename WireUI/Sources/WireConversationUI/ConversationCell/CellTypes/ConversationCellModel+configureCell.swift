@@ -24,8 +24,9 @@ extension ConversationCellModel {
     public func configureCell(_ cell: UITableViewCell) {
         switch self {
 
-        case .guestsAllowed:
-            return
+        case .guestsAllowed(let guestsAllowed):
+            guard let cell = cell as? ConversationCell<GuestsAllowedModel> else { break }
+            return cell.model = guestsAllowed
 
         case .timeDivider(let timeDivider):
             guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
