@@ -24,14 +24,7 @@ struct GuestsAllowedContentView: ConversationCellContentViewProtocol {
     let model: GuestsAllowedModel
 
     var body: some View {
-        HStack {
-            Spacer()
-            Rectangle()
-                .fill(Color.white)
-                .frame(width: 100)
-            Spacer()
-        }
-        .frame(height: 11)
+        Text(verbatim: "todo")
     }
 
 }

@@ -50,10 +50,6 @@ private func TableViewDataSource(
         let model = models[modelIndex]
         let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
         model.configureCell(cell)
-
-        let color = [UIColor.systemPink, .red, .blue, .brown, .cyan, .gray, .magenta]
-        cell.backgroundColor = color.randomElement()
-
         return cell
     }
 }

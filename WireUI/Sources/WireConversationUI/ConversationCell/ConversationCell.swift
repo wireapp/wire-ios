@@ -30,6 +30,7 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
         }
         .margins(.all, 0)
         .minSize(width: 0, height: 0)
+        .background(.clear)
     }
 
 }

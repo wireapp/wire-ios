@@ -221,7 +221,7 @@ final class ConversationContentViewController: UIViewController {
         tableView.keyboardDismissMode = AutomationHelper.sharedHelper
             .disableInteractiveKeyboardDismissal ? .none : .interactive
 
-        tableView.backgroundColor = .red // SemanticColors.View.backgroundConversationView
+        tableView.backgroundColor = SemanticColors.View.backgroundConversationView
         view.backgroundColor = SemanticColors.View.backgroundConversationView
 
         setupMentionsResultsView()
