@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireAuthentication
+import WireSyncEngine
 import SwiftUI
 
 // A temporary bridging object to allow the new WireAuthentication flow inside
@@ -48,12 +49,10 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 break
 
             case .obsoleteClientDetected:
-                // TODO: [WPB-16415]
-                break
+                SessionManager.shared?.wireAuthenticationDidDetectObsoleteClientVersion()
 
             case .obsoleteBackendDetected:
-                // TODO: [WPB-16415]
-                break
+                SessionManager.shared?.wireAuthenticationDidDetectObsoleteBackendVersion()
             }
         }
 
