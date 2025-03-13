@@ -29,7 +29,7 @@ final class CallKitNotificationBuilderTests: XCTestCase {
     private var sut: CallKitNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
-
+    
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -71,6 +71,11 @@ final class CallKitNotificationBuilderTests: XCTestCase {
         let callKitTestUsecases = getCallKitTestUseCases()
 
         for callKitTestUsecase in callKitTestUsecases {
+            if case .endingCall = callKitTestUsecase {
+                let mockHandle = "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.uuid.uuidString.lowercased())"
+                defaults.set([mockHandle], forKey: "knownCalls")
+            }
+            
             var calling = Calling()
             calling.content = callKitTestUsecase.json
 
@@ -109,6 +114,11 @@ final class CallKitNotificationBuilderTests: XCTestCase {
         let callKitTestUsecases = getCallKitTestUseCases()
 
         for callKitTestUsecase in callKitTestUsecases {
+            if case .endingCall = callKitTestUsecase {
+                let mockHandle = "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.uuid.uuidString.lowercased())"
+                defaults.set([mockHandle], forKey: "knownCalls")
+            }
+            
             var calling = Calling()
             calling.content = callKitTestUsecase.json
 
@@ -147,6 +157,11 @@ final class CallKitNotificationBuilderTests: XCTestCase {
         let callKitTestUsecases = getCallKitTestUseCases()
 
         for callKitTestUsecase in callKitTestUsecases {
+            if case .endingCall = callKitTestUsecase {
+                let mockHandle = "\(Scaffolding.accountID.uuidString.lowercased())+\(Scaffolding.conversationID.uuid.uuidString.lowercased())"
+                defaults.set([mockHandle], forKey: "knownCalls")
+            }
+            
             var calling = Calling()
             calling.content = callKitTestUsecase.json
 

@@ -222,7 +222,15 @@
       }
     },
     "push.notification.body.senderCalled" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ called"
+          }
+        }
+      }
     },
     "push.notification.body.senderCreatedConversation" : {
       "extractionState" : "manual",

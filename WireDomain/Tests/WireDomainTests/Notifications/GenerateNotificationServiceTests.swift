@@ -52,6 +52,8 @@ final class GenerateNotificationServiceTests: XCTestCase {
             contentHandler: { [self] _ in didCallNotificationContentHandler = true },
             accountManager: AccountManager(sharedDirectory: url),
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
+            accountID: .mockID1,
+            userDefaults: UserDefaults(suiteName: UUID.mockID1.uuidString)!,
             userLocalStore: userLocalStore,
             conversationLocalStore: conversationLocalStore,
             messageLocalStore: messageLocalStore
