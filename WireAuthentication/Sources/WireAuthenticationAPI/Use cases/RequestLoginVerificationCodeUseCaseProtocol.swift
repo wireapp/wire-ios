@@ -18,17 +18,15 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol RequestLoginVerificationCodeUseCaseProtocol: Sendable {
 
-    func invoke(
-        email: String
-    ) async throws(RequestLoginVerificationCodeUseCaseFailure)
+    func invoke(email: String) async throws
 
 }
 
 public enum RequestLoginVerificationCodeUseCaseFailure: Error {
 
     case invalidEmail
-    case unexpected(any Error)
 
 }

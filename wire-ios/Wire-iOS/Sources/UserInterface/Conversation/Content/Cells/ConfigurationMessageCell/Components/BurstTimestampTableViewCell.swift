@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireConversationUI
 import WireDataModel
 import WireSyncEngine
 
@@ -29,6 +30,16 @@ struct BurstTimestampSenderMessageCellConfiguration {
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
+
+    var conversationCellModel: ConversationCellModel? {
+        let text: String
+        if configuration.includeDayOfWeek {
+            text = configuration.date.olderThanOneWeekdateFormatter.string(from: configuration.date)
+        } else {
+            text = configuration.date.formattedDate
+        }
+        return .timeDivider(text: text)
+    }
 
     let configuration: View.Configuration
 
