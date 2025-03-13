@@ -19,7 +19,7 @@
 public enum ConversationCellModel: Hashable, Sendable {
 
     /// Info text for the user to tell that guests are allowed in the conversation.
-    case guestsAllowed(GuestsAllowedModel)
+    case guestsAllowedInfo(GuestsAllowedInfoModel)
 
     /// Used to group messages.
     case timeDivider(TimeDividerModel)
@@ -27,21 +27,53 @@ public enum ConversationCellModel: Hashable, Sendable {
     /// Used to present any kind of system generated messages.
     case systemMessage(SystemMessageModel)
 
+    /// todo
+    case ping(PingModel)
+
+    /// todo
+    case collapsedMessage(CollapsedMessageModel)
+
+    /// todo
+    case compositeMessage(CompositeMessageModel)
+
+    /// todo
+    case simpleTextMessage(SimpleTextMessageModel)
+
+    /// todo
+    case extendedTextMessage(ExtendedTextMessageModel)
+
+    /// todo
+    //case audioMessage(AudioMessageModel)
+
+    /// todo
+    //case videoMessage(VideoMessageModel)
+
+    /// todo
+    //case fileMessage(FileMessageModel)
+
+    /// todo
+    // case location(LocationModel)
+
+    /// Used to show that another participant in the conversation is currently typing.
+    case typingIndicator(TypingIndicatorModel)
+
     // TODO: add missing cases
-    // ping: sender, ephemeral progress+time left, isObfuscated, (accessibilityLabel, accessibilityIdentifier)
     // composite: ?
-    // simpleTextMessage: sender optional, isSenderCollapsed, attributedText, time, reactions, isObfuscated, ephemeral, edited, seen, isCollapsed
     // extendedTextMessage: simpleTextMessage, quotedMessage, link attachments, link previews, error status
     // collapsedMessage: collapse-icon, ? wrapped message or several types of collapsed messages?
     // location: sender, time, reactions, isObfuscated, ephemeral, isCollapsed
     // audio, video, file: sender, time, reactions, canBeShared?, isCollapsed
-    // typing: name(s)
     // TODO: isObfuscated? attribute or separate cell/model?
     // TODO: actions?
     // TODO: deleted message
+    // TODO: extended message with generic content? (link attachment, link preview, audio, video, file, location)
     // sender contains name, image, availability, accent color, icon (e.g. guest)
     // status delivered? edited? seen?
 
-    // case ?Message
-
 }
+
+public typealias TODO = Int
+public typealias AudioMessageModel = TODO
+public typealias VideoMessageModel = TODO
+public typealias FileMessageModel = TODO
+public typealias LocationModel = TODO

@@ -21,14 +21,44 @@ extension ConversationCellModel: Identifiable {
     public var id: AnyHashable {
         switch self {
 
-        case .guestsAllowed(let guestsAllowed):
-            guestsAllowed.id
+        case .guestsAllowedInfo(let guestsAllowedInfo):
+            guestsAllowedInfo.id
 
         case .timeDivider(let timeDivider):
             timeDivider.id
 
         case .systemMessage(let systemMessage):
             systemMessage.id
+
+        case .ping(let ping):
+            fatalError()
+
+        case .collapsedMessage(let collapsedMessage):
+            fatalError()
+
+        case .compositeMessage(let compositeMessage):
+            fatalError()
+
+        case .simpleTextMessage(let simpleTextMessage):
+            fatalError()
+
+        case .extendedTextMessage(let extendedTextMessage):
+            fatalError()
+
+        // case .audioMessage(let audioMessage):
+        //     fatalError()
+
+        // case .videoMessage(let videoMessage):
+        //     fatalError()
+
+        // case .fileMessage(let fileMessage):
+        //     fatalError()
+
+        // case .location(let location):
+        //     fatalError()
+
+        case .typingIndicator(let typingIndicator):
+            fatalError()
 
         }
     }

@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SystemMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SystemMessageContentView
+public struct TypingIndicatorModel: ConversationCellModelProtocol {
+    typealias ContentView = TypingIndicatorContentView
 
     public var id: AnyHashable { self }
 
-    // TODO: add icon, attributedText
+    // TODO: add name(s)
 
 }
 
 extension ConversationCellModel {
 
-    public static var systemMessage: Self {
-        .systemMessage(SystemMessageModel())
+    public static var typingIndicator: Self {
+        .typingIndicator(TypingIndicatorModel())
     }
 }

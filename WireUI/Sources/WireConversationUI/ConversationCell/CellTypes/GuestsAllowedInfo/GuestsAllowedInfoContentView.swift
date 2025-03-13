@@ -16,16 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct GuestsAllowedModel: ConversationCellModelProtocol {
-    typealias ContentView = GuestsAllowedContentView
+import SwiftUI
+import WireDesign
 
-    public var id: AnyHashable { self }
+struct GuestsAllowedInfoContentView: ConversationCellContentViewProtocol {
+
+    let model: GuestsAllowedInfoModel
+
+    var body: some View {
+        Text(verbatim: "todo")
+    }
 
 }
 
-extension ConversationCellModel {
+// MARK: - Previews
 
-    public static var guestsAllowed: Self {
-        .guestsAllowed(GuestsAllowedModel())
-    }
+#Preview {
+    GuestsAllowedInfoContentView(model: .init())
 }

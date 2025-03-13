@@ -66,7 +66,7 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
 #Preview {
     ConversationCellPreviews(
         models: [
-            .guestsAllowed,
+            .guestsAllowedInfo,
             .timeDivider(text: "Friday", isUnread: false),
             .timeDivider(text: "Saturday", isUnread: false),
             .timeDivider(text: "Sunday", isUnread: true)

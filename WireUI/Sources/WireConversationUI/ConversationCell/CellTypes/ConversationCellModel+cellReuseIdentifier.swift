@@ -23,14 +23,44 @@ extension ConversationCellModel {
     public var cellReuseIdentifier: String {
         switch self {
 
-        case .guestsAllowed:
-            "guestsAllowed"
+        case .guestsAllowedInfo:
+            "guestsAllowedInfo"
 
         case .timeDivider:
             "timeDivider"
 
         case .systemMessage:
             "systemMessage"
+
+        case .ping:
+            "ping"
+
+        case .collapsedMessage:
+            "collapsedMessage"
+
+        case .compositeMessage:
+            "compositeMessage"
+
+        case .simpleTextMessage:
+            "simpleTextMessage"
+
+        case .extendedTextMessage:
+            "extendedTextMessage"
+
+        // case .audioMessage:
+        //     "audioMessage"
+
+        // case .videoMessage:
+        //     "videoMessage"
+
+        // case .fileMessage:
+        //     "fileMessage"
+
+        // case .location:
+        //     "location"
+
+        case .typingIndicator:
+            "typingIndicator"
 
         }
     }

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SystemMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SystemMessageContentView
+public struct ExtendedTextMessageModel: ConversationCellModelProtocol {
+    typealias ContentView = ExtendedTextMessageContentView
 
     public var id: AnyHashable { self }
 
@@ -27,7 +27,7 @@ public struct SystemMessageModel: ConversationCellModelProtocol {
 
 extension ConversationCellModel {
 
-    public static var systemMessage: Self {
-        .systemMessage(SystemMessageModel())
+    public static var extendedTextMessage: Self {
+        .extendedTextMessage(ExtendedTextMessageModel())
     }
 }

@@ -16,18 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SystemMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SystemMessageContentView
+import SwiftUI
 
-    public var id: AnyHashable { self }
+struct ExtendedTextMessageContentView: ConversationCellContentViewProtocol {
+    typealias Model = ExtendedTextMessageModel
 
-    // TODO: add icon, attributedText
+    let model: Model
 
-}
-
-extension ConversationCellModel {
-
-    public static var systemMessage: Self {
-        .systemMessage(SystemMessageModel())
+    var body: some View {
+        Text(verbatim: "TODO")
     }
+
+    init(model: Model) {
+        self.model = model
+    }
+
 }

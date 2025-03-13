@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SystemMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SystemMessageContentView
+public struct SimpleTextMessageModel: ConversationCellModelProtocol {
+    typealias ContentView = SimpleTextMessageContentView
 
     public var id: AnyHashable { self }
 
-    // TODO: add icon, attributedText
+    // TODO: add sender optional, isSenderCollapsed, attributedText, time, reactions, isObfuscated, ephemeral, edited, seen, isCollapsed
 
 }
 
 extension ConversationCellModel {
 
-    public static var systemMessage: Self {
-        .systemMessage(SystemMessageModel())
+    public static var simpleTextMessage: Self {
+        .simpleTextMessage(SimpleTextMessageModel())
     }
 }

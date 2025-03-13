@@ -16,18 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SystemMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SystemMessageContentView
+public struct GuestsAllowedInfoModel: ConversationCellModelProtocol {
+    typealias ContentView = GuestsAllowedInfoContentView
 
     public var id: AnyHashable { self }
-
-    // TODO: add icon, attributedText
 
 }
 
 extension ConversationCellModel {
 
-    public static var systemMessage: Self {
-        .systemMessage(SystemMessageModel())
+    public static var guestsAllowedInfo: Self {
+        .guestsAllowedInfo(GuestsAllowedInfoModel())
     }
 }

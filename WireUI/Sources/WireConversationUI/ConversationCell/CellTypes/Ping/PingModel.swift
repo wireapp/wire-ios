@@ -16,21 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireDesign
+public struct PingModel: ConversationCellModelProtocol {
+    typealias ContentView = PingContentView
 
-struct GuestsAllowedContentView: ConversationCellContentViewProtocol {
+    public var id: AnyHashable { self }
 
-    let model: GuestsAllowedModel
-
-    var body: some View {
-        Text(verbatim: "todo")
-    }
+    // TODO: add sender, ephemeral progress+time left, isObfuscated, (accessibilityLabel, accessibilityIdentifier)?
 
 }
 
-// MARK: - Previews
+extension ConversationCellModel {
 
-#Preview {
-    GuestsAllowedContentView(model: .init())
+    public static var ping: Self {
+        .ping(PingModel())
+    }
 }

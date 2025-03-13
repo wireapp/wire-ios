@@ -24,9 +24,9 @@ extension ConversationCellModel {
     public func configureCell(_ cell: UITableViewCell) {
         switch self {
 
-        case .guestsAllowed(let guestsAllowed):
-            guard let cell = cell as? ConversationCell<GuestsAllowedModel> else { break }
-            return cell.model = guestsAllowed
+        case .guestsAllowedInfo(let guestsAllowedInfo):
+            guard let cell = cell as? ConversationCell<GuestsAllowedInfoModel> else { break }
+            return cell.model = guestsAllowedInfo
 
         case .timeDivider(let timeDivider):
             guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
@@ -34,6 +34,36 @@ extension ConversationCellModel {
 
         case .systemMessage(let systemMessage):
             fatalError("not implemented yet")
+
+        case .ping(let ping):
+            fatalError("not implemented yet")
+
+        case .collapsedMessage(let collapsedMessage):
+            fatalError("not implemented yet")
+
+        case .compositeMessage(let compositeMessage):
+            fatalError("not implemented yet")
+
+        case .simpleTextMessage(let simpleTextMessage):
+            fatalError("not implemented yet")
+
+        case .extendedTextMessage(let extendedTextMessage):
+            fatalError("not implemented yet")
+
+        // case .audioMessage(let audioMessage):
+        //     fatalError("not implemented yet")
+
+        // case .videoMessage(let videoMessage):
+        //     fatalError("not implemented yet")
+
+        // case .fileMessage(let fileMessage):
+        //     fatalError("not implemented yet")
+
+        // case .location(let location):
+        //     fatalError("not implemented yet")
+
+         case .typingIndicator(let typingIndicator):
+             fatalError("not implemented yet")
 
         }
 
