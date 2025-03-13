@@ -55,11 +55,13 @@ package struct DetermineAuthMethodView: View {
                     Spacer()
                         .frame(maxWidth: .infinity)
                     if viewModel.isOnPremBackend,
-                        let backendName = viewModel.backendName,
-                        let backendURL = viewModel.backendURL {
-                        OnPremHeaderView(viewModel: OnPremHeaderViewModel(
-                            backendName: backendName,
-                            backendURL: backendURL)
+                       let backendName = viewModel.backendName,
+                       let backendURL = viewModel.backendURL {
+                        OnPremHeaderView(
+                            viewModel: OnPremHeaderViewModel(
+                                backendName: backendName,
+                                backendURL: backendURL
+                            )
                         )
                         .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
                         .frame(width: 164, height: 95)

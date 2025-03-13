@@ -131,9 +131,11 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             )
                         )
                     } else {
-                        router.presentSheet(RootView.ModalDestination.onPremiseAuthFlow(
-                            backendConfig: backendConfig,
-                            backendMetadata: backendMetadata)
+                        router.presentSheet(
+                            RootView.ModalDestination.onPremiseAuthFlow(
+                                backendConfig: backendConfig,
+                                backendMetadata: backendMetadata
+                            )
                         )
                     }
                     WireLogger.authentication.info("No default SSO URL")

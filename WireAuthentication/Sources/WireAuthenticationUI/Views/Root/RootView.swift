@@ -61,14 +61,14 @@ package struct RootView: View {
                             backendConfig: backendConfig,
                             backendMetadata: backendMetadata
                         )
-                            .alert(
-                                item: $viewModel.alert,
-                                title: titleForAlert,
-                                message: messageForAlert,
-                                actions: { _ in
-                                    Button(L10n.Authentication.Error.confirm, action: {})
-                                }
-                            )
+                        .alert(
+                            item: $viewModel.alert,
+                            title: titleForAlert,
+                            message: messageForAlert,
+                            actions: { _ in
+                                Button(L10n.Authentication.Error.confirm, action: {})
+                            }
+                        )
                     }
                 case let .noHistory(
                     userID,
