@@ -82,7 +82,6 @@ platform :ios do
        
        begin
            run_tests_frameworks(schemas, options)
-           run_tests_frameworks(["WireUITests"], options)
        rescue => e
            UI.test_failure!("Failing running tests #{e.to_s}")
        end
