@@ -47,7 +47,7 @@ extension NotificationAction {
 
     static let muteConversation = NotificationAction(
         identifier: NotificationActionIdentifier.muteConversationIdentifier,
-        title: String.localized(key: "push.notification.action.mute"),
+        title: String.localized(key: "push.notification.action.mute", bundle: .module),
         isDestructive: false,
         opensApplication: false,
         requiresAuthentication: false
@@ -55,7 +55,7 @@ extension NotificationAction {
 
     static let ignoreCall = NotificationAction(
         identifier: NotificationActionIdentifier.ignoreCallIdentifier,
-        title: String.localized(key: "push.notification.action.ignoreCall"),
+        title: String.localized(key: "push.notification.action.ignoreCall", bundle: .module),
         isDestructive: true,
         opensApplication: false,
         requiresAuthentication: false
@@ -63,7 +63,7 @@ extension NotificationAction {
 
     static let callback = NotificationAction(
         identifier: NotificationActionIdentifier.callbackIdentifier,
-        title: String.localized(key: "push.notification.action.callback"),
+        title: String.localized(key: "push.notification.action.callback", bundle: .module),
         isDestructive: false,
         opensApplication: true,
         requiresAuthentication: false
@@ -71,7 +71,7 @@ extension NotificationAction {
 
     static let acceptConnectionRequest = NotificationAction(
         identifier: NotificationActionIdentifier.acceptConnectionRequestIdentifier,
-        title: String.localized(key: "push.notification.action.acceptConnection"),
+        title: String.localized(key: "push.notification.action.acceptConnection", bundle: .module),
         isDestructive: false,
         opensApplication: false,
         requiresAuthentication: false
