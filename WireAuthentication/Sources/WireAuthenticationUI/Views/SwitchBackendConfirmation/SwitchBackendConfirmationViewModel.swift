@@ -56,7 +56,8 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         self.email = email
         self.environmentType = environmentType
         self.backendConfig = backendConfig
-        self.items = [
+
+        var items = [
             ItemUIModel(
                 title: Strings.backendName,
                 value: backendConfig.title,
@@ -93,6 +94,18 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                 isURL: true
             )
         ]
+
+        if let countlyURL = backendConfig.endpoints.countlyURL {
+            items.append(
+                ItemUIModel(
+                    title: Strings.countlyUrl,
+                    value: countlyURL.absoluteString,
+                    isURL: true
+                )
+            )
+        }
+
+        self.items = items
     }
 
     func confirm() async {

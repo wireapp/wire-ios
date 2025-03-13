@@ -59,7 +59,8 @@ final class MockDependencies {
             blackListURL: URL(string: "https://example.com")!,
             teamsURL: URL(string: "https://example.com")!,
             accountsURL: URL(string: "https://example.com")!,
-            websiteURL: URL(string: "https://example.com")!
+            websiteURL: URL(string: "https://example.com")!,
+            countlyURL: URL(string: "https://example.com")!
         ),
         proxySettings: nil,
         pinnedKeys: nil
@@ -183,7 +184,8 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
                     blackListURL: backendConfig.endpoints.blackListURL,
                     teamsURL: backendConfig.endpoints.teamsURL,
                     accountsURL: backendConfig.endpoints.accountsURL,
-                    websiteURL: backendConfig.endpoints.websiteURL
+                    websiteURL: backendConfig.endpoints.websiteURL,
+                    countlyURL: backendConfig.endpoints.countlyURL
                 ),
                 proxySettings: nil,
                 pinnedKeys: nil

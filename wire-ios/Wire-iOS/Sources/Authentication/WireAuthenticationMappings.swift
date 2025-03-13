@@ -56,7 +56,8 @@ extension WireAuthentication.BackendConfig {
             blackListURL: backendEnvironment.blackListURL,
             teamsURL: backendEnvironment.teamsURL,
             accountsURL: backendEnvironment.accountsURL,
-            websiteURL: backendEnvironment.websiteURL
+            websiteURL: backendEnvironment.websiteURL,
+            countlyURL: backendEnvironment.countlyURL
         )
 
         let proxySettings = backendEnvironment.proxy.map { proxy in
@@ -119,7 +120,7 @@ extension WireTransport.BackendEnvironment {
             teamsURL: backendConfig.endpoints.teamsURL,
             accountsURL: backendConfig.endpoints.accountsURL,
             websiteURL: backendConfig.endpoints.websiteURL,
-            countlyURL: nil // backendConfig.endpoints.countlyURL
+            countlyURL: backendConfig.endpoints.countlyURL
         )
         let proxySettings = backendConfig.proxySettings.map {
             WireTransport.ProxySettings(

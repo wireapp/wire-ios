@@ -31,7 +31,8 @@ public enum Fixture {
                 blackListURL: URL(string: "www.mock.com")!,
                 teamsURL: URL(string: "www.mock.com")!,
                 accountsURL: URL(string: "www.mock.com")!,
-                websiteURL: URL(string: "www.mock.com")!
+                websiteURL: URL(string: "www.mock.com")!,
+                countlyURL: URL(string: "www.mock.com")!
             ),
             proxySettings: nil,
             pinnedKeys: nil

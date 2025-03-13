@@ -200,7 +200,8 @@ package func makeSwitchBackendConfirmationViewPreview(
     blackListURL: URL,
     teamsURL: URL,
     accountsURL: URL,
-    websiteURL: URL
+    websiteURL: URL,
+    countlyURL: URL?
 ) -> some View {
     MockDependencies().switchBackendView(
         email: "email.com",
@@ -213,7 +214,8 @@ package func makeSwitchBackendConfirmationViewPreview(
                 blackListURL: blackListURL,
                 teamsURL: teamsURL,
                 accountsURL: accountsURL,
-                websiteURL: websiteURL
+                websiteURL: websiteURL,
+                countlyURL: countlyURL
             ),
             proxySettings: nil,
             pinnedKeys: nil

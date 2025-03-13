@@ -90,7 +90,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 blackListURL: URL(string: "https://example.com")!,
                 teamsURL: URL(string: "https://example.com")!,
                 accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
             ),
             proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
@@ -124,7 +125,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 blackListURL: URL(string: "https://example.com")!,
                 teamsURL: URL(string: "https://example.com")!,
                 accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
             ),
             proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil

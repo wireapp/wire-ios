@@ -58,6 +58,7 @@ public struct Endpoints: Decodable, Sendable, Hashable {
     public let teamsURL: URL
     public let accountsURL: URL
     public let websiteURL: URL
+    public let countlyURL: URL?
 
     public init(
         backendURL: URL,
@@ -65,7 +66,8 @@ public struct Endpoints: Decodable, Sendable, Hashable {
         blackListURL: URL,
         teamsURL: URL,
         accountsURL: URL,
-        websiteURL: URL
+        websiteURL: URL,
+        countlyURL: URL?
     ) {
         self.backendURL = backendURL
         self.backendWSURL = backendWSURL
@@ -73,6 +75,7 @@ public struct Endpoints: Decodable, Sendable, Hashable {
         self.teamsURL = teamsURL
         self.accountsURL = accountsURL
         self.websiteURL = websiteURL
+        self.countlyURL = countlyURL
     }
 }
 
