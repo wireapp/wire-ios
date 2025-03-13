@@ -24,4 +24,16 @@ public enum ConversationCellModel: Hashable, Sendable {
     /// Used to group messages.
     case timeDivider(TimeDividerModel)
 
+    // TODO: add missing cases
+    // ping: sender, ephemeral progress+time left, isObfuscated, (accessibilityLabel, accessibilityIdentifier)
+    // composite: ?
+    // simpleTextMessage: sender, attributedText, reactions, isObfuscated, ephemeral
+    // extendedTextMessage: simpleTextMessage, quotedMessage, link attachments, link previews
+    // location: sender, reactions, isObfuscated, ephemeral
+    // audio, video, file: ?, reactions, canBeShared?
+    // TODO: isObfuscated? attribute or separate cell/model?
+    // TODO: actions?
+
+    case xMessage
+
 }
