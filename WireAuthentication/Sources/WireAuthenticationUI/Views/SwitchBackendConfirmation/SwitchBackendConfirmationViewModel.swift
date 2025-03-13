@@ -144,13 +144,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                         metadata: backendMetadata
                     )
 
-                    router.presentSheet(
-                        RootView.ModalDestination.ssoLogin(
-                            url: ssoURL,
-                            backendEnvironment: backendEnvironment
-                        )
-                    )
-                    //modalDestination = .ssoLogin(url: ssoURL)
+                    modalDestination = .ssoLogin(url: ssoURL, backendEnvironment: backendEnvironment)
                     WireLogger.authentication.info("Fetching default SSO URL succeed")
                 } else {
                     router.presentSheet(
