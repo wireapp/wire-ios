@@ -36,7 +36,7 @@ struct VerifyUserSession {
         case coreDataMigrationRequired
         case userUnauthenticated
         case missingUserClient
-        case unableToLoadStores(Error)
+        case unableToLoadStores
     }
 
     // MARK: - Properties
@@ -123,7 +123,7 @@ struct VerifyUserSession {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) -> Void in
             coreData.loadStores { error in
                 if let error {
-                    continuation.resume(throwing: Failure.unableToLoadStores(error))
+                    continuation.resume(throwing: Failure.unableToLoadStores)
                 } else {
                     continuation.resume()
                 }

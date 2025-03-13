@@ -171,9 +171,9 @@ extension NotificationServiceExtension {
                 WireLogger.notifications.error(
                     "Core data migration required"
                 )
-            case let .unableToLoadStores(error):
+            case let .unableToLoadStores:
                 WireLogger.notifications.error(
-                    "Loading coreDataStack with error: \(error.localizedDescription)"
+                    "Loading coreDataStack with error"
                 )
             }
         case let pullEventsServiceError as PullEventsService.Failure:
