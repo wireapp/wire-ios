@@ -37,7 +37,7 @@ public enum ConversationCellModel: Hashable, Sendable {
     // TODO: isObfuscated? attribute or separate cell/model?
     // TODO: actions?
     // TODO: deleted message
-    // sender contains name, image, availability, accent color
+    // sender contains name, image, availability, accent color, icon (e.g. guest)
     // status delivered? edited? seen?
 
     // case ?Message

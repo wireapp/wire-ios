@@ -567,7 +567,6 @@
 				ConversationAvatarViewModeTests.swift,
 				ConversationAvatarViewTests.swift,
 				ConversationCell/CompositeMessageCellTests.swift,
-				ConversationCell/ConversationCellBurstTimestampViewSnapshotTests.swift,
 				ConversationCell/ConversationRenamedCellTests.swift,
 				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageMlsSupportSnapshotTests.swift,
