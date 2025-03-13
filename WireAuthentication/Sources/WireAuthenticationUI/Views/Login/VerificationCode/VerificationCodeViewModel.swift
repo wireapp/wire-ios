@@ -40,6 +40,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol
     private let router: any Router
+    private let backendEnvironment: WireAuthenticationBackendEnvironment
 
     package init(
         email: String,
@@ -47,6 +48,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol,
         router: any Router,
+        backendEnvironment: WireAuthenticationBackendEnvironment,
         numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits,
         didDetectDomainConflict: Bool
     ) {
@@ -57,6 +59,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.requestLoginVerificationCodeUseCase = requestLoginVerificationCodeUseCase
         self.router = router
+        self.backendEnvironment = backendEnvironment
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
         self.didDetectDomainConflict = didDetectDomainConflict
@@ -89,31 +92,44 @@ public final class VerificationCodeViewModel: ObservableObject {
     func confirm() async {
         isLoading = true
 
-        let loginTask = Task.detached { [loginViaEmailUseCase, email, password, code] in
+        let verificationCode = code.joined()
+
+        let loginTask = Task.detached { [loginViaEmailUseCase, email, password] in
             try await loginViaEmailUseCase.invoke(
                 email: email,
                 password: password,
-                verificationCode: code.joined()
+                verificationCode: verificationCode
             )
         }
 
         do {
             let (cookies, token) = try await loginTask.value
+
+            let emailCredentials = EmailCredentials(
+                email: email,
+                password: password,
+                verificationCode: verificationCode
+            )
+
+            let authenticationResult = AuthenticationResult(
+                userID: token.userID,
+                cookies: cookies,
+                accessToken: token,
+                emailCredentials: emailCredentials,
+                backendEnvironment: backendEnvironment
+            )
+
             router.presentSheet(
                 RootView.ModalDestination.noHistory(
-                    userID: token.userID,
-                    cookies: cookies,
-                    accessToken: token,
+                    authenticationResult: authenticationResult,
                     didDetectDomainConflict: didDetectDomainConflict
                 )
             )
             WireLogger.authentication.info("2FA login via email succeeded")
         } catch {
-            WireLogger.authentication.info("2FA login via email failed: \(error)")
+            WireLogger.authentication.error("2FA login via email failed: \(error)")
 
             switch error {
-            case LoginViaEmailUseCaseFailure.noInternet:
-                alert = .noInternet
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed:
                 alert = .invalid2FACode
             case LoginViaEmailUseCaseFailure.accountPendingActivation:
@@ -121,8 +137,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
             default:
-                WireLogger.authentication.error("Unexpected error during 2FA login via email: \(error)")
-                alert = .unknownError
+                alert = .general(for: error)
             }
         }
 
@@ -138,57 +153,20 @@ public final class VerificationCodeViewModel: ObservableObject {
 
         do {
             try await requestTask.value
+
             WireLogger.authentication.info("Resend 2FA code succeeded")
         } catch {
-            WireLogger.authentication.info("Resend 2FA login failed: \(error)")
+            WireLogger.authentication.error("Resend 2FA login failed: \(error)")
 
             switch error {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
-                WireLogger.authentication.error("Unexpected invalid email when resending 2FA login code: \(error)")
-            case let RequestLoginVerificationCodeUseCaseFailure.unexpected(underlying) where underlying.isNoInternet:
-                alert = .noInternet
             default:
-                WireLogger.authentication.error("Unexpected error when resending 2FA login code: \(error)")
-                alert = .unknownError
+                alert = .general(for: error)
             }
         }
 
         isResending = false
-    }
-
-}
-
-private extension Error {
-    var isNoInternet: Bool {
-        guard let urlError = self as? URLError else { return false }
-
-        return urlError.code == .notConnectedToInternet || urlError.code == .networkConnectionLost
-    }
-}
-
-// MARK: Alerts
-
-package extension VerificationCodeViewModel {
-
-    package struct Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        let title: String
-        let message: String
-
-        private typealias Title = L10n.Authentication.Error.Title
-        private typealias Message = L10n.Authentication.Error.Message
-
-        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
-        static let invalid2FACode = Alert(title: Title.invalidInvalid2FACode, message: Message.invalidInvalid2FACode)
-        static let invalidEmail = Alert(title: Title.invalidCredentials, message: Message.invalidCredentials)
-        static let accountPendingActivation = Alert(
-            title: Title.accountPendingActivation,
-            message: Message.accountPendingActivation
-        )
-        static let accountSuspended = Alert(title: Title.accountSuspended, message: Message.accountSuspended)
-        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }

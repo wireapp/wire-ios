@@ -19,10 +19,11 @@
 import Foundation
 import WireLogging
 
-final class ServerCertificateTrust: NSObject, BackendTrustProvider {
-    let trustData: [TrustData]
+public final class ServerCertificateTrust: NSObject, BackendTrustProvider {
 
-    init(trustData: [TrustData]) {
+    public let trustData: [TrustData]
+
+    public init(trustData: [TrustData]) {
         self.trustData = trustData
     }
 

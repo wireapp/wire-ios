@@ -18,10 +18,18 @@
 
 import Foundation
 
-package enum SSOLinkGeneratorFailure: Error, Equatable {
+public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
 
-    case invalidSSOURL
-
-    case unknown
+    case production
+    case staging
+    case qaDemo
+    case qaDemo2
+    case anta
+    case bella
+    case chala
+    case diya
+    case elna
+    case foma
+    case custom(url: URL)
 
 }

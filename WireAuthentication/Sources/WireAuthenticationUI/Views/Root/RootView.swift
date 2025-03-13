@@ -55,29 +55,33 @@ package struct RootView: View {
                             )
                     }
                 case let .noHistory(
-                    userID,
-                    cookies,
-                    accessToken,
+                    authenticationResult,
                     didDetectDomainConflict
                 ):
                     factory.noHistoryView(
-                        userID: userID,
-                        cookies: cookies,
-                        accessToken: accessToken,
+                        authenticationResult: authenticationResult,
                         didDetectDomainConflict: didDetectDomainConflict
                     )
                 case let .onPremiseLogin(
                     email,
+                    environmentType,
                     backendConfig,
                     backendMetadata
                 ):
                     factory.loginViaEmailOnPremView(
                         email: email,
+                        environmentType: environmentType,
                         backendConfig: backendConfig,
                         backendMetadata: backendMetadata
                     )
-                case let .ssoLogin(ssoURL):
-                    factory.loginViaSSOView(ssoURL: ssoURL)
+                case let .ssoLogin(
+                    ssoURL,
+                    backendEnvironment
+                ):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
                 }
             }
     }
@@ -101,17 +105,19 @@ package struct RootView: View {
 
         case authFlow
         case noHistory(
-            userID: UUID,
-            cookies: [HTTPCookie],
-            accessToken: AccessToken?,
+            authenticationResult: AuthenticationResult,
             didDetectDomainConflict: Bool
         )
         case onPremiseLogin(
             email: String,
+            environmentType: BackendEnvironmentType,
             environment: BackendConfig,
             backendMetadata: BackendMetadata?
         )
-        case ssoLogin(url: URL)
+        case ssoLogin(
+            url: URL,
+            backendEnvironment: WireAuthenticationBackendEnvironment
+        )
     }
 
 }
