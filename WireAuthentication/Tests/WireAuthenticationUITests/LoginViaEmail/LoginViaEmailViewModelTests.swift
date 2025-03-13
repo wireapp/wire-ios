@@ -43,33 +43,16 @@ final class LoginViaEmailViewModelTests: XCTestCase {
         router = MockRouter()
         loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
         mockResolveBackendMetadataUseCase = MockResolveBackendMetadataUseCaseProtocol()
-        mockResolveBackendMetadataUseCase.invoke_MockValue = BackendMetadata(
-            apiVersion: .v8,
-            domain: "some-domain",
-            isFederationEnabled: false
-        )
+        mockResolveBackendMetadataUseCase.invoke_MockValue = Fixture.backendEnvironment.metadata
         passwordValidator = MockPasswordValidator()
         passwordValidator.isPasswordValid_MockMethod = { _ in true }
 
         sut = LoginViaEmailViewModel(
             router: router,
             factory: self,
-            backendEnvironment: Fixture.backendEnvironment,
+            environmentType: .production,
             email: "mika@example.com",
-            backendConfig: BackendConfig(
-                title: "backend name",
-                endpoints: Endpoints(
-                    backendURL: URL(string: "example")!,
-                    backendWSURL: URL(string: "example")!,
-                    blackListURL: URL(string: "example")!,
-                    teamsURL: URL(string: "example")!,
-                    accountsURL: URL(string: "example")!,
-                    websiteURL: URL(string: "example")!,
-                    countlyURL: URL(string: "example")!
-                ),
-                proxySettings: nil,
-                pinnedKeys: nil
-            ),
+            backendConfig: Fixture.backendConfig,
             backendMetadata: nil,
             passwordValidator: passwordValidator,
             canCreateAccount: true,

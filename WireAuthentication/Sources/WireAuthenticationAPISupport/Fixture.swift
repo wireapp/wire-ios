@@ -23,25 +23,29 @@ public enum Fixture {
 
     public static let backendEnvironment = WireAuthenticationBackendEnvironment(
         environmentType: .production,
-        config: BackendConfig(
-            title: "Mock backend",
-            endpoints: Endpoints(
-                backendURL: URL(string: "www.mock.com")!,
-                backendWSURL: URL(string: "www.mock.com")!,
-                blackListURL: URL(string: "www.mock.com")!,
-                teamsURL: URL(string: "www.mock.com")!,
-                accountsURL: URL(string: "www.mock.com")!,
-                websiteURL: URL(string: "www.mock.com")!,
-                countlyURL: URL(string: "www.mock.com")!
-            ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        ),
+        config: Fixture.backendConfig,
         metadata: BackendMetadata(
             apiVersion: .v8,
             domain: "mock.com",
             isFederationEnabled: true
         )
+    )
+
+    public static let backendConfig = BackendConfig(
+        title: "Mock backend",
+        endpoints: Fixture.endpoints,
+        proxySettings: nil,
+        pinnedKeys: nil
+    )
+
+    public static let endpoints = Endpoints(
+        backendURL: URL(string: "www.mock.com")!,
+        backendWSURL: URL(string: "www.mock.com")!,
+        blackListURL: URL(string: "www.mock.com")!,
+        teamsURL: URL(string: "www.mock.com")!,
+        accountsURL: URL(string: "www.mock.com")!,
+        websiteURL: URL(string: "www.mock.com")!,
+        countlyURL: URL(string: "www.mock.com")!
     )
 
     public static let someCookie = HTTPCookie(properties: [

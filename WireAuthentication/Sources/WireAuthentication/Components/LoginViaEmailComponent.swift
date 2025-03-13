@@ -86,7 +86,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         LoginViaEmailViewModel(
             router: dependency.router,
             factory: self,
-            backendEnvironment: backendEnvironment,
+            environmentType: dependency.environmentType,
             email: email,
             backendConfig: dependency.backendConfig,
             backendMetadata: backendMetadata,

@@ -65,11 +65,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
         LoginViaEmailViewModel(
             router: dependency.router,
             factory: self,
-            backendEnvironment: WireAuthenticationBackendEnvironment(
-                environmentType: environmentType,
-                config: backendConfig,
-                metadata: backendMetadata! // FIXME: Remove force unwrap
-            ),
+            environmentType: environmentType,
             email: email,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata,

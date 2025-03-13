@@ -249,7 +249,7 @@ extension MockDependencies: LoginViaEmailBuilder {
         LoginViaEmailViewModel(
             router: rootViewModel,
             factory: self,
-            backendEnvironment: backendEnvironment,
+            environmentType: environmentType,
             email: email,
             backendConfig: backendConfig,
             backendMetadata: nil,
@@ -329,7 +329,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
         LoginViaEmailViewModel(
             router: rootViewModel,
             factory: self,
-            backendEnvironment: backendEnvironment,
+            environmentType: environmentType,
             email: email,
             backendConfig: backendConfig,
             backendMetadata: nil,
