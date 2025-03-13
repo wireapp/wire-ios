@@ -81,7 +81,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
-    private let timestampView: ConversationCellBurstTimestampView
+    // private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?
     private var timer: Timer?
 
@@ -90,7 +90,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     weak var actionController: ConversationMessageActionController?
 
     override init(frame: CGRect) {
-        self.timestampView = ConversationCellBurstTimestampView()
+        // self.timestampView = ConversationCellBurstTimestampView()
         super.init(frame: frame)
         configureSubviews()
         configureConstraints()
@@ -102,18 +102,18 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubviews() {
-        addSubview(timestampView)
+        // addSubview(timestampView)
     }
 
     private func configureConstraints() {
-        timestampView.translatesAutoresizingMaskIntoConstraints = false
+        // timestampView.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-            timestampView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            timestampView.topAnchor.constraint(equalTo: topAnchor),
-            timestampView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            timestampView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+        // NSLayoutConstraint.activate([
+        //     timestampView.leadingAnchor.constraint(equalTo: leadingAnchor),
+        //     timestampView.topAnchor.constraint(equalTo: topAnchor),
+        //     timestampView.trailingAnchor.constraint(equalTo: trailingAnchor),
+        //     timestampView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        // ])
     }
 
     override func willMove(toWindow newWindow: UIWindow?) {
@@ -158,12 +158,12 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     func configure(with object: BurstTimestampSenderMessageCellConfiguration, animated: Bool) {
         configuration = object
 
-        timestampView.configure(
-            with: object.date,
-            includeDayOfWeek: object.includeDayOfWeek,
-            showUnreadDot: object.showUnreadDot,
-            accentColor: object.accentColor
-        )
+        // timestampView.configure(
+        //     with: object.date,
+        //     includeDayOfWeek: object.includeDayOfWeek,
+        //     showUnreadDot: object.showUnreadDot,
+        //     accentColor: object.accentColor
+        // )
     }
 
 }
