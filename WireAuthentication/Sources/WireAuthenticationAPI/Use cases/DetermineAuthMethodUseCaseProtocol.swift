@@ -21,7 +21,7 @@ import Foundation
 public protocol DetermineAuthMethodUseCaseProtocol: Sendable {
 
     @MainActor
-    func invoke(emailOrSSOCode: String) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod
+    func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod
 
 }
 
@@ -47,15 +47,10 @@ public enum AuthenticationMethod: Sendable, Hashable {
 
 public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
 
+    /// The email or SSO code is invalid.
+
     case invalidEmailOrSSOCode
 
-    /// Indicates that the domain registration response was invalid.
-
-    case invalidResponse
-
-    case urlError(URLError)
-
-    case unknown
 }
 
 public protocol DetermineAuthMethodUseCaseFactory {
