@@ -207,7 +207,8 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
             viewModel: switchBackendConfirmationViewModel(
                 email: email,
                 backendConfig: backendConfig
-            )
+            ),
+            factory: self
         )
     }
 
