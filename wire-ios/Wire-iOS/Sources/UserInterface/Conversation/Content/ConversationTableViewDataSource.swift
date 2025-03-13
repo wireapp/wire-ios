@@ -198,7 +198,8 @@ final class ConversationTableViewDataSource: NSObject {
             message: message,
             context: .content,
             view: tableView,
-            isCollapsed: sectionController.isCollapsed
+            isCollapsed: sectionController.isCollapsed,
+            selfUserId: userSession.selfUser.remoteIdentifier
         )
 
         actionControllers[message.objectIdentifier] = actionController

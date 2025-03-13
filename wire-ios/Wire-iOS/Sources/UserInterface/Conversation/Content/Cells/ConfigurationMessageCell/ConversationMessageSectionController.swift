@@ -98,7 +98,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var selected: Bool
 
     /// Whether this section is collapsed
-    private(set) var isCollapsed: Bool {
+    private(set) var isCollapsed: Bool = false {
         didSet {
             actionController?.isCollapsed = isCollapsed
         }
@@ -122,11 +122,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.message = message
         self.context = context
         self.selected = selected
-        self.isCollapsed = Self.isCollapsedInitialValue(message: message)
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
 
         super.init()
+
+        self.isCollapsed = isCollapsedInitialValue()
 
         createCellDescriptions(in: context)
 
@@ -137,15 +138,16 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
     }
 
-    private static func isCollapsedInitialValue(message: ConversationMessage) -> Bool {
-        let collapseOwnMessagesSetting = false
+    private func isCollapsedInitialValue() -> Bool {
+        
         // cases when isCollapsed should be true by default
-        if message.isSystem || !message.failedToSendUsers.isEmpty {
+        if isMessageWithCollapsedByDefault() {
             return true
         }
-
+        
         // then if in settings user allowed to collapse own messages
-        guard collapseOwnMessagesSetting else {
+        guard let selfUserId = userSession.selfUser.remoteIdentifier,
+              PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapse) else {
             return false
         }
         let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message
@@ -442,20 +444,30 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
-//        guard (!message.isSystem || message.isMissedCall) && !isCollapsed else {
         guard !message.isSystem || message.isMissedCall else {
+            return false
+        }
+
+        if !isMessageWithCollapsedByDefault() && isCollapsed {
             return false
         }
 
         return message.deliveryState == .failedToSend || message.isSentBySelfUser
     }
+    
+    private func isMessageWithCollapsedByDefault() -> Bool {
+        message.isSystem || message.failedToSendUsers.count > 0
+    }
 
     func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
         guard message.senderUser != nil else {
-//        guard message.senderUser != nil, !isCollapsed else {
             return false
         }
-
+        
+        if !isMessageWithCollapsedByDefault() && isCollapsed {
+            return false
+        }
+        
         if message.isKnock || message.isSystem {
             return false
         }
@@ -484,7 +496,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if context.isSameSenderAsPrevious, !context.isTimestampInSameMinuteAsPreviousMessage {
             return true
         }
-
+        
         return false
     }
 

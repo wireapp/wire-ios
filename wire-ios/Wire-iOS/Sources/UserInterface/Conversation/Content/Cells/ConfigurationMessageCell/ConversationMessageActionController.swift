@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireFoundation
 
 final class ConversationMessageActionController {
 
@@ -29,9 +30,13 @@ final class ConversationMessageActionController {
 
     let message: ZMConversationMessage
     let context: Context
+    
     // weather message collapsed or normal\expanded
     // nil if not applicable
     var isCollapsed: Bool?
+    // needed to get collapse own messages settings for a specific user
+    // nil if not aplicable
+    var selfUserId: UUID?
     weak var responder: MessageActionResponder?
     weak var view: UIView!
 
@@ -40,13 +45,15 @@ final class ConversationMessageActionController {
         message: ZMConversationMessage,
         context: Context,
         view: UIView,
-        isCollapsed: Bool? = nil
+        isCollapsed: Bool? = nil,
+        selfUserId: UUID? = nil
     ) {
         self.responder = responder
         self.message = message
         self.context = context
         self.view = view
         self.isCollapsed = isCollapsed
+        self.selfUserId = selfUserId
     }
 
     // MARK: - List of Actions
@@ -122,8 +129,10 @@ final class ConversationMessageActionController {
         case .visitLink:
             return message.canVisitLink
         case .collapse:
-            let collapseOwnMessagesSetting = false // TODO:
-            guard collapseOwnMessagesSetting, let isCollapsed, !isCollapsed else {
+            guard let selfUserId,
+                  let isCollapsed,
+                  PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapse),
+                  !isCollapsed else {
                 return false
             }
 
