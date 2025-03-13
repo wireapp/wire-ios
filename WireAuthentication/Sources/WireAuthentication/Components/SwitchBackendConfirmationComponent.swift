@@ -71,8 +71,15 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
 
     // MARK: - Children
 
-    var loginViaSSOComponent: LoginViaSSOComponent {
-        LoginViaSSOComponent()
+    func loginViaSSOComponent(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOComponent {
+        LoginViaSSOComponent(
+            parent: self,
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        )
     }
 
     // MARK: - Private dependencies
@@ -127,8 +134,14 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
 
 extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationView.Factory {
 
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        loginViaSSOComponent.view(ssoURL: ssoURL)
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOView {
+        loginViaSSOComponent(
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        ).view
     }
 
 }

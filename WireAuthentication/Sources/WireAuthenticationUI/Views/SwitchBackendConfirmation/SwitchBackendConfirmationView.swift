@@ -70,8 +70,11 @@ package struct SwitchBackendConfirmationView: View {
         .fixedSize(horizontal: false, vertical: true)
         .sheet(item: $viewModel.modalDestination, content: {
             switch $0 {
-            case let .ssoLogin(url: ssoURL):
-                factory.loginViaSSOView(ssoURL: ssoURL)
+            case let .ssoLogin(ssoURL, backendEnvironment):
+                factory.loginViaSSOView(
+                    ssoURL: ssoURL,
+                    backendEnvironment: backendEnvironment
+                )
             }
         })
     }
