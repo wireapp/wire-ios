@@ -27,6 +27,7 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
             model.buildView()
+                .id(model.id)
         }
         .margins(.all, 0)
         .minSize(width: 0, height: 0)
@@ -42,9 +43,9 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
     ConversationCellPreviews(
         models: [
             .guestsAllowed,
-            .timeDivider(text: "Friday"),
-            .timeDivider(text: "Saturday"),
-            .timeDivider(text: "Sunday")
+            .timeDivider(text: "Friday", isUnread: false),
+            .timeDivider(text: "Saturday", isUnread: false),
+            .timeDivider(text: "Sunday", isUnread: true)
         ]
     )
 }

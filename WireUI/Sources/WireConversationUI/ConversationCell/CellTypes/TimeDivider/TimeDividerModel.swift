@@ -21,21 +21,36 @@ public struct TimeDividerModel: ConversationCellModelProtocol {
 
     public var id: AnyHashable { self }
 
-    var text = ""
+    var text: String
+    var isUnreadIndicatorVisible: Bool
 
-    init(text: String) {
+    init(
+        text: String,
+        isUnreadIndicatorVisible: Bool
+    ) {
         self.text = text
+        self.isUnreadIndicatorVisible = isUnreadIndicatorVisible
     }
 
     init() {
-        self.init(text: "")
+        self.init(
+            text: "",
+            isUnreadIndicatorVisible: false
+        )
     }
 
 }
 
 extension ConversationCellModel {
 
-    public static func timeDivider(text: String) -> Self {
-        .timeDivider(TimeDividerModel(text: text))
+    public static func timeDivider(
+        text: String,
+        isUnread: Bool
+    ) -> Self {
+        let model = TimeDividerModel(
+            text: text,
+            isUnreadIndicatorVisible: isUnread
+        )
+        return .timeDivider(model)
     }
 }

@@ -38,7 +38,10 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
         } else {
             text = configuration.date.formattedDate
         }
-        return .timeDivider(text: text)
+        return .timeDivider(
+            text: text,
+            isUnread: configuration.showUnreadDot
+        )
     }
 
     let configuration: View.Configuration

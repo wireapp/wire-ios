@@ -26,6 +26,46 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
     private(set) var model: TimeDividerModel
 
     var body: some View {
+        if model.isUnreadIndicatorVisible {
+            withUnreadIndicator
+        } else {
+            withoutUnreadIndicator
+        }
+    }
+
+    @ViewBuilder
+    private var withUnreadIndicator: some View {
+        HStack(spacing: 0) {
+
+            Circle()
+                .fill(.tint)
+                .frame(width: 8)
+                .padding(.leading, 24)
+                .padding(.trailing, 18)
+                .layoutPriority(1)
+
+            if !model.text.isEmpty {
+                Text(model.text)
+                    .multilineTextAlignment(.center)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .padding(.trailing, 12)
+                    .layoutPriority(1)
+            }
+
+            VStack {
+                Divider()
+                    .frame(minHeight: 1)
+                    .overlay { dividerColor }
+            }
+            .padding(.trailing, 24)
+
+        }
+        .padding(.vertical, 8)
+    }
+
+    @ViewBuilder
+    private var withoutUnreadIndicator: some View {
         HStack(spacing: 0) {
 
             VStack {
@@ -33,7 +73,7 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
                     .frame(minHeight: 1)
                     .overlay { dividerColor }
             }
-            .padding(.leading, 12)
+            .padding(.leading, 24)
 
             if !model.text.isEmpty {
                 Text(model.text)
@@ -49,21 +89,41 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
                     .frame(minHeight: 1)
                     .overlay { dividerColor }
             }
-            .padding(.trailing, 12)
+            .padding(.trailing, 24)
 
         }
         .padding(.vertical, 8)
-        .padding(.horizontal, 12)
     }
 
 }
 
 // MARK: - Previews
 
-#Preview {
-    TimeDividerContentView(model: TimeDividerModel(text: "Friday Lorem Ipsum Dolor"))
+#Preview("with unread indicator") {
+    let model = TimeDividerModel(
+        text: "Friday Lorem Ipsum Dolor",
+        isUnreadIndicatorVisible: true
+    )
+    TimeDividerContentView(model: model)
 }
 
-#Preview("empty") {
-    TimeDividerContentView(model: TimeDividerModel())
+#Preview("without unread indicator") {
+    let model = TimeDividerModel(
+        text: "Friday Lorem Ipsum Dolor",
+        isUnreadIndicatorVisible: false
+    )
+    TimeDividerContentView(model: model)
+}
+
+#Preview("no text") {
+    let model = TimeDividerModel()
+    TimeDividerContentView(model: model)
+}
+
+#Preview("no text but unread indicator") {
+    let model = TimeDividerModel(
+        text: "",
+        isUnreadIndicatorVisible: true
+    )
+    TimeDividerContentView(model: model)
 }
