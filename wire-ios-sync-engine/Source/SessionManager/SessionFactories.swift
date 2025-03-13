@@ -156,7 +156,7 @@ open class AuthenticatedSessionFactory {
     private(set) var proxyUsername: String?
     private(set) var proxyPassword: String?
 
-    private var proxySettings: ProxySettings? {
+    private var proxySettings: WireAPI.ProxySettings? {
         guard let proxy = environment.proxy else { return nil }
 
         if proxy.needsAuthentication {

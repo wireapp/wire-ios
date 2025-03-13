@@ -23,9 +23,7 @@ package protocol NoHistoryViewBuilder {
 
     @MainActor
     func noHistoryView(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
+        authenticationResult: AuthenticationResult,
         didDetectDomainConflict: Bool
     ) -> NoHistoryView
 
@@ -53,9 +51,22 @@ package struct NoHistoryView: View {
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Button(L10n.Authentication.NoHistory.confirm, action: viewModel.confirm)
-                .wireButtonStyle(.primary)
-                .bold()
+
+            Button {
+                viewModel.confirm()
+            } label: {
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+
+                    Text(L10n.Authentication.NoHistory.confirm)
+                        .lineLimit(nil)
+                }
+            }
+            .wireButtonStyle(.primary)
+            .bold()
+            .disabled(viewModel.isLoading)
         }
         .alert(
             item: $viewModel.alert,
@@ -98,13 +109,10 @@ package struct NoHistoryView: View {
 
 #Preview {
     let viewModel = NoHistoryViewModel(
-        userID: UUID(),
-        cookies: [],
-        accessToken: nil,
         didDetectDomainConflict: false,
         howToChangeEmailURL: URL(string: "https://wire.com")!,
         howToDeleteAccountURL: URL(string: "https://wire.com")!,
-        onFlowCompletion: { _ in }
+        onFlowCompletion: {}
     )
     NoHistoryView(viewModel: viewModel)
 }
@@ -113,13 +121,10 @@ package struct NoHistoryView: View {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
             let viewModel = NoHistoryViewModel(
-                userID: UUID(),
-                cookies: [],
-                accessToken: nil,
                 didDetectDomainConflict: false,
                 howToChangeEmailURL: URL(string: "https://wire.com")!,
                 howToDeleteAccountURL: URL(string: "https://wire.com")!,
-                onFlowCompletion: { _ in }
+                onFlowCompletion: {}
             )
             NoHistoryView(viewModel: viewModel)
         }

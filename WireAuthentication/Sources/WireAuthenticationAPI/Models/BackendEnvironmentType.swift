@@ -18,24 +18,18 @@
 
 import Foundation
 
-package struct SSOSuccessHandler {
+public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
 
-    private let router: any Router
-
-    package init(router: Router) {
-        self.router = router
-    }
-
-    @MainActor
-    package func handleSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        router.presentSheet(
-            RootView.ModalDestination.noHistory(
-                userID: userID,
-                cookies: cookies,
-                accessToken: nil,
-                didDetectDomainConflict: false
-            )
-        )
-    }
+    case production
+    case staging
+    case qaDemo
+    case qaDemo2
+    case anta
+    case bella
+    case chala
+    case diya
+    case elna
+    case foma
+    case custom(url: URL)
 
 }
