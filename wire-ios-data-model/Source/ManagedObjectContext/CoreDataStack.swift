@@ -103,8 +103,16 @@ public extension NSURL {
 
 // MARK: -
 
+// sourcery: AutoMockable
+public protocol CoreDataStackProtocol: ContextProvider {
+    var storesExists: Bool { get }
+    var needsMigration: Bool { get }
+    
+    func loadStores(completionHandler: @escaping (Error?) -> Void)
+}
+
 @objcMembers
-public class CoreDataStack: NSObject, ContextProvider {
+public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
     public let account: Account
 
