@@ -103,15 +103,15 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
 
         let body = if let timeout {
             if let senderName = context.senderName {
-                String.formated(key: "push.notification.body.senderSetTimerOn", senderName, timeout)
+                String.formated(key: "push.notification.body.senderSetTimerOn", bundle: .module, senderName, timeout)
             } else {
-                String.formated(key: "push.notification.body.setTimerOn", timeout)
+                String.formated(key: "push.notification.body.setTimerOn", bundle: .module, timeout)
             }
         } else {
             if let senderName = context.senderName {
-                String.formated(key: "push.notification.body.senderSetTimerOff", senderName)
+                String.formated(key: "push.notification.body.senderSetTimerOff", bundle: .module, senderName)
             } else {
-                String.localized(key: "push.notification.body.setTimerOff")
+                String.localized(key: "push.notification.body.setTimerOff", bundle: .module)
             }
         }
 

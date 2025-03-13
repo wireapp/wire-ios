@@ -48,7 +48,7 @@ struct UserContactJoinEventNotificationBuilder: NotificationBuilder {
     private func buildUserContactJoinNotification() -> UserNotification {
         let content = UNMutableNotificationContent()
 
-        let body = String.formated(key: "push.notification.body.contactJoined", context.name)
+        let body = String.formated(key: "push.notification.body.contactJoined", bundle: .module, context.name)
         content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()

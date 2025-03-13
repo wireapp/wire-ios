@@ -111,9 +111,9 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
         }
 
         let body = if let senderName = context.senderName {
-            String.formated(key: "push.notification.body.senderAddedYou", senderName)
+            String.formated(key: "push.notification.body.senderAddedYou", bundle: .module, senderName)
         } else {
-            String.localized(key: "push.notification.body.addedYou")
+            String.localized(key: "push.notification.body.addedYou", bundle: .module)
         }
 
         content.body = body

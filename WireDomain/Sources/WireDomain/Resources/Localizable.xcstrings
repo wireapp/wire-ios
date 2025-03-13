@@ -166,6 +166,17 @@
         }
       }
     },
+    "push.notification.body.missedCall" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missed call"
+          }
+        }
+      }
+    },
     "push.notification.body.ping" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -176,15 +187,6 @@
           }
         }
       }
-    },
-    "push.notification.body.push.notification.body.senderSharedFile" : {
-
-    },
-    "push.notification.body.push.notification.body.sharedFile" : {
-
-    },
-    "push.notification.body.push.notification.body.textWithMentionFromSender" : {
-
     },
     "push.notification.body.removedYou" : {
       "extractionState" : "manual",
@@ -215,6 +217,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ added you"
+          }
+        }
+      }
+    },
+    "push.notification.body.senderCalled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ called"
           }
         }
       }
@@ -500,7 +513,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " %@ in %@"
+            "value" : "%@ in %@"
           }
         }
       }

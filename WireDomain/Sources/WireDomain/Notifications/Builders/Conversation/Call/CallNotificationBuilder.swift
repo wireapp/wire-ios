@@ -164,11 +164,11 @@ struct CallNotificationBuilder: NotificationBuilder {
 
         let body = if context.isGroupConversation, let senderName {
             String.formated(
-                key: isVideo ? "push.notification.body.videoCallFromSender" : "push.notification.body.audioCallFromSender" , senderName
+                key: isVideo ? "push.notification.body.videoCallFromSender" : "push.notification.body.audioCallFromSender", bundle: .module, senderName
             )
         } else {
             String.localized(
-                key: isVideo ? "push.notification.body.videoCall" : "push.notification.body.audioCall"
+                key: isVideo ? "push.notification.body.videoCall" : "push.notification.body.audioCall", bundle: .module
             )
         }
 
@@ -190,9 +190,9 @@ struct CallNotificationBuilder: NotificationBuilder {
         }
 
         let body = if context.isGroupConversation, let senderName {
-            "\(senderName) called"
+            String.formated(key: "push.notification.body.senderCalled", bundle: .module, senderName)
         } else {
-            "Missed call"
+            String.localized(key: "push.notification.body.missedCall", bundle: .module)
         }
 
         content.body = body

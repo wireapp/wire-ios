@@ -35,11 +35,11 @@ enum NotificationBody {
     private func make(bodyDescriptor: NewMessageBodyDescriptor) -> String {
         switch bodyDescriptor {
         case .sentWithUnknownSender:
-            String.localized(key: "push.notification.body.sentWithUnknownSender")
+            String.localized(key: "push.notification.body.sentWithUnknownSender", bundle: .module)
         case .mentionedWithUnknownSender:
-            String.localized(key: "push.notification.body.mentionedWithUnknownSender")
+            String.localized(key: "push.notification.body.mentionedWithUnknownSender", bundle: .module)
         case .repliedWithUnknownSender:
-            String.localized(key: "push.notification.body.repliedWithUnknownSender")
+            String.localized(key: "push.notification.body.repliedWithUnknownSender", bundle: .module)
         case let .text(content, senderName):
             if let senderName {
                 "\(senderName): \(content)"
@@ -48,54 +48,54 @@ enum NotificationBody {
             }
         case let .textWithMention(content, senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.push.notification.body.textWithMentionFromSender", senderName, content)
+                String.formated(key: "push.notification.body.textWithMentionFromSender", bundle: .module, senderName, content)
             } else {
-                String.formated(key: "push.notification.body.textWithMention", content)
+                String.formated(key: "push.notification.body.textWithMention", bundle: .module, content)
             }
         case let .textWithReply(content, senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.textWithReplyFromSender", senderName, content)
+                String.formated(key: "push.notification.body.textWithReplyFromSender", bundle: .module, senderName, content)
             } else {
-                String.formated(key: "push.notification.body.textWithReply", content)
+                String.formated(key: "push.notification.body.textWithReply", bundle: .module, content)
             }
         case let .sharedPicture(senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.senderSharedPicture", senderName)
+                String.formated(key: "push.notification.body.senderSharedPicture", bundle: .module, senderName)
             } else {
-                String.localized(key: "push.notification.body.sharedPicture")
+                String.localized(key: "push.notification.body.sharedPicture", bundle: .module)
             }
         case let .sharedVideo(senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.senderSharedVideo", senderName)
+                String.formated(key: "push.notification.body.senderSharedVideo", bundle: .module, senderName)
             } else {
-                String.localized(key: "push.notification.body.sharedVideo")
+                String.localized(key: "push.notification.body.sharedVideo", bundle: .module)
             }
         case let .sharedAudio(senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.senderSharedAudio", senderName)
+                String.formated(key: "push.notification.body.senderSharedAudio", bundle: .module, senderName)
             } else {
-                String.localized(key: "push.notification.body.sharedAudio")
+                String.localized(key: "push.notification.body.sharedAudio", bundle: .module)
             }
         case let .sharedFile(senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.push.notification.body.senderSharedFile", senderName)
+                String.formated(key: "push.notification.body.senderSharedFile", bundle: .module, senderName)
             } else {
-                String.localized(key: "push.notification.body.push.notification.body.sharedFile")
+                String.localized(key: "push.notification.body.sharedFile", bundle: .module)
             }
         case let .sharedLocation(senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.senderSharedLocation", senderName)
+                String.formated(key: "push.notification.body.senderSharedLocation", bundle: .module, senderName)
             } else {
-                String.localized(key: "push.notification.body.sharedLocation")
+                String.localized(key: "push.notification.body.sharedLocation", bundle: .module)
             }
         case let .ping(senderName):
             if let senderName {
-                String.formated(key: "push.notification.body.senderPingedYou", senderName)
+                String.formated(key: "push.notification.body.senderPingedYou", bundle: .module, senderName)
             } else {
-                String.localized(key: "push.notification.body.ping")
+                String.localized(key: "push.notification.body.ping", bundle: .module)
             }
         case .hidden:
-            String.localized(key: "push.notification.body.hidden")
+            String.localized(key: "push.notification.body.hidden", bundle: .module)
         }
     }
 

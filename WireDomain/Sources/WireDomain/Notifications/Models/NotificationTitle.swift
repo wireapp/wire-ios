@@ -34,11 +34,11 @@ enum NotificationTitle {
         case let .sender(sender):
             "\(sender)"
         case let .senderInTeam(sender, team):
-            String.formated(key: "push.notification.title", sender, team)
+            String.formated(key: "push.notification.title", bundle: .module, sender, team)
         case let .conversation(conversation):
             "\(conversation)"
         case let .conversationInTeam(conversation, team):
-            String.formated(key: "push.notification.title", conversation, team)
+            String.formated(key: "push.notification.title", bundle: .module, conversation, team)
         }
     }
 

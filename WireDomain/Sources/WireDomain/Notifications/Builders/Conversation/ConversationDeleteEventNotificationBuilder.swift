@@ -113,9 +113,9 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
         }
 
         let body = if let senderName = context.senderName {
-            String.formated(key: "push.notification.body.senderDeletedGroup", senderName)
+            String.formated(key: "push.notification.body.senderDeletedGroup", bundle: .module, senderName)
         } else {
-            String.localized(key: "push.notification.body.deletedGroup")
+            String.localized(key: "push.notification.body.deletedGroup", bundle: .module)
         }
 
         content.body = body
