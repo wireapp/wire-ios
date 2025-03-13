@@ -30,6 +30,8 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
     var networkService: NetworkService { get }
+    var environmentType: BackendEnvironmentType { get }
+    var backendConfig: BackendConfig { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
@@ -83,6 +85,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         LoginViaEmailViewModel(
             router: dependency.router,
             loginViaEmailUseCase: loginViaEmailUseCase,
+            backendEnvironment: backendEnvironment,
             email: email,
             accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
@@ -92,6 +95,16 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
                 dependency?.bridge.registerAccount()
             }
         )
+    }
+
+    public var backendEnvironment: WireAuthenticationBackendEnvironment {
+        shared {
+            WireAuthenticationBackendEnvironment(
+                environmentType: dependency.environmentType,
+                config: dependency.backendConfig,
+                metadata: backendMetadata
+            )
+        }
     }
 
     // MARK: - Children

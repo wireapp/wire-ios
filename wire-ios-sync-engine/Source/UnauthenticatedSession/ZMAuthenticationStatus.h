@@ -69,7 +69,7 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 @property (nonatomic, readonly, copy) NSString *loginEmailThatNeedsAValidationCode;
 
 
-@property (nonatomic, readonly) UserCredentials *loginCredentials;
+@property (nonatomic) UserCredentials *loginCredentials;
 
 @property (nonatomic, readonly) BOOL isWaitingForBackupImport;
 @property (nonatomic, readonly) BOOL completedRegistration;

@@ -18,16 +18,30 @@
 
 import Foundation
 
-package struct SSOFailureHandler {
+/// Email credentials for a user.
 
-    private let router: any Router
+public struct EmailCredentials: Equatable, Hashable {
 
-    package init(router: Router) {
-        self.router = router
+    /// The user's email address.
+
+    public let email: String
+
+    /// The plaintext password.
+
+    public let password: String
+
+    /// A second factor authentication code.
+
+    public let verificationCode: String?
+
+    public init(
+        email: String,
+        password: String,
+        verificationCode: String?
+    ) {
+        self.email = email
+        self.password = password
+        self.verificationCode = verificationCode
     }
 
-    @MainActor
-    package func handleFailure() {
-        router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
-    }
 }

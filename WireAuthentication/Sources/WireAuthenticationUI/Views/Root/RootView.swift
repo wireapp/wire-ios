@@ -71,32 +71,33 @@ package struct RootView: View {
                         )
                     }
                 case let .noHistory(
-                    userID,
-                    cookies,
-                    accessToken,
+                    authenticationResult,
                     didDetectDomainConflict
                 ):
                     factory.noHistoryView(
-                        userID: userID,
-                        cookies: cookies,
-                        accessToken: accessToken,
+                        authenticationResult: authenticationResult,
                         didDetectDomainConflict: didDetectDomainConflict
                     )
                 case let .onPremiseLogin(
                     email,
+                    environmentType,
                     backendConfig,
                     backendMetadata
                 ):
                     factory.loginViaEmailOnPremView(
                         email: email,
+                        environmentType: environmentType,
                         backendConfig: backendConfig,
                         backendMetadata: backendMetadata
                     )
                 case let .ssoLogin(
                     ssoURL,
-                    backendMetadata
+                    backendEnvironment
                 ):
-                    factory.loginViaSSOView(ssoURL: ssoURL)
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
                 case let .switchBackend(backendConfig):
                     factory.switchBackendView(email: nil, backendConfig: backendConfig)
                 }
@@ -126,19 +127,18 @@ package struct RootView: View {
             backendMetadata: BackendMetadata
         )
         case noHistory(
-            userID: UUID,
-            cookies: [HTTPCookie],
-            accessToken: AccessToken?,
+            authenticationResult: AuthenticationResult,
             didDetectDomainConflict: Bool
         )
         case onPremiseLogin(
             email: String,
+            environmentType: BackendEnvironmentType,
             environment: BackendConfig,
             backendMetadata: BackendMetadata?
         )
         case ssoLogin(
             url: URL,
-            BackendMetadata: BackendMetadata
+            backendEnvironment: WireAuthenticationBackendEnvironment
         )
         case switchBackend(backendConfig: BackendConfig)
     }

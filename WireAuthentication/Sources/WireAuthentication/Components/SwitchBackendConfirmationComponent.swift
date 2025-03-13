@@ -28,6 +28,7 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     var preferredAPIVersion: APIVersion? { get }
+    var productionVersions: Set<APIVersion> { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
@@ -37,14 +38,17 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationComponentDependency> {
 
     private let email: String?
+    private let environmentType: BackendEnvironmentType
     public let backendConfig: BackendConfig
 
     init(
         parent: any Scope,
         email: String?,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
         self.email = email
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         super.init(parent: parent)
     }
@@ -60,6 +64,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
             router: dependency.router,
             factory: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
         )
     }
@@ -89,7 +94,7 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
         let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
         return ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
+            clientProductionVersions: dependency.productionVersions,
             preferredAPIVersion: dependency.preferredAPIVersion
         )
     }

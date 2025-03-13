@@ -118,7 +118,7 @@ public final class BackendEnvironment: NSObject {
     let certificateTrust: BackendTrustProvider
     let type: EnvironmentType
 
-    init(
+    public init(
         title: String,
         trustData: [TrustData],
         environmentType: EnvironmentType,

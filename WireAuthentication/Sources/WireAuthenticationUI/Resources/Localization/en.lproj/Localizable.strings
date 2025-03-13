@@ -52,6 +52,7 @@
 "switch_backend_confirmation.teams_url" = "Teams URL:";
 "switch_backend_confirmation.accounts_url" = "Accounts URL:";
 "switch_backend_confirmation.website_url" = "Website URL:";
+"switch_backend_confirmation.countly_url" = "Countly URL:";
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Cancel";
 "switch_backend_confirmation.show_details" = "Show details";

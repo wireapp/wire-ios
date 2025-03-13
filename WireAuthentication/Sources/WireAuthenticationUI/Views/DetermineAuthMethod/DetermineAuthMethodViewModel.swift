@@ -35,15 +35,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
-        case ssoLogin(url: URL)
-        case switchBackend(email: String, backendConfig: BackendConfig)
+        case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
+        case switchBackend(email: String, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
     }
 
     private let router: any Router
     private let factory: any Factory
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
-    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    let backendConfig: BackendConfig?
+    private let environmentType: BackendEnvironmentType
+    private let backendConfig: BackendConfig
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -57,15 +57,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        backendConfig: BackendConfig?,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         emailOrSSOCode: String = "",
         isLoading: Bool = false
     ) {
         self.router = router
         self.factory = factory
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
-        self.backendMetadata = backendMetadata
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
     }
@@ -143,7 +143,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 }.value
                 WireLogger.authentication.error("Generating SSO link succeeded")
 
-                modalDestination = .ssoLogin(url: url)
+                let backendEnvironment = WireAuthenticationBackendEnvironment(
+                    environmentType: environmentType,
+                    config: backendConfig,
+                    metadata: backendMetadata
+                )
+
+                modalDestination = .ssoLogin(
+                    url: url,
+                    backendEnvironment: backendEnvironment
+                )
             } catch {
                 WireLogger.authentication.error("Generating SSO link failed: \(error)")
 
@@ -163,9 +172,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 let backendConfig = try await Task.detached {
                     try await useCase.invoke(at: backendConfigURL)
                 }.value
+
                 WireLogger.authentication.info("Fetching backend config succeeded")
 
-                modalDestination = .switchBackend(email: email, backendConfig: backendConfig)
+                modalDestination = .switchBackend(
+                    email: email,
+                    environmentType: .custom(url: backendConfigURL),
+                    backendConfig: backendConfig
+                )
             } catch {
                 WireLogger.authentication.error("Fetching backend config failed: \(error)")
 

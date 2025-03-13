@@ -26,6 +26,7 @@ package protocol LoginViaEmailOnPremBuilder {
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremView
@@ -223,6 +224,7 @@ package struct LoginViaEmailOnPremView: View {
         .sheet(isPresented: .constant(true)) {
             MockDependencies().loginViaEmailOnPremView(
                 email: "foo@bar.com",
+                environmentType: MockDependencies().environmentType,
                 backendConfig: MockDependencies()._backendConfig,
                 backendMetadata: nil
             )

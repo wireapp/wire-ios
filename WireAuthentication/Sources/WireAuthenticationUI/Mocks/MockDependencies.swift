@@ -27,8 +27,28 @@ final class MockDependencies {
         RootViewModel()
     }
 
+    var environmentType: BackendEnvironmentType {
+        .production
+    }
+
     private var backendConfig: BackendConfig {
         _backendConfig
+    }
+
+    var backendMetadata: BackendMetadata {
+        BackendMetadata(
+            apiVersion: .v8,
+            domain: "example.com",
+            isFederationEnabled: true
+        )
+    }
+
+    var backendEnvironment: WireAuthenticationBackendEnvironment {
+        WireAuthenticationBackendEnvironment(
+            environmentType: environmentType,
+            config: backendConfig,
+            metadata: backendMetadata
+        )
     }
 
     var _backendConfig = BackendConfig(
@@ -39,7 +59,8 @@ final class MockDependencies {
             blackListURL: URL(string: "https://example.com")!,
             teamsURL: URL(string: "https://example.com")!,
             accountsURL: URL(string: "https://example.com")!,
-            websiteURL: URL(string: "https://example.com")!
+            websiteURL: URL(string: "https://example.com")!,
+            countlyURL: URL(string: "https://example.com")!
         ),
         proxySettings: nil,
         pinnedKeys: nil
@@ -60,20 +81,8 @@ final class MockDependencies {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
-            backendConfig: BackendConfig(
-                title: backendConfig.title,
-                endpoints: Endpoints(
-                    backendURL: backendConfig.endpoints.backendURL,
-                    backendWSURL: backendConfig.endpoints.backendWSURL,
-                    blackListURL: backendConfig.endpoints.blackListURL,
-                    teamsURL: backendConfig.endpoints.teamsURL,
-                    accountsURL: backendConfig.endpoints.accountsURL,
-                    websiteURL: backendConfig.endpoints.websiteURL
-                ),
-                proxySettings: nil,
-                pinnedKeys: nil
-            ),
-            backendMetadata: nil,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
             emailOrSSOCode: emailOrSSOCode,
             isLoading: isLoading
         )
@@ -142,20 +151,8 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
-            backendConfig: BackendConfig(
-                title: backendConfig.title,
-                endpoints: Endpoints(
-                    backendURL: backendConfig.endpoints.backendURL,
-                    backendWSURL: backendConfig.endpoints.backendWSURL,
-                    blackListURL: backendConfig.endpoints.blackListURL,
-                    teamsURL: backendConfig.endpoints.teamsURL,
-                    accountsURL: backendConfig.endpoints.accountsURL,
-                    websiteURL: backendConfig.endpoints.websiteURL
-                ),
-                proxySettings: nil,
-                pinnedKeys: nil
-            ),
-            backendMetadata: nil
+            environmentType: environmentType,
+            backendConfig: backendConfig
         )
     }
 
@@ -181,6 +178,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
             router: rootViewModel,
             factory: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: BackendConfig(
                 title: backendConfig.title,
                 endpoints: Endpoints(
@@ -189,7 +187,8 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
                     blackListURL: backendConfig.endpoints.blackListURL,
                     teamsURL: backendConfig.endpoints.teamsURL,
                     accountsURL: backendConfig.endpoints.accountsURL,
-                    websiteURL: backendConfig.endpoints.websiteURL
+                    websiteURL: backendConfig.endpoints.websiteURL,
+                    countlyURL: backendConfig.endpoints.countlyURL
                 ),
                 proxySettings: nil,
                 pinnedKeys: nil
@@ -199,6 +198,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
 
     func switchBackendView(
         email: String?,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(
@@ -226,20 +226,15 @@ extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
         NoHistoryViewModel(
-            userID: UUID(),
-            cookies: [],
-            accessToken: nil,
             didDetectDomainConflict: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,
-            onFlowCompletion: { _ in }
+            onFlowCompletion: {}
         )
     }
 
     func noHistoryView(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
+        authenticationResult: AuthenticationResult,
         didDetectDomainConflict: Bool
     ) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
@@ -257,6 +252,7 @@ extension MockDependencies: LoginViaEmailBuilder {
         LoginViaEmailViewModel(
             router: rootViewModel,
             loginViaEmailUseCase: self,
+            backendEnvironment: backendEnvironment,
             email: email,
             accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
@@ -297,6 +293,7 @@ extension MockDependencies: VerificationCodeBuilder {
             loginViaEmailUseCase: self,
             requestLoginVerificationCodeUseCase: self,
             router: rootViewModel,
+            backendEnvironment: backendEnvironment,
             numberOfDigits: code.count,
             didDetectDomainConflict: false
         )
@@ -317,6 +314,7 @@ extension MockDependencies: VerificationCodeBuilder {
                 loginViaEmailUseCase: self,
                 requestLoginVerificationCodeUseCase: self,
                 router: rootViewModel,
+                backendEnvironment: backendEnvironment,
                 didDetectDomainConflict: false
             )
         )
@@ -334,6 +332,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
             router: rootViewModel,
             factory: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
@@ -343,6 +342,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
 
     func loginViaEmailOnPremView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata?
     ) -> LoginViaEmailOnPremView {
@@ -367,7 +367,10 @@ extension MockDependencies: LoginViaSSOBuilder {
         LoginViaSSOViewModel(ssoURL: ssoURL)
     }
 
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOView {
         LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
     }
 

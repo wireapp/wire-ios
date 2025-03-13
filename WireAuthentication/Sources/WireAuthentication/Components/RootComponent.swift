@@ -26,8 +26,10 @@ internal import WireAuthenticationLogic
 
 class RootComponent: BootstrapComponent {
 
-    public let defaultBackendEnvironment: BackendEnvironment
+    public let environmentType: BackendEnvironmentType
+    public let backendConfig: BackendConfig
     public let preferredAPIVersion: APIVersion?
+    public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let howToChangeEmailURL: URL
@@ -39,7 +41,8 @@ class RootComponent: BootstrapComponent {
     let onFlowCompletion: (AuthenticationResult) -> Void
 
     init(
-        defaultBackendEnvironment: BackendEnvironment,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         accountsURL: URL,
@@ -51,8 +54,10 @@ class RootComponent: BootstrapComponent {
         onRegisterAccount: @escaping () -> Void,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void
     ) {
-        self.defaultBackendEnvironment = defaultBackendEnvironment
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
         self.preferredAPIVersion = preferredAPIVersion
+        self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.howToChangeEmailURL = howToChangeEmailURL
@@ -78,23 +83,19 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor public var bridge: WireAuthenticationBridge {
-        WireAuthenticationBridge(
-            onFlowCompletion: onFlowCompletion,
-            onRegisterAccount: onRegisterAccount,
-            onSSOSuccess: { userID, cookies in
-                SSOSuccessHandler(router: self.router).handleSuccess(userID: userID, cookies: cookies)
-            },
-            onSSOFailure: {
-                SSOFailureHandler(router: self.router).handleFailure()
-            },
-            onSwitchBackend: { backendConfigURL in
-                Task {
-                    await SwitchBackendHandler(router: self.router, factory: self).invoke(backendConfigURL)
-                }
-            }
-        )
+        shared {
+            WireAuthenticationBridge(
+                onFlowCompletion: onFlowCompletion,
+                onRegisterAccount: onRegisterAccount
+            )
+        }
     }
 
+//    onSwitchBackend: { backendConfigURL in
+//        Task {
+//            await SwitchBackendHandler(router: self.router, factory: self).invoke(backendConfigURL)
+//        }
+//    }
     // MARK: - Public dependencies
 
     @MainActor public var router: any Router {
@@ -114,25 +115,42 @@ class RootComponent: BootstrapComponent {
         )
     }
 
-    @MainActor var noHistoryComponent: NoHistoryComponent {
-        NoHistoryComponent(parent: self)
+    @MainActor
+    func noHistoryComponent(
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
     }
 
     func loginViaEmailOnPremComponent(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremComponent {
         LoginViaEmailOnPremComponent(
             parent: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         )
     }
 
-    var loginViaSSOComponent: LoginViaSSOComponent {
-        LoginViaSSOComponent()
+    func loginViaSSOComponent(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOComponent {
+        LoginViaSSOComponent(
+            parent: self,
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        )
     }
 
     func switchBackendConfirmationComponent(
@@ -163,35 +181,38 @@ extension RootComponent: RootView.Factory {
 
     @MainActor
     func noHistoryView(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: WireAuthenticationAPI.AccessToken?,
+        authenticationResult: AuthenticationResult,
         didDetectDomainConflict: Bool
     ) -> NoHistoryView {
-        noHistoryComponent.view(
-            userID: userID,
-            cookies: cookies,
-            accessToken: accessToken,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onFlowCompletion: bridge.onFlowCompletion
-        )
+        noHistoryComponent(
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        ).view
     }
 
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremView {
         loginViaEmailOnPremComponent(
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         ).view
     }
 
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        loginViaSSOComponent.view(ssoURL: ssoURL)
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOView {
+        loginViaSSOComponent(
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        ).view
     }
 
     func switchBackendView(email: String?, backendConfig: BackendConfig) -> SwitchBackendConfirmationView {
