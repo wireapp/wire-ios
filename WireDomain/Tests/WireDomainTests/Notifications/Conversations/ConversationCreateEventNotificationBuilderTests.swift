@@ -190,9 +190,9 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         )
 
         // User info
-        XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! UUID, .mockID1)
-        XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! UUID, .mockID3)
-        XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! UUID, .mockID2)
+        XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)
+        XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! String, UUID.mockID3.uuidString)
+        XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! String, UUID.mockID2.uuidString)
     }
 
     private func setupMock(isGroup: Bool, isTeam: Bool) async {

@@ -282,9 +282,9 @@ final class CallNotificationBuilderTests: XCTestCase {
         )
 
         // User info
-        XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! UUID, .mockID1)
+        XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)
         XCTAssertNil(notificationContent.userInfo["senderIDString"])
-        XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! UUID, .mockID2)
+        XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! String, UUID.mockID1.uuidString)
 
     }
 
