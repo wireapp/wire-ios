@@ -19,6 +19,14 @@ The `WireNotificationExtension` enriches push notifications and fetches update e
 
 ## Testing
 
+Wire-iOS has 3 different testing targets:
+
+* **Wire-iOS-Tests:** (legacy) includes UnitTests and SnapshotTests.
+* **Wire-iOS UnitTests:** includes **only** new UnitTests. 
+* **WireUITests:** contains end-to-end tests with XCUITests. This is used for critical flows.
+
+Note: As the first (legacy) target grown, we decided to split SnapshotTests from UnitTests.
+
 ### Sourcery Mocks
 The project uses [Sourcery](https://github.com/krzysztofzablocki/Sourcery) to generate mocks and embed it in a custom SPM plugin `SourceryPlugin`.
 
