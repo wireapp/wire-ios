@@ -17,17 +17,33 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 
-struct OnPremHeaderView: View {
-    @StateObject var viewModel: OnPremHeaderViewModel
-    @State private var showCustomBackendAlert = false
+package struct OnPremHeaderView: View {
 
-    var body: some View {
+    @State private var showCustomBackendAlert = false
+    private let backendConfig: BackendConfig
+
+    package init(backendConfig: BackendConfig) {
+        self.backendConfig = backendConfig
+    }
+
+    private var backendInfo: String {
+        [
+            L10n.OnPremUserLogin.Alert.Message.backendName,
+            backendConfig.title,
+            "",
+            L10n.OnPremUserLogin.Alert.Message.backendUrl,
+            backendConfig.endpoints.backendURL.absoluteString
+        ].joined(separator: "\n")
+    }
+
+    package var body: some View {
         Button(action: {
             showCustomBackendAlert.toggle()
         }, label: {
-            Text(L10n.OnPremUserLogin.title(viewModel.backendName) + " ")
+            Text(L10n.OnPremUserLogin.title(backendConfig.title) + " ")
                 .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
                 + Text(Image(systemName: "info.circle"))
                 .foregroundColor(.gray)
@@ -39,16 +55,23 @@ struct OnPremHeaderView: View {
         .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $showCustomBackendAlert) {
             Button(L10n.OnPremUserLogin.Alert.button, role: .cancel) {}
         } message: {
-            Text(viewModel.backendInfo)
+            Text(backendInfo)
         }
     }
 }
 
 #Preview {
-    OnPremHeaderView(
-        viewModel: OnPremHeaderViewModel(
-            backendName: "<Backend name>",
-            backendURL: URL(string: "example")!
-        )
+    OnPremHeaderView(backendConfig: BackendConfig(
+        title: "<backend name>",
+        endpoints: Endpoints(
+            backendURL: URL(string: "example")!,
+            backendWSURL: URL(string: "example")!,
+            blackListURL: URL(string: "example")!,
+            teamsURL: URL(string: "example")!,
+            accountsURL: URL(string: "example")!,
+            websiteURL: URL(string: "example")!,
+            countlyURL: nil),
+        proxySettings: nil,
+        pinnedKeys: nil)
     )
 }

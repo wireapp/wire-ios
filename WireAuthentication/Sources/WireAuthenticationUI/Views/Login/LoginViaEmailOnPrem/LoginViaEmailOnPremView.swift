@@ -91,12 +91,7 @@ package struct LoginViaEmailOnPremView: View {
 
     @ViewBuilder private var welcomeMessage: some View {
         VStack(spacing: 14) {
-            OnPremHeaderView(
-                viewModel: OnPremHeaderViewModel(
-                    backendName: viewModel.backendName,
-                    backendURL: viewModel.backendURL
-                )
-            )
+            OnPremHeaderView(backendConfig: viewModel.backendConfig)
             Text(L10n.OnPremUserLogin.message)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)

@@ -32,8 +32,8 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     private let factory: any Factory
     private let passwordValidator: any PasswordValidator
     private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    package let backendConfig: BackendConfig
 
     let email: String
     let canCreateAccount: Bool
@@ -62,14 +62,6 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     private var forgotPasswordURL: URL {
         backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
-    }
-
-    var backendName: String {
-        backendConfig.title
-    }
-
-    var backendURL: URL {
-        backendConfig.endpoints.backendURL
     }
 
     var localizedPasswordRules: String? {
