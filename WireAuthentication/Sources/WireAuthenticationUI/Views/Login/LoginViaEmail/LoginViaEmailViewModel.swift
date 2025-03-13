@@ -117,12 +117,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     var isProxyPasswordValid: Bool {
         // We don't know the individual password requirements for proxies so we just check for non-empty.
-        !proxyPassword.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !trimmedProxyPassword.isEmpty
     }
 
     var isProxyUsernameValid: Bool {
         // We don't know the individual username requirements for proxies so we just check for non-empty.
-        !proxyUsername.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !trimmedProxyUsername.isEmpty
     }
 
     var isSubmitButtonEnabled: Bool {
@@ -134,8 +134,14 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func submitPassword() async {
+        assert(isSubmitButtonEnabled)
+
         isLoading = true
         defer { isLoading = false }
+
+        if requiresProxyCredentials {
+            applyProxyCredentials(trimmedProxyUsername, trimmedProxyPassword)
+        }
 
         let backendMetadata: BackendMetadata
         do {
@@ -219,6 +225,14 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     private var trimmedPassword: String {
         password.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var trimmedProxyUsername: String {
+        proxyUsername.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var trimmedProxyPassword: String {
+        proxyPassword.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func resolveBackendMetadataIfNeeded() async throws -> WireAuthenticationAPI.BackendMetadata {
