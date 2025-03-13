@@ -68,8 +68,7 @@
 
 "authentication.error.title.no_internet" = "No internet connection";
 "authentication.error.title.general" = "Something went wrong";
-"authentication.error.title.invalid_sso_link" = "Error";
-"authentication.error.title.sso_login_failed" = "Something went wrong";
+"authentication.error.title.sso_login_failed" = "Login with SSO failed";
 "authentication.error.title.invalid_credentials" = "Invalid Information";
 "authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
 "authentication.error.title.account_pending_activation" = "Pending activation";
@@ -78,7 +77,6 @@
 
 "authentication.error.message.no_internet" = "There seems to be a problem with your network. Please try again later.";
 "authentication.error.message.general" = "Please retry later.";
-"authentication.error.message.invalid_sso_link" = "Invalid company login url.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
 "authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
 "authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
