@@ -25,6 +25,7 @@ package protocol SwitchBackendConfirmationBuilder {
     @MainActor
     func switchBackendView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView
 
@@ -60,6 +61,7 @@ package struct SwitchBackendConfirmationView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
         )
+        .frame(width: 350)
         .fixedSize(horizontal: false, vertical: true)
     }
 
@@ -199,10 +201,12 @@ package func makeSwitchBackendConfirmationViewPreview(
     blackListURL: URL,
     teamsURL: URL,
     accountsURL: URL,
-    websiteURL: URL
+    websiteURL: URL,
+    countlyURL: URL?
 ) -> some View {
     MockDependencies().switchBackendView(
         email: "email.com",
+        environmentType: .anta,
         backendConfig: BackendConfig(
             title: backendName,
             endpoints: Endpoints(
@@ -211,7 +215,8 @@ package func makeSwitchBackendConfirmationViewPreview(
                 blackListURL: blackListURL,
                 teamsURL: teamsURL,
                 accountsURL: accountsURL,
-                websiteURL: websiteURL
+                websiteURL: websiteURL,
+                countlyURL: countlyURL
             ),
             proxySettings: nil,
             pinnedKeys: nil

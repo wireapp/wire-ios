@@ -36,6 +36,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     private let router: any Router
     private let factory: any Factory
     private let email: String
+    private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
 
     @Published private(set) var isLoading = false
@@ -47,13 +48,16 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
         self.router = router
         self.factory = factory
         self.email = email
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
-        self.items = [
+
+        var items = [
             ItemUIModel(
                 title: Strings.backendName,
                 value: backendConfig.title,
@@ -90,6 +94,18 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                 isURL: true
             )
         ]
+
+        if let countlyURL = backendConfig.endpoints.countlyURL {
+            items.append(
+                ItemUIModel(
+                    title: Strings.countlyUrl,
+                    value: countlyURL.absoluteString,
+                    isURL: true
+                )
+            )
+        }
+
+        self.items = items
     }
 
     func confirm() async {
@@ -105,41 +121,47 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
             router.presentSheet(
                 RootView.ModalDestination.onPremiseLogin(
                     email: email,
+                    environmentType: environmentType,
                     environment: backendConfig,
                     backendMetadata: nil
                 )
             )
         } else {
-            // Before we can make requests we need to resolve the api version.
-            let backendMetadata: BackendMetadata
             do {
-                backendMetadata = try await resolveBackendMetadata()
-            } catch {
-                // TODO: [WPB-16415] handle unresolved api version
-                fatalError()
-            }
-
-            do {
+                // Before we can make requests we need to resolve the api version.
+                let backendMetadata = try await resolveBackendMetadata()
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
+                    let backendEnvironment = WireAuthenticationBackendEnvironment(
+                        environmentType: environmentType,
+                        config: backendConfig,
+                        metadata: backendMetadata
+                    )
+
                     router.presentSheet(
                         RootView.ModalDestination.ssoLogin(
                             url: ssoURL,
-                            BackendMetadata: backendMetadata
+                            backendEnvironment: backendEnvironment
                         )
                     )
+                    WireLogger.authentication.info("Fetching default SSO URL succeed")
                 } else {
                     router.presentSheet(
                         RootView.ModalDestination.onPremiseLogin(
                             email: email,
+                            environmentType: environmentType,
                             environment: backendConfig,
                             backendMetadata: backendMetadata
                         )
                     )
+                    WireLogger.authentication.info("No default SSO URL")
                 }
+
             } catch {
-                WireLogger.authentication.error("Unexpected error while fetching default SSO code: \(error)")
-                alert = .unknownError
+                WireLogger.authentication.error("Fetching default SSO URL failed: \(error)")
+
+                alert = .general(for: error)
             }
+
         }
     }
 
@@ -163,24 +185,6 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         let title: String
         let value: String
         let isURL: Bool
-    }
-
-}
-
-// MARK: Alerts
-
-package extension SwitchBackendConfirmationViewModel {
-
-    struct Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        let title: String
-        let message: String
-
-        private typealias Title = L10n.Authentication.Error.Title
-        private typealias Message = L10n.Authentication.Error.Message
-
-        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }

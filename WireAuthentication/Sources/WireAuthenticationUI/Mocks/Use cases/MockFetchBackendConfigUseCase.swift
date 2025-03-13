@@ -21,7 +21,7 @@ import WireAuthenticationAPI
 
 struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 
-    func invoke(at configURL: URL) async throws(FetchBackendConfigFailure) -> BackendConfig {
+    func invoke(at configURL: URL) async throws -> BackendConfig {
         BackendConfig(
             title: "backend name",
             endpoints: Endpoints(
@@ -30,7 +30,8 @@ struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
                 blackListURL: URL(string: "example")!,
                 teamsURL: URL(string: "example")!,
                 accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!
+                websiteURL: URL(string: "example")!,
+                countlyURL: URL(string: "example")!
             ),
             proxySettings: nil,
             pinnedKeys: nil

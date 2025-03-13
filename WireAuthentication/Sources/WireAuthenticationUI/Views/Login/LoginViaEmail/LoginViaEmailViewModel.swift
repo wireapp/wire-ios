@@ -35,6 +35,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     private let router: any Router
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
+    private let backendEnvironment: WireAuthenticationBackendEnvironment
     private let forgotPasswordURL: URL
     private let passwordValidator: any PasswordValidator
     private let onCreateAccount: () -> Void
@@ -48,6 +49,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     package init(
         router: any Router,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
+        backendEnvironment: WireAuthenticationBackendEnvironment,
         email: String,
         accountsURL: URL,
         passwordValidator: any PasswordValidator,
@@ -57,6 +59,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     ) {
         self.router = router
         self.loginViaEmailUseCase = loginViaEmailUseCase
+        self.backendEnvironment = backendEnvironment
         self.email = email
         self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
@@ -86,17 +89,31 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         do {
             let (cookies, token) = try await loginTask.value
+
+            let emailCredentials = EmailCredentials(
+                email: email,
+                password: trimmedPassword,
+                verificationCode: nil
+            )
+
+            let authenticationResult = AuthenticationResult(
+                userID: token.userID,
+                cookies: cookies,
+                accessToken: token,
+                emailCredentials: emailCredentials,
+                backendEnvironment: backendEnvironment
+            )
+
+            WireLogger.authentication.error("Login via email succeeded")
+
             router.presentSheet(
                 RootView.ModalDestination.noHistory(
-                    userID: token.userID,
-                    cookies: cookies,
-                    accessToken: token,
+                    authenticationResult: authenticationResult,
                     didDetectDomainConflict: didDetectDomainConflict
                 )
             )
-            WireLogger.authentication.info("login via email succeeded")
         } catch {
-            WireLogger.authentication.info("login via email returned an error: \(error)")
+            WireLogger.authentication.error("Login via email failed: \(error)")
 
             switch error {
             case LoginViaEmailUseCaseFailure.invalidCredentials:
@@ -109,11 +126,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .accountPendingActivation
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
-            case LoginViaEmailUseCaseFailure.noInternet:
-                alert = .noInternet
             default:
-                WireLogger.authentication.error("Unexpected error during login via email: \(error)")
-                alert = .unknownError
+                alert = .general(for: error)
             }
         }
 
@@ -132,31 +146,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     private var trimmedPassword: String {
         password.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
-}
-
-// MARK: Alerts
-
-package extension LoginViaEmailViewModel {
-
-    package struct Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        let title: String
-        let message: String
-
-        private typealias Title = L10n.Authentication.Error.Title
-        private typealias Message = L10n.Authentication.Error.Message
-
-        static let noInternet = Alert(title: Title.noInternet, message: Message.noInternet)
-        static let invalidCredentials = Alert(title: Title.invalidCredentials, message: Message.invalidCredentials)
-        static let accountPendingActivation = Alert(
-            title: Title.accountPendingActivation,
-            message: Message.accountPendingActivation
-        )
-        static let accountSuspended = Alert(title: Title.accountSuspended, message: Message.accountSuspended)
-        static let unknownError = Alert(title: Title.general, message: Message.general)
     }
 
 }

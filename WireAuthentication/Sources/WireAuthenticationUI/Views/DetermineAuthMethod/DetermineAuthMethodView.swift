@@ -31,7 +31,6 @@ package struct DetermineAuthMethodView: View {
 
     package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
 
-    @Environment(\.dismiss) var dismiss
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let factory: any Factory
@@ -96,11 +95,11 @@ package struct DetermineAuthMethodView: View {
         }
         .alert(
             item: $viewModel.alert,
-            title: titleForAlert,
-            message: messageForAlert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
             actions: { _ in
                 Button {
-                    dismiss()
+                    viewModel.onAlertDismiss()
                 } label: {
                     Text(L10n.Authentication.Error.confirm)
                 }
@@ -124,14 +123,39 @@ package struct DetermineAuthMethodView: View {
                 )
             }
         }
-        .sheet(item: $viewModel.modalDestination, content: {
-            switch $0 {
-            case let .ssoLogin(url: ssoURL):
-                factory.loginViaSSOView(ssoURL: ssoURL)
-            case let .switchBackend(email: email, backendConfig: backendConfig):
-                factory.switchBackendView(email: email, backendConfig: backendConfig)
+        .sheet(
+            item: $viewModel.modalDestination,
+            content: {
+                switch $0 {
+                case let .ssoLogin(
+                    ssoURL,
+                    backendEnvironment
+                ):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
+                case let .switchBackend(
+                    email,
+                    environmentType,
+                    backendConfig
+                ):
+                    if #available(iOS 16.4, *) {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).presentationBackground(Color.black.opacity(0.7))
+                    } else {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).background(TransparentBackgroundView())
+                    }
+                }
             }
-        })
+        )
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -144,41 +168,23 @@ package struct DetermineAuthMethodView: View {
 
     }
 
-    // MARK: - Private helpers
+}
 
-    private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Title.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Title.general)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Title.general)
-        case .invalidSSOLink:
-            Text(L10n.Authentication.Error.Title.invalidSsoLink)
-        }
-    }
+extension Alert {
 
-    private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Message.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Message.general)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Message.general)
-        case .invalidSSOLink:
-            Text(L10n.Authentication.Error.Message.invalidSsoLink)
-        }
-    }
+    private typealias Title = L10n.Authentication.Error.Title
+    private typealias Message = L10n.Authentication.Error.Message
+
+    static let invalidSSOLink = Alert(title: Title.invalidSsoLink, message: Message.invalidSsoLink)
+    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Title.incorrectSsoCode)
 
 }
 
 @MainActor
-package func makeDetermineAuthMethodViewPreview(
+func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
     isLoading: Bool = false,
-    alert: DetermineAuthMethodViewModel.Alert? = nil
+    alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
@@ -196,4 +202,21 @@ package func makeDetermineAuthMethodViewPreview(
                 alert: .unknownError
             )
         }
+}
+
+private struct TransparentBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        InnerView()
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+
+    private class InnerView: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+
+            superview?.superview?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        }
+
+    }
 }
