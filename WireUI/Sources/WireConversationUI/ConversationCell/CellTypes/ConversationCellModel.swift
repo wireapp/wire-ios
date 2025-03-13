@@ -58,7 +58,7 @@ public enum ConversationCellModel: Hashable, Sendable {
     case typingIndicator(TypingIndicatorModel)
 
     // TODO: add missing cases
-    // location: 
+    // location: sender, time, reactions, isObfuscated, ephemeral, isCollapsed
     // audio, video, file: sender, time, reactions, canBeShared?, isCollapsed
     // TODO: isObfuscated? attribute or separate cell/model?
     // TODO: actions?
