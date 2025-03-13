@@ -45,12 +45,12 @@ struct VerifyUserSession {
 
     private let pullEventsServiceProvider: any PullEventsServiceProvider
     private let cookieStorage: any CookieStorageProtocol
-    private let coreData: CoreDataStack
+    private let coreData: any CoreDataStackProtocol
 
     init(
         pullEventsServiceProvider: any PullEventsServiceProvider,
         cookieStorage: any CookieStorageProtocol,
-        coreData: CoreDataStack
+        coreData: any CoreDataStackProtocol
     ) {
         self.pullEventsServiceProvider = pullEventsServiceProvider
         self.cookieStorage = cookieStorage
@@ -77,7 +77,6 @@ struct VerifyUserSession {
             throw Failure.userUnauthenticated
         }
         
-        try await setupCoreData()
         try await completion()
     }
 
@@ -87,13 +86,9 @@ struct VerifyUserSession {
     func startSyncingEvents(
         eventID: UUID
     ) async throws {
-        let syncContext = coreData.syncContext
-        let messageLocalStore = MessageLocalStore(context: syncContext)
-        let userLocalStore = UserLocalStore(
-            context: syncContext,
-            messageLocalStore: messageLocalStore
-        )
+        try await setupCoreData()
         
+        let userLocalStore = pullEventsServiceProvider.userLocalStore
         let selfUserInfo = await userLocalStore.selfUserInfo()
 
         guard let selfClientID = selfUserInfo.clientId else {
@@ -122,7 +117,7 @@ struct VerifyUserSession {
         
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) -> Void in
             coreData.loadStores { error in
-                if let error {
+                if error != nil {
                     continuation.resume(throwing: Failure.unableToLoadStores)
                 } else {
                     continuation.resume()

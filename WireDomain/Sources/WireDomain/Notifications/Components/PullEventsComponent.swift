@@ -32,6 +32,8 @@ protocol PullEventsDependency: Dependency {
 }
 
 protocol PullEventsServiceProvider {
+    var userLocalStore: any UserLocalStoreProtocol { get}
+    
     func pullEventsService(
         selfUserID: UUID,
         selfClientID: String
