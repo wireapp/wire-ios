@@ -95,6 +95,9 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: { [weak dependency] in
                 dependency?.bridge.registerAccount()
+            },
+            applyProxyCredentials: { _, _ in
+                // no op in this component
             }
         )
     }

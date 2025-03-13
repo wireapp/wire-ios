@@ -21,13 +21,13 @@ import Foundation
 
 /// Associates a list of `hosts` with a public `key`.
 
-public struct PinnedKey: Sendable {
+public struct PinnedKey: Equatable, Sendable {
 
     public enum Failure: Error {
         case invalidKeyData
     }
 
-    public enum Host: Sendable {
+    public enum Host: Equatable, Sendable {
         case endsWith(String)
         case equals(String)
     }

@@ -40,6 +40,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    private var _networkService: (environment: BackendEnvironment, service: NetworkService)?
 
     init(
         parent: any Scope,
@@ -52,6 +53,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
         self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.backendMetadata = backendMetadata
+
         super.init(parent: parent)
     }
 
@@ -74,25 +76,56 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
             didDetectDomainConflict: false,
             onCreateAccount: { [weak dependency] in
                 dependency?.bridge.registerAccount()
+            },
+            applyProxyCredentials: { [weak self] username, password in
+                self?.applyProxyCredentials(username: username, password: password)
             }
         )
     }
 
     // MARK: - Private dependencies
 
-    private var backendEnvironment: BackendEnvironment {
-        shared {
-            BackendEnvironment(backendConfig)
-        }
+    private var defaultBackendEnvironment: BackendEnvironment {
+        BackendEnvironment(backendConfig)
     }
 
     private var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: backendEnvironment,
+        if let (_, service) = _networkService {
+            return service
+        } else {
+            let environment = defaultBackendEnvironment
+            let service = NetworkService.make(
+                backendEnvironment: BackendEnvironment(backendConfig),
                 minTLSVersion: dependency.minTLSVersion
             )
+            _networkService = (environment, service)
+            return service
         }
+    }
+
+    private func configureNetworkService(environment: BackendEnvironment) {
+        if let (environment, _) = _networkService, environment == environment { return }
+
+        _networkService = (
+            environment: environment,
+            service: NetworkService.make(
+                backendEnvironment: environment,
+                minTLSVersion: dependency.minTLSVersion
+            )
+        )
+    }
+
+    private func applyProxyCredentials(username: String, password: String) {
+        guard let proxySettings = backendConfig.proxySettings else { return }
+
+        var environment = defaultBackendEnvironment
+        environment.proxySettings = .authenticated(
+            host: proxySettings.host,
+            port: proxySettings.port,
+            username: username,
+            password: password
+        )
+        configureNetworkService(environment: environment)
     }
 
     // MARK: - Children

@@ -57,7 +57,8 @@ final class LoginViaEmailViewModelTests: XCTestCase {
             passwordValidator: passwordValidator,
             canCreateAccount: true,
             didDetectDomainConflict: false,
-            onCreateAccount: { [self] in onCreateAccountCalled = true }
+            onCreateAccount: { [self] in onCreateAccountCalled = true },
+            applyProxyCredentials: { _, _ in }
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)

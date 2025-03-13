@@ -20,7 +20,7 @@ import Foundation
 
 /// A collection of data for connecting to a given backend environment (e.g. Production, Staging, etc).
 
-public struct BackendEnvironment {
+public struct BackendEnvironment: Equatable {
 
     /// The `URL` of the backend.
 
@@ -36,7 +36,7 @@ public struct BackendEnvironment {
 
     /// The proxy settings for the backend if any.
 
-    public let proxySettings: ProxySettings?
+    public var proxySettings: ProxySettings?
 
     /// Creates a new `BackendEnvironment`.
     ///

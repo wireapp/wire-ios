@@ -47,6 +47,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private let backendConfig: BackendConfig
     private let backendMetadata: BackendMetadata?
     private let onCreateAccount: () -> Void
+    private let applyProxyCredentials: (_ username: String, _ password: String) -> Void
 
     let email: String
     let canCreateAccount: Bool
@@ -64,7 +65,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        onCreateAccount: @escaping () -> Void
+        onCreateAccount: @escaping () -> Void,
+        applyProxyCredentials: @escaping (_ username: String, _ password: String) -> Void
     ) {
         self.router = router
         self.factory = factory
@@ -76,6 +78,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.onCreateAccount = onCreateAccount
+        self.applyProxyCredentials = applyProxyCredentials
     }
 
     private var forgotPasswordURL: URL {

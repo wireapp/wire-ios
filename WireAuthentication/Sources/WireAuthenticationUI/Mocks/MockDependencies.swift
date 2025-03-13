@@ -256,7 +256,8 @@ extension MockDependencies: LoginViaEmailBuilder {
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: false,
-            onCreateAccount: {}
+            onCreateAccount: {},
+            applyProxyCredentials: { _, _ in }
         )
     }
 
@@ -336,7 +337,8 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            onCreateAccount: {}
+            onCreateAccount: {},
+            applyProxyCredentials: { _, _ in }
         )
     }
 
