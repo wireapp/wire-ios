@@ -25,15 +25,21 @@ public enum ConversationCellModel: Hashable, Sendable {
     case timeDivider(TimeDividerModel)
 
     // TODO: add missing cases
+    // systemMessage: icon, attributedText
     // ping: sender, ephemeral progress+time left, isObfuscated, (accessibilityLabel, accessibilityIdentifier)
     // composite: ?
-    // simpleTextMessage: sender, attributedText, reactions, isObfuscated, ephemeral
-    // extendedTextMessage: simpleTextMessage, quotedMessage, link attachments, link previews
-    // location: sender, reactions, isObfuscated, ephemeral
-    // audio, video, file: ?, reactions, canBeShared?
+    // simpleTextMessage: sender optional, isSenderCollapsed, attributedText, time, reactions, isObfuscated, ephemeral, edited, seen, isCollapsed
+    // extendedTextMessage: simpleTextMessage, quotedMessage, link attachments, link previews, error status
+    // collapsedMessage: collapse-icon, ? wrapped message or several types of collapsed messages?
+    // location: sender, time, reactions, isObfuscated, ephemeral, isCollapsed
+    // audio, video, file: sender, time, reactions, canBeShared?, isCollapsed
+    // typing: name(s)
     // TODO: isObfuscated? attribute or separate cell/model?
     // TODO: actions?
+    // TODO: deleted message
+    // sender contains name, image, availability, accent color
+    // status delivered? edited? seen?
 
-    case xMessage
+    // case ?Message
 
 }
