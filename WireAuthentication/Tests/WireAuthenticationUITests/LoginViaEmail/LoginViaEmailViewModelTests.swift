@@ -170,8 +170,8 @@ final class LoginViaEmailViewModelTests: XCTestCase {
         XCTAssertEqual(isLoadingCalls, [true, false])
         XCTAssertEqual(router.navigate_Invocations.count, 1)
         XCTAssertEqual(
-            router.navigate_Invocations.first as? LoginViaEmailView.Destination,
-            LoginViaEmailView.Destination.verifyLogin(email: "mika@example.com", password: "password")
+            router.navigate_Invocations.first as? LoginViaEmailDestination,
+            LoginViaEmailDestination.verifyLogin(email: "mika@example.com", password: "password")
         )
     }
 

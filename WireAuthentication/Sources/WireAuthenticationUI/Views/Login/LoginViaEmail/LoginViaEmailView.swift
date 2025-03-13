@@ -78,7 +78,7 @@ package struct LoginViaEmailView: View {
                 Button(L10n.Authentication.Error.confirm, action: {})
             }
         )
-        .navigationDestination(for: Destination.self) { destination in
+        .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             switch destination {
             case let .verifyLogin(email, password):
                 factory.verificationCodeView(
@@ -176,12 +176,6 @@ package struct LoginViaEmailView: View {
                     .cornerRadius(12)
             }
         }
-    }
-
-    enum Destination: Hashable {
-
-        case verifyLogin(email: String, password: String)
-
     }
 
 }

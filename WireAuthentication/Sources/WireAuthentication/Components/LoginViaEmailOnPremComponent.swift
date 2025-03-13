@@ -58,7 +58,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
     // MARK: - View
 
     @MainActor var view: LoginViaEmailOnPremView {
-        LoginViaEmailOnPremView(viewModel: viewModel)
+        LoginViaEmailOnPremView(viewModel: viewModel, factory: self)
     }
 
     @MainActor private var viewModel: LoginViaEmailViewModel {
@@ -99,6 +99,12 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
         }
     }
 
+    // MARK: - Children
+
+    var verificationCodeComponent: VerificationCodeComponent {
+        VerificationCodeComponent(parent: self)
+    }
+
 }
 
 extension LoginViaEmailOnPremComponent: LoginViaEmailOnPremViewModel.Factory {
@@ -119,6 +125,22 @@ extension LoginViaEmailOnPremComponent: LoginViaEmailOnPremViewModel.Factory {
             for: .init(apiVersion)
         )
         return LoginViaEmailUseCase(authenticationAPI: api)
+    }
+
+}
+
+extension LoginViaEmailOnPremComponent: LoginViaEmailView.Factory {
+
+    func verificationCodeView(
+        email: String,
+        password: String,
+        didDetectDomainConflict: Bool
+    ) -> VerificationCodeView {
+        verificationCodeComponent.view(
+            email: email,
+            password: password,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
     }
 
 }

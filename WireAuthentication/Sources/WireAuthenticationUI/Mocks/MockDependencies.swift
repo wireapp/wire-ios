@@ -347,7 +347,11 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
         backendMetadata: BackendMetadata?
     ) -> LoginViaEmailOnPremView {
         LoginViaEmailOnPremView(
-            viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
+            viewModel: loginViaEmailOnPremViewModel(
+                email: email,
+                backendConfig: backendConfig
+            ),
+            factory: self
         )
     }
 }

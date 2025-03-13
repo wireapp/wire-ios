@@ -34,12 +34,18 @@ package protocol LoginViaEmailOnPremBuilder {
 }
 
 package struct LoginViaEmailOnPremView: View {
+    package typealias Factory = VerificationCodeBuilder
+
     @StateObject var viewModel: LoginViaEmailViewModel
 
+    let factory: any VerificationCodeBuilder
+
     package init(
-        viewModel: LoginViaEmailViewModel
+        viewModel: LoginViaEmailViewModel,
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.factory = factory
     }
 
     package var body: some View {
@@ -72,6 +78,24 @@ package struct LoginViaEmailOnPremView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
+        }
+        .alert(
+            item: $viewModel.alert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { _ in
+                Button(L10n.Authentication.Error.confirm, action: {})
+            }
+        )
+        .navigationDestination(for: LoginViaEmailDestination.self) { destination in
+            switch destination {
+            case let .verifyLogin(email, password):
+                factory.verificationCodeView(
+                    email: email,
+                    password: password,
+                    didDetectDomainConflict: viewModel.didDetectDomainConflict
+                )
+            }
         }
         .presentationDetents(viewModel.requiresProxyCredentials ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
@@ -217,6 +241,7 @@ package struct LoginViaEmailOnPremView: View {
             Spacer()
         }
     }
+
 }
 
 #Preview() {
