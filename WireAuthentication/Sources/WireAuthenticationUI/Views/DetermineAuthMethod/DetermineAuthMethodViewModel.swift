@@ -42,8 +42,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let router: any Router
     private let factory: any Factory
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
-    private let backendConfig: BackendConfig?
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    let backendConfig: BackendConfig?
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -78,10 +78,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         let backendMetadata: BackendMetadata
         do {
-            let useCase = factory.resolveBackendMetadataUseCase()
-            backendMetadata = try await Task.detached { [useCase] in
-                try await useCase.invoke()
-            }.value
+            backendMetadata = try await resolveBackendMetadataIfNeeded()
         } catch {
             // TODO: [WPB-16415] report via bridge that API version can't be resolved.
             fatalError()
@@ -114,18 +111,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func dismissmodalView() {
         ssoLinkGenerator?.flushToken()
         modalDestination = nil
-    }
-
-    var isOnPremBackend: Bool {
-        backendConfig != nil
-    }
-
-    var backendName: String? {
-        backendConfig?.title
-    }
-
-    var backendURL: URL? {
-        backendConfig?.endpoints.backendURL
     }
 
     // MARK: - Private
@@ -198,4 +183,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return false
         }
     }
+
+    private func resolveBackendMetadataIfNeeded() async throws -> BackendMetadata {
+        if let backendMetadata {
+            return backendMetadata
+        }
+
+        let useCase = factory.resolveBackendMetadataUseCase()
+        return try await Task.detached {
+            try await useCase.invoke()
+        }.value
+    }
+
 }
