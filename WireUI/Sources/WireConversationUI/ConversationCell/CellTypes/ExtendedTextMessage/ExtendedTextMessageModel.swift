@@ -21,7 +21,7 @@ public struct ExtendedTextMessageModel: ConversationCellModelProtocol {
 
     public var id: AnyHashable { self }
 
-    // TODO: add icon, attributedText
+    // TODO: add simpleTextMessage, quotedMessage, link attachments, link previews, error status
 
 }
 

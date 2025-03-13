@@ -21,7 +21,7 @@ public struct CollapsedMessageModel: ConversationCellModelProtocol {
 
     public var id: AnyHashable { self }
 
-    // TODO: add icon, attributedText
+    // TODO: add collapse-icon, ? wrapped message or several types of collapsed messages?
 
 }
 

@@ -21,7 +21,7 @@ public struct CompositeMessageModel: ConversationCellModelProtocol {
 
     public var id: AnyHashable { self }
 
-    // TODO: add icon, attributedText
+    // TODO: add missing properties
 
 }
 

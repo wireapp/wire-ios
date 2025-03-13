@@ -58,17 +58,14 @@ public enum ConversationCellModel: Hashable, Sendable {
     case typingIndicator(TypingIndicatorModel)
 
     // TODO: add missing cases
-    // composite: ?
-    // extendedTextMessage: simpleTextMessage, quotedMessage, link attachments, link previews, error status
-    // collapsedMessage: collapse-icon, ? wrapped message or several types of collapsed messages?
-    // location: sender, time, reactions, isObfuscated, ephemeral, isCollapsed
+    // location: 
     // audio, video, file: sender, time, reactions, canBeShared?, isCollapsed
     // TODO: isObfuscated? attribute or separate cell/model?
     // TODO: actions?
     // TODO: deleted message
     // TODO: extended message with generic content? (link attachment, link preview, audio, video, file, location)
-    // sender contains name, image, availability, accent color, icon (e.g. guest)
-    // status delivered? edited? seen?
+    // TODO: group sender info like name, image, availability, accent color, icon (e.g. guest)
+    // TODO: message status: delivered? edited? seen?
 
 }
 
