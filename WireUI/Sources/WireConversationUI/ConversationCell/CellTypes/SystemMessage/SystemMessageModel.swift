@@ -21,4 +21,6 @@ public struct SystemMessageModel: ConversationCellModelProtocol {
 
     public var id: AnyHashable { self }
 
+    // TODO: add icon, attributedText
+
 }

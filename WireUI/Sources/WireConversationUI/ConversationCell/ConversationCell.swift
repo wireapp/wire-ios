@@ -18,6 +18,11 @@
 
 import SwiftUI
 
+// TODO: remove after performance review
+import os
+@MainActor private var instanceCount = 0
+private let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ConversationCell")
+
 final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewCell {
 
     var model = Model() {
@@ -27,11 +32,30 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
             model.buildView()
-                .id(model.id)
+                // .id(model.id) // TODO: check if .id should or must not be used
         }
         .margins(.all, 0)
         .minSize(width: 0, height: 0)
         .background(.clear)
+    }
+
+    // TODO: remove global var and init/deinit
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        instanceCount += 1
+        logger.info("ConversationCell<\(String(describing: Model.self), privacy: .public)>.init, total instance count: \(instanceCount, privacy: .public)")
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    deinit {
+        Task { @MainActor in
+            instanceCount -= 1
+            logger.info("ConversationCell<\(String(describing: Model.self), privacy: .public)>.deinit, total instance count: \(instanceCount, privacy: .public)")
+        }
     }
 
 }

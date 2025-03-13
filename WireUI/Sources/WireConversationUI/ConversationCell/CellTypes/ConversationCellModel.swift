@@ -28,7 +28,6 @@ public enum ConversationCellModel: Hashable, Sendable {
     case systemMessage(SystemMessageModel)
 
     // TODO: add missing cases
-    // systemMessage: icon, attributedText
     // ping: sender, ephemeral progress+time left, isObfuscated, (accessibilityLabel, accessibilityIdentifier)
     // composite: ?
     // simpleTextMessage: sender optional, isSenderCollapsed, attributedText, time, reactions, isObfuscated, ephemeral, edited, seen, isCollapsed
