@@ -25,11 +25,18 @@ extension ConversationCellModel {
         guard !tableView.registeredIdentifiers.contains(cellReuseIdentifier) else { return }
 
         let cellType = switch self {
+
         case .guestsAllowed:
             ConversationCell<GuestsAllowedModel>.self
+
         case .timeDivider:
             ConversationCell<TimeDividerModel>.self
+
+        case .systemMessage:
+            fatalError()
+
         }
+
         tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)
     }
 

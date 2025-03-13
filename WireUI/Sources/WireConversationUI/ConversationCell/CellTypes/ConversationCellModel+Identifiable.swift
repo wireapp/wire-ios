@@ -27,6 +27,9 @@ extension ConversationCellModel: Identifiable {
         case .timeDivider(let timeDivider):
             timeDivider.id
 
+        case .systemMessage(let systemMessage):
+            systemMessage.id
+
         }
     }
 

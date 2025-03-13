@@ -32,6 +32,9 @@ extension ConversationCellModel {
             guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
             return cell.model = timeDivider
 
+        case .systemMessage(let systemMessage):
+            fatalError("not implemented yet")
+
         }
 
         assertionFailure("unexpected cell: \(cell)")

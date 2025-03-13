@@ -16,23 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
-extension ConversationCellModel {
+struct SystemMessageContentView: ConversationCellContentViewProtocol {
+    typealias Model = SystemMessageModel
 
-    public var cellReuseIdentifier: String {
-        switch self {
+    let model: Model
 
-        case .guestsAllowed:
-            "guestsAllowed"
+    var body: some View {
+        Text(verbatim: "TODO")
+    }
 
-        case .timeDivider:
-            "timeDivider"
-
-        case .systemMessage:
-            "systemMessage"
-
-        }
+    init(model: Model) {
+        self.model = model
     }
 
 }

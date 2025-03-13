@@ -16,23 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+public struct SystemMessageModel: ConversationCellModelProtocol {
+    typealias ContentView = SystemMessageContentView
 
-extension ConversationCellModel {
-
-    public var cellReuseIdentifier: String {
-        switch self {
-
-        case .guestsAllowed:
-            "guestsAllowed"
-
-        case .timeDivider:
-            "timeDivider"
-
-        case .systemMessage:
-            "systemMessage"
-
-        }
-    }
+    public var id: AnyHashable { self }
 
 }

@@ -24,6 +24,9 @@ public enum ConversationCellModel: Hashable, Sendable {
     /// Used to group messages.
     case timeDivider(TimeDividerModel)
 
+    /// Used to present any kind of system generated messages.
+    case systemMessage(SystemMessageModel)
+
     // TODO: add missing cases
     // systemMessage: icon, attributedText
     // ping: sender, ephemeral progress+time left, isObfuscated, (accessibilityLabel, accessibilityIdentifier)
