@@ -22,7 +22,7 @@ struct MockDetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
     func invoke(
         emailOrSSOCode: String
-    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
+    ) async -> AuthenticationMethod {
         try! await Task.sleep(for: .seconds(3))
 
         return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
