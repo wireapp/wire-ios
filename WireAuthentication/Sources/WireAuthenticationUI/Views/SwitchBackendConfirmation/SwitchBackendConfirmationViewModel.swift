@@ -23,6 +23,12 @@ import WireLogging
 @MainActor
 package class SwitchBackendConfirmationViewModel: ObservableObject {
 
+    package enum ModalDestination: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
+    }
+
     private typealias Strings = L10n.SwitchBackendConfirmation
 
     package typealias Factory =
@@ -42,6 +48,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
+    @Published var modalDestination: ModalDestination?
 
     // MARK: - Life cycle
 
@@ -141,12 +148,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                         metadata: backendMetadata
                     )
 
-                    router.presentSheet(
-                        RootView.ModalDestination.ssoLogin(
-                            url: ssoURL,
-                            backendEnvironment: backendEnvironment
-                        )
-                    )
+                    modalDestination = .ssoLogin(url: ssoURL, backendEnvironment: backendEnvironment)
                     WireLogger.authentication.info("Fetching default SSO URL succeed")
                 } else {
                     router.presentSheet(
