@@ -187,7 +187,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         switch actionIdentifier {
         case CallNotificationAction.ignore.rawValue, NotificationActionIdentifier.ignoreCallIdentifier:
             ignoreCall(with: userInfo, completionHandler: completionHandler)
-        case CallNotificationAction.accept.rawValue, NotificationActionIdentifier.startCallIdentifier:
+        case CallNotificationAction.accept.rawValue:
             acceptCall(with: userInfo, completionHandler: completionHandler)
         case ConversationNotificationAction.mute.rawValue,
             NotificationActionIdentifier.muteConversationIdentifier:
@@ -200,6 +200,8 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
             }
         case ConversationNotificationAction.connect.rawValue, NotificationActionIdentifier.acceptConnectionRequestIdentifier:
             acceptConnectionRequest(with: userInfo, completionHandler: completionHandler)
+        case NotificationActionIdentifier.callbackIdentifier:
+            callback(with: userInfo, completionHandler: completionHandler)
         default:
             showContent(for: userInfo)
             completionHandler()

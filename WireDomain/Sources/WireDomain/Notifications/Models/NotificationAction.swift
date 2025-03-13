@@ -19,10 +19,10 @@
 import UserNotifications
 
 public enum NotificationActionIdentifier {
-    public static let muteConversationIdentifier = "muteConversationAction"
+    public static let muteConversationIdentifier = "conversationMuteAction"
     public static let ignoreCallIdentifier = "ignoreCallAction"
-    public static let startCallIdentifier = "startCallAction"
-    public static let acceptConnectionRequestIdentifier = "acceptConnectionRequestAction"
+    public static let callbackIdentifier = "callbackCallAction"
+    public static let acceptConnectionRequestIdentifier = "acceptConnectAction"
 }
 
 struct NotificationAction {
@@ -47,7 +47,7 @@ extension NotificationAction {
 
     static let muteConversation = NotificationAction(
         identifier: NotificationActionIdentifier.muteConversationIdentifier,
-        title: "conversation.mute",
+        title: String.localized(key: "push.notification.action.mute"),
         isDestructive: false,
         opensApplication: false,
         requiresAuthentication: false
@@ -55,15 +55,15 @@ extension NotificationAction {
 
     static let ignoreCall = NotificationAction(
         identifier: NotificationActionIdentifier.ignoreCallIdentifier,
-        title: "call.ignore",
+        title: String.localized(key: "push.notification.action.ignoreCall"),
         isDestructive: true,
         opensApplication: false,
         requiresAuthentication: false
     )
 
-    static let startCall = NotificationAction(
-        identifier: NotificationActionIdentifier.startCallIdentifier,
-        title: "call.accept",
+    static let callback = NotificationAction(
+        identifier: NotificationActionIdentifier.callbackIdentifier,
+        title: String.localized(key: "push.notification.action.callback"),
         isDestructive: false,
         opensApplication: true,
         requiresAuthentication: false
@@ -71,7 +71,7 @@ extension NotificationAction {
 
     static let acceptConnectionRequest = NotificationAction(
         identifier: NotificationActionIdentifier.acceptConnectionRequestIdentifier,
-        title: "connection.accept",
+        title: String.localized(key: "push.notification.action.acceptConnection"),
         isDestructive: false,
         opensApplication: false,
         requiresAuthentication: false

@@ -92,6 +92,24 @@ public extension ZMUserSession {
             completionHandler()
         }
     }
+    
+    func callback(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
+        guard let activity = BackgroundActivityFactory.shared
+            .startBackgroundActivity(name: "Callback Action Handler") else {
+            return
+        }
+        
+        guard let conversation = userInfo.conversation(in: managedObjectContext) else {
+            return
+        }
+        
+        do {
+            try callCenter?.startCall(in: conversation, isVideo: false)
+            completionHandler()
+        } catch let error {
+            return
+        }
+    }
 
     func muteConversation(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
         guard let activity = BackgroundActivityFactory.shared

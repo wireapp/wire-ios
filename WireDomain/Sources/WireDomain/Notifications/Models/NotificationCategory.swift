@@ -37,7 +37,7 @@ public enum NotificationCategory: String, CaseIterable {
         case .incomingCall:
             [.ignoreCall]
         case .missedCall:
-            [.startCall]
+            [.callback]
         case .incomingConnectionRequest:
             [.acceptConnectionRequest]
         }
