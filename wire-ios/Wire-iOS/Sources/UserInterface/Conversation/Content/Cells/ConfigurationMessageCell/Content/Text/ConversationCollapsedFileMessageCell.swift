@@ -115,18 +115,34 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         let user = object.user
         avatar.user = user
         
-        if object.message.isText {
+        let message = object.message
+        if message.isText {
             typeIcon.isHidden = true
-            if let textMessageData = object.message.textMessageData {
+            if let textMessageData = message.textMessageData {
                 messageTextView.attributedText = NSAttributedString
                     .format(
                         message: textMessageData,
-                        isObfuscated: object .message.isObfuscated)
+                        isObfuscated: message.isObfuscated)
             }
         } else {
             messageTextView.font = UIFont.italicSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize)
             typeIcon.isHidden = false
-            messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
+            if message.isImage {
+                typeIcon.image = .init(resource: .image)
+                messageTextView.text = L10n.Localizable.Content.Collapsed.Image.title
+            } else if message.isVideo {
+                typeIcon.image = .init(resource: .image)
+                messageTextView.text = L10n.Localizable.Content.Collapsed.Video.title
+            } else if message.isAudio {
+                typeIcon.image = .init(resource: .image)
+                messageTextView.text = L10n.Localizable.Content.Collapsed.Audio.title
+            } else if message.isLocation {
+                typeIcon.image = .init(resource: .image)
+                messageTextView.text = L10n.Localizable.Content.Collapsed.Location.title
+            } else if message.isFile {
+                typeIcon.image = .init(resource: .file)
+                messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
+            }
         }
 
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)

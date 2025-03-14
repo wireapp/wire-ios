@@ -643,6 +643,10 @@
 "content.message.delete_ellipsis" = "Delete…";
 
 "content.collapsed.file.title" = "You shared a file";
+"content.collapsed.image.title" = "You shared a picture";
+"content.collapsed.video.title" = "You shared a video";
+"content.collapsed.audio.title" = "You shared an audio";
+"content.collapsed.location.title" = "You shared location";
 
 "content.message.like" = "Like";
 "content.message.unlike" = "Unlike";
