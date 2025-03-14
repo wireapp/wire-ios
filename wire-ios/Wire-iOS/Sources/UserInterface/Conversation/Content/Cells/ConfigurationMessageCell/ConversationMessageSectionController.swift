@@ -93,6 +93,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// The object that receives informations from the section.
     weak var sectionDelegate: ConversationMessageSectionControllerDelegate?
 
+    /// Whether this section is selected
+    private var selected: Bool
+
     /// Whether this section is collapsed
     private var isCollapsed: Bool
 
@@ -107,11 +110,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     init(
         message: ConversationMessage,
         context: ConversationMessageContext,
+        selected: Bool = false,
         userSession: UserSession,
         useInvertedIndices: Bool
     ) {
         self.message = message
         self.context = context
+        self.selected = selected
         self.isCollapsed = true
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
@@ -281,6 +286,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
     #endif
+
+    func didSelect() {
+        selected = true
+    }
+
+    func didDeselect() {
+        selected = false
+    }
 
     private func createCellDescriptions(in context: ConversationMessageContext) {
         var cellDescriptions = [AnyConversationMessageCellDescription]()

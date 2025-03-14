@@ -77,7 +77,7 @@ final class ConversationTableViewDataSource: NSObject {
     let tableView: UpsideDownTableView
 
     var firstUnreadMessage: ZMConversationMessage?
-    // var selectedMessage: ZMConversationMessage? // TODO: what is this used for?
+    var selectedMessage: ZMConversationMessage?
     var editingMessage: ZMConversationMessage?
 
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
@@ -223,7 +223,7 @@ final class ConversationTableViewDataSource: NSObject {
         let sectionController = ConversationMessageSectionController(
             message: message,
             context: context,
-            // selected: message.isEqual(selectedMessage), // TODO: how to replace this?
+            selected: message.isEqual(selectedMessage),
             userSession: userSession,
             useInvertedIndices: true
         )
@@ -442,17 +442,17 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         currentSections.count
     }
 
-//    func select(indexPath: IndexPath) {
-//        let sectionController = sectionController(at: indexPath.section, in: tableView)
-//        sectionController.didSelect()
-//        reloadSections(newSections: calculateSections(updating: sectionController))
-//    }
+    func select(indexPath: IndexPath) {
+        let sectionController = sectionController(at: indexPath.section, in: tableView)
+        sectionController.didSelect()
+        reloadSections(newSections: calculateSections(updating: sectionController))
+    }
 
-//    func deselect(indexPath: IndexPath) {
-//        let sectionController = sectionController(at: indexPath.section, in: tableView)
-//        sectionController.didDeselect()
-//        reloadSections(newSections: calculateSections(updating: sectionController))
-//    }
+    func deselect(indexPath: IndexPath) {
+        let sectionController = sectionController(at: indexPath.section, in: tableView)
+        sectionController.didDeselect()
+        reloadSections(newSections: calculateSections(updating: sectionController))
+    }
 
     func highlight(message: ZMConversationMessage) {
         guard let section = index(of: message) else {
