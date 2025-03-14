@@ -40,30 +40,25 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 0
+    var showEphemeralTimer = false
+    var topMargin = CGFloat()
 
-    let containsHighlightableContent: Bool = false
+    let containsHighlightableContent = false
 
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String? = nil
+    let accessibilityIdentifier = String?.none
+    let accessibilityLabel = String?.none
 
-//    init(
-//        message: ZMConversationMessage,
-//        context: ConversationMessageContext,
-//        accentColor: UIColor
-//    ) {
-//        self.configuration = View.Configuration(
-//            date: message.serverTimestamp ?? Date(),
-//            includeDayOfWeek: context.isFirstMessageOfTheDay,
-//            showUnreadDot: context.isFirstUnreadMessage,
-//            accentColor: accentColor
-//        )
-//        self.actionController = nil
-//    }
-
-    init(configuration: View.Configuration) {
-        self.configuration = configuration
+    init(
+        message: ZMConversationMessage,
+        context: ConversationMessageContext,
+        accentColor: UIColor
+    ) {
+        self.configuration = View.Configuration(
+            date: message.serverTimestamp ?? Date(),
+            includeDayOfWeek: context.isFirstMessageOfTheDay,
+            showUnreadDot: context.isFirstUnreadMessage,
+            accentColor: accentColor
+        )
     }
 
 }
@@ -84,7 +79,6 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     var isSelected: Bool = false
 
     func willDisplay() {}
-
     func didEndDisplaying() {}
 
     func configure(with object: Configuration, animated: Bool) {}

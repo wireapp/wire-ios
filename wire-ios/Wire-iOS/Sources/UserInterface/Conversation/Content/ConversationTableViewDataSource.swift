@@ -482,23 +482,24 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         }
 
         let section = currentSections[indexPath.section]
-
         guard section.elements.indices.contains(indexPath.row) else {
             fatal("section.elements has \(section.elements.count) elements, but try to access #\(indexPath)")
         }
 
         let cellDescription = section.elements[indexPath.row]
-
         if let model = cellDescription.conversationCellModel {
+
             model.registerIfNeeded(in: tableView)
             let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
             model.configureCell(cell)
             return cell
-        } else {
-            registerCellIfNeeded(with: cellDescription, in: tableView)
-        }
 
-        return cellDescription.makeCell(for: tableView, at: indexPath)
+        } else {
+
+            registerCellIfNeeded(with: cellDescription, in: tableView)
+            return cellDescription.makeCell(for: tableView, at: indexPath)
+
+        }
     }
 }
 
