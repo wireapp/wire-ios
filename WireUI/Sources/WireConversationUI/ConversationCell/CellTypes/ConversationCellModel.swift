@@ -54,6 +54,9 @@ public enum ConversationCellModel: Hashable, Sendable {
     /// todo
     // case location(LocationModel)
 
+    /// Placeholder for deleted messages.
+    case deletedMessage(DeletedMessageModel)
+
     /// Used to show that another participant in the conversation is currently typing.
     case typingIndicator(TypingIndicatorModel)
 
@@ -64,7 +67,6 @@ public enum ConversationCellModel: Hashable, Sendable {
     // TODO: actions?
     // TODO: deleted message
     // TODO: extended message with generic content? (link attachment, link preview, audio, video, file, location)
-    // TODO: group sender info like name, image, availability, accent color, icon (e.g. guest)
     // TODO: message status: delivered? edited? seen?
 
 }

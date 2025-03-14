@@ -57,6 +57,9 @@ extension ConversationCellModel: Identifiable {
         // case .location(let location):
         //     fatalError()
 
+        case .deletedMessage(let deletedMessage):
+            fatalError()
+
         case .typingIndicator(let typingIndicator):
             fatalError()
 

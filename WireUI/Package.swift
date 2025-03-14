@@ -36,10 +36,7 @@ let package = Package(
     targets: [
         .target(
             name: "WireAccountImageUI",
-            dependencies: [
-                "WireDesign",
-                "WireFoundation"
-            ]
+            dependencies: ["WireDesign", "WireFoundation"]
         ),
         .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
 

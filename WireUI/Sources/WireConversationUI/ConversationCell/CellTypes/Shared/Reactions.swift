@@ -16,27 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SimpleTextMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SimpleTextMessageContentView
-
-    public var id: AnyHashable { self }
-
-    /// If `nil` no sender info is displayed (e.g. for subsequent messages of the same sender).
-    var senderInfo: MessageSenderInfo?
-
-    // TODO: attributedText, time, isObfuscated, ephemeral, edited, seen, isCollapsed
-
-    var reactions: Reactions
-
-    init() {
-        reactions = Reactions()
-    }
-
+struct Reaction: Hashable, Sendable {
+    var emoji: Character
+    var count: Int
+    var isSelfReaction: Bool
 }
 
-extension ConversationCellModel {
-
-    public static var simpleTextMessage: Self {
-        .simpleTextMessage(SimpleTextMessageModel())
-    }
-}
+typealias Reactions = [Reaction]

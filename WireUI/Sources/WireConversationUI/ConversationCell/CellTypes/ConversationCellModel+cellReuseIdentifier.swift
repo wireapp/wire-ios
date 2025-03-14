@@ -59,6 +59,9 @@ extension ConversationCellModel {
         // case .location:
         //     "location"
 
+        case .deletedMessage:
+            "deletedMessage"
+
         case .typingIndicator:
             "typingIndicator"
 

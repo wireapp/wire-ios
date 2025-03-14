@@ -62,6 +62,9 @@ extension ConversationCellModel {
         // case .location(let location):
         //     fatalError("not implemented yet")
 
+        case .deletedMessage(let deletedMessage):
+            fatalError("not implemented yet")
+
          case .typingIndicator(let typingIndicator):
              fatalError("not implemented yet")
 

@@ -62,6 +62,9 @@ extension ConversationCellModel {
         // case .location:
         //     fatalError()
 
+        case .deletedMessage:
+            fatalError()
+
         case .typingIndicator:
             fatalError()
 

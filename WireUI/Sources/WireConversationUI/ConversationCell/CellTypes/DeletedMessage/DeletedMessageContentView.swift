@@ -16,27 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SimpleTextMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SimpleTextMessageContentView
+import SwiftUI
 
-    public var id: AnyHashable { self }
+struct DeletedMessageContentView: ConversationCellContentViewProtocol {
+    typealias Model = DeletedMessageModel
 
-    /// If `nil` no sender info is displayed (e.g. for subsequent messages of the same sender).
-    var senderInfo: MessageSenderInfo?
+    let model: Model
 
-    // TODO: attributedText, time, isObfuscated, ephemeral, edited, seen, isCollapsed
-
-    var reactions: Reactions
-
-    init() {
-        reactions = Reactions()
+    var body: some View {
+        Text(verbatim: "TODO")
     }
 
-}
-
-extension ConversationCellModel {
-
-    public static var simpleTextMessage: Self {
-        .simpleTextMessage(SimpleTextMessageModel())
+    init(model: Model) {
+        self.model = model
     }
+
 }

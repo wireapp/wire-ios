@@ -16,27 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SimpleTextMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SimpleTextMessageContentView
+import WireAccountImageUI
+import WireFoundation
 
-    public var id: AnyHashable { self }
+/// Combines the info about the sender of a message, both for the image and the text.
+struct MessageSenderInfo: Hashable, Sendable {
 
-    /// If `nil` no sender info is displayed (e.g. for subsequent messages of the same sender).
-    var senderInfo: MessageSenderInfo?
+    var accountImageSource: AccountImageSource
+    var availability: Availability?
 
-    // TODO: attributedText, time, isObfuscated, ephemeral, edited, seen, isCollapsed
+    /// If `nil` only the account image of a message is visible.
+    var details: Details?
 
-    var reactions: Reactions
-
-    init() {
-        reactions = Reactions()
+    /// The info for the sender's name to be visible next to the account image.
+    struct Details: Hashable, Sendable {
+        var name: String
+        var accentColor: WireAccentColor
+        var isGuest: Bool
     }
 
-}
-
-extension ConversationCellModel {
-
-    public static var simpleTextMessage: Self {
-        .simpleTextMessage(SimpleTextMessageModel())
-    }
 }

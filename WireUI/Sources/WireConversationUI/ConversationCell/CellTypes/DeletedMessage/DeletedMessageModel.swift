@@ -16,27 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SimpleTextMessageModel: ConversationCellModelProtocol {
-    typealias ContentView = SimpleTextMessageContentView
+public struct DeletedMessageModel: ConversationCellModelProtocol {
+    typealias ContentView = DeletedMessageContentView
 
     public var id: AnyHashable { self }
 
-    /// If `nil` no sender info is displayed (e.g. for subsequent messages of the same sender).
-    var senderInfo: MessageSenderInfo?
-
-    // TODO: attributedText, time, isObfuscated, ephemeral, edited, seen, isCollapsed
-
-    var reactions: Reactions
-
-    init() {
-        reactions = Reactions()
-    }
+    // TODO: add sender, deletion time, (accessibilityLabel, accessibilityIdentifier)?
 
 }
 
 extension ConversationCellModel {
 
-    public static var simpleTextMessage: Self {
-        .simpleTextMessage(SimpleTextMessageModel())
+    public static func deletedMessage() -> Self {
+        .deletedMessage(DeletedMessageModel())
     }
 }
