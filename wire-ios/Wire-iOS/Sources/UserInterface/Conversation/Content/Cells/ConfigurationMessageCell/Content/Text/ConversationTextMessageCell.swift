@@ -18,12 +18,6 @@
 
 import UIKit
 import WireSyncEngine
-import WireConversationUI
-
-import os
-@MainActor private var instanceCount = 0
-private let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ConversationTextMessageCell")
-
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
@@ -73,27 +67,15 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         messageTextView.layoutManager.usedRect(for: messageTextView.textContainer)
     }
 
-    static var instanceCount = 0
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
         setupAccessibility()
-
-        Self.instanceCount += 1
-        logger.info("ConversationTextMessageCell.init \(Self.instanceCount)")
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    deinit {
-        Task { @MainActor [logger] in
-            Self.instanceCount -= 1
-            logger.info("  ConversationTextMessageCell.deinit \(Self.instanceCount)")
-        }
     }
 
     private func setup() {
@@ -166,10 +148,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
-
-    var conversationCellModel: ConversationCellModel? {
-        nil
-    }
 
     let configuration: View.Configuration
 

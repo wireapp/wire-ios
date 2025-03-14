@@ -22,20 +22,10 @@ import WireDataModel
 final class ConversationStackMessageContentView: UIView, ConversationMessageCell {
     typealias Configuration = [AnyConversationMessageCellDescription]
 
-
+    private let stackView = UIStackView()
     var conversationMessageCells: [any UIView & ConversationMessageCell] {
         stackView.arrangedSubviews.compactMap { $0 as? any ConversationMessageCell }
     }
-
-    private let senderView = UIView()
-    private let textView = UIView()
-    private let reactionsView = UIView()
-
-    private lazy var stackView = UIStackView(arrangedSubviews: [
-        senderView,
-        textView,
-        reactionsView
-    ])
 
     var isSelected = false
 
@@ -67,7 +57,7 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
 
     func configure(with configuration: Configuration, animated: Bool) {
         stackView.arrangedSubviews.forEach { arrangedSubview in
-            arrangedSubview.isHidden = true
+            arrangedSubview.removeFromSuperview()
         }
         for cellDescription in configuration {
             let contentView = cellDescription.makeView(frame: .zero)
