@@ -188,7 +188,9 @@ final class ConversationMessageCellTableViewAdapter<
 
     /// For stack cells get the cell description of the arranged subview.
     /// If no view matches, the top level cell description is returned.
-    private func nestedCellDescription(using locationInCell: (UIView?) -> CGPoint) -> AnyConversationMessageCellDescription? {
+    private func nestedCellDescription(
+        using locationInCell: (UIView?) -> CGPoint
+    ) -> AnyConversationMessageCellDescription? {
         guard
             let cellView = cellView as? ConversationStackMessageContentView,
             let cellDescription = cellDescription as? StackViewCellDescription
