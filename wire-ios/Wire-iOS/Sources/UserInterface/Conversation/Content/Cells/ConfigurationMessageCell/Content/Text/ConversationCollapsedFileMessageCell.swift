@@ -137,19 +137,19 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
     }
 
     private func configureSubviews() {
-
+        
+        let margins = conversationHorizontalMargins
+        
         addSubview(wholeViewTapButton)
         wholeViewTapButton.pin(to: self)
-
-        let rightView = [typeIcon, collapseButton.wrapInView(trailingInset: 16)]
-            .horizontalStack(spacing: 8)
-            .wrapInView(bottomInset: -1)
         
         let stack = UIStackView.horizontal(
             views: [
-                avatar.wrapInView(leadingInset: 20, bottomInset: -7),
+                avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),
                 messageTextView,
-                rightView
+                [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
+                    .horizontalStack(spacing: 8)
+                    .wrapInView(bottomInset: -1)
             ],
             spacing: 10,
             alignment: .center

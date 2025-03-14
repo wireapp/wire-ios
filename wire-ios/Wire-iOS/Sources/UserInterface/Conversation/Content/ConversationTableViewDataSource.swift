@@ -211,6 +211,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers[message.objectIdentifier] {
+            cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
 
@@ -225,12 +226,12 @@ final class ConversationTableViewDataSource: NSObject {
             context: context,
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
-            useInvertedIndices: true
+            useInvertedIndices: true,
+            contentWith: contentWidth
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
         sectionController.actionController = actionController(for: message, sectionController: sectionController)
-        sectionController.contentWidth = contentWidth
         
         sectionControllers[message.objectIdentifier] = sectionController
 

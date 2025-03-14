@@ -299,9 +299,8 @@ final class ConversationContentViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
-        scrollToFirstUnreadMessageIfNeeded()
         dataSource.contentWidth = tableView.bounds.width
+        scrollToFirstUnreadMessageIfNeeded()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

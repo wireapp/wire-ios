@@ -108,7 +108,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     
-    var contentWidth: CGFloat = UIScreen.main.bounds.width
+    var contentWidth: CGFloat
 
     deinit {
         changeObservers.removeAll()
@@ -119,13 +119,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         context: ConversationMessageContext,
         selected: Bool = false,
         userSession: UserSession,
-        useInvertedIndices: Bool
+        useInvertedIndices: Bool,
+        contentWith: CGFloat
     ) {
         self.message = message
         self.context = context
         self.selected = selected
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
+        self.contentWidth = contentWith
 
         super.init()
 
@@ -618,7 +620,7 @@ func willTextExceedOneLine(text: String, textViewWidth: CGFloat) -> Bool {
                                         attributes: attributes,
                                         context: nil)
 
-    var singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
+    let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
 
     return boundingBox.height > singleLineHeight
 }
