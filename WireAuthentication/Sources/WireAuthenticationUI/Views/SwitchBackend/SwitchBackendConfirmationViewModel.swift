@@ -32,7 +32,6 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     private typealias Strings = L10n.SwitchBackendConfirmation
 
     package typealias Factory =
-        //FetchBackendConfigUseCaseFactory &
         FetchSSOURLUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory
 

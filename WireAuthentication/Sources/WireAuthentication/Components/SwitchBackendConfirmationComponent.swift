@@ -130,10 +130,6 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
         )
     }
 
-//    func fetchBackendConfigUseCase() -> any WireAuthenticationAPI.FetchBackendConfigUseCaseProtocol {
-//        FetchBackendConfigUseCase()
-//    }
-
 }
 
 extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationView.Factory {
