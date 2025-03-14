@@ -33,7 +33,13 @@ final class ConversationMessageActionController {
 
     // weather message collapsed or normal\expanded
     // nil if not applicable
-    var isCollapsed: Bool?
+    var isCollapsed: Bool? {
+        didSet {
+            isCollapsedWasUpdated = true
+        }
+    }
+    private var isCollapsedWasUpdated: Bool = false
+    
     // needed to get collapse own messages settings for a specific user
     // nil if not aplicable
     var selfUserId: UUID?
@@ -132,12 +138,13 @@ final class ConversationMessageActionController {
             guard let selfUserId,
                   let isCollapsed,
                   PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages),
-                  !isCollapsed else {
+                  !isCollapsed,
+                    isCollapsedWasUpdated else {
                 return false
             }
 
             let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message
-                .isLocation || message.isImage // TODO: long text
+                .isLocation || message.isImage || message.isText
 
             return message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse
         case .present,
