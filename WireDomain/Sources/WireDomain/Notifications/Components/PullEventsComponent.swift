@@ -313,7 +313,7 @@ extension PullEventsComponent {
         )
     }
 
-    func makeProxySettings() async -> ProxySettings? {
+    func makeProxySettings() async -> WireAPI.ProxySettings? {
         let legacyBackendEnvironment = makeLegacyBackendEnvironment()
         guard let proxy = legacyBackendEnvironment.proxy else { return nil }
 
