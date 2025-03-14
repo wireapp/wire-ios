@@ -77,14 +77,14 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         let content = UNMutableNotificationContent()
 
         let connectionStatus = context.connectionStatus
-        
+
         let localizableKey: String.LocalizationValue = switch connectionStatus {
         case .pending:
             "push.notification.body.connectionPending"
         case .accepted:
             "push.notification.body.connectionAccepted"
         }
-        
+
         let body = if let username = context.username {
             String.formated(key: localizableKey, bundle: .module, username)
         } else {
