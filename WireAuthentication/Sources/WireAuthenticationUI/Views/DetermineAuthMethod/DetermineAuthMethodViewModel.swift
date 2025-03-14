@@ -28,10 +28,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package typealias Factory =
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory &
         SSOLinkGeneratorFactory &
-        ValidateEmailOrSSOCodeUseCaseFactory &
-        OpenAppStoreUseCaseFactory
+        ValidateEmailOrSSOCodeUseCaseFactory
 
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }

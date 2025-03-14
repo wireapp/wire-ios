@@ -26,8 +26,8 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     package typealias Factory =
         LoginViaEmailUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory &
-        OpenAppStoreUseCaseFactory
+        OpenAppStoreUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
 
     private let router: any Router
     private let factory: any Factory

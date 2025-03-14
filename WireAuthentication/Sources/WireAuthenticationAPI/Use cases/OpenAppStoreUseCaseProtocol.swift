@@ -21,7 +21,8 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OpenAppStoreUseCaseProtocol: Sendable {
 
-    @MainActor func invoke()
+    @MainActor
+    func invoke()
 
 }
 

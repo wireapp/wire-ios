@@ -33,8 +33,8 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     package typealias Factory =
         FetchSSOURLUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory &
-        OpenAppStoreUseCaseFactory
+        OpenAppStoreUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
 
     // MARK: - State
 

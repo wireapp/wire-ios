@@ -28,7 +28,8 @@ public struct OpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
         self.url = url
     }
 
-    @MainActor public func invoke() {
+    @MainActor
+    public func invoke() {
         UIApplication.shared.open(url)
     }
 
