@@ -111,7 +111,10 @@ final class ConversationTableViewDataSource: NSObject {
     func calculateSections(
         forceRecalculate: Bool = false
     ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
-        messages.enumerated().map { offset, element in
+
+        print("ConversationTextMessageCell calculateSections()")
+
+        return messages.enumerated().map { offset, element in
             let sectionIdentifier = element.objectIdentifier
             let context = context(
                 for: element,
@@ -134,6 +137,9 @@ final class ConversationTableViewDataSource: NSObject {
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
     ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+
+        print("ConversationTextMessageCell calculateSections(updating:)")
+
         let sectionIdentifier = sectionController.message.objectIdentifier
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
@@ -204,6 +210,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers[message.objectIdentifier] {
+            print("ConversationTextMessageCell using cached section controller")
             return cachedEntry
         }
 
@@ -213,6 +220,8 @@ final class ConversationTableViewDataSource: NSObject {
             firstUnreadMessage: firstUnreadMessage,
             searchQueries: searchQueries
         )
+
+        print("ConversationTextMessageCell creating new section controller")
         let sectionController = ConversationMessageSectionController(
             message: message,
             context: context,
