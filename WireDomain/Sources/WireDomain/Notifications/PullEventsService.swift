@@ -18,7 +18,6 @@
 
 import Foundation
 import WireAPI
-import WireLogging
 
 // sourcery: AutoMockable
 protocol PullEventsServiceProtocol {

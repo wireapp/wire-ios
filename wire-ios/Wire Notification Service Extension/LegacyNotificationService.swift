@@ -71,7 +71,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     // MARK: - Life cycle
 
     override init() {
-        WireLogger.notifications.info("initializing new legacy notification service")
+        WireLogger.notifications.info("initializing new legacy notification service", attributes: .legacyNSE)
         super.init()
     }
 
@@ -81,12 +81,12 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        WireLogger.notifications.info("legacy notification service will process request (\(request.identifier))")
+        WireLogger.notifications.info("legacy notification service will process request (\(request.identifier))", attributes: .legacyNSE)
 
         self.contentHandler = contentHandler
 
         guard let accountID = request.content.accountID else {
-            WireLogger.notifications.error("failed to process request: payload missing account ID")
+            WireLogger.notifications.error("failed to process request: payload missing account ID", attributes: .legacyNSE)
             return finishWithoutShowingNotification()
         }
 
@@ -94,7 +94,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             session = try createSession(accountID: accountID)
         } catch {
             WireLogger.notifications
-                .error("failed to process process request: could not create session: \(error.localizedDescription)")
+                .error("failed to process process request: could not create session: \(error.localizedDescription)", attributes: .legacyNSE)
             return finishWithoutShowingNotification()
         }
 
@@ -123,25 +123,25 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
         removeNotification(withSameMessageId: notification.messageNonce)
 
-        WireLogger.notifications.info("session did generate a notification", attributes: notification.logAttributes)
+        WireLogger.notifications.info("session did generate a notification", attributes: notification.logAttributes, .legacyNSE)
 
         defer { tearDown() }
 
         guard let contentHandler else { return }
 
         guard let content = notification.content as? UNMutableNotificationContent else {
-            WireLogger.notifications.error("generated notification is not mutable")
+            WireLogger.notifications.error("generated notification is not mutable", attributes: .legacyNSE)
             return finishWithoutShowingNotification()
         }
 
         content.interruptionLevel = .timeSensitive
 
         if let badgeCount = totalUnreadCount(unreadConversationCount) {
-            WireLogger.notifications.info("setting badge count to \(badgeCount.intValue)")
+            WireLogger.notifications.info("setting badge count to \(badgeCount.intValue)", attributes: .legacyNSE)
             content.badge = badgeCount
         }
 
-        WireLogger.notifications.info("showing notification to user", attributes: notification.logAttributes)
+        WireLogger.notifications.info("showing notification to user", attributes: notification.logAttributes, .legacyNSE)
         contentHandler(content)
     }
 
@@ -174,9 +174,9 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     func notificationSessionDidFailWithError(error: NotificationSessionError) {
         switch error {
         case .alreadyFetchedEvent:
-            WireLogger.notifications.warn("session failed with error: \(error.localizedDescription)")
+            WireLogger.notifications.warn("session failed with error: \(error.localizedDescription)", attributes: .legacyNSE)
         default:
-            WireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
+            WireLogger.notifications.error("session failed with error: \(error.localizedDescription)", attributes: .legacyNSE)
         }
 
         finishWithoutShowingNotification()

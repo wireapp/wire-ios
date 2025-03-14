@@ -17,10 +17,7 @@
 //
 
 import WireAPI
-import WireCrypto
 import WireDataModel
-import WireFoundation
-import WireLogging
 
 /// Observes pending events, process them and generates new notifications content.
 struct VerifyUserSession {

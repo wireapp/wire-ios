@@ -116,14 +116,16 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
                         try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
                     } catch {
                         WireLogger.calling.error(
-                            "failed to wake up main app: \(error.localizedDescription)"
+                            "failed to wake up main app: \(error.localizedDescription)",
+                            attributes: .newNSE
                         )
                     }
                 }
 
             } catch {
                 WireLogger.notifications.error(
-                    "Failed to generate notification: \(error.localizedDescription)"
+                    "Failed to generate notification: \(error.localizedDescription)",
+                    attributes: .newNSE
                 )
             }
         }
@@ -151,7 +153,7 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
         notification.interruptionLevel = .timeSensitive
         notification.badge = await getNotificationBadge()
 
-        WireLogger.notifications.info("Displaying push notification")
+        WireLogger.notifications.info("Displaying push notification", attributes: .newNSE)
         // Displays the notification to the user
         contentHandler(notification)
     }

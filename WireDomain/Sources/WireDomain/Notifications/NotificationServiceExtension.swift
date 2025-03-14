@@ -37,7 +37,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
     public init() {
         registerProviderFactories()
-        WireLogger.notifications.info("initializing new notification service")
+        logger.info("initializing new notification service", attributes: .newNSE)
     }
 
     // MARK: - Notifications
@@ -84,14 +84,14 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     }
 
     public func serviceExtensionTimeWillExpire() {
-        logger.warn("new notification service will expire")
+        logger.warn("new notification service will expire", attributes: .newNSE)
         finishWithEmptyNotification()
     }
 
     // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty content to
     // the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
     private func finishWithEmptyNotification() {
-        logger.info("finishing without showing notification")
+        logger.info("finishing without showing notification", attributes: .newNSE)
         contentHandler?(.emptyNotification)
         terminate()
     }
@@ -146,53 +146,63 @@ extension NotificationServiceExtension {
             switch payloadError {
             case .missingUserID:
                 logger.error(
-                    "failed to decode notification payload: missing user ID"
+                    "failed to decode notification payload: missing user ID",
+                    attributes: .newNSE
                 )
             case .missingEventID:
                 logger.error(
-                    "failed to decode notification payload: missing event ID"
+                    "failed to decode notification payload: missing event ID",
+                    attributes: .newNSE
                 )
             }
         case let verifyUserSessionError as VerifyUserSession.Failure:
             switch verifyUserSessionError {
             case .userUnauthenticated:
                 WireLogger.notifications.error(
-                    "Not displaying notification because app is not authenticated"
+                    "Not displaying notification because app is not authenticated",
+                    attributes: .newNSE
                 )
             case .missingUserClient:
                 WireLogger.notifications.error(
-                    "Not displaying notification because user client is missing"
+                    "Not displaying notification because user client is missing",
+                    attributes: .newNSE
                 )
             case .coreDataMissingSharedContainer:
                 WireLogger.notifications.error(
-                    "Core data missing shared container"
+                    "Core data missing shared container",
+                    attributes: .newNSE
                 )
             case .coreDataMigrationRequired:
                 WireLogger.notifications.error(
-                    "Core data migration required"
+                    "Core data migration required",
+                    attributes: .newNSE
                 )
             case .unableToLoadStores:
                 WireLogger.notifications.error(
-                    "Loading coreDataStack with error"
+                    "Loading coreDataStack with error",
+                    attributes: .newNSE
                 )
             }
         case let pullEventsServiceError as PullEventsService.Failure:
             switch pullEventsServiceError {
             case let .unableToPullPendingEvents(error):
                 logger.error(
-                    "failed to process notification: could not pull pending events: \(error.localizedDescription)"
+                    "failed to process notification: could not pull pending events: \(error.localizedDescription)",
+                    attributes: .newNSE
                 )
             }
         case let serviceSetupError as NotificationServiceExtension.Failure:
             switch serviceSetupError {
             case .noAccountFound:
                 logger.error(
-                    "failed to process notification: no selected account found"
+                    "failed to process notification: no selected account found",
+                    attributes: .newNSE
                 )
             }
         default:
             logger.error(
-                "Unable to create a session: \(error.localizedDescription)"
+                "Unable to create a session: \(error.localizedDescription)",
+                attributes: .newNSE
             )
         }
     }
