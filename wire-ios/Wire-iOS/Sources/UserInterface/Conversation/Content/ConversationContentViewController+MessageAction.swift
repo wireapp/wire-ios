@@ -105,13 +105,13 @@ extension ConversationContentViewController {
                 }
             }
         case .present:
-            dataSource.selectedMessage = message
+            // dataSource.selectedMessage = message
             presentDetails(for: message)
         case .save:
             if Message.isImage(message) {
                 saveImage(from: message, view: view)
             } else if let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() {
-                dataSource.selectedMessage = message
+                // dataSource.selectedMessage = message
 
                 let activityViewController = UIActivityViewController(
                     activityItems: [fileURL],
@@ -126,7 +126,7 @@ extension ConversationContentViewController {
                     .warn("Saving a message of any type other than image or file is currently not handled.")
             }
         case .digitallySign:
-            dataSource.selectedMessage = message
+            // dataSource.selectedMessage = message
             if message.isFileDownloaded() {
                 signPDFDocument(for: message, observer: self)
             } else {
@@ -285,8 +285,8 @@ extension ConversationContentViewController: SignatureObserver {
 
     private func retriveSignature() {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
-            self?.dataSource.selectedMessage?
-                .fileMessageData?.retrievePDFSignature()
+            fatalError("TODO")
+            // self?.dataSource.selectedMessage?.fileMessageData?.retrievePDFSignature()
         }
     }
 

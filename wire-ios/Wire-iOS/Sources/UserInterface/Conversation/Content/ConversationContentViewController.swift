@@ -343,25 +343,25 @@ final class ConversationContentViewController: UIViewController {
             return nil
         }
 
-        let message = dataSource.messages[indexPath.section]
-
-        if message == dataSource.selectedMessage {
-
-            // If this cell is already selected, deselect it.
-            dataSource.selectedMessage = nil
-            dataSource.deselect(indexPath: indexPath)
-            tableView.deselectRow(at: indexPath, animated: true)
-
+//        let message = dataSource.messages[indexPath.section]
+//
+//        if message == dataSource.selectedMessage {
+//
+//            // If this cell is already selected, deselect it.
+//            dataSource.selectedMessage = nil
+//            dataSource.deselect(indexPath: indexPath)
+//            tableView.deselectRow(at: indexPath, animated: true)
+//
             return nil
-        } else {
-            if let indexPathForSelectedRow = tableView.indexPathForSelectedRow {
-                dataSource.deselect(indexPath: indexPathForSelectedRow)
-            }
-            dataSource.selectedMessage = message
-            dataSource.select(indexPath: indexPath)
-
-            return indexPath
-        }
+//        } else {
+//            if let indexPathForSelectedRow = tableView.indexPathForSelectedRow {
+//                dataSource.deselect(indexPath: indexPathForSelectedRow)
+//            }
+//            dataSource.selectedMessage = message
+//            dataSource.select(indexPath: indexPath)
+//
+//            return indexPath
+//        }
     }
 
     // MARK: - Get/set
