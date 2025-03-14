@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "ابحث";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
@@ -1648,21 +1649,10 @@
 "error.user.account_suspended" = "لم يعد مصرّحًا لهذا الحساب بتسجيل الدخول.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "تعذَّر تحديث كلمة مرورك.";
-
 "error.group_call.too_many_members_in_conversation.title" = "هناك أشخاص أكثر مما يجب في هذه المكالمة";
 "error.group_call.too_many_members_in_conversation" = "تستطيع إجراء مكالمات لحد %d أشخاص.";
 "error.group_call.too_many_participants_in_the_call.title" = "المكالمة ممتلئة";
 "error.group_call.too_many_participants_in_the_call" = "There’s only room for %d participants in here.";
-"error.call.gsm_ongoing.title" = "مُكالمة خلوية";
-"error.call.gsm_ongoing" = "من فضلك أنهِ المكالمة الخلوية قبل التّحدث باستخدام Wire.";
-"error.call.general.title" = "خطأ في المكالمة";
-"error.call.general" = "حاول الاتصال مرة أخرى خلال دقائق.";
-"error.call.slow_connection.title" = "اتصال بطيء";
-"error.call.slow_connection" = "قد تواجه مشكلات أثناء المكالمة";
-"error.call.slow_connection.call_anyway" = "الاتصال على أي حال";
 
 "error.invite.no_email_provider" = "من فضلك اضبط تطبيق البريد الإلكتروني للتّمكن من إرسال دعوات من خلاله";
 "error.invite.no_messaging_provider" = "من فضلك اضبط الـSMS لتتمكن من إرسال دعوات من خلالها";
