@@ -85,8 +85,13 @@ package struct LoginViaEmailOnPremView: View {
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
-            actions: { _ in
-                Button(L10n.Authentication.Error.confirm, action: {})
+            actions: { alert in
+                switch alert {
+                case .obsoleteClient:
+                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                default:
+                    Button(L10n.Authentication.Error.confirm, action: {})
+                }
             }
         )
         .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])

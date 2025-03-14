@@ -26,13 +26,13 @@ internal import WireAuthenticationLogic
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    @MainActor var bridge: WireAuthenticationBridge { get }
     var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
+    var appStoreURL: URL { get }
 
 }
 
@@ -42,7 +42,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
-            bridge: dependency.bridge,
             environmentType: dependency.environmentType,
             backendConfig: dependency.backendConfig
         )
@@ -142,6 +141,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
         FetchBackendConfigUseCase()
+    }
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
 }

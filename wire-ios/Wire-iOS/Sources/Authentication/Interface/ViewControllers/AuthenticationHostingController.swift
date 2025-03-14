@@ -48,12 +48,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
             case .accountRegistrationRequested:
                 // TODO: [WPB-16279] Navigate to the account registration flow
                 break
-
-            case .obsoleteClientDetected:
-                SessionManager.shared?.wireAuthenticationDidDetectObsoleteClientVersion()
-
-            case .obsoleteBackendDetected:
-                SessionManager.shared?.wireAuthenticationDidDetectObsoleteBackendVersion()
             }
         }
 

@@ -30,7 +30,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         FetchBackendConfigUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory &
         SSOLinkGeneratorFactory &
-        ValidateEmailOrSSOCodeUseCaseFactory
+        ValidateEmailOrSSOCodeUseCaseFactory &
+        OpenAppStoreUseCaseFactory
 
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
@@ -41,7 +42,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
-    private let bridge: WireAuthenticationBridge
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
@@ -58,7 +58,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        bridge: WireAuthenticationBridge,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         emailOrSSOCode: String = "",
@@ -66,7 +65,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     ) {
         self.router = router
         self.factory = factory
-        self.bridge = bridge
         self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
@@ -86,10 +84,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 try await useCase.invoke()
             }.value
         } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
-            bridge.sendOutboundEvent(.obsoleteClientDetected)
+            alert = .obsoleteClient
             return
         } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
-            bridge.sendOutboundEvent(.obsoleteBackendDetected)
+            alert = .obsoleteBackend
             return
         } catch {
             alert = .general(for: error)
@@ -123,6 +121,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func onAlertDismiss() {
         ssoLinkGenerator?.flushToken()
         modalDestination = nil
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     // MARK: - Private

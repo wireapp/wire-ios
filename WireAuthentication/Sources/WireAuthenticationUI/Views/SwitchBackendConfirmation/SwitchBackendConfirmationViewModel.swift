@@ -33,7 +33,8 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     package typealias Factory =
         FetchSSOURLUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory
+        ResolveBackendMetadataUseCaseFactory &
+        OpenAppStoreUseCaseFactory
 
     // MARK: - State
 
@@ -41,7 +42,6 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
-    private let bridge: WireAuthenticationBridge
     private let email: String
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
@@ -55,14 +55,12 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        bridge: WireAuthenticationBridge,
         email: String,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
         self.router = router
         self.factory = factory
-        self.bridge = bridge
         self.email = email
         self.environmentType = environmentType
         self.backendConfig = backendConfig
@@ -163,10 +161,10 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                 }
             } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
                 WireLogger.authentication.error("detected obsolete client")
-                bridge.sendOutboundEvent(.obsoleteClientDetected)
+                alert = .obsoleteClient
             } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
                 WireLogger.authentication.error("detected obsolete backend")
-                bridge.sendOutboundEvent(.obsoleteBackendDetected)
+                alert = .obsoleteBackend
             } catch {
                 WireLogger.authentication.error("Fetching default SSO URL failed: \(error)")
                 alert = .general(for: error)
@@ -186,6 +184,11 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         return try await Task.detached {
             try await useCase.invoke()
         }.value
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     // MARK: - Model

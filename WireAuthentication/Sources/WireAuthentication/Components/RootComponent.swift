@@ -36,6 +36,7 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
+    public let appStoreURL: URL
 
     init(
         environmentType: BackendEnvironmentType,
@@ -47,7 +48,8 @@ class RootComponent: BootstrapComponent {
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults
+        userDefaults: UserDefaults,
+        appStoreURL: URL
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig
@@ -60,6 +62,7 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
+        self.appStoreURL = appStoreURL
     }
 
     // MARK: - View

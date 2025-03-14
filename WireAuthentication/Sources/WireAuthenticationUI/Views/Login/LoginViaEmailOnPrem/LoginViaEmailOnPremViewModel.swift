@@ -26,11 +26,11 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     package typealias Factory =
         LoginViaEmailUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory
+        ResolveBackendMetadataUseCaseFactory &
+        OpenAppStoreUseCaseFactory
 
     private let router: any Router
     private let factory: any Factory
-    private let bridge: WireAuthenticationBridge
     private let passwordValidator: any PasswordValidator
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
@@ -46,7 +46,6 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        bridge: WireAuthenticationBridge,
         email: String,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
@@ -56,7 +55,6 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     ) {
         self.router = router
         self.factory = factory
-        self.bridge = bridge
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
@@ -104,10 +102,10 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
         } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
-            bridge.sendOutboundEvent(.obsoleteClientDetected)
+            alert = .obsoleteClient
             return
         } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
-            bridge.sendOutboundEvent(.obsoleteBackendDetected)
+            alert = .obsoleteBackend
             return
         } catch {
             alert = .general(for: error)
@@ -153,6 +151,11 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     func recoverPassword() {
         UIApplication.shared.open(forgotPasswordURL)
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     func createAccount() {

@@ -17,18 +17,19 @@
 //
 
 import Foundation
+import UIKit
+import WireAuthenticationAPI
 
-// Temporary helpers to report unresolved api version from
-// WireAuthentication.
+public struct OpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
 
-public extension SessionManager {
+    let url: URL
 
-    func wireAuthenticationDidDetectObsoleteClientVersion() {
-        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .clientAPIVersionObsolete)
+    public init(url: URL) {
+        self.url = url
     }
 
-    func wireAuthenticationDidDetectObsoleteBackendVersion() {
-        delegate?.sessionManagerDidBlacklistCurrentVersion(reason: .backendAPIVersionObsolete)
+    @MainActor public func invoke() {
+        UIApplication.shared.open(url)
     }
 
 }

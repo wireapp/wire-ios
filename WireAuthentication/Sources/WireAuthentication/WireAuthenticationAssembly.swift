@@ -50,7 +50,8 @@ public struct WireAuthenticationAssembly {
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults
+        userDefaults: UserDefaults,
+        appStoreURL: URL
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
             environmentType: environmentType,
@@ -62,7 +63,8 @@ public struct WireAuthenticationAssembly {
             howToDeleteAccountURL: howToDeleteAccountURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
-            userDefaults: userDefaults
+            userDefaults: userDefaults,
+            appStoreURL: appStoreURL
         )
 
         return (view: rootComponent.view, bridge: rootComponent.bridge)

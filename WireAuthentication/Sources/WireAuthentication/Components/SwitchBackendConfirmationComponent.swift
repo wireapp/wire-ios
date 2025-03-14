@@ -27,12 +27,12 @@ import WireLogging
 protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
     var productionVersions: Set<APIVersion> { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
+    var appStoreURL: URL { get }
 
 }
 
@@ -64,7 +64,6 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
         SwitchBackendConfirmationViewModel(
             router: dependency.router,
             factory: self,
-            bridge: dependency.bridge,
             email: email,
             environmentType: environmentType,
             backendConfig: backendConfig
@@ -130,6 +129,10 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
             authenticationAPI: authenticationAPI,
             linkGenerator: linkGenerator
         )
+    }
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
 }
