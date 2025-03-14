@@ -29,19 +29,19 @@ struct AnyConversationCellModel: ConversationCellModelProtocol {
     private let _isEqual: @Sendable (Any) -> Bool
 
     init<Model: ConversationCellModelProtocol>(_ base: Model) {
-        _id = {
+        self._id = {
             base.id
         }
-        _buildView = {
+        self._buildView = {
             ContentView(
                 model: AnyConversationCellModel(base),
                 content: base.buildView
             )
         }
-        _hash = { hasher in
+        self._hash = { hasher in
             base.hash(into: &hasher)
         }
-        _isEqual = { other in
+        self._isEqual = { other in
             guard let otherBase = other as? Model else { return false }
             return base == otherBase
         }
@@ -73,14 +73,14 @@ extension AnyConversationCellModel {
             content()
         }
 
-        init<V: View>(model _: Model, content: @escaping () -> V) {
+        init(model _: Model, content: @escaping () -> some View) {
             self.content = {
                 AnyView(content())
             }
         }
 
         init(model: Model) {
-            content = {
+            self.content = {
                 AnyView(model.buildView())
             }
         }

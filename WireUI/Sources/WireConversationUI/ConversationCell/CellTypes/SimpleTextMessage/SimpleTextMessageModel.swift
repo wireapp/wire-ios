@@ -35,17 +35,17 @@ public struct SimpleTextMessageModel: ConversationCellModelProtocol {
     var reactions: Reactions
 
     init() {
-        text = AttributedString()
-        dateTime = ""
-        status = ""
-        reactions = Reactions()
+        self.text = AttributedString()
+        self.dateTime = ""
+        self.status = ""
+        self.reactions = Reactions()
     }
 
 }
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
-    public static var simpleTextMessage: Self {
+    static var simpleTextMessage: Self {
         .simpleTextMessage(SimpleTextMessageModel())
     }
 }

@@ -27,15 +27,15 @@ public struct DeletedMessageModel: ConversationCellModelProtocol {
     // TODO: add accessibilityLabel, accessibilityIdentifier?
 
     init() {
-        senderInfo = MessageSenderInfo()
-        deletionTime = ""
+        self.senderInfo = MessageSenderInfo()
+        self.deletionTime = ""
     }
 
 }
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
-    public static func deletedMessage() -> Self {
+    static func deletedMessage() -> Self {
         .deletedMessage(DeletedMessageModel())
     }
 }

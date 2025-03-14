@@ -25,9 +25,9 @@ public struct CompositeMessageModel: ConversationCellModelProtocol {
 
 }
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
-    public static var compositeMessage: Self {
+    static var compositeMessage: Self {
         .compositeMessage(CompositeMessageModel())
     }
 }

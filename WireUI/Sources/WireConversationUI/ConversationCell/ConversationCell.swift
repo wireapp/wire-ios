@@ -20,6 +20,7 @@ import SwiftUI
 
 // TODO: remove after performance review
 import os
+
 @MainActor private var instanceCount = 0
 private let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ConversationCell")
 
@@ -32,7 +33,7 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
             model.buildView()
-                // .id(model.id) // TODO: check if .id should or must not be used
+            // .id(model.id) // TODO: check if .id should or must not be used
         }
         .margins(.all, 0)
         .minSize(width: 0, height: 0)
@@ -43,7 +44,10 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         instanceCount += 1
-        logger.info("ConversationCell<\(String(describing: Model.self), privacy: .public)>.init, total instance count: \(instanceCount, privacy: .public)")
+        logger
+            .info(
+                "ConversationCell<\(String(describing: Model.self), privacy: .public)>.init, total instance count: \(instanceCount, privacy: .public)"
+            )
     }
 
     @available(*, unavailable)
@@ -54,7 +58,10 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
     deinit {
         Task { @MainActor in
             instanceCount -= 1
-            logger.info("ConversationCell<\(String(describing: Model.self), privacy: .public)>.deinit, total instance count: \(instanceCount, privacy: .public)")
+            logger
+                .info(
+                    "ConversationCell<\(String(describing: Model.self), privacy: .public)>.deinit, total instance count: \(instanceCount, privacy: .public)"
+                )
         }
     }
 

@@ -43,13 +43,13 @@ public enum ConversationCellModel: Hashable, Sendable {
     case extendedTextMessage(ExtendedTextMessageModel)
 
     /// todo
-    //case audioMessage(AudioMessageModel)
+    // case audioMessage(AudioMessageModel)
 
     /// todo
-    //case videoMessage(VideoMessageModel)
+    // case videoMessage(VideoMessageModel)
 
     /// todo
-    //case fileMessage(FileMessageModel)
+    // case fileMessage(FileMessageModel)
 
     /// todo
     // case location(LocationModel)

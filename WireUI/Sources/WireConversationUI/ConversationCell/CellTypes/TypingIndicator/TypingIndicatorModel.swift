@@ -25,9 +25,9 @@ public struct TypingIndicatorModel: ConversationCellModelProtocol {
 
 }
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
-    public static var typingIndicator: Self {
+    static var typingIndicator: Self {
         .typingIndicator(TypingIndicatorModel())
     }
 }

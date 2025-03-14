@@ -64,7 +64,6 @@ public extension ConversationCellModel {
 
         case .typingIndicator:
             "typingIndicator"
-
         }
     }
 

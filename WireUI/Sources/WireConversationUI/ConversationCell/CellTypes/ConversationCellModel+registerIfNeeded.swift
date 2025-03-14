@@ -67,7 +67,6 @@ public extension ConversationCellModel {
 
         case .typingIndicator:
             fatalError()
-
         }
 
         tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)

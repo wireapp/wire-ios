@@ -24,30 +24,30 @@ public extension ConversationCellModel {
     func configureCell(_ cell: UITableViewCell) {
         switch self {
 
-        case .guestsAllowedInfo(let guestsAllowedInfo):
+        case let .guestsAllowedInfo(guestsAllowedInfo):
             guard let cell = cell as? ConversationCell<GuestsAllowedInfoModel> else { break }
             return cell.model = guestsAllowedInfo
 
-        case .timeDivider(let timeDivider):
+        case let .timeDivider(timeDivider):
             guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
             return cell.model = timeDivider
 
-        case .systemMessage(let systemMessage):
+        case let .systemMessage(systemMessage):
             fatalError("not implemented yet")
 
-        case .ping(let ping):
+        case let .ping(ping):
             fatalError("not implemented yet")
 
-        case .collapsedMessage(let collapsedMessage):
+        case let .collapsedMessage(collapsedMessage):
             fatalError("not implemented yet")
 
-        case .compositeMessage(let compositeMessage):
+        case let .compositeMessage(compositeMessage):
             fatalError("not implemented yet")
 
-        case .simpleTextMessage(let simpleTextMessage):
+        case let .simpleTextMessage(simpleTextMessage):
             fatalError("not implemented yet")
 
-        case .extendedTextMessage(let extendedTextMessage):
+        case let .extendedTextMessage(extendedTextMessage):
             fatalError("not implemented yet")
 
         // case .audioMessage(let audioMessage):
@@ -62,12 +62,11 @@ public extension ConversationCellModel {
         // case .location(let location):
         //     fatalError("not implemented yet")
 
-        case .deletedMessage(let deletedMessage):
+        case let .deletedMessage(deletedMessage):
             fatalError("not implemented yet")
 
-         case .typingIndicator(let typingIndicator):
-             fatalError("not implemented yet")
-
+        case let .typingIndicator(typingIndicator):
+            fatalError("not implemented yet")
         }
 
         assertionFailure("unexpected cell: \(cell)")

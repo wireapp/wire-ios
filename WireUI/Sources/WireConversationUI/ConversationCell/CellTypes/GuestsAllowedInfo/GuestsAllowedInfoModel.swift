@@ -23,9 +23,9 @@ public struct GuestsAllowedInfoModel: ConversationCellModelProtocol {
 
 }
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
-    public static var guestsAllowedInfo: Self {
+    static var guestsAllowedInfo: Self {
         .guestsAllowedInfo(GuestsAllowedInfoModel())
     }
 }
