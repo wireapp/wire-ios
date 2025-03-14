@@ -166,9 +166,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 textViewWidth: contentWidth - margins.right - margins.left)
             return shouldCollapse
         } else {
-            let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message
-                .isLocation || message.isImage // TODO: long text
-            return isOfSupportedMessageTypeToCollapse
+            let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
+                .isLocation || message.isImage
+            return message.isSentBySelfUser && messageSupportsCollapsing
         }
     }
 
