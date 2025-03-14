@@ -23,6 +23,9 @@ import os
 @MainActor private var instanceCount = 0
 private let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ConversationCell")
 
+
+
+
 final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewCell {
 
     var model = Model() {
