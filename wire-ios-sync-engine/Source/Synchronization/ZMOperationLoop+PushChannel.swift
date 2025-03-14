@@ -59,6 +59,9 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                 }
             } else {
                 WaitingGroupTask(context: syncMOC) {
+                    events.forEach {
+                        WireLogger.updateEvent.debug("processLiveEvent event", attributes: $0.logAttributes(source: .pushChannel))
+                    }
                     do {
                         try await self.updateEventProcessor.processLiveEvents(events)
                     } catch {

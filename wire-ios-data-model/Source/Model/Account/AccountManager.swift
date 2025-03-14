@@ -18,8 +18,7 @@
 
 import Foundation
 import WireTransport
-
-private let log = ZMSLog(tag: "Accounts")
+import WireLogging
 
 public let AccountManagerDidUpdateAccountsNotificationName = Notification
     .Name("AccountManagerDidUpdateAccountsNotification")
@@ -83,6 +82,7 @@ public final class AccountManager: NSObject {
         store.remove(account)
         if selectedAccount == account {
             defaults?.selectedAccountIdentifier = nil
+            WireLogger.system.clearActiveAccount()
         }
         updateAccounts()
     }
@@ -93,6 +93,7 @@ public final class AccountManager: NSObject {
         precondition(accounts.contains(account), "Selecting an account without first adding it is not allowed")
         guard account != selectedAccount else { return }
         defaults?.selectedAccountIdentifier = account.userIdentifier
+        WireLogger.system.setActiveAccount(accoundID: account.userIdentifier.safeForLoggingDescription)
         updateAccounts()
     }
 

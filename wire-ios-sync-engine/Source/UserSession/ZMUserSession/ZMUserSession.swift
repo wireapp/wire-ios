@@ -543,11 +543,7 @@ public final class ZMUserSession: NSObject {
         }
 
         if let selfUserClient {
-            WireLogger.authentication.addTag(.selfClientId, value: nil)
-            WireLogger.authentication.addTag(
-                .selfClientId,
-                value: selfUserClient.safeRemoteIdentifier.safeForLoggingDescription
-            )
+            WireLogger.authentication.setClientID(selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
@@ -595,7 +591,7 @@ public final class ZMUserSession: NSObject {
         contextStorage.clear()
 
         NotificationCenter.default.removeObserver(self)
-        WireLogger.authentication.addTag(.selfClientId, value: nil)
+        WireLogger.authentication.clearClientID()
 
         isTornDown = true
     }
@@ -1285,9 +1281,8 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
 
-        let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
-        WireLogger.authentication.addTag(.selfClientId, value: nil)
-        WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        let clientID = userClient.safeRemoteIdentifier.safeForLoggingDescription
+        WireLogger.authentication.setClientID(clientID)
 
         // The client was just registered and still needs to perform the
         // initial sync.

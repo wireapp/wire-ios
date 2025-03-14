@@ -421,7 +421,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             model: UIDevice.current.zm_model(),
             label: UIDevice.current.name
         )
-
+        
         managedObjectContext.saveOrRollback()
     }
 
@@ -486,6 +486,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
         managedObjectContext.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
         managedObjectContext.saveOrRollback()
+
+        WireLogger.authentication.setClientID(client.safeRemoteIdentifier.safeForLoggingDescription)
 
         fetchExistingSelfClientsAfterRegisteringClient(client)
 
