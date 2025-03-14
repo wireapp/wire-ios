@@ -22,12 +22,18 @@ on:
         required: true
       DD_API_KEY:
         required: true
+      UI_TEST_LOGIN_EMAIL:
+        required: true
+      UI_TEST_LOGIN_PASSWORD:
+        required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
   REPO_ROOT: ${{ github.workspace }}
   PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+  UI_TEST_LOGIN_EMAIL: ${{ secrets.UI_TEST_LOGIN_EMAIL }}
+  UI_TEST_LOGIN_PASSWORD: ${{ secrets.UI_TEST_LOGIN_PASSWORD }}
 
 jobs:
   run-tests:
@@ -114,12 +120,17 @@ jobs:
         run: |
           bundle exec fastlane prepare_for_tests
 
-      - name: "Test all selected frameworks" 
+      - name: "Test new critical flows"
+        if: ${{ inputs.test_dependencies == false }}
+        run: |
+          bundle exec fastlane run_uitests
+
+      - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
         run: |
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
-
-      - name: "Test frameworks without dependencies" 
+          
+      - name: "Test frameworks without dependencies"
         if: ${{ inputs.test_dependencies == false }}
         run: |
           bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}

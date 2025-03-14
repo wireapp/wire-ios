@@ -369,6 +369,7 @@
 "conversation.banner.separator" = "和";
 
 "conversation.action.search" = "搜索";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "圖片";
@@ -1648,21 +1649,10 @@
 "error.user.account_suspended" = "此帳戶不再被授權登錄";
 "error.user.account_limit_reached" = "您最多可添加三個賬號";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "無法更新您的密碼。";
-
 "error.group_call.too_many_members_in_conversation.title" = "已超過群組通話限定人數";
 "error.group_call.too_many_members_in_conversation" = "群組通話功能最多支援%d 人";
 "error.group_call.too_many_participants_in_the_call.title" = "此通話參與者已達上限";
 "error.group_call.too_many_participants_in_the_call" = "只能再容納%d參與者。";
-"error.call.gsm_ongoing.title" = "撥打手機";
-"error.call.gsm_ongoing" = "在使用 Wire 之前請取消手機通話";
-"error.call.general.title" = "撥打錯誤";
-"error.call.general" = "請在幾分鐘後再試一次通話。";
-"error.call.slow_connection.title" = "連線速度緩慢";
-"error.call.slow_connection" = "您可能會在通話期間遇到問題";
-"error.call.slow_connection.call_anyway" = "仍然要通話";
 
 "error.invite.no_email_provider" = "請設定您的 Email 用戶端以透過 Email 發送邀請。";
 "error.invite.no_messaging_provider" = "請設定您的簡訊服務以透過簡訊發送邀請。";
