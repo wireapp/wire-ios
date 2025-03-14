@@ -19,7 +19,6 @@
 import XCTest
 @testable import Wire
 
-
 final class CallViewControllerTests: ZMSnapshotTestCase {
 
     var mockVoiceChannel: MockVoiceChannel!

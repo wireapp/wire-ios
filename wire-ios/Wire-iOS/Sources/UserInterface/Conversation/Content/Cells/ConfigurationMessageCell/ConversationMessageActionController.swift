@@ -31,12 +31,14 @@ final class ConversationMessageActionController {
     let message: ZMConversationMessage
     let context: Context
 
-    // weather message collapsed or normal\expanded
-    // nil if not applicable
+    /// whether message collapsed or normal | expanded
+    /// nil if not applicable
     var isCollapsed: Bool?
-    // needed to get collapse own messages settings for a specific user
-    // nil if not aplicable
+
+    /// used to get collapse own messages settings for a specific user
+    /// nil if not applicable
     var selfUserId: UUID?
+
     weak var responder: MessageActionResponder?
     weak var view: UIView!
 
@@ -61,6 +63,11 @@ final class ConversationMessageActionController {
     private var allPerformableMessageAction: [MessageAction] {
         MessageAction.allCases
             .filter(canPerformAction)
+    }
+    
+    private var collapseOwnMessagesEnabled: Bool {
+        guard let selfUserId else { return false }
+        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
     }
 
     func allMessageMenuElements() -> [UIAction] {
@@ -129,17 +136,16 @@ final class ConversationMessageActionController {
         case .visitLink:
             return message.canVisitLink
         case .collapse:
-            guard let selfUserId,
-                  let isCollapsed,
-                  PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages),
+            guard let isCollapsed,
+                  collapseOwnMessagesEnabled,
                   !isCollapsed else {
                 return false
             }
 
-            let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message
+            let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
                 .isLocation || message.isImage // TODO: long text
 
-            return message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse
+            return message.isSentBySelfUser && messageSupportsCollapsing
         case .present,
              .openQuote,
              .resetSession:

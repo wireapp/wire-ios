@@ -16,42 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireFoundation
+import XCTest
 @testable import Wire
 
 final class ConversationCollapsedFileMessageCellTests: ConversationMessageSnapshotTestCase {
-    
+
     var message: MockMessage!
     var mockSelfUser: MockUserType!
     lazy var collapseOwnMessagesStorage = PrivateUserDefaults<CollapseKey>(
-        userID: userSession.selfUser.remoteIdentifier)
-    
+        userID: userSession.selfUser.remoteIdentifier
+    )
+
     override func setUp() {
         super.setUp()
-        
+
         UIColor.setAccentOverride(.red)
-        
+
         mockSelfUser = MockUserType.createDefaultSelfUser()
         message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
         collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
     }
-    
+
     override func tearDown() {
         message = nil
         mockSelfUser = nil
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
-        
+
         super.tearDown()
     }
-    
+
     func testUploadedCell_fromThisDevice() {
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
-        
+
         verify(message: message)
     }
-    
+
     func testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
@@ -59,12 +60,12 @@ final class ConversationCollapsedFileMessageCellTests: ConversationMessageSnapsh
 
         verify(message: message)
     }
-    
+
     func testUploadedCell_fromOtherUser() {
         message.senderUser = SwiftMockLoader.mockUsers().first!
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = nil
-        
+
         verify(message: message)
     }
 }

@@ -150,9 +150,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
               PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages) else {
             return false
         }
-        let isOfSupportedMessageTypeToCollapse = message.isFile || message.isAudio || message.isVideo || message
+        let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
             .isLocation || message.isImage // TODO: long text
-        return message.isSentBySelfUser && isOfSupportedMessageTypeToCollapse
+        return message.isSentBySelfUser && messageSupportsCollapsing
     }
 
     // MARK: - Content Types

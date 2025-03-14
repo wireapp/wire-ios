@@ -17,8 +17,8 @@
 //
 
 import XCTest
-@testable import WireFoundation
 @testable import Wire
+@testable import WireFoundation
 
 // MARK: - MessageActionsViewControllerTests
 
@@ -147,7 +147,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // THEN
         XCTAssertEqual(actionsTitles, ["Delete", "Cancel"])
     }
-    
+
     func testMenuActionsForFileMessage_collapseOwnMessagesDisabled() {
         // GIVEN
         let message = MockMessageFactory.fileTransferMessage()
@@ -156,7 +156,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // THEN
         XCTAssertEqual(actionsTitles, ["Reply", "Details", "Download", "Delete", "Cancel"])
     }
-    
+
     func testMenuActionsForFileMessage_collapseOwnMessagesEnabled() {
         // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
@@ -164,7 +164,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         userDefaults.set(true, forKey: .collapseOwnMessages)
 
         let message = MockMessageFactory.fileTransferMessage()
-        
+
         // WHEN
         let (actionController, sut) = makeSut(
             message: message,
@@ -177,7 +177,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         XCTAssertEqual(actionController.isCollapsed, false)
         XCTAssertEqual(actionController.selfUserId, selfUser.remoteIdentifier)
         // expand message
-        
+
         // THEN
         XCTAssertEqual(
             sut.titles,
@@ -185,7 +185,6 @@ final class MessageActionsViewControllerTests: XCTestCase {
         )
     }
 
-    
     func testMenuActionsForFileMessage_fromOtherUser_hasNoCollapse() {
         // GIVEN
         let message = MockMessageFactory.fileTransferMessage()
@@ -211,7 +210,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
     private func actionsTitlesForMessage(message: MockMessage) -> [String] {
         makeSut(message: message).1.titles
     }
-    
+
     private func makeSut(
         message: MockMessage,
         sender: MockUserType? = nil,
@@ -231,10 +230,10 @@ final class MessageActionsViewControllerTests: XCTestCase {
             withActions: MessageAction.allCases,
             actionController: actionController
         )
-        
+
         return (actionController, sut)
     }
-    
+
 }
 
 // MARK: - UIView extension
