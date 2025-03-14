@@ -62,6 +62,8 @@ protocol ConversationMessageCell: UIView {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
 
+    typealias ZMConversationMessage = WireDataModel.ZMConversationMessage
+
     /// Whether the cell is selected.
     var isSelected: Bool { get set }
 
@@ -143,6 +145,8 @@ extension ConversationMessageCell {
 protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
     associatedtype View: ConversationMessageCell, UIView
+
+    typealias ZMConversationMessage = WireDataModel.ZMConversationMessage
 
     var conversationCellModel: ConversationCellModel? { get }
 
