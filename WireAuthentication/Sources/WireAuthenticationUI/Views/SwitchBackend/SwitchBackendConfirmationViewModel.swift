@@ -32,9 +32,9 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     private typealias Strings = L10n.SwitchBackendConfirmation
 
     package typealias Factory =
+        //FetchBackendConfigUseCaseFactory &
         FetchSSOURLUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory &
-        FetchBackendConfigUseCaseFactory
+        ResolveBackendMetadataUseCaseFactory
 
     // MARK: - State
 
@@ -160,6 +160,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                     } else {
                         router.presentSheet(
                             RootView.ModalDestination.onPremiseAuthFlow(
+                                environmentType: environmentType,
                                 backendConfig: backendConfig,
                                 backendMetadata: backendMetadata
                             )

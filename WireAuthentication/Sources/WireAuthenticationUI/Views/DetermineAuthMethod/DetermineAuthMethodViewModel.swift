@@ -63,8 +63,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         environmentType: BackendEnvironmentType,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         emailOrSSOCode: String = "",
         isLoading: Bool = false
     ) {

@@ -26,6 +26,7 @@ internal import WireAuthenticationLogic
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
     var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
@@ -36,8 +37,22 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 }
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
-//    let backendConfig: backendConfig,
-//    let backendMetadata: backendMetadata
+
+    private let environmentType: BackendEnvironmentType
+    private let backendConfig: BackendConfig
+    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+
+    init(
+        parent: any Scope,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) {
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
+        self.backendMetadata = backendMetadata
+        super.init(parent: parent)
+    }
 
     // MARK: - View
 
@@ -49,19 +64,28 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     }
 
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
+        let router = dependency.router
+        let switchBackendHandler = SwitchBackendHandler(router: router, factory: self)
+
+        dependency.bridge.onSwitchBackend = { [switchBackendHandler] backendConfigURL in
+            Task {
+                await switchBackendHandler.invoke(backendConfigURL)
+            }
+        }
+
+        return DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
-            environmentType: dependency.environmentType,
-            backendMetadata: nil,
-            backendConfig: dependency.backendConfig
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
         )
     }
 
     public var networkService: NetworkService {
         shared {
             NetworkService.make(
-                backendEnvironment: .init(dependency.backendConfig),
+                backendEnvironment: .init(backendConfig),
                 minTLSVersion: dependency.minTLSVersion
             )
         }
@@ -137,7 +161,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
         return SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
-            baseURL: dependency.backendConfig.endpoints.backendURL,
+            baseURL: backendConfig.endpoints.backendURL,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
         )

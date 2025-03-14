@@ -24,7 +24,10 @@ import WireReusableUIComponents
 final class MockDependencies {
 
     private var rootViewModel: RootViewModel {
-        RootViewModel()
+        RootViewModel(modalDestination: .authFlow(
+            environmentType: environmentType,
+            backendConfig: backendConfig)
+        )
     }
 
     var environmentType: BackendEnvironmentType {
@@ -82,8 +85,8 @@ final class MockDependencies {
             router: rootViewModel,
             factory: self,
             environmentType: environmentType,
-            backendMetadata: nil,
             backendConfig: backendConfig,
+            backendMetadata: nil,
             emailOrSSOCode: emailOrSSOCode,
             isLoading: isLoading
         )
@@ -153,13 +156,14 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             factory: self,
             environmentType: environmentType,
-            backendMetadata: nil,
-            backendConfig: backendConfig
+            backendConfig: backendConfig,
+            backendMetadata: nil
         )
     }
 
     func determineAuthMethodView(
-        backendConfig: BackendConfig?,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: BackendMetadata?
     ) -> DetermineAuthMethodView {
         DetermineAuthMethodView(

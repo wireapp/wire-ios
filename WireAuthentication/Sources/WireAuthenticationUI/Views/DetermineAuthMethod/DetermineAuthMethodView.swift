@@ -25,7 +25,8 @@ package protocol DetermineAuthMethodBuilder {
 
     @MainActor
     func determineAuthMethodView(
-        backendConfig: BackendConfig?,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> DetermineAuthMethodView
 

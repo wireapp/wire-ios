@@ -46,6 +46,10 @@ package struct SwitchBackendHandler {
                         environmentType: .custom(url: backendConfigURL)
                     )
                 )
+//                router.navigate(to: RootView.ModalDestination.switchBackend(
+//                    backendConfig: backendConfig,
+//                    environmentType: .custom(url: backendConfigURL)
+//                ))
             }
         } catch {
             WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
