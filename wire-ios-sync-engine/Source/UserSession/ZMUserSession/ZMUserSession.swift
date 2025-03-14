@@ -543,6 +543,7 @@ public final class ZMUserSession: NSObject {
         }
 
         if let selfUserClient {
+            WireLogger.authentication.addTag(.selfClientId, value: nil)
             WireLogger.authentication.addTag(
                 .selfClientId,
                 value: selfUserClient.safeRemoteIdentifier.safeForLoggingDescription
@@ -1285,6 +1286,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         }
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
+        WireLogger.authentication.addTag(.selfClientId, value: nil)
         WireLogger.authentication.addTag(.selfClientId, value: clientId)
 
         // The client was just registered and still needs to perform the
