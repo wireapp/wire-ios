@@ -33,8 +33,7 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
         }
     }
 
-    @ViewBuilder
-    private var withUnreadIndicator: some View {
+    @ViewBuilder private var withUnreadIndicator: some View {
         HStack(spacing: 0) {
 
             Circle()
@@ -64,8 +63,7 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
         .padding(.vertical, 8)
     }
 
-    @ViewBuilder
-    private var withoutUnreadIndicator: some View {
+    @ViewBuilder private var withoutUnreadIndicator: some View {
         HStack(spacing: 0) {
 
             VStack {

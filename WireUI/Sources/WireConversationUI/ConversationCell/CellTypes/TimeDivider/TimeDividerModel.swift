@@ -41,9 +41,9 @@ public struct TimeDividerModel: ConversationCellModelProtocol {
 
 }
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
-    public static func timeDivider(
+    static func timeDivider(
         text: String,
         isUnread: Bool
     ) -> Self {

@@ -21,9 +21,8 @@ extension ConversationCellModel: Identifiable {
     public var id: AnyHashable {
         switch self {
 
-        case .timeDivider(let timeDivider):
+        case let .timeDivider(timeDivider):
             timeDivider.id
-
         }
     }
 

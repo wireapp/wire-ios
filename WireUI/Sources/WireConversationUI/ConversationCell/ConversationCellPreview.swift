@@ -53,14 +53,14 @@ private func TableViewDataSource(
         return cell
     }
 }
+
 private enum TableViewSection { case single }
 
 private final class TableViewDelegate: NSObject, UITableViewDelegate {}
 
 private extension UITableViewController {
 
-    @MainActor
-    var dataSource: (any UITableViewDataSource)? {
+    @MainActor var dataSource: (any UITableViewDataSource)? {
         get { objc_getAssociatedObject(self, &dataSourceKey) as? any UITableViewDataSource }
         set {
             objc_setAssociatedObject(self, &dataSourceKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -68,8 +68,7 @@ private extension UITableViewController {
         }
     }
 
-    @MainActor
-    var delegate: (any UITableViewDelegate)? {
+    @MainActor var delegate: (any UITableViewDelegate)? {
         get { objc_getAssociatedObject(self, &delegateKey) as? any UITableViewDelegate }
         set {
             objc_setAssociatedObject(self, &delegateKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

@@ -18,7 +18,7 @@
 
 public enum ConversationCellModel: Hashable, Sendable {
 
-    /// Used to group messages.
+    /// Used to group messages by time.
     case timeDivider(TimeDividerModel)
 
 }
