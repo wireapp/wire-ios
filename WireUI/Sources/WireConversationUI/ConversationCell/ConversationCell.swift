@@ -69,7 +69,7 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
             .guestsAllowedInfo,
             .timeDivider(text: "Friday", isUnread: false),
             .timeDivider(text: "Saturday", isUnread: false),
-            .timeDivider(text: "Sunday", isUnread: true)
+            .timeDivider(text: "Today", isUnread: true)
         ]
     )
 }
