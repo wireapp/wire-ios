@@ -77,7 +77,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
         }
     }
 
-    private var networkService: NetworkService {
+    private var networkService: any NetworkServiceProtocol {
         shared {
             NetworkService.make(
                 backendEnvironment: backendEnvironment,

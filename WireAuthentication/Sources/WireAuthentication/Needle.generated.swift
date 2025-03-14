@@ -218,7 +218,7 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
     }
-    var networkService: NetworkService {
+    var networkService: any NetworkServiceProtocol {
         return determineAuthMethodComponent.networkService
     }
     var environmentType: BackendEnvironmentType {
@@ -269,7 +269,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
-        localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
+        localTable["networkService-any NetworkServiceProtocol"] = { [unowned self] in self.networkService as Any }
     }
 }
 extension SwitchBackendConfirmationComponent: NeedleFoundation.Registration {
@@ -321,7 +321,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.backendConfig] = "backendConfig-BackendConfig"
         keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
-        keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-NetworkService"
+        keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-any NetworkServiceProtocol"
         keyPathToName[\LoginViaEmailComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         localTable["backendMetadata-WireAuthenticationAPI.BackendMetadata"] = { [unowned self] in self.backendMetadata as Any }

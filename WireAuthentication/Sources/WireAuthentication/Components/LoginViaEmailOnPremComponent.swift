@@ -40,7 +40,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    private var _networkService: (environment: BackendEnvironment, service: NetworkService)?
+    private var _networkService: (environment: BackendEnvironment, service: any NetworkServiceProtocol)?
 
     init(
         parent: any Scope,
@@ -101,7 +101,7 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
         BackendEnvironment(backendConfig)
     }
 
-    private var networkService: NetworkService {
+    private var networkService: any NetworkServiceProtocol {
         if let (_, service) = _networkService {
             return service
         } else {

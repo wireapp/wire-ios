@@ -22,13 +22,13 @@ import Foundation
 
 public struct BackendMetadataAPIBuilder {
 
-    let networkService: NetworkService
+    let networkService: any NetworkServiceProtocol
 
     /// Create a new builder.
     ///
     /// - Parameter networkService: A service for executing requests.`
 
-    public init(networkService: NetworkService) {
+    public init(networkService: any NetworkServiceProtocol) {
         self.networkService = networkService
     }
 

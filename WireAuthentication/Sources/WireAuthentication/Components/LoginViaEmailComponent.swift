@@ -31,7 +31,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var backendConfig: BackendConfig { get }
     var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
-    var networkService: NetworkService { get }
+    var networkService: any NetworkServiceProtocol { get }
     var environmentType: BackendEnvironmentType { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 

@@ -53,7 +53,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    public var networkService: NetworkService {
+    public var networkService: any NetworkServiceProtocol {
         shared {
             NetworkService.make(
                 backendEnvironment: .init(dependency.backendConfig),
