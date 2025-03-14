@@ -19,6 +19,8 @@
 import DifferenceKit
 import WireDataModel
 import WireSyncEngine
+import os
+private let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ConversationTableViewDataSource")
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -111,7 +113,8 @@ final class ConversationTableViewDataSource: NSObject {
     func calculateSections(
         forceRecalculate: Bool = false
     ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
-        messages.enumerated().map { offset, element in
+        logger.info("calculateSections(forceRecalculate: \(forceRecalculate))")
+        return messages.enumerated().map { offset, element in
             let sectionIdentifier = element.objectIdentifier
             let context = context(
                 for: element,
@@ -137,7 +140,11 @@ final class ConversationTableViewDataSource: NSObject {
         let sectionIdentifier = sectionController.message.objectIdentifier
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
-        else { return currentSections }
+        else {
+            logger.info("calculateSections(updating sectionController) aborted")
+            return currentSections
+        }
+        logger.info("calculateSections(updating sectionController for section \(section))")
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
