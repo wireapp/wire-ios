@@ -43,6 +43,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     private let reactionsView = GridLayoutView()
 

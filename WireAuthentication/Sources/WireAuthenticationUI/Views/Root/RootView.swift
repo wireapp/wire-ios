@@ -21,7 +21,11 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory = DetermineAuthMethodBuilder & NoHistoryViewBuilder
+    package typealias Factory =
+        DetermineAuthMethodBuilder &
+        LoginViaEmailOnPremBuilder &
+        LoginViaSSOBuilder &
+        NoHistoryViewBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -50,10 +54,35 @@ package struct RootView: View {
                                 }
                             )
                     }
-                case let .noHistory(userID, cookies):
-                    factory.noHistoryView(userID: userID, cookies: cookies)
+                case let .noHistory(
+                    authenticationResult,
+                    didDetectDomainConflict
+                ):
+                    factory.noHistoryView(
+                        authenticationResult: authenticationResult,
+                        didDetectDomainConflict: didDetectDomainConflict
+                    )
+                case let .onPremiseLogin(
+                    email,
+                    environmentType,
+                    backendConfig,
+                    backendMetadata
+                ):
+                    factory.loginViaEmailOnPremView(
+                        email: email,
+                        environmentType: environmentType,
+                        backendConfig: backendConfig,
+                        backendMetadata: backendMetadata
+                    )
+                case let .ssoLogin(
+                    ssoURL,
+                    backendEnvironment
+                ):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
                 }
-
             }
     }
 
@@ -75,7 +104,20 @@ package struct RootView: View {
         public var id: Self { self }
 
         case authFlow
-        case noHistory(userID: UUID, cookies: [HTTPCookie])
+        case noHistory(
+            authenticationResult: AuthenticationResult,
+            didDetectDomainConflict: Bool
+        )
+        case onPremiseLogin(
+            email: String,
+            environmentType: BackendEnvironmentType,
+            environment: BackendConfig,
+            backendMetadata: BackendMetadata?
+        )
+        case ssoLogin(
+            url: URL,
+            backendEnvironment: WireAuthenticationBackendEnvironment
+        )
     }
 
 }

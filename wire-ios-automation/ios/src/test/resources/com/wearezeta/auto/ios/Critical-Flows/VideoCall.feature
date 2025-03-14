@@ -32,8 +32,8 @@ Feature: Video Calls
     And I tap Ping button from input tools
     When I restore Calling overlay
     And I see Video Calling overlay
-    And I switch Off camera button
     And I Switch ON camera button
+    And I switch Off camera button
     When I tap Leave button on Calling overlay
     Then I do not see Calling overlay
 

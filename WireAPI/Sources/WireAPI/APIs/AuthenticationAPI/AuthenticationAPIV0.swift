@@ -54,6 +54,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         let request = try URLRequestBuilder(path: path)
             .withBody(encodedJSON, contentType: .json)
             .withMethod(.post)
+            .withQueryItem(name: "persist", value: "true")
             .build()
 
         let (data, response) = try await networkService.executeRequest(request)
@@ -134,6 +135,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
 
+    // Move to separate api
     func validateLoginToken(ssoCode: UUID) async throws {
         let path = "/sso/initiate-login/\(ssoCode.uuidString)"
         let request = try URLRequestBuilder(path: path)
@@ -150,6 +152,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .parse(code: response.statusCode, data: nil)
     }
 
+    // Move to separate api
     func getSSOCode() async throws -> UUID? {
         let path = "/sso/settings"
         let request = try URLRequestBuilder(path: path)

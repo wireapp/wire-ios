@@ -25,6 +25,13 @@ import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
+public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
+public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
+public typealias Endpoints = WireAuthenticationAPI.Endpoints
+public typealias ProxySettings = WireAuthenticationAPI.ProxySettings
+public typealias TrustData = WireAuthenticationAPI.TrustData
+public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
+
 public struct WireAuthenticationAssembly {
 
     public init() {
@@ -33,10 +40,13 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        defaultBackendEnvironment: BackendEnvironment,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         minTLSVersion: TLSVersion,
-        defaultAPIVersion: APIVersion,
+        preferredAPIVersion: APIVersion?,
         accountsURL: URL,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
@@ -44,10 +54,13 @@ public struct WireAuthenticationAssembly {
         onRegisterAccount: @escaping () -> Void
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
-            defaultBackendEnvironment: defaultBackendEnvironment,
-            defaultAPIVersion: defaultAPIVersion,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             accountsURL: accountsURL,
+            howToChangeEmailURL: howToChangeEmailURL,
+            howToDeleteAccountURL: howToDeleteAccountURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             userDefaults: userDefaults,

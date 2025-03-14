@@ -185,7 +185,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertTrue(sut.isPerformingSync)
 
         // when
-        sut.processEvents()
+        sut.processLegacyEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -202,7 +202,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         networkStateRecorder.observe(in: sut.managedObjectContext.notificationContext)
 
         // when
-        sut.processEvents()
+        sut.processLegacyEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

@@ -23,11 +23,11 @@ import WireLogging
 
 public struct PullMLSStatusSync: PullMLSStatusSyncProtocol {
 
-    private let api: any BackendInfoAPI
+    private let api: any MLSAPI
     private let store: any BackendConfigLocalStoreProtocol
 
     public init(
-        api: any BackendInfoAPI,
+        api: any MLSAPI,
         store: any BackendConfigLocalStoreProtocol
     ) {
         self.api = api
@@ -39,7 +39,7 @@ public struct PullMLSStatusSync: PullMLSStatusSyncProtocol {
             let keys = try await api.getBackendMLSPublicKeys()
             let hasValidKeys = keys.removal.hasValidKey()
             store.storeIsMLSEnabledStatus(newValue: hasValidKeys)
-        } catch let error as BackendInfoAPIError {
+        } catch let error as MLSAPIError {
             switch error {
             case .unsupportedEndpointForAPIVersion, .mlsNotEnabled:
                 WireLogger.mls.info("backend has no MLS public keys")

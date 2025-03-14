@@ -27,11 +27,9 @@ public struct VerificationCodeView_Previews: View {
     }
 
     public var body: some View {
-        VerificationCodeView(
-            viewModel: VerificationCodeViewModel(
-                email: "name.name@mail.com",
-                password: "password"
-            )
+        MockDependencies().previewVerificationCodeView(
+            email: "name.name@mail.com",
+            password: "password"
         )
     }
 

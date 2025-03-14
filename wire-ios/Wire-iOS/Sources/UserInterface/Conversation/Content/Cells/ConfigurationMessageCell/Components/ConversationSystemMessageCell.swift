@@ -21,9 +21,9 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-// MARK: - ConversationSystemMessageCell
-
-final class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     struct Configuration: Equatable {
         let icon: UIImage?

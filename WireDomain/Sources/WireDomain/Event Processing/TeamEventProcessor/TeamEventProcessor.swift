@@ -19,7 +19,7 @@
 import Foundation
 import WireAPI
 
-struct TeamEventProcessor {
+struct TeamEventProcessor: TeamEventProcessorProtocol {
 
     let deleteEventProcessor: any TeamDeleteEventProcessorProtocol
     let memberLeaveEventProcessor: any TeamMemberLeaveEventProcessorProtocol

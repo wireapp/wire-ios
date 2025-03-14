@@ -2,4 +2,4 @@ curl \
 	--request POST \
 	--header "Content-Type: application/json" \
 	--data "{\"email\":\"email@example.com\",\"password\":\"123456\"}" \
-	"/v5/login"
+	"/v5/login?persist=true"

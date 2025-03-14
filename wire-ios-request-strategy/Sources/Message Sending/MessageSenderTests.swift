@@ -78,7 +78,7 @@ final class MessageSenderTests: MessagingTestBase {
         XCTAssertEqual(1, arrangement.messageDependencyResolver.waitForDependenciesToResolveFor_Invocations.count)
     }
 
-    func testThatBeforeSendingMessage_thenWaitForQuickSyncToFinish() async throws {
+    func testThatBeforeSendingMessage_thenWaitForDecryptionOfEventsToFinish() async throws {
         // given
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -97,7 +97,7 @@ final class MessageSenderTests: MessagingTestBase {
         try? await messageSender.sendMessage(message: message)
 
         // then
-        XCTAssertEqual(1, arrangement.quickSyncObserver.waitForQuickSyncToFinish_Invocations.count)
+        XCTAssertEqual(1, arrangement.quickSyncObserver.waitForDecryptionOfEventsToFinish_Invocations.count)
     }
 
     func testThatWhenApiVersionIsNotResolved_thenFailWithUnresolvedApiVersion() async throws {
@@ -692,7 +692,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withQuickSyncObserverCompleting() -> Arrangement {
-            quickSyncObserver.waitForQuickSyncToFinish_MockMethod = {}
+            quickSyncObserver.waitForDecryptionOfEventsToFinish_MockMethod = {}
             return self
         }
 

@@ -97,9 +97,19 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
 
         let testCases: [(config: DomainRegistrationConfiguration, expected: AuthenticationMethod)] = [
             (config: .make(domainRedirect: .none), expected: .loginOrRegisterViaEmail(email: email)),
+            (
+                config: .make(domainRedirect: .none, isCloudAccountAlreadyRegistered: true),
+                expected: .loginViaEmail(email: email, didDetectDomainConflict: true)
+            ),
             (config: .make(domainRedirect: .locked), expected: .loginOrRegisterViaEmail(email: email)),
             (config: .make(domainRedirect: .preAuthorized), expected: .loginOrRegisterViaEmail(email: email)),
-            (config: .make(domainRedirect: .noRegistration), expected: .loginViaEmail(email: email)),
+            (
+                config: .make(domainRedirect: .noRegistration),
+                expected: .loginViaEmail(
+                    email: email,
+                    didDetectDomainConflict: false
+                )
+            ),
             (
                 config: .make(domainRedirect: .sso, ssoCodeString: someSSO.uuidString),
                 expected: .loginViaSSO(code: someSSO)
@@ -132,45 +142,19 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = config
 
             // when, then
-            await XCTAssertThrowsErrorAsync(DetermineAuthMethodUseCaseFailure.invalidResponse) { [self] in
+            await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidResponse) { [self] in
                 _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
             }
         }
     }
 
-    func testInvoke_withOnPremEmail_whenCloudAccountExists() async throws {
+    func testInvoke_forwardsUnderlyingErrors() async throws {
         // given
-        mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = .make(
-            domainRedirect: .none,
-            isCloudAccountAlreadyRegistered: true
-        )
+        mockAuthenticationAPI.getDomainRegistrationForEmail_MockError = URLError(.notConnectedToInternet)
 
         // when, then
-        await XCTAssertThrowsErrorAsync(
-            DetermineAuthMethodUseCaseFailure.onPremNotPossible(recovery: .loginViaEmail(email: "user@example.com"))
-        ) { [self] in
+        await XCTAssertThrowsErrorAsync(URLError(.notConnectedToInternet)) { [self] in
             _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
-        }
-    }
-
-    func testInvoke_mapsErrors() async throws {
-        // given
-        let noInternetError = URLError(.notConnectedToInternet)
-        let someError = NSError(domain: "SomeDomain", code: 0, userInfo: nil)
-
-        let testCases: [(underlyingError: any Error, expected: DetermineAuthMethodUseCaseFailure)] = [
-            (underlyingError: AuthenticationAPIError.invalidResponse, expected: .invalidResponse),
-            (underlyingError: noInternetError, expected: .urlError(noInternetError)),
-            (underlyingError: someError, expected: .unknown)
-        ]
-
-        for testCase in testCases {
-            mockAuthenticationAPI.getDomainRegistrationForEmail_MockError = testCase.underlyingError
-
-            // when, then
-            await XCTAssertThrowsErrorAsync(testCase.expected) { [self] in
-                _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
-            }
         }
     }
 

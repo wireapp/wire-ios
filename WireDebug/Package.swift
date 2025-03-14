@@ -37,7 +37,6 @@ let package = Package(
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("FullTypedThrows"),
         .enableUpcomingFeature("ExistentialAny")
     ]
 }

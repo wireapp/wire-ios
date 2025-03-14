@@ -30,6 +30,19 @@
 "create_personal_account.title" = "У вас нет аккаунта Wire?";
 "create_personal_account.button" = "Создать личный аккаунт";
 
+"on_prem_user_login.title" = "Приветствуем вас в Wire Enterprise для %@!";
+"on_prem_user_login.message" = "Введите пароль для входа";
+"on_prem_user_login.alert.title" = "Внутренний бэкэнд";
+"on_prem_user_login.alert.message.backend-name" = "Название бэкэнда";
+"on_prem_user_login.alert.message.backend-url" = "URL бэкэнда:";
+"on_prem_user_login.alert.button" = "OK";
+
+"proxy_credentials.title" = "Учетные данные прокси";
+"proxy_credentials.message" = "Этот бэкэнд настроен на использование следующего прокси: %@.";
+"proxy_credentials.input_email.title" = "Прокси email";
+"proxy_credentials.input_password.title" = "Пароль";
+"proxy_credentials.input_password.placeholder" = "Введите пароль";
+
 "switch_backend_confirmation.title" = "Перенаправить на локальный бэкэнд?";
 "switch_backend_confirmation.message" = "При продолжении вы будете перенаправлены на следующий локальный бэкэнд для авторизации:";
 "switch_backend_confirmation.backend_name" = "Название бэкэнда";
@@ -51,3 +64,28 @@
 "authentication.no_history.title" = "Вы впервые используете Wire на этом устройстве.";
 "authentication.no_history.message" = "История бесед не отображается в целях обеспечения конфиденциальности.";
 "authentication.no_history.confirm" = "OK";
+
+"authentication.error.title.no_internet" = "Нет интернета";
+"authentication.error.title.general" = "Ошибка";
+"authentication.error.title.invalid_sso_link" = "Ошибка";
+"authentication.error.title.sso_login_failed" = "Что-то пошло не так";
+"authentication.error.title.invalid_credentials" = "Неверная информация";
+"authentication.error.title.invalid_invalid_2FA_code" = "Неверный код подтверждения";
+"authentication.error.title.account_pending_activation" = "Ожидание активации";
+"authentication.error.title.account_suspended" = "Неавторизован";
+
+"authentication.error.message.no_internet" = "Вы не подключены к интернету.";
+"authentication.error.message.general" = "Что-то пошло не так";
+"authentication.error.message.invalid_sso_link" = "Неверный url авторизации компании.";
+"authentication.error.message.sso_login_failed" = "Для получения более подробной информации обратитесь к администратору вашей команды.";
+"authentication.error.message.invalid_credentials" = "Эти учетные данные неверны.  Проверьте их и повторите попытку.";
+"authentication.error.message.invalid_invalid_2FA_code" = "Пожалуйста, введите действительный верификационный код.";
+"authentication.error.message.account_pending_activation" = "Аккаунт, к которому вы пытаетесь получить доступ, ожидает активации. Пожалуйста, проверьте свои данные.";
+"authentication.error.message.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
+
+"authentication.error.confirm" = "OK";
+
+"authentication.error.title.email_already_in_use" = "Email already in use";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
+"authentication.error.how_to_change_email" = "How to change email address";
+"authentication.error.how_to_delete_account" = "How to delete a private account";

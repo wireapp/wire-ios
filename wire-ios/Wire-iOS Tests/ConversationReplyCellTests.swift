@@ -18,6 +18,7 @@
 
 import WireLinkPreview
 import XCTest
+
 @testable import Wire
 
 final class ConversationReplyCellTests: CoreDataSnapshotTestCase {

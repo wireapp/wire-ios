@@ -51,9 +51,13 @@ class EventDecoderTest: MessagingTestBase {
             selfConversation.remoteIdentifier = self.accountIdentifier
             selfConversation.conversationType = .self
         }
+        disableZMLogError(true)
+
     }
 
     override func tearDown() {
+        // log ZMUpdateEvents will produce errors (SafeTypes)
+        disableZMLogError(false)
         EventDecoder.testingBatchSize = nil
         sut = nil
         super.tearDown()
@@ -475,7 +479,7 @@ extension EventDecoderTest {
         proteusViaCoreCrypto.isOn = false
     }
 
-    func test_ProteusEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
+    func test_ProteusEventDecryptionDoesStoreLastEventIdIfFails() async throws {
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         defer {
             DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
@@ -506,7 +510,7 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
-        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
+        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 1)
     }
 
     func test_MLSEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {

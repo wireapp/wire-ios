@@ -1356,7 +1356,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_PerformPendingJoins_GivesUp() async throws {
-        try await test_PerformPendingJoinsRecovery(.giveUp, cause: .mlsCommitMissingReferences)
+        try await test_PerformPendingJoinsRecovery(.giveUp, cause: .mlsCommitMissingReferences(message: ""))
     }
 
     private func test_PerformPendingJoinsRecovery(
@@ -2249,7 +2249,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsProtocolError)
+            throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsProtocolError(message: "message"))
         }
 
         // Mock quick sync.
@@ -2260,7 +2260,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then
-        await assertItThrows(error: SendCommitBundleAction.Failure.mlsProtocolError) {
+        await assertItThrows(error: SendCommitBundleAction.Failure.mlsProtocolError(message: "message")) {
             // When
             try await sut.updateKeyMaterial(for: groupID)
         }

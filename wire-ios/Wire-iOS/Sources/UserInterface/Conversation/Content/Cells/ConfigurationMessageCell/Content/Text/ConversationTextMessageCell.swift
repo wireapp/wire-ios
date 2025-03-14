@@ -19,9 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView,
-    ConversationMessageCell,
-    TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -51,18 +49,14 @@ final class ConversationTextMessageCell: UIView,
         return view
     }()
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
-    weak var menuPresenter: ConversationMessageCellMenuPresenter?
+    weak var actionController: ConversationMessageActionController?
 
     var ephemeralTimerTopInset: CGFloat {
-        guard let font = messageTextView.font else {
-            return 0
-        }
-
-        return font.lineHeight / 2
+        (messageTextView.font?.lineHeight ?? 0) / 2
     }
 
     var selectionView: UIView? {
@@ -85,13 +79,15 @@ final class ConversationTextMessageCell: UIView,
     }
 
     private func setup() {
+        messageTextView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(messageTextView)
         configureConstraints()
     }
 
     private func configureConstraints() {
-        messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        messageTextView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        messageTextView.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -152,16 +148,18 @@ final class ConversationTextMessageCell: UIView,
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
+    var canBeCombinedWithOtherCells: Bool { true }
 
-    let isFullWidth: Bool = false
+    var showEphemeralTimer: Bool = false
+    var topMargin: CGFloat = 8
+
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
@@ -171,15 +169,6 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
         self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
     }
-
-    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
-        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
-        cell.cellView.delegate = delegate
-        cell.cellView.message = message
-        cell.cellView.menuPresenter = cell
-        return cell
-    }
 }
 
 // MARK: - Factory
@@ -188,19 +177,26 @@ extension ConversationTextMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        showEphemeralTimer: Bool
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
         }
 
-        return cells(textMessageData: textMessageData, message: message, searchQueries: searchQueries)
+        return cells(
+            textMessageData: textMessageData,
+            message: message,
+            searchQueries: searchQueries,
+            showEphemeralTimer: showEphemeralTimer
+        )
     }
 
     static func cells(
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        showEphemeralTimer: Bool
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
@@ -230,6 +226,7 @@ extension ConversationTextMessageCellDescription {
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
             let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
+            quoteCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
 
@@ -239,12 +236,11 @@ extension ConversationTextMessageCellDescription {
                 attributedString: messageText,
                 isObfuscated: message.isObfuscated
             )
+            textCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
 
-        guard !message.isObfuscated else {
-            return cells
-        }
+        guard !message.isObfuscated else { return cells }
 
         // Links
         if let attachment = attachments.first {
@@ -253,10 +249,12 @@ extension ConversationTextMessageCellDescription {
                 attachment: attachment,
                 thumbnailResource: message.linkAttachmentImage
             )
+            attachmentCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview
             let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(message: message, data: textMessageData)
+            linkPreviewCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
         }
 

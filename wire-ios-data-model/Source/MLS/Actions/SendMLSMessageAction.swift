@@ -31,25 +31,25 @@ public final class SendMLSMessageAction: EntityAction {
         case malformedResponse
 
         // 400
-        case mlsWelcomeMismatch
-        case mlsGroupConversationMismatch
-        case mlsClientSenderUserMismatch
-        case mlsSelfRemovalNotAllowed
-        case mlsCommitMissingReferences
-        case mlsProtocolError
-        case invalidRequestBody
+        case mlsWelcomeMismatch(message: String)
+        case mlsGroupConversationMismatch(message: String)
+        case mlsClientSenderUserMismatch(message: String)
+        case mlsSelfRemovalNotAllowed(message: String)
+        case mlsCommitMissingReferences(message: String)
+        case mlsProtocolError(message: String)
+        case invalidRequestBody(message: String)
 
         // 403
-        case missingLegalHoldConsent
-        case mlsMissingSenderClient
-        case legalHoldNotEnabled
-        case accessDenied
+        case missingLegalHoldConsent(message: String)
+        case mlsMissingSenderClient(message: String)
+        case legalHoldNotEnabled(message: String)
+        case accessDenied(message: String)
 
         // 404
-        case mlsProposalNotFound
-        case mlsKeyPackageRefNotFound
-        case noConversation
-        case noConversationMember
+        case mlsProposalNotFound(message: String)
+        case mlsKeyPackageRefNotFound(message: String)
+        case noConversation(message: String)
+        case noConversationMember(message: String)
 
         // 409
         case mlsStaleMessage
@@ -57,8 +57,8 @@ public final class SendMLSMessageAction: EntityAction {
         case unreachableDomains(Set<String>)
 
         // 422
-        case mlsUnsupportedProposal
-        case mlsUnsupportedMessage
+        case mlsUnsupportedProposal(message: String)
+        case mlsUnsupportedMessage(message: String)
 
         // 503
         case nonFederatingDomains(Set<String>)
@@ -76,50 +76,50 @@ public final class SendMLSMessageAction: EntityAction {
             case .malformedResponse:
                 "The response payload could not be decoded"
 
-            case .mlsWelcomeMismatch:
-                "The list of targets of a welcome message does not match the list of new clients in a group"
+            case let .mlsWelcomeMismatch(message):
+                "The list of targets of a welcome message does not match the list of new clients in a group. message: \(message)"
 
-            case .mlsGroupConversationMismatch:
-                "Conversation ID resolved from group ID does not match submitted conversation ID"
+            case let .mlsGroupConversationMismatch(message):
+                "Conversation ID resolved from group ID does not match submitted conversation ID. message: \(message)"
 
-            case .mlsClientSenderUserMismatch:
-                "User ID resolved from client ID does not match message's sender user ID"
+            case let .mlsClientSenderUserMismatch(message):
+                "User ID resolved from client ID does not match message's sender user ID. message: \(message)"
 
-            case .mlsSelfRemovalNotAllowed:
-                "Self removal from group is not allowed"
+            case let .mlsSelfRemovalNotAllowed(message):
+                "Self removal from group is not allowed. message: \(message)"
 
-            case .mlsProtocolError:
-                "MLS protocol error"
+            case let .mlsProtocolError(message):
+                "MLS protocol error. message: \(message)"
 
             case .mlsCommitMissingReferences:
                 "The commit is not referencing all pending proposals"
 
-            case .invalidRequestBody:
-                "Invalid request body"
+            case let .invalidRequestBody(message):
+                "Invalid request body. message: \(message)"
 
-            case .missingLegalHoldConsent:
-                "Failed to connect to a user or to invite a user to a group because somebody is under legal hold and somebody else has not granted consent"
+            case let .missingLegalHoldConsent(message):
+                "Failed to connect to a user or to invite a user to a group because somebody is under legal hold and somebody else has not granted consent. message: \(message)"
 
-            case .mlsMissingSenderClient:
-                "The client has to refresh their access token and provide their client ID"
+            case let .mlsMissingSenderClient(message):
+                "The client has to refresh their access token and provide their client ID. message: \(message)"
 
-            case .legalHoldNotEnabled:
-                "Legal hold is not enabled for this team"
+            case let .legalHoldNotEnabled(message):
+                "Legal hold is not enabled for this team. message: \(message)"
 
-            case .accessDenied:
-                "Conversation access denied"
+            case let .accessDenied(message):
+                "Conversation access denied. message: \(message)"
 
-            case .mlsProposalNotFound:
-                "A proposal referenced in a commit message could not be found"
+            case let .mlsProposalNotFound(message):
+                "A proposal referenced in a commit message could not be found. message: \(message)"
 
-            case .mlsKeyPackageRefNotFound:
-                "A referenced key package could not be mapped to a known client"
+            case let .mlsKeyPackageRefNotFound(message):
+                "A referenced key package could not be mapped to a known client. message: \(message)"
 
-            case .noConversation:
-                "Conversation not found"
+            case let .noConversation(message):
+                "Conversation not found. message: \(message)"
 
-            case .noConversationMember:
-                "Conversation member not found"
+            case let .noConversationMember(message):
+                "Conversation member not found. message: \(message)"
 
             case .mlsStaleMessage:
                 "The conversation epoch in a message is too old"
@@ -130,11 +130,11 @@ public final class SendMLSMessageAction: EntityAction {
             case let .nonFederatingDomains(domains):
                 "Some domains are note fully connected: \(domains)"
 
-            case .mlsUnsupportedProposal:
-                "Unsupported proposal type"
+            case let .mlsUnsupportedProposal(message):
+                "Unsupported proposal type. message: \(message)"
 
-            case .mlsUnsupportedMessage:
-                "Attempted to send a message with an unsupported combination of content type and wire format"
+            case let .mlsUnsupportedMessage(message):
+                "Attempted to send a message with an unsupported combination of content type and wire format. message: \(message)"
 
             case let .unknown(status, label, message):
                 "Unknown error (response status: \(status), label: \(label), message: \(message))"

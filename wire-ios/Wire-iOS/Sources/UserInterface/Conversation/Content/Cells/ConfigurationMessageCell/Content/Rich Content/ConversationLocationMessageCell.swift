@@ -43,6 +43,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var labelFont: UIFont? = .normalFont
     var labelTextColor: UIColor? = SemanticColors.Label.textDefault
@@ -103,7 +104,9 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressContainerView.translatesAutoresizingMaskIntoConstraints = false
         addressLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        containerView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let containerInsets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        containerView.fitIn(view: self, insets: containerInsets)
         mapView.fitIn(view: containerView)
         obfuscationView.fitIn(view: containerView)
 
@@ -185,16 +188,18 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLocationMessageCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var canBeCombinedWithOtherCells: Bool { true }
 
-    let isFullWidth: Bool = false
+    var showEphemeralTimer: Bool = false
+    var topMargin: CGFloat = 0
+
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

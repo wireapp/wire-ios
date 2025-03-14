@@ -21,13 +21,12 @@ import WireCommonComponents
 import WireDesign
 
 enum Constants {
-
     static var teamAccountViewImageInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
 }
 
-extension Float {
+extension CGFloat {
     enum ConversationButtonMessageCell {
-        static let verticalInset: Float = 8
+        static let verticalInset: CGFloat = 8
     }
 }
 

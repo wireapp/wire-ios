@@ -24,21 +24,54 @@ import WireAuthenticationAPI
 @MainActor
 package final class NoHistoryViewModel: ObservableObject {
 
-    private let userID: UUID
-    private let cookies: [HTTPCookie]
-    private let onFlowCompletion: (AuthenticationResult) -> Void
+    package enum Alert: Hashable, Identifiable, Sendable {
+        package var id: Self { self }
+
+        case cloudAccountAlreadyRegistered
+    }
+
+    @Published var isLoading = false
+    @Published var alert: Alert?
+
+    private let howToChangeEmailURL: URL
+    private let howToDeleteAccountURL: URL
+    private let onFlowCompletion: () -> Void
+
+    let didDetectDomainConflict: Bool
 
     package init(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+        didDetectDomainConflict: Bool,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
+        onFlowCompletion: @escaping () -> Void
     ) {
-        self.userID = userID
-        self.cookies = cookies
+        self.didDetectDomainConflict = didDetectDomainConflict
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
         self.onFlowCompletion = onFlowCompletion
     }
 
     func confirm() {
-        onFlowCompletion(AuthenticationResult(userID: userID, cookies: cookies, accessToken: nil))
+        onFlowCompletion()
+
+        // For now, the flow will continue outside this module and operations
+        // may happen while we still see this view. Show the loading indicator
+        // so the user will know something is happening.
+        isLoading = true
     }
+
+    func onAppear() {
+        if didDetectDomainConflict {
+            alert = .cloudAccountAlreadyRegistered
+        }
+    }
+
+    func howToChangeEmail() {
+        UIApplication.shared.open(howToChangeEmailURL)
+    }
+
+    func howToDeleteAccount() {
+        UIApplication.shared.open(howToDeleteAccountURL)
+    }
+
 }

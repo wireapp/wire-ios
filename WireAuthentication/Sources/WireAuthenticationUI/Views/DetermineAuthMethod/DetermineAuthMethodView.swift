@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
@@ -28,7 +29,7 @@ package protocol DetermineAuthMethodBuilder {
 
 package struct DetermineAuthMethodView: View {
 
-    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder
+    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
@@ -94,11 +95,11 @@ package struct DetermineAuthMethodView: View {
         }
         .alert(
             item: $viewModel.alert,
-            title: titleForAlert,
-            message: messageForAlert,
-            actions: { alert in
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { _ in
                 Button {
-                    viewModel.didDismissAlert(alert: alert)
+                    viewModel.onAlertDismiss()
                 } label: {
                     Text(L10n.Authentication.Error.confirm)
                 }
@@ -106,18 +107,55 @@ package struct DetermineAuthMethodView: View {
         )
         .navigationDestination(for: Destination.self) {
             switch $0 {
-            case let .login(email):
-                factory.loginViaEmailView(email: email, canCreateAccount: false)
-            case let .loginOrRegister(email):
-                factory.loginViaEmailView(email: email, canCreateAccount: true)
+            case let .login(email, didDetectDomainConflict, backendMetadata):
+                factory.loginViaEmailView(
+                    email: email,
+                    canCreateAccount: false,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendMetadata: backendMetadata
+                )
+            case let .loginOrRegister(email, backendMetadata):
+                factory.loginViaEmailView(
+                    email: email,
+                    canCreateAccount: true,
+                    didDetectDomainConflict: false,
+                    backendMetadata: backendMetadata
+                )
             }
         }
-        .sheet(item: $viewModel.modalDestination, content: {
-            switch $0 {
-            case let .ssoLogin(url: ssoURL):
-                factory.loginViaSSOView(ssoURL: ssoURL)
+        .sheet(
+            item: $viewModel.modalDestination,
+            content: {
+                switch $0 {
+                case let .ssoLogin(
+                    ssoURL,
+                    backendEnvironment
+                ):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
+                case let .switchBackend(
+                    email,
+                    environmentType,
+                    backendConfig
+                ):
+                    if #available(iOS 16.4, *) {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).presentationBackground(Color.black.opacity(0.7))
+                    } else {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).background(TransparentBackgroundView())
+                    }
+                }
             }
-        })
+        )
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -125,50 +163,28 @@ package struct DetermineAuthMethodView: View {
 
     package enum Destination: Hashable {
 
-        case login(email: String)
-        case loginOrRegister(email: String)
+        case login(email: String, didDetectDomainConflict: Bool, backendMetadata: BackendMetadata)
+        case loginOrRegister(email: String, backendMetadata: BackendMetadata)
 
-    }
-
-    // MARK: - Private helpers
-
-    private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Title.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Title.general)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Title.general)
-        case .onPremLoginNotPossible:
-            Text(L10n.Authentication.Error.Title.onPremNotPossible)
-        case .invalidSSOLink:
-            Text(L10n.Authentication.Error.Title.invalidSsoLink)
-        }
-    }
-
-    private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Message.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Message.general)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Message.general)
-        case .onPremLoginNotPossible:
-            Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
-        case .invalidSSOLink:
-            Text(L10n.Authentication.Error.Message.invalidSsoLink)
-        }
     }
 
 }
 
+extension Alert {
+
+    private typealias Title = L10n.Authentication.Error.Title
+    private typealias Message = L10n.Authentication.Error.Message
+
+    static let invalidSSOLink = Alert(title: Title.ssoLoginFailed, message: Message.ssoLoginFailed)
+    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Message.incorrectSsoCode)
+
+}
+
 @MainActor
-package func makeDetermineAuthMethodViewPreview(
+func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
     isLoading: Bool = false,
-    alert: DetermineAuthMethodViewModel.Alert? = nil
+    alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
@@ -186,4 +202,21 @@ package func makeDetermineAuthMethodViewPreview(
                 alert: .unknownError
             )
         }
+}
+
+private struct TransparentBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        InnerView()
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+
+    private class InnerView: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+
+            superview?.superview?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        }
+
+    }
 }

@@ -66,6 +66,7 @@ typedef NS_CLOSED_ENUM(uint8_t, ZMTransportResponseStatus) {
 @property (nonatomic, readonly) ZMTransportResponseStatus result;
 
 - (nullable NSString *)payloadLabel;
+- (nullable NSString *)payloadMessage;
 
 @property (nonatomic, nullable) NSDate *startOfUploadTimestamp;
 

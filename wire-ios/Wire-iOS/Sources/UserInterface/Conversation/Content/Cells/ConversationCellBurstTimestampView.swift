@@ -129,10 +129,10 @@ final class ConversationCellBurstTimestampView: UIView {
     func configure(with timestamp: Date, includeDayOfWeek: Bool, showUnreadDot: Bool, accentColor: UIColor) {
         if includeDayOfWeek {
             isSeparatorHidden = false
-            label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp).localized
+            label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
         } else {
             isSeparatorHidden = false
-            label.text = timestamp.formattedDate.localized
+            label.text = timestamp.formattedDate
         }
 
         label.font = burstBoldFont

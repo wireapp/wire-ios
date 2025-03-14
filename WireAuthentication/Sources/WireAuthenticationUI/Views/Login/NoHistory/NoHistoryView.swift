@@ -17,11 +17,15 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 
 package protocol NoHistoryViewBuilder {
 
     @MainActor
-    func noHistoryView(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView
+    func noHistoryView(
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryView
 
 }
 
@@ -47,9 +51,39 @@ package struct NoHistoryView: View {
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Button(L10n.Authentication.NoHistory.confirm, action: viewModel.confirm)
-                .wireButtonStyle(.primary)
-                .bold()
+
+            Button {
+                viewModel.confirm()
+            } label: {
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+
+                    Text(L10n.Authentication.NoHistory.confirm)
+                        .lineLimit(nil)
+                }
+            }
+            .wireButtonStyle(.primary)
+            .bold()
+            .disabled(viewModel.isLoading)
+        }
+        .alert(
+            item: $viewModel.alert,
+            title: titleForAlert,
+            message: messageForAlert,
+            actions: { _ in
+                Button(L10n.Authentication.Error.howToChangeEmail, action: {
+                    viewModel.howToChangeEmail()
+                })
+                Button(L10n.Authentication.Error.howToDeleteAccount, action: {
+                    viewModel.howToDeleteAccount()
+                })
+                Button(L10n.Authentication.Error.confirm, action: {})
+            }
+        )
+        .onAppear {
+            viewModel.onAppear()
         }
         .padding()
         .presentationDetents([.medium])
@@ -57,13 +91,28 @@ package struct NoHistoryView: View {
         .presentationDragIndicator(.hidden)
     }
 
+    private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
+        switch alert {
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
+        }
+    }
+
+    private func messageForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
+        switch alert {
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
+        }
+    }
+
 }
 
 #Preview {
     let viewModel = NoHistoryViewModel(
-        userID: UUID(),
-        cookies: [],
-        onFlowCompletion: { _ in }
+        didDetectDomainConflict: false,
+        howToChangeEmailURL: URL(string: "https://wire.com")!,
+        howToDeleteAccountURL: URL(string: "https://wire.com")!,
+        onFlowCompletion: {}
     )
     NoHistoryView(viewModel: viewModel)
 }
@@ -72,9 +121,10 @@ package struct NoHistoryView: View {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
             let viewModel = NoHistoryViewModel(
-                userID: UUID(),
-                cookies: [],
-                onFlowCompletion: { _ in }
+                didDetectDomainConflict: false,
+                howToChangeEmailURL: URL(string: "https://wire.com")!,
+                howToDeleteAccountURL: URL(string: "https://wire.com")!,
+                onFlowCompletion: {}
             )
             NoHistoryView(viewModel: viewModel)
         }

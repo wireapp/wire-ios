@@ -28,8 +28,8 @@ struct BurstTimestampSenderMessageCellConfiguration {
 }
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = BurstTimestampSenderMessageCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
@@ -37,10 +37,8 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 0
 
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -75,6 +73,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     override init(frame: CGRect) {
         self.timestampView = ConversationCellBurstTimestampView()
@@ -128,9 +127,9 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     private func startTimer() {
         stopTimer()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             self?.reconfigure()
-        })
+        }
     }
 
     private func stopTimer() {

@@ -18,6 +18,7 @@
 
 import WireCommonComponents
 import XCTest
+
 @testable import Wire
 
 final class ConversationMessageSectionControllerTests: XCTestCase {
@@ -64,14 +65,14 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: MockMessage(),
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: false
         )
-        section.cellDescriptions.removeAll()
-        section.useInvertedIndices = false
+        section.cellDescriptionsForTesting.removeAll()
 
         // WHEN
-        section.add(description: MockCellDescription<Bool>())
-        section.add(description: MockCellDescription<String>())
+        section.addForTesting(description: MockCellDescription<Bool>())
+        section.addForTesting(description: MockCellDescription<String>())
 
         // THEN
         let cell1 = section.tableViewCellDescriptions[0]
@@ -86,14 +87,14 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: MockMessage(),
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: true
         )
-        section.cellDescriptions.removeAll()
-        section.useInvertedIndices = true
+        section.cellDescriptionsForTesting.removeAll()
 
         // WHEN
-        section.add(description: MockCellDescription<Bool>())
-        section.add(description: MockCellDescription<String>())
+        section.addForTesting(description: MockCellDescription<Bool>())
+        section.addForTesting(description: MockCellDescription<String>())
 
         // THEN
         let cell1 = section.tableViewCellDescriptions[0]
@@ -112,18 +113,22 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: false
         )
 
         // Then
-        let cellDescriptions = section.cellDescriptions
-        guard cellDescriptions.count == 3 else {
-            return XCTFail("Expected 3 cells")
-        }
+        let cellDescriptions = section.cellDescriptionsForTesting
+        guard
+            cellDescriptions.count == 1,
+            let stackViewCellDescription = cellDescriptions.first?.instance as? StackViewCellDescription,
+            stackViewCellDescription.cellDescriptions.count == 3
+        else { return XCTFail("Expected a single stack view cell description with three combined cells") }
 
-        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
-        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
-        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+        let stackedCellDescriptions = stackViewCellDescription.cellDescriptions
+        XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(stackedCellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
 
     func testCellGrouping_SenderIsSameAsPreviousAndTimestampInSameMinuteAsPreviousMessage() throws {
@@ -138,17 +143,21 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: false
         )
 
         // THEN
-        let cellDescriptions = section.cellDescriptions
-        guard cellDescriptions.count == 2 else {
-            return XCTFail("Expected 2 cells")
-        }
+        let cellDescriptions = section.cellDescriptionsForTesting
+        guard
+            cellDescriptions.count == 1,
+            let stackViewCellDescription = cellDescriptions.first?.instance as? StackViewCellDescription,
+            stackViewCellDescription.cellDescriptions.count == 2
+        else { return XCTFail("Expected a single stack view cell description with two combined cells") }
 
-        XCTAssertTrue(cellDescriptions[0].instance is ConversationTextMessageCellDescription)
-        XCTAssertTrue(cellDescriptions[1].instance is ConversationMessageToolboxCellDescription)
+        let stackedCellDescriptions = stackViewCellDescription.cellDescriptions
+        XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationMessageToolboxCellDescription)
     }
 
     func testCellGrouping_PreviousMessageIsKnock() throws {
@@ -159,18 +168,23 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // When
         let section = ConversationMessageSectionController(
             message: message,
-            context: context, userSession: userSession
+            context: context,
+            userSession: userSession,
+            useInvertedIndices: false
         )
 
         // Then
-        let cellDescriptions = section.cellDescriptions
-        guard cellDescriptions.count == 3 else {
-            return XCTFail("Expected 3 cells")
-        }
+        let cellDescriptions = section.cellDescriptionsForTesting
+        guard
+            cellDescriptions.count == 1,
+            let stackViewCellDescription = cellDescriptions.first?.instance as? StackViewCellDescription,
+            stackViewCellDescription.cellDescriptions.count == 3
+        else { return XCTFail("Expected a single stack view cell description with three combined cells") }
 
-        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
-        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
-        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+        let stackedCellDescriptions = stackViewCellDescription.cellDescriptions
+        XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(stackedCellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
 
     func testCellGrouping_SenderIsSameAsPreviousAndTimeStampIsNotInTheSameMinuteAsPreviousMessage() throws {
@@ -184,17 +198,21 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
-            userSession: userSession
+            userSession: userSession,
+            useInvertedIndices: false
         )
 
-        let cellDescriptions = section.cellDescriptions
-        guard cellDescriptions.count == 3 else {
-            return XCTFail("Expected 3 cells")
-        }
+        let cellDescriptions = section.cellDescriptionsForTesting
+        guard
+            cellDescriptions.count == 1,
+            let stackViewCellDescription = cellDescriptions.first?.instance as? StackViewCellDescription,
+            stackViewCellDescription.cellDescriptions.count == 3
+        else { return XCTFail("Expected a single stack view cell description with three combined cells") }
 
-        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
-        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
-        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+        let stackedCellDescriptions = stackViewCellDescription.cellDescriptions
+        XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(stackedCellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
 
 }

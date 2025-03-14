@@ -16,36 +16,49 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import NeedleFoundation
+import SwiftUI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
-class NoHistoryComponent {
+protocol NoHistoryComponentDependency: Dependency {
 
-    let onFlowCompletion: (AuthenticationResult) -> Void
+    var howToChangeEmailURL: URL { get }
+    var howToDeleteAccountURL: URL { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
 
-    init(onFlowCompletion: @escaping (AuthenticationResult) -> Void) {
-        self.onFlowCompletion = onFlowCompletion
+}
+
+class NoHistoryComponent: Component<NoHistoryComponentDependency> {
+
+    private let authenticationResult: AuthenticationResult
+    private let didDetectDomainConflict: Bool
+
+    init(
+        parent: any Scope,
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) {
+        self.authenticationResult = authenticationResult
+        self.didDetectDomainConflict = didDetectDomainConflict
+        super.init(parent: parent)
     }
 
-    @MainActor
-    private func viewModel(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
-    ) -> NoHistoryViewModel {
+    @MainActor private var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
-            userID: userID,
-            cookies: cookies,
-            onFlowCompletion: onFlowCompletion
+            didDetectDomainConflict: didDetectDomainConflict,
+            howToChangeEmailURL: dependency.howToChangeEmailURL,
+            howToDeleteAccountURL: dependency.howToDeleteAccountURL,
+            onFlowCompletion: { [dependency, authenticationResult] in
+                dependency?.bridge.onFlowCompletion(authenticationResult)
+            }
         )
     }
 
-    @MainActor
-    func view(userID: UUID, cookies: [HTTPCookie]) -> NoHistoryView {
-        NoHistoryView(
-            viewModel: viewModel(userID: userID, cookies: cookies, onFlowCompletion: onFlowCompletion)
-        )
+    @MainActor var view: NoHistoryView {
+        NoHistoryView(viewModel: viewModel)
     }
 
 }

@@ -76,34 +76,19 @@ final class AuthenticationInterfaceBuilder {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
             let (rootView, bridge) = assembly.assemble(
-                defaultBackendEnvironment: BackendEnvironment(
-                    url: environment.backendURL,
-                    webSocketURL: environment.backendWSURL,
-                    pinnedKeys: environment.trustData.map { trustData in
-                        PinnedKey(
-                            key: trustData.certificateKey,
-                            hosts: trustData.hosts.map { host in
-                                switch host.rule {
-                                case .equals:
-                                    .equals(host.value)
-                                case .endsWith:
-                                    .endsWith(host.value)
-                                }
-                            }
-                        )
-                    },
-                    proxySettings: nil
-                ),
+                environmentType: BackendEnvironmentType(environment.environmentType.value),
+                backendConfig: BackendConfig(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
-                defaultAPIVersion: .v8,
+                preferredAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
+                howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
+                howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 userDefaults: .shared(),
-                onFlowCompletion: { _ in
-                    // TODO: [WPB-16044] Pass the cookies and token
+                onFlowCompletion: { result in
                     authenticationCoordinator?.eventResponderChain.handleEvent(
-                        ofType: .wireAuthenticationModuleComplete
+                        ofType: .wireAuthenticationModuleComplete(result)
                     )
                 },
                 onRegisterAccount: {

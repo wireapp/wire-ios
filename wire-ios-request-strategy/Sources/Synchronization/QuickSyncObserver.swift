@@ -21,8 +21,25 @@ import WireLogging
 
 // sourcery: AutoMockable
 public protocol QuickSyncObserverInterface {
-    func waitForQuickSyncToFinish() async
+    func waitForDecryptionOfEventsToFinish() async
 }
+
+enum DecryptionState {
+    case notStarted
+    case inProgress
+    case done
+}
+
+public extension Notification.Name {
+
+    /// Published before the first event is decrypted and stored.
+    static let didStartDecryptingEventsNotification = Self("EventProcessorDidStartDecryptingEventsNotification")
+
+    /// Published after the last event has been decrypted and stored.
+    static let didStopDecryptingEventsNotification = Self("EventProcessorDidFinishDecryptingEventsNotification")
+}
+
+import Combine
 
 public final class QuickSyncObserver: QuickSyncObserverInterface {
 
@@ -30,6 +47,11 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
     private let applicationStatus: ApplicationStatus
     private let notificationCenter: NotificationCenter = .default
     private let notificationContext: NotificationContext
+
+    private let decryptionQueue = DispatchQueue(label: "decryptionQueue")
+
+    private var decryptionState: DecryptionState = .notStarted
+    private var cancellables = Set<AnyCancellable>()
 
     public init(
         context: NSManagedObjectContext,
@@ -39,32 +61,56 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
         self.context = context
         self.applicationStatus = applicationStatus
         self.notificationContext = notificationContext
+
+        setupObservation()
     }
 
-    public func waitForQuickSyncToFinish() async {
-        if await quickSyncHasCompleted() {
+    private func setupObservation() {
+        notificationCenter
+            .publisher(for: .didStartDecryptingEventsNotification)
+            .receive(on: decryptionQueue)
+            .sink { [weak self] _ in
+                self?.decryptionState = .inProgress
+            }
+            .store(in: &cancellables)
+
+        notificationCenter
+            .publisher(for: .didStopDecryptingEventsNotification)
+            .receive(on: decryptionQueue)
+            .sink { [weak self] _ in
+                self?.decryptionState = .done
+            }
+            .store(in: &cancellables)
+    }
+
+    public func waitForDecryptionOfEventsToFinish() async {
+        if await quickSyncHasCompleted() || finishedDecrypting {
             WireLogger.messaging.info(
-                "no need to wait, because quick sync has completed",
+                "no need to wait, because app has finished quick sync, so decryption too",
                 attributes: .safePublic
             )
             return
         }
 
         WireLogger.messaging.info(
-            "Waiting for app to be online before sending message",
+            "Waiting for app to finish decrypting during quickSync before sending message",
             attributes: .safePublic
         )
 
         for await _ in notificationCenter.notifications(
-            named: .quickSyncCompletedNotification,
+            named: .didStopDecryptingEventsNotification,
             object: notificationContext
         ) {
             WireLogger.messaging.info(
-                "Quick sync finished",
+                "Decryption finished",
                 attributes: .safePublic
             )
             break
         }
+    }
+
+    private var finishedDecrypting: Bool {
+        decryptionState == .done
     }
 
     private func quickSyncHasCompleted() async -> Bool {
