@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "検索";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "画像";
@@ -1648,21 +1649,10 @@
 "error.user.account_suspended" = "このアカウントは、もはやログイン権限はありません";
 "error.user.account_limit_reached" = "３アカウント以上は追加できません。";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "パスワードの更新ができませんでした。";
-
 "error.group_call.too_many_members_in_conversation.title" = "呼び出す人が多すぎます";
 "error.group_call.too_many_members_in_conversation" = "電話は最大%d人までとの間ですることができます。";
 "error.group_call.too_many_participants_in_the_call.title" = "この通話は満員です";
 "error.group_call.too_many_participants_in_the_call" = "このチャットルームには、あと%d 人まで入ることができます。";
-"error.call.gsm_ongoing.title" = "携帯電話通話";
-"error.call.gsm_ongoing" = "Wireでの通話の前に、携帯電話の通話を終わらせてください。";
-"error.call.general.title" = "呼び出しエラー";
-"error.call.general" = "数分後に再度電話をしてみてください。";
-"error.call.slow_connection.title" = "インターネット接続が遅いです";
-"error.call.slow_connection" = "通話中に問題が発生する可能性があります";
-"error.call.slow_connection.call_anyway" = "とにかく電話をする";
 
 "error.invite.no_email_provider" = "メールで招待状を送るために、メールクライアントの設定をしてください。";
 "error.invite.no_messaging_provider" = "SMSで招待状を送るために、SMSの設定をしてください。";
