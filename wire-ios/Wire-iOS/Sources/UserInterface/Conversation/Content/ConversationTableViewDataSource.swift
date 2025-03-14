@@ -489,7 +489,14 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let cellDescription = section.elements[indexPath.row]
 
-        registerCellIfNeeded(with: cellDescription, in: tableView)
+        if let model = cellDescription.conversationCellModel {
+            model.registerIfNeeded(in: tableView)
+            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
+            model.configureCell(cell)
+            return cell
+        } else {
+            registerCellIfNeeded(with: cellDescription, in: tableView)
+        }
 
         return cellDescription.makeCell(for: tableView, at: indexPath)
     }

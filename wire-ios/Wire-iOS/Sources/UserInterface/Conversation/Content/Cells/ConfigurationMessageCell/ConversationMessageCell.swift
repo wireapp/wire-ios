@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireConversationUI
 import WireDataModel
 import WireUtilities
 
@@ -143,6 +144,8 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
     associatedtype View: ConversationMessageCell, UIView
 
+    var conversationCellModel: ConversationCellModel? { get }
+
     /// The views of neighbouring cell descriptions which return `true` might be
     /// arranged in a vertical stack view inside a single table view cell.
     /// If `false` the resulting view will always end up in a single table view cell.
@@ -193,6 +196,10 @@ protocol ConversationMessageCellDescription: AnyObject {
 // MARK: - Table View Dequeuing
 
 extension ConversationMessageCellDescription {
+
+    var conversationCellModel: ConversationCellModel? {
+        nil
+    }
 
     var canBeCombinedWithOtherCells: Bool {
         false
@@ -277,6 +284,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let instanceGetter: () -> any ConversationMessageCellDescription
     private let isConfigurationEqualBlock: (AnyConversationMessageCellDescription) -> Bool
 
+    private let _conversationCellModel: () -> ConversationCellModel?
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
@@ -322,6 +330,7 @@ final class AnyConversationMessageCellDescription: NSObject {
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
+        self._conversationCellModel = { description.conversationCellModel }
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
@@ -341,6 +350,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     var baseType: AnyClass {
         baseTypeGetter()
+    }
+
+    var conversationCellModel: ConversationCellModel? {
+        _conversationCellModel()
     }
 
     var delegate: ConversationMessageCellDelegate? {

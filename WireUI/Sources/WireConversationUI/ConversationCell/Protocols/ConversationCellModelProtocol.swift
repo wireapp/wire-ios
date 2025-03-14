@@ -16,8 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum Availability: CaseIterable, Hashable, Sendable {
-    case available
-    case busy
-    case away
+import SwiftUI
+
+// the `Hashable` requirement could be loosened if needed (and moved to conforming types where needed)
+protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
+    associatedtype ContentView: ConversationCellContentViewProtocol
+
+    init()
+
+    @MainActor
+    func buildView() -> ContentView
+
+}
+
+extension ConversationCellModelProtocol where Self == ContentView.Model {
+
+    @MainActor
+    func buildView() -> ContentView {
+        ContentView(model: self)
+    }
+
 }
