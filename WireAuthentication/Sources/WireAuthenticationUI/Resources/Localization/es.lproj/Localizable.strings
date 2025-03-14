@@ -89,3 +89,10 @@
 "authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
 "authentication.error.how_to_change_email" = "How to change email address";
 "authentication.error.how_to_delete_account" = "How to delete a private account";
+
+"obsolete_client.alert.title" = "Actualización necesaria";
+"obsolete_client.alert.message" = "Te estás perdiendo nuevas características.\nObtén la última versión de Wire en la App Store.";
+"obsolete_client.alert.ok_button" = "Ir a la App Store";
+
+"obsolete_backend.alert.title" = "Server version not supported";
+"obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
