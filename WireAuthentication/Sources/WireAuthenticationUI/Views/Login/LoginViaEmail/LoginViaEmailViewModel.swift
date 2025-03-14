@@ -173,7 +173,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
             let backendEnvironment = WireAuthenticationBackendEnvironment(
                 environmentType: environmentType,
-                config: backendConfig,
+                config: ResolvedBackendConfig(
+                    title: backendConfig.title,
+                    endpoints: backendConfig.endpoints,
+                    proxySettings: proxySettings,
+                    pinnedKeys: backendConfig.pinnedKeys
+                ),
                 metadata: backendMetadata
             )
 
@@ -233,6 +238,21 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     private var trimmedProxyPassword: String {
         proxyPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var proxySettings: ResolvedProxySettings? {
+        guard let proxySettings = backendConfig.proxySettings else { return nil }
+
+        if proxySettings.needsAuthentication {
+            return .authenticated(
+                host: proxySettings.host,
+                port: proxySettings.port,
+                username: trimmedProxyUsername,
+                password: trimmedProxyPassword
+            )
+        } else {
+            return .unauthenticated(host: proxySettings.host, port: proxySettings.port)
+        }
     }
 
     private func resolveBackendMetadataIfNeeded() async throws -> WireAuthenticationAPI.BackendMetadata {

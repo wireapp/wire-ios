@@ -135,3 +135,60 @@ public struct ProxySettings: Decodable, Sendable, Hashable {
     }
 
 }
+
+public struct ResolvedBackendConfig: Sendable, Equatable, Hashable {
+
+    /// The  name of the backend.
+
+    public let title: String
+
+    /// Backend URLs
+
+    public let endpoints: Endpoints
+
+    /// The proxy settings for the backend if any.
+
+    public let proxySettings: ResolvedProxySettings?
+
+    /// The pinned keys for the backend for use with certificate pinning.
+
+    public let pinnedKeys: [TrustData]?
+
+    package init(
+        title: String,
+        endpoints: Endpoints,
+        proxySettings: ResolvedProxySettings?,
+        pinnedKeys: [TrustData]?
+    ) {
+        self.title = title
+        self.endpoints = endpoints
+        self.proxySettings = proxySettings
+        self.pinnedKeys = pinnedKeys
+    }
+
+    package static func withoutProxyCredentials(_ config: BackendConfig) -> ResolvedBackendConfig {
+        assert(config.proxySettings?.needsAuthentication != true)
+
+        return ResolvedBackendConfig(
+            title: config.title,
+            endpoints: config.endpoints,
+            proxySettings: config.proxySettings.map { .unauthenticated(host: $0.host, port: $0.port) },
+            pinnedKeys: config.pinnedKeys
+        )
+    }
+
+}
+
+/// Proxy settings for communicating with a backend server.
+
+public enum ResolvedProxySettings: Sendable, Equatable, Hashable {
+
+    /// Settings for an unauthenticated proxy.
+
+    case unauthenticated(host: String, port: Int)
+
+    /// Settings for an authenticated proxy.
+
+    case authenticated(host: String, port: Int, username: String, password: String)
+
+}

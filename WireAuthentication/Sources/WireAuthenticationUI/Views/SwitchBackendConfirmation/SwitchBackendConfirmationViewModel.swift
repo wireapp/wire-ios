@@ -133,7 +133,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
                     let backendEnvironment = WireAuthenticationBackendEnvironment(
                         environmentType: environmentType,
-                        config: backendConfig,
+                        config: ResolvedBackendConfig.withoutProxyCredentials(backendConfig),
                         metadata: backendMetadata
                     )
 

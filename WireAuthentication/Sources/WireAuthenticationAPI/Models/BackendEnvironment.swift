@@ -30,15 +30,15 @@ public struct WireAuthenticationBackendEnvironment: Sendable, Equatable, Hashabl
 
     /// The data needed to connect to the backend.
 
-    public let config: BackendConfig
+    public let config: ResolvedBackendConfig
 
     /// Information about the connected backend.
 
     public let metadata: BackendMetadata
 
-    public init(
+    package init(
         environmentType: BackendEnvironmentType,
-        config: BackendConfig,
+        config: ResolvedBackendConfig,
         metadata: BackendMetadata
     ) {
         self.title = config.title

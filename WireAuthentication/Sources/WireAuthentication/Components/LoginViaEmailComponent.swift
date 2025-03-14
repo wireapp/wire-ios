@@ -103,13 +103,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     }
 
     public var backendEnvironment: WireAuthenticationBackendEnvironment {
-        shared {
-            WireAuthenticationBackendEnvironment(
-                environmentType: dependency.environmentType,
-                config: dependency.backendConfig,
-                metadata: backendMetadata
-            )
-        }
+        fatalError("Remove this and inject where needed") // FIXME: REMOVE
     }
 
     // MARK: - Children

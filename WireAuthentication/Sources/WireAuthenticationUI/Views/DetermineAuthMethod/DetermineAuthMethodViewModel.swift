@@ -148,7 +148,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
                 let backendEnvironment = WireAuthenticationBackendEnvironment(
                     environmentType: environmentType,
-                    config: backendConfig,
+                    config: ResolvedBackendConfig.withoutProxyCredentials(backendConfig),
                     metadata: backendMetadata
                 )
 

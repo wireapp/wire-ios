@@ -23,7 +23,7 @@ public enum Fixture {
 
     public static let backendEnvironment = WireAuthenticationBackendEnvironment(
         environmentType: .production,
-        config: Fixture.backendConfig,
+        config: .withoutProxyCredentials(Fixture.backendConfig),
         metadata: BackendMetadata(
             apiVersion: .v8,
             domain: "mock.com",

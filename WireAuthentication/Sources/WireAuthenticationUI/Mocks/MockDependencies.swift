@@ -46,7 +46,7 @@ final class MockDependencies {
     var backendEnvironment: WireAuthenticationBackendEnvironment {
         WireAuthenticationBackendEnvironment(
             environmentType: environmentType,
-            config: backendConfig,
+            config: ResolvedBackendConfig.withoutProxyCredentials(backendConfig),
             metadata: backendMetadata
         )
     }
