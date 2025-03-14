@@ -138,6 +138,7 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
 
             let callingBuilder = await callingBuilder(
                 calling: genericMessage.calling,
+                at: mlsMessageEvent.timestamp,
                 conversationID: mlsMessageEvent.conversationID,
                 senderID: mlsMessageEvent.senderID
             )
