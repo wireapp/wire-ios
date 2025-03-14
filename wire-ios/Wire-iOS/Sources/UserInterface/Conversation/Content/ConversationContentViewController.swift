@@ -83,6 +83,7 @@ final class ConversationContentViewController: UIViewController {
 
     let mentionsSearchResultsViewController: UserSearchResultsViewController = .init()
 
+    // TODO: setup timer which iterates over time divider and ephemeral etc. to update
     lazy var dataSource = ConversationTableViewDataSource(
         conversation: conversation,
         tableView: tableView,

@@ -18,30 +18,20 @@
 
 import UIKit
 import WireConversationUI
-import WireDataModel
-import WireSyncEngine
-
-struct BurstTimestampSenderMessageCellConfiguration {
-    let date: Date
-    let includeDayOfWeek: Bool
-    let showUnreadDot: Bool
-    let accentColor: UIColor
-}
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
 
     var conversationCellModel: ConversationCellModel? {
-        let text: String
-        if configuration.includeDayOfWeek {
-            text = configuration.date.olderThanOneWeekdateFormatter.string(from: configuration.date)
+
+        let text = if configuration.includeDayOfWeek {
+            configuration.date.olderThanOneWeekdateFormatter.string(from: configuration.date)
         } else {
-            text = configuration.date.formattedDate
+            configuration.date.formattedDate
         }
-        return .timeDivider(
-            text: text,
-            isUnread: configuration.showUnreadDot
-        )
+
+        return .timeDivider(text: text, isUnread: configuration.showUnreadDot)
+
     }
 
     let configuration: View.Configuration
@@ -50,120 +40,47 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 0
+    var showEphemeralTimer = false
+    var topMargin = CGFloat()
 
-    let containsHighlightableContent: Bool = false
+    let containsHighlightableContent = false
 
-    let accessibilityIdentifier: String? = nil
-    let accessibilityLabel: String? = nil
+    let accessibilityIdentifier = String?.none
+    let accessibilityLabel = String?.none
 
     init(
         message: ZMConversationMessage,
         context: ConversationMessageContext,
         accentColor: UIColor
     ) {
-
         self.configuration = View.Configuration(
             date: message.serverTimestamp ?? Date(),
             includeDayOfWeek: context.isFirstMessageOfTheDay,
             showUnreadDot: context.isFirstUnreadMessage,
             accentColor: accentColor
         )
-        self.actionController = nil
-    }
-
-    init(configuration: View.Configuration) {
-        self.configuration = configuration
     }
 
 }
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
-    // private let timestampView: ConversationCellBurstTimestampView
-    private var configuration: BurstTimestampSenderMessageCellConfiguration?
-    private var timer: Timer?
+    struct Configuration {
+        let date: Date
+        let includeDayOfWeek: Bool
+        let showUnreadDot: Bool
+        let accentColor: UIColor
+    }
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
 
-    override init(frame: CGRect) {
-        // self.timestampView = ConversationCellBurstTimestampView()
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
-    }
-
-    private func configureSubviews() {
-        // addSubview(timestampView)
-    }
-
-    private func configureConstraints() {
-        // timestampView.translatesAutoresizingMaskIntoConstraints = false
-
-        // NSLayoutConstraint.activate([
-        //     timestampView.leadingAnchor.constraint(equalTo: leadingAnchor),
-        //     timestampView.topAnchor.constraint(equalTo: topAnchor),
-        //     timestampView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        //     timestampView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        // ])
-    }
-
-    override func willMove(toWindow newWindow: UIWindow?) {
-        super.willMove(toWindow: newWindow)
-
-        if window == nil {
-            stopTimer()
-        }
-    }
-
-    func willDisplay() {
-        startTimer()
-    }
-
-    func didEndDisplaying() {
-        stopTimer()
-    }
-
-    private func reconfigure() {
-        guard let configuration else {
-            return
-        }
-        configure(with: configuration, animated: false)
-    }
-
-    private func startTimer() {
-        stopTimer()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            self?.reconfigure()
-        }
-    }
-
-    private func stopTimer() {
-        timer?.invalidate()
-        timer = nil
-    }
-
-    // MARK: - Cell
-
     var isSelected: Bool = false
 
-    func configure(with object: BurstTimestampSenderMessageCellConfiguration, animated: Bool) {
-        configuration = object
+    func willDisplay() {}
+    func didEndDisplaying() {}
 
-        // timestampView.configure(
-        //     with: object.date,
-        //     includeDayOfWeek: object.includeDayOfWeek,
-        //     showUnreadDot: object.showUnreadDot,
-        //     accentColor: object.accentColor
-        // )
-    }
+    func configure(with object: Configuration, animated: Bool) {}
 
 }

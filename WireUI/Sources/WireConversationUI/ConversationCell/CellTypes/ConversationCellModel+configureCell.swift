@@ -18,10 +18,10 @@
 
 import UIKit
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
     @MainActor
-    public func configureCell(_ cell: UITableViewCell) {
+    func configureCell(_ cell: UITableViewCell) {
         switch self {
 
         case .guestsAllowedInfo(let guestsAllowedInfo):

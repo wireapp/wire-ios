@@ -36,60 +36,38 @@ final class ConversationCellSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testImageModeAllAccountTypesAndAvailabilities() {
-        typealias Previews = AccountImageView_Previews
+    func testUIUserInterfaceStyleDark() {
+        let sut = ConversationCellPreviews(
+            models: [
+                .timeDivider(text: "Friday", isUnread: false),
+                .timeDivider(text: "Saturday\nMulti-line-text", isUnread: false),
+                .timeDivider(text: "Today", isUnread: true)
+            ]
+        )
+        sut.view.frame = UIScreen.main.bounds
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
+    }
 
-        for showNotificationBadge in [true, false] {
-            let showNotificationBadgeSuffix = showNotificationBadge ? "_showNotifications" : ""
-
-            for availability in Availability.allCases + [Availability?.none] {
-                // Given
-                let rootView = Previews.previewWithNavigationBar(
-                    .image(Previews.accountImage),
-                    availability,
-                    showNotificationBadge
+    @available(iOS 17, *) @MainActor
+    func testUIFontContentSizeCategories() {
+        let sut = ConversationCellPreviews(
+            models: [
+                .timeDivider(text: "Friday", isUnread: false),
+                .timeDivider(text: "Saturday\nMulti-line-text", isUnread: false),
+                .timeDivider(text: "Today", isUnread: true)
+            ]
+        )
+        sut.view.frame = UIScreen.main.bounds
+        for contentSizeCategory in [UIContentSizeCategory.small, .accessibilityExtraExtraExtraLarge] {
+            sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory
+            snapshotHelper
+                .verify(
+                    matching: sut,
+                    named: "\(contentSizeCategory)"
                 )
-                let hostingControllerView = UIHostingController(rootView: rootView).view!
-                hostingControllerView.frame = UIScreen.main.bounds
-
-                var testName = if let availability { "imageMode_\(availability)" } else { "imageMode_noAvailability" }
-                testName += showNotificationBadgeSuffix
-
-                // Then
-                snapshotHelper
-                    .withUserInterfaceStyle(.light)
-                    .verify(matching: hostingControllerView, named: "light", testName: testName)
-                snapshotHelper
-                    .withUserInterfaceStyle(.dark)
-                    .verify(matching: hostingControllerView, named: "dark", testName: testName)
-            }
         }
     }
 
-    @MainActor
-    func testTextModeAllAccountTypesAndAvailabilities() {
-        typealias Previews = AccountImageView_Previews
-
-        for showNotificationBadge in [true, false] {
-            let showNotificationBadgeSuffix = showNotificationBadge ? "_showNotifications" : ""
-
-            for availability in Availability.allCases + [Availability?.none] {
-                // Given
-                let rootView = Previews.previewWithNavigationBar(.text("CA"), availability, showNotificationBadge)
-                let hostingControllerView = UIHostingController(rootView: rootView).view!
-                hostingControllerView.frame = UIScreen.main.bounds
-
-                var testName = if let availability { "textMode_\(availability)" } else { "textMode_noAvailability" }
-                testName += showNotificationBadgeSuffix
-
-                // Then
-                snapshotHelper
-                    .withUserInterfaceStyle(.light)
-                    .verify(matching: hostingControllerView, named: "light", testName: testName)
-                snapshotHelper
-                    .withUserInterfaceStyle(.dark)
-                    .verify(matching: hostingControllerView, named: "dark", testName: testName)
-            }
-        }
-    }
 }

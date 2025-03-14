@@ -18,10 +18,10 @@
 
 import UIKit
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
     @MainActor
-    public func registerIfNeeded(in tableView: UITableView) {
+    func registerIfNeeded(in tableView: UITableView) {
         guard !tableView.registeredIdentifiers.contains(cellReuseIdentifier) else { return }
 
         let cellType = switch self {

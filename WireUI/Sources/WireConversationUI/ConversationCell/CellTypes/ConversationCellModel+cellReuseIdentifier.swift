@@ -18,9 +18,9 @@
 
 import UIKit
 
-extension ConversationCellModel {
+public extension ConversationCellModel {
 
-    public var cellReuseIdentifier: String {
+    var cellReuseIdentifier: String {
         switch self {
 
         case .guestsAllowedInfo:
