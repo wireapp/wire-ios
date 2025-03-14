@@ -57,6 +57,18 @@ class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDepend
         super.init(parent: parent)
     }
 
+    public var authenticationAPI: any AuthenticationAPI {
+        fatalError("Not implemented")
+    }
+
+    public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
+        fatalError("Not implemented")
+    }
+
+    public var backendEnvironment: WireAuthenticationBackendEnvironment {
+        fatalError("Remove this and inject where needed") // FIXME: REMOVE
+    }
+
     // MARK: - View
 
     @MainActor var view: LoginViaEmailOnPremView {

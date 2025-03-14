@@ -56,6 +56,30 @@ private class LoginViaEmailOnPremComponentDependencyf7e724456bf0a882da0aProvider
 private func factory1ea11c5904a3248307ceb3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return LoginViaEmailOnPremComponentDependencyf7e724456bf0a882da0aProvider(rootComponent: parent1(component) as! RootComponent)
 }
+private class VerificationCodeComponentDependency0200b6a1fd45b1e3b4bfProvider: VerificationCodeComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
+        return loginViaEmailOnPremComponent.loginViaEmailUseCase
+    }
+    var authenticationAPI: any AuthenticationAPI {
+        return loginViaEmailOnPremComponent.authenticationAPI
+    }
+    var backendEnvironment: WireAuthenticationBackendEnvironment {
+        return loginViaEmailOnPremComponent.backendEnvironment
+    }
+    private let loginViaEmailOnPremComponent: LoginViaEmailOnPremComponent
+    private let rootComponent: RootComponent
+    init(loginViaEmailOnPremComponent: LoginViaEmailOnPremComponent, rootComponent: RootComponent) {
+        self.loginViaEmailOnPremComponent = loginViaEmailOnPremComponent
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->LoginViaEmailOnPremComponent->VerificationCodeComponent
+private func factorybfe01c99f4d31d96c7142f1bf48cc16dfba301b8(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return VerificationCodeComponentDependency0200b6a1fd45b1e3b4bfProvider(loginViaEmailOnPremComponent: parent1(component) as! LoginViaEmailOnPremComponent, rootComponent: parent2(component) as! RootComponent)
+}
 private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: VerificationCodeComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -223,6 +247,9 @@ extension LoginViaEmailOnPremComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailOnPremComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
+        localTable["authenticationAPI-any AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
+        localTable["loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"] = { [unowned self] in self.loginViaEmailUseCase as Any }
+        localTable["backendEnvironment-WireAuthenticationBackendEnvironment"] = { [unowned self] in self.backendEnvironment as Any }
     }
 }
 extension VerificationCodeComponent: NeedleFoundation.Registration {
@@ -320,6 +347,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->LoginViaEmailOnPremComponent", factory1ea11c5904a3248307ceb3a8f24c1d289f2c0f2e)
+    registerProviderFactory("^->RootComponent->LoginViaEmailOnPremComponent->VerificationCodeComponent", factorybfe01c99f4d31d96c7142f1bf48cc16dfba301b8)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent", factorye1144df20d596f07c3bea9403e3301bb54f80df0)
