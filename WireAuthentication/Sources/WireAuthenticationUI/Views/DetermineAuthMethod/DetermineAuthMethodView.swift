@@ -187,8 +187,8 @@ extension Alert {
     private typealias Title = L10n.Authentication.Error.Title
     private typealias Message = L10n.Authentication.Error.Message
 
-    static let invalidSSOLink = Alert(title: Title.invalidSsoLink, message: Message.invalidSsoLink)
-    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Title.incorrectSsoCode)
+    static let invalidSSOLink = Alert(title: Title.ssoLoginFailed, message: Message.ssoLoginFailed)
+    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Message.incorrectSsoCode)
 
 }
 
