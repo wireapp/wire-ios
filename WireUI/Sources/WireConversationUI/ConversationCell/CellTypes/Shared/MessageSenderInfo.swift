@@ -28,6 +28,10 @@ struct MessageSenderInfo: Hashable, Sendable {
     /// If `nil` only the account image of a message is visible.
     var details: Details?
 
+    init() {
+        self.accountImageSource = .text("")
+    }
+
     /// The info for the sender's name to be visible next to the account image.
     struct Details: Hashable, Sendable {
         var name: String

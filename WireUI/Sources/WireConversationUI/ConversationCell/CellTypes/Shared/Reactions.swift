@@ -23,3 +23,5 @@ struct Reaction: Hashable, Sendable {
 }
 
 typealias Reactions = [Reaction]
+
+// TODO: merge chore/restore-reactions-collection-view-WPB-16361

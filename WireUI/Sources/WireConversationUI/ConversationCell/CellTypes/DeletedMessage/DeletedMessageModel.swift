@@ -21,7 +21,15 @@ public struct DeletedMessageModel: ConversationCellModelProtocol {
 
     public var id: AnyHashable { self }
 
-    // TODO: add sender, deletion time, (accessibilityLabel, accessibilityIdentifier)?
+    var senderInfo: MessageSenderInfo
+    var deletionTime: String
+
+    // TODO: add accessibilityLabel, accessibilityIdentifier?
+
+    init() {
+        senderInfo = MessageSenderInfo()
+        deletionTime = ""
+    }
 
 }
 

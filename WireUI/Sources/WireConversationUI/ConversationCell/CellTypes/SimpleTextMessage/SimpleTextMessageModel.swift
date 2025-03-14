@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 public struct SimpleTextMessageModel: ConversationCellModelProtocol {
     typealias ContentView = SimpleTextMessageContentView
 
@@ -24,11 +26,18 @@ public struct SimpleTextMessageModel: ConversationCellModelProtocol {
     /// If `nil` no sender info is displayed (e.g. for subsequent messages of the same sender).
     var senderInfo: MessageSenderInfo?
 
-    // TODO: attributedText, time, isObfuscated, ephemeral, edited, seen, isCollapsed
+    var text: AttributedString
+
+    var dateTime: String
+
+    var status: String
 
     var reactions: Reactions
 
     init() {
+        text = AttributedString()
+        dateTime = ""
+        status = ""
         reactions = Reactions()
     }
 

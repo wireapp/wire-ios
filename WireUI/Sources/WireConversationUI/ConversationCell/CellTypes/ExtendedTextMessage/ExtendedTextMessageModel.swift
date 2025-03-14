@@ -21,6 +21,9 @@ public struct ExtendedTextMessageModel: ConversationCellModelProtocol {
 
     public var id: AnyHashable { self }
 
+    /// If `nil` no ephemeral indicator is shown.
+    var ephemeralProgress: Float?
+
     // TODO: add simpleTextMessage, quotedMessage, link attachments, link previews, error status
 
 }
