@@ -52,6 +52,7 @@
 "switch_backend_confirmation.teams_url" = "URL команды:";
 "switch_backend_confirmation.accounts_url" = "URL аккаунта:";
 "switch_backend_confirmation.website_url" = "URL веб-сайта:";
+"switch_backend_confirmation.countly_url" = "Countly URL:";
 "switch_backend_confirmation.proceed" = "Продолжить";
 "switch_backend_confirmation.cancel" = "Отмена";
 "switch_backend_confirmation.show_details" = "Подробнее";
@@ -65,30 +66,30 @@
 "authentication.no_history.message" = "История бесед не отображается в целях обеспечения конфиденциальности.";
 "authentication.no_history.confirm" = "OK";
 
-"authentication.error.title.no_internet" = "Нет интернета";
-"authentication.error.title.general" = "Ошибка";
-"authentication.error.title.invalid_sso_link" = "Ошибка";
-"authentication.error.title.sso_login_failed" = "Что-то пошло не так";
+"authentication.error.title.no_internet" = "Отсутствует подключение к интернету";
+"authentication.error.title.general" = "Что-то пошло не так";
+"authentication.error.title.sso_login_failed" = "Ошибка SSO-авторизации";
 "authentication.error.title.invalid_credentials" = "Неверная информация";
 "authentication.error.title.invalid_invalid_2FA_code" = "Неверный код подтверждения";
 "authentication.error.title.account_pending_activation" = "Ожидание активации";
 "authentication.error.title.account_suspended" = "Неавторизован";
+"authentication.error.title.incorrect_sso_code" = "Неверный код SSO";
 
-"authentication.error.message.no_internet" = "Вы не подключены к интернету.";
-"authentication.error.message.general" = "Что-то пошло не так";
-"authentication.error.message.invalid_sso_link" = "Неверный url авторизации компании.";
+"authentication.error.message.no_internet" = "Похоже, возникла проблема с вашей сетью. Пожалуйста, попробуйте позже.";
+"authentication.error.message.general" = "Повторите попытку позже.";
 "authentication.error.message.sso_login_failed" = "Для получения более подробной информации обратитесь к администратору вашей команды.";
 "authentication.error.message.invalid_credentials" = "Эти учетные данные неверны.  Проверьте их и повторите попытку.";
 "authentication.error.message.invalid_invalid_2FA_code" = "Пожалуйста, введите действительный верификационный код.";
-"authentication.error.message.account_pending_activation" = "Аккаунт, к которому вы пытаетесь получить доступ, ожидает активации. Пожалуйста, проверьте свои данные.";
+"authentication.error.message.account_pending_activation" = "Сначала примите приглашение в свою команду и выполните шаги по созданию аккаунта.";
 "authentication.error.message.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
+"authentication.error.message.incorrect_sso_code" = "Проверьте код доступа SSO вашей компании и повторите попытку.";
 
 "authentication.error.confirm" = "OK";
 
-"authentication.error.title.email_already_in_use" = "Email already in use";
-"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
-"authentication.error.how_to_change_email" = "How to change email address";
-"authentication.error.how_to_delete_account" = "How to delete a private account";
+"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
+"authentication.error.message.email_already_in_use" = "Домен этого email принадлежит локальному бэкенду. Пожалуйста, измените свой email в настройках аккаунта или удалите аккаунт. Если вы являетесь частью команды, обратитесь к администратору команды.";
+"authentication.error.how_to_change_email" = "Как изменить адрес email";
+"authentication.error.how_to_delete_account" = "Как удалить личный аккаунт";
 
 "obsolete_client.alert.title" = "Необходимо обновление";
 "obsolete_client.alert.message" = "Вы упускаете новые возможности.\nПолучите последнюю версию Wire в App Store.";
