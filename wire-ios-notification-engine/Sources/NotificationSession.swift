@@ -343,7 +343,10 @@ public final class NotificationSession {
 
         coreDataStack.syncContext.performGroupedBlock {
             if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
-                WireLogger.notifications.error("Not displaying notification because app is not authenticated", attributes: .legacyNSE)
+                WireLogger.notifications.error(
+                    "Not displaying notification because app is not authenticated",
+                    attributes: .legacyNSE
+                )
                 self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
             }
@@ -428,7 +431,11 @@ extension NotificationSession: PushNotificationStrategyDelegate {
                 // Only store the last call event.
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
-                WireLogger.notifications.info("generated a notification from an event", attributes: event.logAttributes, .legacyNSE)
+                WireLogger.notifications.info(
+                    "generated a notification from an event",
+                    attributes: event.logAttributes,
+                    .legacyNSE
+                )
                 tempNotifications[notification.contentHashValue] = notification
             } else {
                 WireLogger.notifications.info("ignoring event", attributes: event.logAttributes, .legacyNSE)
@@ -446,7 +453,10 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         }
 
         guard let callerID = event.senderUUID else {
-            WireLogger.calling.error("should not handle call event: senderUUID missing from event", attributes: .legacyNSE)
+            WireLogger.calling.error(
+                "should not handle call event: senderUUID missing from event",
+                attributes: .legacyNSE
+            )
             return nil
         }
 
@@ -460,7 +470,10 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         }
 
         guard let conversationID = event.conversationUUID else {
-            WireLogger.calling.error("should not handle call event: conversationUUID missing from event", attributes: .legacyNSE)
+            WireLogger.calling.error(
+                "should not handle call event: conversationUUID missing from event",
+                attributes: .legacyNSE
+            )
             return nil
         }
 
@@ -479,12 +492,18 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         }
 
         if conversation.mutedMessageTypesIncludingAvailability != .none {
-            WireLogger.calling.info("should not handle call event: conversation is muted or user is not available", attributes: .legacyNSE)
+            WireLogger.calling.info(
+                "should not handle call event: conversation is muted or user is not available",
+                attributes: .legacyNSE
+            )
             return nil
         }
 
         if conversation.isForcedReadOnly {
-            WireLogger.calling.info("should not handle call event: conversation is forced readonly", attributes: .legacyNSE)
+            WireLogger.calling.info(
+                "should not handle call event: conversation is forced readonly",
+                attributes: .legacyNSE
+            )
             return nil
         }
 
