@@ -23,7 +23,7 @@ struct UserConnectionEventDecoder {
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserConnectionEvent {
-        let user = try container.decode(
+        let user = try container.decodeIfPresent(
             UserPayload.self,
             forKey: .user
         )
@@ -34,7 +34,7 @@ struct UserConnectionEventDecoder {
         )
 
         return UserConnectionEvent(
-            userName: user.name,
+            userName: user?.name,
             connection: Connection(
                 senderID: connection.from,
                 receiverID: connection.to,
@@ -60,7 +60,7 @@ struct UserConnectionEventDecoder {
         let qualifiedTo: QualifiedID?
         let conversationID: UUID?
         let qualifiedConversationID: QualifiedID?
-        let lastUpdate: UTCTime
+        let lastUpdate: UTCTimeMillis
         let status: ConnectionStatus
 
         enum CodingKeys: String, CodingKey {
