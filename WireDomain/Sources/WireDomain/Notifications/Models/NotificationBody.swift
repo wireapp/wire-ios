@@ -28,7 +28,7 @@ enum NotificationBody {
         case let .singleMessage(newMessageBodyDescriptor):
             make(bodyDescriptor: newMessageBodyDescriptor)
         case let .bundled(count):
-            String.formated(key: "push.notification.body.bundledMessages", count)
+            String.formated(key: "push.notification.body.bundledMessages", bundle: .module, "\(count)")
         }
     }
 

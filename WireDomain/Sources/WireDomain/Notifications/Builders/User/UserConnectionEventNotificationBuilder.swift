@@ -28,7 +28,7 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
 
     private struct Context {
         let connectionStatus: ConnectionStatus
-        let username: String
+        let username: String?
         let conversationID: WireAPI.QualifiedID?
         let senderID: UUID?
         let selfUserID: UUID
@@ -77,12 +77,18 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         let content = UNMutableNotificationContent()
 
         let connectionStatus = context.connectionStatus
-
-        let body = switch connectionStatus {
+        
+        let localizableKey: String.LocalizationValue = switch connectionStatus {
         case .pending:
-            String.formated(key: "push.notification.body.connectionPending", bundle: .module, context.username)
+            "push.notification.body.connectionPending"
         case .accepted:
-            String.formated(key: "push.notification.body.connectionAccepted", bundle: .module, context.username)
+            "push.notification.body.connectionAccepted"
+        }
+        
+        let body = if let username = context.username {
+            String.formated(key: localizableKey, bundle: .module, username)
+        } else {
+            String.localized(key: localizableKey, bundle: .module)
         }
 
         content.body = body
