@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "搜索";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "图像";
@@ -1648,21 +1649,10 @@
 "error.user.account_suspended" = "此账户不再被授权登录";
 "error.user.account_limit_reached" = "您最多只能添加3个帐号。";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "无法更新您的密码。";
-
 "error.group_call.too_many_members_in_conversation.title" = "超出群组通话人数";
 "error.group_call.too_many_members_in_conversation" = "群组通话功能最多支援到%d 人";
 "error.group_call.too_many_participants_in_the_call.title" = "通话人数已满";
 "error.group_call.too_many_participants_in_the_call" = "只能再容纳%d 人。";
-"error.call.gsm_ongoing.title" = "行動通話";
-"error.call.gsm_ongoing" = "在使用Wire通話前請先結束您的行動通話。";
-"error.call.general.title" = "通話錯誤";
-"error.call.general" = "請稍候幾分鐘再嘗試通話。";
-"error.call.slow_connection.title" = "连接速度缓慢";
-"error.call.slow_connection" = "您可能会在通话期间遇到问题";
-"error.call.slow_connection.call_anyway" = "仍然要通话";
 
 "error.invite.no_email_provider" = "请设置您的电子邮箱从而通过邮件的形式发送邀请。";
 "error.invite.no_messaging_provider" = "请设定您的短信服务从而通过短信的方式发送邀请";

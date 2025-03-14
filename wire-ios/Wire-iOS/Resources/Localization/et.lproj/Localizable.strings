@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "Otsing";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
@@ -1648,21 +1649,10 @@
 "error.user.account_suspended" = "See konto ei ole enam sisse logimiseks autoriseeritud.";
 "error.user.account_limit_reached" = "Sa ei saa lisada rohkem kui 3 kontot.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Parooli uuendamine ebaõnnestus.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Vestluses on liiga palju inimesi, et kõnet alustada";
 "error.group_call.too_many_members_in_conversation" = "Kõnede tegemiseks on maksimaalne inimeste arv vestluses %d.";
 "error.group_call.too_many_participants_in_the_call.title" = "Kõne on täis";
 "error.group_call.too_many_participants_in_the_call" = "Osalejaid mahub siia vaid %d.";
-"error.call.gsm_ongoing.title" = "Mobiilikõne";
-"error.call.gsm_ongoing" = "Wire kõne alustamiseks katkesta palun mobiilikõne.";
-"error.call.general.title" = "Kõne viga";
-"error.call.general" = "Palun proovi helistada uuesti mõne minuti pärast.";
-"error.call.slow_connection.title" = "Aeglane ühendus";
-"error.call.slow_connection" = "Kõne ajal võib esineda probleeme";
-"error.call.slow_connection.call_anyway" = "Helista ikkagi";
 
 "error.invite.no_email_provider" = "Palun seadista oma e-posti programm, et saaksid saata kutseid e-postiga";
 "error.invite.no_messaging_provider" = "Palun seadista oma SMS, et saaksid kutseid saata SMS-ga";
