@@ -167,6 +167,17 @@ extension ConversationContentViewController {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
     }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        coordinator.animate(alongsideTransition: nil) { _ in
+            self.dataSource.resetSectionControllers()
+            self.dataSource.reloadSections(newSections: self.dataSource.calculateSections())
+            self.tableView.reloadData()
+        }
+    }
+
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {

@@ -120,14 +120,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         selected: Bool = false,
         userSession: UserSession,
         useInvertedIndices: Bool,
-        contentWith: CGFloat
+        contentWidth: CGFloat
     ) {
         self.message = message
         self.context = context
         self.selected = selected
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
-        self.contentWidth = contentWith
+        self.contentWidth = contentWidth
 
         super.init()
 
