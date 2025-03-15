@@ -155,7 +155,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
         case .hidden:
             return buildHiddenNotification()
         default:
-            return .text(.emptyNotification)
+            return .notDisplayed
         }
     }
 
@@ -235,13 +235,13 @@ struct ConversationMLSMessageAddEventNotificationBuilder: NotificationBuilder {
 
     private func buildTextNotification(_ text: Text?) async -> UserNotification {
         guard let textMessageData = text else {
-            return .text(.emptyNotification)
+            return .notDisplayed
         }
 
         let text = textMessageData.content.removingExtremeCombiningCharacters
 
         guard !text.isEmpty else {
-            return .text(.emptyNotification)
+            return .notDisplayed
         }
 
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)

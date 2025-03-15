@@ -65,11 +65,11 @@ struct UserNotificationBuilder: NotificationBuilder {
             )
 
         default:
-            return .text(.emptyNotification)
+            return .notDisplayed
         }
 
         guard await builder.shouldBuildNotification() else {
-            return .text(.emptyNotification)
+            return .notDisplayed
         }
 
         return try await builder.buildContent()

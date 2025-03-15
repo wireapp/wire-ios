@@ -153,7 +153,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         case .hidden:
             return buildHiddenNotification()
         default:
-            return .text(.emptyNotification)
+            return .notDisplayed
         }
     }
 
@@ -233,13 +233,13 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
 
     private func buildTextNotification(_ text: Text?) async -> UserNotification {
         guard let textMessageData = text else {
-            return .text(.emptyNotification)
+            return .notDisplayed
         }
 
         let text = textMessageData.content.removingExtremeCombiningCharacters
 
         guard !text.isEmpty else {
-            return .text(.emptyNotification)
+            return .notDisplayed
         }
 
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
