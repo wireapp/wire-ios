@@ -114,9 +114,9 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                         attributes: logAttributes
                     )
                 }
-                
+
             case let .conversation(.mlsWelcome(eventData)):
-                
+
                 do {
                     try await mlsMessageDecryptor.decryptedWelcomeMessageEventData(
                         from: eventData

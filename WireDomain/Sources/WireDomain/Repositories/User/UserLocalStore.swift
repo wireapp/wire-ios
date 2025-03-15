@@ -400,7 +400,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             )
         }
     }
-    
+
     public func fetchSelfUserAvailability() async -> Availability {
         await context.perform { [context] in
             ZMUser.selfUser(in: context).availability

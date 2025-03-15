@@ -30,10 +30,10 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
         let senderID: UUID
         let selfUserID: UUID
     }
-    
+
     private struct Validator {
         let availability: Availability
-        
+
         func validate() -> Bool {
             [Availability.none, .available].contains(availability)
         }
@@ -53,15 +53,15 @@ struct ConversationCreateEventNotificationBuilder: NotificationBuilder {
 
         self.userLocalStore = userLocalStore
         self.conversationLocalStore = conversationLocalStore
-        
+
         // Validation criteria
-        
+
         let availability = await userLocalStore.fetchSelfUserAvailability()
-        
+
         self.validator = Validator(
             availability: availability
         )
-        
+
         // Context
 
         let conversation = await conversationLocalStore.fetchOrCreateConversation(

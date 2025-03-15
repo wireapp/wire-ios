@@ -74,7 +74,7 @@ public protocol ConversationLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String
     ) async
-    
+
     func createMLSConversation(
         conversationID: UUID,
         conversationDomain: String?,

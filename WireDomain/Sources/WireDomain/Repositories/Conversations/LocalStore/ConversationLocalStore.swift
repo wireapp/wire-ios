@@ -508,7 +508,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.needsToBeUpdatedFromBackend = true
         }
     }
-    
+
     public func createMLSConversation(
         conversationID: UUID,
         conversationDomain: String?,
@@ -520,14 +520,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 domain: conversationDomain,
                 in: context
             )
-            
+
             conversation.remoteIdentifier = conversationID
             conversation.domain = conversationDomain
             conversation.mlsGroupID = mlsGroupID
             conversation.mlsStatus = .ready
             context.saveOrRollback()
         }
-        
+
     }
 
     public func fetchMLSConversation(
