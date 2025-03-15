@@ -26,37 +26,53 @@ import WireReusableUIComponents
 
 protocol LoginViaEmailComponentDependency: Dependency {
 
-    @MainActor var router: any Router { get }
-    var preferredAPIVersion: APIVersion? { get }
-    var backendConfig: BackendConfig { get }
-    var accountsURL: URL { get }
-    var passwordValidator: any PasswordValidator { get }
-    var networkService: any NetworkServiceProtocol { get }
-    var environmentType: BackendEnvironmentType { get }
-    @MainActor var bridge: WireAuthenticationBridge { get }
+    // FIXME: Adjust as necessary
+//    @MainActor var router: any Router { get }
+//    var preferredAPIVersion: APIVersion? { get }
+//    var backendConfig: BackendConfig { get }
+//    var accountsURL: URL { get }
+//    var passwordValidator: any PasswordValidator { get }
+//    var networkService: any NetworkServiceProtocol { get }
+//    var environmentType: BackendEnvironmentType { get }
+//    @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
-    public let backendMetadata: WireAuthenticationAPI.BackendMetadata
+    private let email: String
+    private let environmentType: BackendEnvironmentType
+    private let backendConfig: BackendConfig
+    private let backendMetadata: WireAuthenticationAPI.BackendMetadata
+    private let router: any Router
+    private let passwordValidator: any PasswordValidator
+    private let bridge: WireAuthenticationBridge
+    private let preferredAPIVersion: APIVersion?
+    private let networkService: any NetworkServiceProtocol
 
     init(
         parent: any Scope,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata
+        email: String,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata,
+        router: any Router,
+        passwordValidator: any PasswordValidator,
+        bridge: WireAuthenticationBridge,
+        preferredAPIVersion: APIVersion?,
+        networkService: any NetworkServiceProtocol
     ) {
+        self.email = email
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
         self.backendMetadata = backendMetadata
+        self.router = router
+        self.passwordValidator = passwordValidator
+        self.bridge = bridge
+        self.preferredAPIVersion = preferredAPIVersion
+        self.networkService = networkService
+
         super.init(parent: parent)
-    }
-
-    public var authenticationAPI: any AuthenticationAPI {
-        AuthenticationAPIBuilder(networkService: dependency.networkService).makeAPI(
-            for: .init(backendMetadata.apiVersion)
-        )
-    }
-
-    public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
     // MARK: - View
@@ -84,17 +100,17 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         didDetectDomainConflict: Bool
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
-            router: dependency.router,
+            router: router,
             factory: self,
-            environmentType: dependency.environmentType,
+            environmentType: environmentType,
             email: email,
-            backendConfig: dependency.backendConfig,
+            backendConfig: backendConfig,
             backendMetadata: backendMetadata,
-            passwordValidator: dependency.passwordValidator,
+            passwordValidator: passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [weak dependency] in
-                dependency?.bridge.registerAccount()
+            onCreateAccount: { [weak bridge] in
+                bridge?.registerAccount()
             },
             applyProxyCredentials: { _, _ in
                 // no op in this component
@@ -102,14 +118,41 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         )
     }
 
-    public var backendEnvironment: WireAuthenticationBackendEnvironment {
-        fatalError("Remove this and inject where needed") // FIXME: REMOVE
-    }
-
     // MARK: - Children
 
-    var verificationCodeComponent: VerificationCodeComponent {
-        VerificationCodeComponent(parent: self)
+    func verificationCodeComponent(
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> VerificationCodeComponent {
+        VerificationCodeComponent(
+            parent: self,
+            router: router,
+            authenticationAPI: AuthenticationAPIBuilder(
+                networkService: networkService
+            ).makeAPI(for: APIVersion(backendEnvironment.metadata.apiVersion)),
+            backendEnvironment: backendEnvironment
+        )
+    }
+
+}
+
+extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
+
+    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
+        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
+        return ResolveBackendMetadataUseCase(
+            backendMetadataAPI: api,
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: preferredAPIVersion
+        )
+    }
+
+    func loginViaEmailUseCase(
+        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+    ) -> any LoginViaEmailUseCaseProtocol {
+        let api = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
+            for: .init(apiVersion)
+        )
+        return LoginViaEmailUseCase(authenticationAPI: api)
     }
 
 }
@@ -119,35 +162,14 @@ extension LoginViaEmailComponent: LoginViaEmailView.Factory {
     func verificationCodeView(
         email: String,
         password: String,
-        didDetectDomainConflict: Bool
+        didDetectDomainConflict: Bool,
+        backendEnvironment: WireAuthenticationBackendEnvironment
     ) -> VerificationCodeView {
-        verificationCodeComponent.view(
+        verificationCodeComponent(backendEnvironment: backendEnvironment).view(
             email: email,
             password: password,
             didDetectDomainConflict: didDetectDomainConflict
         )
-    }
-
-}
-
-extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
-
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
-        let api = BackendMetadataAPIBuilder(networkService: dependency.networkService).makeAPI()
-        return ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
-    }
-
-    func loginViaEmailUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any LoginViaEmailUseCaseProtocol {
-        let api = AuthenticationAPIBuilder(networkService: dependency.networkService).makeAPI(
-            for: .init(apiVersion)
-        )
-        return LoginViaEmailUseCase(authenticationAPI: api)
     }
 
 }

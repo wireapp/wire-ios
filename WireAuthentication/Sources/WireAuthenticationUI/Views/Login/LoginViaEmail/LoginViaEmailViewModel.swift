@@ -162,6 +162,17 @@ package final class LoginViaEmailViewModel: ObservableObject {
             return
         }
 
+        let backendEnvironment = WireAuthenticationBackendEnvironment(
+            environmentType: environmentType,
+            config: ResolvedBackendConfig(
+                title: backendConfig.title,
+                endpoints: backendConfig.endpoints,
+                proxySettings: proxySettings,
+                pinnedKeys: backendConfig.pinnedKeys
+            ),
+            metadata: backendMetadata
+        )
+
         do {
             let (cookies, token) = try await login(backendMetadata: backendMetadata)
 
@@ -169,17 +180,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 email: email,
                 password: trimmedPassword,
                 verificationCode: nil
-            )
-
-            let backendEnvironment = WireAuthenticationBackendEnvironment(
-                environmentType: environmentType,
-                config: ResolvedBackendConfig(
-                    title: backendConfig.title,
-                    endpoints: backendConfig.endpoints,
-                    proxySettings: proxySettings,
-                    pinnedKeys: backendConfig.pinnedKeys
-                ),
-                metadata: backendMetadata
             )
 
             let authenticationResult = AuthenticationResult(
@@ -206,7 +206,11 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .invalidCredentials
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
-                    to: LoginViaEmailDestination.verifyLogin(email: email, password: password)
+                    to: LoginViaEmailDestination.verifyLogin(
+                        email: email,
+                        password: password,
+                        backendEnvironment: backendEnvironment
+                    )
                 )
             case LoginViaEmailUseCaseFailure.accountPendingActivation:
                 alert = .accountPendingActivation

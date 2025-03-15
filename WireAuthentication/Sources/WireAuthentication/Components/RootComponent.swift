@@ -98,8 +98,21 @@ class RootComponent: BootstrapComponent {
 
     // MARK: - Children
 
+    @MainActor
     var determineAuthMethodComponent: DetermineAuthMethodComponent {
-        DetermineAuthMethodComponent(parent: self)
+        DetermineAuthMethodComponent(
+            parent: self,
+            router: router,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            preferredAPIVersion: preferredAPIVersion,
+            productionVersions: productionVersions,
+            minTLSVersion: minTLSVersion,
+            ssoCallbackURLScheme: ssoCallbackURLScheme,
+            userDefaults: userDefaults,
+            bridge: bridge,
+            passwordValidator: passwordValidator
+        )
     }
 
     @MainActor
@@ -110,10 +123,14 @@ class RootComponent: BootstrapComponent {
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
+            didDetectDomainConflict: didDetectDomainConflict,
+            howToChangeEmailURL: howToChangeEmailURL,
+            howToDeleteAccountURL: howToDeleteAccountURL,
+            bridge: bridge
         )
     }
 
+    @MainActor
     func loginViaEmailOnPremComponent(
         email: String,
         environmentType: BackendEnvironmentType,
@@ -125,10 +142,16 @@ class RootComponent: BootstrapComponent {
             email: email,
             environmentType: environmentType,
             backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendMetadata: backendMetadata,
+            router: router,
+            minTLSVersion: minTLSVersion,
+            passwordValidator: passwordValidator,
+            bridge: bridge,
+            preferredAPIVersion: preferredAPIVersion
         )
     }
 
+    @MainActor
     func loginViaSSOComponent(
         ssoURL: URL,
         backendEnvironment: WireAuthenticationBackendEnvironment
@@ -136,7 +159,9 @@ class RootComponent: BootstrapComponent {
         LoginViaSSOComponent(
             parent: self,
             ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            backendEnvironment: backendEnvironment,
+            router: router,
+            bridge: bridge
         )
     }
 

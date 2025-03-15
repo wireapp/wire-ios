@@ -22,27 +22,67 @@ import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
-    @MainActor var router: any Router { get }
-    var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
-    var preferredAPIVersion: APIVersion? { get }
-    var minTLSVersion: TLSVersion { get }
-    var ssoCallbackURLScheme: String { get }
-    var userDefaults: UserDefaults { get }
+    // FIXME: Adjust as necessary
+//    @MainActor var router: any Router { get }
+//    var environmentType: BackendEnvironmentType { get }
+//    var backendConfig: BackendConfig { get }
+//    var preferredAPIVersion: APIVersion? { get }
+//    var minTLSVersion: TLSVersion { get }
+//    var ssoCallbackURLScheme: String { get }
+//    var userDefaults: UserDefaults { get }
 
 }
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
+    private let router: any Router
+    private let environmentType: BackendEnvironmentType
+    private let backendConfig: BackendConfig
+    private let preferredAPIVersion: APIVersion?
+    private let productionVersions: Set<APIVersion>
+    private let minTLSVersion: TLSVersion
+    private let ssoCallbackURLScheme: String
+    private let userDefaults: UserDefaults
+    private let bridge: WireAuthenticationBridge
+    private let passwordValidator: any PasswordValidator
+
+    init(
+        parent: any Scope,
+        router: any Router,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        preferredAPIVersion: APIVersion?,
+        productionVersions: Set<APIVersion>,
+        minTLSVersion: TLSVersion,
+        ssoCallbackURLScheme: String,
+        userDefaults: UserDefaults,
+        bridge: WireAuthenticationBridge,
+        passwordValidator: any PasswordValidator
+    ) {
+        self.router = router
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
+        self.preferredAPIVersion = preferredAPIVersion
+        self.productionVersions = productionVersions
+        self.minTLSVersion = minTLSVersion
+        self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.userDefaults = userDefaults
+        self.bridge = bridge
+        self.passwordValidator = passwordValidator
+
+        super.init(parent: parent)
+    }
+
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
-            router: dependency.router,
+            router: router,
             factory: self,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig
+            environmentType: environmentType,
+            backendConfig: backendConfig
         )
     }
 
@@ -53,21 +93,24 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    public var networkService: any NetworkServiceProtocol {
-        shared {
-            NetworkService.make(
-                backendEnvironment: .init(dependency.backendConfig),
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
-    }
 
     // MARK: - Children
 
-    func loginViaEmailComponent(backendMetadata: WireAuthenticationAPI.BackendMetadata) -> LoginViaEmailComponent {
+    func loginViaEmailComponent(
+        email: String,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata
+    ) -> LoginViaEmailComponent {
         LoginViaEmailComponent(
             parent: self,
-            backendMetadata: backendMetadata
+            email: email,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata,
+            router: router,
+            passwordValidator: passwordValidator,
+            bridge: bridge,
+            preferredAPIVersion: preferredAPIVersion,
+            networkService: networkService
         )
     }
 
@@ -78,7 +121,9 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         LoginViaSSOComponent(
             parent: self,
             ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            backendEnvironment: backendEnvironment,
+            router: router,
+            bridge: bridge
         )
     }
 
@@ -91,10 +136,28 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             parent: self,
             email: email,
             environmentType: environmentType,
-            backendConfig: backendConfig
+            backendConfig: backendConfig,
+            router: router,
+            preferredAPIVersion: preferredAPIVersion,
+            productionVersions: productionVersions,
+            minTLSVersion: minTLSVersion,
+            ssoCallbackURLScheme: ssoCallbackURLScheme,
+            userDefaults: userDefaults
         )
     }
 
+    // MARK: Private helpers
+
+    public var networkService: any NetworkServiceProtocol {
+        assert(backendConfig.proxySettings?.needsAuthentication != true, "Proxy auth isn't supported from here")
+
+        return shared {
+            NetworkService.make(
+                backendEnvironment: .makeWithoutProxyAuthentication(backendConfig),
+                minTLSVersion: minTLSVersion
+            )
+        }
+    }
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
@@ -120,7 +183,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         return ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
             clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
+            preferredAPIVersion: preferredAPIVersion
         )
     }
 
@@ -132,9 +195,9 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
         return SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
-            baseURL: dependency.backendConfig.endpoints.backendURL,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
+            baseURL: backendConfig.endpoints.backendURL,
+            callbackScheme: ssoCallbackURLScheme,
+            defaults: userDefaults
         )
     }
 
@@ -153,7 +216,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         didDetectDomainConflict: Bool,
         backendMetadata: WireAuthenticationAPI.BackendMetadata
     ) -> LoginViaEmailView {
-        loginViaEmailComponent(backendMetadata: backendMetadata).view(
+        loginViaEmailComponent(email: email, backendMetadata: backendMetadata).view(
             email: email,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict

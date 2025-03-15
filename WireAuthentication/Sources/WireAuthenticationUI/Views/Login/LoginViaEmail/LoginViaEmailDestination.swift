@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAuthenticationAPI
+
 enum LoginViaEmailDestination: Hashable {
 
-    case verifyLogin(email: String, password: String)
+    case verifyLogin(email: String, password: String, backendEnvironment: WireAuthenticationBackendEnvironment)
 
 }

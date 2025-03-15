@@ -304,7 +304,8 @@ extension MockDependencies: VerificationCodeBuilder {
     func verificationCodeView(
         email: String,
         password: String,
-        didDetectDomainConflict: Bool
+        didDetectDomainConflict: Bool,
+        backendEnvironment: WireAuthenticationBackendEnvironment
     ) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: VerificationCodeViewModel(

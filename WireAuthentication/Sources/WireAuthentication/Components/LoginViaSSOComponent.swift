@@ -23,8 +23,9 @@ internal import WireAuthenticationUI
 
 protocol LoginViaSSODependency: Dependency {
 
-    @MainActor var router: any Router { get }
-    @MainActor var bridge: WireAuthenticationBridge { get }
+    // FIXME: Adjust as necessary
+//    @MainActor var router: any Router { get }
+//    @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
@@ -32,14 +33,21 @@ class LoginViaSSOComponent: Component<LoginViaSSODependency> {
 
     private let ssoURL: URL
     private let backendEnvironment: WireAuthenticationBackendEnvironment
+    private let router: any Router
+    private let bridge: WireAuthenticationBridge
 
     init(
         parent: any Scope,
         ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
+        backendEnvironment: WireAuthenticationBackendEnvironment,
+        router: any Router,
+        bridge: WireAuthenticationBridge
     ) {
         self.ssoURL = ssoURL
         self.backendEnvironment = backendEnvironment
+        self.router = router
+        self.bridge = bridge
+
         super.init(parent: parent)
     }
 
@@ -50,8 +58,7 @@ class LoginViaSSOComponent: Component<LoginViaSSODependency> {
     }
 
     @MainActor private var viewModel: LoginViaSSOViewModel {
-        let router = dependency.router
-        dependency.bridge.onSSOSuccess = { [router, backendEnvironment] userID, cookies in
+        bridge.onSSOSuccess = { [router, backendEnvironment] userID, cookies in
             let authenticationResult = AuthenticationResult(
                 userID: userID,
                 cookies: cookies,
@@ -68,7 +75,7 @@ class LoginViaSSOComponent: Component<LoginViaSSODependency> {
             )
         }
 
-        dependency.bridge.onSSOFailure = { [router] in
+        bridge.onSSOFailure = { [router] in
             router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
         }
 

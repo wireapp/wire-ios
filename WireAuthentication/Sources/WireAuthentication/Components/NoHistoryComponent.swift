@@ -25,9 +25,10 @@ import WireReusableUIComponents
 
 protocol NoHistoryComponentDependency: Dependency {
 
-    var howToChangeEmailURL: URL { get }
-    var howToDeleteAccountURL: URL { get }
-    @MainActor var bridge: WireAuthenticationBridge { get }
+    // FIXME: Adjust as necessary
+//    var howToChangeEmailURL: URL { get }
+//    var howToDeleteAccountURL: URL { get }
+//    @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
@@ -35,24 +36,34 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     private let authenticationResult: AuthenticationResult
     private let didDetectDomainConflict: Bool
+    private let howToChangeEmailURL: URL
+    private let howToDeleteAccountURL: URL
+    private let bridge: WireAuthenticationBridge
 
     init(
         parent: any Scope,
         authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
+        didDetectDomainConflict: Bool,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
+        bridge: WireAuthenticationBridge
     ) {
         self.authenticationResult = authenticationResult
         self.didDetectDomainConflict = didDetectDomainConflict
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
+        self.bridge = bridge
+
         super.init(parent: parent)
     }
 
     @MainActor private var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
             didDetectDomainConflict: didDetectDomainConflict,
-            howToChangeEmailURL: dependency.howToChangeEmailURL,
-            howToDeleteAccountURL: dependency.howToDeleteAccountURL,
-            onFlowCompletion: { [dependency, authenticationResult] in
-                dependency?.bridge.onFlowCompletion(authenticationResult)
+            howToChangeEmailURL: howToChangeEmailURL,
+            howToDeleteAccountURL: howToDeleteAccountURL,
+            onFlowCompletion: { [weak bridge, authenticationResult] in
+                bridge?.onFlowCompletion(authenticationResult)
             }
         )
     }

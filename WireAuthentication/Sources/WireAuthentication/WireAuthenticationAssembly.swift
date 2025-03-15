@@ -27,6 +27,7 @@ internal import WireAuthenticationLogic
 
 public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
 public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
+public typealias ResolvedBackendConfig = WireAuthenticationAPI.ResolvedBackendConfig
 public typealias Endpoints = WireAuthenticationAPI.Endpoints
 public typealias ProxySettings = WireAuthenticationAPI.ProxySettings
 public typealias TrustData = WireAuthenticationAPI.TrustData

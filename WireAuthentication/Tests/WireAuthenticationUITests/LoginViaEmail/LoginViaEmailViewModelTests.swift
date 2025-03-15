@@ -155,7 +155,11 @@ final class LoginViaEmailViewModelTests: XCTestCase {
         XCTAssertEqual(router.navigate_Invocations.count, 1)
         XCTAssertEqual(
             router.navigate_Invocations.first as? LoginViaEmailDestination,
-            LoginViaEmailDestination.verifyLogin(email: "mika@example.com", password: "password")
+            LoginViaEmailDestination.verifyLogin(
+                email: "mika@example.com",
+                password: "password",
+                backendEnvironment: Fixture.backendEnvironment
+            )
         )
     }
 

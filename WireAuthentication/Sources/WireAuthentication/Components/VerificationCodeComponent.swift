@@ -26,17 +26,30 @@ import WireReusableUIComponents
 
 protocol VerificationCodeComponentDependency: Dependency {
 
-    @MainActor var router: any Router { get }
-    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
-    var authenticationAPI: any AuthenticationAPI { get }
-    var backendEnvironment: WireAuthenticationBackendEnvironment { get }
+    // FIXME: Adjust as necessary
+//    @MainActor var router: any Router { get }
+//    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
+//    var authenticationAPI: any AuthenticationAPI { get }
+//    var backendEnvironment: WireAuthenticationBackendEnvironment { get }
 
 }
 
 class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
-    private var requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol {
-        RequestLoginVerificationCodeUseCase(authenticationAPI: dependency.authenticationAPI)
+    private let router: any Router
+    private let authenticationAPI: any AuthenticationAPI
+    private let backendEnvironment: WireAuthenticationBackendEnvironment
+
+    init(
+        parent: any Scope,
+        router: any Router,
+        authenticationAPI: any AuthenticationAPI,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) {
+        self.router = router
+        self.authenticationAPI = authenticationAPI
+        self.backendEnvironment = backendEnvironment
+        super.init(parent: parent)
     }
 
     @MainActor
@@ -59,10 +72,12 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         VerificationCodeViewModel(
             email: email,
             password: password,
-            loginViaEmailUseCase: dependency.loginViaEmailUseCase,
-            requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
-            router: dependency.router,
-            backendEnvironment: dependency.backendEnvironment,
+            loginViaEmailUseCase: LoginViaEmailUseCase(authenticationAPI: authenticationAPI),
+            requestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCase(
+                authenticationAPI: authenticationAPI
+            ),
+            router: router,
+            backendEnvironment: backendEnvironment,
             didDetectDomainConflict: didDetectDomainConflict
         )
     }

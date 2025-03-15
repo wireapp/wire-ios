@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireAuthenticationAPI
 
 package protocol VerificationCodeBuilder {
 
@@ -25,7 +26,8 @@ package protocol VerificationCodeBuilder {
     func verificationCodeView(
         email: String,
         password: String,
-        didDetectDomainConflict: Bool
+        didDetectDomainConflict: Bool,
+        backendEnvironment: WireAuthenticationBackendEnvironment
     ) -> VerificationCodeView
 
 }

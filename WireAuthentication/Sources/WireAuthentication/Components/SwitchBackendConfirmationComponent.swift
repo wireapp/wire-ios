@@ -26,12 +26,13 @@ import WireLogging
 
 protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
-    @MainActor var router: any Router { get }
-    var preferredAPIVersion: APIVersion? { get }
-    var productionVersions: Set<APIVersion> { get }
-    var minTLSVersion: TLSVersion { get }
-    var ssoCallbackURLScheme: String { get }
-    var userDefaults: UserDefaults { get }
+    // FIXME: Adjust as necessary
+//    @MainActor var router: any Router { get }
+//    var preferredAPIVersion: APIVersion? { get }
+//    var productionVersions: Set<APIVersion> { get }
+//    var minTLSVersion: TLSVersion { get }
+//    var ssoCallbackURLScheme: String { get }
+//    var userDefaults: UserDefaults { get }
 
 }
 
@@ -40,16 +41,35 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
     private let email: String
     private let environmentType: BackendEnvironmentType
     public let backendConfig: BackendConfig
+    private let router: any Router
+    private let preferredAPIVersion: APIVersion?
+    private let productionVersions: Set<APIVersion>
+    private let minTLSVersion: TLSVersion
+    private let ssoCallbackURLScheme: String
+    private let userDefaults: UserDefaults
 
     init(
         parent: any Scope,
         email: String,
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendConfig: BackendConfig,
+        router: any Router,
+        preferredAPIVersion: APIVersion?,
+        productionVersions: Set<APIVersion>,
+        minTLSVersion: TLSVersion,
+        ssoCallbackURLScheme: String,
+        userDefaults: UserDefaults
     ) {
         self.email = email
         self.environmentType = environmentType
         self.backendConfig = backendConfig
+        self.router = router
+        self.preferredAPIVersion = preferredAPIVersion
+        self.productionVersions = productionVersions
+        self.minTLSVersion = minTLSVersion
+        self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.userDefaults = userDefaults
+
         super.init(parent: parent)
     }
 
@@ -61,7 +81,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
 
     @MainActor private var viewModel: SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
-            router: dependency.router,
+            router: router,
             factory: self,
             email: email,
             environmentType: environmentType,
@@ -72,16 +92,14 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
     // MARK: - Private dependencies
 
     private var backendEnvironment: BackendEnvironment {
-        shared {
-            BackendEnvironment(backendConfig)
-        }
+        BackendEnvironment.makeWithoutProxyAuthentication(backendConfig)
     }
 
     private var networkService: any NetworkServiceProtocol {
         shared {
             NetworkService.make(
                 backendEnvironment: backendEnvironment,
-                minTLSVersion: dependency.minTLSVersion
+                minTLSVersion: minTLSVersion
             )
         }
     }
@@ -94,8 +112,8 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
         let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
         return ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
-            clientProductionVersions: dependency.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
+            clientProductionVersions: productionVersions,
+            preferredAPIVersion: preferredAPIVersion
         )
     }
 
@@ -108,8 +126,8 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
         let linkGenerator = SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
             baseURL: backendEnvironment.url,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
+            callbackScheme: ssoCallbackURLScheme,
+            defaults: userDefaults
         )
         return FetchSSOURLUseCase(
             authenticationAPI: authenticationAPI,
@@ -137,31 +155,9 @@ private extension PinnedKey {
 
 }
 
-private extension WireAPI.ProxySettings {
-
-    init(_ proxySettings: WireAuthenticationAPI.ProxySettings) {
-
-        // TODO: [WPB-16266] add credentials
-        if proxySettings.needsAuthentication {
-            self = .authenticated(
-                host: proxySettings.host,
-                port: proxySettings.port,
-                username: "",
-                password: ""
-            )
-        } else {
-            self = .unauthenticated(
-                host: proxySettings.host,
-                port: proxySettings.port
-            )
-        }
-    }
-
-}
-
 extension BackendEnvironment {
 
-    init(_ backendConfig: BackendConfig) {
+    static func makeWithoutProxyAuthentication(_ backendConfig: BackendConfig) -> BackendEnvironment {
         var pinnedKeys = [PinnedKey]()
         do {
             for trustData in backendConfig.pinnedKeys ?? [] {
@@ -172,11 +168,11 @@ extension BackendEnvironment {
             pinnedKeys.removeAll()
         }
 
-        self.init(
+        return BackendEnvironment(
             url: backendConfig.endpoints.backendURL,
             webSocketURL: backendConfig.endpoints.backendWSURL,
             pinnedKeys: pinnedKeys,
-            proxySettings: backendConfig.proxySettings.map(WireAPI.ProxySettings.init)
+            proxySettings: backendConfig.proxySettings.map { .unauthenticated(host: $0.host, port: $0.port) }
         )
     }
 

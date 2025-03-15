@@ -89,11 +89,12 @@ package struct LoginViaEmailOnPremView: View {
         )
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             switch destination {
-            case let .verifyLogin(email, password):
+            case let .verifyLogin(email, password, backendEnvironment):
                 factory.verificationCodeView(
                     email: email,
                     password: password,
-                    didDetectDomainConflict: viewModel.didDetectDomainConflict
+                    didDetectDomainConflict: viewModel.didDetectDomainConflict,
+                    backendEnvironment: backendEnvironment
                 )
             }
         }
