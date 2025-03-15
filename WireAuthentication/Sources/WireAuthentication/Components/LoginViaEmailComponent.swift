@@ -91,8 +91,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [weak dependency] in
-                dependency?.bridge.registerAccount()
+            onCreateAccount: { [dependency] in
+                dependency?.bridge.sendOutboundEvent(.accountRegistrationRequested)
             }
         )
     }
