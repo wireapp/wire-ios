@@ -86,22 +86,13 @@ final class AuthenticationInterfaceBuilder {
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 userDefaults: .shared(),
-                onFlowCompletion: { result in
-                    authenticationCoordinator?.eventResponderChain.handleEvent(
-                        ofType: .wireAuthenticationModuleComplete(result)
-                    )
-                },
-                onRegisterAccount: {
-                    // TODO: [WPB-16279] Navigate to the account registration flow
-                }
+                appStoreURL: WireURLs.shared.appOnItunes
             )
-
-            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
-                bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
-            })
-            authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)
-
-            return AuthenticationHostingController(rootView: rootView)
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
 
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
