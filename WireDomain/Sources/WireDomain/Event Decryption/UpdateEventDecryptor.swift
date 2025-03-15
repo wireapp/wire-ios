@@ -100,17 +100,30 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             case let .conversation(.mlsMessageAdd(eventData)):
 
                 WireLogger.updateEvent.info(
-                    "decrypting MLS event...",
+                    "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
 
                 do {
-                    let decryptedEventData = try await mlsMessageDecryptor.decryptedEventData(from: eventData)
+                    let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(from: eventData)
                     decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
 
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt MLS event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt MLS add message event, dropping: \(error.localizedDescription)",
+                        attributes: logAttributes
+                    )
+                }
+                
+            case let .conversation(.mlsWelcome(eventData)):
+                
+                do {
+                    try await mlsMessageDecryptor.decryptedWelcomeMessageEventData(
+                        from: eventData
+                    )
+                } catch {
+                    WireLogger.updateEvent.error(
+                        "failed to decrypt MLS welcome message event, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
                     )
                 }

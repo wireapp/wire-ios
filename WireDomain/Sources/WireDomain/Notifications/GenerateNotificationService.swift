@@ -129,6 +129,8 @@ struct GenerateNotificationService: GenerateNotificationServiceProtocol {
                 )
             }
         }
+        
+        notifications.removeAll(where: { $0 == .emptyNotification })
 
         await showNotifications(notifications)
     }

@@ -508,6 +508,27 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.needsToBeUpdatedFromBackend = true
         }
     }
+    
+    public func createMLSConversation(
+        conversationID: UUID,
+        conversationDomain: String?,
+        mlsGroupID: MLSGroupID
+    ) async {
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            )
+            
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = conversationDomain
+            conversation.mlsGroupID = mlsGroupID
+            conversation.mlsStatus = .ready
+            context.saveOrRollback()
+        }
+        
+    }
 
     public func fetchMLSConversation(
         groupID: WireDataModel.MLSGroupID

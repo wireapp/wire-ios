@@ -199,6 +199,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
+        userLocalStore.fetchSelfUserAvailability_MockValue = .available
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
         conversationLocalStore.lastReadServerTimestamp_MockValue = .now

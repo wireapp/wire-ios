@@ -175,4 +175,6 @@ public protocol UserLocalStoreProtocol {
     func id(
         for user: ZMUser
     ) async -> UUID
+    
+    func fetchSelfUserAvailability() async -> Availability
 }

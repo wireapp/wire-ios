@@ -333,6 +333,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(conversationID, conversationDomain)
     }
 
+    // MARK: - createMLSConversation
+
+    public var createMLSConversationConversationIDConversationDomainMlsGroupID_Invocations: [(conversationID: UUID, conversationDomain: String?, mlsGroupID: MLSGroupID)] = []
+    public var createMLSConversationConversationIDConversationDomainMlsGroupID_MockMethod: ((UUID, String?, MLSGroupID) async -> Void)?
+
+    public func createMLSConversation(conversationID: UUID, conversationDomain: String?, mlsGroupID: MLSGroupID) async {
+        createMLSConversationConversationIDConversationDomainMlsGroupID_Invocations.append((conversationID: conversationID, conversationDomain: conversationDomain, mlsGroupID: mlsGroupID))
+
+        guard let mock = createMLSConversationConversationIDConversationDomainMlsGroupID_MockMethod else {
+            fatalError("no mock for `createMLSConversationConversationIDConversationDomainMlsGroupID`")
+        }
+
+        await mock(conversationID, conversationDomain, mlsGroupID)
+    }
+
     // MARK: - fetchMLSConversation
 
     public var fetchMLSConversationGroupID_Invocations: [WireDataModel.MLSGroupID] = []
@@ -1516,27 +1531,47 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
 
 
-    // MARK: - decryptedEventData
+    // MARK: - decryptedMessageAddEventData
 
-    var decryptedEventDataFrom_Invocations: [ConversationMLSMessageAddEvent] = []
-    var decryptedEventDataFrom_MockError: Error?
-    var decryptedEventDataFrom_MockMethod: ((ConversationMLSMessageAddEvent) async throws -> ConversationMLSMessageAddEvent)?
-    var decryptedEventDataFrom_MockValue: ConversationMLSMessageAddEvent?
+    var decryptedMessageAddEventDataFrom_Invocations: [ConversationMLSMessageAddEvent] = []
+    var decryptedMessageAddEventDataFrom_MockError: Error?
+    var decryptedMessageAddEventDataFrom_MockMethod: ((ConversationMLSMessageAddEvent) async throws -> ConversationMLSMessageAddEvent)?
+    var decryptedMessageAddEventDataFrom_MockValue: ConversationMLSMessageAddEvent?
 
-    func decryptedEventData(from eventData: ConversationMLSMessageAddEvent) async throws -> ConversationMLSMessageAddEvent {
-        decryptedEventDataFrom_Invocations.append(eventData)
+    func decryptedMessageAddEventData(from eventData: ConversationMLSMessageAddEvent) async throws -> ConversationMLSMessageAddEvent {
+        decryptedMessageAddEventDataFrom_Invocations.append(eventData)
 
-        if let error = decryptedEventDataFrom_MockError {
+        if let error = decryptedMessageAddEventDataFrom_MockError {
             throw error
         }
 
-        if let mock = decryptedEventDataFrom_MockMethod {
+        if let mock = decryptedMessageAddEventDataFrom_MockMethod {
             return try await mock(eventData)
-        } else if let mock = decryptedEventDataFrom_MockValue {
+        } else if let mock = decryptedMessageAddEventDataFrom_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptedEventDataFrom`")
+            fatalError("no mock for `decryptedMessageAddEventDataFrom`")
         }
+    }
+
+    // MARK: - decryptedWelcomeMessageEventData
+
+    var decryptedWelcomeMessageEventDataFrom_Invocations: [ConversationMLSWelcomeEvent] = []
+    var decryptedWelcomeMessageEventDataFrom_MockError: Error?
+    var decryptedWelcomeMessageEventDataFrom_MockMethod: ((ConversationMLSWelcomeEvent) async throws -> Void)?
+
+    func decryptedWelcomeMessageEventData(from eventData: ConversationMLSWelcomeEvent) async throws {
+        decryptedWelcomeMessageEventDataFrom_Invocations.append(eventData)
+
+        if let error = decryptedWelcomeMessageEventDataFrom_MockError {
+            throw error
+        }
+
+        guard let mock = decryptedWelcomeMessageEventDataFrom_MockMethod else {
+            fatalError("no mock for `decryptedWelcomeMessageEventDataFrom`")
+        }
+
+        try await mock(eventData)
     }
 
 }
@@ -3821,6 +3856,24 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `idFor`")
+        }
+    }
+
+    // MARK: - fetchSelfUserAvailability
+
+    public var fetchSelfUserAvailability_Invocations: [Void] = []
+    public var fetchSelfUserAvailability_MockMethod: (() async -> Availability)?
+    public var fetchSelfUserAvailability_MockValue: Availability?
+
+    public func fetchSelfUserAvailability() async -> Availability {
+        fetchSelfUserAvailability_Invocations.append(())
+
+        if let mock = fetchSelfUserAvailability_MockMethod {
+            return await mock()
+        } else if let mock = fetchSelfUserAvailability_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfUserAvailability`")
         }
     }
 
