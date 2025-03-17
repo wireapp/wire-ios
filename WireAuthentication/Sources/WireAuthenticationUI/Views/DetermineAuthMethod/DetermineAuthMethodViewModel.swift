@@ -83,14 +83,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             switch event {
             case let .backendSwitchRequested(configURL):
                 Task {
-                    guard let resolvedBackendMetadata = try? await self.resolveBackendMetadataIfNeeded() else {
-                        return
-                    }
-
-                    await self.handleAuthenticationMethod(
-                        .onPremLogin(email: nil, backendConfig: configURL),
-                        backendMetadata: resolvedBackendMetadata
-                    )
+                    await self.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
             default:
                 break
@@ -106,8 +99,18 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         let backendMetadata: BackendMetadata
         do {
-            backendMetadata = try await resolveBackendMetadataIfNeeded()
+            let useCase = factory.resolveBackendMetadataUseCase()
+            backendMetadata = try await Task.detached { [useCase] in
+                try await useCase.invoke()
+            }.value
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            return
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            return
         } catch {
+            alert = .general(for: error)
             return
         }
 
@@ -203,6 +206,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             }
 
         case let .onPremLogin(email, backendConfigURL):
+            await handleOnPremLogin(email: email, backendConfigURL: backendConfigURL)
+        }
+    }
+
+    private func handleOnPremLogin(email: String?, backendConfigURL: URL) async {
+        Task {
             do {
                 let useCase = factory.fetchBackendConfigUseCase()
                 let backendConfig = try await Task.detached {
@@ -231,28 +240,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return true
         } catch {
             return false
-        }
-    }
-
-    private func resolveBackendMetadataIfNeeded() async throws -> BackendMetadata {
-        if let backendMetadata {
-            return backendMetadata
-        }
-
-        do {
-            let useCase = factory.resolveBackendMetadataUseCase()
-            return try await Task.detached { [useCase] in
-                try await useCase.invoke()
-            }.value
-        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
-            alert = .obsoleteClient
-            throw ResolveBackendMetadataUseCaseFailure.clientVersionObsolete
-        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
-            alert = .obsoleteBackend
-            throw ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete
-        } catch {
-            alert = .general(for: error)
-            throw error
         }
     }
 
