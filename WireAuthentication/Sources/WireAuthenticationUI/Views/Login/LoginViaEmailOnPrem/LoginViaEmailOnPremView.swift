@@ -119,7 +119,7 @@ package struct LoginViaEmailOnPremView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: .constant(viewModel.email ?? "")
         )
-        .disabled(!viewModel.isValidEmail)
+        .disabled(viewModel.isValidEmail)
     }
 
     @ViewBuilder private var passwordField: some View {
