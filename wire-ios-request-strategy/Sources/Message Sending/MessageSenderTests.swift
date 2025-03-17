@@ -764,7 +764,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withBroadcastProteusMessage(returning result: Result<
             (Payload.MessageSendingStatus, ZMTransportResponse),
-                                         Error
+            Error
         >) -> Arrangement {
 
             switch result {

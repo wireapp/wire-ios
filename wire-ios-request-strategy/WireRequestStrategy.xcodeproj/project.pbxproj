@@ -954,6 +954,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		018F577F2D887DA1007105B2 /* APIs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = APIs; sourceTree = "<group>"; };
 		59D264282CF7225A0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264292CF722680005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
 		CB2D09132D2BEB54006E05B8 /* Calling */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Calling; sourceTree = "<group>"; };
 		CB2D09162D2C0D51006E05B8 /* Calling */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Calling; sourceTree = "<group>"; };
@@ -1054,6 +1055,7 @@
 		06474D6124B31CA8002C695D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				018F577F2D887DA1007105B2 /* APIs */,
 				CB2D09162D2C0D51006E05B8 /* Calling */,
 				E6BBCF1B2C33E1DC00BD0259 /* Helpers */,
 				633722BD2B7E2C0400BE4E45 /* E2EIdentity */,
@@ -2237,6 +2239,7 @@
 				CB7979082C73663B006FBA58 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				018F577F2D887DA1007105B2 /* APIs */,
 				59D264282CF7225A0005317F /* TestPlans */,
 				CB2D09162D2C0D51006E05B8 /* Calling */,
 			);
