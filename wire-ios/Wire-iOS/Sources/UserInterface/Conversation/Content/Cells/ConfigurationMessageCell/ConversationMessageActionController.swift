@@ -143,7 +143,7 @@ final class ConversationMessageActionController {
             }
 
             let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
-                .isLocation || message.isImage // TODO: long text
+                .isLocation || message.isImage
 
             return message.isSentBySelfUser && messageSupportsCollapsing
         case .present,
