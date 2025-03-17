@@ -80,7 +80,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
-    
+
     var contentWidth: CGFloat = UIScreen.main.bounds.width
 
     var searchQueries: [String] = [] {
@@ -232,7 +232,7 @@ final class ConversationTableViewDataSource: NSObject {
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
         sectionController.actionController = actionController(for: message, sectionController: sectionController)
-        
+
         sectionControllers[message.objectIdentifier] = sectionController
 
         return sectionController

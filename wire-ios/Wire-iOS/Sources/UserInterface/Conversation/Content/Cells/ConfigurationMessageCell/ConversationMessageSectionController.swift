@@ -107,7 +107,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var changeObservers: [Any] = []
 
     private let userSession: UserSession
-    
+
     var contentWidth: CGFloat
 
     deinit {
@@ -155,7 +155,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
               message.isSentBySelfUser else {
             return false
         }
-        
+
         if message.isText {
             guard let textMessageData = message.textMessageData else {
                 return false
@@ -163,10 +163,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
             let margins = UIView().conversationHorizontalMargins
 
-            let shouldCollapse = willTextExceedOneLine(
+            return willTextExceedOneLine(
                 text: textMessageData.messageText ?? "",
-                textViewWidth: contentWidth - margins.right - margins.left)
-            return shouldCollapse
+                textViewWidth: contentWidth - margins.right - margins.left
+            )
         } else {
             let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
                 .isLocation || message.isImage
@@ -251,9 +251,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
         if isCollapsed {
             [AnyConversationMessageCellDescription(ConversationCollapsedFileMessageCellDescription(
-                message: message) { [weak self] in
-                    self?.handleCollapseExpand()
-                })]
+                message: message
+            ) { [weak self] in
+                self?.handleCollapseExpand()
+            })]
         } else {
             ConversationTextMessageCellDescription
                 .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
@@ -610,15 +611,17 @@ extension ConversationMessageSectionController: UserObserving {
 
 func willTextExceedOneLine(text: String, textViewWidth: CGFloat) -> Bool {
     let availableWidth = textViewWidth
-    
+
     let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
-    
+
     let font = UIFont.normalLightFont
     let attributes: [NSAttributedString.Key: Any] = [.font: font]
-    let boundingBox = text.boundingRect(with: textSize,
-                                        options: .usesLineFragmentOrigin,
-                                        attributes: attributes,
-                                        context: nil)
+    let boundingBox = text.boundingRect(
+        with: textSize,
+        options: .usesLineFragmentOrigin,
+        attributes: attributes,
+        context: nil
+    )
 
     let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
 

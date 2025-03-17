@@ -38,6 +38,7 @@ final class ConversationMessageActionController {
             isCollapsedWasUpdated = true
         }
     }
+
     private var isCollapsedWasUpdated: Bool = false
 
     /// used to get collapse own messages settings for a specific user
