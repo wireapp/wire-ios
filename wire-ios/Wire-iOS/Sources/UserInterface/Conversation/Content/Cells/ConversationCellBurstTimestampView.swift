@@ -128,11 +128,19 @@ final class ConversationCellBurstTimestampView: UIView {
 
     func configure(
         timestamp: Date,
+        includeDayOfWeek: Bool,
         showUnreadDot: Bool,
         accentColor: UIColor
     ) {
         let calendar = Calendar.current
-        if calendar.isDateInToday(timestamp) {
+        if showUnreadDot {
+            // show time
+            label.text = if includeDayOfWeek {
+                timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
+            } else {
+                timestamp.formattedDate
+            }
+        } else if calendar.isDateInToday(timestamp) {
             // for same day just show "Today"
             label.text = sameDayDateFormatter.string(from: timestamp)
         } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: .now) {

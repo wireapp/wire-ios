@@ -146,6 +146,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
         timestampView.configure(
             timestamp: object.date,
+            includeDayOfWeek: object.includeDayOfWeek,
             showUnreadDot: object.showUnreadDot,
             accentColor: object.accentColor
         )
