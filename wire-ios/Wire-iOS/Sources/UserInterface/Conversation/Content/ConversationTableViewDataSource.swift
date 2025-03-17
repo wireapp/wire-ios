@@ -41,12 +41,12 @@ extension AnyConversationMessageCellDescription: Differentiable {
 }
 
 extension ZMConversationMessage {
+
     var isSentFromThisDevice: Bool {
-        guard let sender = senderUser else {
-            return false
-        }
+        guard let sender = senderUser else { return false }
         return sender.isSelfUser && deliveryState == .pending
     }
+
 }
 
 final class ConversationTableViewDataSource: NSObject {
