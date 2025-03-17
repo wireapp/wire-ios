@@ -108,6 +108,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
 
+    /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
 
     deinit {
@@ -141,6 +142,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             startObservingChanges(for: quotedMessage)
         }
     }
+    
+    private var collapseOwnMessagesEnabled: Bool {
+        guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
+        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
+    }
 
     private func isCollapsedInitialValue() -> Bool {
 
@@ -150,23 +156,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // then if in settings user allowed to collapse own messages
-        guard let selfUserId = userSession.selfUser.remoteIdentifier,
-              PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages),
-              message.isSentBySelfUser else {
+        guard collapseOwnMessagesEnabled, message.isSentBySelfUser else {
             return false
         }
 
         if message.isText {
-            guard let textMessageData = message.textMessageData else {
+            guard let textMessage = message.textMessageData?.messageText else {
                 return false
             }
 
             let margins = UIView().conversationHorizontalMargins
 
-            return willTextExceedOneLine(
-                text: textMessageData.messageText ?? "",
-                textViewWidth: contentWidth - margins.right - margins.left
-            )
+            return textMessage.willExceedOneLine(availableWidth: contentWidth - margins.right - margins.left)
         } else {
             let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
                 .isLocation || message.isImage
@@ -609,21 +610,24 @@ extension ConversationMessageSectionController: UserObserving {
     }
 }
 
-func willTextExceedOneLine(text: String, textViewWidth: CGFloat) -> Bool {
-    let availableWidth = textViewWidth
-
-    let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
-
-    let font = UIFont.normalLightFont
-    let attributes: [NSAttributedString.Key: Any] = [.font: font]
-    let boundingBox = text.boundingRect(
-        with: textSize,
-        options: .usesLineFragmentOrigin,
-        attributes: attributes,
-        context: nil
-    )
-
-    let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
-
-    return boundingBox.height > singleLineHeight
+extension String {
+    
+    func willExceedOneLine(availableWidth: CGFloat) -> Bool {
+                
+        let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
+        
+        let font = UIFont.normalLightFont
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        let boundingBox = self.boundingRect(
+            with: textSize,
+            options: .usesLineFragmentOrigin,
+            attributes: attributes,
+            context: nil
+        )
+        
+        let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
+        
+        return boundingBox.height > singleLineHeight
+    }
+    
 }
