@@ -75,7 +75,9 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor private var viewModel: RootViewModel {
-        shared { RootViewModel() }
+        shared {
+            RootViewModel(bridge: bridge)
+        }
     }
 
     @MainActor public var bridge: WireAuthenticationBridge {

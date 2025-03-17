@@ -29,6 +29,8 @@ public protocol Router {
 
     func presentSheet<ModalDestination: Hashable>(_ modalDestination: ModalDestination)
 
+    func dismissSheet()
+
     func presentAlert(_ alert: RootViewModel.Alert)
 
 }

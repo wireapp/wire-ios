@@ -24,7 +24,7 @@ import WireReusableUIComponents
 final class MockDependencies {
 
     private var rootViewModel: RootViewModel {
-        RootViewModel()
+        RootViewModel(bridge: WireAuthenticationBridge())
     }
 
     var environmentType: BackendEnvironmentType {
