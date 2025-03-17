@@ -126,15 +126,22 @@ final class ConversationCellBurstTimestampView: UIView {
         label.applyStyle(.dateInConversationLabel)
     }
 
-    func configure(with timestamp: Date, includeDayOfWeek: Bool, showUnreadDot: Bool, accentColor: UIColor) {
-        if includeDayOfWeek {
-            isSeparatorHidden = false
-            label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
+    func configure(
+        timestamp: Date,
+        showUnreadDot: Bool,
+        accentColor: UIColor
+    ) {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(timestamp) {
+            // for same day just show "Today"
+            label.text = sameDayDateFormatter.string(from: timestamp)
+        } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: .now) {
+            label.text = WRDateFormatter.thisYearFormatter.string(from: timestamp)
         } else {
-            isSeparatorHidden = false
-            label.text = timestamp.formattedDate
+            label.text = WRDateFormatter.otherYearFormatter.string(from: timestamp)
         }
 
+        isSeparatorHidden = false
         label.font = burstBoldFont
         leftSeparator.backgroundColor = color
         rightSeparator.backgroundColor = color
@@ -142,3 +149,12 @@ final class ConversationCellBurstTimestampView: UIView {
         unreadDot.backgroundColor = accentColor
     }
 }
+
+@MainActor
+private let sameDayDateFormatter = {
+    let relativeDateFormatter = DateFormatter()
+    relativeDateFormatter.timeStyle = .none
+    relativeDateFormatter.dateStyle = .medium
+    relativeDateFormatter.doesRelativeDateFormatting = true
+    return relativeDateFormatter
+}()
