@@ -29,11 +29,23 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         case unhandled
 
         init(callContent: CallContent, wasCallHandleReported: Bool) {
-            let isStartCall = callContent.type.isOne(of: ["SETUP", "GROUPSTART", "CONFSTART"])
+            let isStartCall = callContent.type.isOne(
+                of: [
+                    CallType.setup,
+                    CallType.groupStart,
+                    CallType.confStart
+                ]
+            )
             let isIncomingCall = isStartCall && !callContent.resp
-            let isEndCall = callContent.type.isOne(of: ["CANCEL", "GROUPEND", "CONFEND"])
+            let isEndCall = callContent.type.isOne(
+                of: [
+                    CallType.cancel,
+                    CallType.groupEnd,
+                    CallType.confEnd
+                ]
+            )
             let isAnsweredElsewhere = isStartCall && callContent.resp
-            let isRejected = callContent.type == "REJECT"
+            let isRejected = callContent.type == CallType.reject
 
             if isIncomingCall, !wasCallHandleReported {
                 self = .initiatesRinging
@@ -77,6 +89,13 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         }
     }
 
+    private enum Constants {
+        static let knownCalls = "knownCalls"
+        static let isAvsReady = "isAVSReady"
+        static let isCallKitAvailable = "isCallKitAvailable"
+        static let loadedUserSessions = "loadedUserSessions"
+    }
+
     private let context: Context
     private let validator: Validator
 
@@ -94,7 +113,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
         }
 
         let handle = "\(accountID.transportString())+\(conversationID.uuid.transportString())"
-        let knownCallHandles = userDefaults.object(forKey: "knownCalls") as? [String] ?? []
+        let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
         let wasCallHandleReported = knownCallHandles.contains(handle)
 
         let callKitState = CallKitState(
@@ -119,9 +138,9 @@ struct CallKitNotificationBuilder: NotificationBuilder {
             .conversationMutedMessageTypesIncludingAvailability(conversation)
         let isConversationMuted = mutedMessagesTypes == .all
         let isConversationForcedReadOnly = await conversationLocalStore.isConversationForcedReadOnly(conversation)
-        let isAVSReady = userDefaults.bool(forKey: "isAVSReady")
-        let isCallKitReady = userDefaults.bool(forKey: "isCallKitAvailable")
-        let loadedUserSessions = userDefaults.object(forKey: "loadedUserSessions") as? [String] ?? []
+        let isAVSReady = userDefaults.bool(forKey: Constants.isAvsReady)
+        let isCallKitReady = userDefaults.bool(forKey: Constants.isCallKitAvailable)
+        let loadedUserSessions = userDefaults.object(forKey: Constants.loadedUserSessions) as? [String] ?? []
         let loaderUserSessionsIDs = loadedUserSessions.compactMap(UUID.init(uuidString:))
         let isUserSessionLoaded = loaderUserSessionsIDs.contains(accountID)
 

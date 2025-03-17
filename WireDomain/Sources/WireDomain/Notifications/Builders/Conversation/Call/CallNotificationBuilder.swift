@@ -28,9 +28,21 @@ struct CallNotificationBuilder: NotificationBuilder {
         case unhandled
 
         init(callContent: CallContent) {
-            let isStartCall = callContent.type.isOne(of: ["SETUP", "GROUPSTART", "CONFSTART"])
+            let isStartCall = callContent.type.isOne(
+                of: [
+                    CallType.setup,
+                    CallType.groupStart,
+                    CallType.confStart
+                ]
+            )
             let isIncomingCall = isStartCall && !callContent.resp
-            let isEndCall = callContent.type.isOne(of: ["CANCEL", "GROUPEND", "CONFEND"])
+            let isEndCall = callContent.type.isOne(
+                of: [
+                    CallType.cancel,
+                    CallType.groupEnd,
+                    CallType.confEnd
+                ]
+            )
 
             if isIncomingCall {
                 self = .incomingCall(video: callContent.properties?.isVideo ?? false)

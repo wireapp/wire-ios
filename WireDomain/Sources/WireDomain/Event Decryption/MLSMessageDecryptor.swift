@@ -25,17 +25,17 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
-
+    
     func decryptedWelcomeMessageEventData(
         from eventData: ConversationMLSWelcomeEvent
     ) async throws {
         let welcomeMessage = eventData.welcomeMessage
         let conversationID = eventData.conversationID
-
+        
         let groupID = try await mlsDecryptionService.processWelcomeMessage(
             welcomeMessage: welcomeMessage
         )
-
+        
         await conversationLocalStore.createMLSConversation(
             conversationID: conversationID.uuid,
             conversationDomain: conversationID.domain,
