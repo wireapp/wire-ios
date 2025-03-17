@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " и ";
 
 "conversation.action.search" = "Поиск";
+"conversation.action.conversationDetails" = "Информация о беседе";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Изображение";
@@ -1648,21 +1649,10 @@
 "error.user.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
 "error.user.account_limit_reached" = "Нельзя добавить более трех учетных записей.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Не удалось обновить пароль.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Вы выбрали слишком много пользователей для звонка";
 "error.group_call.too_many_members_in_conversation" = "Звонки работают в беседах до %d человек.";
 "error.group_call.too_many_participants_in_the_call.title" = "Вызов переполнен";
 "error.group_call.too_many_participants_in_the_call" = "Здесь хватит места только для %d участников.";
-"error.call.gsm_ongoing.title" = "Звонок через мобильную сеть";
-"error.call.gsm_ongoing" = "Пожалуйста, отмените вызов через мобильную сеть, перед звонком в Wire.";
-"error.call.general.title" = "Ошибка вызова";
-"error.call.general" = "Пожалуйста, попробуйте позвонить снова через несколько минут.";
-"error.call.slow_connection.title" = "Медленное подключение";
-"error.call.slow_connection" = "Могут возникнуть проблемы во время звонка";
-"error.call.slow_connection.call_anyway" = "Все равно позвонить";
 
 "error.invite.no_email_provider" = "Пожалуйста, настройте свой почтовый клиент, чтобы иметь возможность отправлять приглашения по электронной почте";
 "error.invite.no_messaging_provider" = "Пожалуйста, настройте SMS, чтобы иметь возможность отправлять приглашения через SMS";

@@ -46,7 +46,8 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
             blackListURL: URL(string: "www.staging.com")!,
             teamsURL: URL(string: "www.staging.com")!,
             accountsURL: URL(string: "www.staging.com")!,
-            websiteURL: URL(string: "www.staging.com")!
+            websiteURL: URL(string: "www.staging.com")!,
+            countlyURL: URL(string: "www.staging.com")!
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -69,7 +70,8 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
             blackListURL: URL(string: "www.staging.com")!,
             teamsURL: URL(string: "www.staging.com")!,
             accountsURL: URL(string: "www.staging.com")!,
-            websiteURL: URL(string: "www.staging.com")!
+            websiteURL: URL(string: "www.staging.com")!,
+            countlyURL: URL(string: "www.staging.com")!
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

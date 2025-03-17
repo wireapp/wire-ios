@@ -34,6 +34,17 @@ protocol LaunchSequenceOperation {
 final class DeveloperFlagOperation: LaunchSequenceOperation {
     func execute() {
         DeveloperFlag.storage = .applicationGroup
+        for argument in AutomationHelper.sharedHelper.developerFlagArguments {
+            let keyAndValue = argument.split(separator: ":").map { "\($0)" }
+            if keyAndValue.count != 2 {
+                continue
+            }
+            guard let flag = DeveloperFlag(rawValue: keyAndValue[0]) else {
+                continue
+            }
+            let isOn = keyAndValue[1] == "true"
+            flag.enable(isOn)
+        }
     }
 }
 
