@@ -128,18 +128,13 @@ final class ConversationCellBurstTimestampView: UIView {
 
     func configure(
         timestamp: Date,
-        includeDayOfWeek: Bool,
+        includeDayOfWeek isFirstMessageOfTheDay: Bool,
         showUnreadDot: Bool,
         accentColor: UIColor
     ) {
         let calendar = Calendar.current
-        if showUnreadDot {
-            // show time
-            label.text = if includeDayOfWeek {
-                timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
-            } else {
-                timestamp.formattedDate
-            }
+        if showUnreadDot, !isFirstMessageOfTheDay {
+            label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
         } else if calendar.isDateInToday(timestamp) {
             // for same day just show "Today"
             label.text = sameDayDateFormatter.string(from: timestamp)
