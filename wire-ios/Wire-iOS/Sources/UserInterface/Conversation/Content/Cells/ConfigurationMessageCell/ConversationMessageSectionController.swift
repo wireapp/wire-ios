@@ -241,7 +241,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addImageMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !needToAddCollapsedCell() else {
+        if needToAddCollapsedCell() {
             return addCollapsedCell(showEphemeralTimer)
         }
         let conversationImageMessageCellDescription = ConversationImageMessageCellDescription(
@@ -253,7 +253,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
     
     func needToAddCollapsedCell() -> Bool {
-        return !isMessageWithCollapsedByDefault() && !isCollapsed
+        return !isMessageWithCollapsedByDefault() && isCollapsed
     }
 
     private func addCollapsedCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -268,7 +268,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !needToAddCollapsedCell() else {
+        if needToAddCollapsedCell() {
             return addCollapsedCell(showEphemeralTimer)
         }
         return ConversationTextMessageCellDescription
@@ -276,7 +276,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addLocationMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !needToAddCollapsedCell() else {
+        if needToAddCollapsedCell() {
             return addCollapsedCell(showEphemeralTimer)
         }
 
@@ -288,7 +288,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addAudioMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !needToAddCollapsedCell() else {
+        if needToAddCollapsedCell() {
             return addCollapsedCell(showEphemeralTimer)
         }
         let cellDescription = ConversationAudioMessageCellDescription(message: message)
@@ -297,7 +297,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addVideoMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !needToAddCollapsedCell() else {
+        if needToAddCollapsedCell() {
             return addCollapsedCell(showEphemeralTimer)
         }
         let cellDescription = ConversationVideoMessageCellDescription(message: message)
