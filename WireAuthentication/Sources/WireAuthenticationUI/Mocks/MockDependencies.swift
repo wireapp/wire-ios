@@ -24,9 +24,11 @@ import WireReusableUIComponents
 final class MockDependencies {
 
     private var rootViewModel: RootViewModel {
-        RootViewModel(modalDestination: .authFlow(
-            environmentType: environmentType,
-            backendConfig: backendConfig)
+        RootViewModel(
+            modalDestination: .authFlow(
+                environmentType: environmentType,
+                backendConfig: backendConfig
+            )
         )
     }
 

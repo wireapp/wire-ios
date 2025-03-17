@@ -65,7 +65,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     }
 
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        return DetermineAuthMethodViewModel(
+        DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
             environmentType: environmentType,

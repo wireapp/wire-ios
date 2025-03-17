@@ -76,9 +76,11 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor private var viewModel: RootViewModel {
-        shared { RootViewModel(modalDestination: .authFlow(
-            environmentType: environmentType,
-            backendConfig: backendConfig)
+        shared { RootViewModel(
+            modalDestination: .authFlow(
+                environmentType: environmentType,
+                backendConfig: backendConfig
+            )
         ) }
     }
 
