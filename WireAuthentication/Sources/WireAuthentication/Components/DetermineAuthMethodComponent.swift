@@ -28,6 +28,8 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
+    var environmentType: BackendEnvironmentType { get }
+    var backendConfig: BackendConfig { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }

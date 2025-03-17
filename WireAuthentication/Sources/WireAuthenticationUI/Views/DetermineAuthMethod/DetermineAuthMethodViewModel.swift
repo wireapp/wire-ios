@@ -81,17 +81,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         self.cancellable = bridge.inboundEvents.sink { event in
             switch event {
-            case let .onSwitchBackend(configURL):
+            case let .backendSwitchRequested(configURL):
                 Task {
-                    let resolvedBackendMetadata: BackendMetadata
-                    if let backendMetadata {
-                        resolvedBackendMetadata = backendMetadata
-                    } else {
-                        do {
-                            resolvedBackendMetadata = try await self.resolveBackendMetadata()
-                        } catch {
-                            return
-                        }
+                    guard let resolvedBackendMetadata = try? await self.resolveBackendMetadataIfNeeded() else {
+                        return
                     }
 
                     await self.handleAuthenticationMethod(
@@ -113,7 +106,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         let backendMetadata: BackendMetadata
         do {
-            backendMetadata = try await resolveBackendMetadata()
+            backendMetadata = try await resolveBackendMetadataIfNeeded()
         } catch {
             return
         }
@@ -150,24 +143,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func goToAppStore() {
         factory.openAppStoreUseCase().invoke()
         alert = nil
-    }
-
-    private func resolveBackendMetadata() async throws -> BackendMetadata {
-        do {
-            let useCase = factory.resolveBackendMetadataUseCase()
-            return try await Task.detached { [useCase] in
-                try await useCase.invoke()
-            }.value
-        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
-            alert = .obsoleteClient
-            throw ResolveBackendMetadataUseCaseFailure.clientVersionObsolete
-        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
-            alert = .obsoleteBackend
-            throw ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete
-        } catch {
-            alert = .general(for: error)
-            throw error
-        }
     }
 
     // MARK: - Private
@@ -264,10 +239,22 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return backendMetadata
         }
 
-        let useCase = factory.resolveBackendMetadataUseCase()
-        return try await Task.detached {
-            try await useCase.invoke()
-        }.value
+        do {
+            let useCase = factory.resolveBackendMetadataUseCase()
+            return try await Task.detached { [useCase] in
+                try await useCase.invoke()
+            }.value
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            throw ResolveBackendMetadataUseCaseFailure.clientVersionObsolete
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            throw ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete
+        } catch {
+            alert = .general(for: error)
+            throw error
+        }
     }
 
 }
+

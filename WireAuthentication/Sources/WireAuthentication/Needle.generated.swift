@@ -90,6 +90,12 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var preferredAPIVersion: APIVersion? {
         return rootComponent.preferredAPIVersion
     }
+    var environmentType: BackendEnvironmentType {
+        return rootComponent.environmentType
+    }
+    var backendConfig: BackendConfig {
+        return rootComponent.backendConfig
+    }
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
     }
@@ -245,6 +251,8 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
         keyPathToName[\DetermineAuthMethodComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
+        keyPathToName[\DetermineAuthMethodComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"
+        keyPathToName[\DetermineAuthMethodComponentDependency.backendConfig] = "backendConfig-BackendConfig"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"

@@ -56,7 +56,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 bridge.sendInboundEvent(.ssoAuthenticationSuccess(userID: userID, cookies: cookies))
             },
             handleBackendSwitch: { url in
-                bridge.sendInboundEvent(.onSwitchBackend(configURL: url))
+                bridge.sendInboundEvent(.backendSwitchRequested(configURL: url))
             }
         )
 

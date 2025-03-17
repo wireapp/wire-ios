@@ -63,7 +63,7 @@ public final class WireAuthenticationBridge {
 
         case ssoAuthenticationSuccess(userID: UUID, cookies: [HTTPCookie])
         case ssoAutheticationFailure
-        case onSwitchBackend(configURL: URL)
+        case backendSwitchRequested(configURL: URL)
 
     }
 
