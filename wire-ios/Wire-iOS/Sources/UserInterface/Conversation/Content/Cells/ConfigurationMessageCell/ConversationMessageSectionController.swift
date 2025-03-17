@@ -251,9 +251,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         conversationImageMessageCellDescription.showEphemeralTimer = showEphemeralTimer
         return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
     }
-    
+
     func needToAddCollapsedCell() -> Bool {
-        return !isMessageWithCollapsedByDefault() && isCollapsed
+        !isMessageWithCollapsedByDefault() && isCollapsed
     }
 
     private func addCollapsedCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -625,7 +625,6 @@ extension ConversationMessageSectionController: UserObserving {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 }
-
 
 extension ConversationMessageSectionController {
 
