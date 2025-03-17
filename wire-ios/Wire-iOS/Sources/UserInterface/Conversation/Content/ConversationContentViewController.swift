@@ -91,7 +91,8 @@ final class ConversationContentViewController: UIViewController {
         userSession: userSession
     )
 
-    /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has left).
+    /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has
+    /// left).
     private var refreshTimer: Timer?
 
     let messagePresenter: MessagePresenter
@@ -480,7 +481,8 @@ final class ConversationContentViewController: UIViewController {
 
     // MARK: - Update Timer
 
-    @objc private func startRefreshTimerIfNeeded() {
+    @objc
+    private func startRefreshTimerIfNeeded() {
         stopRefreshTimer()
 
         var timeInterval = TimeInterval()
@@ -489,8 +491,8 @@ final class ConversationContentViewController: UIViewController {
             for cellDescription in section.elements {
                 if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
                     timeInterval = timeInterval == .zero
-                    ? refreshInterval
-                    : min(timeInterval, refreshInterval)
+                        ? refreshInterval
+                        : min(timeInterval, refreshInterval)
                 }
             }
         }
@@ -512,7 +514,8 @@ final class ConversationContentViewController: UIViewController {
         print("stopped refresh timer")
     }
 
-    @objc private func refreshTimerFire(_ timer: Timer) {
+    @objc
+    private func refreshTimerFire(_ timer: Timer) {
         print("refresh timer fire")
 
         var indexPathsToReload = [IndexPath]()

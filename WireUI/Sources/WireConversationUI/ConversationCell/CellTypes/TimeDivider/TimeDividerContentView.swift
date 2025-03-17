@@ -70,7 +70,9 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
             .fill(.tint)
             .frame(width: 8)
             .padding(.leading, 24)
-            .padding(.trailing, model.text.isEmpty ? 18 : 6) // edge case, probably never needed
+            // if the text is empty (edge case, probably never the case) we need additional padding between the dot and
+            // the trailing divider
+            .padding(.trailing, model.text.isEmpty ? 18 : 6)
             .layoutPriority(1)
     }
 

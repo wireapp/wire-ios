@@ -22,7 +22,7 @@ public extension ConversationCellModel {
 
     var refreshInterval: TimeInterval {
         switch self {
-        case .timeDivider(let timeDividerModel):
+        case let .timeDivider(timeDividerModel):
             10
         default:
             .zero
