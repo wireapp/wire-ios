@@ -69,7 +69,7 @@ final class ConversationMessageActionController {
         MessageAction.allCases
             .filter(canPerformAction)
     }
-    
+
     private var collapseOwnMessagesEnabled: Bool {
         guard let selfUserId else { return false }
         return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
