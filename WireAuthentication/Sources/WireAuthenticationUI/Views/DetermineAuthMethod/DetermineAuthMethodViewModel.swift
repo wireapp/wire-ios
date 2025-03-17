@@ -37,7 +37,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
-        case switchBackend(email: String, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
+        case switchBackend(email: String?, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
     }
 
     private let router: any Router
@@ -95,7 +95,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     }
 
                     await self.handleAuthenticationMethod(
-                        .onPremLogin(email: "", backendConfig: configURL),
+                        .onPremLogin(email: nil, backendConfig: configURL),
                         backendMetadata: resolvedBackendMetadata
                     )
                 }
