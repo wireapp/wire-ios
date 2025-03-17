@@ -39,13 +39,6 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    @MainActor var view: DetermineAuthMethodView {
-        DetermineAuthMethodView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
-
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: dependency.router,
@@ -54,6 +47,13 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             backendConfig: dependency.backendConfig,
             backendMetadata: nil,
             bridge: dependency.bridge
+        )
+    }
+
+    @MainActor var view: DetermineAuthMethodView {
+        DetermineAuthMethodView(
+            viewModel: viewModel,
+            factory: self
         )
     }
 
