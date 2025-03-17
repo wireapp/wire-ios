@@ -149,19 +149,6 @@ class RootComponent: BootstrapComponent {
         )
     }
 
-    func switchBackendConfirmationComponent(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationComponent {
-        SwitchBackendConfirmationComponent(
-            parent: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        )
-    }
-
 }
 
 extension RootComponent: RootView.Factory {
@@ -212,18 +199,6 @@ extension RootComponent: RootView.Factory {
         loginViaSSOComponent(
             ssoURL: ssoURL,
             backendEnvironment: backendEnvironment
-        ).view
-    }
-
-    func switchBackendView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationView {
-        switchBackendConfirmationComponent(
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
         ).view
     }
 

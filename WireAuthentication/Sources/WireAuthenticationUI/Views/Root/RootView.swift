@@ -25,8 +25,7 @@ package struct RootView: View {
         DetermineAuthMethodBuilder &
         LoginViaEmailOnPremBuilder &
         LoginViaSSOBuilder &
-        NoHistoryViewBuilder &
-        SwitchBackendConfirmationBuilder
+        NoHistoryViewBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -87,12 +86,6 @@ package struct RootView: View {
                         ssoURL: ssoURL,
                         backendEnvironment: backendEnvironment
                     )
-                case let .switchBackend(backendConfig, environmentType):
-                    factory.switchBackendView(
-                        email: nil,
-                        environmentType: environmentType,
-                        backendConfig: backendConfig
-                    )
                 }
             }
     }
@@ -123,7 +116,6 @@ package struct RootView: View {
             url: URL,
             backendEnvironment: WireAuthenticationBackendEnvironment
         )
-        case switchBackend(backendConfig: BackendConfig, environmentType: BackendEnvironmentType)
     }
 
 }
