@@ -16,31 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import WireUtilities
+import XCTest
 
-/// The collection view adjusts it's `intrinsicContentSize` to match the layout's content size, so that no scrolling is
-/// needed.
-final class MessageReactionsCollectionView: UICollectionView {
+extension XCUIApplication {
 
-    override var contentSize: CGSize {
-        didSet { invalidateIntrinsicContentSize() }
+    func useWireAuthentication(_ enabled: Bool = true) {
+        developerFlag(DeveloperFlag.useWireAuthentication, enabled: enabled)
     }
 
-    override var intrinsicContentSize: CGSize {
-        collectionViewLayout.collectionViewContentSize
+    func developerFlag(_ developerFlag: DeveloperFlag, enabled: Bool) {
+        launchArguments.append("--developer-flag=\(developerFlag.rawValue):\(enabled ? "true" : "false")")
     }
-
-    init() {
-        super.init(
-            frame: .zero,
-            collectionViewLayout: MessageReactionsCollectionViewFlowLayout()
-        )
-        clipsToBounds = false
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
 }

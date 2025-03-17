@@ -18,16 +18,18 @@
 
 import Foundation
 
-package struct SSOFailureHandler {
+public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
 
-    private let router: any Router
+    case production
+    case staging
+    case qaDemo
+    case qaDemo2
+    case anta
+    case bella
+    case chala
+    case diya
+    case elna
+    case foma
+    case custom(url: URL)
 
-    package init(router: Router) {
-        self.router = router
-    }
-
-    @MainActor
-    package func handleFailure() {
-        router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
-    }
 }

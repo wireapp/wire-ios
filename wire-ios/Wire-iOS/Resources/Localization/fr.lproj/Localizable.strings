@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " et ";
 
 "conversation.action.search" = "Chercher";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
@@ -1648,21 +1649,10 @@
 "error.user.account_suspended" = "Ce compte n'est plus autorisé à se connecter.";
 "error.user.account_limit_reached" = "Vous ne pouvez pas ajouter plus de 3 comptes.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Nous n’avons pas pu mettre à jour votre mot de passe.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Trop de participants pour un appel";
 "error.group_call.too_many_members_in_conversation" = "Les appels fonctionnent dans des conversations avec %d participants ou moins.";
 "error.group_call.too_many_participants_in_the_call.title" = "L'appel est complet";
 "error.group_call.too_many_participants_in_the_call" = "Il n'y a de la place que pour %d participants ici.";
-"error.call.gsm_ongoing.title" = "Appel mobile";
-"error.call.gsm_ongoing" = "Veuillez annuler l’appel mobile avant d’appeler sur Wire.";
-"error.call.general.title" = "Erreur d’appel";
-"error.call.general" = "Veuillez renouveler votre appel dans quelques minutes.";
-"error.call.slow_connection.title" = "Connexion lente";
-"error.call.slow_connection" = "Vous pourriez avoir des problèmes pendant l'appel";
-"error.call.slow_connection.call_anyway" = "Appeler quand même";
 
 "error.invite.no_email_provider" = "Veuillez configurer votre client de messagerie pour pouvoir envoyer les invitations par e-mail";
 "error.invite.no_messaging_provider" = "Veuillez configurer vos SMS pour pouvoir envoyer les invitations par SMS";

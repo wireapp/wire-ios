@@ -18,16 +18,17 @@
 
 import Foundation
 
-final class BackendEndpoints: NSObject, BackendEndpointsProvider, Codable {
-    let backendURL: URL
-    let backendWSURL: URL
-    let blackListURL: URL
-    let teamsURL: URL
-    let accountsURL: URL
-    let websiteURL: URL
-    let countlyURL: URL?
+public final class BackendEndpoints: NSObject, BackendEndpointsProvider, Codable {
 
-    init(
+    public let backendURL: URL
+    public let backendWSURL: URL
+    public let blackListURL: URL
+    public let teamsURL: URL
+    public let accountsURL: URL
+    public let websiteURL: URL
+    public let countlyURL: URL?
+
+    public init(
         backendURL: URL,
         backendWSURL: URL,
         blackListURL: URL,

@@ -123,22 +123,39 @@ package struct DetermineAuthMethodView: View {
                 )
             }
         }
-        .sheet(item: $viewModel.modalDestination, content: {
-            switch $0 {
-            case let .ssoLogin(url: ssoURL):
-                factory.loginViaSSOView(ssoURL: ssoURL)
-            case let .switchBackend(email: email, backendConfig: backendConfig):
-                if #available(iOS 16.4, *) {
-                    factory.switchBackendView(email: email, backendConfig: backendConfig)
-                        .presentationBackground(Color.black.opacity(0.7))
-                } else {
-                    factory.switchBackendView(email: email, backendConfig: backendConfig)
-                        .background(
-                            TransparentBackgroundView()
-                        )
+        .sheet(
+            item: $viewModel.modalDestination,
+            content: {
+                switch $0 {
+                case let .ssoLogin(
+                    ssoURL,
+                    backendEnvironment
+                ):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
+                case let .switchBackend(
+                    email,
+                    environmentType,
+                    backendConfig
+                ):
+                    if #available(iOS 16.4, *) {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).presentationBackground(Color.black.opacity(0.7))
+                    } else {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).background(TransparentBackgroundView())
+                    }
                 }
             }
-        })
+        )
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -158,8 +175,8 @@ extension Alert {
     private typealias Title = L10n.Authentication.Error.Title
     private typealias Message = L10n.Authentication.Error.Message
 
-    static let invalidSSOLink = Alert(title: Title.invalidSsoLink, message: Message.invalidSsoLink)
-    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Title.incorrectSsoCode)
+    static let invalidSSOLink = Alert(title: Title.ssoLoginFailed, message: Message.ssoLoginFailed)
+    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Message.incorrectSsoCode)
 
 }
 
