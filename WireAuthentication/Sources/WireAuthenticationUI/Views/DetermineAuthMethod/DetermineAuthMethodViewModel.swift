@@ -81,7 +81,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         self.cancellable = bridge.inboundEvents.sink { event in
             switch event {
-            case .onSwitchBackend(configURL: let configURL):
+            case let .onSwitchBackend(configURL):
                 Task {
                     let resolvedBackendMetadata: BackendMetadata
                     if let backendMetadata {

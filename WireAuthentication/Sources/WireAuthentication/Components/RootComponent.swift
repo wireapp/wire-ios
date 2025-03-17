@@ -99,7 +99,7 @@ class RootComponent: BootstrapComponent {
     func determineAuthMethodComponent(
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+        backendMetadata: BackendMetadata?
     ) -> DetermineAuthMethodComponent {
         DetermineAuthMethodComponent(
             parent: self,
@@ -125,7 +125,7 @@ class RootComponent: BootstrapComponent {
         email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+        backendMetadata: BackendMetadata?
     ) -> LoginViaEmailOnPremComponent {
         LoginViaEmailOnPremComponent(
             parent: self,
@@ -223,14 +223,6 @@ extension RootComponent: RootView.Factory {
             environmentType: environmentType,
             backendConfig: backendConfig
         ).view
-    }
-
-}
-
-extension RootComponent: SwitchBackendHandler.Factory {
-
-    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
-        FetchBackendConfigUseCase()
     }
 
 }

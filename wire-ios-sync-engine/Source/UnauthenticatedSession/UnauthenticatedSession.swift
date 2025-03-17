@@ -115,12 +115,12 @@ public class UnauthenticatedSession: NSObject {
     }
 
     public func appendURLActionProcessors(
-        handleCompanyLoginSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
+        handleSSOLoginSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
         handleBackendSwitch: @escaping (URL) -> Void
     ) {
         urlActionProcessors.append(
             AuthenticationModuleURLActionProcessor(
-                handleCompanyLoginSuccess: handleCompanyLoginSuccess,
+                handleSSOLoginSuccess: handleSSOLoginSuccess,
                 handleBackendSwitch: handleBackendSwitch
             )
         )

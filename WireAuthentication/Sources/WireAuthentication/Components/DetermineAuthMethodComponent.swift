@@ -41,13 +41,13 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
-    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    private let backendMetadata: BackendMetadata?
 
     init(
         parent: any Scope,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+        backendMetadata: BackendMetadata?
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig

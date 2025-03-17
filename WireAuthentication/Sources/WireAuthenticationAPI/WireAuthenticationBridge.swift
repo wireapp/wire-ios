@@ -67,10 +67,4 @@ public final class WireAuthenticationBridge {
 
     }
 
-//    /// Handles the backend switch
-//
-//    public func switchBackend(configURL: URL) {
-//        onSwitchBackend?(configURL)
-//    }
-
 }
