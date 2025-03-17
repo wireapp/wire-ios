@@ -131,13 +131,13 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
                 typeIcon.image = .init(resource: .image)
                 messageTextView.text = L10n.Localizable.Content.Collapsed.Image.title
             } else if message.isVideo {
-                typeIcon.image = .init(resource: .image)
+                typeIcon.image = .init(resource: .play)
                 messageTextView.text = L10n.Localizable.Content.Collapsed.Video.title
             } else if message.isAudio {
-                typeIcon.image = .init(resource: .image)
+                typeIcon.image = .init(resource: .micOn)
                 messageTextView.text = L10n.Localizable.Content.Collapsed.Audio.title
             } else if message.isLocation {
-                typeIcon.image = .init(resource: .image)
+                typeIcon.image = .init(resource: .location)
                 messageTextView.text = L10n.Localizable.Content.Collapsed.Location.title
             } else if message.isFile {
                 typeIcon.image = .init(resource: .file)
