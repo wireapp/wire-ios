@@ -39,7 +39,13 @@ public final class AccountManager: NSObject {
 
     private let defaults = UserDefaults.shared()
     public private(set) var accounts = [Account]()
-    public private(set) var selectedAccount: Account? // The currently selected account or `nil` in case there is none
+    public private(set) var selectedAccount: Account? { // The currently selected account or `nil` in case there is none
+        didSet {
+            if let selectedAccount {
+                WireLogger.system.setActiveAccount(accoundID: selectedAccount.userIdentifier.safeForLoggingDescription)
+            }
+        }
+    }
 
     private var store: AccountStore
 
@@ -93,7 +99,6 @@ public final class AccountManager: NSObject {
         precondition(accounts.contains(account), "Selecting an account without first adding it is not allowed")
         guard account != selectedAccount else { return }
         defaults?.selectedAccountIdentifier = account.userIdentifier
-        WireLogger.system.setActiveAccount(accoundID: account.userIdentifier.safeForLoggingDescription)
         updateAccounts()
     }
 
