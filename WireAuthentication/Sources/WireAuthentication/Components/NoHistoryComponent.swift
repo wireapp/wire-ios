@@ -52,7 +52,7 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
             howToChangeEmailURL: dependency.howToChangeEmailURL,
             howToDeleteAccountURL: dependency.howToDeleteAccountURL,
             onFlowCompletion: { [dependency, authenticationResult] in
-                dependency?.bridge.onFlowCompletion(authenticationResult)
+                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
             }
         )
     }

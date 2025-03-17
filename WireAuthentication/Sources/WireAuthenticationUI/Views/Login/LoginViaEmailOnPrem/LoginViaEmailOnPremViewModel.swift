@@ -26,6 +26,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     package typealias Factory =
         LoginViaEmailUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory
 
     private let router: any Router
@@ -37,6 +38,8 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     let email: String?
     let canCreateAccount: Bool
+
+    @Published var alert: Alert?
 
     // MARK: - Life cycle
 
@@ -91,9 +94,15 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         let backendMetadata: WireAuthenticationAPI.BackendMetadata
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            return
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            return
         } catch {
-            // TODO: [WPB-16415] handle unresolved api version
-            fatalError()
+            alert = .general(for: error)
+            return
         }
 
         let (cookies, accessToken): ([HTTPCookie], AccessToken)
@@ -136,6 +145,11 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     func recoverPassword() {
         UIApplication.shared.open(forgotPasswordURL)
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     func createAccount() {

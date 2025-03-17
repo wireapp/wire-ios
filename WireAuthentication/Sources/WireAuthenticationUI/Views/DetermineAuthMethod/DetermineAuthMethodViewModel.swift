@@ -28,6 +28,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package typealias Factory =
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory &
         SSOLinkGeneratorFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
@@ -43,8 +44,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let factory: any Factory
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     private let environmentType: BackendEnvironmentType
-    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    private let backendMetadata: BackendMetadata?
     package let backendConfig: BackendConfig
+    private var cancellable: AnyCancellable?
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -64,9 +66,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         factory: any Factory,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?,
+        backendMetadata: BackendMetadata?,
         emailOrSSOCode: String = "",
-        isLoading: Bool = false
+        isLoading: Bool = false,
+        bridge: WireAuthenticationBridge
     ) {
         self.router = router
         self.factory = factory
@@ -75,6 +78,31 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
         self.isLoading = isLoading
+
+        self.cancellable = bridge.inboundEvents.sink { event in
+            switch event {
+            case .onSwitchBackend(configURL: let configURL):
+                Task {
+                    let resolvedBackendMetadata: BackendMetadata
+                    if let backendMetadata {
+                        resolvedBackendMetadata = backendMetadata
+                    } else {
+                        do {
+                            resolvedBackendMetadata = try await self.resolveBackendMetadata()
+                        } catch {
+                            return
+                        }
+                    }
+
+                    await self.handleAuthenticationMethod(
+                        .onPremLogin(email: "", backendConfig: configURL),
+                        backendMetadata: resolvedBackendMetadata
+                    )
+                }
+            default:
+                break
+            }
+        }
     }
 
     func submitEmailOrSSOCode() async {
@@ -85,10 +113,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         let backendMetadata: BackendMetadata
         do {
-            backendMetadata = try await resolveBackendMetadataIfNeeded()
+            backendMetadata = try await resolveBackendMetadata()
         } catch {
-            // TODO: [WPB-16415] report via bridge that API version can't be resolved.
-            fatalError()
+            return
         }
 
         do {
@@ -118,6 +145,29 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func onAlertDismiss() {
         ssoLinkGenerator?.flushToken()
         modalDestination = nil
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
+    }
+
+    private func resolveBackendMetadata() async throws -> BackendMetadata {
+        do {
+            let useCase = factory.resolveBackendMetadataUseCase()
+            return try await Task.detached { [useCase] in
+                try await useCase.invoke()
+            }.value
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            throw ResolveBackendMetadataUseCaseFailure.clientVersionObsolete
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            throw ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete
+        } catch {
+            alert = .general(for: error)
+            throw error
+        }
     }
 
     // MARK: - Private

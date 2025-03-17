@@ -44,6 +44,9 @@ private class LoginViaEmailOnPremComponentDependencyf7e724456bf0a882da0aProvider
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
     }
+    var appStoreURL: URL {
+        return rootComponent.appStoreURL
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -102,6 +105,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var userDefaults: UserDefaults {
         return rootComponent.userDefaults
     }
+    var appStoreURL: URL {
+        return rootComponent.appStoreURL
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -129,6 +135,9 @@ private class SwitchBackendConfirmationComponentDependency7a1956d88810c08ef169Pr
     }
     var userDefaults: UserDefaults {
         return rootComponent.userDefaults
+    }
+    var appStoreURL: URL {
+        return rootComponent.appStoreURL
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -230,6 +239,7 @@ extension LoginViaEmailOnPremComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailOnPremComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
+        keyPathToName[\LoginViaEmailOnPremComponentDependency.appStoreURL] = "appStoreURL-URL"
     }
 }
 extension VerificationCodeComponent: NeedleFoundation.Registration {
@@ -250,6 +260,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
+        keyPathToName[\DetermineAuthMethodComponentDependency.appStoreURL] = "appStoreURL-URL"
         localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
@@ -261,6 +272,7 @@ extension SwitchBackendConfirmationComponent: NeedleFoundation.Registration {
         keyPathToName[\SwitchBackendConfirmationComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.userDefaults] = "userDefaults-UserDefaults"
+        keyPathToName[\SwitchBackendConfirmationComponentDependency.appStoreURL] = "appStoreURL-URL"
         localTable["backendConfig-BackendConfig"] = { [unowned self] in self.backendConfig as Any }
     }
 }
@@ -284,7 +296,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["userDefaults-UserDefaults"] = { [unowned self] in self.userDefaults as Any }
-        localTable["onRegisterAccount-() -> Void"] = { [unowned self] in self.onRegisterAccount as Any }
+        localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
@@ -334,7 +346,6 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->SwitchBackendConfirmationComponent", factorye1144df20d596f07c3beb3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaSSOComponent", factory075263b25e612b6948d3a9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d342f5655bf2362a8495f6)
-    registerProviderFactory("^->RootComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d3a9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->LoginViaSSOComponent", factory075263b25e612b6948d3b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->NoHistoryComponent", factory3bfed346df783964230ab3a8f24c1d289f2c0f2e)

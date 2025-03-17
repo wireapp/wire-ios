@@ -50,29 +50,12 @@ class LoginViaSSOComponent: Component<LoginViaSSODependency> {
     }
 
     @MainActor private var viewModel: LoginViaSSOViewModel {
-        let router = dependency.router
-        dependency.bridge.onSSOSuccess = { [router, backendEnvironment] userID, cookies in
-            let authenticationResult = AuthenticationResult(
-                userID: userID,
-                cookies: cookies,
-                accessToken: nil,
-                emailCredentials: nil,
-                backendEnvironment: backendEnvironment
-            )
-
-            router.presentSheet(
-                RootView.ModalDestination.noHistory(
-                    authenticationResult: authenticationResult,
-                    didDetectDomainConflict: false
-                )
-            )
-        }
-
-        dependency.bridge.onSSOFailure = { [router] in
-            router.presentAlert(Alert.ssoLoginFailed)
-        }
-
-        return LoginViaSSOViewModel(ssoURL: ssoURL)
+        LoginViaSSOViewModel(
+            ssoURL: ssoURL,
+            bridge: dependency.bridge,
+            router: dependency.router,
+            backendEnvironment: backendEnvironment
+        )
     }
 
 }

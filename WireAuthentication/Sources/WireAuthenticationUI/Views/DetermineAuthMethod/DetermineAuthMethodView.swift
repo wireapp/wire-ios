@@ -109,11 +109,12 @@ package struct DetermineAuthMethodView: View {
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
-            actions: { _ in
-                Button {
-                    viewModel.onAlertDismiss()
-                } label: {
-                    Text(L10n.Authentication.Error.confirm)
+            actions: { alert in
+                switch alert {
+                case .obsoleteClient:
+                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                default:
+                    Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
                 }
             }
         )

@@ -127,6 +127,11 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
         MockFetchBackendConfigUseCase()
     }
 
+    nonisolated
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        MockOpenAppStoreUseCase()
+    }
+
 }
 
 extension MockDependencies: LoginViaEmailUseCaseProtocol {
@@ -373,7 +378,12 @@ extension MockDependencies: LoginViaEmailUseCaseFactory {
 extension MockDependencies: LoginViaSSOBuilder {
 
     private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoURL: ssoURL)
+        LoginViaSSOViewModel(
+            ssoURL: ssoURL,
+            bridge: WireAuthenticationBridge(),
+            router: rootViewModel,
+            backendEnvironment: backendEnvironment
+        )
     }
 
     func loginViaSSOView(

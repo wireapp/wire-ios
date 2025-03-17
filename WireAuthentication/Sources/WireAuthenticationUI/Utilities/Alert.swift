@@ -66,6 +66,16 @@ public extension Alert {
         message: Message.accountSuspended
     )
 
+    static let obsoleteClient = Alert(
+        title: L10n.ObsoleteClient.Alert.title,
+        message: L10n.ObsoleteClient.Alert.message
+    )
+
+    static let obsoleteBackend = Alert(
+        title: L10n.ObsoleteBackend.Alert.title,
+        message: L10n.ObsoleteBackend.Alert.message
+    )
+
     static let unknownError = Alert(
         title: Title.general,
         message: Message.general

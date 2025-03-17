@@ -33,6 +33,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     package typealias Factory =
         FetchSSOURLUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory
 
     // MARK: - State
@@ -137,6 +138,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
             do {
                 // Before we can make requests we need to resolve the api version.
                 let backendMetadata = try await resolveBackendMetadata()
+
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
                     let backendEnvironment = WireAuthenticationBackendEnvironment(
                         environmentType: environmentType,
@@ -167,13 +169,16 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                     }
                     WireLogger.authentication.info("No default SSO URL")
                 }
-
+            } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+                WireLogger.authentication.error("detected obsolete client")
+                alert = .obsoleteClient
+            } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+                WireLogger.authentication.error("detected obsolete backend")
+                alert = .obsoleteBackend
             } catch {
                 WireLogger.authentication.error("Fetching default SSO URL failed: \(error)")
-
                 alert = .general(for: error)
             }
-
         }
     }
 
@@ -189,6 +194,11 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         return try await Task.detached {
             try await useCase.invoke()
         }.value
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     // MARK: - Model

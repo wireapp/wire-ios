@@ -33,6 +33,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
+    var appStoreURL: URL { get }
 
 }
 
@@ -175,6 +176,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
         FetchBackendConfigUseCase()
+    }
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
 }

@@ -37,8 +37,7 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
-    public let onRegisterAccount: () -> Void
-    let onFlowCompletion: (AuthenticationResult) -> Void
+    public let appStoreURL: URL
 
     init(
         environmentType: BackendEnvironmentType,
@@ -51,8 +50,7 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
-        onRegisterAccount: @escaping () -> Void,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+        appStoreURL: URL
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig
@@ -65,8 +63,7 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
-        self.onRegisterAccount = onRegisterAccount
-        self.onFlowCompletion = onFlowCompletion
+        self.appStoreURL = appStoreURL
     }
 
     // MARK: - View
@@ -87,10 +84,7 @@ class RootComponent: BootstrapComponent {
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
-            WireAuthenticationBridge(
-                onFlowCompletion: onFlowCompletion,
-                onRegisterAccount: onRegisterAccount
-            )
+            WireAuthenticationBridge()
         }
     }
 
