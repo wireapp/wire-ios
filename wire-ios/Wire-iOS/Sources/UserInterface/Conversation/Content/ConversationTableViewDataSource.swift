@@ -534,8 +534,9 @@ extension ConversationTableViewDataSource {
         firstUnreadMessage: ZMConversationMessage?,
         searchQueries: [String]
     ) -> ConversationMessageContext {
-        // 45 minutes
-        let significantTimeInterval: TimeInterval = 60 * 45
+
+        // disabling the significant-passed-time threshold, but the leaving the code intact in case the behavior should change again
+        let significantTimeInterval: TimeInterval = .infinity
         let isTimeIntervalSinceLastMessageSignificant: Bool
 
         let isTimestampInSameMinuteAsPreviousMessage: Bool
