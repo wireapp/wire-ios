@@ -16,8 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct MessageReaction: Equatable {
-    var emojiID: Emoji.ID
-    var count: UInt
-    var isSelfUserReacting: Bool
+import Foundation
+
+/// Email credentials for a user.
+
+public struct EmailCredentials: Equatable, Hashable {
+
+    /// The user's email address.
+
+    public let email: String
+
+    /// The plaintext password.
+
+    public let password: String
+
+    /// A second factor authentication code.
+
+    public let verificationCode: String?
+
+    public init(
+        email: String,
+        password: String,
+        verificationCode: String?
+    ) {
+        self.email = email
+        self.password = password
+        self.verificationCode = verificationCode
+    }
+
 }

@@ -25,6 +25,7 @@ public struct SwitchBackendConfirmationPreview: View {
         VStack {
             MockDependencies().switchBackendView(
                 email: "email.com",
+                environmentType: MockDependencies().environmentType,
                 backendConfig: MockDependencies()._backendConfig
             )
         }
