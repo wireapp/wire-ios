@@ -41,7 +41,7 @@ package final class RootViewModel: ObservableObject, Router {
     }
 
     package func presentSheet(_ modalDestination: RootView.ModalDestination) {
-        self.modalDestination = modalDestination// as? RootView.ModalDestination
+        self.modalDestination = modalDestination
     }
 
     public func presentAlert(_ alert: Alert) {
