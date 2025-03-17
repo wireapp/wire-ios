@@ -257,4 +257,3 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
 }
-

@@ -20,7 +20,7 @@ import Foundation
 
 /// Identifies an alert and provides it's title and message.
 
-public struct Alert: Hashable, Identifiable, Sendable {
+package struct Alert: Hashable, Identifiable, Sendable {
 
     public var id: Self { self }
 
@@ -31,7 +31,7 @@ public struct Alert: Hashable, Identifiable, Sendable {
 
 // MARK: - Common alerts
 
-public extension Alert {
+extension Alert {
 
     private typealias Title = L10n.Authentication.Error.Title
     private typealias Message = L10n.Authentication.Error.Message
