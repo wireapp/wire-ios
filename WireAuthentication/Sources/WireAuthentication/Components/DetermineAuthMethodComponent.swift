@@ -93,9 +93,15 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     // MARK: - Children
 
-    func loginViaEmailComponent(backendMetadata: WireAuthenticationAPI.BackendMetadata) -> LoginViaEmailComponent {
+    func loginViaEmailComponent(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata
+    ) -> LoginViaEmailComponent {
         LoginViaEmailComponent(
             parent: self,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
             backendMetadata: backendMetadata
         )
     }
@@ -180,9 +186,15 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         email: String,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
-        loginViaEmailComponent(backendMetadata: backendMetadata).view(
+        loginViaEmailComponent(
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        ).view(
             email: email,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict

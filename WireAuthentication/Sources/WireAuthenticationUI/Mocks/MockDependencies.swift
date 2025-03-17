@@ -273,6 +273,8 @@ extension MockDependencies: LoginViaEmailBuilder {
         email: String,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
         LoginViaEmailView(

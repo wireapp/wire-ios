@@ -28,6 +28,8 @@ package protocol LoginViaEmailBuilder {
         email: String,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView
 
@@ -186,18 +188,18 @@ package struct LoginViaEmailView: View {
 
 }
 
-#Preview() {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            MockDependencies().loginViaEmailView(
-                email: "foo@bar.com",
-                canCreateAccount: false,
-                didDetectDomainConflict: false,
-                backendMetadata: BackendMetadata(
-                    apiVersion: .v8,
-                    domain: "wire.com",
-                    isFederationEnabled: true
-                )
-            )
-        }
-}
+//#Preview() {
+//    BackgroundView()
+//        .sheet(isPresented: .constant(true)) {
+//            MockDependencies().loginViaEmailView(
+//                email: "foo@bar.com",
+//                canCreateAccount: false,
+//                didDetectDomainConflict: false,
+//                backendMetadata: BackendMetadata(
+//                    apiVersion: .v8,
+//                    domain: "wire.com",
+//                    isFederationEnabled: true
+//                )
+//            )
+//        }
+//}

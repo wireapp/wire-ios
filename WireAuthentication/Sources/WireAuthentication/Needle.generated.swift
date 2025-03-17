@@ -205,6 +205,9 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var backendConfig: BackendConfig {
         return rootComponent.backendConfig
     }
+    var minTLSVersion: TLSVersion {
+        return rootComponent.minTLSVersion
+    }
     var bridge: WireAuthenticationBridge {
         return rootComponent.bridge
     }
@@ -301,8 +304,8 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-NetworkService"
         keyPathToName[\LoginViaEmailComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"
         keyPathToName[\LoginViaEmailComponentDependency.backendConfig] = "backendConfig-BackendConfig"
+        keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
-        localTable["backendMetadata-WireAuthenticationAPI.BackendMetadata"] = { [unowned self] in self.backendMetadata as Any }
         localTable["authenticationAPI-any AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"] = { [unowned self] in self.loginViaEmailUseCase as Any }
         localTable["backendEnvironment-WireAuthenticationBackendEnvironment"] = { [unowned self] in self.backendEnvironment as Any }
