@@ -26,71 +26,70 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
     private(set) var model: TimeDividerModel
 
     var body: some View {
-        if model.isUnreadIndicatorVisible {
-            withUnreadIndicator
-        } else {
-            withoutUnreadIndicator
-        }
-    }
-
-    @ViewBuilder private var withUnreadIndicator: some View {
         HStack(spacing: 0) {
 
-            Circle()
-                .fill(.tint)
-                .frame(width: 8)
-                .padding(.leading, 24)
-                .padding(.trailing, 18)
-                .layoutPriority(1)
+            if model.isUnreadIndicatorVisible {
+                unreadDot
+            } else {
+                leadingDivider
+            }
 
             if !model.text.isEmpty {
-                Text(model.text)
-                    .multilineTextAlignment(.center)
-                    .font(.footnote)
-                    .fontWeight(.semibold)
-                    .padding(.trailing, 12)
-                    .layoutPriority(1)
+                text
             }
 
-            VStack {
-                Divider()
-                    .frame(minHeight: 1)
-                    .overlay { dividerColor }
-            }
-            .padding(.trailing, 24)
+            trailingDivider
 
         }
         .padding(.vertical, 8)
     }
 
     @ViewBuilder private var withoutUnreadIndicator: some View {
-        HStack(spacing: 0) {
 
-            VStack {
-                Divider()
-                    .frame(minHeight: 1)
-                    .overlay { dividerColor }
-            }
-            .padding(.leading, 24)
+        leadingDivider
 
-            if !model.text.isEmpty {
-                Text(model.text)
-                    .multilineTextAlignment(.center)
-                    .font(.footnote)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 12)
-                    .layoutPriority(1)
-            }
-
-            VStack {
-                Divider()
-                    .frame(minHeight: 1)
-                    .overlay { dividerColor }
-            }
-            .padding(.trailing, 24)
-
+        if !model.text.isEmpty {
+            text
         }
-        .padding(.vertical, 8)
+
+        trailingDivider
+
+    }
+
+    @ViewBuilder private var text: some View {
+        Text(model.text)
+            .multilineTextAlignment(.center)
+            .font(.footnote)
+            .fontWeight(.semibold)
+            .padding(.horizontal, 12)
+            .layoutPriority(1)
+    }
+
+    @ViewBuilder private var unreadDot: some View {
+        Circle()
+            .fill(.tint)
+            .frame(width: 8)
+            .padding(.leading, 24)
+            .padding(.trailing, model.text.isEmpty ? 18 : 6) // edge case, probably never needed
+            .layoutPriority(1)
+    }
+
+    @ViewBuilder private var leadingDivider: some View {
+        VStack {
+            Divider()
+                .frame(minHeight: 1)
+                .overlay { dividerColor }
+        }
+        .padding(.leading, 24)
+    }
+
+    @ViewBuilder private var trailingDivider: some View {
+        VStack {
+            Divider()
+                .frame(minHeight: 1)
+                .overlay { dividerColor }
+        }
+        .padding(.trailing, 24)
     }
 
 }
