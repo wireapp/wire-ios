@@ -166,7 +166,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let message = MockMessageFactory.fileTransferMessage()
 
         // WHEN
-        let (actionController, sut) = makeSut(
+        var (actionController, _) = makeSut(
             message: message,
             sender: selfUser,
             isCollapsed: false,
@@ -174,8 +174,17 @@ final class MessageActionsViewControllerTests: XCTestCase {
         )
         message.senderUser = selfUser
 
+        actionController.isCollapsed?.toggle()
+        actionController.isCollapsed?.toggle()
+
         XCTAssertEqual(actionController.isCollapsed, false)
         XCTAssertEqual(actionController.selfUserId, selfUser.remoteIdentifier)
+
+        let sut = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
+
         // expand message
 
         // THEN

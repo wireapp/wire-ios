@@ -28,6 +28,7 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     var preferredAPIVersion: APIVersion? { get }
+    var productionVersions: Set<APIVersion> { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
@@ -37,14 +38,17 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationComponentDependency> {
 
     private let email: String
+    private let environmentType: BackendEnvironmentType
     public let backendConfig: BackendConfig
 
     init(
         parent: any Scope,
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
         self.email = email
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         super.init(parent: parent)
     }
@@ -52,7 +56,7 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
     // MARK: - View
 
     @MainActor var view: SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(viewModel: viewModel)
+        SwitchBackendConfirmationView(viewModel: viewModel, factory: self)
     }
 
     @MainActor private var viewModel: SwitchBackendConfirmationViewModel {
@@ -60,7 +64,21 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
             router: dependency.router,
             factory: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
+        )
+    }
+
+    // MARK: - Children
+
+    func loginViaSSOComponent(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOComponent {
+        LoginViaSSOComponent(
+            parent: self,
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
         )
     }
 
@@ -89,7 +107,7 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
         let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
         return ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
+            clientProductionVersions: dependency.productionVersions,
             preferredAPIVersion: dependency.preferredAPIVersion
         )
     }
@@ -110,6 +128,20 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
             authenticationAPI: authenticationAPI,
             linkGenerator: linkGenerator
         )
+    }
+
+}
+
+extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationView.Factory {
+
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOView {
+        loginViaSSOComponent(
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        ).view
     }
 
 }

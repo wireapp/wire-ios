@@ -16,12 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-typealias MessageReactionsDiffableDataSource = UICollectionViewDiffableDataSource<MessageReactionsSectionID, Emoji.ID>
-
-enum MessageReactionsSectionID: Hashable {
-    case single
+// Generated file - DO NOT EDIT
+enum LoginCredentials {
+    static let email: String = "test@example.com"
+    static let password: String = "password123"
 }
-
-typealias MessageReactionsDiffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<MessageReactionsSectionID, Emoji.ID>

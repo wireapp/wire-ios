@@ -168,7 +168,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)

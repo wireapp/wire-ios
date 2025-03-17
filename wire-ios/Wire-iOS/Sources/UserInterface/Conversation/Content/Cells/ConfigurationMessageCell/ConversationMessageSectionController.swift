@@ -108,6 +108,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
 
+    /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
 
     deinit {
@@ -142,6 +143,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
     }
 
+    private var collapseOwnMessagesEnabled: Bool {
+        guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
+        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
+    }
+
     private func isCollapsedInitialValue() -> Bool {
 
         // cases when isCollapsed should be true by default
@@ -150,23 +156,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // then if in settings user allowed to collapse own messages
-        guard let selfUserId = userSession.selfUser.remoteIdentifier,
-              PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages),
-              message.isSentBySelfUser else {
+        guard collapseOwnMessagesEnabled, message.isSentBySelfUser else {
             return false
         }
 
         if message.isText {
-            guard let textMessageData = message.textMessageData else {
+            guard let textMessage = message.textMessageData?.messageText else {
                 return false
             }
 
             let margins = UIView().conversationHorizontalMargins
 
-            return willTextExceedOneLine(
-                text: textMessageData.messageText ?? "",
-                textViewWidth: contentWidth - margins.right - margins.left
-            )
+            return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth - margins.right - margins.left)
         } else {
             let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
                 .isLocation || message.isImage
@@ -240,7 +241,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addImageMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !isCollapsed else {
+        guard !needToAddCollapsedCell() else {
             return addCollapsedCell(showEphemeralTimer)
         }
         let conversationImageMessageCellDescription = ConversationImageMessageCellDescription(
@@ -249,6 +250,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         )
         conversationImageMessageCellDescription.showEphemeralTimer = showEphemeralTimer
         return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
+    }
+    
+    func needToAddCollapsedCell() -> Bool {
+        return !isMessageWithCollapsedByDefault() && !isCollapsed
     }
 
     private func addCollapsedCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -263,7 +268,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !isCollapsed else {
+        guard !needToAddCollapsedCell() else {
             return addCollapsedCell(showEphemeralTimer)
         }
         return ConversationTextMessageCellDescription
@@ -271,7 +276,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addLocationMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !isCollapsed else {
+        guard !needToAddCollapsedCell() else {
             return addCollapsedCell(showEphemeralTimer)
         }
 
@@ -283,7 +288,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addAudioMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !isCollapsed else {
+        guard !needToAddCollapsedCell() else {
             return addCollapsedCell(showEphemeralTimer)
         }
         let cellDescription = ConversationAudioMessageCellDescription(message: message)
@@ -292,7 +297,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addVideoMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !isCollapsed else {
+        guard !needToAddCollapsedCell() else {
             return addCollapsedCell(showEphemeralTimer)
         }
         let cellDescription = ConversationVideoMessageCellDescription(message: message)
@@ -301,7 +306,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addFileMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        guard !isCollapsed else {
+        guard !needToAddCollapsedCell() else {
             return addCollapsedCell(showEphemeralTimer)
         }
 
@@ -621,21 +626,25 @@ extension ConversationMessageSectionController: UserObserving {
     }
 }
 
-func willTextExceedOneLine(text: String, textViewWidth: CGFloat) -> Bool {
-    let availableWidth = textViewWidth
 
-    let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
+extension ConversationMessageSectionController {
 
-    let font = UIFont.normalLightFont
-    let attributes: [NSAttributedString.Key: Any] = [.font: font]
-    let boundingBox = text.boundingRect(
-        with: textSize,
-        options: .usesLineFragmentOrigin,
-        attributes: attributes,
-        context: nil
-    )
+    func willTextExceedOneLine(text: String, availableWidth: CGFloat) -> Bool {
 
-    let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
+        let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
 
-    return boundingBox.height > singleLineHeight
+        let font = UIFont.normalLightFont
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        let boundingBox = text.boundingRect(
+            with: textSize,
+            options: .usesLineFragmentOrigin,
+            attributes: attributes,
+            context: nil
+        )
+
+        let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
+
+        return boundingBox.height > singleLineHeight
+    }
+
 }

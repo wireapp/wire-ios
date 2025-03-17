@@ -52,6 +52,7 @@
 "switch_backend_confirmation.teams_url" = "Teams URL:";
 "switch_backend_confirmation.accounts_url" = "Accounts URL:";
 "switch_backend_confirmation.website_url" = "Website URL:";
+"switch_backend_confirmation.countly_url" = "Countly URL:";
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "取消";
 "switch_backend_confirmation.show_details" = "Show details";
@@ -65,27 +66,27 @@
 "authentication.no_history.message" = "基於隱私，將不會顯示您的聊天紀錄。";
 "authentication.no_history.confirm" = "確認";
 
-"authentication.error.title.no_internet" = "No internet";
-"authentication.error.title.general" = "錯誤";
-"authentication.error.title.invalid_sso_link" = "錯誤";
-"authentication.error.title.sso_login_failed" = "出了點問題";
+"authentication.error.title.no_internet" = "No internet connection";
+"authentication.error.title.general" = "出了點問題";
+"authentication.error.title.sso_login_failed" = "Login with SSO failed";
 "authentication.error.title.invalid_credentials" = "Invalid Information";
 "authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
 "authentication.error.title.account_pending_activation" = "Pending activation";
 "authentication.error.title.account_suspended" = "Unauthorized";
+"authentication.error.title.incorrect_sso_code" = "Invalid SSO code";
 
-"authentication.error.message.no_internet" = "You are not connected to the internet.";
-"authentication.error.message.general" = "出了點問題";
-"authentication.error.message.invalid_sso_link" = "Invalid company login url.";
+"authentication.error.message.no_internet" = "您的網路連線似乎有問題，請稍候再試。";
+"authentication.error.message.general" = "Please retry later.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
 "authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
 "authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
-"authentication.error.message.account_pending_activation" = "The account you are trying to access is pending activation. Please verify your details.";
+"authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "此帳戶不再被授權登錄";
+"authentication.error.message.incorrect_sso_code" = "請核對您的公司單一登錄(SSO)存取碼，然後重試。";
 
 "authentication.error.confirm" = "確認";
 
-"authentication.error.title.email_already_in_use" = "Email already in use";
-"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
+"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
 "authentication.error.how_to_change_email" = "How to change email address";
 "authentication.error.how_to_delete_account" = "How to delete a private account";

@@ -25,6 +25,7 @@ package protocol SwitchBackendConfirmationBuilder {
     @MainActor
     func switchBackendView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView
 
@@ -34,16 +35,21 @@ package struct SwitchBackendConfirmationView: View {
 
     // MARK: - Properties
 
+    package typealias Factory = LoginViaSSOBuilder
+
     @Environment(\.dismiss) var dismiss
     @State private var showFullDetails: Bool = false
     @StateObject var viewModel: SwitchBackendConfirmationViewModel
 
     private typealias Strings = L10n.SwitchBackendConfirmation
+    private let factory: any Factory
 
     package init(
-        viewModel: SwitchBackendConfirmationViewModel
+        viewModel: SwitchBackendConfirmationViewModel,
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.factory = factory
     }
 
     package var body: some View {
@@ -62,6 +68,15 @@ package struct SwitchBackendConfirmationView: View {
         )
         .frame(width: 350)
         .fixedSize(horizontal: false, vertical: true)
+        .sheet(item: $viewModel.modalDestination, content: {
+            switch $0 {
+            case let .ssoLogin(ssoURL, backendEnvironment):
+                factory.loginViaSSOView(
+                    ssoURL: ssoURL,
+                    backendEnvironment: backendEnvironment
+                )
+            }
+        })
     }
 
     private var title: some View {
@@ -200,10 +215,12 @@ package func makeSwitchBackendConfirmationViewPreview(
     blackListURL: URL,
     teamsURL: URL,
     accountsURL: URL,
-    websiteURL: URL
+    websiteURL: URL,
+    countlyURL: URL?
 ) -> some View {
     MockDependencies().switchBackendView(
         email: "email.com",
+        environmentType: .anta,
         backendConfig: BackendConfig(
             title: backendName,
             endpoints: Endpoints(
@@ -212,7 +229,8 @@ package func makeSwitchBackendConfirmationViewPreview(
                 blackListURL: blackListURL,
                 teamsURL: teamsURL,
                 accountsURL: accountsURL,
-                websiteURL: websiteURL
+                websiteURL: websiteURL,
+                countlyURL: countlyURL
             ),
             proxySettings: nil,
             pinnedKeys: nil

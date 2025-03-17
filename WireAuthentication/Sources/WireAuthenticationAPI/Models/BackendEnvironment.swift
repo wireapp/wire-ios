@@ -18,24 +18,33 @@
 
 import Foundation
 
-package struct SSOSuccessHandler {
+public struct WireAuthenticationBackendEnvironment: Sendable, Equatable, Hashable {
 
-    private let router: any Router
+    /// The name of the backend.
 
-    package init(router: Router) {
-        self.router = router
-    }
+    public let title: String
 
-    @MainActor
-    package func handleSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        router.presentSheet(
-            RootView.ModalDestination.noHistory(
-                userID: userID,
-                cookies: cookies,
-                accessToken: nil,
-                didDetectDomainConflict: false
-            )
-        )
+    /// An identifier for the type of backend.
+
+    public let environmentType: BackendEnvironmentType
+
+    /// The data needed to connect to the backend.
+
+    public let config: BackendConfig
+
+    /// Information about the connected backend.
+
+    public let metadata: BackendMetadata
+
+    public init(
+        environmentType: BackendEnvironmentType,
+        config: BackendConfig,
+        metadata: BackendMetadata
+    ) {
+        self.title = config.title
+        self.environmentType = environmentType
+        self.config = config
+        self.metadata = metadata
     }
 
 }
