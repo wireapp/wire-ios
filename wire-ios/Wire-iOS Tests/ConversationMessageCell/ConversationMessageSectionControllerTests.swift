@@ -69,7 +69,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: MockMessage(),
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
         section.cellDescriptionsForTesting.removeAll()
 
@@ -91,7 +92,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: MockMessage(),
             context: context,
             userSession: userSession,
-            useInvertedIndices: true
+            useInvertedIndices: true,
+            contentWidth: 0
         )
         section.cellDescriptionsForTesting.removeAll()
 
@@ -117,7 +119,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         // Then
@@ -147,7 +150,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         // THEN
@@ -173,7 +177,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         // Then
@@ -202,7 +207,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         let cellDescriptions = section.cellDescriptionsForTesting
@@ -229,7 +235,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         let actionController = ConversationMessageActionController(
@@ -338,7 +345,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         trackForMemoryLeaks(section)
