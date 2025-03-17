@@ -173,13 +173,13 @@ final class MessageActionsViewControllerTests: XCTestCase {
             selfUserId: selfUser.remoteIdentifier
         )
         message.senderUser = selfUser
-        
+
         actionController.isCollapsed?.toggle()
         actionController.isCollapsed?.toggle()
-        
+
         XCTAssertEqual(actionController.isCollapsed, false)
         XCTAssertEqual(actionController.selfUserId, selfUser.remoteIdentifier)
-        
+
         let sut = MessageActionsViewController.controller(
             withActions: MessageAction.allCases,
             actionController: actionController

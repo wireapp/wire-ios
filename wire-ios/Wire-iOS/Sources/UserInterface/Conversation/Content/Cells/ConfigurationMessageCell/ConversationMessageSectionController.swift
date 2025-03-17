@@ -142,7 +142,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             startObservingChanges(for: quotedMessage)
         }
     }
-    
+
     private var collapseOwnMessagesEnabled: Bool {
         guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
         return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
@@ -167,7 +167,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
             let margins = UIView().conversationHorizontalMargins
 
-            return textMessage.willExceedOneLine(availableWidth: contentWidth - margins.right - margins.left)
+            return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth - margins.right - margins.left)
         } else {
             let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
                 .isLocation || message.isImage
@@ -250,7 +250,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        if isCollapsed {
+        if isCollapsed, !isMessageWithCollapsedByDefault() {
             [AnyConversationMessageCellDescription(ConversationCollapsedFileMessageCellDescription(
                 message: message
             ) { [weak self] in
@@ -610,24 +610,24 @@ extension ConversationMessageSectionController: UserObserving {
     }
 }
 
-extension String {
-    
-    func willExceedOneLine(availableWidth: CGFloat) -> Bool {
-                
+extension ConversationMessageSectionController {
+
+    func willTextExceedOneLine(text: String, availableWidth: CGFloat) -> Bool {
+
         let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
-        
+
         let font = UIFont.normalLightFont
         let attributes: [NSAttributedString.Key: Any] = [.font: font]
-        let boundingBox = self.boundingRect(
+        let boundingBox = text.boundingRect(
             with: textSize,
             options: .usesLineFragmentOrigin,
             attributes: attributes,
             context: nil
         )
-        
+
         let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
-        
+
         return boundingBox.height > singleLineHeight
     }
-    
+
 }
