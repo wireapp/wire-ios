@@ -421,7 +421,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             model: UIDevice.current.zm_model(),
             label: UIDevice.current.name
         )
-        
+
         managedObjectContext.saveOrRollback()
     }
 

@@ -26,7 +26,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
     private var tags = [LogAttributesKey: String]()
-    
+
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
@@ -95,15 +95,14 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         var entry =
             "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
-        if tags.count > 0 {
-            let extraInfo = tags.map { (key, value) in "[\(key.rawValue):\(value)]" }.joined()
+        if !tags.isEmpty {
+            let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
             entry = entry + extraInfo
         }
-        
+
         if let tag = mergedAttributes[.tag] as? String {
             entry = "[\(tag)] - \(entry)"
         }
-        
 
         let formatedMessage = DDLogMessage(DDLogMessageFormat(stringLiteral: entry), level: level, flag: .from(level))
         DDLog.log(asynchronous: true, message: formatedMessage)

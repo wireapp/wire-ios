@@ -90,9 +90,9 @@ public class SystemLogger: LoggerProtocol {
         }
 
         var finalMessage = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
-        
-        if tags.count > 0 {
-            let extraInfo = tags.map { (key, value) in "[\(key.rawValue):\(value)]" }.joined()
+
+        if !tags.isEmpty {
+            let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
             finalMessage = finalMessage + extraInfo
         }
 

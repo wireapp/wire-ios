@@ -37,9 +37,9 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case processId = "process_id"
     case processName = "process_name"
     case coreCryptoContext = "core_crypto_context"
-    case accountID = "accound_id"
+    case accountID = "account_id"
     case mlsGroupID = "mls_group_id"
-    
+
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
