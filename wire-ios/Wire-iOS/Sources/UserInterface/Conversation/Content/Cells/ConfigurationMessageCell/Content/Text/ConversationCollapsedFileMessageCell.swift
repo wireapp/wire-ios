@@ -76,7 +76,6 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         return view
     }()
 
-
     private lazy var typeIcon: UIImageView = {
         let view = UIImageView(image: .init(resource: .file))
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -114,7 +113,7 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         avatar.user = user
-        
+
         let message = object.message
         if message.isText {
             typeIcon.isHidden = true
@@ -122,7 +121,8 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
                 messageTextView.attributedText = NSAttributedString
                     .format(
                         message: textMessageData,
-                        isObfuscated: message.isObfuscated)
+                        isObfuscated: message.isObfuscated
+                    )
             }
         } else {
             messageTextView.font = UIFont.italicSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize)
@@ -153,12 +153,12 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
     }
 
     private func configureSubviews() {
-        
+
         let margins = conversationHorizontalMargins
-        
+
         addSubview(wholeViewTapButton)
         wholeViewTapButton.pin(to: self)
-        
+
         let stack = UIStackView.horizontal(
             views: [
                 avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),

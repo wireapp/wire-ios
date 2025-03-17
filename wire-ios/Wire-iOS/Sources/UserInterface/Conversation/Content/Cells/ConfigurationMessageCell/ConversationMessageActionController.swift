@@ -38,6 +38,7 @@ final class ConversationMessageActionController {
             isCollapsedWasUpdated = true
         }
     }
+
     private var isCollapsedWasUpdated: Bool = false
 
     /// used to get collapse own messages settings for a specific user
@@ -69,7 +70,7 @@ final class ConversationMessageActionController {
         MessageAction.allCases
             .filter(canPerformAction)
     }
-    
+
     private var collapseOwnMessagesEnabled: Bool {
         guard let selfUserId else { return false }
         return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)

@@ -107,7 +107,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var changeObservers: [Any] = []
 
     private let userSession: UserSession
-    
+
     var contentWidth: CGFloat
 
     deinit {
@@ -155,7 +155,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
               message.isSentBySelfUser else {
             return false
         }
-        
+
         if message.isText {
             guard let textMessageData = message.textMessageData else {
                 return false
@@ -163,10 +163,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
             let margins = UIView().conversationHorizontalMargins
 
-            let shouldCollapse = willTextExceedOneLine(
+            return willTextExceedOneLine(
                 text: textMessageData.messageText ?? "",
-                textViewWidth: contentWidth - margins.right - margins.left)
-            return shouldCollapse
+                textViewWidth: contentWidth - margins.right - margins.left
+            )
         } else {
             let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
                 .isLocation || message.isImage
@@ -250,7 +250,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         conversationImageMessageCellDescription.showEphemeralTimer = showEphemeralTimer
         return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
     }
-    
+
     private func addCollapsedCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
         let cellDescriptions = ConversationCollapsedFileMessageCellDescription(
             message: message,
@@ -267,7 +267,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return addCollapsedCell(showEphemeralTimer)
         }
         return ConversationTextMessageCellDescription
-                .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
+            .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
     }
 
     private func addLocationMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -304,7 +304,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         guard !isCollapsed else {
             return addCollapsedCell(showEphemeralTimer)
         }
-        
+
         let cellDescriptions = ConversationFileMessageCellDescription(message: message)
         cellDescriptions.showEphemeralTimer = showEphemeralTimer
         return [AnyConversationMessageCellDescription(cellDescriptions)]
@@ -623,15 +623,17 @@ extension ConversationMessageSectionController: UserObserving {
 
 func willTextExceedOneLine(text: String, textViewWidth: CGFloat) -> Bool {
     let availableWidth = textViewWidth
-    
+
     let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
-    
+
     let font = UIFont.normalLightFont
     let attributes: [NSAttributedString.Key: Any] = [.font: font]
-    let boundingBox = text.boundingRect(with: textSize,
-                                        options: .usesLineFragmentOrigin,
-                                        attributes: attributes,
-                                        context: nil)
+    let boundingBox = text.boundingRect(
+        with: textSize,
+        options: .usesLineFragmentOrigin,
+        attributes: attributes,
+        context: nil
+    )
 
     let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
 
