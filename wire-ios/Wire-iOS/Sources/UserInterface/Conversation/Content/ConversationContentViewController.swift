@@ -480,15 +480,17 @@ final class ConversationContentViewController: UIViewController {
 
     // MARK: - Update Timer
 
-    private func startRefreshTimerIfNeeded() {
+    @objc private func startRefreshTimerIfNeeded() {
         stopRefreshTimer()
 
         var timeInterval = TimeInterval()
         for indexPath in tableView.indexPathsForVisibleRows ?? [] {
             let section = dataSource.currentSections[indexPath.section]
             for cellDescription in section.elements {
-                if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval {
-                    timeInterval = min(timeInterval, refreshInterval)
+                if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
+                    timeInterval = timeInterval == .zero
+                    ? refreshInterval
+                    : min(timeInterval, refreshInterval)
                 }
             }
         }
@@ -517,7 +519,7 @@ final class ConversationContentViewController: UIViewController {
         for indexPath in tableView.indexPathsForVisibleRows ?? [] {
             let section = dataSource.currentSections[indexPath.section]
             for cellDescription in section.elements {
-                if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval {
+                if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
                     indexPathsToReload += [indexPath]
                 }
             }
@@ -630,20 +632,16 @@ extension ConversationContentViewController: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [reactAction])
     }
 
-    // TODO: delay the call to `startRefreshTimerIfNeeded` by one second
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        print("scrollViewDidEndDragging")
         startRefreshTimerIfNeeded()
     }
 
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         // use for example when tapping the arrow to scroll to the bottom
-        print("scrollViewDidEndScrollingAnimation")
         startRefreshTimerIfNeeded()
     }
 
     func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
-        print("scrollViewDidScrollToTop")
         startRefreshTimerIfNeeded()
     }
 }

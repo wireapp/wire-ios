@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-TODO: leave comments on the PR
-
 import UIKit
 import WireConversationUI
 import WireDataModel
