@@ -59,7 +59,10 @@ package final class LoginViaSSOViewModel: ObservableObject {
                     )
                 )
             case .ssoAutheticationFailure:
-                router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
+                router.presentAlert(Alert.ssoLoginFailed)
+
+            default:
+                break
             }
         }
     }

@@ -88,7 +88,8 @@ final class MockDependencies {
             backendConfig: backendConfig,
             backendMetadata: nil,
             emailOrSSOCode: emailOrSSOCode,
-            isLoading: isLoading
+            isLoading: isLoading,
+            bridge: WireAuthenticationBridge()
         )
         viewModel.alert = alert
 
@@ -162,7 +163,8 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             factory: self,
             environmentType: environmentType,
             backendConfig: backendConfig,
-            backendMetadata: nil
+            backendMetadata: nil,
+            bridge: WireAuthenticationBridge()
         )
     }
 

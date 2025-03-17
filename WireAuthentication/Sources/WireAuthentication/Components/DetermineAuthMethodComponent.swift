@@ -65,21 +65,13 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     }
 
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        let router = dependency.router
-        let switchBackendHandler = SwitchBackendHandler(router: router, factory: self)
-
-        dependency.bridge.onSwitchBackend = { [switchBackendHandler] backendConfigURL in
-            Task {
-                await switchBackendHandler.invoke(backendConfigURL)
-            }
-        }
-
         return DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
             environmentType: environmentType,
             backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendMetadata: backendMetadata,
+            bridge: dependency.bridge
         )
     }
 
