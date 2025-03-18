@@ -232,9 +232,6 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var router: any Router {
         return rootComponent.router
     }
-    var accountsURL: URL {
-        return rootComponent.accountsURL
-    }
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
     }
@@ -267,9 +264,6 @@ private func factory9bda312c16141c932061c770221f242f9204cf85(_ component: Needle
 private class LoginViaEmailComponentDependency02acc83f1ad8d17e18e1Provider: LoginViaEmailComponentDependency {
     var router: any Router {
         return rootComponent.router
-    }
-    var accountsURL: URL {
-        return rootComponent.accountsURL
     }
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
@@ -360,7 +354,6 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["preferredAPIVersion-APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
         localTable["productionVersions-Set<APIVersion>"] = { [unowned self] in self.productionVersions as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
-        localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
@@ -395,7 +388,6 @@ extension DetermineAuthMethodOnPremComponent: NeedleFoundation.Registration {
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
-        keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-NetworkService"
         keyPathToName[\LoginViaEmailComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"

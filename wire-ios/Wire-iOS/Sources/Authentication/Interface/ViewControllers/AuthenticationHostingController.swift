@@ -29,6 +29,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
     AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
+    private let bridge: WireAuthenticationBridge
     private var cancellable: AnyCancellable?
 
     init(
@@ -37,6 +38,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         authenticationCoordinator: AuthenticationCoordinator?
     ) {
         self.authenticationCoordinator = authenticationCoordinator
+        self.bridge = bridge
         super.init(rootView: rootView)
 
         self.cancellable = bridge.outboundEvents.sink { event in
@@ -46,9 +48,14 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                     ofType: .wireAuthenticationModuleComplete(authenticationResult)
                 )
 
-            case .accountRegistrationRequested:
-                // TODO: [WPB-16279] Navigate to the account registration flow
-                break
+            case let .accountRegistrationRequested(
+                email,
+                backendEnvironment
+            ):
+                authenticationCoordinator?.wireAuthenticationDidRequestAccountRegistration(
+                    email: email,
+                    backendEnvironment: backendEnvironment
+                )
 
             case .exitFlowRequested:
                 guard
@@ -89,6 +96,10 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
     func displayError(_ error: any Error) {
         // no op
+    }
+
+    func didRewindToThisView() {
+        bridge.sendInboundEvent(.didRewindToThisView)
     }
 
 }

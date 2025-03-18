@@ -28,7 +28,19 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var modalDestination: RootView.ModalDestination? = .authFlow
     @Published var alert: Alert?
 
-    package init() {}
+    private var cancellable: AnyCancellable?
+    private var lastModalDestination: RootView.ModalDestination?
+
+    package init(bridge: WireAuthenticationBridge) {
+        self.cancellable = bridge.inboundEvents.sink { [weak self] event in
+            switch event {
+            case .didRewindToThisView:
+                self?.restoreSheet()
+            default:
+                break
+            }
+        }
+    }
 
     package func popToRoot() {
         path.removeLast(path.count)
@@ -44,6 +56,18 @@ package final class RootViewModel: ObservableObject, Router {
 
     public func presentAlert(_ alert: Alert) {
         self.alert = alert
+    }
+
+    public func dismissSheet() {
+        lastModalDestination = modalDestination
+        modalDestination = nil
+    }
+
+    private func restoreSheet() {
+        if let lastModalDestination, modalDestination == nil {
+            modalDestination = lastModalDestination
+            self.lastModalDestination = nil
+        }
     }
 
 }

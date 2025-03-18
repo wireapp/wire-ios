@@ -26,6 +26,7 @@ internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
 public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
+public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.WireAuthenticationBackendEnvironment
 public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
 public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
 public typealias Endpoints = WireAuthenticationAPI.Endpoints
@@ -59,7 +60,6 @@ public struct WireAuthenticationAssembly {
             backendConfig: backendConfig,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
-            accountsURL: accountsURL,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
             passwordValidator: passwordValidator,
