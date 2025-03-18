@@ -148,11 +148,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         self.trailingDateLabelConstraint = trailingDateLabelConstraint
 
         let authorLabelNoTopPaddingConstraint = authorLabel.topAnchor.constraint(equalTo: topAnchor)
-        authorLabelNoTopPaddingConstraint.isActive = false // only for deleted messages
+        authorLabelNoTopPaddingConstraint.isActive = true // only for not deleted messages
         self.authorLabelNoTopPaddingConstraint = authorLabelNoTopPaddingConstraint
 
         let authorLabelCenterVerticalConstraint = authorLabel.centerYAnchor.constraint(greaterThanOrEqualTo: centerYAnchor)
-        authorLabelCenterVerticalConstraint.isActive = true // only for not deleted messages
+        authorLabelCenterVerticalConstraint.isActive = false // only for deleted messages
         self.authorLabelCenterVerticalConstraint = authorLabelCenterVerticalConstraint
 
         NSLayoutConstraint.activate([
@@ -190,8 +190,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         switch object.indicator {
 
         case .deleted:
-            authorLabelNoTopPaddingConstraint?.isActive = true
-            authorLabelCenterVerticalConstraint?.isActive = false
+            authorLabelNoTopPaddingConstraint?.isActive = false
+            authorLabelCenterVerticalConstraint?.isActive = true
             if let attachment = attachment(from: .trash, size: 8) {
                 attributedString.append(attachment)
             }
@@ -203,8 +203,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             fallthrough
 
         default:
-            authorLabelNoTopPaddingConstraint?.isActive = false
-            authorLabelCenterVerticalConstraint?.isActive = true
+            authorLabelNoTopPaddingConstraint?.isActive = true
+            authorLabelCenterVerticalConstraint?.isActive = false
         }
 
         switch object.teamRoleIndicator {
