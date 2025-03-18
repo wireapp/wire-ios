@@ -97,7 +97,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
 
         if !tags.isEmpty {
             let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
-            entry = entry + extraInfo
+            entry += extraInfo
         }
 
         if let tag = mergedAttributes[.tag] as? String {

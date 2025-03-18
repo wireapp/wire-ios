@@ -93,7 +93,7 @@ public class SystemLogger: LoggerProtocol {
 
         if !tags.isEmpty {
             let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
-            finalMessage = finalMessage + extraInfo
+            finalMessage += extraInfo
         }
 
         if mergedAttributes[.public] as? Bool == true {
