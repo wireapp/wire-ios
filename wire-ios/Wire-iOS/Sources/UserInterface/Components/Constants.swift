@@ -24,12 +24,6 @@ enum Constants {
     static var teamAccountViewImageInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
 }
 
-extension CGFloat {
-    enum ConversationButtonMessageCell {
-        static let verticalInset: CGFloat = 8
-    }
-}
-
 extension StyleKitIcon.Size {
     enum CreatePasscode {
         static let iconSize: StyleKitIcon.Size = .custom(11)

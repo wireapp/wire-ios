@@ -34,7 +34,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 0
 
     let containsHighlightableContent: Bool = false
 

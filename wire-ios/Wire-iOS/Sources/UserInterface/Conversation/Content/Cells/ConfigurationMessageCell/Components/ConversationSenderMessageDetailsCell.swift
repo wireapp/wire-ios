@@ -147,12 +147,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         )
         self.trailingDateLabelConstraint = trailingDateLabelConstraint
 
-        let avatarTopAnchorConstraint = avatar.topAnchor.constraint(equalTo: topAnchor, constant: 8)
+        let avatarTopAnchorConstraint = avatar.topAnchor.constraint(equalTo: topAnchor)
         avatarTopAnchorConstraint.priority = .defaultLow
-        let avatarBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 8)
+        let avatarBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
         avatarBottomAnchorConstraint.priority = .defaultLow
 
-        let authorLabelNoTopPaddingConstraint = authorLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8)
+        let authorLabelNoTopPaddingConstraint = authorLabel.topAnchor.constraint(equalTo: topAnchor)
         authorLabelNoTopPaddingConstraint.isActive = true // only for not deleted messages
         self.authorLabelNoTopPaddingConstraint = authorLabelNoTopPaddingConstraint
 
@@ -167,18 +167,18 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             dateLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
             trailingDateLabelConstraint,
 
-            authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
+            authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             authorLabelNoTopPaddingConstraint,
             authorLabelCenterVerticalConstraint,
-            bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor, constant: 8),
+            bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
 
             avatarTopAnchorConstraint,
             avatarBottomAnchorConstraint,
-            avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
-            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor, constant: 8),
+            avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
         ])
     }
@@ -310,7 +310,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 16
 
     let containsHighlightableContent: Bool = false
 

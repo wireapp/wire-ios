@@ -48,12 +48,6 @@ final class ConversationMessageCellTableViewAdapter<
         }
     }
 
-    var topMargin: CGFloat = 0 {
-        didSet {
-            top.constant = CGFloat(topMargin)
-        }
-    }
-
     private var leading: NSLayoutConstraint!
     private var top: NSLayoutConstraint!
     private var trailing: NSLayoutConstraint!
@@ -82,8 +76,8 @@ final class ConversationMessageCellTableViewAdapter<
 
         self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8)
+        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8)
         bottom.priority = UILayoutPriority(999)
         self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(
             equalTo: cellView.topAnchor,
@@ -123,12 +117,11 @@ final class ConversationMessageCellTableViewAdapter<
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with object: C.View.Configuration, topMargin: CGFloat) {
+    func configure(with object: C.View.Configuration) {
         cellView.configure(with: object, animated: false)
         cellView.accessibilityLabel = cellDescription?.accessibilityLabel
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
-        self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
     }
@@ -291,10 +284,7 @@ extension UITableView {
         ) as Any as! ConversationMessageCellTableViewAdapter<C>
 
         cell.cellDescription = description
-        cell.configure(
-            with: description.configuration,
-            topMargin: description.topMargin
-        )
+        cell.configure(with: description.configuration)
 
         return cell
     }
