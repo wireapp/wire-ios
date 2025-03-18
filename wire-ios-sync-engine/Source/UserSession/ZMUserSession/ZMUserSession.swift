@@ -1085,7 +1085,10 @@ extension ZMUserSession: SyncAgentDelegate {
                 }
 
                 if !isRecovering, mlsFeature.isEnabled {
-                    await mlsService.commitPendingProposalsIfNeeded()
+                    Task.detached { [mlsService] in
+                        // we don't need to wait for this, as it can take a while to finish
+                        await mlsService.commitPendingProposalsIfNeeded()
+                    }
                 }
 
                 await calculateSelfSupportedProtocolsIfNeeded()
