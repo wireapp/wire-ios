@@ -98,7 +98,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var selected: Bool
 
     /// Whether this section is collapsed
-    private var isCollapsed: Bool
+    private(set) var isCollapsed: Bool = false {
+        didSet {
+            actionController?.isCollapsed = isCollapsed
+        }
+    }
 
     private var changeObservers: [Any] = []
 
@@ -118,11 +122,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.message = message
         self.context = context
         self.selected = selected
-        self.isCollapsed = true
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
 
         super.init()
+
+        self.isCollapsed = isCollapsedInitialValue()
 
         createCellDescriptions(in: context)
 
@@ -131,6 +136,23 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if let quotedMessage = message.textMessageData?.quoteMessage {
             startObservingChanges(for: quotedMessage)
         }
+    }
+
+    private func isCollapsedInitialValue() -> Bool {
+
+        // cases when isCollapsed should be true by default
+        if isMessageWithCollapsedByDefault() {
+            return true
+        }
+
+        // then if in settings user allowed to collapse own messages
+        guard let selfUserId = userSession.selfUser.remoteIdentifier,
+              PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages) else {
+            return false
+        }
+        let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
+            .isLocation || message.isImage
+        return message.isSentBySelfUser && messageSupportsCollapsing
     }
 
     // MARK: - Content Types
@@ -179,6 +201,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         cellDelegate?.conversationMessageShouldUpdate()
     }
 
+    private func handleCollapseExpand() {
+        isCollapsed = !isCollapsed
+        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+    }
+
+    func collapse() {
+        handleCollapseExpand()
+    }
+
     // MARK: - Content Cells
 
     private func addPingMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -224,9 +255,20 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addFileMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        let cellDescriptions = ConversationFileMessageCellDescription(message: message)
-        cellDescriptions.showEphemeralTimer = showEphemeralTimer
-        return [AnyConversationMessageCellDescription(cellDescriptions)]
+        if isCollapsed {
+            let cellDescriptions = ConversationCollapsedFileMessageCellDescription(
+                message: message,
+                collapseExpandAction: { [weak self] in
+                    self?.handleCollapseExpand()
+                }
+            )
+            cellDescriptions.showEphemeralTimer = showEphemeralTimer
+            return [AnyConversationMessageCellDescription(cellDescriptions)]
+        } else {
+            let cellDescriptions = ConversationFileMessageCellDescription(message: message)
+            cellDescriptions.showEphemeralTimer = showEphemeralTimer
+            return [AnyConversationMessageCellDescription(cellDescriptions)]
+        }
     }
 
     private func addSystemMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -406,11 +448,23 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
+        if !isMessageWithCollapsedByDefault() && isCollapsed {
+            return false
+        }
+
         return message.deliveryState == .failedToSend || message.isSentBySelfUser
+    }
+
+    private func isMessageWithCollapsedByDefault() -> Bool {
+        message.isSystem || !message.failedToSendUsers.isEmpty
     }
 
     func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
         guard message.senderUser != nil else {
+            return false
+        }
+
+        if !isMessageWithCollapsedByDefault() && isCollapsed {
             return false
         }
 

@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireFoundation
 
 final class ConversationMessageActionController {
 
@@ -29,6 +30,15 @@ final class ConversationMessageActionController {
 
     let message: ZMConversationMessage
     let context: Context
+
+    /// whether message collapsed or normal | expanded
+    /// nil if not applicable
+    var isCollapsed: Bool?
+
+    /// used to get collapse own messages settings for a specific user
+    /// nil if not applicable
+    var selfUserId: UUID?
+
     weak var responder: MessageActionResponder?
     weak var view: UIView!
 
@@ -36,12 +46,16 @@ final class ConversationMessageActionController {
         responder: MessageActionResponder?,
         message: ZMConversationMessage,
         context: Context,
-        view: UIView
+        view: UIView,
+        isCollapsed: Bool? = nil,
+        selfUserId: UUID? = nil
     ) {
         self.responder = responder
         self.message = message
         self.context = context
         self.view = view
+        self.isCollapsed = isCollapsed
+        self.selfUserId = selfUserId
     }
 
     // MARK: - List of Actions
@@ -49,6 +63,11 @@ final class ConversationMessageActionController {
     private var allPerformableMessageAction: [MessageAction] {
         MessageAction.allCases
             .filter(canPerformAction)
+    }
+
+    private var collapseOwnMessagesEnabled: Bool {
+        guard let selfUserId else { return false }
+        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
     }
 
     func allMessageMenuElements() -> [UIAction] {
@@ -88,38 +107,49 @@ final class ConversationMessageActionController {
     func canPerformAction(action: MessageAction) -> Bool {
         switch action {
         case .copy:
-            message.canBeCopied
+            return message.canBeCopied
         case .digitallySign:
-            message.canBeDigitallySigned
+            return message.canBeDigitallySigned
         case .reply:
-            message.canBeQuoted
+            return message.canBeQuoted
         case .openDetails:
-            message.areMessageDetailsAvailable
+            return message.areMessageDetailsAvailable
         case .edit:
-            message.canBeEdited
+            return message.canBeEdited
         case .delete:
-            message.canBeDeleted
+            return message.canBeDeleted
         case .save:
-            message.canBeSaved
+            return message.canBeSaved
         case .cancel:
-            message.canCancelDownload
+            return message.canCancelDownload
         case .download:
-            message.canBeDownloaded
+            return message.canBeDownloaded
         case .resend:
-            message.canBeResent
+            return message.canBeResent
         case .showInConversation:
-            context == .collection
+            return context == .collection
         case .sketchDraw,
              .sketchEmoji:
-            message.isImage
+            return message.isImage
         case .react:
-            message.canAddReaction
+            return message.canAddReaction
         case .visitLink:
-            message.canVisitLink
+            return message.canVisitLink
+        case .collapse:
+            guard let isCollapsed,
+                  collapseOwnMessagesEnabled,
+                  !isCollapsed else {
+                return false
+            }
+
+            let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
+                .isLocation || message.isImage
+
+            return message.isSentBySelfUser && messageSupportsCollapsing
         case .present,
              .openQuote,
              .resetSession:
-            false
+            return false
         }
     }
 
@@ -265,5 +295,10 @@ final class ConversationMessageActionController {
     @objc
     func visitLink() {
         perform(action: .visitLink)
+    }
+
+    @objc
+    func collapse() {
+        perform(action: .collapse)
     }
 }
