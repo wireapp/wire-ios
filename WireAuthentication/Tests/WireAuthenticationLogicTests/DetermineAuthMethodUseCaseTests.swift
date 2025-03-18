@@ -98,7 +98,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         let testCases: [(config: DomainRegistrationConfiguration, expected: AuthenticationMethod)] = [
             (config: .make(domainRedirect: .none), expected: .loginOrRegisterViaEmail(email: email)),
             (
-                config: .make(domainRedirect: .none, isCloudAccountAlreadyRegistered: true),
+                config: .make(domainRedirect: .noRegistration, isCloudAccountAlreadyRegistered: true),
                 expected: .loginViaEmail(email: email, didDetectDomainConflict: true)
             ),
             (config: .make(domainRedirect: .locked), expected: .loginOrRegisterViaEmail(email: email)),
