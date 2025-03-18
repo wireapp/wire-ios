@@ -89,7 +89,7 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
     private func setupStackView() {
         stackView.axis = .vertical
         addSubview(stackView)
-        stackView.fitIn(view: self)
+        stackView.fitIn(view: self, insets: UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0))
     }
 
     override func systemLayoutSizeFitting(
