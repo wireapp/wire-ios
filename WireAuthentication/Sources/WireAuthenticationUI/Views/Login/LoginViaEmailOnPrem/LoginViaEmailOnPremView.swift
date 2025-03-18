@@ -135,7 +135,12 @@ package struct LoginViaEmailOnPremView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: .constant(viewModel.email)
         )
+<<<<<<< HEAD
         .disabled(!viewModel.email.isEmpty)
+=======
+        .autocorrectionDisabled()
+        .disabled(viewModel.isValidEmail)
+>>>>>>> 402ef00560 (fix: disable autocorrect on WireAuthentication input fields - WPB-16585 (#2695))
     }
 
     @ViewBuilder private var passwordField: some View {
