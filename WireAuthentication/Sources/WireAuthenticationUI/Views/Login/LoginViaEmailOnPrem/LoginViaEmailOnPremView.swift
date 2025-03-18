@@ -119,6 +119,7 @@ package struct LoginViaEmailOnPremView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: .constant(viewModel.email ?? "")
         )
+        .autocorrectionDisabled()
         .disabled(viewModel.isValidEmail)
     }
 

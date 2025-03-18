@@ -86,6 +86,7 @@ package struct DetermineAuthMethodView: View {
                         string: $viewModel.emailOrSSOCode
                     )
                     .autocapitalization(.none)
+                    .autocorrectionDisabled()
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }
