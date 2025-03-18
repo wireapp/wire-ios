@@ -92,7 +92,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             onCreateAccount: { [dependency, backendEnvironment] in
                 guard let dependency else { return }
                 dependency.router.dismissSheet()
-                dependency.bridge.sendOutboundEvent(.accountRegistrationRequested(
+                dependency.bridge.sendOutboundEvent(
+                    .accountRegistrationRequested(
                         email: email,
                         backendEnvironment
                     )

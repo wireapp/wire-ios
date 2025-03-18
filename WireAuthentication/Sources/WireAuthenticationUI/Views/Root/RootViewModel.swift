@@ -38,7 +38,7 @@ public final class RootViewModel: ObservableObject, Router {
     private var lastModalDestination: RootView.ModalDestination?
 
     public init(bridge: WireAuthenticationBridge) {
-        cancellable = bridge.inboundEvents.sink { [weak self] event in
+        self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:
                 self?.restoreSheet()
