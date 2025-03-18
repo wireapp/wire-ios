@@ -22,13 +22,7 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class RootViewModel: ObservableObject, Router {
-
-    public enum Alert: Hashable, Identifiable, Sendable {
-        public var id: Self { self }
-
-        case ssoLoginFailed
-    }
+package final class RootViewModel: ObservableObject, Router {
 
     @Published var path = NavigationPath()
     @Published var modalDestination: RootView.ModalDestination? = .authFlow
@@ -37,7 +31,7 @@ public final class RootViewModel: ObservableObject, Router {
     private var cancellable: AnyCancellable?
     private var lastModalDestination: RootView.ModalDestination?
 
-    public init(bridge: WireAuthenticationBridge) {
+    package init(bridge: WireAuthenticationBridge) {
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:
@@ -48,19 +42,19 @@ public final class RootViewModel: ObservableObject, Router {
         }
     }
 
-    public func popToRoot() {
+    package func popToRoot() {
         path.removeLast(path.count)
     }
 
-    public func navigate(to destination: some Hashable) {
+    package func navigate(to destination: some Hashable) {
         path.append(destination)
     }
 
-    public func presentSheet(_ modalDestination: some Hashable) {
-        self.modalDestination = modalDestination as? RootView.ModalDestination
+    package func presentSheet(_ modalDestination: RootView.ModalDestination) {
+        self.modalDestination = modalDestination
     }
 
-    public func presentAlert(_ alert: RootViewModel.Alert) {
+    public func presentAlert(_ alert: Alert) {
         self.alert = alert
     }
 

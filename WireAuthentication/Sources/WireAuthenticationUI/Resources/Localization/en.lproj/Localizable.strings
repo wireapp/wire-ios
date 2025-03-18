@@ -39,7 +39,7 @@
 
 "proxy_credentials.title" = "Proxy Credentials";
 "proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_email.title" = "Proxy email or username";
 "proxy_credentials.input_password.title" = "Password";
 "proxy_credentials.input_password.placeholder" = "Enter password";
 
