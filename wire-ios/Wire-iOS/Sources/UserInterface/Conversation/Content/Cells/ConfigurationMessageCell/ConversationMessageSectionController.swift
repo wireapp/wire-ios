@@ -312,7 +312,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
-        if isSenderVisible, let sender = message.senderUser, let timestamp = message.formattedReceivedDate() {
+        if isSenderVisible, let sender = message.senderUser {
             let description = ConversationSenderMessageCellDescription(
                 sender: sender,
                 message: message,
