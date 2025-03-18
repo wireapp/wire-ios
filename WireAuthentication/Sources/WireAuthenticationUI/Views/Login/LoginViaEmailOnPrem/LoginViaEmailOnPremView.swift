@@ -26,6 +26,7 @@ package protocol LoginViaEmailOnPremBuilder {
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremView
@@ -80,6 +81,19 @@ package struct LoginViaEmailOnPremView: View {
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
         }
+        .alert(
+            item: $viewModel.alert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { alert in
+                switch alert {
+                case .obsoleteClient:
+                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                default:
+                    Button(L10n.Authentication.Error.confirm, action: {})
+                }
+            }
+        )
         .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -234,6 +248,7 @@ package struct LoginViaEmailOnPremView: View {
         .sheet(isPresented: .constant(true)) {
             MockDependencies().loginViaEmailOnPremView(
                 email: "foo@bar.com",
+                environmentType: MockDependencies().environmentType,
                 backendConfig: MockDependencies()._backendConfig,
                 backendMetadata: nil
             )

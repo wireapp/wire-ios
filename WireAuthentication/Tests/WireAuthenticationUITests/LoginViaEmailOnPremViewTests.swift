@@ -43,6 +43,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
+            environmentType: MockDependencies().environmentType,
             backendConfig: MockDependencies()._backendConfig,
             backendMetadata: nil
         )
@@ -62,6 +63,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
+            environmentType: MockDependencies().environmentType,
             backendConfig: MockDependencies()._backendConfig,
             backendMetadata: nil
         )
@@ -88,7 +90,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 blackListURL: URL(string: "https://example.com")!,
                 teamsURL: URL(string: "https://example.com")!,
                 accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
             ),
             proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
@@ -96,6 +99,7 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
+            environmentType: MockDependencies().environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil
         )
@@ -121,13 +125,15 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 blackListURL: URL(string: "https://example.com")!,
                 teamsURL: URL(string: "https://example.com")!,
                 accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
             ),
             proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
+            environmentType: MockDependencies().environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil
         )

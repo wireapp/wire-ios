@@ -26,16 +26,20 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     package typealias Factory =
         LoginViaEmailUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory
 
     private let router: any Router
     private let factory: any Factory
     private let passwordValidator: any PasswordValidator
+    private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
 
     let email: String
     let canCreateAccount: Bool
+
+    @Published var alert: Alert?
 
     // MARK: - Life cycle
 
@@ -43,6 +47,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         passwordValidator: any PasswordValidator,
@@ -53,6 +58,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.backendMetadata = backendMetadata
     }
@@ -95,9 +101,15 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         let backendMetadata: WireAuthenticationAPI.BackendMetadata
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            return
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            return
         } catch {
-            // TODO: [WPB-16415] handle unresolved api version
-            fatalError()
+            alert = .general(for: error)
+            return
         }
 
         let (cookies, accessToken): ([HTTPCookie], AccessToken)
@@ -111,16 +123,39 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             fatalError("error: \(error)")
         }
 
-        router.navigate(to: RootView.ModalDestination.noHistory(
+        let emailCredentials = EmailCredentials(
+            email: email,
+            password: password,
+            verificationCode: nil
+        )
+
+        let backendEnvironment = WireAuthenticationBackendEnvironment(
+            environmentType: environmentType,
+            config: backendConfig,
+            metadata: backendMetadata
+        )
+
+        let authenticationResult = AuthenticationResult(
             userID: accessToken.userID,
             cookies: cookies,
             accessToken: accessToken,
+            emailCredentials: emailCredentials,
+            backendEnvironment: backendEnvironment
+        )
+
+        router.presentSheet(RootView.ModalDestination.noHistory(
+            authenticationResult: authenticationResult,
             didDetectDomainConflict: false
         ))
     }
 
     func recoverPassword() {
         UIApplication.shared.open(forgotPasswordURL)
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     func createAccount() {

@@ -25,8 +25,10 @@ import WireAuthenticationAPI
 
 class RootComponent: BootstrapComponent {
 
-    public let defaultBackendEnvironment: BackendEnvironment
+    public let environmentType: BackendEnvironmentType
+    public let backendConfig: BackendConfig
     public let preferredAPIVersion: APIVersion?
+    public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
     public let accountsURL: URL
     public let howToChangeEmailURL: URL
@@ -34,11 +36,11 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
-    public let onRegisterAccount: () -> Void
-    let onFlowCompletion: (AuthenticationResult) -> Void
+    public let appStoreURL: URL
 
     init(
-        defaultBackendEnvironment: BackendEnvironment,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         accountsURL: URL,
@@ -47,11 +49,12 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
-        onRegisterAccount: @escaping () -> Void,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+        appStoreURL: URL
     ) {
-        self.defaultBackendEnvironment = defaultBackendEnvironment
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
         self.preferredAPIVersion = preferredAPIVersion
+        self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
         self.accountsURL = accountsURL
         self.howToChangeEmailURL = howToChangeEmailURL
@@ -59,8 +62,7 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
-        self.onRegisterAccount = onRegisterAccount
-        self.onFlowCompletion = onFlowCompletion
+        self.appStoreURL = appStoreURL
     }
 
     // MARK: - View
@@ -77,16 +79,9 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor public var bridge: WireAuthenticationBridge {
-        WireAuthenticationBridge(
-            onFlowCompletion: onFlowCompletion,
-            onRegisterAccount: onRegisterAccount,
-            onSSOSuccess: { userID, cookies in
-                SSOSuccessHandler(router: self.router).handleSuccess(userID: userID, cookies: cookies)
-            },
-            onSSOFailure: {
-                SSOFailureHandler(router: self.router).handleFailure()
-            }
-        )
+        shared {
+            WireAuthenticationBridge()
+        }
     }
 
     // MARK: - Public dependencies
@@ -101,25 +96,42 @@ class RootComponent: BootstrapComponent {
         DetermineAuthMethodComponent(parent: self)
     }
 
-    @MainActor var noHistoryComponent: NoHistoryComponent {
-        NoHistoryComponent(parent: self)
+    @MainActor
+    func noHistoryComponent(
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
     }
 
     func loginViaEmailOnPremComponent(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremComponent {
         LoginViaEmailOnPremComponent(
             parent: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         )
     }
 
-    var loginViaSSOComponent: LoginViaSSOComponent {
-        LoginViaSSOComponent()
+    func loginViaSSOComponent(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOComponent {
+        LoginViaSSOComponent(
+            parent: self,
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        )
     }
 
 }
@@ -132,35 +144,38 @@ extension RootComponent: RootView.Factory {
 
     @MainActor
     func noHistoryView(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: WireAuthenticationAPI.AccessToken?,
+        authenticationResult: AuthenticationResult,
         didDetectDomainConflict: Bool
     ) -> NoHistoryView {
-        noHistoryComponent.view(
-            userID: userID,
-            cookies: cookies,
-            accessToken: accessToken,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onFlowCompletion: bridge.onFlowCompletion
-        )
+        noHistoryComponent(
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        ).view
     }
 
     @MainActor
     func loginViaEmailOnPremView(
         email: String,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
     ) -> LoginViaEmailOnPremView {
         loginViaEmailOnPremComponent(
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         ).view
     }
 
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        loginViaSSOComponent.view(ssoURL: ssoURL)
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOView {
+        loginViaSSOComponent(
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        ).view
     }
 
 }

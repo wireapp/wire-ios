@@ -76,24 +76,8 @@ final class AuthenticationInterfaceBuilder {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
             let (rootView, bridge) = assembly.assemble(
-                defaultBackendEnvironment: BackendEnvironment(
-                    url: environment.backendURL,
-                    webSocketURL: environment.backendWSURL,
-                    pinnedKeys: environment.trustData.map { trustData in
-                        PinnedKey(
-                            key: trustData.certificateKey,
-                            hosts: trustData.hosts.map { host in
-                                switch host.rule {
-                                case .equals:
-                                    .equals(host.value)
-                                case .endsWith:
-                                    .endsWith(host.value)
-                                }
-                            }
-                        )
-                    },
-                    proxySettings: nil
-                ),
+                environmentType: BackendEnvironmentType(environment.environmentType.value),
+                backendConfig: BackendConfig(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 preferredAPIVersion: .v8,
                 accountsURL: environment.accountsURL,
@@ -102,23 +86,13 @@ final class AuthenticationInterfaceBuilder {
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 userDefaults: .shared(),
-                onFlowCompletion: { _ in
-                    // TODO: [WPB-16044] Pass the cookies and token
-                    authenticationCoordinator?.eventResponderChain.handleEvent(
-                        ofType: .wireAuthenticationModuleComplete
-                    )
-                },
-                onRegisterAccount: {
-                    // TODO: [WPB-16279] Navigate to the account registration flow
-                }
+                appStoreURL: WireURLs.shared.appOnItunes
             )
-
-            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
-                bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
-            })
-            authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)
-
-            return AuthenticationHostingController(rootView: rootView)
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
 
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)

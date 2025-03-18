@@ -52,6 +52,7 @@
 "switch_backend_confirmation.teams_url" = "Teams URL:";
 "switch_backend_confirmation.accounts_url" = "Accounts URL:";
 "switch_backend_confirmation.website_url" = "Website URL:";
+"switch_backend_confirmation.countly_url" = "Countly URL:";
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Cancelar";
 "switch_backend_confirmation.show_details" = "Show details";
@@ -65,27 +66,34 @@
 "authentication.no_history.message" = "Por motivos de privacidad, tu historial de chat no aparecerá aquí.";
 "authentication.no_history.confirm" = "OK";
 
-"authentication.error.title.no_internet" = "No internet";
-"authentication.error.title.general" = "Error";
-"authentication.error.title.invalid_sso_link" = "Error";
-"authentication.error.title.sso_login_failed" = "Algo salió mal";
+"authentication.error.title.no_internet" = "No internet connection";
+"authentication.error.title.general" = "Algo salió mal";
+"authentication.error.title.sso_login_failed" = "Login with SSO failed";
 "authentication.error.title.invalid_credentials" = "Invalid Information";
 "authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
 "authentication.error.title.account_pending_activation" = "Pending activation";
 "authentication.error.title.account_suspended" = "Unauthorized";
+"authentication.error.title.incorrect_sso_code" = "Invalid SSO code";
 
-"authentication.error.message.no_internet" = "You are not connected to the internet.";
-"authentication.error.message.general" = "Algo salió mal";
-"authentication.error.message.invalid_sso_link" = "Invalid company login url.";
+"authentication.error.message.no_internet" = "Parece haber un problema con la red. Por favor, inténtalo más tarde.";
+"authentication.error.message.general" = "Please retry later.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
 "authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
 "authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
-"authentication.error.message.account_pending_activation" = "The account you are trying to access is pending activation. Please verify your details.";
+"authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "Esta cuenta ya no está autorizada a iniciar sesión.";
+"authentication.error.message.incorrect_sso_code" = "Please verify your company SSO access code and try again.";
 
 "authentication.error.confirm" = "OK";
 
-"authentication.error.title.email_already_in_use" = "Email already in use";
-"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
+"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
 "authentication.error.how_to_change_email" = "How to change email address";
 "authentication.error.how_to_delete_account" = "How to delete a private account";
+
+"obsolete_client.alert.title" = "Actualización necesaria";
+"obsolete_client.alert.message" = "Te estás perdiendo nuevas características.\nObtén la última versión de Wire en la App Store.";
+"obsolete_client.alert.ok_button" = "Ir a la App Store";
+
+"obsolete_backend.alert.title" = "Server version not supported";
+"obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";

@@ -35,22 +35,12 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
     package func invoke(
         emailOrSSOCode: String
-    ) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod {
+    ) async throws -> AuthenticationMethod {
         let emailOrSSOCode = try validateEmailOrSSOCode(input: emailOrSSOCode)
 
         switch emailOrSSOCode {
         case let .email(email, domain):
-            do {
-                return try await determineAuthMethod(email: email, domain: domain)
-            } catch let error as DetermineAuthMethodUseCaseFailure {
-                throw error
-            } catch AuthenticationAPIError.invalidResponse {
-                throw .invalidResponse
-            } catch let error as URLError {
-                throw .urlError(error)
-            } catch {
-                throw .unknown
-            }
+            return try await determineAuthMethod(email: email, domain: domain)
         case let .ssoCode(ssoCode):
             return .loginViaSSO(code: ssoCode)
         }
@@ -85,7 +75,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
         }
 
         switch configuration.domainRedirect {
-        case .none where configuration.isCloudAccountAlreadyRegistered == true:
+        case .noRegistration where configuration.isCloudAccountAlreadyRegistered == true:
             // The email domain has been claimed by an on-prem backend,
             // but there's already an existing cloud account registered.
             return .loginViaEmail(email: email, didDetectDomainConflict: true)
@@ -98,13 +88,13 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
         case .sso:
             guard let ssoCode = configuration.ssoCode else {
-                throw DetermineAuthMethodUseCaseFailure.invalidResponse
+                throw AuthenticationAPIError.invalidResponse
             }
             return .loginViaSSO(code: ssoCode)
 
         case .backend:
             guard let backendURL = configuration.backendURL else {
-                throw DetermineAuthMethodUseCaseFailure.invalidResponse
+                throw AuthenticationAPIError.invalidResponse
             }
             return .onPremLogin(email: email, backendConfig: backendURL)
         }
