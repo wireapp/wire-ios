@@ -93,11 +93,35 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             return .loginViaSSO(code: ssoCode)
 
         case .backend:
-            guard let backendURL = configuration.backendURL else {
+            guard let configURL = configuration.backendURL else {
                 throw AuthenticationAPIError.invalidResponse
             }
+            let backendURL = try await fetchBackendConfig(from: configURL)
+
             return .onPremLogin(email: email, backendConfig: backendURL)
         }
+    }
+
+    private func fetchBackendConfig(from backendURL: URL) async throws -> URL {
+        let (data, _) = try await URLSession.shared.data(from: backendURL)
+
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let domainInfo = try decoder.decode(DomainInfo.self, from: data)
+
+        return domainInfo.configJsonURL
+    }
+
+}
+
+private struct DomainInfo: Codable {
+
+    let configJsonURL: URL
+    let webappWelcomeURL: URL
+
+    private enum CodingKeys: String, CodingKey {
+        case configJsonURL = "config_json_url"
+        case webappWelcomeURL = "webapp_welcome_url"
     }
 
 }
