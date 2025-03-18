@@ -49,7 +49,6 @@ class LoginViaEmailViewModelTests: XCTestCase {
             loginViaEmailUseCase: loginViaEmailUseCase,
             backendEnvironment: Fixture.backendEnvironment,
             email: "mika@example.com",
-            accountsURL: URL(string: "https://www.example.com")!,
             passwordValidator: passwordValidator,
             canCreateAccount: true,
             didDetectDomainConflict: false,
