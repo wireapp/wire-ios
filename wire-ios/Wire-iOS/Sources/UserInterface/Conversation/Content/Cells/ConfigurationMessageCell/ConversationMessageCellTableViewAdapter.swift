@@ -77,7 +77,7 @@ final class ConversationMessageCellTableViewAdapter<
         self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8)
-        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8)
+        self.bottom = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: 8)
         bottom.priority = UILayoutPriority(999)
         self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(
             equalTo: cellView.topAnchor,

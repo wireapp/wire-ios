@@ -104,8 +104,8 @@ final class ConversationCellBurstTimestampView: UIView {
 
             label.leadingAnchor.constraint(equalTo: leftSeparator.trailingAnchor, constant: inset),
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
-            label.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
-            bottomAnchor.constraint(greaterThanOrEqualTo: label.bottomAnchor, constant: 8),
+            label.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: label.bottomAnchor),
 
             rightSeparator.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: inset),
             rightSeparator.trailingAnchor.constraint(equalTo: trailingAnchor),
