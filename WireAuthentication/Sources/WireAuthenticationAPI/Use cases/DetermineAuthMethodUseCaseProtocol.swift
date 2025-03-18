@@ -41,7 +41,7 @@ public enum AuthenticationMethod: Sendable, Hashable {
 
     /// On-prem login, either via email or SSO
 
-    case onPremLogin(email: String, backendConfig: URL)
+    case onPremLogin(email: String?, backendConfig: URL)
 
 }
 

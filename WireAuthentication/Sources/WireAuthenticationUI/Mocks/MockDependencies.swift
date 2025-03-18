@@ -83,8 +83,10 @@ final class MockDependencies {
             factory: self,
             environmentType: environmentType,
             backendConfig: backendConfig,
+            backendMetadata: nil,
             emailOrSSOCode: emailOrSSOCode,
-            isLoading: isLoading
+            isLoading: isLoading,
+            bridge: WireAuthenticationBridge()
         )
         viewModel.alert = alert
 
@@ -157,11 +159,24 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             factory: self,
             environmentType: environmentType,
-            backendConfig: backendConfig
+            backendConfig: backendConfig,
+            backendMetadata: nil,
+            bridge: WireAuthenticationBridge()
         )
     }
 
-    var determineAuthMethodView: DetermineAuthMethodView {
+    func determineAuthMethodView(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?
+    ) -> DetermineAuthMethodView {
+        DetermineAuthMethodView(
+            viewModel: determineAuthMethodViewModel,
+            factory: self
+        )
+    }
+
+    func determineAuthMethodView() -> DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
             factory: self
@@ -173,7 +188,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 extension MockDependencies: SwitchBackendConfirmationBuilder {
 
     private func switchBackendConfirmationViewModel(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
@@ -199,7 +214,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
     }
 
     func switchBackendView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView {
@@ -269,6 +284,8 @@ extension MockDependencies: LoginViaEmailBuilder {
         email: String,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
         LoginViaEmailView(
@@ -328,7 +345,7 @@ extension MockDependencies: VerificationCodeBuilder {
 extension MockDependencies: LoginViaEmailOnPremBuilder {
 
     private func loginViaEmailOnPremViewModel(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
@@ -344,7 +361,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
     }
 
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata?
