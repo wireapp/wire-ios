@@ -79,7 +79,9 @@ final class AuthenticationInterfaceBuilder {
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
-                preferredAPIVersion: .v8,
+                preferredAPIVersion: BackendInfo.preferredAPIVersion.flatMap {
+                    WireAPI.APIVersion(rawValue: UInt($0.rawValue))
+                },
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
