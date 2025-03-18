@@ -114,6 +114,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     private func configureSubviews() {
         let avatarContainerView = UIView()
+            .setClipsToBounds(false)
         avatarContainerView.addSubview(avatar)
         avatar.pinOptionally(
                 to: avatarContainerView,
@@ -124,14 +125,16 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         
         let leadingMargin = conversationHorizontalMargins.left - CGFloat(integerLiteral: avatar.size.rawValue) - 7
         let stackView = UIStackView(arrangedSubviews: [
-            avatarContainerView.wrapInView(leadingInset: leadingMargin),
+            avatarContainerView
+                .wrapInView(leadingInset: leadingMargin)
+                .setClipsToBounds(false),
             authorLabel
-        ])
+        ]).setClipsToBounds(false)
+            
         stackView.axis = .horizontal
         stackView.spacing = 7
         stackView.alignment = .leading
         stackView.distribution = .fill
-        stackView.clipsToBounds = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(stackView)
@@ -336,4 +339,17 @@ private extension UserType {
         }
     }
 
+}
+
+extension ConversationSenderMessageDetailsCell: UIGestureRecognizerDelegate {
+    
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let avatarPoint = avatar.convert(point, from: self)
+        
+        if avatar.point(inside: avatarPoint, with: event) {
+            return avatar
+        }
+        
+        return super.hitTest(point, with: event)
+    }
 }
