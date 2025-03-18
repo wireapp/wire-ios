@@ -19,7 +19,7 @@
 import WireDesign
 import WireSyncEngine
 
-final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCell {
+final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let message: ZMConversationMessage
@@ -192,9 +192,9 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
     }
 }
 
-final class ConversationCollapsedFileMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationCollapsedMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationCollapsedFileMessageCell
+    typealias View = ConversationCollapsedMessageCell
 
     let configuration: View.Configuration
 

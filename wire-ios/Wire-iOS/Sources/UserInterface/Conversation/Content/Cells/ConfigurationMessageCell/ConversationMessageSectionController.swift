@@ -257,7 +257,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addCollapsedCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        let cellDescriptions = ConversationCollapsedFileMessageCellDescription(
+        let cellDescriptions = ConversationCollapsedMessageCellDescription(
             message: message,
             collapseExpandAction: { [weak self] in
                 self?.handleCollapseExpand()

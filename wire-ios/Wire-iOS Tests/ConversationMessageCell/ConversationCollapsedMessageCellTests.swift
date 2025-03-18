@@ -20,7 +20,7 @@ import WireFoundation
 import XCTest
 @testable import Wire
 
-final class ConversationCollapsedFileMessageCellTests: ConversationMessageSnapshotTestCase {
+final class ConversationCollapsedMessageCellTests: ConversationMessageSnapshotTestCase {
 
     var message: MockMessage!
     var mockSelfUser: MockUserType!
