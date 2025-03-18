@@ -165,7 +165,7 @@ final class MessageToolboxDataSource {
     private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
         let countdownStatus = makeEphemeralCountdown()
 
-        let deliveryStateString = selfMessageStatus(for: message)
+        let deliveryStateString = selfMessageState(for: message)
 
         if let timestampString = timestampString(message), message.isSent {
             if let deliveryStateString, message.shouldShowDeliveryState {
@@ -201,38 +201,30 @@ final class MessageToolboxDataSource {
         return nil
     }
 
+    // MARK: - message delivery state
+    
     /// Returns the status for the sender of the message.
-    private func selfMessageStatus(for message: ZMConversationMessage) -> NSAttributedString? {
+    private func selfMessageState(for message: ZMConversationMessage) -> NSAttributedString? {
         guard let sender = message.senderUser, sender.isSelfUser else {
             return nil
         }
 
-        var deliveryStateString: String
-
         switch message.deliveryState {
         case .pending:
-            deliveryStateString = ContentSystem.pendingMessageTimestamp
+            return stateAttributedString(attachment: sendingTextAttachment())
         case .read:
-            return selfStatusForReadDeliveryState(for: message)
+            return readDeliveryStateAttributedString(for: message)
         case .delivered:
-            deliveryStateString = ContentSystem.messageDeliveredTimestamp
+            return stateAttributedString(attachment: deliveredTextAttachment())
         case .sent:
-            deliveryStateString = ContentSystem.messageSentTimestamp
+            return stateAttributedString(attachment: sentTextAttachment())
         case .invalid, .failedToSend:
             return nil
         }
-
-        return NSAttributedString(string: deliveryStateString) && attributes
-    }
-
-    private func seenTextAttachment() -> NSTextAttachment {
-        let imageIcon = NSTextAttachment.textAttachment(for: .eye, with: statusTextColor, verticalCorrection: -1)
-        imageIcon.accessibilityLabel = "seen"
-        return imageIcon
     }
 
     /// Creates the status for the read receipts.
-    private func selfStatusForReadDeliveryState(for message: ZMConversationMessage) -> NSAttributedString? {
+    private func readDeliveryStateAttributedString(for message: ZMConversationMessage) -> NSAttributedString? {
         guard let conversationType = message.conversationLike?.conversationType else { return nil }
 
         switch conversationType {
@@ -265,7 +257,42 @@ final class MessageToolboxDataSource {
             return nil
         }
     }
+    
+    private func seenTextAttachment() -> NSTextAttachment {
+        textAttachment(image: UIImage(resource: .seen), accessibilityLabel: "seen")
+    }
+    
+    private func sendingTextAttachment() -> NSTextAttachment {
+        textAttachment(image: UIImage(resource: .sending), accessibilityLabel: "sending")
+    }
+    
+    private func sentTextAttachment() -> NSTextAttachment {
+        textAttachment(image: UIImage(resource: .sent), accessibilityLabel: "sent")
+    }
+    
+    private func deliveredTextAttachment() -> NSTextAttachment {
+        textAttachment(image: UIImage(resource: .delivered), accessibilityLabel: "delivered")
+    }
+    
+    private func textAttachment(image: UIImage, accessibilityLabel: String) -> NSTextAttachment {
+        let imageIcon = NSTextAttachment.textAttachment(
+            image: image,
+            with: statusTextColor,
+            iconSize: 13,
+            verticalCorrection: -1
+        )
+        imageIcon.accessibilityLabel = accessibilityLabel
+        return imageIcon
+    }
+    
+    private func stateAttributedString(attachment: NSTextAttachment) -> NSAttributedString? {
+        let attributedString = NSAttributedString(attachment: attachment)
+        attributedString.accessibilityLabel = attachment.accessibilityLabel
+        return attributedString
+    }
 
+    // MARK: -
+    
     /// Creates the timestamp text.
     private func timestampString(_ message: ZMConversationMessage) -> String? {
         var timestampString: String?
