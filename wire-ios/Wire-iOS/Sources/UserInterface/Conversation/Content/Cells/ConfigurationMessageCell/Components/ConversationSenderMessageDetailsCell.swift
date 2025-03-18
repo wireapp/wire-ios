@@ -147,11 +147,16 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         )
         self.trailingDateLabelConstraint = trailingDateLabelConstraint
 
+        let avatarTopAnchorConstraint = avatar.topAnchor.constraint(equalTo: topAnchor)
+        avatarTopAnchorConstraint.priority = .defaultLow
+        let avatarBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
+        avatarBottomAnchorConstraint.priority = .defaultLow
+
         let authorLabelNoTopPaddingConstraint = authorLabel.topAnchor.constraint(equalTo: topAnchor)
         authorLabelNoTopPaddingConstraint.isActive = true // only for not deleted messages
         self.authorLabelNoTopPaddingConstraint = authorLabelNoTopPaddingConstraint
 
-        let authorLabelCenterVerticalConstraint = authorLabel.centerYAnchor.constraint(greaterThanOrEqualTo: centerYAnchor)
+        let authorLabelCenterVerticalConstraint = authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
         authorLabelCenterVerticalConstraint.isActive = false // only for deleted messages
         self.authorLabelCenterVerticalConstraint = authorLabelCenterVerticalConstraint
 
@@ -162,17 +167,18 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             dateLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
             trailingDateLabelConstraint,
 
-            dateLabel.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             authorLabelNoTopPaddingConstraint,
             authorLabelCenterVerticalConstraint,
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
-            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
 
+            avatarTopAnchorConstraint,
+            avatarBottomAnchorConstraint,
             avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
         ])
     }
