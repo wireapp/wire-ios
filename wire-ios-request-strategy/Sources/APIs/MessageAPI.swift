@@ -381,11 +381,11 @@ class MessageAPIV5: MessageAPIV4 {
 
     private func customMapFailureResponse(_ response: ZMTransportResponse) -> Error {
         if let error = SendMLSMessageFailure(from: response) {
-            return error
+            error
         } else {
             // This will return a NetworkError
             // (i.e. federation error will be caughted on MessageSender)
-            return mapFailureResponse(response)
+            mapFailureResponse(response)
         }
     }
 }
