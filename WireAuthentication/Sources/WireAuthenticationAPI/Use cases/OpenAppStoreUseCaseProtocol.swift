@@ -16,38 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+import Foundation
 
-package protocol LoginViaSSOBuilder {
+// sourcery: AutoMockable
+public protocol OpenAppStoreUseCaseProtocol: Sendable {
 
     @MainActor
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView
+    func invoke()
 
 }
 
-package struct LoginViaSSOView: View {
+public protocol OpenAppStoreUseCaseFactory {
 
-    @ObservedObject var viewModel: LoginViaSSOViewModel
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol
 
-    package init(
-        viewModel: LoginViaSSOViewModel
-    ) {
-        self.viewModel = viewModel
-    }
-
-    package var body: some View {
-        SafariBrowser(url: viewModel.ssoURL)
-    }
-}
-
-#Preview {
-    let url = URL(string: "https://www.wire.com")!
-    MockDependencies().loginViaSSOView(
-        ssoURL: url,
-        backendEnvironment: MockDependencies().backendEnvironment
-    )
 }

@@ -28,6 +28,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package typealias Factory =
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory &
         SSOLinkGeneratorFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
@@ -82,9 +83,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             backendMetadata = try await Task.detached { [useCase] in
                 try await useCase.invoke()
             }.value
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            return
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            return
         } catch {
-            // TODO: [WPB-16415] report via bridge that API version can't be resolved.
-            fatalError()
+            alert = .general(for: error)
+            return
         }
 
         do {
@@ -114,6 +121,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func onAlertDismiss() {
         ssoLinkGenerator?.flushToken()
         modalDestination = nil
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     // MARK: - Private

@@ -90,3 +90,10 @@
 "authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
 "authentication.error.how_to_change_email" = "E-Mail-Adresse ändern";
 "authentication.error.how_to_delete_account" = "Privates Benutzerkonto löschen";
+
+"obsolete_client.alert.title" = "Aktualisierung erforderlich";
+"obsolete_client.alert.message" = "Sie verpassen neue Funktionen.\nLaden Sie die neueste Version von Wire herunter.";
+"obsolete_client.alert.ok_button" = "Zum App Store";
+
+"obsolete_backend.alert.title" = "Serverversion wird nicht unterstützt";
+"obsolete_backend.alert.message" = "Die Serverversion wird von dieser App nicht unterstützt. Bitte wenden Sie sich an Ihren Systemadministrator.";
