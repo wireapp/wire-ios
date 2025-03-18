@@ -61,7 +61,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     func testForIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
         sut.configure(
-            with: Date(timeIntervalSinceReferenceDate: 0),
+            timestamp: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: true,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
@@ -74,7 +74,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     func testForNotIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
         sut.configure(
-            with: Date(timeIntervalSinceReferenceDate: 0),
+            timestamp: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: false,
             showUnreadDot: false,
             accentColor: userSession.selfUser.accentColor
