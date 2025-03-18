@@ -535,7 +535,8 @@ extension ConversationTableViewDataSource {
         searchQueries: [String]
     ) -> ConversationMessageContext {
 
-        // disabling the significant-passed-time threshold, but the leaving the code intact in case the behavior should change again
+        // disabling the significant-passed-time threshold, but the leaving the code intact in case the behavior should
+        // change again
         let significantTimeInterval: TimeInterval = .infinity
         let isTimeIntervalSinceLastMessageSignificant: Bool
 

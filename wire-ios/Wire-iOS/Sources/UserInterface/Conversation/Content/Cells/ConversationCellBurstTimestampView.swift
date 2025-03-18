@@ -153,8 +153,7 @@ final class ConversationCellBurstTimestampView: UIView {
     }
 }
 
-@MainActor
-private let sameDayDateFormatter = {
+@MainActor private let sameDayDateFormatter = {
     let relativeDateFormatter = DateFormatter()
     relativeDateFormatter.timeStyle = .none
     relativeDateFormatter.dateStyle = .medium
