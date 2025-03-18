@@ -29,15 +29,31 @@ protocol LoginViaEmailComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
-    var authenticationAPI: AuthenticationAPI { get }
+    var networkService: NetworkService { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
+    public let backendMetadata: WireAuthenticationAPI.BackendMetadata
+
+    init(
+        parent: any Scope,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata
+    ) {
+        self.backendMetadata = backendMetadata
+        super.init(parent: parent)
+    }
+
+    public var authenticationAPI: any AuthenticationAPI {
+        AuthenticationAPIBuilder(networkService: dependency.networkService).makeAPI(
+            for: .init(backendMetadata.apiVersion)
+        )
+    }
+
     public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
+        LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
     // MARK: - View

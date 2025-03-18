@@ -15,7 +15,7 @@ Feature: CBR
     When I login to the default email verified backend as <TeamOwner>
     Then I am signed in properly
     When I open conversation "<Member1>" in conversation list
-    When I tap Audio Call button
+    When I start a call
     And <Member1> verifies that waiting instance status is changed to active in 20 seconds
     And User <Member1> verifies to have CBR connection
     And I wait for 7 seconds

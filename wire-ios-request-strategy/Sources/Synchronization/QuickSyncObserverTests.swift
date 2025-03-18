@@ -29,11 +29,11 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
         // then test completes
         let before = Date.now
-        await quickSyncObserver.waitForQuickSyncToFinish()
+        await quickSyncObserver.waitForDecryptionOfEventsToFinish()
         XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "sync duration > 500ms")
     }
 
-    func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncCompletes() {
+    func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncDecryptionCompletes() {
         // given
         let (_, quickSyncObserver) = Arrangement(coreDataStack: coreDataStack)
             .withSynchronizationState(.quickSyncing)
@@ -41,13 +41,14 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
         Task {
             try? await Task.sleep(for: .seconds(0.25))
-            NotificationInContext(name: .quickSyncCompletedNotification, context: syncMOC.notificationContext).post()
+            NotificationInContext(name: .didStopDecryptingEventsNotification, context: syncMOC.notificationContext)
+                .post()
         }
 
         // then test completes
         let expectation = XCTestExpectation(description: "sync is done within 500ms")
         Task {
-            await quickSyncObserver.waitForQuickSyncToFinish()
+            await quickSyncObserver.waitForDecryptionOfEventsToFinish()
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 0.5)

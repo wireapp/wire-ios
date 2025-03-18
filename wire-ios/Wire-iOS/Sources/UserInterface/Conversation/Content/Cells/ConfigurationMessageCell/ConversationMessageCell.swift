@@ -174,6 +174,9 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The configuration object that will be used to populate the cell.
     var configuration: View.Configuration { get }
 
+    /// `True` if the created content view should have this property set to `True`.
+    var isAccessibilityElement: Bool { get }
+
     /// The accessibility identifier of the cell.
     var accessibilityIdentifier: String? { get }
 
@@ -196,6 +199,10 @@ extension ConversationMessageCellDescription {
     }
 
     var supportsActions: Bool {
+        false
+    }
+
+    var isAccessibilityElement: Bool {
         false
     }
 
@@ -226,6 +233,8 @@ extension ConversationMessageCellDescription {
     func configureContentView(_ cellView: any UIView & ConversationMessageCell, animated: Bool = false) {
         guard let cellView = cellView as? View else { return }
         cellView.configure(with: configuration, animated: animated)
+        cellView.accessibilityLabel = accessibilityLabel
+        cellView.accessibilityIdentifier = accessibilityIdentifier
 
         if cellView.isVisible {
             _ = message?.startSelfDestructionIfNeeded()
@@ -276,6 +285,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
     private let _showEphemeralTimer: AnyConstantProperty<Bool>
+    private let _isAccessibilityElement: AnyConstantProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
 
@@ -320,6 +330,7 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
         self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
+        self._isAccessibilityElement = AnyConstantProperty(description, keyPath: \.isAccessibilityElement)
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
@@ -365,6 +376,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     var showEphemeralTimer: Bool {
         _showEphemeralTimer.getter()
+    }
+
+    var cellIsAccessibilityElement: Bool {
+        _isAccessibilityElement.getter()
     }
 
     /// The accessibility identifier of the cell.

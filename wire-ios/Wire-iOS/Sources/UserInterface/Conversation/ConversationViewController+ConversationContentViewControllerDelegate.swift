@@ -24,6 +24,33 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
 
 extension ConversationViewController: ConversationContentViewControllerDelegate {
+
+    func didSwipeToReact(
+        actionController: ConversationMessageActionController,
+        popoverPresentationInfo: (sourceView: UIView, frame: CGRect)?
+    ) {
+        actionControllerForSelectedEmoji = actionController
+        let pickerController = CompleteReactionPickerViewController(
+            selectedReactions: actionController.message
+                .selfUserReactions()
+        )
+        pickerController.delegate = self
+
+        // Embed the pickerController in a UINavigationController
+        let navigationController = UINavigationController(rootViewController: pickerController)
+        navigationController.modalPresentationStyle = .popover
+        navigationController.preferredContentSize = CGSize(width: 580, height: 640)
+
+        if let popoverPresentationController = navigationController.popoverPresentationController,
+           let info = popoverPresentationInfo {
+            popoverPresentationController.sourceView = info.sourceView
+            popoverPresentationController.sourceRect = info.frame
+            popoverPresentationController.permittedArrowDirections = .any
+            popoverPresentationController.delegate = self
+        }
+        present(navigationController, animated: true)
+    }
+
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect) {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
@@ -160,5 +187,18 @@ extension ConversationViewController {
             from: sourceView,
             contentViewController: viewController
         )
+    }
+}
+
+extension ConversationViewController: EmojiPickerViewControllerDelegate {
+
+    func emojiPickerDeleteTapped() {
+        actionControllerForSelectedEmoji = nil
+    }
+
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
+        actionControllerForSelectedEmoji?.perform(action: .react(emoji.value))
+        dismiss(animated: true)
+        actionControllerForSelectedEmoji = nil
     }
 }

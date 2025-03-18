@@ -4,6 +4,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireLogging
 import WireReusableUIComponents
 internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
@@ -33,11 +34,8 @@ private class LoginViaEmailOnPremComponentDependencyf7e724456bf0a882da0aProvider
     var router: any Router {
         return rootComponent.router
     }
-    var defaultBackendEnvironment: BackendEnvironment {
-        return rootComponent.defaultBackendEnvironment
-    }
-    var defaultAPIVersion: APIVersion {
-        return rootComponent.defaultAPIVersion
+    var preferredAPIVersion: APIVersion? {
+        return rootComponent.preferredAPIVersion
     }
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
@@ -61,21 +59,19 @@ private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: V
     var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
         return loginViaEmailComponent.loginViaEmailUseCase
     }
-    var authenticationAPI: AuthenticationAPI {
-        return determineAuthMethodComponent.authenticationAPI
+    var authenticationAPI: any AuthenticationAPI {
+        return loginViaEmailComponent.authenticationAPI
     }
-    private let determineAuthMethodComponent: DetermineAuthMethodComponent
     private let loginViaEmailComponent: LoginViaEmailComponent
     private let rootComponent: RootComponent
-    init(determineAuthMethodComponent: DetermineAuthMethodComponent, loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
-        self.determineAuthMethodComponent = determineAuthMethodComponent
+    init(loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
         self.loginViaEmailComponent = loginViaEmailComponent
         self.rootComponent = rootComponent
     }
 }
 /// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent
-private func factoryd3638676a47fce1fe623cded1e126cd6f1df3cee(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return VerificationCodeComponentDependency48f3b80358781bc7c928Provider(determineAuthMethodComponent: parent2(component) as! DetermineAuthMethodComponent, loginViaEmailComponent: parent1(component) as! LoginViaEmailComponent, rootComponent: parent3(component) as! RootComponent)
+private func factoryd3638676a47fce1fe62317031e1ba787d83cb463(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return VerificationCodeComponentDependency48f3b80358781bc7c928Provider(loginViaEmailComponent: parent1(component) as! LoginViaEmailComponent, rootComponent: parent3(component) as! RootComponent)
 }
 private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider: DetermineAuthMethodComponentDependency {
     var router: any Router {
@@ -84,8 +80,8 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var defaultBackendEnvironment: BackendEnvironment {
         return rootComponent.defaultBackendEnvironment
     }
-    var defaultAPIVersion: APIVersion {
-        return rootComponent.defaultAPIVersion
+    var preferredAPIVersion: APIVersion? {
+        return rootComponent.preferredAPIVersion
     }
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
@@ -109,8 +105,8 @@ private class SwitchBackendConfirmationComponentDependency7a1956d88810c08ef169Pr
     var router: any Router {
         return rootComponent.router
     }
-    var defaultAPIVersion: APIVersion {
-        return rootComponent.defaultAPIVersion
+    var preferredAPIVersion: APIVersion? {
+        return rootComponent.preferredAPIVersion
     }
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
@@ -156,8 +152,8 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
     }
-    var authenticationAPI: AuthenticationAPI {
-        return determineAuthMethodComponent.authenticationAPI
+    var networkService: NetworkService {
+        return determineAuthMethodComponent.networkService
     }
     var bridge: WireAuthenticationBridge {
         return rootComponent.bridge
@@ -178,8 +174,7 @@ private func factory9bda312c16141c932061c770221f242f9204cf85(_ component: Needle
 extension LoginViaEmailOnPremComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailOnPremComponentDependency.router] = "router-any Router"
-        keyPathToName[\LoginViaEmailOnPremComponentDependency.defaultBackendEnvironment] = "defaultBackendEnvironment-BackendEnvironment"
-        keyPathToName[\LoginViaEmailOnPremComponentDependency.defaultAPIVersion] = "defaultAPIVersion-APIVersion"
+        keyPathToName[\LoginViaEmailOnPremComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailOnPremComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
     }
@@ -188,24 +183,24 @@ extension VerificationCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\VerificationCodeComponentDependency.router] = "router-any Router"
         keyPathToName[\VerificationCodeComponentDependency.loginViaEmailUseCase] = "loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"
-        keyPathToName[\VerificationCodeComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
+        keyPathToName[\VerificationCodeComponentDependency.authenticationAPI] = "authenticationAPI-any AuthenticationAPI"
     }
 }
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\DetermineAuthMethodComponentDependency.router] = "router-any Router"
         keyPathToName[\DetermineAuthMethodComponentDependency.defaultBackendEnvironment] = "defaultBackendEnvironment-BackendEnvironment"
-        keyPathToName[\DetermineAuthMethodComponentDependency.defaultAPIVersion] = "defaultAPIVersion-APIVersion"
+        keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
-        localTable["authenticationAPI-AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
+        localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
 extension SwitchBackendConfirmationComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\SwitchBackendConfirmationComponentDependency.router] = "router-any Router"
-        keyPathToName[\SwitchBackendConfirmationComponentDependency.defaultAPIVersion] = "defaultAPIVersion-APIVersion"
+        keyPathToName[\SwitchBackendConfirmationComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\SwitchBackendConfirmationComponentDependency.userDefaults] = "userDefaults-UserDefaults"
@@ -215,7 +210,7 @@ extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
         localTable["defaultBackendEnvironment-BackendEnvironment"] = { [unowned self] in self.defaultBackendEnvironment as Any }
-        localTable["defaultAPIVersion-APIVersion"] = { [unowned self] in self.defaultAPIVersion as Any }
+        localTable["preferredAPIVersion-APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
         localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }
@@ -239,8 +234,10 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
         keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
-        keyPathToName[\LoginViaEmailComponentDependency.authenticationAPI] = "authenticationAPI-AuthenticationAPI"
+        keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-NetworkService"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
+        localTable["backendMetadata-WireAuthenticationAPI.BackendMetadata"] = { [unowned self] in self.backendMetadata as Any }
+        localTable["authenticationAPI-any AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"] = { [unowned self] in self.loginViaEmailUseCase as Any }
     }
 }
@@ -261,7 +258,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->LoginViaEmailOnPremComponent", factory1ea11c5904a3248307ceb3a8f24c1d289f2c0f2e)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe623cded1e126cd6f1df3cee)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent", factorye1144df20d596f07c3bea9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)

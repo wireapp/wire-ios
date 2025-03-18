@@ -20,7 +20,7 @@ import Foundation
 
 /// A protocol responsible for generating the Single Sign-On (SSO) authentication link.
 
-public protocol SSOLinkGeneratorProtocol {
+public protocol SSOLinkGeneratorProtocol: Sendable {
 
     /// Generates the URL for the SSO authentication screen.
     ///
@@ -33,5 +33,11 @@ public protocol SSOLinkGeneratorProtocol {
     /// Flushes the temporary SSO login token stored in the user defaults.
 
     func flushToken()
+
+}
+
+public protocol SSOLinkGeneratorFactory {
+
+    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
 
 }
