@@ -32,8 +32,6 @@ final class ConversationViewController: UIViewController {
     private let getParticipantImageSourceUseCase: GetParticipantImageSourceUseCaseProtocol
     var actionControllerForSelectedEmoji: ConversationMessageActionController?
 
-    var actionControllerForSelectedEmoji: ConversationMessageActionController?
-
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
