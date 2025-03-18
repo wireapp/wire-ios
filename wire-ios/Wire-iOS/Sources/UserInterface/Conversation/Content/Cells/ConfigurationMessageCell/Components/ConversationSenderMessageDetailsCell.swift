@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 enum Indicator {
     case deleted
@@ -42,7 +43,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         let user: UserType
         let indicator: Indicator?
         let teamRoleIndicator: TeamRoleIndicator?
-        let timestamp: String?
     }
 
     // MARK: - Properties
@@ -51,15 +51,13 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
 
-    private var trailingDateLabelConstraint: NSLayoutConstraint?
-
     var isSelected: Bool = false
 
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
         view.userSession = ZMUserSession.shared()
         view.initialsFont = .avatarInitial
-        view.size = .badge
+        view.size = .small
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnAvatar)))
         view.accessibilityElementsHidden = false
@@ -79,20 +77,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentHuggingPriority(.defaultLow, for: .vertical)
-
-        return label
-    }()
-
-    private lazy var dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = FontSpec.mediumRegularFont.font!
-        label.textColor = SemanticColors.Label.textMessageDate
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.lineBreakMode = .byTruncatingMiddle
-        label.numberOfLines = 1
-        label.accessibilityIdentifier = "DateLabel"
-        label.isAccessibilityElement = true
+        label.setContentHuggingPriority(.required, for: .vertical)
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
 
         return label
     }()
@@ -102,7 +89,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubviews()
-        configureConstraints()
     }
 
     @available(*, unavailable)
@@ -118,9 +104,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         configureAuthorLabel(object: object)
 
-        dateLabel.isHidden = object.timestamp == nil
-        dateLabel.text = object.timestamp
-
         // We need to call that method here to restraint the authorLabel moving
         // outside of the view and then back to its position. For more information
         // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
@@ -130,39 +113,32 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - Configure subviews and setup constraints
 
     private func configureSubviews() {
-        addSubview(avatar)
-        addSubview(authorLabel)
-        addSubview(dateLabel)
-    }
-
-    private func configureConstraints() {
-
-        [avatar, authorLabel, dateLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        let trailingDateLabelConstraint = dateLabel.trailingAnchor.constraint(
-            equalTo: trailingAnchor,
-            constant: -conversationHorizontalMargins.right
-        )
-
-        self.trailingDateLabelConstraint = trailingDateLabelConstraint
-        NSLayoutConstraint.activate([
-            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
-            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
-
-            dateLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
-            trailingDateLabelConstraint,
-
-            dateLabel.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
-            authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
-            bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
-            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
-
-            avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
-            avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
-
-            avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
-            dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
+        let avatarContainerView = UIView()
+        avatarContainerView.addSubview(avatar)
+        avatar.pinOptionally(
+                to: avatarContainerView,
+                topInset: 0,
+                leadingInset: 0,
+                trailingInset: 0
+            )
+        
+        let leadingMargin = conversationHorizontalMargins.left - CGFloat(integerLiteral: avatar.size.rawValue) - 7
+        let stackView = UIStackView(arrangedSubviews: [
+            avatarContainerView.wrapInView(leadingInset: leadingMargin),
+            authorLabel
         ])
+        stackView.axis = .horizontal
+        stackView.spacing = 7
+        stackView.alignment = .leading
+        stackView.distribution = .fill
+        stackView.clipsToBounds = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(stackView)
+        
+        avatar.constraintToSquare(sideLength: CGFloat(integerLiteral: avatar.size.rawValue))
+        stackView.heightAnchor.constraint(equalTo: authorLabel.heightAnchor).isActive = true
+        stackView.fitIn(view: self)
     }
 
     private func configureAuthorLabel(object: Configuration) {
@@ -262,13 +238,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         SessionManager.shared?.showUserProfile(user: user)
     }
-
-    // MARK: - Override method
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        trailingDateLabelConstraint?.constant = -conversationHorizontalMargins.right
-    }
 }
 
 // MARK: - ConversationSenderMessageCellDescription
@@ -300,7 +269,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     ///   - sender: The given sender of the message
     ///   - message: The given message
     ///   - timestamp: The given timestamp of the message
-    init(sender: UserType, message: ZMConversationMessage, timestamp: String?) {
+    init(sender: UserType, message: ZMConversationMessage) {
         self.message = message
 
         let teamRoleIndicator = sender.teamRoleIndicator()
@@ -314,8 +283,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         self.configuration = View.Configuration(
             user: sender,
             indicator: indicator,
-            teamRoleIndicator: teamRoleIndicator,
-            timestamp: timestamp
+            teamRoleIndicator: teamRoleIndicator
         )
 
         setupAccessibility(sender)
