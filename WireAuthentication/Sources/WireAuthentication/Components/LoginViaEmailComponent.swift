@@ -93,7 +93,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: { [dependency] in
                 dependency?.router.dismissSheet()
-                dependency?.bridge.sendOutboundEvent(.accountRegistrationRequested)
+                dependency?.bridge.sendOutboundEvent(.accountRegistrationRequested(email: email))
             }
         )
     }

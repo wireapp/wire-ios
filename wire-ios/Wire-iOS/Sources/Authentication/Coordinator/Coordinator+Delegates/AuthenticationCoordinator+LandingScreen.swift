@@ -48,6 +48,19 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
         stateController.transition(to: .createCredentials(unregisteredUser))
     }
 
+    func wireAuthenticationDidRequestAccountRegistration(email: String) {
+        typealias Alert = L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported
+
+        guard !shouldShowProxyWarning else {
+            showProxyAlert(title: Alert.title, message: Alert.message)
+            return
+        }
+
+        let unregisteredUser = makeUnregisteredUser()
+        unregisteredUser.unverifiedEmail = email
+        stateController.transition(to: .createCredentials(unregisteredUser))
+    }
+
     func landingViewControllerDidChooseEnterpriseLogin() {
         typealias Alert = L10n.Localizable.Landing.Alert.Sso.NotSupported
 

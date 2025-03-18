@@ -47,9 +47,9 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                     ofType: .wireAuthenticationModuleComplete(authenticationResult)
                 )
 
-            case .accountRegistrationRequested:
-                authenticationCoordinator?.landingViewControllerDidChooseCreateAccount()
-                break
+            case let .accountRegistrationRequested(email):
+                // TODO: maybe need to switch backend environment
+                authenticationCoordinator?.wireAuthenticationDidRequestAccountRegistration(email: email)
             }
         }
 

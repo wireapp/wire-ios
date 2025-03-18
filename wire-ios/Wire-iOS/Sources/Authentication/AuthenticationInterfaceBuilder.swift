@@ -128,8 +128,16 @@ final class AuthenticationInterfaceBuilder {
         case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
-        case .createCredentials:
-            return makeCredentialsViewController(for: .registration)
+        case let .createCredentials(user):
+            let prefilledCredentials = AuthenticationPrefilledCredentials(
+                credentials: LoginCredentials(
+                    emailAddress: user.unverifiedEmail,
+                    hasPassword: false,
+                    usesCompanyLogin: false
+                ),
+                isExpired: false
+            )
+            return makeCredentialsViewController(for: .registration(prefilledCredentials))
 
         case .clientManagement:
             let manageClientsInvitation = ClientUnregisterInvitationStepDescription()

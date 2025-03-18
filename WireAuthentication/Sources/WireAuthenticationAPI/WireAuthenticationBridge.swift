@@ -52,7 +52,7 @@ public final class WireAuthenticationBridge {
     public enum OutboundEvent {
 
         case userAuthenticated(AuthenticationResult)
-        case accountRegistrationRequested
+        case accountRegistrationRequested(email: String)
 
     }
 
