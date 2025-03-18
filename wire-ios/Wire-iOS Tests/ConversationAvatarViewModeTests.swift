@@ -52,7 +52,8 @@ final class ConversationConnectAvatarViewModeTests: XCTestCase {
 
         // WHEN
         sut.configure(context: ConversationConnectAvatarView.Context(
-            users: users))
+            users: users
+        ))
 
         // THEN
         XCTAssertEqual(sut.mode, .one(serviceUser: true))
@@ -64,7 +65,8 @@ final class ConversationConnectAvatarViewModeTests: XCTestCase {
 
         // WHEN
         sut.configure(context: ConversationConnectAvatarView.Context(
-            users: users))
+            users: users
+        ))
 
         // THEN
         XCTAssertEqual(sut.mode, .four)
@@ -75,7 +77,8 @@ final class ConversationConnectAvatarViewModeTests: XCTestCase {
 
         // WHEN
         sut.configure(context: ConversationConnectAvatarView.Context(
-            users: users))
+            users: users
+        ))
 
         // THEN
         XCTAssertEqual(sut.mode, .none)

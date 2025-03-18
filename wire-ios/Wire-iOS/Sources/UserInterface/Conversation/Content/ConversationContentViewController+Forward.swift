@@ -41,8 +41,7 @@ extension ShareDestination where Self: ConversationGroupAvatarViewConversation {
         let avatarView = ConversationGroupAvatarView()
         avatarView.configure(
             context: ConversationGroupAvatarView.Context(
-                conversation: self,
-                qualifiedID: nil
+                conversation: self
             )
         )
         return avatarView

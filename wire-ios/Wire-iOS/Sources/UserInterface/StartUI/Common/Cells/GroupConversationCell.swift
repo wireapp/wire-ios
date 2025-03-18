@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-typealias GroupConversationCellConversation = Conversation & StableRandomParticipantsProvider
+typealias GroupConversationCellConversation = Conversation & HasQualifiedID & StableRandomParticipantsProvider
 
 final class GroupConversationCell: UICollectionViewCell {
 
@@ -109,7 +109,7 @@ final class GroupConversationCell: UICollectionViewCell {
     }
 
     func configure(conversation: GroupConversationCellConversation) {
-        avatarView.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
+        avatarView.configure(context: .conversation(conversation: conversation))
 
         titleLabel.text = conversation.displayName
 

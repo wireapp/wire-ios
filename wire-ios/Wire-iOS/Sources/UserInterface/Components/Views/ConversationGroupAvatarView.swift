@@ -20,49 +20,55 @@ import SwiftUI
 import WireConversationsUIBindings
 import WireSyncEngine
 
-typealias ConversationGroupAvatarViewConversation = ConversationLike
+typealias ConversationGroupAvatarViewConversation = ConversationLike & HasQualifiedID
 
 final class ConversationGroupAvatarView: UIView {
     struct Context {
         // an established conversation or self user has a pending request to other users
         let conversation: ConversationGroupAvatarViewConversation
-        // we can't add the QualifiedID to ConversationLike because it's an @objc protocol
-        let qualifiedID: QualifiedID?
     }
 
     func configure(context: Context) {
-        self.conversation = context.conversation
-        iconViewController.view.isHidden = false
+        let conversation = context.conversation
+        self.conversation = conversation
+
+        let iconView = Self.iconView(for: context.conversation.qualifiedID)
+
+        let hostingVC = UIHostingController(rootView: iconView)
+        hostingVC.view.frame = iconContainer.frame
+        hostingVC.view.clipsToBounds = true
+
+        iconViewController?.removeFromParent()
+        iconViewController?.view.removeFromSuperview()
+
+        iconContainer.addSubview(hostingVC.view)
+        iconViewController = hostingVC
+        attachToNearestViewController(childVC: hostingVC)
+
+        accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
     }
 
-    private var conversation: ConversationGroupAvatarViewConversation? = .none {
-        didSet {
-            guard let conversation else {
-                iconViewController.view.isHidden = true
-                return
-            }
-
-            accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
-        }
-    }
+    private var conversation: ConversationGroupAvatarViewConversation? = .none
 
     private var qualifiedID: QualifiedID? = .none
 
-    var iconViewController: UIViewController {
-        let view = WireConversationGroupIconFactory().create(conversationID: qualifiedID!.uuid.uuidString)
-        let hostingVC = UIHostingController(rootView: view)
-        hostingVC.view.frame = bounds
-        hostingVC.view.clipsToBounds = true
-        addSubview(hostingVC.view)
-        return hostingVC
-    }
+    lazy var iconContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.frame = bounds
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 4
+        return view
+    }()
+
+    private var iconViewController: UIViewController?
 
     init() {
         super.init(frame: .zero)
 
         autoresizesSubviews = false
         layer.masksToBounds = true
-        attachToNearestViewController()
+        addSubview(iconContainer)
     }
 
     @available(*, unavailable)
@@ -76,20 +82,20 @@ final class ConversationGroupAvatarView: UIView {
             return
         }
 
-        iconViewController.view.frame = bounds.insetBy(dx: 2, dy: 2)
+        iconContainer.frame = bounds
+        iconViewController?.view.frame = iconContainer.frame
 
         layer.cornerRadius = 6
-        iconViewController.view.layer.cornerRadius = 4
+        iconContainer.layer.cornerRadius = 4
     }
-
 
     // An ugly hack to get the view controller so we can properly tie our icon's UIHostingController to it
     // in order to preserve the SwiftUI lifecycle. This is necessary because the view controller is not available.
-    private func attachToNearestViewController() {
-        guard let parentVC = self.findViewController() else { return }
+    private func attachToNearestViewController(childVC: UIViewController) {
+        guard let parentVC = findViewController() else { return }
 
-        parentVC.addChild(iconViewController)
-        iconViewController.didMove(toParent: parentVC)
+        parentVC.addChild(childVC)
+        childVC.didMove(toParent: parentVC)
     }
 
     private func findViewController() -> UIViewController? {
@@ -101,5 +107,14 @@ final class ConversationGroupAvatarView: UIView {
             responder = nextResponder
         }
         return nil
+    }
+
+    @ViewBuilder
+    private static func iconView(for qualifiedID: QualifiedID?) -> some View {
+        if let qualifiedID {
+            WireConversationGroupIconFactory().create(conversationID: qualifiedID.uuid.uuidString)
+        } else {
+            EmptyView()
+        }
     }
 }

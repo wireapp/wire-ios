@@ -23,20 +23,21 @@ final class ConversationAvatarView: UIView {
         // one or more users requesting connection to self user
         case connect(users: [UserType])
         // an established conversation or self user has a pending request to other users
-        case conversation(conversation: ConversationGroupAvatarViewConversation, qualifiedID: QualifiedID?)
+        case conversation(conversation: ConversationGroupAvatarViewConversation)
     }
 
     func configure(context: Context) {
         switch context {
-        case .connect(users: let users):
+        case let .connect(users: users):
             connectAvatarView.configure(context: ConversationConnectAvatarView.Context(users: users))
             connectAvatarView.isHidden = false
             groupIconAvatarView.isHidden = true
-        case .conversation(conversation: let conversation, qualifiedID: let qualifiedID):
+        case let .conversation(conversation: conversation):
             groupIconAvatarView.configure(context: ConversationGroupAvatarView.Context(
-                conversation: conversation,
-                qualifiedID: qualifiedID
+                conversation: conversation
             ))
+            connectAvatarView.isHidden = true
+            groupIconAvatarView.isHidden = false
         }
     }
 

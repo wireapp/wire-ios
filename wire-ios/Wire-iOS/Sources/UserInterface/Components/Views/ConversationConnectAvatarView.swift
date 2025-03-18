@@ -145,7 +145,7 @@ final class ConversationConnectAvatarView: UIView {
     }
 
     func configure(context: Context) {
-        self.users = context.users
+        users = context.users
         mode = Mode(users: users)
     }
 
