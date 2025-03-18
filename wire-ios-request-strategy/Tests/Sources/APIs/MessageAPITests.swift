@@ -101,8 +101,6 @@ final class MessageAPITests: XCTestCase {
         let conversationID = QualifiedID.random()
         // WHEN
 
-
-
         mockHTTPClient.transportResponse = ZMTransportResponse(
             payload: ["label": responseLabel, "message": errorMessage] as ZMTransportData,
             httpStatus: responseStatus,
