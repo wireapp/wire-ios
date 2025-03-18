@@ -73,7 +73,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     func commitPendingProposalsIfNeeded() async {
         await mlsService.commitPendingProposalsIfNeeded()
     }
-    
+
     private func decryptMLSMessage(
         message: String,
         mlsGroupID: MLSGroupID,

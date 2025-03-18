@@ -123,9 +123,11 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         }
 
         Task.detached {
+            // we don't need to wait for this, as it can take a while to finish
+            // it should not block decryption
             await mlsMessageDecryptor.commitPendingProposalsIfNeeded()
         }
-        
+
         return decryptedEvents
     }
 
