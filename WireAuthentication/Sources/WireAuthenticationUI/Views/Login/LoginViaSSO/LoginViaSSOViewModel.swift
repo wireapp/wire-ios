@@ -58,8 +58,12 @@ package final class LoginViaSSOViewModel: ObservableObject {
                         didDetectDomainConflict: false
                     )
                 )
+
             case .ssoAutheticationFailure:
-                router.presentAlert(RootViewModel.Alert.ssoLoginFailed)
+                router.presentAlert(Alert.ssoLoginFailed)
+
+            default:
+                break
             }
         }
     }

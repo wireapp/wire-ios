@@ -22,7 +22,8 @@ final class MockRouter: Router {
 
     public var navigate_Invocations: [any Hashable] = []
     public var modalPresent_Invocations: [any Hashable] = []
-    public var alert_Invocations: [RootViewModel.Alert] = []
+    public var alert_Invocations: [Alert] = []
+    public var dismissSheet_InvocationCount = 0
 
     func popToRoot() {}
 
@@ -34,8 +35,12 @@ final class MockRouter: Router {
         modalPresent_Invocations.append(modalDestination)
     }
 
-    func presentAlert(_ alert: RootViewModel.Alert) {
+    func presentAlert(_ alert: Alert) {
         alert_Invocations.append(alert)
+    }
+
+    func dismissSheet() {
+        dismissSheet_InvocationCount += 1
     }
 
 }
