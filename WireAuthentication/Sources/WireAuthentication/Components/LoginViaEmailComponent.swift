@@ -27,7 +27,6 @@ import WireReusableUIComponents
 protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
     var networkService: NetworkService { get }
     var environmentType: BackendEnvironmentType { get }
@@ -87,7 +86,6 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             loginViaEmailUseCase: loginViaEmailUseCase,
             backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,

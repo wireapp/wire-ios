@@ -257,7 +257,6 @@ extension MockDependencies: LoginViaEmailBuilder {
             loginViaEmailUseCase: self,
             backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: false,

@@ -59,7 +59,6 @@ public struct WireAuthenticationAssembly {
             backendConfig: backendConfig,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
-            accountsURL: accountsURL,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
             passwordValidator: passwordValidator,
