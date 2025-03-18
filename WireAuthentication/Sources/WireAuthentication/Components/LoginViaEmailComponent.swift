@@ -27,7 +27,6 @@ import WireReusableUIComponents
 protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
     var networkService: NetworkService { get }
     var environmentType: BackendEnvironmentType { get }
@@ -87,12 +86,22 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             loginViaEmailUseCase: loginViaEmailUseCase,
             backendEnvironment: backendEnvironment,
             email: email,
+<<<<<<< HEAD
             accountsURL: dependency.accountsURL,
+=======
+>>>>>>> a9236721a9 (refactor: connect WireAuthentication to existing registration flow - WPB-16279 (#2689))
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency] in
-                dependency?.bridge.sendOutboundEvent(.accountRegistrationRequested)
+            onCreateAccount: { [dependency, backendEnvironment] in
+                guard let dependency else { return }
+                dependency.router.dismissSheet()
+                dependency.bridge.sendOutboundEvent(
+                    .accountRegistrationRequested(
+                        email: email,
+                        backendEnvironment
+                    )
+                )
             }
         )
     }

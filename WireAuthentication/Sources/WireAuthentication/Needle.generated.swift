@@ -192,9 +192,6 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var router: any Router {
         return rootComponent.router
     }
-    var accountsURL: URL {
-        return rootComponent.accountsURL
-    }
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
     }
@@ -221,6 +218,42 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
 private func factory9bda312c16141c932061c770221f242f9204cf85(_ component: NeedleFoundation.Scope) -> AnyObject {
     return LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider(determineAuthMethodComponent: parent1(component) as! DetermineAuthMethodComponent, rootComponent: parent2(component) as! RootComponent)
 }
+<<<<<<< HEAD
+=======
+private class LoginViaEmailComponentDependency02acc83f1ad8d17e18e1Provider: LoginViaEmailComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var passwordValidator: any PasswordValidator {
+        return rootComponent.passwordValidator
+    }
+    var networkService: NetworkService {
+        return determineAuthMethodOnPremComponent.networkService
+    }
+    var environmentType: BackendEnvironmentType {
+        return rootComponent.environmentType
+    }
+    var backendConfig: BackendConfig {
+        return rootComponent.backendConfig
+    }
+    var minTLSVersion: TLSVersion {
+        return rootComponent.minTLSVersion
+    }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
+    private let determineAuthMethodOnPremComponent: DetermineAuthMethodOnPremComponent
+    private let rootComponent: RootComponent
+    init(determineAuthMethodOnPremComponent: DetermineAuthMethodOnPremComponent, rootComponent: RootComponent) {
+        self.determineAuthMethodOnPremComponent = determineAuthMethodOnPremComponent
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->DetermineAuthMethodOnPremComponent->LoginViaEmailComponent
+private func factoryf72dc3dd3ed336197337cd4281a5bfff6e29e9ef(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return LoginViaEmailComponentDependency02acc83f1ad8d17e18e1Provider(determineAuthMethodOnPremComponent: parent1(component) as! DetermineAuthMethodOnPremComponent, rootComponent: parent2(component) as! RootComponent)
+}
+>>>>>>> a9236721a9 (refactor: connect WireAuthentication to existing registration flow - WPB-16279 (#2689))
 
 #else
 extension LoginViaEmailOnPremComponent: NeedleFoundation.Registration {
@@ -279,7 +312,6 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["preferredAPIVersion-APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
         localTable["productionVersions-Set<APIVersion>"] = { [unowned self] in self.productionVersions as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
-        localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
@@ -300,7 +332,6 @@ extension NoHistoryComponent: NeedleFoundation.Registration {
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
-        keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-NetworkService"
         keyPathToName[\LoginViaEmailComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"

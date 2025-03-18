@@ -29,6 +29,12 @@ public protocol Router {
 
     func presentSheet<ModalDestination: Hashable>(_ modalDestination: ModalDestination)
 
+<<<<<<< HEAD
     func presentAlert(_ alert: RootViewModel.Alert)
+=======
+    func dismissSheet()
+
+    func presentAlert(_ alert: Alert)
+>>>>>>> a9236721a9 (refactor: connect WireAuthentication to existing registration flow - WPB-16279 (#2689))
 
 }

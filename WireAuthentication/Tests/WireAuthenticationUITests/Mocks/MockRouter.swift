@@ -22,7 +22,12 @@ final class MockRouter: Router {
 
     public var navigate_Invocations: [any Hashable] = []
     public var modalPresent_Invocations: [any Hashable] = []
+<<<<<<< HEAD
     public var alert_Invocations: [RootViewModel.Alert] = []
+=======
+    public var alert_Invocations: [Alert] = []
+    public var dismissSheet_InvocationCount = 0
+>>>>>>> a9236721a9 (refactor: connect WireAuthentication to existing registration flow - WPB-16279 (#2689))
 
     func popToRoot() {}
 
@@ -36,6 +41,10 @@ final class MockRouter: Router {
 
     func presentAlert(_ alert: RootViewModel.Alert) {
         alert_Invocations.append(alert)
+    }
+
+    func dismissSheet() {
+        dismissSheet_InvocationCount += 1
     }
 
 }

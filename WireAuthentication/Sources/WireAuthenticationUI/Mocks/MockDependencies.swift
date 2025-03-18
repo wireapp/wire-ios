@@ -24,7 +24,7 @@ import WireReusableUIComponents
 final class MockDependencies {
 
     private var rootViewModel: RootViewModel {
-        RootViewModel()
+        RootViewModel(bridge: WireAuthenticationBridge())
     }
 
     var environmentType: BackendEnvironmentType {
@@ -257,7 +257,6 @@ extension MockDependencies: LoginViaEmailBuilder {
             loginViaEmailUseCase: self,
             backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: false,
