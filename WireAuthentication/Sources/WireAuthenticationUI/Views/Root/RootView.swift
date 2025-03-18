@@ -44,15 +44,15 @@ package struct RootView: View {
                 switch sheet {
                 case .authFlow:
                     NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView
-                            .alert(
-                                item: $viewModel.alert,
-                                title: titleForAlert,
-                                message: messageForAlert,
-                                actions: { _ in
-                                    Button(L10n.Authentication.Error.confirm, action: {})
-                                }
-                            )
+                        factory.determineAuthMethodView()
+                    }
+                case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
+                    NavigationStack(path: $viewModel.path) {
+                        factory.determineAuthMethodView(
+                            environmentType: environmentType,
+                            backendConfig: backendConfig,
+                            backendMetadata: backendMetadata
+                        )
                     }
                 case let .noHistory(
                     authenticationResult,
@@ -86,30 +86,21 @@ package struct RootView: View {
             }
     }
 
-    private func titleForAlert(_ alert: RootViewModel.Alert) -> Text {
-        switch alert {
-        case .ssoLoginFailed:
-            Text(L10n.Authentication.Error.Title.ssoLoginFailed)
-        }
-    }
-
-    private func messageForAlert(_ alert: RootViewModel.Alert) -> Text {
-        switch alert {
-        case .ssoLoginFailed:
-            Text(L10n.Authentication.Error.Message.ssoLoginFailed)
-        }
-    }
-
     package enum ModalDestination: Identifiable, Hashable {
         public var id: Self { self }
 
         case authFlow
+        case onPremiseAuthFlow(
+            environmentType: BackendEnvironmentType,
+            backendConfig: BackendConfig,
+            backendMetadata: BackendMetadata
+        )
         case noHistory(
             authenticationResult: AuthenticationResult,
             didDetectDomainConflict: Bool
         )
         case onPremiseLogin(
-            email: String,
+            email: String?,
             environmentType: BackendEnvironmentType,
             environment: BackendConfig,
             backendMetadata: BackendMetadata?
