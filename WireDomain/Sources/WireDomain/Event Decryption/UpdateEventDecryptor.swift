@@ -122,6 +122,10 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             }
         }
 
+        Task.detached {
+            await mlsMessageDecryptor.commitPendingProposalsIfNeeded()
+        }
+        
         return decryptedEvents
     }
 
