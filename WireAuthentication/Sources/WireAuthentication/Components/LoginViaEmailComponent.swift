@@ -91,9 +91,14 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency] in
-                dependency?.router.dismissSheet()
-                dependency?.bridge.sendOutboundEvent(.accountRegistrationRequested(email: email))
+            onCreateAccount: { [dependency, backendEnvironment] in
+                guard let dependency else { return }
+                dependency.router.dismissSheet()
+                dependency.bridge.sendOutboundEvent(.accountRegistrationRequested(
+                        email: email,
+                        backendEnvironment
+                    )
+                )
             }
         )
     }
