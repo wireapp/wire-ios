@@ -24,13 +24,13 @@ import WireDesign
 /// The different contents that can be displayed inside the message toolbox.
 enum MessageToolboxContent: Equatable {
     /// Display buttons to let the user resend the message.
-    case sendFailure(NSAttributedString)
+    case sendFailure(String)
 
     /// Display list of calls
-    case callList(NSAttributedString)
+    case callList(String)
 
     /// Display the message details (timestamp and/or status and/or countdown).
-    case details(timestamp: NSAttributedString?, status: NSAttributedString?, countdown: NSAttributedString?)
+    case details(timestamp: String?, status: MessageToolboxState?, countdown: String?)
 }
 
 extension MessageToolboxContent: Comparable {
@@ -51,6 +51,14 @@ extension MessageToolboxContent: Comparable {
 
 }
 
+enum MessageToolboxState: Equatable {
+    case sending
+    case sent
+    case delivered
+    case seen
+    case seenByMultiple(Int)
+}
+
 // MARK: - Data Source
 
 /// An object that determines what content to display for the given message.
@@ -64,10 +72,10 @@ final class MessageToolboxDataSource {
     /// The displayed message.
     let message: ConversationMessage
 
-    var editedAttributedString: NSAttributedString? {
+    var editedString: String? {
         guard message.updatedAt != nil else { return nil }
 
-        return L10n.Localizable.Content.Message.edited && attributes
+        return L10n.Localizable.Content.Message.edited
     }
 
     /// The content to display for the message.
@@ -75,13 +83,7 @@ final class MessageToolboxDataSource {
 
     // MARK: - Formatting Properties
 
-    private let statusTextColor = SemanticColors.Label.textMessageDetails
-    private let statusFont = FontSpec.smallRegularFont.font!
     private static let ephemeralTimeFormatter = EphemeralTimeoutFormatter()
-
-    private var attributes: [NSAttributedString.Key: AnyObject] {
-        [.font: statusFont, .foregroundColor: statusTextColor]
-    }
 
     // MARK: - Initialization
 
@@ -128,7 +130,7 @@ final class MessageToolboxDataSource {
                 Message.userCancelledUploadReason
             }
 
-            content = .sendFailure(detailsString && attributes)
+            content = .sendFailure(detailsString)
         }
 
         // 3) Timestamp
@@ -148,23 +150,27 @@ final class MessageToolboxDataSource {
     // MARK: - Details Text
 
     /// Creates a label that display the status of the message.
-    private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
+    private func makeDetailsString() -> (
+        String?,
+        MessageToolboxState?,
+        String?
+    ) {
         let countdownStatus = makeEphemeralCountdown()
 
         let deliveryStateString = selfMessageState(for: message)
 
         if let timestampString = message.formattedReceivedDate(), message.isSent {
             if let deliveryStateString, message.shouldShowDeliveryState {
-                return (timestampString && attributes, deliveryStateString, countdownStatus)
+                return (timestampString, deliveryStateString, countdownStatus)
             } else {
-                return (timestampString && attributes, nil, countdownStatus)
+                return (timestampString, nil, countdownStatus)
             }
         } else {
             return (nil, deliveryStateString, countdownStatus)
         }
     }
 
-    private func makeEphemeralCountdown() -> NSAttributedString? {
+    private func makeEphemeralCountdown() -> String? {
         let showDestructionTimer = message.isEphemeral &&
             !message.isObfuscated &&
             message.destructionDate != nil &&
@@ -176,7 +182,7 @@ final class MessageToolboxDataSource {
 
             if remaining > 0 {
                 if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
-                    return string && attributes
+                    return string
                 }
             } else if message.isAudio {
                 // do nothing, audio messages are allowed to extend the timer
@@ -190,97 +196,51 @@ final class MessageToolboxDataSource {
     // MARK: - message delivery state
 
     /// Returns the status for the sender of the message.
-    private func selfMessageState(for message: ZMConversationMessage) -> NSAttributedString? {
+    private func selfMessageState(for message: ZMConversationMessage) -> MessageToolboxState? {
         guard let sender = message.senderUser, sender.isSelfUser else {
             return nil
         }
 
         switch message.deliveryState {
         case .pending:
-            return stateAttributedString(attachment: sendingTextAttachment())
-        case .read:
-            return readDeliveryStateAttributedString(for: message)
+            return .sending
+        case .read where message.conversationLike?.conversationType == .group:
+                return .seenByMultiple(message.readReceipts.count)
+        case .read where message.conversationLike?.conversationType == .oneOnOne:
+            return .seen
         case .delivered:
-            return stateAttributedString(attachment: deliveredTextAttachment())
+            return .delivered
         case .sent:
-            return stateAttributedString(attachment: sentTextAttachment())
-        case .invalid, .failedToSend:
-            return nil
-        }
-    }
-
-    /// Creates the status for the read receipts.
-    private func readDeliveryStateAttributedString(for message: ZMConversationMessage) -> NSAttributedString? {
-        guard let conversationType = message.conversationLike?.conversationType else { return nil }
-
-        switch conversationType {
-        case .group:
-            let attributes: [NSAttributedString.Key: AnyObject] = [
-                .font: UIFont.monospacedDigitSystemFont(ofSize: 10, weight: .semibold),
-                .foregroundColor: statusTextColor
-            ]
-
-            let imageIcon = seenTextAttachment()
-            let attributedString = NSAttributedString(attachment: imageIcon) + " \(message.readReceipts.count)" &&
-                attributes
-            attributedString
-                .accessibilityLabel = (imageIcon.accessibilityLabel ?? "") + " \(message.readReceipts.count)"
-            return attributedString
-
-        case .oneOnOne:
-            guard let timestamp = message.readReceipts.first?.serverTimestamp else {
-                return nil
-            }
-
-            let imageIcon = seenTextAttachment()
-
-            let timestampString = message.formattedDate(timestamp)
-            let attributedString = NSAttributedString(attachment: imageIcon) + " " + timestampString && attributes
-            attributedString.accessibilityLabel = (imageIcon.accessibilityLabel ?? "") + " " + timestampString
-            return attributedString
-
+            return .sent
         default:
             return nil
         }
     }
 
-    private func seenTextAttachment() -> NSTextAttachment {
-        textAttachment(image: UIImage(resource: .seen), accessibilityLabel: "seen")
-    }
+    /// Creates the status for the read receipts.
+    private func readDeliveryStateAttributedString(for message: ZMConversationMessage) -> MessageToolboxState? {
+        guard let conversationType = message.conversationLike?.conversationType else { return nil }
 
-    private func sendingTextAttachment() -> NSTextAttachment {
-        textAttachment(image: UIImage(resource: .sending), accessibilityLabel: "sending")
-    }
+        switch conversationType {
+        case .group:
+            return .seenByMultiple(message.readReceipts.count)
 
-    private func sentTextAttachment() -> NSTextAttachment {
-        textAttachment(image: UIImage(resource: .sent), accessibilityLabel: "sent")
-    }
+        case .oneOnOne:
+//            guard let timestamp = message.readReceipts.first?.serverTimestamp else {
+//                return nil
+//            }
+//            let timestampString = message.formattedDate(timestamp) // TODO: need time seen?
+            return .seen
 
-    private func deliveredTextAttachment() -> NSTextAttachment {
-        textAttachment(image: UIImage(resource: .delivered), accessibilityLabel: "delivered")
+        default:
+            return nil
+        }
     }
-
-    private func textAttachment(image: UIImage, accessibilityLabel: String) -> NSTextAttachment {
-        let imageIcon = NSTextAttachment.textAttachment(
-            image: image,
-            with: statusTextColor,
-            iconSize: 13,
-            verticalCorrection: -1
-        )
-        imageIcon.accessibilityLabel = accessibilityLabel
-        return imageIcon
-    }
-
-    private func stateAttributedString(attachment: NSTextAttachment) -> NSAttributedString? {
-        let attributedString = NSAttributedString(attachment: attachment)
-        attributedString.accessibilityLabel = attachment.accessibilityLabel
-        return attributedString
-    }
-
+    
     // MARK: - Call List
 
     /// Create a timestamp list for all calls associated with a call system message
-    private func makeCallList() -> NSAttributedString {
+    private func makeCallList() -> String {
         if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
            let timestamp = timestampString(message) {
 
@@ -293,9 +253,9 @@ final class MessageToolboxDataSource {
                 "\(text)\n\(current)"
             }
 
-            return finalText && attributes
+            return finalText
         } else {
-            return timestampString(message) ?? "-" && attributes
+            return timestampString(message) ?? "-"
         }
     }
 
