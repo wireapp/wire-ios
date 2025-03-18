@@ -487,6 +487,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         managedObjectContext.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
         managedObjectContext.saveOrRollback()
 
+        WireLogger.authentication.setClientID(client.safeRemoteIdentifier.safeForLoggingDescription)
+
         fetchExistingSelfClientsAfterRegisteringClient(client)
 
         emailCredentials = nil
