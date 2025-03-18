@@ -68,7 +68,8 @@ enum ConversationSystemMessageCellDescription {
         case .messageDeletedForEveryone:
             let senderCell = ConversationSenderMessageCellDescription(
                 sender: sender,
-                message: message
+                message: message,
+                shouldShowAuthor: true
             )
             senderCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(senderCell)]

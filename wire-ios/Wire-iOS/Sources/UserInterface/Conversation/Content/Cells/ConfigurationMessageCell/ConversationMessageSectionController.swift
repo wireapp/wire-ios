@@ -95,6 +95,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// Whether this section is selected
     private var selected: Bool
+    private let shouldShowAuthor: Bool
 
     /// Whether this section is collapsed
     private var isCollapsed: Bool
@@ -112,7 +113,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         context: ConversationMessageContext,
         selected: Bool = false,
         userSession: UserSession,
-        useInvertedIndices: Bool
+        useInvertedIndices: Bool,
+        shouldShowAuthor: Bool
     ) {
         self.message = message
         self.context = context
@@ -120,6 +122,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.isCollapsed = true
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
+        self.shouldShowAuthor = shouldShowAuthor
 
         super.init()
 
@@ -312,7 +315,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if isSenderVisible, let sender = message.senderUser, let timestamp = message.formattedReceivedDate() {
             let description = ConversationSenderMessageCellDescription(
                 sender: sender,
-                message: message
+                message: message,
+                shouldShowAuthor: shouldShowAuthor
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }

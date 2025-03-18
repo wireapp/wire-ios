@@ -43,6 +43,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         let user: UserType
         let indicator: Indicator?
         let teamRoleIndicator: TeamRoleIndicator?
+        let shouldShowAuthor: Bool
     }
 
     // MARK: - Properties
@@ -83,6 +84,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         return label
     }()
+    
+    lazy var stackView = UIStackView()
+        .setClipsToBounds(false)
 
     // MARK: - Init
 
@@ -95,6 +99,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
+    
+    var heightConstraint: NSLayoutConstraint?
 
     // MARK: - configure
 
@@ -104,6 +110,16 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         configureAuthorLabel(object: object)
 
+        if let heightConstraint {
+            stackView.removeConstraint(heightConstraint)
+        }
+        if object.shouldShowAuthor {
+            heightConstraint = stackView.heightAnchor.constraint(equalTo: authorLabel.heightAnchor)
+        } else {
+            heightConstraint = stackView.heightAnchor.constraint(equalToConstant: 0)
+        }
+        heightConstraint?.isActive = true
+        
         // We need to call that method here to restraint the authorLabel moving
         // outside of the view and then back to its position. For more information
         // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
@@ -123,16 +139,17 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
                 trailingInset: 0
             )
         
-        let leadingMargin = conversationHorizontalMargins.left - CGFloat(integerLiteral: avatar.size.rawValue) - 7
-        let stackView = UIStackView(arrangedSubviews: [
-            avatarContainerView
-                .wrapInView(leadingInset: leadingMargin)
-                .setClipsToBounds(false),
-            authorLabel
-        ]).setClipsToBounds(false)
+        let spacing: CGFloat = 7
+        let leadingMargin = conversationHorizontalMargins.left - CGFloat(integerLiteral: avatar.size.rawValue) - spacing
+        
+        [avatarContainerView
+            .wrapInView(leadingInset: leadingMargin)
+            .setClipsToBounds(false),
+         authorLabel
+        ].forEach { stackView.addArrangedSubview($0) }
             
         stackView.axis = .horizontal
-        stackView.spacing = 7
+        stackView.spacing = spacing
         stackView.alignment = .leading
         stackView.distribution = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -140,7 +157,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         addSubview(stackView)
         
         avatar.constraintToSquare(sideLength: CGFloat(integerLiteral: avatar.size.rawValue))
-        stackView.heightAnchor.constraint(equalTo: authorLabel.heightAnchor).isActive = true
+        
         stackView.fitIn(view: self)
     }
 
@@ -272,7 +289,11 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     ///   - sender: The given sender of the message
     ///   - message: The given message
     ///   - timestamp: The given timestamp of the message
-    init(sender: UserType, message: ZMConversationMessage) {
+    init(
+        sender: UserType,
+        message: ZMConversationMessage,
+        shouldShowAuthor: Bool
+    ) {
         self.message = message
 
         let teamRoleIndicator = sender.teamRoleIndicator()
@@ -286,7 +307,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         self.configuration = View.Configuration(
             user: sender,
             indicator: indicator,
-            teamRoleIndicator: teamRoleIndicator
+            teamRoleIndicator: teamRoleIndicator,
+            shouldShowAuthor: shouldShowAuthor
         )
 
         setupAccessibility(sender)
