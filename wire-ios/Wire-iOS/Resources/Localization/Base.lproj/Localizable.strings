@@ -635,6 +635,7 @@
 "content.message.delete" = "Delete";
 "content.message.save" = "Save";
 "content.message.resend" = "Resend";
+"content.message.edited" = "Edited";
 
 "content.message.delete_ellipsis" = "Delete…";
 

@@ -81,11 +81,13 @@ public extension UIView {
 }
 
 public extension UIView {
-    func pinOptionally(to anchorable: UIView,
-                       topInset: CGFloat? = nil,
-                       bottomInset: CGFloat? = nil,
-                       leadingInset: CGFloat? = nil,
-                       trailingInset: CGFloat? = nil) {
+    func pinOptionally(
+        to anchorable: UIView,
+        topInset: CGFloat? = nil,
+        bottomInset: CGFloat? = nil,
+        leadingInset: CGFloat? = nil,
+        trailingInset: CGFloat? = nil
+    ) {
         translatesAutoresizingMaskIntoConstraints = false
         var constraints = [NSLayoutConstraint]()
         if let leadingInset {
@@ -94,14 +96,14 @@ public extension UIView {
         if let trailingInset {
             constraints.append(anchorable.trailingAnchor.constraint(equalTo: trailingAnchor, constant: trailingInset))
         }
-        
+
         if let topInset {
             constraints.append(topAnchor.constraint(equalTo: anchorable.topAnchor, constant: topInset))
         }
         if let bottomInset {
             constraints.append(anchorable.bottomAnchor.constraint(equalTo: bottomAnchor, constant: bottomInset))
         }
-        
+
         NSLayoutConstraint.activate(constraints)
     }
 }

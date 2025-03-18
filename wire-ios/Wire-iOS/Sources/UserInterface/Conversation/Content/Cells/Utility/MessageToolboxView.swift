@@ -35,8 +35,8 @@ private extension UILabel {
     static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
         label.numberOfLines = 1
-        label.textColor = SemanticColors.View.backgroundSeparatorCell
-        label.font = UIFont.smallSemiboldFont
+        label.textColor = SemanticColors.Label.baseSecondaryText
+        label.font = .preferredFont(forTextStyle: .body)
         label.text = String.MessageToolbox.middleDot
         label.isAccessibilityElement = false
         label.setContentHuggingPriority(.required, for: .horizontal)
@@ -76,6 +76,18 @@ final class MessageToolboxView: UIView {
         label.isAccessibilityElement = true
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return label
+    }()
+
+    private let editedLabel: UILabel = {
+        let label = UILabel()
+        label.lineBreakMode = .byTruncatingMiddle
+        label.numberOfLines = 1
+        label.accessibilityIdentifier = "Edited"
+        label.isAccessibilityElement = true
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.isHidden = true
         return label
     }()
 
@@ -143,6 +155,7 @@ final class MessageToolboxView: UIView {
         [
             detailsLabel,
             timestampSeparatorLabel,
+            editedLabel,
             statusLabel,
             statusSeparatorLabel,
             countdownLabel
@@ -252,6 +265,7 @@ final class MessageToolboxView: UIView {
             statusSeparatorLabel.isHidden = true
             countdownLabel.isHidden = true
             messageFailureView.isHidden = true
+            editedLabel.isHidden = true
 
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
@@ -260,6 +274,7 @@ final class MessageToolboxView: UIView {
             timestampSeparatorLabel.isHidden = false
             messageFailureView.isHidden = false
             messageFailureView.setTitle(detailsString.string)
+            editedLabel.isHidden = true
 
         case let .details(timestamp, status, countdown):
             detailsLabel.attributedText = timestamp
@@ -275,10 +290,13 @@ final class MessageToolboxView: UIView {
             statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
             countdownLabel.attributedText = countdown
             countdownLabel.isHidden = countdown == nil
+
+            let editedAttributedString = dataSource.editedAttributedString
+            editedLabel.isHidden = editedAttributedString == nil
+            editedLabel.attributedText = editedAttributedString
+
             messageFailureView.isHidden = true
         }
-
-        layoutIfNeeded()
     }
 
     // MARK: - Timer

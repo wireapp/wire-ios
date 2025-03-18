@@ -64,6 +64,12 @@ final class MessageToolboxDataSource {
     /// The displayed message.
     let message: ConversationMessage
 
+    var editedAttributedString: NSAttributedString? {
+        guard message.updatedAt != nil else { return nil }
+
+        return L10n.Localizable.Content.Message.edited && attributes
+    }
+
     /// The content to display for the message.
     private(set) var content: MessageToolboxContent
 
@@ -141,33 +147,13 @@ final class MessageToolboxDataSource {
 
     // MARK: - Details Text
 
-    /// Create a timestamp list for all calls associated with a call system message
-    private func makeCallList() -> NSAttributedString {
-        if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
-           let timestamp = timestampString(message) {
-
-            let childrenTimestamps = childMessages
-                .compactMap { $0 as? ZMConversationMessage }
-                .sortedAscendingPrependingNil(by: \.serverTimestamp)
-                .compactMap(timestampString)
-
-            let finalText = childrenTimestamps.reduce(timestamp) { text, current in
-                "\(text)\n\(current)"
-            }
-
-            return finalText && attributes
-        } else {
-            return timestampString(message) ?? "-" && attributes
-        }
-    }
-
     /// Creates a label that display the status of the message.
     private func makeDetailsString() -> (NSAttributedString?, NSAttributedString?, NSAttributedString?) {
         let countdownStatus = makeEphemeralCountdown()
 
         let deliveryStateString = selfMessageState(for: message)
 
-        if let timestampString = timestampString(message), message.isSent {
+        if let timestampString = message.formattedReceivedDate(), message.isSent {
             if let deliveryStateString, message.shouldShowDeliveryState {
                 return (timestampString && attributes, deliveryStateString, countdownStatus)
             } else {
@@ -202,7 +188,7 @@ final class MessageToolboxDataSource {
     }
 
     // MARK: - message delivery state
-    
+
     /// Returns the status for the sender of the message.
     private func selfMessageState(for message: ZMConversationMessage) -> NSAttributedString? {
         guard let sender = message.senderUser, sender.isSelfUser else {
@@ -257,23 +243,23 @@ final class MessageToolboxDataSource {
             return nil
         }
     }
-    
+
     private func seenTextAttachment() -> NSTextAttachment {
         textAttachment(image: UIImage(resource: .seen), accessibilityLabel: "seen")
     }
-    
+
     private func sendingTextAttachment() -> NSTextAttachment {
         textAttachment(image: UIImage(resource: .sending), accessibilityLabel: "sending")
     }
-    
+
     private func sentTextAttachment() -> NSTextAttachment {
         textAttachment(image: UIImage(resource: .sent), accessibilityLabel: "sent")
     }
-    
+
     private func deliveredTextAttachment() -> NSTextAttachment {
         textAttachment(image: UIImage(resource: .delivered), accessibilityLabel: "delivered")
     }
-    
+
     private func textAttachment(image: UIImage, accessibilityLabel: String) -> NSTextAttachment {
         let imageIcon = NSTextAttachment.textAttachment(
             image: image,
@@ -284,15 +270,35 @@ final class MessageToolboxDataSource {
         imageIcon.accessibilityLabel = accessibilityLabel
         return imageIcon
     }
-    
+
     private func stateAttributedString(attachment: NSTextAttachment) -> NSAttributedString? {
         let attributedString = NSAttributedString(attachment: attachment)
         attributedString.accessibilityLabel = attachment.accessibilityLabel
         return attributedString
     }
 
-    // MARK: -
-    
+    // MARK: - Call List
+
+    /// Create a timestamp list for all calls associated with a call system message
+    private func makeCallList() -> NSAttributedString {
+        if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
+           let timestamp = timestampString(message) {
+
+            let childrenTimestamps = childMessages
+                .compactMap { $0 as? ZMConversationMessage }
+                .sortedAscendingPrependingNil(by: \.serverTimestamp)
+                .compactMap(timestampString)
+
+            let finalText = childrenTimestamps.reduce(timestamp) { text, current in
+                "\(text)\n\(current)"
+            }
+
+            return finalText && attributes
+        } else {
+            return timestampString(message) ?? "-" && attributes
+        }
+    }
+
     /// Creates the timestamp text.
     private func timestampString(_ message: ZMConversationMessage) -> String? {
         var timestampString: String?

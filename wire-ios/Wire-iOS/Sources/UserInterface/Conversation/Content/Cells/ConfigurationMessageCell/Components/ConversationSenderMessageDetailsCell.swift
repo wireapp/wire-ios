@@ -20,12 +20,11 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 enum Indicator {
     case deleted
-    case edited
 }
 
 enum TeamRoleIndicator {
@@ -79,12 +78,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.setContentHuggingPriority(.required, for: .vertical)
-        
+
         label.translatesAutoresizingMaskIntoConstraints = false
 
         return label
     }()
-    
+
     lazy var stackView = UIStackView()
         .setClipsToBounds(false)
 
@@ -99,7 +98,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
-    
+
     var heightConstraint: NSLayoutConstraint?
 
     // MARK: - configure
@@ -119,11 +118,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             heightConstraint = stackView.heightAnchor.constraint(equalToConstant: 0)
         }
         heightConstraint?.isActive = true
-        
-        // We need to call that method here to restraint the authorLabel moving
-        // outside of the view and then back to its position. For more information
-        // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
-        layoutIfNeeded()
     }
 
     // MARK: - Configure subviews and setup constraints
@@ -133,31 +127,33 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             .setClipsToBounds(false)
         avatarContainerView.addSubview(avatar)
         avatar.pinOptionally(
-                to: avatarContainerView,
-                topInset: 0,
-                leadingInset: 0,
-                trailingInset: 0
-            )
-        
+            to: avatarContainerView,
+            topInset: 0,
+            leadingInset: 0,
+            trailingInset: 0
+        )
+
         let spacing: CGFloat = 7
         let leadingMargin = conversationHorizontalMargins.left - CGFloat(integerLiteral: avatar.size.rawValue) - spacing
-        
-        [avatarContainerView
-            .wrapInView(leadingInset: leadingMargin)
-            .setClipsToBounds(false),
-         authorLabel
-        ].forEach { stackView.addArrangedSubview($0) }
-            
+
+        [
+            avatarContainerView
+                .wrapInView(leadingInset: leadingMargin)
+                .setClipsToBounds(false),
+            authorLabel
+        ]
+        .forEach { stackView.addArrangedSubview($0) }
+
         stackView.axis = .horizontal
         stackView.spacing = spacing
         stackView.alignment = .leading
         stackView.distribution = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         addSubview(stackView)
-        
+
         avatar.constraintToSquare(sideLength: CGFloat(integerLiteral: avatar.size.rawValue))
-        
+
         stackView.fitIn(view: self)
     }
 
@@ -175,11 +171,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         case .deleted:
             if let attachment = attachment(from: .trash, size: 8) {
-                attributedString.append(attachment)
-            }
-
-        case .edited:
-            if let attachment = attachment(from: .pencil, size: 8) {
                 attributedString.append(attachment)
             }
 
@@ -299,8 +290,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         let teamRoleIndicator = sender.teamRoleIndicator()
         let indicator: Indicator? = if message.isDeletion {
             .deleted
-        } else if message.updatedAt != nil {
-            .edited
         } else {
             .none
         }
@@ -364,14 +353,14 @@ private extension UserType {
 }
 
 extension ConversationSenderMessageDetailsCell: UIGestureRecognizerDelegate {
-    
+
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let avatarPoint = avatar.convert(point, from: self)
-        
+
         if avatar.point(inside: avatarPoint, with: event) {
             return avatar
         }
-        
+
         return super.hitTest(point, with: event)
     }
 }

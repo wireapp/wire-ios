@@ -39,15 +39,14 @@ extension NSTextAttachment {
         } else {
             icon.makeImage(size: iconSize, color: color)
         }
-        
+
         return makeAttachment(
             image: image,
             iconSize: iconSize,
             verticalCorrection: verticalCorrection
         )
     }
-    
-    
+
     static func textAttachment(
         image: UIImage,
         with color: UIColor,
@@ -55,15 +54,15 @@ extension NSTextAttachment {
         verticalCorrection: CGFloat = 0,
         insets: UIEdgeInsets? = nil
     ) -> NSTextAttachment {
-        
+
         var image = image
             .withTintColor(color)
             .resize(for: iconSize)
-        
+
         if let insets {
             image = image.with(insets: insets, backgroundColor: .clear)!
         }
-        
+
         return makeAttachment(
             image: image,
             iconSize: iconSize,

@@ -19,7 +19,7 @@
 import UIKit
 
 public extension UIView {
- 
+
     @discardableResult
     func setClipsToBounds(_ value: Bool) -> Self {
         clipsToBounds = value
