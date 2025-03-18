@@ -541,7 +541,40 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.messageProtocol = .mls
         }
         let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
-        let networkError = SendMLSMessageFailure(from: response)!
+        let networkError = NetworkError.errorDecodingResponse(response)
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withQuickSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v5)
+            .withMLServiceConfigured()
+            .withSendMlsMessage(returning: .failure(networkError))
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+
+        // then
+        await assertItThrows(error: networkError) {
+            try await messageSender.sendMessage(message: message)
+        }
+    }
+
+    func testThatWhenSendingMlsMessageFailsWithMLSError_thenThrowError() async throws {
+        // given
+        await syncMOC.performGrouped {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+        }
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
+        let networkError = SendMLSMessageFailure.mlsMissingSenderClient(message: "test")
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
             context: syncMOC,

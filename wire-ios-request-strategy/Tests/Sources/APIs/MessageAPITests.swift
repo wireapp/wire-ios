@@ -85,17 +85,43 @@ final class MessageAPITests: XCTestCase {
                 status: 422,
                 error: .mlsUnsupportedMessage(message: errorMessage),
                 label: "mls-unsupported-message"
-            ),
-            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: errorMessage), label: "foo")
+            )
         ]
 
         for failure in failures {
-            try await test_Failure(failure)
+            try await testSendMLSMessageFailure(failure)
+        }
+    }
+
+    func testOtherFailure_ReturnsNil() async throws {
+        // GIVEN:
+        let responseStatus = 999
+        let responseLabel = "foo"
+        let data = Data()
+        let conversationID = QualifiedID.random()
+        // WHEN
+
+
+
+        mockHTTPClient.transportResponse = ZMTransportResponse(
+            payload: ["label": responseLabel, "message": errorMessage] as ZMTransportData,
+            httpStatus: responseStatus,
+            transportSessionError: nil,
+            apiVersion: 8
+        )
+
+        do {
+            _ = try await sut.sendMLSMessage(message: data, conversationID: conversationID, expirationDate: nil)
+        } catch {
+            let specificError = try XCTUnwrap(error as? NetworkError)
+            XCTAssertEqual(specificError, NetworkError.errorDecodingResponse(mockHTTPClient.transportResponse!))
         }
 
     }
 
-    func test_Failure(
+    // MARK: - Helpers
+
+    private func testSendMLSMessageFailure(
         _ failureCase: FailureCase,
         file: StaticString = #file,
         line: UInt = #line
@@ -113,18 +139,29 @@ final class MessageAPITests: XCTestCase {
         do {
             _ = try await sut.sendMLSMessage(message: data, conversationID: conversationID, expirationDate: nil)
         } catch {
-            let specificError = try XCTUnwrap(error as? SendMLSMessageFailure, file: file, line: line)
+            let specificError = try XCTUnwrap(
+                error as? SendMLSMessageFailure,
+                "unexpected error type for \(failureCase)",
+                file: file,
+                line: line
+            )
             XCTAssertEqual(specificError, failureCase.error, file: file, line: line)
         }
     }
+}
 
-    struct FailureCase {
+extension MessageAPITests {
+    struct FailureCase: CustomStringConvertible {
         let status: Int
         let error: SendMLSMessageFailure
         let label: String?
 
         static func failure(status: Int, error: SendMLSMessageFailure, label: String? = nil) -> Self {
             .init(status: status, error: error, label: label)
+        }
+
+        var description: String {
+            "FailureCase status: \(status), error: \(error), label: \(label ?? "<nil>")"
         }
     }
 }
