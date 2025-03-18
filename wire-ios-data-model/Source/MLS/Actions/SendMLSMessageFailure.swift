@@ -162,9 +162,6 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
         let payloadMessage = response.payloadMessage() ?? ""
 
         switch (response.httpStatus, label) {
-        case (201, _):
-            return nil
-
         case (400, "mls-group-conversation-mismatch"):
             self = .mlsGroupConversationMismatch(message: payloadMessage)
 
@@ -217,11 +214,7 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
             self = .mlsUnsupportedMessage(message: payloadMessage)
 
         default:
-            self = .unknown(
-                status: response.httpStatus,
-                label: label,
-                message: payloadMessage
-            )
+            return nil
         }
     }
 

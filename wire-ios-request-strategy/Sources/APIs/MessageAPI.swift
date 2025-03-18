@@ -373,14 +373,20 @@ class MessageAPIV5: MessageAPIV4 {
         if response.result == .success {
             payload = try mapSuccessResponse(response)
         } else {
-            throw mapFailureResponse(response)
+            throw customMapFailureResponse(response)
         }
 
         return (payload, response)
     }
 
-    private func mapFailureResponse(_ response: ZMTransportResponse) -> Error {
-        SendMLSMessageFailure(from: response) ?? NetworkError.errorDecodingResponse(response)
+    private func customMapFailureResponse(_ response: ZMTransportResponse) -> Error {
+        if let error = SendMLSMessageFailure(from: response) {
+            return error
+        } else {
+            // This will return a NetworkError
+            // (i.e. federation error will be caughted on MessageSender)
+            return mapFailureResponse(response)
+        }
     }
 }
 
