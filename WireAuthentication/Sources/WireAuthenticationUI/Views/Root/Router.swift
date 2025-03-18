@@ -21,14 +21,14 @@ import Foundation
 import SwiftUI
 
 @MainActor
-public protocol Router {
+package protocol Router {
 
     func popToRoot()
 
     func navigate<Destination: Hashable>(to destination: Destination)
 
-    func presentSheet<ModalDestination: Hashable>(_ modalDestination: ModalDestination)
+    func presentSheet(_ modalDestination: RootView.ModalDestination)
 
-    func presentAlert(_ alert: RootViewModel.Alert)
+    func presentAlert(_ alert: Alert)
 
 }

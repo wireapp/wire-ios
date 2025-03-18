@@ -22,6 +22,7 @@ import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+internal import WireAuthenticationLogic
 
 class RootComponent: BootstrapComponent {
 
@@ -92,6 +93,19 @@ class RootComponent: BootstrapComponent {
 
     // MARK: - Children
 
+    func determineAuthMethodOnPremComponent(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?
+    ) -> DetermineAuthMethodOnPremComponent {
+        DetermineAuthMethodOnPremComponent(
+            parent: self,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        )
+    }
+
     var determineAuthMethodComponent: DetermineAuthMethodComponent {
         DetermineAuthMethodComponent(parent: self)
     }
@@ -109,10 +123,10 @@ class RootComponent: BootstrapComponent {
     }
 
     func loginViaEmailOnPremComponent(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+        backendMetadata: BackendMetadata?
     ) -> LoginViaEmailOnPremComponent {
         LoginViaEmailOnPremComponent(
             parent: self,
@@ -138,7 +152,21 @@ class RootComponent: BootstrapComponent {
 
 extension RootComponent: RootView.Factory {
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+    @MainActor
+    func determineAuthMethodView(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) -> DetermineAuthMethodView {
+        determineAuthMethodOnPremComponent(
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        ).view
+    }
+
+    @MainActor
+    func determineAuthMethodView() -> DetermineAuthMethodView {
         determineAuthMethodComponent.view
     }
 
@@ -155,7 +183,7 @@ extension RootComponent: RootView.Factory {
 
     @MainActor
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?

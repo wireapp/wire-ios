@@ -49,6 +49,8 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: true,
             didDetectDomainConflict: false,
+            environmentType: MockDependencies().environmentType,
+            backendConfig: MockDependencies()._backendConfig,
             backendMetadata: backendMetadata
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
@@ -69,6 +71,8 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: true,
             didDetectDomainConflict: false,
+            environmentType: MockDependencies().environmentType,
+            backendConfig: MockDependencies()._backendConfig,
             backendMetadata: backendMetadata
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
@@ -90,6 +94,8 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
+            environmentType: MockDependencies().environmentType,
+            backendConfig: MockDependencies()._backendConfig,
             backendMetadata: backendMetadata
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
@@ -110,6 +116,8 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
+            environmentType: MockDependencies().environmentType,
+            backendConfig: MockDependencies()._backendConfig,
             backendMetadata: backendMetadata
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
