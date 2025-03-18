@@ -675,19 +675,19 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - commitPendingProposals
+    // MARK: - updateCommitPendingProposal
 
-    public var commitPendingProposalsConversationDateCommitDelay_Invocations: [(conversation: ZMConversation, date: Date, commitDelay: UInt64)] = []
-    public var commitPendingProposalsConversationDateCommitDelay_MockMethod: ((ZMConversation, Date, UInt64) async -> Void)?
+    public var updateCommitPendingProposalDateForCommitDelay_Invocations: [(date: Date, conversation: ZMConversation, commitDelay: UInt64)] = []
+    public var updateCommitPendingProposalDateForCommitDelay_MockMethod: ((Date, ZMConversation, UInt64) async -> Void)?
 
-    public func commitPendingProposals(conversation: ZMConversation, date: Date, commitDelay: UInt64) async {
-        commitPendingProposalsConversationDateCommitDelay_Invocations.append((conversation: conversation, date: date, commitDelay: commitDelay))
+    public func updateCommitPendingProposal(date: Date, for conversation: ZMConversation, commitDelay: UInt64) async {
+        updateCommitPendingProposalDateForCommitDelay_Invocations.append((date: date, conversation: conversation, commitDelay: commitDelay))
 
-        guard let mock = commitPendingProposalsConversationDateCommitDelay_MockMethod else {
-            fatalError("no mock for `commitPendingProposalsConversationDateCommitDelay`")
+        guard let mock = updateCommitPendingProposalDateForCommitDelay_MockMethod else {
+            fatalError("no mock for `updateCommitPendingProposalDateForCommitDelay`")
         }
 
-        await mock(conversation, date, commitDelay)
+        await mock(date, conversation, commitDelay)
     }
 
     // MARK: - updateSecurityLevelAfterReceivingMessage
@@ -1328,6 +1328,21 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
         } else {
             fatalError("no mock for `decryptedEventDataFrom`")
         }
+    }
+
+    // MARK: - commitPendingProposalsIfNeeded
+
+    var commitPendingProposalsIfNeeded_Invocations: [Void] = []
+    var commitPendingProposalsIfNeeded_MockMethod: (() async -> Void)?
+
+    func commitPendingProposalsIfNeeded() async {
+        commitPendingProposalsIfNeeded_Invocations.append(())
+
+        guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
+            fatalError("no mock for `commitPendingProposalsIfNeeded`")
+        }
+
+        await mock()
     }
 
 }
