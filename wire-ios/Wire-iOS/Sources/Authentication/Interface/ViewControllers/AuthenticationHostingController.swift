@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthentication
+import WireLogging
 import WireSyncEngine
 
 // A temporary bridging object to allow the new WireAuthentication flow inside
@@ -48,6 +49,17 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
             case .accountRegistrationRequested:
                 // TODO: [WPB-16279] Navigate to the account registration flow
                 break
+
+            case .exitFlowRequested:
+                guard
+                    let sessionManager = SessionManager.shared,
+                    let account = sessionManager.firstAuthenticatedAccount
+                else {
+                    WireLogger.authentication.error("WireAuthentication requested exit but no account to go back to")
+                    return
+                }
+
+                sessionManager.select(account)
             }
         }
 

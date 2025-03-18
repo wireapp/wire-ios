@@ -53,6 +53,7 @@ public final class WireAuthenticationBridge {
 
         case userAuthenticated(AuthenticationResult)
         case accountRegistrationRequested
+        case exitFlowRequested
 
     }
 

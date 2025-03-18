@@ -108,6 +108,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var appStoreURL: URL {
         return rootComponent.appStoreURL
     }
+    var existsAnotherAccount: Bool {
+        return rootComponent.existsAnotherAccount
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -212,6 +215,9 @@ private class DetermineAuthMethodOnPremComponentDependencyb4a02ddb77e5a66140fbPr
     }
     var appStoreURL: URL {
         return rootComponent.appStoreURL
+    }
+    var existsAnotherAccount: Bool {
+        return rootComponent.existsAnotherAccount
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -324,6 +330,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodComponentDependency.appStoreURL] = "appStoreURL-URL"
+        keyPathToName[\DetermineAuthMethodComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
@@ -360,6 +367,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["userDefaults-UserDefaults"] = { [unowned self] in self.userDefaults as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
+        localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
@@ -380,6 +388,7 @@ extension DetermineAuthMethodOnPremComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.appStoreURL] = "appStoreURL-URL"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
