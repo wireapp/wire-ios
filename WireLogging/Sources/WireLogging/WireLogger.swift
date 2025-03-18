@@ -106,8 +106,6 @@ public struct WireLogger: LoggerProtocol, Sendable {
 
 public extension WireLogger {
     func setClientID(_ clientID: String) {
-        // reset the value first, in case it was set before, DD add twice attribute
-        addTag(.selfClientId, value: nil)
         addTag(.selfClientId, value: clientID)
     }
 
@@ -116,8 +114,6 @@ public extension WireLogger {
     }
 
     func setActiveAccount(accoundID: String) {
-        // reset the value first, in case it was set before, DD add twice attribute
-        addTag(.accountID, value: nil)
         addTag(.accountID, value: accoundID)
     }
 
