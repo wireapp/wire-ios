@@ -134,7 +134,7 @@ final class ConversationCellBurstTimestampView: UIView {
     ) {
         let calendar = Calendar.current
         if showUnreadDot, !isFirstMessageOfTheDay {
-            label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
+            label.text = WRDateFormatter.timeIntervalFormatter.string(for: timestamp)
         } else if calendar.isDateInToday(timestamp) {
             // for same day just show "Today"
             label.text = sameDayDateFormatter.string(from: timestamp)
@@ -154,9 +154,9 @@ final class ConversationCellBurstTimestampView: UIView {
 }
 
 @MainActor private let sameDayDateFormatter = {
-    let relativeDateFormatter = DateFormatter()
-    relativeDateFormatter.timeStyle = .none
-    relativeDateFormatter.dateStyle = .medium
-    relativeDateFormatter.doesRelativeDateFormatting = true
-    return relativeDateFormatter
+    let sameDayDateFormatter = DateFormatter()
+    sameDayDateFormatter.timeStyle = .none
+    sameDayDateFormatter.dateStyle = .medium
+    sameDayDateFormatter.doesRelativeDateFormatting = true
+    return sameDayDateFormatter
 }()
