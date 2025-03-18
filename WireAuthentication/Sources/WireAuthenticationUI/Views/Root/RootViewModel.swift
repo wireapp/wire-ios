@@ -25,12 +25,10 @@ import WireAuthenticationAPI
 package final class RootViewModel: ObservableObject, Router {
 
     @Published var path = NavigationPath()
-    @Published var modalDestination: RootView.ModalDestination?
+    @Published var modalDestination: RootView.ModalDestination? = .authFlow
     @Published var alert: Alert?
 
-    package init(modalDestination: RootView.ModalDestination) {
-        self.modalDestination = modalDestination
-    }
+    package init() {}
 
     package func popToRoot() {
         path.removeLast(path.count)

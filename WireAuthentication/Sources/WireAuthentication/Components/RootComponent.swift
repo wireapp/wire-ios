@@ -76,12 +76,7 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor private var viewModel: RootViewModel {
-        shared { RootViewModel(
-            modalDestination: .authFlow(
-                environmentType: environmentType,
-                backendConfig: backendConfig
-            )
-        ) }
+        shared { RootViewModel() }
     }
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -109,6 +104,10 @@ class RootComponent: BootstrapComponent {
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         )
+    }
+
+    var determineAuthMethodComponent: DetermineAuthMethodComponent {
+        DetermineAuthMethodComponent(parent: self)
     }
 
     @MainActor
@@ -164,6 +163,11 @@ extension RootComponent: RootView.Factory {
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         ).view
+    }
+
+    @MainActor
+    func determineAuthMethodView() -> DetermineAuthMethodView {
+        determineAuthMethodComponent.view
     }
 
     @MainActor

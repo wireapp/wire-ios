@@ -82,8 +82,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.cancellable = bridge.inboundEvents.sink { event in
             switch event {
             case let .backendSwitchRequested(configURL):
-                Task {
-                    await self.handleOnPremLogin(email: nil, backendConfigURL: configURL)
+                Task { [weak self] in
+                    await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
             default:
                 break

@@ -42,13 +42,9 @@ package struct RootView: View {
         BackgroundView()
             .sheet(item: $viewModel.modalDestination) { sheet in
                 switch sheet {
-                case let .authFlow(environmentType, backendConfig):
+                case .authFlow:
                     NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView(
-                            environmentType: environmentType,
-                            backendConfig: backendConfig,
-                            backendMetadata: nil
-                        )
+                        factory.determineAuthMethodView()
                     }
                 case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
                     NavigationStack(path: $viewModel.path) {
@@ -93,10 +89,7 @@ package struct RootView: View {
     package enum ModalDestination: Identifiable, Hashable {
         public var id: Self { self }
 
-        case authFlow(
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig
-        )
+        case authFlow
         case onPremiseAuthFlow(
             environmentType: BackendEnvironmentType,
             backendConfig: BackendConfig,
