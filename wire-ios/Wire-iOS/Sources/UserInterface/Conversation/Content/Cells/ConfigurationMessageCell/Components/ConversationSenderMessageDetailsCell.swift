@@ -154,6 +154,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
             dateLabel.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            authorLabel.centerYAnchor.constraint(greaterThanOrEqualTo: centerYAnchor),
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
             bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
 
