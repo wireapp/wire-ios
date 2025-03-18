@@ -30,7 +30,8 @@ struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
                 blackListURL: URL(string: "example")!,
                 teamsURL: URL(string: "example")!,
                 accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!
+                websiteURL: URL(string: "example")!,
+                countlyURL: URL(string: "example")!
             ),
             proxySettings: nil,
             pinnedKeys: nil

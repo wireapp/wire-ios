@@ -52,6 +52,7 @@
 "switch_backend_confirmation.teams_url" = "Teams-URL:";
 "switch_backend_confirmation.accounts_url" = "Accounts-URL:";
 "switch_backend_confirmation.website_url" = "Website-URL:";
+"switch_backend_confirmation.countly_url" = "Countly-URL:";
 "switch_backend_confirmation.proceed" = "Fortfahren";
 "switch_backend_confirmation.cancel" = "Abbrechen";
 "switch_backend_confirmation.show_details" = "Details anzeigen";
@@ -65,27 +66,34 @@
 "authentication.no_history.message" = "Aus Datenschutzgründen wird der bisherige Gesprächsverlauf nicht angezeigt.";
 "authentication.no_history.confirm" = "OK";
 
-"authentication.error.title.no_internet" = "Kein Internet";
-"authentication.error.title.general" = "Fehler";
-"authentication.error.title.invalid_sso_link" = "Fehler";
-"authentication.error.title.sso_login_failed" = "Ein Fehler ist aufgetreten";
+"authentication.error.title.no_internet" = "No internet connection";
+"authentication.error.title.general" = "Ein Fehler ist aufgetreten";
+"authentication.error.title.sso_login_failed" = "Login with SSO failed";
 "authentication.error.title.invalid_credentials" = "Ungültige Informationen";
 "authentication.error.title.invalid_invalid_2FA_code" = "Ungültiger Bestätigungscode";
 "authentication.error.title.account_pending_activation" = "Ausstehende Aktivierung";
 "authentication.error.title.account_suspended" = "Unauthorized";
+"authentication.error.title.incorrect_sso_code" = "Ungültiger SSO-Code";
 
-"authentication.error.message.no_internet" = "Sie sind nicht mit dem Internet verbunden.";
-"authentication.error.message.general" = "Ein Fehler ist aufgetreten";
-"authentication.error.message.invalid_sso_link" = "Invalid company login url.";
+"authentication.error.message.no_internet" = "Es gibt ein Problem mit Ihrem Netzwerk. Bitte versuchen Sie es später noch einmal.";
+"authentication.error.message.general" = "Please retry later.";
 "authentication.error.message.sso_login_failed" = "Für Details wenden Sie sich bitte an Ihren Team-Admin.";
 "authentication.error.message.invalid_credentials" = "Diese Zugangsdaten sind nicht korrekt. Bitte überprüfen Sie Ihre Angaben und versuchen Sie es erneut.";
 "authentication.error.message.invalid_invalid_2FA_code" = "Bitte geben Sie einen gültigen Bestätigungscode ein.";
-"authentication.error.message.account_pending_activation" = "Dieses Benutzerkonto ist noch nicht aktiviert. Bitte bestätigen Sie Ihre Angaben.";
+"authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "Benutzerkonto ist nicht mehr zur Anmeldung berechtigt.";
+"authentication.error.message.incorrect_sso_code" = "Bitte den SSO-Zugangscode des Unternehmens überprüfen und erneut versuchen.";
 
 "authentication.error.confirm" = "OK";
 
-"authentication.error.title.email_already_in_use" = "E-Mail-Adresse wird bereits verwendet";
-"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
-"authentication.error.how_to_change_email" = "How to change email address";
-"authentication.error.how_to_delete_account" = "How to delete a private account";
+"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
+"authentication.error.how_to_change_email" = "E-Mail-Adresse ändern";
+"authentication.error.how_to_delete_account" = "Privates Benutzerkonto löschen";
+
+"obsolete_client.alert.title" = "Aktualisierung erforderlich";
+"obsolete_client.alert.message" = "Sie verpassen neue Funktionen.\nLaden Sie die neueste Version von Wire herunter.";
+"obsolete_client.alert.ok_button" = "Zum App Store";
+
+"obsolete_backend.alert.title" = "Serverversion wird nicht unterstützt";
+"obsolete_backend.alert.message" = "Die Serverversion wird von dieser App nicht unterstützt. Bitte wenden Sie sich an Ihren Systemadministrator.";

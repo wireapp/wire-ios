@@ -18,24 +18,16 @@
 
 import Foundation
 
-package struct SSOSuccessHandler {
-
-    private let router: any Router
-
-    package init(router: Router) {
-        self.router = router
-    }
+// sourcery: AutoMockable
+public protocol OpenAppStoreUseCaseProtocol: Sendable {
 
     @MainActor
-    package func handleSuccess(userID: UUID, cookies: [HTTPCookie]) {
-        router.presentSheet(
-            RootView.ModalDestination.noHistory(
-                userID: userID,
-                cookies: cookies,
-                accessToken: nil,
-                didDetectDomainConflict: false
-            )
-        )
-    }
+    func invoke()
+
+}
+
+public protocol OpenAppStoreUseCaseFactory {
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol
 
 }

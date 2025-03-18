@@ -26,11 +26,14 @@ internal import WireAuthenticationLogic
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var defaultBackendEnvironment: BackendEnvironment { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
+    var environmentType: BackendEnvironmentType { get }
+    var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
+    var appStoreURL: URL { get }
 
 }
 
@@ -39,7 +42,11 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: dependency.router,
-            factory: self
+            factory: self,
+            environmentType: dependency.environmentType,
+            backendConfig: dependency.backendConfig,
+            backendMetadata: nil,
+            bridge: dependency.bridge
         )
     }
 
@@ -53,7 +60,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     public var networkService: NetworkService {
         shared {
             NetworkService.make(
-                backendEnvironment: dependency.defaultBackendEnvironment,
+                backendEnvironment: .init(dependency.backendConfig),
                 minTLSVersion: dependency.minTLSVersion
             )
         }
@@ -61,24 +68,35 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     // MARK: - Children
 
-    func loginViaEmailComponent(backendMetadata: WireAuthenticationAPI.BackendMetadata) -> LoginViaEmailComponent {
+    func loginViaEmailComponent(backendMetadata: BackendMetadata) -> LoginViaEmailComponent {
         LoginViaEmailComponent(
             parent: self,
+            environmentType: dependency.environmentType,
+            backendConfig: dependency.backendConfig,
             backendMetadata: backendMetadata
         )
     }
 
-    var loginViaSSOComponent: LoginViaSSOComponent {
-        LoginViaSSOComponent()
+    func loginViaSSOComponent(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOComponent {
+        LoginViaSSOComponent(
+            parent: self,
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        )
     }
 
     func switchBackendConfirmationComponent(
-        email: String,
+        email: String?,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationComponent {
         SwitchBackendConfirmationComponent(
             parent: self,
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
         )
     }
@@ -120,7 +138,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
         return SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
-            baseURL: dependency.defaultBackendEnvironment.url,
+            baseURL: dependency.backendConfig.endpoints.backendURL,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
         )
@@ -128,6 +146,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
         FetchBackendConfigUseCase()
+    }
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
 }
@@ -139,7 +161,9 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         email: String,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
         loginViaEmailComponent(backendMetadata: backendMetadata).view(
             email: email,
@@ -148,16 +172,24 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         )
     }
 
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        loginViaSSOComponent.view(ssoURL: ssoURL)
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) -> LoginViaSSOView {
+        loginViaSSOComponent(
+            ssoURL: ssoURL,
+            backendEnvironment: backendEnvironment
+        ).view
     }
 
     func switchBackendView(
-        email: String,
+        email: String?,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView {
         switchBackendConfirmationComponent(
             email: email,
+            environmentType: environmentType,
             backendConfig: backendConfig
         ).view
     }

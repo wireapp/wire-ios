@@ -16,12 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import UIKit
+import WireAuthenticationAPI
 
-typealias MessageReactionsDiffableDataSource = UICollectionViewDiffableDataSource<MessageReactionsSectionID, Emoji.ID>
+public struct OpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
 
-enum MessageReactionsSectionID: Hashable {
-    case single
+    let url: URL
+
+    public init(url: URL) {
+        self.url = url
+    }
+
+    @MainActor
+    public func invoke() {
+        UIApplication.shared.open(url)
+    }
+
 }
-
-typealias MessageReactionsDiffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<MessageReactionsSectionID, Emoji.ID>

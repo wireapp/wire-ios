@@ -26,23 +26,28 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
 
     package typealias Factory =
         LoginViaEmailUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory
 
     private let router: any Router
     private let factory: any Factory
     private let passwordValidator: any PasswordValidator
-    private let backendConfig: BackendConfig
+    private let environmentType: BackendEnvironmentType
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    package let backendConfig: BackendConfig
 
-    let email: String
+    let email: String?
     let canCreateAccount: Bool
+
+    @Published var alert: Alert?
 
     // MARK: - Life cycle
 
     package init(
         router: any Router,
         factory: any Factory,
-        email: String,
+        email: String?,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?,
         passwordValidator: any PasswordValidator,
@@ -53,26 +58,13 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         self.email = email
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
+        self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.backendMetadata = backendMetadata
     }
 
     private var forgotPasswordURL: URL {
         backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
-    }
-
-    var backendName: String {
-        backendConfig.title
-    }
-
-    var backendInfo: String {
-        [
-            L10n.OnPremUserLogin.Alert.Message.backendName,
-            backendName,
-            "",
-            L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendConfig.endpoints.backendURL.absoluteString
-        ].joined(separator: "\n")
     }
 
     var localizedPasswordRules: String? {
@@ -91,18 +83,32 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         passwordValidator.isPasswordValid(password)
     }
 
+    var isValidEmail: Bool {
+        guard let email else { return false }
+        return !email.isEmpty
+    }
+
     func submitPassword(_ password: String) async {
+        guard let email else { return }
+
         let backendMetadata: WireAuthenticationAPI.BackendMetadata
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            return
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            return
         } catch {
-            // TODO: [WPB-16415] handle unresolved api version
-            fatalError()
+            alert = .general(for: error)
+            return
         }
 
         let (cookies, accessToken): ([HTTPCookie], AccessToken)
         do {
             (cookies, accessToken) = try await login(
+                email: email,
                 password: password,
                 backendMetadata: backendMetadata
             )
@@ -111,16 +117,39 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
             fatalError("error: \(error)")
         }
 
-        router.navigate(to: RootView.ModalDestination.noHistory(
+        let emailCredentials = EmailCredentials(
+            email: email,
+            password: password,
+            verificationCode: nil
+        )
+
+        let backendEnvironment = WireAuthenticationBackendEnvironment(
+            environmentType: environmentType,
+            config: backendConfig,
+            metadata: backendMetadata
+        )
+
+        let authenticationResult = AuthenticationResult(
             userID: accessToken.userID,
             cookies: cookies,
             accessToken: accessToken,
+            emailCredentials: emailCredentials,
+            backendEnvironment: backendEnvironment
+        )
+
+        router.presentSheet(RootView.ModalDestination.noHistory(
+            authenticationResult: authenticationResult,
             didDetectDomainConflict: false
         ))
     }
 
     func recoverPassword() {
         UIApplication.shared.open(forgotPasswordURL)
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     func createAccount() {
@@ -140,6 +169,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     private func login(
+        email: String,
         password: String,
         backendMetadata: BackendMetadata
     ) async throws -> ([HTTPCookie], AccessToken) {

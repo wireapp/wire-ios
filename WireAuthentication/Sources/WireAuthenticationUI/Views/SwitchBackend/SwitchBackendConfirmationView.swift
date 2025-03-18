@@ -24,7 +24,8 @@ package protocol SwitchBackendConfirmationBuilder {
 
     @MainActor
     func switchBackendView(
-        email: String,
+        email: String?,
+        environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView
 
@@ -34,16 +35,21 @@ package struct SwitchBackendConfirmationView: View {
 
     // MARK: - Properties
 
+    package typealias Factory = LoginViaSSOBuilder
+
     @Environment(\.dismiss) var dismiss
     @State private var showFullDetails: Bool = false
     @StateObject var viewModel: SwitchBackendConfirmationViewModel
 
     private typealias Strings = L10n.SwitchBackendConfirmation
+    private let factory: any Factory
 
     package init(
-        viewModel: SwitchBackendConfirmationViewModel
+        viewModel: SwitchBackendConfirmationViewModel,
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.factory = factory
     }
 
     package var body: some View {
@@ -60,7 +66,30 @@ package struct SwitchBackendConfirmationView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
         )
+        .frame(width: 350)
         .fixedSize(horizontal: false, vertical: true)
+        .alert(
+            item: $viewModel.alert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { alert in
+                switch alert {
+                case .obsoleteClient:
+                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                default:
+                    Button(L10n.Authentication.Error.confirm, action: {})
+                }
+            }
+        )
+        .sheet(item: $viewModel.modalDestination, content: {
+            switch $0 {
+            case let .ssoLogin(ssoURL, backendEnvironment):
+                factory.loginViaSSOView(
+                    ssoURL: ssoURL,
+                    backendEnvironment: backendEnvironment
+                )
+            }
+        })
     }
 
     private var title: some View {
@@ -199,10 +228,12 @@ package func makeSwitchBackendConfirmationViewPreview(
     blackListURL: URL,
     teamsURL: URL,
     accountsURL: URL,
-    websiteURL: URL
+    websiteURL: URL,
+    countlyURL: URL?
 ) -> some View {
     MockDependencies().switchBackendView(
         email: "email.com",
+        environmentType: .anta,
         backendConfig: BackendConfig(
             title: backendName,
             endpoints: Endpoints(
@@ -211,7 +242,8 @@ package func makeSwitchBackendConfirmationViewPreview(
                 blackListURL: blackListURL,
                 teamsURL: teamsURL,
                 accountsURL: accountsURL,
-                websiteURL: websiteURL
+                websiteURL: websiteURL,
+                countlyURL: countlyURL
             ),
             proxySettings: nil,
             pinnedKeys: nil

@@ -25,6 +25,14 @@ import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
+public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
+public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
+public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
+public typealias Endpoints = WireAuthenticationAPI.Endpoints
+public typealias ProxySettings = WireAuthenticationAPI.ProxySettings
+public typealias TrustData = WireAuthenticationAPI.TrustData
+public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
+
 public struct WireAuthenticationAssembly {
 
     public init() {
@@ -33,7 +41,8 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        defaultBackendEnvironment: BackendEnvironment,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
         accountsURL: URL,
@@ -42,11 +51,11 @@ public struct WireAuthenticationAssembly {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        onRegisterAccount: @escaping () -> Void
+        appStoreURL: URL
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
-            defaultBackendEnvironment: defaultBackendEnvironment,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             accountsURL: accountsURL,
@@ -55,8 +64,7 @@ public struct WireAuthenticationAssembly {
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             userDefaults: userDefaults,
-            onRegisterAccount: onRegisterAccount,
-            onFlowCompletion: onFlowCompletion
+            appStoreURL: appStoreURL
         )
 
         return (view: rootComponent.view, bridge: rootComponent.bridge)

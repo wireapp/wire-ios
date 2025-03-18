@@ -52,6 +52,7 @@
 "switch_backend_confirmation.teams_url" = "Teams URL:";
 "switch_backend_confirmation.accounts_url" = "Accounts URL:";
 "switch_backend_confirmation.website_url" = "Website URL:";
+"switch_backend_confirmation.countly_url" = "Countly URL:";
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Cancelar";
 "switch_backend_confirmation.show_details" = "Show details";
@@ -65,27 +66,34 @@
 "authentication.no_history.message" = "Por questões de privacidade, o seu histórico de conversa não aparecerá aqui.";
 "authentication.no_history.confirm" = "OK";
 
-"authentication.error.title.no_internet" = "No internet";
-"authentication.error.title.general" = "Erro";
-"authentication.error.title.invalid_sso_link" = "Erro";
-"authentication.error.title.sso_login_failed" = "Algo deu errado";
+"authentication.error.title.no_internet" = "No internet connection";
+"authentication.error.title.general" = "Algo deu errado";
+"authentication.error.title.sso_login_failed" = "Login with SSO failed";
 "authentication.error.title.invalid_credentials" = "Invalid Information";
 "authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
 "authentication.error.title.account_pending_activation" = "Pending activation";
 "authentication.error.title.account_suspended" = "Unauthorized";
+"authentication.error.title.incorrect_sso_code" = "Invalid SSO code";
 
-"authentication.error.message.no_internet" = "You are not connected to the internet.";
-"authentication.error.message.general" = "Algo deu errado";
-"authentication.error.message.invalid_sso_link" = "Invalid company login url.";
+"authentication.error.message.no_internet" = "Parece que há um problema com a sua rede. Por favor, tente novamente mais tarde.";
+"authentication.error.message.general" = "Please retry later.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
 "authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
 "authentication.error.message.invalid_invalid_2FA_code" = "Please enter a valid verification code.";
-"authentication.error.message.account_pending_activation" = "The account you are trying to access is pending activation. Please verify your details.";
+"authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "Esta conta não está mais autorizada a entrar.";
+"authentication.error.message.incorrect_sso_code" = "Por favor, verifique se o seu código de acesso SSO da empresa e tente novamente.";
 
 "authentication.error.confirm" = "OK";
 
-"authentication.error.title.email_already_in_use" = "Email already in use";
-"authentication.error.message.email_already_in_use" = "This email's domain belongs to a Wire Enterprise Instance, but the email address is associated with a Wire Cloud account. To proceed with the Enterprise instance login, please update your email address to another domain, or delete your account. If the account is part of a team, please reach out to the Team Administrator.";
+"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
 "authentication.error.how_to_change_email" = "How to change email address";
 "authentication.error.how_to_delete_account" = "How to delete a private account";
+
+"obsolete_client.alert.title" = "Atualização necessária";
+"obsolete_client.alert.message" = "Você está perdendo novas funcionalidades. \nObtenha a última versão do Wire na App Store.";
+"obsolete_client.alert.ok_button" = "Vá para a App Store";
+
+"obsolete_backend.alert.title" ="Versão do servidor não suportada";
+"obsolete_backend.alert.message" = "A versão do servidor não é suportada por este aplicativo. Por favor, entre em contato com o administrador do sistema.";
