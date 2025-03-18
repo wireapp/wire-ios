@@ -32,6 +32,7 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
+    var appStoreURL: URL { get }
 
 }
 
@@ -128,6 +129,10 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
             authenticationAPI: authenticationAPI,
             linkGenerator: linkGenerator
         )
+    }
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
 }
