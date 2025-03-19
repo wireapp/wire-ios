@@ -88,7 +88,7 @@ public extension ZMConversationMessage {
         guard isSystem else { return false }
         return systemMessageData!.systemMessageType == .messageDeletedForEveryone
     }
-    
+
     var supportsCollapsing: Bool {
         isFile || isAudio || isVideo || isLocation || isImage || isText
     }

@@ -37,7 +37,7 @@ struct HorizontalMargins {
             self.right = 16
         }
     }
-    
+
     static func conversationHorizontalMargins(
         windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame
             .width ?? UIScreen.main.bounds.width
@@ -56,12 +56,10 @@ struct HorizontalMargins {
 
 }
 
-
 extension UITraitEnvironment {
     var conversationHorizontalMargins: HorizontalMargins {
         HorizontalMargins.conversationHorizontalMargins()
     }
-
 
     var directionAwareConversationLayoutMargins: HorizontalMargins {
         let margins = conversationHorizontalMargins
