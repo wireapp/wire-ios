@@ -48,6 +48,7 @@ func XCTAssertArrayEqual(
 class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     var userSession: UserSessionMock!
+    var forceRecord: Bool? = nil
 
     override func setUp() {
         super.setUp()
@@ -63,17 +64,19 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     func verify(
         message: ConversationMessage,
         context: ConversationMessageContext? = nil,
+        named: String? = nil,
         waitForImagesToLoad: Bool = false,
         waitForTextViewToLoad: Bool = false,
         allColorSchemes: Bool = false,
         allWidths: Bool = true,
         snapshotBackgroundColor: UIColor? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
 
-        let createSut: () -> UIView = {
+        let createSut: (CGFloat) -> UIView = { width in
             // prevent cache exist and loading image immediately
             if !waitForImagesToLoad {
                 MediaAssetCache.defaultImageCache.cache.removeAllObjects()
@@ -83,7 +86,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
                 context: context,
                 waitForImagesToLoad: waitForImagesToLoad,
                 waitForTextViewToLoad: waitForTextViewToLoad,
-                snapshotBackgroundColor: snapshotBackgroundColor
+                snapshotBackgroundColor: snapshotBackgroundColor,
+                width: width
             )
         }
 
@@ -92,7 +96,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             verify(
                 createSut: createSut,
                 snapshotBackgroundColor: snapshotBackgroundColor,
-                named: "dark",
+                named: (named ?? "") + "dark",
+                record: record ?? forceRecord,
                 allWidths: allWidths,
                 file: file,
                 testName: testName,
@@ -103,7 +108,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             verify(
                 createSut: createSut,
                 snapshotBackgroundColor: snapshotBackgroundColor,
-                named: "light",
+                named: (named ?? "") + "light",
+                record: record ?? forceRecord,
                 allWidths: allWidths,
                 file: file,
                 testName: testName,
@@ -113,6 +119,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             verify(
                 createSut: createSut,
                 snapshotBackgroundColor: snapshotBackgroundColor,
+                named: named,
+                record: record ?? forceRecord,
                 allWidths: allWidths,
                 file: file,
                 testName: testName,
@@ -122,9 +130,10 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     }
 
     private func verify(
-        createSut: () -> UIView,
+        createSut: (CGFloat) -> UIView,
         snapshotBackgroundColor: UIColor?,
         named name: String? = nil,
+        record: Bool? = nil,
         allColorSchemes: Bool = false,
         allWidths: Bool = true,
         file: StaticString = #filePath,
@@ -138,6 +147,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
                 createSut: createSut,
                 snapshotBackgroundColor: backgroundColor,
                 named: name,
+                record: record,
                 file: file,
                 testName: testName,
                 line: line
@@ -148,6 +158,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
                 widths: [smallestWidth],
                 snapshotBackgroundColor: backgroundColor,
                 named: name,
+                record: record ?? forceRecord,
                 file: file,
                 testName: testName,
                 line: line
@@ -160,7 +171,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         context: ConversationMessageContext?,
         waitForImagesToLoad: Bool,
         waitForTextViewToLoad: Bool,
-        snapshotBackgroundColor: UIColor?
+        snapshotBackgroundColor: UIColor?,
+        width: CGFloat
     ) -> UIStackView {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
@@ -169,7 +181,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: width
         )
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)
