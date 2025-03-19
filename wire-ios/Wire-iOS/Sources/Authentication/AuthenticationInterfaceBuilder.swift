@@ -21,6 +21,7 @@ import WireAPI
 import WireAuthentication
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -75,6 +76,7 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
+            let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),
@@ -86,7 +88,8 @@ final class AuthenticationInterfaceBuilder {
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 userDefaults: .shared(),
-                appStoreURL: WireURLs.shared.appOnItunes
+                appStoreURL: WireURLs.shared.appOnItunes,
+                existsAnotherAccount: numberOfAccounts > 0
             )
             return AuthenticationHostingController(
                 rootView: rootView,

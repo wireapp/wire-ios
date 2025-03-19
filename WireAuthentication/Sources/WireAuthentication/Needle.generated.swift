@@ -105,6 +105,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var appStoreURL: URL {
         return rootComponent.appStoreURL
     }
+    var existsAnotherAccount: Bool {
+        return rootComponent.existsAnotherAccount
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -188,6 +191,43 @@ private class NoHistoryComponentDependency0df6cc26e7db3dd9d951Provider: NoHistor
 private func factory3bfed346df783964230ab3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return NoHistoryComponentDependency0df6cc26e7db3dd9d951Provider(rootComponent: parent1(component) as! RootComponent)
 }
+<<<<<<< HEAD
+=======
+private class DetermineAuthMethodOnPremComponentDependencyb4a02ddb77e5a66140fbProvider: DetermineAuthMethodOnPremComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
+    var preferredAPIVersion: APIVersion? {
+        return rootComponent.preferredAPIVersion
+    }
+    var minTLSVersion: TLSVersion {
+        return rootComponent.minTLSVersion
+    }
+    var ssoCallbackURLScheme: String {
+        return rootComponent.ssoCallbackURLScheme
+    }
+    var userDefaults: UserDefaults {
+        return rootComponent.userDefaults
+    }
+    var appStoreURL: URL {
+        return rootComponent.appStoreURL
+    }
+    var existsAnotherAccount: Bool {
+        return rootComponent.existsAnotherAccount
+    }
+    private let rootComponent: RootComponent
+    init(rootComponent: RootComponent) {
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->DetermineAuthMethodOnPremComponent
+private func factorydbdff85f3341dce5e925b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return DetermineAuthMethodOnPremComponentDependencyb4a02ddb77e5a66140fbProvider(rootComponent: parent1(component) as! RootComponent)
+}
+>>>>>>> cf871dddd6 (fix: can't exit authentication flow - WPB-16562 (#2692))
 private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: LoginViaEmailComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -250,6 +290,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodComponentDependency.appStoreURL] = "appStoreURL-URL"
+        keyPathToName[\DetermineAuthMethodComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
@@ -286,6 +327,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["userDefaults-UserDefaults"] = { [unowned self] in self.userDefaults as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
+        localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
@@ -297,6 +339,22 @@ extension NoHistoryComponent: NeedleFoundation.Registration {
         keyPathToName[\NoHistoryComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
     }
 }
+<<<<<<< HEAD
+=======
+extension DetermineAuthMethodOnPremComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.router] = "router-any Router"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.userDefaults] = "userDefaults-UserDefaults"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.appStoreURL] = "appStoreURL-URL"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
+        localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
+    }
+}
+>>>>>>> cf871dddd6 (fix: can't exit authentication flow - WPB-16562 (#2692))
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"

@@ -75,15 +75,21 @@ final class MockDependencies {
 
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
+        canExitFlow: Bool,
         isLoading: Bool,
         alert: Alert?
     ) -> DetermineAuthMethodView {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
             emailOrSSOCode: emailOrSSOCode,
+<<<<<<< HEAD
+=======
+            canExitFlow: canExitFlow,
+>>>>>>> cf871dddd6 (fix: can't exit authentication flow - WPB-16562 (#2692))
             isLoading: isLoading
         )
         viewModel.alert = alert
@@ -156,8 +162,15 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
+<<<<<<< HEAD
             backendConfig: backendConfig
+=======
+            backendConfig: backendConfig,
+            backendMetadata: nil,
+            canExitFlow: false
+>>>>>>> cf871dddd6 (fix: can't exit authentication flow - WPB-16562 (#2692))
         )
     }
 
