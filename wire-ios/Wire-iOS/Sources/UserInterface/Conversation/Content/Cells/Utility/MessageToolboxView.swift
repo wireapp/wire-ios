@@ -35,8 +35,8 @@ private extension UILabel {
     static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
         label.numberOfLines = 1
-        label.textColor = SemanticColors.View.backgroundSeparatorCell
-        label.font = UIFont.smallSemiboldFont
+        label.textColor = SemanticColors.Label.baseSecondaryText
+        label.font = .preferredFont(forTextStyle: .body)
         label.text = String.MessageToolbox.middleDot
         label.isAccessibilityElement = false
         label.setContentHuggingPriority(.required, for: .horizontal)
@@ -65,10 +65,14 @@ final class MessageToolboxView: UIView {
         stack.axis = .horizontal
         stack.spacing = 3
         stack.isAccessibilityElement = false
+        stack.alignment = .center
         return stack
     }()
+    
+    lazy var font = FontSpec.smallRegularFont.font!
+    lazy var color = SemanticColors.Label.textMessageDetails
 
-    private let detailsLabel: UILabel = {
+    lazy var detailsLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
@@ -76,6 +80,23 @@ final class MessageToolboxView: UIView {
         label.isAccessibilityElement = true
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.font = font
+        label.textColor = color
+        return label
+    }()
+
+    private lazy var editedLabel: UILabel = {
+        let label = UILabel()
+        label.lineBreakMode = .byTruncatingMiddle
+        label.numberOfLines = 1
+        label.accessibilityIdentifier = "Edited"
+        label.isAccessibilityElement = true
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.isHidden = true
+        label.font = font
+        label.textColor = SemanticColors.Label.textMessageDetails
+
         return label
     }()
 
@@ -83,7 +104,7 @@ final class MessageToolboxView: UIView {
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
     private let messageFailureView = MessageSendFailureView()
 
-    private let statusLabel: UILabel = {
+    private lazy var statusLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
@@ -91,10 +112,27 @@ final class MessageToolboxView: UIView {
         label.isAccessibilityElement = true
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.font = font
+        label.textColor = color
         return label
     }()
+    
+    lazy var statusImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.accessibilityIgnoresInvertColors = true
+        imageView.tintColor = color
+        return imageView
+    }()
+    
+    lazy var statusContainerView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [statusImageView, statusLabel])
+        stackView.spacing = 4
+        stackView.isAccessibilityElement = true
+        return stackView
+    }()
 
-    private let countdownLabel: UILabel = {
+    private lazy var countdownLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
@@ -102,6 +140,8 @@ final class MessageToolboxView: UIView {
         label.isAccessibilityElement = true
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.font = font
+        label.textColor = color
         return label
     }()
 
@@ -143,12 +183,15 @@ final class MessageToolboxView: UIView {
         [
             detailsLabel,
             timestampSeparatorLabel,
-            statusLabel,
+            editedLabel,
+            statusContainerView,
             statusSeparatorLabel,
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
 
         [separatorView, contentStack, messageFailureView].forEach(addSubview)
+        
+        statusImageView.constraintToSquare(sideLength: 13)
     }
 
     private func createConstraints() {
@@ -156,7 +199,7 @@ final class MessageToolboxView: UIView {
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         messageFailureView.translatesAutoresizingMaskIntoConstraints = false
 
-        heightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 28)
+        heightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 16)
         heightConstraint.priority = UILayoutPriority(999)
 
         NSLayoutConstraint.activate([
@@ -244,7 +287,7 @@ final class MessageToolboxView: UIView {
         switch dataSource.content {
 
         case let .callList(callListString):
-            detailsLabel.attributedText = callListString
+            detailsLabel.text = callListString
             detailsLabel.isHidden = false
             detailsLabel.numberOfLines = 0
             hideAndCleanStatusLabel()
@@ -252,6 +295,7 @@ final class MessageToolboxView: UIView {
             statusSeparatorLabel.isHidden = true
             countdownLabel.isHidden = true
             messageFailureView.isHidden = true
+            editedLabel.isHidden = true
 
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
@@ -259,26 +303,53 @@ final class MessageToolboxView: UIView {
             countdownLabel.isHidden = true
             timestampSeparatorLabel.isHidden = false
             messageFailureView.isHidden = false
-            messageFailureView.setTitle(detailsString.string)
+            messageFailureView.setTitle(detailsString)
+            editedLabel.isHidden = true
 
-        case let .details(timestamp, status, countdown):
-            detailsLabel.attributedText = timestamp
+        case let .details(timestamp, state, countdown):
+            detailsLabel.text = timestamp
             detailsLabel.isHidden = timestamp == nil
             detailsLabel.numberOfLines = 1
-            statusLabel.attributedText = status
-            // override accessibilityLabel if the attributed string has customized accessibilityLabel
-            if let accessibilityLabel = status?.accessibilityLabel {
-                statusLabel.accessibilityLabel = accessibilityLabel
-            }
-            statusLabel.isHidden = status == nil
-            timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-            statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
-            countdownLabel.attributedText = countdown
+            
+            updateState(state)
+            
+            timestampSeparatorLabel.isHidden = timestamp == nil || state == nil
+            statusSeparatorLabel.isHidden = (timestamp == nil && state == nil) || countdown == nil
+            countdownLabel.text = countdown
             countdownLabel.isHidden = countdown == nil
+
+            let editedString = dataSource.editedString
+            editedLabel.isHidden = editedString == nil
+            editedLabel.text = editedString
+
             messageFailureView.isHidden = true
         }
-
-        layoutIfNeeded()
+    }
+    
+    private func updateState(_ state: MessageToolboxState?) {
+        statusLabel.isHidden = true
+        statusContainerView.isHidden = false
+        switch state {
+        case .sending:
+            statusImageView.image = UIImage(resource: .sending)
+            statusContainerView.accessibilityLabel = "sending"
+        case .sent:
+            statusImageView.image = UIImage(resource: .sent)
+            statusContainerView.accessibilityLabel = "sent"
+        case .delivered:
+            statusImageView.image = UIImage(resource: .delivered)
+            statusContainerView.accessibilityLabel = "delivered"
+        case .seen:
+            statusImageView.image = UIImage(resource: .seen)
+            statusContainerView.accessibilityLabel = "seen"
+        case .seenByMultiple(let count):
+            statusImageView.image = UIImage(resource: .seen)
+            statusLabel.isHidden = false
+            statusLabel.text = "\(count)"
+            statusContainerView.accessibilityLabel = "seen \(count)"
+        case nil:
+            statusContainerView.isHidden = true
+        }
     }
 
     // MARK: - Timer

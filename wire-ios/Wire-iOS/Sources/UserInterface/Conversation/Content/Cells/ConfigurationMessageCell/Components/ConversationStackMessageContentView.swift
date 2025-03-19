@@ -59,6 +59,9 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         stackView.arrangedSubviews.forEach { arrangedSubview in
             arrangedSubview.removeFromSuperview()
         }
+
+        var senderView: ConversationSenderMessageDetailsCell?
+
         for cellDescription in configuration {
             let contentView = cellDescription.makeView(frame: .zero)
             cellDescription.configureContentView(contentView)
@@ -73,10 +76,19 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
             if let lastArrangedSubview {
                 stackView.setCustomSpacing(cellDescription.topMargin, after: lastArrangedSubview)
             }
+
+            if let contentView = contentView as? ConversationSenderMessageDetailsCell {
+                senderView = contentView
+            }
         }
+
         UIView.performWithoutAnimation {
             stackView.setNeedsLayout()
             stackView.layoutIfNeeded()
+        }
+
+        if let senderView {
+            stackView.bringSubviewToFront(senderView)
         }
 
         if
