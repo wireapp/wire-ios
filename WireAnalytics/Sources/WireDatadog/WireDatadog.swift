@@ -127,7 +127,7 @@ public final class WireDatadog {
     }
 
     public func addAttribute(forKey key: String, value: String) {
-        logger?.addTag(withKey: key, value: value)
+        logger?.addAttribute(forKey: key, value: value)
     }
 
     public func removeAttribute(forKey key: String) {

@@ -20,9 +20,9 @@ import Foundation
 
 /// Identifies an alert and provides it's title and message.
 
-struct Alert: Hashable, Identifiable, Sendable {
+package struct Alert: Hashable, Identifiable, Sendable {
 
-    package var id: Self { self }
+    public var id: Self { self }
 
     let title: String
     let message: String
@@ -66,9 +66,24 @@ extension Alert {
         message: Message.accountSuspended
     )
 
+    static let obsoleteClient = Alert(
+        title: L10n.ObsoleteClient.Alert.title,
+        message: L10n.ObsoleteClient.Alert.message
+    )
+
+    static let obsoleteBackend = Alert(
+        title: L10n.ObsoleteBackend.Alert.title,
+        message: L10n.ObsoleteBackend.Alert.message
+    )
+
     static let unknownError = Alert(
         title: Title.general,
         message: Message.general
+    )
+
+    static let ssoLoginFailed = Alert(
+        title: Title.ssoLoginFailed,
+        message: Message.ssoLoginFailed
     )
 
 }
