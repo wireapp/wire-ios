@@ -85,7 +85,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testTodayBeingDisplayedWithoutUnread() {
+    func testTodayNoUnread() {
         // GIVEN & WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
@@ -98,7 +98,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testTodayBeingDisplayedWithUnreadOnlyMessageOfToday() {
+    func testTodayWithUnread() {
         // GIVEN & WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
@@ -111,7 +111,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testTodayBeingDisplayedWithUnreadNotFirstMessageOfToday() {
+    func testTodayWithUnreadAndFirstMessageOfToday() {
         // GIVEN & WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
@@ -124,7 +124,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testWeekdayAndDateBeingDisplayedForYesterdayWithoutUnread() {
+    func testYesterdayNoUnread() {
         // GIVEN
         let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
         let currentDateProvider = MockCurrentDateProviding()
@@ -143,7 +143,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testYesterdayIsDisplayedForOnlyUnreadMessageSince24h() {
+    func testYesterdayWithUnread() {
         // GIVEN
         let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
         let currentDateProvider = MockCurrentDateProviding()
@@ -162,7 +162,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testKA1() {
+    func testYesterdayWithUnreadAndFirstMessageOfToday() {
         // GIVEN
         let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
         let currentDateProvider = MockCurrentDateProviding()
@@ -172,7 +172,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
-            includeDayOfWeek: true,
+            includeDayOfWeek: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -181,7 +181,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testWeekdayDateAndYearBeingDisplayedForLastYearWithoutUnread() {
+    func testLastYearNoUnread() {
         // GIVEN
         let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
         let currentDateProvider = MockCurrentDateProviding()
@@ -199,4 +199,43 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    func testLastYearWithUnread() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
+            includeDayOfWeek: false,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testLastYearWithUnreadAndFirstMessageOfToday() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
+            includeDayOfWeek: false,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
 }
