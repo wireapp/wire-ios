@@ -92,8 +92,6 @@ final class MessageToolboxDataSource {
     /// - Returns: A boolean to either update the content of the message toolbox or not
     func shouldUpdateContent(widthConstraint: CGFloat) -> Bool {
         // Compute the state
-        let isSentBySelfUser = message.senderUser?.isSelfUser == true
-        let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
         let previousContent = content
 
         // Determine the content by priority
@@ -107,22 +105,9 @@ final class MessageToolboxDataSource {
             content = .callList(makeCallList())
         }
         // 2) Failed to send
-        else if failedToSend, isSentBySelfUser {
-            typealias Message = L10n.Localizable.Content.System.FailedtosendMessage
-
-            let detailsString: String = switch message.expirationReason {
-            case .none, .other, .timeout:
-                Message.generalReason
-            case .federationRemoteError:
-                Message.federationRemoteErrorReason(
-                    message.conversationLike?.domain ?? "",
-                    WireURLs.shared.unreachableBackendInfo.absoluteString
-                )
-            case .cancelled:
-                Message.userCancelledUploadReason
-            }
-
-            content = .sendFailure(detailsString && attributes)
+        else if let errorMessage = MessageErrorHelper.errorMessage(message) {
+            
+            content = .sendFailure(errorMessage && attributes)
         }
 
         // 3) Timestamp

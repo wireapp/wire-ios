@@ -25,6 +25,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         let message: ZMConversationMessage
         let user: UserType?
         let collapseExpandAction: () -> Void
+        let errorMessage: String?
     }
 
     var isSelected: Bool = false
@@ -97,6 +98,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         button.tintColor = SemanticColors.Label.baseSecondaryText
         return button
     }()
+    
+    private let messageFailureView = MessageSendFailureView()
+        .setIsHidden(true)
 
     private lazy var wholeViewTapButton = UIButton()
 
@@ -144,6 +148,13 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                 messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
             }
         }
+        
+        if let errorMessage = object.errorMessage {
+            messageFailureView.isHidden = false
+            messageFailureView.setTitle(errorMessage)
+        } else {
+            messageFailureView.isHidden = true
+        }
 
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
         let action = UIAction { _ in
@@ -159,7 +170,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         addSubview(wholeViewTapButton)
         wholeViewTapButton.pin(to: self)
 
-        let stack = UIStackView.horizontal(
+        let horizontalStack = UIStackView.horizontal(
             views: [
                 avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),
                 messageTextView,
@@ -169,15 +180,20 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             ],
             spacing: 10,
             alignment: .center
-        )
-
-        addSubview(stack)
-
-        stack
+        ).setTranslatesAutoresizingMaskIntoConstraints(false)
+            .setIsUserInteractionEnabled(false)
+        
+        let stack = [horizontalStack,
+                     messageFailureView.wrapInView(leadingInset: margins.left,trailingInset: margins.right)]
+            .verticalStack()
             .setTranslatesAutoresizingMaskIntoConstraints(false)
             .setIsUserInteractionEnabled(false)
-            .pin(to: self)
-            .heightConstraint(38)
+            
+        addSubview(stack)
+
+        horizontalStack.heightConstraint(38)
+        
+        stack.pin(to: self)
 
         typeIcon.constraintToSquare(sideLength: 16)
     }
@@ -214,11 +230,15 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage, collapseExpandAction: @escaping () -> Void) {
+    init(
+        message: ConversationMessage,
+        collapseExpandAction: @escaping () -> Void
+    ) {
         self.configuration = View.Configuration(
             message: message,
             user: message.senderUser,
-            collapseExpandAction: collapseExpandAction
+            collapseExpandAction: collapseExpandAction,
+            errorMessage: MessageErrorHelper.errorMessage(message)
         )
     }
 
