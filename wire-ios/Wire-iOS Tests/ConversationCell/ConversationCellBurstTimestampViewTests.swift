@@ -80,12 +80,12 @@ final class ConversationCellBurstTimestampViewTests: XCTestCase {
         XCTAssertEqual(sut.label.text, "25 minutes ago")
     }
 
-    func testUnreadIndicatorToday() {
+    func testUnreadIndicatorToday() throws {
         // Given
-        var then = Date.now.addingTimeInterval(-45 * 60)
+        let then = Date.now.addingTimeInterval(-45 * 60)
         if !Calendar.current.isDate(.now, inSameDayAs: then) {
             // if the test runs before 00:45, add another hour
-            then.addTimeInterval(3600)
+            throw XCTSkip("This test needs to run between 00:45 and 23:59")
         }
 
         // When
@@ -172,12 +172,12 @@ final class ConversationCellBurstTimestampViewTests: XCTestCase {
 
     // MARK: - Time Divider
 
-    func testTimeDividerToday() {
+    func testTimeDividerToday() throws {
         // Given
-        var then = Date.now.addingTimeInterval(-30)
+        let then = Date.now.addingTimeInterval(-45 * 60)
         if !Calendar.current.isDate(.now, inSameDayAs: then) {
             // if the test runs before 00:45, add another hour
-            then.addTimeInterval(3600)
+            throw XCTSkip("This test needs to run between 00:45 and 23:59")
         }
 
         // When

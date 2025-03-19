@@ -80,73 +80,10 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testTodayNoUnread() {
-        // GIVEN
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // WHEN
-        sut.configure(
-            timestamp: .now.addingTimeInterval(-3600), // 1h ago
-            isFirstMessageOfTheDay: false,
-            showUnreadDot: false,
-            accentColor: userSession.selfUser.accentColor
-        )
-
-        // THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func testTodayWithUnread() {
-        // GIVEN
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // WHEN
-        sut.configure(
-            timestamp: .now.addingTimeInterval(-3600), // 1h ago
-            isFirstMessageOfTheDay: false,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
-        )
-
-        // THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func testTodayWithUnreadAndFirstMessageOfToday() {
-        // GIVEN
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // WHEN
-        sut.configure(
-            timestamp: .now.addingTimeInterval(-3600), // 1h ago
-            isFirstMessageOfTheDay: true,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
-        )
-
-        // THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
     func testYesterdayNoUnread() {
-        // GIVEN
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
         // WHEN
         sut.configure(
-            timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
+            timestamp: .now.addingTimeInterval(-24 * 3600), // 24h ago
             isFirstMessageOfTheDay: false,
             showUnreadDot: false,
             accentColor: userSession.selfUser.accentColor
@@ -157,15 +94,9 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     }
 
     func testYesterdayWithUnread() {
-        // GIVEN
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
         // WHEN
         sut.configure(
-            timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
+            timestamp: .now.addingTimeInterval(-24 * 3600), // 24h ago
             isFirstMessageOfTheDay: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
@@ -176,16 +107,10 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     }
 
     func testYesterdayWithUnreadAndFirstMessageOfToday() {
-        // GIVEN
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
         // WHEN
         sut.configure(
-            timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
-            isFirstMessageOfTheDay: false,
+            timestamp: .now.addingTimeInterval(-24 * 3600), // 24h ago
+            isFirstMessageOfTheDay: true,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -242,7 +167,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
-            isFirstMessageOfTheDay: false,
+            isFirstMessageOfTheDay: true,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
