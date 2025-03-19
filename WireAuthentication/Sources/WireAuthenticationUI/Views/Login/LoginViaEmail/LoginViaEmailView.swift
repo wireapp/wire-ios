@@ -28,6 +28,8 @@ package protocol LoginViaEmailBuilder {
         email: String,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView
 
@@ -99,6 +101,7 @@ package struct LoginViaEmailView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: .constant(viewModel.email)
         )
+        .autocorrectionDisabled()
         .disabled(true)
     }
 
@@ -193,6 +196,8 @@ package struct LoginViaEmailView: View {
                 email: "foo@bar.com",
                 canCreateAccount: false,
                 didDetectDomainConflict: false,
+                environmentType: MockDependencies().environmentType,
+                backendConfig: MockDependencies()._backendConfig,
                 backendMetadata: BackendMetadata(
                     apiVersion: .v8,
                     domain: "wire.com",
