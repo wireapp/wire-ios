@@ -20,17 +20,17 @@ import Foundation
 
 class MessageErrorHelper {
     static func errorMessage(_ message: ConversationMessage) -> String? {
-        
+
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
-        
+
         guard failedToSend, isSentBySelfUser else {
             return nil
         }
-        
+
         typealias Message = L10n.Localizable.Content.System.FailedtosendMessage
 
-        let mesage: String = switch message.expirationReason {
+        return switch message.expirationReason {
         case .none, .other, .timeout:
             Message.generalReason
         case .federationRemoteError:
@@ -41,6 +41,5 @@ class MessageErrorHelper {
         case .cancelled:
             Message.userCancelledUploadReason
         }
-        return mesage
     }
 }

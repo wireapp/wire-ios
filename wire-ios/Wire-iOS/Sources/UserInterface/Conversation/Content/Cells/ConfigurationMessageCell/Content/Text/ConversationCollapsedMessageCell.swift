@@ -98,7 +98,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         button.tintColor = SemanticColors.Label.baseSecondaryText
         return button
     }()
-    
+
     private let messageFailureView = MessageSendFailureView()
         .setIsHidden(true)
 
@@ -149,7 +149,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                 messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
             }
         }
-        
+
         if let errorMessage = object.errorMessage {
             messageFailureView.isHidden = false
             messageFailureView.setTitle(errorMessage)
@@ -183,17 +183,19 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             alignment: .center
         ).setTranslatesAutoresizingMaskIntoConstraints(false)
             .setIsUserInteractionEnabled(false)
-        
-        let stack = [horizontalStack,
-                     messageFailureView.wrapInView(leadingInset: margins.left,trailingInset: margins.right)]
-            .verticalStack()
-            .setTranslatesAutoresizingMaskIntoConstraints(false)
-            .setIsUserInteractionEnabled(false)
-            
+
+        let stack = [
+            horizontalStack,
+            messageFailureView.wrapInView(leadingInset: margins.left, trailingInset: margins.right)
+        ]
+        .verticalStack()
+        .setTranslatesAutoresizingMaskIntoConstraints(false)
+        .setIsUserInteractionEnabled(false)
+
         addSubview(stack)
 
         horizontalStack.heightConstraint(38)
-        
+
         stack.pin(to: self)
 
         typeIcon.constraintToSquare(sideLength: 16)

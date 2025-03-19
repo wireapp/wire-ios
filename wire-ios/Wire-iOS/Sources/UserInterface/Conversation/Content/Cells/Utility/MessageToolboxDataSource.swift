@@ -106,7 +106,7 @@ final class MessageToolboxDataSource {
         }
         // 2) Failed to send
         else if let errorMessage = MessageErrorHelper.errorMessage(message) {
-            
+
             content = .sendFailure(errorMessage && attributes)
         }
 

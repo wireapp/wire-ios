@@ -86,7 +86,7 @@ public extension UIView {
         isUserInteractionEnabled = value
         return self
     }
-    
+
     @discardableResult
     func setIsHidden(_ value: Bool) -> Self {
         isHidden = value

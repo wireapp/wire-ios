@@ -56,7 +56,10 @@ final class ConversationCollapsedMessageCellTests: ConversationMessageSnapshotTe
             "video": MockMessageFactory.videoMessage(),
             "image": MockMessageFactory.imageMessage(),
             "location": MockMessageFactory.locationMessage(),
-            "text": MockMessageFactory.textMessage(withText: "Long long long Long long long Long long long Long long long Long long long Long long long")
+            "text": MockMessageFactory
+                .textMessage(
+                    withText: "Long long long Long long long Long long long Long long long Long long long Long long long"
+                )
         ]
         messages.forEach { verify(message: $0.value, named: $0.key) }
     }
@@ -76,7 +79,7 @@ final class ConversationCollapsedMessageCellTests: ConversationMessageSnapshotTe
 
         verify(message: message)
     }
-    
+
     func testWithErrorMessage() {
         message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
 
@@ -84,9 +87,8 @@ final class ConversationCollapsedMessageCellTests: ConversationMessageSnapshotTe
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
         message.deliveryState = .failedToSend
         message.expirationReason = .timeout
-        
+
         verify(message: message)
     }
 
-    
 }
