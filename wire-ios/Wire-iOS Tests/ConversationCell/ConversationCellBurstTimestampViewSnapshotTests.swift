@@ -58,7 +58,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // GIVEN & WHEN
         sut.configure(
             timestamp: Date(timeIntervalSinceReferenceDate: 0),
-            includeDayOfWeek: true,
+            isFirstMessageOfTheDay: true,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -71,7 +71,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // GIVEN & WHEN
         sut.configure(
             timestamp: Date(timeIntervalSinceReferenceDate: 0),
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: false,
             accentColor: userSession.selfUser.accentColor
         )
@@ -90,7 +90,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: false,
             accentColor: userSession.selfUser.accentColor
         )
@@ -109,7 +109,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -128,7 +128,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
-            includeDayOfWeek: true,
+            isFirstMessageOfTheDay: true,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -147,7 +147,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: false,
             accentColor: userSession.selfUser.accentColor
         )
@@ -166,7 +166,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -185,7 +185,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -204,7 +204,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: false,
             accentColor: userSession.selfUser.accentColor
         )
@@ -223,7 +223,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -242,7 +242,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // WHEN
         sut.configure(
             timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
-            includeDayOfWeek: false,
+            isFirstMessageOfTheDay: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )

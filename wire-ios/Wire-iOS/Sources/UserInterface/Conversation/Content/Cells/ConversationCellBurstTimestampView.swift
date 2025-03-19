@@ -130,7 +130,7 @@ final class ConversationCellBurstTimestampView: UIView {
 
     func configure(
         timestamp: Date,
-        includeDayOfWeek isFirstMessageOfTheDay: Bool,
+        isFirstMessageOfTheDay: Bool,
         showUnreadDot: Bool,
         accentColor: UIColor
     ) {
