@@ -30,19 +30,20 @@ protocol LoginViaEmailOnPremComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var passwordValidator: any PasswordValidator { get }
+    var appStoreURL: URL { get }
 
 }
 
 class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDependency> {
 
-    private let email: String
+    private let email: String?
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
 
     init(
         parent: any Scope,
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
@@ -110,6 +111,10 @@ extension LoginViaEmailOnPremComponent: LoginViaEmailOnPremViewModel.Factory {
             for: .init(apiVersion)
         )
         return LoginViaEmailUseCase(authenticationAPI: api)
+    }
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
 }

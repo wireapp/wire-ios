@@ -22,6 +22,7 @@ import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+internal import WireAuthenticationLogic
 
 class RootComponent: BootstrapComponent {
 
@@ -36,8 +37,7 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
-    public let onRegisterAccount: () -> Void
-    let onFlowCompletion: (AuthenticationResult) -> Void
+    public let appStoreURL: URL
 
     init(
         environmentType: BackendEnvironmentType,
@@ -50,8 +50,7 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
-        onRegisterAccount: @escaping () -> Void,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
+        appStoreURL: URL
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig
@@ -64,8 +63,7 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
-        self.onRegisterAccount = onRegisterAccount
-        self.onFlowCompletion = onFlowCompletion
+        self.appStoreURL = appStoreURL
     }
 
     // MARK: - View
@@ -83,10 +81,7 @@ class RootComponent: BootstrapComponent {
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
-            WireAuthenticationBridge(
-                onFlowCompletion: onFlowCompletion,
-                onRegisterAccount: onRegisterAccount
-            )
+            WireAuthenticationBridge()
         }
     }
 
@@ -97,6 +92,19 @@ class RootComponent: BootstrapComponent {
     }
 
     // MARK: - Children
+
+    func determineAuthMethodOnPremComponent(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?
+    ) -> DetermineAuthMethodOnPremComponent {
+        DetermineAuthMethodOnPremComponent(
+            parent: self,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        )
+    }
 
     var determineAuthMethodComponent: DetermineAuthMethodComponent {
         DetermineAuthMethodComponent(parent: self)
@@ -115,10 +123,10 @@ class RootComponent: BootstrapComponent {
     }
 
     func loginViaEmailOnPremComponent(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+        backendMetadata: BackendMetadata?
     ) -> LoginViaEmailOnPremComponent {
         LoginViaEmailOnPremComponent(
             parent: self,
@@ -144,7 +152,21 @@ class RootComponent: BootstrapComponent {
 
 extension RootComponent: RootView.Factory {
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
+    @MainActor
+    func determineAuthMethodView(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    ) -> DetermineAuthMethodView {
+        determineAuthMethodOnPremComponent(
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        ).view
+    }
+
+    @MainActor
+    func determineAuthMethodView() -> DetermineAuthMethodView {
         determineAuthMethodComponent.view
     }
 
@@ -161,7 +183,7 @@ extension RootComponent: RootView.Factory {
 
     @MainActor
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?

@@ -33,6 +33,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     package typealias Factory =
         FetchSSOURLUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory
 
     // MARK: - State
@@ -41,7 +42,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
-    private let email: String
+    private let email: String?
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
 
@@ -54,7 +55,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
@@ -137,6 +138,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
             do {
                 // Before we can make requests we need to resolve the api version.
                 let backendMetadata = try await resolveBackendMetadata()
+
                 if let ssoURL = try await fetchSSOURL(apiVersion: backendMetadata.apiVersion) {
                     let backendEnvironment = WireAuthenticationBackendEnvironment(
                         environmentType: environmentType,
@@ -146,7 +148,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
                     modalDestination = .ssoLogin(url: ssoURL, backendEnvironment: backendEnvironment)
                     WireLogger.authentication.info("Fetching default SSO URL succeed")
-                } else {
+                } else if let email {
                     router.presentSheet(
                         RootView.ModalDestination.onPremiseLogin(
                             email: email,
@@ -155,15 +157,25 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             backendMetadata: backendMetadata
                         )
                     )
-                    WireLogger.authentication.info("No default SSO URL")
+                } else {
+                    router.presentSheet(
+                        RootView.ModalDestination.onPremiseAuthFlow(
+                            environmentType: environmentType,
+                            backendConfig: backendConfig,
+                            backendMetadata: backendMetadata
+                        )
+                    )
                 }
-
+            } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+                WireLogger.authentication.error("detected obsolete client")
+                alert = .obsoleteClient
+            } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+                WireLogger.authentication.error("detected obsolete backend")
+                alert = .obsoleteBackend
             } catch {
                 WireLogger.authentication.error("Fetching default SSO URL failed: \(error)")
-
                 alert = .general(for: error)
             }
-
         }
     }
 
@@ -179,6 +191,11 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         return try await Task.detached {
             try await useCase.invoke()
         }.value
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
     }
 
     // MARK: - Model

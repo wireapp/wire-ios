@@ -31,4 +31,5 @@ protocol MLSMessageDecryptorProtocol {
         from eventData: ConversationMLSMessageAddEvent
     ) async throws -> ConversationMLSMessageAddEvent
 
+    func commitPendingProposalsIfNeeded() async
 }

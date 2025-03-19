@@ -16,38 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import UIKit
 import WireAuthenticationAPI
 
-package protocol LoginViaSSOBuilder {
+public struct OpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
+
+    let url: URL
+
+    public init(url: URL) {
+        self.url = url
+    }
 
     @MainActor
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView
-
-}
-
-package struct LoginViaSSOView: View {
-
-    @ObservedObject var viewModel: LoginViaSSOViewModel
-
-    package init(
-        viewModel: LoginViaSSOViewModel
-    ) {
-        self.viewModel = viewModel
+    public func invoke() {
+        UIApplication.shared.open(url)
     }
 
-    package var body: some View {
-        SafariBrowser(url: viewModel.ssoURL)
-    }
-}
-
-#Preview {
-    let url = URL(string: "https://www.wire.com")!
-    MockDependencies().loginViaSSOView(
-        ssoURL: url,
-        backendEnvironment: MockDependencies().backendEnvironment
-    )
 }

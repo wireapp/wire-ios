@@ -32,30 +32,46 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var networkService: NetworkService { get }
     var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
+    var minTLSVersion: TLSVersion { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
-    public let backendMetadata: WireAuthenticationAPI.BackendMetadata
+    private let environmentType: BackendEnvironmentType
+    private let backendConfig: BackendConfig
+    private let backendMetadata: BackendMetadata
 
     init(
         parent: any Scope,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata
     ) {
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
         self.backendMetadata = backendMetadata
         super.init(parent: parent)
     }
 
     public var authenticationAPI: any AuthenticationAPI {
-        AuthenticationAPIBuilder(networkService: dependency.networkService).makeAPI(
+        AuthenticationAPIBuilder(networkService: networkService).makeAPI(
             for: .init(backendMetadata.apiVersion)
         )
     }
 
     public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
         LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+    }
+
+    private var networkService: NetworkService {
+        shared {
+            NetworkService.make(
+                backendEnvironment: BackendEnvironment(backendConfig),
+                minTLSVersion: dependency.minTLSVersion
+            )
+        }
     }
 
     // MARK: - View
@@ -87,12 +103,12 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             loginViaEmailUseCase: loginViaEmailUseCase,
             backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: dependency.accountsURL,
+            accountsURL: backendConfig.endpoints.accountsURL,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [weak dependency] in
-                dependency?.bridge.registerAccount()
+            onCreateAccount: { [dependency] in
+                dependency?.bridge.sendOutboundEvent(.accountRegistrationRequested)
             }
         )
     }
@@ -100,8 +116,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     public var backendEnvironment: WireAuthenticationBackendEnvironment {
         shared {
             WireAuthenticationBackendEnvironment(
-                environmentType: dependency.environmentType,
-                config: dependency.backendConfig,
+                environmentType: environmentType,
+                config: backendConfig,
                 metadata: backendMetadata
             )
         }
