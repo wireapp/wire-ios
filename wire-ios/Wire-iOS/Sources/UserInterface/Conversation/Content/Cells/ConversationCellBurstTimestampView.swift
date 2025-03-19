@@ -140,7 +140,7 @@ final class ConversationCellBurstTimestampView: UIView {
             if isFirstMessageOfTheDay {
                 label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
             } else {
-               label.text = timestamp.formattedDate
+                label.text = timestamp.formattedDate
             }
 
         } else {
