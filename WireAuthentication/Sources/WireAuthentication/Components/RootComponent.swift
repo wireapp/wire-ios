@@ -37,6 +37,7 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
     public let appStoreURL: URL
+    public let existsAnotherAccount: Bool
 
     init(
         environmentType: BackendEnvironmentType,
@@ -48,7 +49,8 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
-        appStoreURL: URL
+        appStoreURL: URL,
+        existsAnotherAccount: Bool
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig
@@ -61,6 +63,7 @@ class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
         self.appStoreURL = appStoreURL
+        self.existsAnotherAccount = existsAnotherAccount
     }
 
     // MARK: - View
