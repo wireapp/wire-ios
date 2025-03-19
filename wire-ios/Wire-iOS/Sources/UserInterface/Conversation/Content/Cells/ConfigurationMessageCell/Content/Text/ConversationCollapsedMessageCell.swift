@@ -129,7 +129,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     )
             }
         } else {
-            messageTextView.font = UIFont.italicSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize)
+            messageTextView.font = UIFont.normalLightFont.italic
+            messageTextView.textColor = SemanticColors.Label.textDefault
             typeIcon.isHidden = false
             if message.isImage {
                 typeIcon.image = .init(resource: .image)
