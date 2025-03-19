@@ -86,7 +86,13 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     }
 
     func testTodayNoUnread() {
-        // GIVEN & WHEN
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
             includeDayOfWeek: false,
@@ -99,7 +105,13 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     }
 
     func testTodayWithUnread() {
-        // GIVEN & WHEN
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
             includeDayOfWeek: false,
@@ -112,7 +124,13 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     }
 
     func testTodayWithUnreadAndFirstMessageOfToday() {
-        // GIVEN & WHEN
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
         sut.configure(
             timestamp: .now.addingTimeInterval(-3600), // 1h ago
             includeDayOfWeek: true,
