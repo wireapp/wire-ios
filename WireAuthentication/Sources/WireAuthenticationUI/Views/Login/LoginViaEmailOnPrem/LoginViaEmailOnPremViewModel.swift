@@ -33,10 +33,10 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     private let factory: any Factory
     private let passwordValidator: any PasswordValidator
     private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
     private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    package let backendConfig: BackendConfig
 
-    let email: String
+    let email: String?
     let canCreateAccount: Bool
 
     @Published var alert: Alert?
@@ -46,7 +46,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?,
@@ -67,20 +67,6 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
     }
 
-    var backendName: String {
-        backendConfig.title
-    }
-
-    var backendInfo: String {
-        [
-            L10n.OnPremUserLogin.Alert.Message.backendName,
-            backendName,
-            "",
-            L10n.OnPremUserLogin.Alert.Message.backendUrl,
-            backendConfig.endpoints.backendURL.absoluteString
-        ].joined(separator: "\n")
-    }
-
     var localizedPasswordRules: String? {
         passwordValidator.localizedRulesDescription
     }
@@ -97,7 +83,14 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         passwordValidator.isPasswordValid(password)
     }
 
+    var isValidEmail: Bool {
+        guard let email else { return false }
+        return !email.isEmpty
+    }
+
     func submitPassword(_ password: String) async {
+        guard let email else { return }
+
         let backendMetadata: WireAuthenticationAPI.BackendMetadata
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
@@ -115,6 +108,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
         let (cookies, accessToken): ([HTTPCookie], AccessToken)
         do {
             (cookies, accessToken) = try await login(
+                email: email,
                 password: password,
                 backendMetadata: backendMetadata
             )
@@ -175,6 +169,7 @@ package final class LoginViaEmailOnPremViewModel: ObservableObject {
     }
 
     private func login(
+        email: String,
         password: String,
         backendMetadata: BackendMetadata
     ) async throws -> ([HTTPCookie], AccessToken) {

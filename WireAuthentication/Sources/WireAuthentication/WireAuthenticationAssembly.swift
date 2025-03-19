@@ -26,6 +26,7 @@ internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
 public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
+public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.WireAuthenticationBackendEnvironment
 public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
 public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
 public typealias Endpoints = WireAuthenticationAPI.Endpoints
@@ -51,20 +52,21 @@ public struct WireAuthenticationAssembly {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
-        appStoreURL: URL
+        appStoreURL: URL,
+        existsAnotherAccount: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
             environmentType: environmentType,
             backendConfig: backendConfig,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
-            accountsURL: accountsURL,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             userDefaults: userDefaults,
-            appStoreURL: appStoreURL
+            appStoreURL: appStoreURL,
+            existsAnotherAccount: existsAnotherAccount
         )
 
         return (view: rootComponent.view, bridge: rootComponent.bridge)
