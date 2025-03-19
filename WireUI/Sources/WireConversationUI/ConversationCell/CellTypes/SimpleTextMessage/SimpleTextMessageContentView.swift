@@ -26,9 +26,18 @@ struct SimpleTextMessageContentView: ConversationCellContentViewProtocol {
     var body: some View {
         VStack(alignment: .leading) {
             Text(model.text)
-            (Text(model.dateTime) + Text(verbatim: " • ") + Text(model.status))
-                .font(.caption)
+            if !model.dateTime.isEmpty, !model.status.isEmpty {
+                (Text(model.dateTime) + Text(verbatim: " • ") + Text(model.status))
+                    .font(.caption)
+            } else if !model.dateTime.isEmpty {
+                Text(model.dateTime)
+                    .font(.caption)
+            } else if !model.status.isEmpty {
+                Text(model.status)
+                    .font(.caption)
+            }
         }
+        .padding()
     }
 
     init(model: Model) {

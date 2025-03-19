@@ -73,18 +73,29 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
 #Preview {
     ConversationCellPreviews(
         models: [
-            // .guestsAllowedInfo,
-            .timeDivider(text: "Friday", isUnread: false),
+            .timeDivider(text: "Tuesday, Mar 18", isUnread: false),
             .simpleTextMessage(
-                SimpleTextMessageModel(
-                    text: "some message",
-                    dateTime: "Yesterday 10:11 AM",
-                    status: "",
-                    reactions: []
-                )
+                text: "message",
+                dateTime: "Tuesday 10:11 AM",
+                status: ""
             ),
-            .timeDivider(text: "Saturday", isUnread: false),
-            .timeDivider(text: "Today", isUnread: true)
+            .simpleTextMessage(
+                text: "message",
+                dateTime: "Tuesday 11:10 AM",
+                status: ""
+            ),
+            .timeDivider(text: "25 hours ago", isUnread: true),
+            .simpleTextMessage(
+                text: "message",
+                dateTime: "Tuesday 11:30 AM",
+                status: ""
+            ),
+            .timeDivider(text: "Today", isUnread: false),
+            .simpleTextMessage(
+                text: "message",
+                dateTime: "12:30 AM",
+                status: ""
+            )
         ]
     )
 }

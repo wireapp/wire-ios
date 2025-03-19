@@ -47,9 +47,23 @@ extension SimpleTextMessageModel {
 
 }
 
-public extension ConversationCellModel {
+extension ConversationCellModel {
 
-    static var simpleTextMessage: Self {
-        .simpleTextMessage(SimpleTextMessageModel())
+    static func simpleTextMessage(
+        senderInfo: MessageSenderInfo? = .none,
+        text: AttributedString,
+        dateTime: String,
+        status: String = "",
+        reactions: Reactions = []
+    ) -> Self {
+        .simpleTextMessage(
+            SimpleTextMessageModel(
+                senderInfo: senderInfo,
+                text: text,
+                dateTime: dateTime,
+                status: status,
+                reactions: reactions
+            )
+        )
     }
 }
