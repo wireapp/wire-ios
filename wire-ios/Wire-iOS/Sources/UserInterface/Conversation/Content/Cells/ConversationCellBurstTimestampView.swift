@@ -147,7 +147,7 @@ final class ConversationCellBurstTimestampView: UIView {
             } else if difference <= 30 * 60 { // within 30 minutes display "xy minutes ago"
                 label.text = WRDateFormatter.timeIntervalFormatter.localizedString(for: timestamp, relativeTo: now)
             } else if isToday { // for same day just show "Today"
-                label.text = sameDayDateFormatter.string(from: timestamp)
+                label.text = todayDateFormatter.string(from: timestamp)
             } else if calendar.isDateInYesterday(timestamp) { // for the day before show "Yesterday"
                 // construct two dates with a difference between 1 and 2 days (e.g. 36h): it should return "Yesterday"
                 label.text = WRDateFormatter.timeIntervalFormatter.localizedString(
@@ -156,13 +156,13 @@ final class ConversationCellBurstTimestampView: UIView {
                 )
             } else if difference < 7 * 24 * 60 * 60 { // within 7 days print weekday and date
                 //
-                label.text = "TODO"
+                label.text = weekdayAndDateDateFormatter.string(from: timestamp)
             } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: now) { // same year
                 // date + month
-                label.text = WRDateFormatter.thisYearFormatter.string(from: timestamp)
+                label.text = monthAndDayDateFormatter.string(from: timestamp)
             } else {
                 // date + month + year
-                label.text = WRDateFormatter.otherYearFormatter.string(from: timestamp)
+                label.text = monthDayAndYearDateFormatter.string(from: timestamp)
             }
 
         } else {
@@ -170,9 +170,9 @@ final class ConversationCellBurstTimestampView: UIView {
             // It's a simple time divider, or it's an unread indicator and a time divier.
             if isToday {
                 // for same day just show "Today"
-                label.text = sameDayDateFormatter.string(from: timestamp)
+                label.text = todayDateFormatter.string(from: timestamp)
             } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: now) {
-                label.text = WRDateFormatter.thisYearFormatter.string(from: timestamp)
+                label.text = weekdayAndDateDateFormatter.string(from: timestamp)
             } else {
                 label.text = WRDateFormatter.otherYearFormatter.string(from: timestamp)
             }
@@ -188,10 +188,44 @@ final class ConversationCellBurstTimestampView: UIView {
     }
 }
 
-@MainActor private let sameDayDateFormatter = {
+@MainActor private let todayDateFormatter = {
     let sameDayDateFormatter = DateFormatter()
     sameDayDateFormatter.timeStyle = .none
     sameDayDateFormatter.dateStyle = .medium
     sameDayDateFormatter.doesRelativeDateFormatting = true
     return sameDayDateFormatter
+}()
+
+@MainActor private let monthAndDayDateFormatter = {
+    let monthAndDayDateFormatter = DateFormatter()
+    monthAndDayDateFormatter.dateFormat = "MMM d"
+    monthAndDayDateFormatter.locale = .current
+    return monthAndDayDateFormatter
+}()
+
+@MainActor private let monthDayAndYearDateFormatter = {
+    let monthAndDayDateFormatter = DateFormatter()
+    monthAndDayDateFormatter.dateFormat = "MMM d, yyyy"
+    monthAndDayDateFormatter.locale = .current
+    return monthAndDayDateFormatter
+}()
+
+@MainActor private let weekdayAndDateDateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = DateFormatter.dateFormat(
+        fromTemplate: "EEEEdMMM",
+        options: 0,
+        locale: .current
+    )
+    return dateFormatter
+}()
+
+@MainActor private let weekdayDateAndYearDateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = DateFormatter.dateFormat(
+        fromTemplate: "EEEEdMMMYYYY",
+        options: 0,
+        locale: .current
+    )
+    return dateFormatter
 }()
