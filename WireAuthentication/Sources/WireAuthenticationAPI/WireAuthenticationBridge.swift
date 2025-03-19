@@ -52,7 +52,8 @@ public final class WireAuthenticationBridge {
     public enum OutboundEvent {
 
         case userAuthenticated(AuthenticationResult)
-        case accountRegistrationRequested
+        case accountRegistrationRequested(email: String, WireAuthenticationBackendEnvironment)
+        case exitFlowRequested
 
     }
 
@@ -61,8 +62,10 @@ public final class WireAuthenticationBridge {
 
     public enum InboundEvent {
 
+        case didRewindToThisView
         case ssoAuthenticationSuccess(userID: UUID, cookies: [HTTPCookie])
         case ssoAutheticationFailure
+        case backendSwitchRequested(configURL: URL)
 
     }
 

@@ -42,7 +42,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
-    private let email: String
+    private let email: String?
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
 
@@ -55,7 +55,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {
@@ -148,7 +148,7 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
 
                     modalDestination = .ssoLogin(url: ssoURL, backendEnvironment: backendEnvironment)
                     WireLogger.authentication.info("Fetching default SSO URL succeed")
-                } else {
+                } else if let email {
                     router.presentSheet(
                         RootView.ModalDestination.onPremiseLogin(
                             email: email,
@@ -157,7 +157,14 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
                             backendMetadata: backendMetadata
                         )
                     )
-                    WireLogger.authentication.info("No default SSO URL")
+                } else {
+                    router.presentSheet(
+                        RootView.ModalDestination.onPremiseAuthFlow(
+                            environmentType: environmentType,
+                            backendConfig: backendConfig,
+                            backendMetadata: backendMetadata
+                        )
+                    )
                 }
             } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
                 WireLogger.authentication.error("detected obsolete client")
