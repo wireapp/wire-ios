@@ -25,16 +25,13 @@ import XCTest
 
 final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
-    // MARK: - Properties
-
     private var snapshotHelper: SnapshotHelper!
     private var sut: ConversationCellBurstTimestampView!
     private var userSession: UserSessionMock!
 
-    // MARK: - setUp
-
     override func setUp() {
         super.setUp()
+
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         sut = ConversationCellBurstTimestampView()
@@ -42,8 +39,6 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         sut.unreadDot.backgroundColor = .red
         sut.backgroundColor = SemanticColors.View.backgroundConversationView
     }
-
-    // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
@@ -53,7 +48,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Snapshot Tests
+    // MARK: -
 
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
