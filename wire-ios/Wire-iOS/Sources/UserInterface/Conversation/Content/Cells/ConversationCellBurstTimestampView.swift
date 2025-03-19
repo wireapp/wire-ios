@@ -197,17 +197,23 @@ final class ConversationCellBurstTimestampView: UIView {
 }()
 
 @MainActor private let monthAndDayDateFormatter = {
-    let monthAndDayDateFormatter = DateFormatter()
-    monthAndDayDateFormatter.dateFormat = "MMM d"
-    monthAndDayDateFormatter.locale = .current
-    return monthAndDayDateFormatter
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = DateFormatter.dateFormat(
+        fromTemplate: "MMM d",
+        options: 0,
+        locale: .current
+    )
+    return dateFormatter
 }()
 
 @MainActor private let monthDayAndYearDateFormatter = {
-    let monthAndDayDateFormatter = DateFormatter()
-    monthAndDayDateFormatter.dateFormat = "MMM d, yyyy"
-    monthAndDayDateFormatter.locale = .current
-    return monthAndDayDateFormatter
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = DateFormatter.dateFormat(
+        fromTemplate: "MMM d, yyyy",
+        options: 0,
+        locale: .current
+    )
+    return dateFormatter
 }()
 
 @MainActor private let weekdayAndDateDateFormatter = {
