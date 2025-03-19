@@ -149,10 +149,7 @@ final class ConversationMessageActionController {
                 return false
             }
 
-            let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
-                .isLocation || message.isImage || message.isText
-
-            return message.isSentBySelfUser && messageSupportsCollapsing
+            return message.isSentBySelfUser && message.supportsCollapsing
         case .present,
              .openQuote,
              .resetSession:
