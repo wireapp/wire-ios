@@ -23,44 +23,16 @@ import WireTransport
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
-    var selfClient: UserClient!
-    var otherClient: UserClient!
-
-    override func setUp() {
-        super.setUp()
-
-        syncMOC.performGroupedAndWait {
-            self.selfClient = createSelfClient()
-            self.otherClient = createClient(for: ZMUser.selfUser(in: syncMOC))
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    override func tearDown() {
-        super.tearDown()
-        selfClient = nil
-        otherClient = nil
-    }
 
     func test_itRenewsAccessTokenAfterClientRegistration_StartingFromApiV3() {
         syncMOC.performAndWait {
+            let selfClient = createSelfClient()
+
             APIVersion.allCases.forEach {
                 test_accessTokenRenewalAfterClientRegistration(
-                    userClient: self.selfClient,
+                    userClient: selfClient,
                     apiVersion: $0,
                     shouldRenew: $0 > .v2
-                )
-            }
-        }
-    }
-
-    func test_itDoesNotRenewAccessTokenAfterClientRegistration_StartingFromApiV3() {
-        syncMOC.performAndWait {
-            APIVersion.allCases.forEach {
-                test_accessTokenRenewalAfterClientRegistration(
-                    userClient: self.otherClient,
-                    apiVersion: $0,
-                    shouldRenew: false
                 )
             }
         }

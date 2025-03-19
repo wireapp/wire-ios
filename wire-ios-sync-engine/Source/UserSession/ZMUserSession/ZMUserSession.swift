@@ -834,17 +834,10 @@ public final class ZMUserSession: NSObject {
     // MARK: Access Token
 
     private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
-        let selfUserClientID = managedObjectContext.performAndWait {
-            selfUserClient?.remoteIdentifier
-        }
-
-        let isSelfClient = selfUserClientID == userClient.remoteIdentifier
-
         guard
             let apiVersion = BackendInfo.apiVersion,
             apiVersion > .v2,
-            let clientID = userClient.remoteIdentifier,
-            isSelfClient
+            let clientID = userClient.remoteIdentifier
         else { return }
 
         renewAccessToken(with: clientID)
