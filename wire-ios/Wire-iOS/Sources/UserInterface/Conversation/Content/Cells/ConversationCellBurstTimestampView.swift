@@ -136,7 +136,7 @@ final class ConversationCellBurstTimestampView: UIView {
     ) {
         let calendar = Calendar.current
         let now = currentDateProvider.now
-        if showUnreadDot, !isFirstMessageOfTheDay {
+        if showUnreadDot /*, !isFirstMessageOfTheDay*/ {
             label.text = WRDateFormatter.timeIntervalFormatter.string(for: timestamp)
         } else if calendar.isDateInToday(timestamp) {
             // for same day just show "Today"

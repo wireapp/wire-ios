@@ -143,6 +143,44 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
+    func testYesterdayIsDisplayedForOnlyUnreadMessageSince24h() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
+            includeDayOfWeek: false,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testKA1() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
+            includeDayOfWeek: true,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
     func testWeekdayDateAndYearBeingDisplayedForLastYearWithoutUnread() {
         // GIVEN
         let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
