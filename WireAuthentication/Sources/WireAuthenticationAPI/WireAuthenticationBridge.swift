@@ -64,6 +64,7 @@ public final class WireAuthenticationBridge {
         case didRewindToThisView
         case ssoAuthenticationSuccess(userID: UUID, cookies: [HTTPCookie])
         case ssoAutheticationFailure
+        case backendSwitchRequested(configURL: URL)
 
     }
 
