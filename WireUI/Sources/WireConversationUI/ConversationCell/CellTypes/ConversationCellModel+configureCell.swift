@@ -45,7 +45,8 @@ public extension ConversationCellModel {
             fatalError("not implemented yet")
 
         case let .simpleTextMessage(simpleTextMessage):
-            fatalError("not implemented yet")
+            guard let cell = cell as? ConversationCell<SimpleTextMessageModel> else { break }
+            return cell.model = simpleTextMessage
 
         case let .extendedTextMessage(extendedTextMessage):
             fatalError("not implemented yet")

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/*
 extension ConversationCellModel: Identifiable {
 
     public var id: AnyHashable {
@@ -66,3 +67,4 @@ extension ConversationCellModel: Identifiable {
     }
 
 }
+*/

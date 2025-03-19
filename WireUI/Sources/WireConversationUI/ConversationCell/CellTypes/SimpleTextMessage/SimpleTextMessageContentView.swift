@@ -24,11 +24,26 @@ struct SimpleTextMessageContentView: ConversationCellContentViewProtocol {
     let model: Model
 
     var body: some View {
-        Text(verbatim: "TODO")
+        VStack(alignment: .leading) {
+            Text(model.text)
+            (Text(model.dateTime) + Text(verbatim: " • ") + Text(model.status))
+                .font(.caption)
+        }
     }
 
     init(model: Model) {
         self.model = model
     }
 
+}
+
+#Preview {
+    let model = SimpleTextMessageModel(
+        senderInfo: .none,
+        text: "text",
+        dateTime: "10:11 AM",
+        status: "Sent",
+        reactions: []
+    )
+    return SimpleTextMessageContentView(model: model)
 }

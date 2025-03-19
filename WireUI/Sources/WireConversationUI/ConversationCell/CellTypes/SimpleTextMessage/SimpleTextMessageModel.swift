@@ -34,6 +34,10 @@ public struct SimpleTextMessageModel: ConversationCellModelProtocol {
 
     var reactions: Reactions
 
+}
+
+extension SimpleTextMessageModel {
+
     init() {
         self.text = AttributedString()
         self.dateTime = ""

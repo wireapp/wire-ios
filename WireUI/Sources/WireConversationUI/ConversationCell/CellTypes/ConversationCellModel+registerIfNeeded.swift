@@ -45,7 +45,7 @@ public extension ConversationCellModel {
             fatalError()
 
         case .simpleTextMessage:
-            fatalError()
+            ConversationCell<SimpleTextMessageModel>.self
 
         case .extendedTextMessage:
             fatalError()
