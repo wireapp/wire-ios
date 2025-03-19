@@ -76,26 +76,29 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
             .timeDivider(text: "Tuesday, Mar 18", isUnread: false),
             .simpleTextMessage(
                 text: "message",
-                dateTime: "Tuesday 10:11 AM",
+                dateTime: "10:11 AM",
                 status: ""
             ),
             .simpleTextMessage(
                 text: "message",
-                dateTime: "Tuesday 11:10 AM",
+                dateTime: "11:10 AM",
                 status: ""
             ),
             .timeDivider(text: "25 hours ago", isUnread: true),
             .simpleTextMessage(
                 text: "message",
-                dateTime: "Tuesday 11:30 AM",
+                dateTime: "11:30 AM",
                 status: ""
             ),
             .timeDivider(text: "Today", isUnread: false),
             .simpleTextMessage(
                 text: "message",
                 dateTime: "12:30 AM",
-                status: ""
+                status: "👁️"
             )
         ]
     )
 }
+
+// seen+sent timestamps only time
+// read indicator on last message and without timestamp
