@@ -25,7 +25,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         let message: ZMConversationMessage
         let user: UserType?
         let collapseExpandAction: () -> Void
-        let errorMessage: String?
     }
 
     var isSelected: Bool = false
@@ -99,9 +98,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         return button
     }()
 
-    private let messageFailureView = MessageSendFailureView()
-        .setIsHidden(true)
-
     private lazy var wholeViewTapButton = UIButton()
 
     override init(frame: CGRect) {
@@ -150,13 +146,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             }
         }
 
-        if let errorMessage = object.errorMessage {
-            messageFailureView.isHidden = false
-            messageFailureView.setTitle(errorMessage)
-        } else {
-            messageFailureView.isHidden = true
-        }
-
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
         let action = UIAction { _ in
             object.collapseExpandAction()
@@ -165,13 +154,11 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubviews() {
-
+        
         let margins = conversationHorizontalMargins
-
-        addSubview(wholeViewTapButton)
-        wholeViewTapButton.pin(to: self)
-
-        let horizontalStack = UIStackView.horizontal(
+        
+        
+        let stack = UIStackView.horizontal(
             views: [
                 avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),
                 messageTextView,
@@ -183,22 +170,17 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             alignment: .center
         ).setTranslatesAutoresizingMaskIntoConstraints(false)
             .setIsUserInteractionEnabled(false)
-
-        let stack = [
-            horizontalStack,
-            messageFailureView.wrapInView(leadingInset: margins.left, trailingInset: margins.right)
-        ]
-        .verticalStack()
-        .setTranslatesAutoresizingMaskIntoConstraints(false)
-        .setIsUserInteractionEnabled(false)
-
+        
+        
         addSubview(stack)
-
-        horizontalStack.heightConstraint(38)
-
+        
+        stack.heightConstraint(38)
+        
         stack.pin(to: self)
-
+        addSubview(wholeViewTapButton)
+        wholeViewTapButton.pin(to: stack)
         typeIcon.constraintToSquare(sideLength: 16)
+        
     }
 
     // MARK: - Tap gesture of avatar
@@ -240,8 +222,7 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
         self.configuration = View.Configuration(
             message: message,
             user: message.senderUser,
-            collapseExpandAction: collapseExpandAction,
-            errorMessage: MessageErrorHelper.errorMessage(message)
+            collapseExpandAction: collapseExpandAction
         )
     }
 
