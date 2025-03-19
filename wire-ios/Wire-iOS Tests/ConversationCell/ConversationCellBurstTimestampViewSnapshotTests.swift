@@ -17,11 +17,11 @@
 //
 
 import WireDesign
+import WireSystemSupport
 import WireTestingPackage
 import XCTest
 
 @testable import Wire
-import WireSystemSupport
 
 final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 

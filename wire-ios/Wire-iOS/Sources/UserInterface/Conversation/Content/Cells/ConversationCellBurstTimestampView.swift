@@ -134,17 +134,28 @@ final class ConversationCellBurstTimestampView: UIView {
         showUnreadDot: Bool,
         accentColor: UIColor
     ) {
-        let calendar = Calendar.current
-        let now = currentDateProvider.now
-        if showUnreadDot /*, !isFirstMessageOfTheDay*/ {
-            label.text = WRDateFormatter.timeIntervalFormatter.string(for: timestamp)
-        } else if calendar.isDateInToday(timestamp) {
-            // for same day just show "Today"
-            label.text = sameDayDateFormatter.string(from: timestamp)
-        } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: now) {
-            label.text = WRDateFormatter.thisYearFormatter.string(from: timestamp)
+        if showUnreadDot {
+
+            // keep old implementation for unread indicator until a new concept has been developed
+            if isFirstMessageOfTheDay {
+                label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp)
+            } else {
+               label.text = timestamp.formattedDate
+            }
+
         } else {
-            label.text = WRDateFormatter.otherYearFormatter.string(from: timestamp)
+
+            let calendar = Calendar.current
+            let now = currentDateProvider.now
+            if calendar.isDateInToday(timestamp) {
+                // for same day just show "Today"
+                label.text = sameDayDateFormatter.string(from: timestamp)
+            } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: now) {
+                label.text = WRDateFormatter.thisYearFormatter.string(from: timestamp)
+            } else {
+                label.text = WRDateFormatter.otherYearFormatter.string(from: timestamp)
+            }
+
         }
 
         isSeparatorHidden = false
