@@ -24,13 +24,16 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let authenticationAPI: AuthenticationAPI
+    private let httpClient: HTTPClientProtocol
 
     package init(
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
-        authenticationAPI: AuthenticationAPI
+        authenticationAPI: AuthenticationAPI,
+        httpClient: HTTPClientProtocol
     ) {
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.authenticationAPI = authenticationAPI
+        self.httpClient = httpClient
     }
 
     package func invoke(
@@ -96,17 +99,20 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             guard let configURL = configuration.backendURL else {
                 throw AuthenticationAPIError.invalidResponse
             }
-            let backendURL = try await fetchBackendConfig(from: configURL)
 
-            return .onPremLogin(email: email, backendConfig: backendURL)
+            do {
+                let backendURL = try await fetchBackendConfigURL(from: configURL)
+                return .onPremLogin(email: email, backendConfig: backendURL)
+            } catch {
+                throw AuthenticationAPIError.invalidResponse
+            }
         }
     }
 
-    private func fetchBackendConfig(from backendURL: URL) async throws -> URL {
-        let (data, _) = try await URLSession.shared.data(from: backendURL)
+    private func fetchBackendConfigURL(from backendURL: URL) async throws -> URL {
+        let (data, _) = try await httpClient.fetchData(from: backendURL)
 
         let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
         let domainInfo = try decoder.decode(DomainInfo.self, from: data)
 
         return domainInfo.configJsonURL
