@@ -192,7 +192,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
     func testInvoke_onPremLogin_WhenBackendConfigJsonURLIsMissing() async throws {
         // given
         let backendURL = URL(string: "https://backend.example.com/config")!
-        let jsonData = "{}".data(using: .utf8)!
+        let jsonData = Data("{}".utf8)
 
         mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration.make(
             backendURLString: backendURL.absoluteString,

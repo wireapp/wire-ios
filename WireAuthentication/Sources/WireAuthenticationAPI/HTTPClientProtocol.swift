@@ -21,4 +21,3 @@ import Foundation
 package protocol HTTPClientProtocol: Sendable {
     func fetchData(from url: URL) async throws -> (Data, URLResponse)
 }
-
