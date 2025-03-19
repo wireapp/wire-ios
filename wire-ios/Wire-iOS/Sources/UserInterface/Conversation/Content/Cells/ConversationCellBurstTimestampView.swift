@@ -23,6 +23,8 @@ import WireSyncEngine
 
 final class ConversationCellBurstTimestampView: UIView {
 
+    var currentDateProvider: CurrentDateProviding = SystemDateProvider()
+
     let unreadDot = UIView()
     private let label: UILabel = .init()
 
@@ -133,12 +135,13 @@ final class ConversationCellBurstTimestampView: UIView {
         accentColor: UIColor
     ) {
         let calendar = Calendar.current
+        let now = currentDateProvider.now
         if showUnreadDot, !isFirstMessageOfTheDay {
             label.text = WRDateFormatter.timeIntervalFormatter.string(for: timestamp)
         } else if calendar.isDateInToday(timestamp) {
             // for same day just show "Today"
             label.text = sameDayDateFormatter.string(from: timestamp)
-        } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: .now) {
+        } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: now) {
             label.text = WRDateFormatter.thisYearFormatter.string(from: timestamp)
         } else {
             label.text = WRDateFormatter.otherYearFormatter.string(from: timestamp)

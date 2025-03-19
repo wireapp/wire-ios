@@ -21,6 +21,7 @@ import WireTestingPackage
 import XCTest
 
 @testable import Wire
+import WireSystemSupport
 
 final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
@@ -75,6 +76,83 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // GIVEN & WHEN
         sut.configure(
             timestamp: Date(timeIntervalSinceReferenceDate: 0),
+            includeDayOfWeek: false,
+            showUnreadDot: false,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testTodayBeingDisplayedWithoutUnread() {
+        // GIVEN & WHEN
+        sut.configure(
+            timestamp: .now.addingTimeInterval(-3600), // 1h ago
+            includeDayOfWeek: false,
+            showUnreadDot: false,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testTodayBeingDisplayedWithUnreadOnlyMessageOfToday() {
+        // GIVEN & WHEN
+        sut.configure(
+            timestamp: .now.addingTimeInterval(-3600), // 1h ago
+            includeDayOfWeek: false,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testTodayBeingDisplayedWithUnreadNotFirstMessageOfToday() {
+        // GIVEN & WHEN
+        sut.configure(
+            timestamp: .now.addingTimeInterval(-3600), // 1h ago
+            includeDayOfWeek: true,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testWeekdayAndDateBeingDisplayedForYesterdayWithoutUnread() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-24 * 3600), // 24h ago
+            includeDayOfWeek: false,
+            showUnreadDot: false,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testWeekdayDateAndYearBeingDisplayedForLastYearWithoutUnread() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
             includeDayOfWeek: false,
             showUnreadDot: false,
             accentColor: userSession.selfUser.accentColor
