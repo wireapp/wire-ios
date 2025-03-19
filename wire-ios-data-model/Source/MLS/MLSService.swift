@@ -1763,25 +1763,38 @@ public final class MLSService: MLSServiceInterface {
                 taskGroup.addTask { [self] in
                     do {
                         if timestamp.isInThePast {
-                            logger.info("commit scheduled in the past, committing...")
+                            logger.info(
+                                "commit scheduled in the past, committing...",
+                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                            )
                             try await commitPendingProposals(in: groupID)
                         } else {
-                            logger.info("commit scheduled in the future, waiting...")
+                            logger.info(
+                                "commit scheduled in the future, waiting...",
+                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                            )
 
                             let timeIntervalSinceNow = timestamp.timeIntervalSinceNow
                             if timeIntervalSinceNow > 0 {
                                 try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
                             }
-                            logger.info("scheduled commit is ready, committing...")
+                            logger.info(
+                                "scheduled commit is ready, committing...",
+                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                            )
                             try await commitPendingProposals(in: groupID)
                         }
 
                     } catch {
-                        logger.error("failed to commit pending proposals: \(String(describing: error))")
+                        logger.error(
+                            "failed to commit pending proposals: \(String(describing: error))",
+                            attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                        )
                     }
                 }
             }
         }
+        logger.debug("end any scheduled pending proposals")
     }
 
     private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
