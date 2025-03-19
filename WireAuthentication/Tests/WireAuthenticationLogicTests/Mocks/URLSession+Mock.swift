@@ -18,18 +18,17 @@
 
 import Foundation
 
-public final class SendCommitBundleAction: EntityAction {
-    public typealias Result = [ZMUpdateEvent]
-    public typealias Failure = SendMLSMessageFailure
+extension URLSession {
 
-    public var resultHandler: ResultHandler?
-    public var commitBundle: Data
+    /// A url session powered by `URLProtocolMock`.
+    ///
+    /// Set `URLProtocolMock.mockHandler` with a mocking function to
+    /// control how request received by this URL session are handled.
 
-    public init(
-        commitBundle: Data,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.commitBundle = commitBundle
-        self.resultHandler = resultHandler
+    static func mockURLSession() -> URLSession {
+        let config = URLSessionConfiguration.default
+        config.protocolClasses = [URLProtocolMock.self]
+        return URLSession(configuration: config)
     }
+
 }
