@@ -24,16 +24,16 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let authenticationAPI: AuthenticationAPI
-    private let httpClient: HTTPClientProtocol
+    private let urlSession: URLSession
 
     package init(
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
         authenticationAPI: AuthenticationAPI,
-        httpClient: HTTPClientProtocol
+        urlSession: URLSession
     ) {
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.authenticationAPI = authenticationAPI
-        self.httpClient = httpClient
+        self.urlSession = urlSession
     }
 
     package func invoke(
@@ -110,7 +110,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
     }
 
     private func fetchBackendConfigURL(from backendURL: URL) async throws -> URL {
-        let (data, _) = try await httpClient.fetchData(from: backendURL)
+        let (data, _) = try await urlSession.data(from: backendURL)
 
         let decoder = JSONDecoder()
         let domainInfo = try decoder.decode(DomainInfo.self, from: data)

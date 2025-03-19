@@ -27,23 +27,23 @@ import XCTest
 final class DetermineAuthMethodUseCaseTests: XCTestCase {
 
     private var mockAuthenticationAPI: MockAuthenticationAPI!
-    private var mockHttpClient: MockHTTPClient!
+    private var session: URLSession!
     private var sut: DetermineAuthMethodUseCase!
 
     override func setUp() {
         mockAuthenticationAPI = MockAuthenticationAPI()
-        mockHttpClient = MockHTTPClient()
+        session = .mockURLSession()
 
         sut = DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase(),
             authenticationAPI: mockAuthenticationAPI,
-            httpClient: mockHttpClient
+            urlSession: session
         )
     }
 
     override func tearDown() {
         mockAuthenticationAPI = nil
-        mockHttpClient = nil
+        session = nil
         sut = nil
     }
 
@@ -174,13 +174,10 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             backendURLString: backendURL.absoluteString,
             domainRedirect: .backend
         )
-        mockHttpClient.testData = data
-        mockHttpClient.testResponse = HTTPURLResponse(
-            url: backendURL,
-            statusCode: 200,
-            httpVersion: nil,
-            headerFields: nil
-        )
+        URLProtocolMock.mockHandler = { request in
+                XCTAssertEqual(request.url, backendURL)
+                return (data, HTTPURLResponse(url: backendURL, statusCode: 200, httpVersion: nil, headerFields: nil)!)
+            }
 
         // when
         let authMethod = try await sut.invoke(emailOrSSOCode: "user@example.com")
@@ -198,13 +195,10 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             backendURLString: backendURL.absoluteString,
             domainRedirect: .backend
         )
-        mockHttpClient.testData = jsonData
-        mockHttpClient.testResponse = HTTPURLResponse(
-            url: backendURL,
-            statusCode: 200,
-            httpVersion: nil,
-            headerFields: nil
-        )
+        URLProtocolMock.mockHandler = { request in
+            XCTAssertEqual(request.url, backendURL)
+            return (jsonData, HTTPURLResponse(url: backendURL, statusCode: 200, httpVersion: nil, headerFields: nil)!)
+        }
 
         // when, then
         await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidResponse) { [self] in
@@ -230,6 +224,65 @@ private extension DomainRegistrationConfiguration {
             isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered,
             ssoCodeString: ssoCodeString
         )
+    }
+
+}
+
+extension URLSession {
+
+    /// A url session powered by `URLProtocolMock`.
+    ///
+    /// Set `URLProtocolMock.mockHandler` with a mocking function to
+    /// control how request received by this URL session are handled.
+
+    static func mockURLSession() -> URLSession {
+        let config = URLSessionConfiguration.default
+        config.protocolClasses = [URLProtocolMock.self]
+        return URLSession(configuration: config)
+    }
+
+}
+
+final class URLProtocolMock: URLProtocol {
+
+    static var mockHandler: ((URLRequest) throws -> (Data?, URLResponse))?
+
+    override static func canInit(with request: URLRequest) -> Bool {
+        // This protocol can handle the request.
+        true
+    }
+
+    override static func canonicalRequest(for request: URLRequest) -> URLRequest {
+        // Let the request simply pass through.
+        request
+    }
+
+    override func startLoading() {
+        guard let mockHandler = Self.mockHandler else {
+            fatalError("no mock handler for `URLProtocolMock`")
+        }
+
+        let data: Data?
+        let response: URLResponse
+
+        do {
+            (data, response) = try mockHandler(request)
+        } catch {
+            client?.urlProtocol(self, didFailWithError: error)
+            return
+        }
+
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+
+        if let data {
+            client?.urlProtocol(self, didLoad: data)
+        }
+
+        client?.urlProtocolDidFinishLoading(self)
+    }
+
+    override func stopLoading() {
+        // The request was cancelled or completed.
     }
 
 }
