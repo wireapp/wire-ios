@@ -156,18 +156,9 @@ final class MessageToolboxDataSource {
         String?
     ) {
         let countdownStatus = makeEphemeralCountdown()
-
-        let deliveryStateString = selfMessageState(for: message)
-
-        if let timestampString = message.formattedReceivedDate(), message.isSent {
-            if let deliveryStateString, message.shouldShowDeliveryState {
-                return (timestampString, deliveryStateString, countdownStatus)
-            } else {
-                return (timestampString, nil, countdownStatus)
-            }
-        } else {
-            return (nil, deliveryStateString, countdownStatus)
-        }
+        let deliveryStateString = message.shouldShowDeliveryState ? selfMessageState(for: message) : nil
+        let timestampString = message.isSent ? message.formattedReceivedDate() : nil
+        return (timestampString, deliveryStateString, countdownStatus)
     }
 
     private func makeEphemeralCountdown() -> String? {
@@ -176,20 +167,19 @@ final class MessageToolboxDataSource {
             message.destructionDate != nil &&
             message.deliveryState != .pending
 
-        if let destructionDate = message.destructionDate, showDestructionTimer {
-            let remaining = destructionDate
-                .timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
-
-            if remaining > 0 {
-                if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
-                    return string
-                }
-            } else if message.isAudio {
-                // do nothing, audio messages are allowed to extend the timer
-                // past the destruction date.
+        guard let destructionDate = message.destructionDate, showDestructionTimer else { return nil }
+        
+        // We need to add one second to start with the correct value
+        let remaining = destructionDate.timeIntervalSinceNow + 1
+        
+        if remaining > 0 {
+            if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
+                return string
             }
+        } else if message.isAudio {
+            // do nothing, audio messages are allowed to extend the timer
+            // past the destruction date.
         }
-
         return nil
     }
 
@@ -241,22 +231,21 @@ final class MessageToolboxDataSource {
 
     /// Create a timestamp list for all calls associated with a call system message
     private func makeCallList() -> String {
-        if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
-           let timestamp = timestampString(message) {
-
-            let childrenTimestamps = childMessages
-                .compactMap { $0 as? ZMConversationMessage }
-                .sortedAscendingPrependingNil(by: \.serverTimestamp)
-                .compactMap(timestampString)
-
-            let finalText = childrenTimestamps.reduce(timestamp) { text, current in
-                "\(text)\n\(current)"
-            }
-
-            return finalText
-        } else {
+        guard let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
+              let timestamp = timestampString(message) else {
             return timestampString(message) ?? "-"
         }
+
+        let childrenTimestamps = childMessages
+            .compactMap { $0 as? ZMConversationMessage }
+            .sortedAscendingPrependingNil(by: \.serverTimestamp)
+            .compactMap(timestampString)
+        
+        let finalText = childrenTimestamps.reduce(timestamp) { text, current in
+            "\(text)\n\(current)"
+        }
+        
+        return finalText
     }
 
     /// Creates the timestamp text.
