@@ -175,9 +175,9 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             domainRedirect: .backend
         )
         URLProtocolMock.mockHandler = { request in
-                XCTAssertEqual(request.url, backendURL)
-                return (data, HTTPURLResponse(url: backendURL, statusCode: 200, httpVersion: nil, headerFields: nil)!)
-            }
+            XCTAssertEqual(request.url, backendURL)
+            return (data, HTTPURLResponse(url: backendURL, statusCode: 200, httpVersion: nil, headerFields: nil)!)
+        }
 
         // when
         let authMethod = try await sut.invoke(emailOrSSOCode: "user@example.com")
