@@ -69,7 +69,7 @@ enum ConversationSystemMessageCellDescription {
             let senderCell = ConversationSenderMessageCellDescription(
                 sender: sender,
                 message: message,
-                timestamp: nil
+                shouldShowAuthor: true
             )
             senderCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(senderCell)]
