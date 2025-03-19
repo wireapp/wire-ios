@@ -23,12 +23,10 @@ import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
-protocol DetermineAuthMethodComponentDependency: Dependency {
+protocol DetermineAuthMethodOnPremComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
-    var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
@@ -37,17 +35,21 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 }
 
-class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
+class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremComponentDependency> {
+    private let environmentType: BackendEnvironmentType
+    private let backendConfig: BackendConfig
+    private let backendMetadata: BackendMetadata?
 
-    @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
-            router: dependency.router,
-            factory: self,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig,
-            backendMetadata: nil,
-            bridge: dependency.bridge
-        )
+    init(
+        parent: any Scope,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?
+    ) {
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
+        self.backendMetadata = backendMetadata
+        super.init(parent: parent)
     }
 
     @MainActor var view: DetermineAuthMethodView {
@@ -57,10 +59,21 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
+    @MainActor private var viewModel: DetermineAuthMethodViewModel {
+        DetermineAuthMethodViewModel(
+            router: dependency.router,
+            factory: self,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata,
+            bridge: dependency.bridge
+        )
+    }
+
     public var networkService: NetworkService {
         shared {
             NetworkService.make(
-                backendEnvironment: .init(dependency.backendConfig),
+                backendEnvironment: .init(backendConfig),
                 minTLSVersion: dependency.minTLSVersion
             )
         }
@@ -68,11 +81,15 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     // MARK: - Children
 
-    func loginViaEmailComponent(backendMetadata: BackendMetadata) -> LoginViaEmailComponent {
+    func loginViaEmailComponent(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata
+    ) -> LoginViaEmailComponent {
         LoginViaEmailComponent(
             parent: self,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
             backendMetadata: backendMetadata
         )
     }
@@ -103,7 +120,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
 }
 
-extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
+extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Factory {
 
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
         ValidateEmailOrSSOCodeUseCase()
@@ -138,7 +155,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
         return SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
-            baseURL: dependency.backendConfig.endpoints.backendURL,
+            baseURL: backendConfig.endpoints.backendURL,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
         )
@@ -154,7 +171,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
 }
 
-extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
+extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
 
     @MainActor
     func loginViaEmailView(
@@ -165,7 +182,11 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
-        loginViaEmailComponent(backendMetadata: backendMetadata).view(
+        loginViaEmailComponent(
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata
+        ).view(
             email: email,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict
@@ -192,34 +213,6 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
             environmentType: environmentType,
             backendConfig: backendConfig
         ).view
-    }
-
-}
-
-// TODO: [WPB-16272] remove when API version is deduplicated.
-extension WireAPI.APIVersion {
-
-    init(_ apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) {
-        switch apiVersion {
-        case .v0:
-            self = .v0
-        case .v1:
-            self = .v1
-        case .v2:
-            self = .v2
-        case .v3:
-            self = .v3
-        case .v4:
-            self = .v4
-        case .v5:
-            self = .v5
-        case .v6:
-            self = .v6
-        case .v7:
-            self = .v7
-        case .v8:
-            self = .v8
-        }
     }
 
 }

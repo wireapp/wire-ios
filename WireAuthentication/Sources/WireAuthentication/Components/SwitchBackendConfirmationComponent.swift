@@ -38,13 +38,13 @@ protocol SwitchBackendConfirmationComponentDependency: Dependency {
 
 class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationComponentDependency> {
 
-    private let email: String
+    private let email: String?
     private let environmentType: BackendEnvironmentType
     public let backendConfig: BackendConfig
 
     init(
         parent: any Scope,
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) {

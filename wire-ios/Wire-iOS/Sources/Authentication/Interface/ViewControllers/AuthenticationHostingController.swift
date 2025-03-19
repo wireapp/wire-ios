@@ -51,9 +51,14 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
             }
         }
 
-        authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookies in
-            bridge.sendInboundEvent(.ssoAuthenticationSuccess(userID: userID, cookies: cookies))
-        })
+        authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(
+            handleSSOLoginSuccess: { userID, cookies in
+                bridge.sendInboundEvent(.ssoAuthenticationSuccess(userID: userID, cookies: cookies))
+            },
+            handleBackendSwitch: { url in
+                bridge.sendInboundEvent(.backendSwitchRequested(configURL: url))
+            }
+        )
 
         authenticationCoordinator?.unauthenticatedSession.setErrorHandler {
             bridge.sendInboundEvent(.ssoAutheticationFailure)
