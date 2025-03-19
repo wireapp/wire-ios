@@ -174,7 +174,7 @@ final class ConversationCellBurstTimestampView: UIView {
             } else if calendar.component(.year, from: timestamp) == calendar.component(.year, from: now) {
                 label.text = weekdayAndDateDateFormatter.string(from: timestamp)
             } else {
-                label.text = WRDateFormatter.otherYearFormatter.string(from: timestamp)
+                label.text = weekdayDateAndYearDateFormatter.string(from: timestamp)
             }
 
         }
