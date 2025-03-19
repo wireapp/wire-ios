@@ -165,13 +165,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 return false
             }
 
-            let margins = UIView().conversationHorizontalMargins
+            let margins = HorizontalMargins.conversationHorizontalMargins()
 
             return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth - margins.right - margins.left)
         } else {
-            let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
-                .isLocation || message.isImage
-            return message.isSentBySelfUser && messageSupportsCollapsing
+            return message.isSentBySelfUser && message.supportsCollapsing
         }
     }
 
