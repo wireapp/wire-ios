@@ -123,10 +123,6 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     func displayError(_ error: Error) {
         // no-op
     }
-
-    func didRewindToThisView() {
-        // no-op
-    }
 }
 
 // MARK: - ClientListViewControllerDelegate

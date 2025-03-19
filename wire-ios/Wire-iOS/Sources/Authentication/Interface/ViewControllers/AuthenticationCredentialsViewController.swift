@@ -37,7 +37,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     /// Types of flow provided by the view controller.
     enum FlowType {
         case login(AuthenticationPrefilledCredentials?)
-        case registration(AuthenticationPrefilledCredentials?)
+        case registration
         case reauthentication(AuthenticationPrefilledCredentials?)
     }
 
@@ -103,10 +103,9 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             self.init(description: description, contentCenterConstraintActivation: false)
             self.prefilledCredentials = credentials
             self.shouldUseScrollView = true
-        case let .registration(credentials):
+        case .registration:
             let description = PersonalRegistrationStepDescription()
             self.init(description: description, contentCenterConstraintActivation: true)
-            self.prefilledCredentials = credentials
             self.shouldUseScrollView = false
         }
 
@@ -394,11 +393,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     private func updatePrefilledCredentials() {
         guard let prefilledCredentials else { return }
-        if isRegistering, let email = prefilledCredentials.credentials.emailAddress, !email.isEmpty {
-            emailInputField.text = email
-        } else {
-            emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
-        }
+        emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
     }
 
     override func clearInputFields() {
@@ -435,19 +430,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
         valueSubmitted(emailInputField.input)
         return true
-    }
-
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        guard
-            textField == emailInputField,
-            isRegistering,
-            let prefilledCredentials,
-            prefilledCredentials.credentials.emailAddress != nil
-        else {
-            return true
-        }
-
-        return false
     }
 
     // MARK: - Email / Password Input

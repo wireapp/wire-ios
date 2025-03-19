@@ -38,10 +38,6 @@ final class KeyboardAvoidingAuthenticationCoordinatedViewController: KeyboardAvo
         childAuthenticationCoordinatedViewController?.displayError(error)
     }
 
-    func didRewindToThisView() {
-        // no-op
-    }
-
     private var childAuthenticationCoordinatedViewController: AuthenticationCoordinatedViewController? {
         viewController as? AuthenticationCoordinatedViewController
     }

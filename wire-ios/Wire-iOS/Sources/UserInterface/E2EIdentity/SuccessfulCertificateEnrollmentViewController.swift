@@ -217,10 +217,6 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {}
 
     func displayError(_ error: Error) {}
-
-    func didRewindToThisView() {
-        // no-op
-    }
 }
 
 // MARK: - Previews

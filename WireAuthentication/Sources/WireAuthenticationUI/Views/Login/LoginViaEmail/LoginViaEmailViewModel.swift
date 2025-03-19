@@ -51,6 +51,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         backendEnvironment: WireAuthenticationBackendEnvironment,
         email: String,
+        accountsURL: URL,
         passwordValidator: any PasswordValidator,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
@@ -60,7 +61,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.backendEnvironment = backendEnvironment
         self.email = email
-        self.forgotPasswordURL = backendEnvironment.config.endpoints.accountsURL.appendingPathComponent("forgot")
+        self.forgotPasswordURL = accountsURL.appendingPathComponent("forgot")
         self.passwordValidator = passwordValidator
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict

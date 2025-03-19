@@ -41,6 +41,4 @@ protocol AuthenticationCoordinatedViewController: AnyObject {
     ///
     /// - Parameter error: The error to present to the user.
     func displayError(_ error: Error)
-
-    func didRewindToThisView()
 }

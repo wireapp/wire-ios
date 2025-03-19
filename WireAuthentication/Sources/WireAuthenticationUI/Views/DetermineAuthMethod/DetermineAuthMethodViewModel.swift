@@ -42,7 +42,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
-    private let bridge: WireAuthenticationBridge
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     private let environmentType: BackendEnvironmentType
     private let backendMetadata: BackendMetadata?
@@ -53,7 +52,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
     @Published var modalDestination: ModalDestination?
-    @Published var canExitFlow: Bool
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
@@ -66,22 +64,19 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        bridge: WireAuthenticationBridge,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata?,
         emailOrSSOCode: String = "",
-        canExitFlow: Bool,
-        isLoading: Bool = false
+        isLoading: Bool = false,
+        bridge: WireAuthenticationBridge
     ) {
         self.router = router
         self.factory = factory
-        self.bridge = bridge
         self.environmentType = environmentType
         self.backendMetadata = backendMetadata
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
-        self.canExitFlow = canExitFlow
         self.isLoading = isLoading
 
         self.cancellable = bridge.inboundEvents.sink { event in
@@ -151,10 +146,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func goToAppStore() {
         factory.openAppStoreUseCase().invoke()
         alert = nil
-    }
-
-    func exitFlow() {
-        bridge.sendOutboundEvent(.exitFlowRequested)
     }
 
     // MARK: - Private

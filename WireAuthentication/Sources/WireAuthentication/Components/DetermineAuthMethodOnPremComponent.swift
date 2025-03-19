@@ -32,7 +32,6 @@ protocol DetermineAuthMethodOnPremComponentDependency: Dependency {
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
     var appStoreURL: URL { get }
-    var existsAnotherAccount: Bool { get }
 
 }
 
@@ -64,11 +63,10 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
         DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
-            bridge: dependency.bridge,
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata,
-            canExitFlow: dependency.existsAnotherAccount
+            bridge: dependency.bridge
         )
     }
 

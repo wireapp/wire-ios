@@ -86,7 +86,6 @@ package struct DetermineAuthMethodView: View {
                         string: $viewModel.emailOrSSOCode
                     )
                     .autocapitalization(.none)
-                    .autocorrectionDisabled()
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -108,17 +107,6 @@ package struct DetermineAuthMethodView: View {
                 .wireButtonStyle(.primary)
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
-        }
-        .toolbar {
-            if viewModel.canExitFlow {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        viewModel.exitFlow()
-                    } label: {
-                        Image(systemName: "xmark")
-                    }
-                }
-            }
         }
         .alert(
             item: $viewModel.alert,
@@ -237,43 +225,24 @@ extension Alert {
 @MainActor
 func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
-    canExitFlow: Bool = false,
     isLoading: Bool = false,
     alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
-        canExitFlow: canExitFlow,
         isLoading: isLoading,
         alert: alert
     )
 }
 
-#Preview("can't exit flow") {
+#Preview {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            NavigationStack {
-                makeDetermineAuthMethodViewPreview(
-                    emailOrSSOCode: "user@wire.com",
-                    canExitFlow: false,
-                    isLoading: false,
-                    alert: nil
-                )
-            }
-        }
-}
-
-#Preview("can exit flow") {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            NavigationStack {
-                makeDetermineAuthMethodViewPreview(
-                    emailOrSSOCode: "user@wire.com",
-                    canExitFlow: true,
-                    isLoading: false,
-                    alert: nil
-                )
-            }
+            makeDetermineAuthMethodViewPreview(
+                emailOrSSOCode: "user@wire.com",
+                isLoading: false,
+                alert: .unknownError
+            )
         }
 }
 

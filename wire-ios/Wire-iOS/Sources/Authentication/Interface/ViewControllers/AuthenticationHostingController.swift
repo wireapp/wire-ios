@@ -20,7 +20,6 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthentication
-import WireLogging
 import WireSyncEngine
 
 // A temporary bridging object to allow the new WireAuthentication flow inside
@@ -29,7 +28,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
     AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
-    private let bridge: WireAuthenticationBridge
     private var cancellable: AnyCancellable?
 
     init(
@@ -38,7 +36,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         authenticationCoordinator: AuthenticationCoordinator?
     ) {
         self.authenticationCoordinator = authenticationCoordinator
-        self.bridge = bridge
         super.init(rootView: rootView)
 
         self.cancellable = bridge.outboundEvents.sink { event in
@@ -48,25 +45,9 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                     ofType: .wireAuthenticationModuleComplete(authenticationResult)
                 )
 
-            case let .accountRegistrationRequested(
-                email,
-                backendEnvironment
-            ):
-                authenticationCoordinator?.wireAuthenticationDidRequestAccountRegistration(
-                    email: email,
-                    backendEnvironment: backendEnvironment
-                )
-
-            case .exitFlowRequested:
-                guard
-                    let sessionManager = SessionManager.shared,
-                    let account = sessionManager.firstAuthenticatedAccount
-                else {
-                    WireLogger.authentication.error("WireAuthentication requested exit but no account to go back to")
-                    return
-                }
-
-                sessionManager.select(account)
+            case .accountRegistrationRequested:
+                // TODO: [WPB-16279] Navigate to the account registration flow
+                break
             }
         }
 
@@ -96,10 +77,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
     func displayError(_ error: any Error) {
         // no op
-    }
-
-    func didRewindToThisView() {
-        bridge.sendInboundEvent(.didRewindToThisView)
     }
 
 }
