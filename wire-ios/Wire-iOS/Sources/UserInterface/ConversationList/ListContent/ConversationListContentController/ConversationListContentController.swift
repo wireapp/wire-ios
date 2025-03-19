@@ -103,6 +103,17 @@ final class ConversationListContentController: UICollectionViewController {
             .addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
                 self?.activeMediaPlayerChanged()
             }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
+            let context = self.listViewModel.userSession!.contextProvider.viewContext
+            let conversations = try! context.fetch(ZMConversation.sortedFetchRequest()) as! [ZMConversation]
+            for conversation in conversations {
+                guard conversation.displayName == "build: ios smoke" else { continue }
+
+                conversation.lastReadServerTimeStamp = ISO8601DateFormatter().date(from: "2025-03-10T17:00:00+01:00")
+            }
+            try! context.save()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
