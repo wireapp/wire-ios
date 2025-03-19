@@ -82,14 +82,15 @@ final class ConversationCellBurstTimestampViewTests: XCTestCase {
 
     func testUnreadIndicatorToday() {
         // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
+        var then = Date.now.addingTimeInterval(-45 * 60)
+        if !Calendar.current.isDate(.now, inSameDayAs: then) {
+            // if the test runs before 00:45, add another hour
+            then.addTimeInterval(3600)
+        }
 
         // When
         sut.configure(
-            timestamp: mockedNow.addingTimeInterval(-45 * 60), // 45 min ago
+            timestamp: then, // 45 min ago
             isFirstMessageOfTheDay: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
@@ -100,15 +101,9 @@ final class ConversationCellBurstTimestampViewTests: XCTestCase {
     }
 
     func testUnreadIndicatorYesterday() {
-        // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
         // When
         sut.configure(
-            timestamp: mockedNow.addingTimeInterval(-10 * 3600), // before midnight
+            timestamp: .now.addingTimeInterval(-24 * 3600), // 1d ago
             isFirstMessageOfTheDay: false,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
@@ -179,16 +174,17 @@ final class ConversationCellBurstTimestampViewTests: XCTestCase {
 
     func testTimeDividerToday() {
         // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
+        var then = Date.now.addingTimeInterval(-30)
+        if !Calendar.current.isDate(.now, inSameDayAs: then) {
+            // if the test runs before 00:45, add another hour
+            then.addTimeInterval(3600)
+        }
 
         // When
         for flag in [true, false] {
             // unread indicators have the same text as time dividers when they're for the first message of a day
             sut.configure(
-                timestamp: mockedNow.addingTimeInterval(-30), // 30s ago
+                timestamp: then, // 30s ago
                 isFirstMessageOfTheDay: flag,
                 showUnreadDot: flag,
                 accentColor: userSession.selfUser.accentColor
