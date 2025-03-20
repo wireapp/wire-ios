@@ -610,6 +610,8 @@ extension ConversationMessageSectionController: UserObserving {
 
 extension ConversationMessageSectionController {
 
+    // TODO: https://wearezeta.atlassian.net/browse/WPB-16627
+    // improve by having one place to calculate width and for actual view to present text
     func willTextExceedOneLine(text: String, availableWidth: CGFloat) -> Bool {
 
         let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)

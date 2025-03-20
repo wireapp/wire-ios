@@ -166,7 +166,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let message = MockMessageFactory.fileTransferMessage()
 
         // WHEN
-        var (actionController, _) = makeSut(
+        let (actionController, _) = makeSut(
             message: message,
             sender: selfUser,
             isCollapsed: false,
@@ -174,6 +174,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
         )
         message.senderUser = selfUser
 
+        // need to toggle it twice because of logic that
+        // we only show collapse when user actually expanded at least once
         actionController.isCollapsed?.toggle()
         actionController.isCollapsed?.toggle()
 
