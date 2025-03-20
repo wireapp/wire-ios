@@ -45,11 +45,6 @@ protocol MLSActionsProviderProtocol {
         in context: NotificationContext
     ) async throws -> [KeyPackage]
 
-    func sendMessage(
-        _ message: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent]
-
     func sendCommitBundle(
         _ bundle: Data,
         in context: NotificationContext
@@ -150,14 +145,6 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
             excludedSelfClientId: excludedSelfClientID
         )
 
-        return try await action.perform(in: context)
-    }
-
-    func sendMessage(
-        _ message: Data,
-        in context: NotificationContext
-    ) async throws -> [ZMUpdateEvent] {
-        var action = SendMLSMessageAction(message: message)
         return try await action.perform(in: context)
     }
 
