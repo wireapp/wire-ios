@@ -29,6 +29,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
     AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
+    private let bridge: WireAuthenticationBridge
     private var cancellable: AnyCancellable?
 
     init(
@@ -37,6 +38,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         authenticationCoordinator: AuthenticationCoordinator?
     ) {
         self.authenticationCoordinator = authenticationCoordinator
+        self.bridge = bridge
         super.init(rootView: rootView)
 
         self.cancellable = bridge.outboundEvents.sink { event in
@@ -45,12 +47,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 authenticationCoordinator?.eventResponderChain.handleEvent(
                     ofType: .wireAuthenticationModuleComplete(authenticationResult)
                 )
-
-<<<<<<< HEAD
-            case .accountRegistrationRequested:
-                // TODO: [WPB-16279] Navigate to the account registration flow
-                break
-=======
             case let .accountRegistrationRequested(
                 email,
                 backendEnvironment
@@ -59,7 +55,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                     email: email,
                     backendEnvironment: backendEnvironment
                 )
-
             case .exitFlowRequested:
                 guard
                     let sessionManager = SessionManager.shared,
@@ -70,13 +65,17 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 }
 
                 sessionManager.select(account)
->>>>>>> cf871dddd6 (fix: can't exit authentication flow - WPB-16562 (#2692))
             }
         }
 
-        authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookies in
-            bridge.sendInboundEvent(.ssoAuthenticationSuccess(userID: userID, cookies: cookies))
-        })
+        authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(
+            handleSSOLoginSuccess: { userID, cookies in
+                bridge.sendInboundEvent(.ssoAuthenticationSuccess(userID: userID, cookies: cookies))
+            },
+            handleBackendSwitch: { url in
+                bridge.sendInboundEvent(.backendSwitchRequested(configURL: url))
+            }
+        )
 
         authenticationCoordinator?.unauthenticatedSession.setErrorHandler {
             bridge.sendInboundEvent(.ssoAutheticationFailure)
@@ -95,6 +94,10 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
     func displayError(_ error: any Error) {
         // no op
+    }
+
+    func didRewindToThisView() {
+        bridge.sendInboundEvent(.didRewindToThisView)
     }
 
 }

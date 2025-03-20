@@ -37,7 +37,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
-        case switchBackend(email: String, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
+        case switchBackend(email: String?, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
     }
 
     private let router: any Router
@@ -45,7 +45,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let bridge: WireAuthenticationBridge
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
+    private let backendMetadata: BackendMetadata?
+    package let backendConfig: BackendConfig
+    private var cancellable: AnyCancellable?
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -57,27 +59,41 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         !isValidEmailOrSSOCode()
     }
 
+    var isOnPremiseBackend: Bool {
+        environmentType != .production
+    }
+
     package init(
         router: any Router,
         factory: any Factory,
         bridge: WireAuthenticationBridge,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?,
         emailOrSSOCode: String = "",
-<<<<<<< HEAD
-=======
         canExitFlow: Bool,
->>>>>>> cf871dddd6 (fix: can't exit authentication flow - WPB-16562 (#2692))
         isLoading: Bool = false
     ) {
         self.router = router
         self.factory = factory
         self.bridge = bridge
         self.environmentType = environmentType
+        self.backendMetadata = backendMetadata
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
         self.canExitFlow = canExitFlow
         self.isLoading = isLoading
+
+        self.cancellable = bridge.inboundEvents.sink { event in
+            switch event {
+            case let .backendSwitchRequested(configURL):
+                Task { [weak self] in
+                    await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
+                }
+            default:
+                break
+            }
+        }
     }
 
     func submitEmailOrSSOCode() async {
@@ -152,12 +168,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.login(
                 email: email,
                 didDetectDomainConflict: didDetectDomainConflict,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
                 backendMetadata: backendMetadata
             ))
 
         case let .loginOrRegisterViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(
                 email: email,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
                 backendMetadata: backendMetadata
             ))
 
@@ -195,6 +215,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             }
 
         case let .onPremLogin(email, backendConfigURL):
+            await handleOnPremLogin(email: email, backendConfigURL: backendConfigURL)
+        }
+    }
+
+    private func handleOnPremLogin(email: String?, backendConfigURL: URL) async {
+        Task {
             do {
                 let useCase = factory.fetchBackendConfigUseCase()
                 let backendConfig = try await Task.detached {
@@ -225,4 +251,5 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return false
         }
     }
+
 }

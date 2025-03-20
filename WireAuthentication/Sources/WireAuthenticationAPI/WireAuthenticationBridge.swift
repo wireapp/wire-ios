@@ -52,12 +52,8 @@ public final class WireAuthenticationBridge {
     public enum OutboundEvent {
 
         case userAuthenticated(AuthenticationResult)
-<<<<<<< HEAD
-        case accountRegistrationRequested
-=======
         case accountRegistrationRequested(email: String, WireAuthenticationBackendEnvironment)
         case exitFlowRequested
->>>>>>> cf871dddd6 (fix: can't exit authentication flow - WPB-16562 (#2692))
 
     }
 
@@ -66,8 +62,10 @@ public final class WireAuthenticationBridge {
 
     public enum InboundEvent {
 
+        case didRewindToThisView
         case ssoAuthenticationSuccess(userID: UUID, cookies: [HTTPCookie])
         case ssoAutheticationFailure
+        case backendSwitchRequested(configURL: URL)
 
     }
 

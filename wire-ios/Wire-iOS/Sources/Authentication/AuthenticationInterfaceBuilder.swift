@@ -81,7 +81,9 @@ final class AuthenticationInterfaceBuilder {
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
-                preferredAPIVersion: .v8,
+                preferredAPIVersion: BackendInfo.preferredAPIVersion.flatMap {
+                    WireAPI.APIVersion(rawValue: UInt($0.rawValue))
+                },
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
@@ -131,8 +133,16 @@ final class AuthenticationInterfaceBuilder {
         case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
-        case .createCredentials:
-            return makeCredentialsViewController(for: .registration)
+        case let .createCredentials(user):
+            let prefilledCredentials = AuthenticationPrefilledCredentials(
+                credentials: LoginCredentials(
+                    emailAddress: user.unverifiedEmail,
+                    hasPassword: false,
+                    usesCompanyLogin: false
+                ),
+                isExpired: false
+            )
+            return makeCredentialsViewController(for: .registration(prefilledCredentials))
 
         case .clientManagement:
             let manageClientsInvitation = ClientUnregisterInvitationStepDescription()

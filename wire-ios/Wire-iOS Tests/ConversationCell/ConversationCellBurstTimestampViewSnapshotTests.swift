@@ -17,6 +17,7 @@
 //
 
 import WireDesign
+import WireSystemSupport
 import WireTestingPackage
 import XCTest
 
@@ -24,16 +25,13 @@ import XCTest
 
 final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
-    // MARK: - Properties
-
     private var snapshotHelper: SnapshotHelper!
     private var sut: ConversationCellBurstTimestampView!
     private var userSession: UserSessionMock!
 
-    // MARK: - setUp
-
     override func setUp() {
         super.setUp()
+
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         sut = ConversationCellBurstTimestampView()
@@ -41,8 +39,6 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         sut.unreadDot.backgroundColor = .red
         sut.backgroundColor = SemanticColors.View.backgroundConversationView
     }
-
-    // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
@@ -52,7 +48,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Snapshot Tests
+    // MARK: -
 
     func testForInitState() {
         snapshotHelper.verify(matching: sut)
@@ -61,8 +57,8 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     func testForIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
         sut.configure(
-            with: Date(timeIntervalSinceReferenceDate: 0),
-            includeDayOfWeek: true,
+            timestamp: Date(timeIntervalSinceReferenceDate: 0),
+            isFirstMessageOfTheDay: true,
             showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
@@ -74,8 +70,8 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
     func testForNotIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
         sut.configure(
-            with: Date(timeIntervalSinceReferenceDate: 0),
-            includeDayOfWeek: false,
+            timestamp: Date(timeIntervalSinceReferenceDate: 0),
+            isFirstMessageOfTheDay: false,
             showUnreadDot: false,
             accentColor: userSession.selfUser.accentColor
         )
@@ -83,4 +79,101 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
+
+    func testYesterdayNoUnread() {
+        // WHEN
+        sut.configure(
+            timestamp: .now.addingTimeInterval(-24 * 3600), // 24h ago
+            isFirstMessageOfTheDay: false,
+            showUnreadDot: false,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testYesterdayWithUnread() {
+        // WHEN
+        sut.configure(
+            timestamp: .now.addingTimeInterval(-24 * 3600), // 24h ago
+            isFirstMessageOfTheDay: false,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testYesterdayWithUnreadAndFirstMessageOfToday() {
+        // WHEN
+        sut.configure(
+            timestamp: .now.addingTimeInterval(-24 * 3600), // 24h ago
+            isFirstMessageOfTheDay: true,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testLastYearNoUnread() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
+            isFirstMessageOfTheDay: false,
+            showUnreadDot: false,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testLastYearWithUnread() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
+            isFirstMessageOfTheDay: false,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testLastYearWithUnreadAndFirstMessageOfToday() {
+        // GIVEN
+        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = mockedNow
+        sut.currentDateProvider = currentDateProvider
+
+        // WHEN
+        sut.configure(
+            timestamp: mockedNow.addingTimeInterval(-365 * 24 * 3600), // 1y ago
+            isFirstMessageOfTheDay: true,
+            showUnreadDot: true,
+            accentColor: userSession.selfUser.accentColor
+        )
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
+    }
+
 }
