@@ -109,7 +109,16 @@ class RootComponent: BootstrapComponent {
     }
 
     var determineAuthMethodComponent: DetermineAuthMethodComponent {
-        DetermineAuthMethodComponent(parent: self)
+        let networkStack = NetworkStack(
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            minTLSVersion: minTLSVersion
+        )
+
+        return DetermineAuthMethodComponent(
+            parent: self,
+            networkStack: networkStack
+        )
     }
 
     @MainActor

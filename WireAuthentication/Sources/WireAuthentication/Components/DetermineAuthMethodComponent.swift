@@ -40,6 +40,16 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
+    public let networkStack: NetworkStack
+
+    init(
+        parent: any Scope,
+        networkStack: NetworkStack
+    ) {
+        self.networkStack = networkStack
+        super.init(parent: parent)
+    }
+
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: dependency.router,
@@ -109,6 +119,15 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
         ValidateEmailOrSSOCodeUseCase()
+    }
+
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        return DetermineAuthMethodUseCase(
+            validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
+            authenticationAPI: authenticationAPI,
+            urlSession: URLSession.shared
+        )
     }
 
     func determineAuthMethodUseCase(

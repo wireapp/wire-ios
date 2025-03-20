@@ -128,6 +128,10 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Facto
         ValidateEmailOrSSOCodeUseCase()
     }
 
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
+        fatalError()
+    }
+
     func determineAuthMethodUseCase(
         apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
     ) -> any DetermineAuthMethodUseCaseProtocol {

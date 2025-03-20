@@ -108,6 +108,11 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
     }
 
     nonisolated
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
+        MockDetermineAuthMethodUseCase()
+    }
+
+    nonisolated
     func determineAuthMethodUseCase(apiVersion: BackendMetadata.APIVersion) -> any DetermineAuthMethodUseCaseProtocol {
         MockDetermineAuthMethodUseCase()
     }

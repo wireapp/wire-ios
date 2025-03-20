@@ -22,11 +22,18 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
 
+package protocol DetermineAuthMethodUseCaseFactory2 {
+
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol
+
+}
+
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
         DetermineAuthMethodUseCaseFactory &
+        DetermineAuthMethodUseCaseFactory2 &
         FetchBackendConfigUseCaseFactory &
         OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory &
@@ -102,33 +109,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             isLoading = false
         }
 
-        let backendMetadata: BackendMetadata
         do {
-            let useCase = factory.resolveBackendMetadataUseCase()
-            backendMetadata = try await Task.detached { [useCase] in
-                try await useCase.invoke()
-            }.value
-        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
-            alert = .obsoleteClient
-            return
-        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
-            alert = .obsoleteBackend
-            return
-        } catch {
-            alert = .general(for: error)
-            return
-        }
-
-        do {
-            let useCase = factory.determineAuthMethodUseCase(apiVersion: backendMetadata.apiVersion)
+            let useCase = try await factory.determineAuthMethodUseCase()
             let authMethod = try await Task.detached { [useCase, emailOrSSOCode] in
                 try await useCase.invoke(emailOrSSOCode: emailOrSSOCode)
             }.value
 
-            await handleAuthenticationMethod(
-                authMethod,
-                backendMetadata: backendMetadata
-            )
+            await handleAuthenticationMethod(authMethod)
         } catch {
             WireLogger.authentication.error("Error determining authentication method: \(error)")
 
@@ -137,6 +124,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 // No need to do anything here. In general this shouldn't happen because we validate before submitting.
                 // It is probably worth restructuring the code to avoid this.
                 break
+            case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
+                // TODO: this should probably be an alert on the root view
+                alert = .obsoleteClient
+            case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
+                // TODO: this should probably be an alert on the root view
+                alert = .obsoleteBackend
             default:
                 alert = .general(for: error)
             }
@@ -160,9 +153,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     // MARK: - Private
 
     private func handleAuthenticationMethod(
-        _ method: AuthenticationMethod,
-        backendMetadata: BackendMetadata
+        _ method: AuthenticationMethod
     ) async {
+        // TODO: remove this temp fix
+        let backendMetadata = BackendMetadata(
+            apiVersion: .v8,
+            domain: "example.com",
+            isFederationEnabled: false
+        )
         switch method {
         case let .loginViaEmail(email, didDetectDomainConflict):
             router.navigate(to: DetermineAuthMethodView.Destination.login(
