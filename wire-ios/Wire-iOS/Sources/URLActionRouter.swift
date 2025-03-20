@@ -209,6 +209,12 @@ extension URLActionRouter: PresentationDelegate {
                 decisionHandler: decisionHandler
             )
         case let .accessBackend(url):
+            if let error = sessionManager?.canSwitchBackend() {
+                let localizedError = mapToLocalizedError(error)
+                presentLocalizedErrorAlert(localizedError)
+                return
+            }
+
             if DeveloperFlag.useWireAuthentication.isOn {
                 decisionHandler(SecurityFlags.customBackend.isEnabled)
             } else {
