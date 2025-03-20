@@ -239,6 +239,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addImageMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        if needToAddCollapsedCell() {
+            return addCollapsedCell(showEphemeralTimer)
+        }
         let conversationImageMessageCellDescription = ConversationImageMessageCellDescription(
             message: message,
             image: message.imageMessageData!
@@ -247,20 +250,34 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
     }
 
-    private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        if isCollapsed, !isMessageWithCollapsedByDefault() {
-            [AnyConversationMessageCellDescription(ConversationCollapsedFileMessageCellDescription(
-                message: message
-            ) { [weak self] in
+    func needToAddCollapsedCell() -> Bool {
+        !isMessageWithCollapsedByDefault() && isCollapsed
+    }
+
+    private func addCollapsedCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        let cellDescriptions = ConversationCollapsedMessageCellDescription(
+            message: message,
+            collapseExpandAction: { [weak self] in
                 self?.handleCollapseExpand()
-            })]
-        } else {
-            ConversationTextMessageCellDescription
-                .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
+            }
+        )
+        cellDescriptions.showEphemeralTimer = showEphemeralTimer
+        return [AnyConversationMessageCellDescription(cellDescriptions)]
+    }
+
+    private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        if needToAddCollapsedCell() {
+            return addCollapsedCell(showEphemeralTimer)
         }
+        return ConversationTextMessageCellDescription
+            .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
     }
 
     private func addLocationMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        if needToAddCollapsedCell() {
+            return addCollapsedCell(showEphemeralTimer)
+        }
+
         guard let locationMessageData = message.locationMessageData else { return [] }
 
         let locationCell = ConversationLocationMessageCellDescription(message: message, location: locationMessageData)
@@ -269,32 +286,31 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addAudioMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        if needToAddCollapsedCell() {
+            return addCollapsedCell(showEphemeralTimer)
+        }
         let cellDescription = ConversationAudioMessageCellDescription(message: message)
         cellDescription.showEphemeralTimer = showEphemeralTimer
         return [AnyConversationMessageCellDescription(cellDescription)]
     }
 
     private func addVideoMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
+        if needToAddCollapsedCell() {
+            return addCollapsedCell(showEphemeralTimer)
+        }
         let cellDescription = ConversationVideoMessageCellDescription(message: message)
         cellDescription.showEphemeralTimer = showEphemeralTimer
         return [AnyConversationMessageCellDescription(cellDescription)]
     }
 
     private func addFileMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        if isCollapsed {
-            let cellDescriptions = ConversationCollapsedFileMessageCellDescription(
-                message: message,
-                collapseExpandAction: { [weak self] in
-                    self?.handleCollapseExpand()
-                }
-            )
-            cellDescriptions.showEphemeralTimer = showEphemeralTimer
-            return [AnyConversationMessageCellDescription(cellDescriptions)]
-        } else {
-            let cellDescriptions = ConversationFileMessageCellDescription(message: message)
-            cellDescriptions.showEphemeralTimer = showEphemeralTimer
-            return [AnyConversationMessageCellDescription(cellDescriptions)]
+        guard !needToAddCollapsedCell() else {
+            return addCollapsedCell(showEphemeralTimer)
         }
+
+        let cellDescriptions = ConversationFileMessageCellDescription(message: message)
+        cellDescriptions.showEphemeralTimer = showEphemeralTimer
+        return [AnyConversationMessageCellDescription(cellDescriptions)]
     }
 
     private func addSystemMessageCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {

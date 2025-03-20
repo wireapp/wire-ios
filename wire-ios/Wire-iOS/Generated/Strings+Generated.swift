@@ -1673,9 +1673,25 @@ internal enum L10n {
     }
     internal enum Content {
       internal enum Collapsed {
+        internal enum Audio {
+          /// You sent an audio message
+          internal static let title = L10n.tr("Localizable", "content.collapsed.audio.title", fallback: "You sent an audio message")
+        }
         internal enum File {
-          /// You shared a file
-          internal static let title = L10n.tr("Localizable", "content.collapsed.file.title", fallback: "You shared a file")
+          /// You sent a file
+          internal static let title = L10n.tr("Localizable", "content.collapsed.file.title", fallback: "You sent a file")
+        }
+        internal enum Image {
+          /// You sent a picture
+          internal static let title = L10n.tr("Localizable", "content.collapsed.image.title", fallback: "You sent a picture")
+        }
+        internal enum Location {
+          /// You sent your location
+          internal static let title = L10n.tr("Localizable", "content.collapsed.location.title", fallback: "You sent your location")
+        }
+        internal enum Video {
+          /// You sent a video
+          internal static let title = L10n.tr("Localizable", "content.collapsed.video.title", fallback: "You sent a video")
         }
       }
       internal enum File {
