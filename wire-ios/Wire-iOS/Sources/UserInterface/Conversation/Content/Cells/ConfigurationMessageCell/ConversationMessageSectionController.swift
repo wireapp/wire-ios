@@ -490,8 +490,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
+        // for all messages that support collapsing and is collapsed
         if !isMessageWithCollapsedByDefault() && isCollapsed {
-            return false
+            // if message failed, always show footer with error message and retry button
+            if message.deliveryState == .failedToSend {
+                return true
+            }
+            // then do not show footer if sent but show when sending
+            return !message.isSent
         }
 
         return message.deliveryState == .failedToSend || message.isSentBySelfUser
@@ -588,22 +594,22 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     // MARK: - Changes
 
     private func startObservingChanges(for message: ZMConversationMessage) {
-        if let userSession = ZMUserSession.shared() {
-            let observer = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
+        guard let userSession = ZMUserSession.shared() else { return }
+
+        let observer = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
+        changeObservers.append(observer)
+
+        if let sender = message.senderUser {
+            let observer = UserChangeInfo.add(observer: self, for: sender, in: userSession)!
             changeObservers.append(observer)
+        }
 
-            if let sender = message.senderUser {
-                let observer = UserChangeInfo.add(observer: self, for: sender, in: userSession)!
-                changeObservers.append(observer)
-            }
-
-            if let users = message.systemMessageData?.users {
-                for user in users where user.remoteIdentifier != (message.senderUser as? ZMUser)?.remoteIdentifier {
-                    if let observer = UserChangeInfo.add(observer: self, for: user, in: userSession) {
-                        changeObservers.append(observer)
-                    } else {
-                        assertionFailure("Failed to add observer for user \(user)")
-                    }
+        if let users = message.systemMessageData?.users {
+            for user in users where user.remoteIdentifier != (message.senderUser as? ZMUser)?.remoteIdentifier {
+                if let observer = UserChangeInfo.add(observer: self, for: user, in: userSession) {
+                    changeObservers.append(observer)
+                } else {
+                    assertionFailure("Failed to add observer for user \(user)")
                 }
             }
         }

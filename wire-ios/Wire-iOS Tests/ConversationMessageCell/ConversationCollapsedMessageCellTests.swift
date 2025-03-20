@@ -35,6 +35,9 @@ final class ConversationCollapsedMessageCellTests: ConversationMessageSnapshotTe
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
         message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
+        message.backingFileMessageData.transferState = .uploaded
+        message.backingFileMessageData.fileURL = Bundle.main.bundleURL
+
         collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
     }
 
@@ -47,10 +50,18 @@ final class ConversationCollapsedMessageCellTests: ConversationMessageSnapshotTe
     }
 
     func testUploadedCell_fromThisDevice() {
-        message.backingFileMessageData.transferState = .uploaded
-        message.backingFileMessageData.fileURL = Bundle.main.bundleURL
-
-        verify(message: message)
+        let messages: [String: MockMessage] = [
+            "file": message,
+            "audio": MockMessageFactory.audioMessage()!,
+            "video": MockMessageFactory.videoMessage(),
+            "image": MockMessageFactory.imageMessage(),
+            "location": MockMessageFactory.locationMessage(),
+            "text": MockMessageFactory
+                .textMessage(
+                    withText: "Long long long Long long long Long long long Long long long Long long long Long long long"
+                )
+        ]
+        messages.forEach { verify(message: $0.value, named: $0.key) }
     }
 
     func testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
@@ -68,4 +79,16 @@ final class ConversationCollapsedMessageCellTests: ConversationMessageSnapshotTe
 
         verify(message: message)
     }
+
+    func testWithErrorMessage() {
+        message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
+
+        message.backingFileMessageData.transferState = .uploaded
+        message.backingFileMessageData.fileURL = Bundle.main.bundleURL
+        message.deliveryState = .failedToSend
+        message.expirationReason = .timeout
+
+        verify(message: message)
+    }
+
 }

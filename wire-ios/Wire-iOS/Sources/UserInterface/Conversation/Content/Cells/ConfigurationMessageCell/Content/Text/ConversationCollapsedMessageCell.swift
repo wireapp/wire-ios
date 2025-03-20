@@ -125,7 +125,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     )
             }
         } else {
-            messageTextView.font = UIFont.italicSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize)
+            messageTextView.font = UIFont.normalLightFont.italic
+            messageTextView.textColor = SemanticColors.Label.textDefault
             typeIcon.isHidden = false
             if message.isImage {
                 typeIcon.image = .init(resource: .image)
@@ -190,6 +191,19 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         SessionManager.shared?.showUserProfile(user: user)
     }
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let avatarPoint = convert(point, to: avatar)
+
+        // Check if the tap is inside the avatar bounds
+        if avatar.bounds.contains(avatarPoint) {
+            // Return avatar to make it receive the tap
+            return avatar
+        }
+
+        // Otherwise, let normal hit testing occur
+        return super.hitTest(point, with: event)
+    }
 }
 
 final class ConversationCollapsedMessageCellDescription: ConversationMessageCellDescription {
@@ -214,7 +228,10 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage, collapseExpandAction: @escaping () -> Void) {
+    init(
+        message: ConversationMessage,
+        collapseExpandAction: @escaping () -> Void
+    ) {
         self.configuration = View.Configuration(
             message: message,
             user: message.senderUser,
