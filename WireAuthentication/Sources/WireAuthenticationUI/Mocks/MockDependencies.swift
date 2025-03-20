@@ -374,6 +374,14 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
     }
 }
 
+//extension MockDependencies: LoginViaEmailViewNewBuilder {
+//
+//    func loginViaEmailViewNew(email: String?, environmentType: WireAuthenticationAPI.BackendEnvironmentType, backendConfig: WireAuthenticationAPI.BackendConfig, backendMetadata: WireAuthenticationAPI.BackendMetadata?) -> LoginViaEmailViewNew {
+//        <#code#>
+//    }
+//
+//}
+
 extension MockDependencies: LoginViaEmailUseCaseFactory {
 
     nonisolated
