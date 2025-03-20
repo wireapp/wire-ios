@@ -108,6 +108,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
 
+    /// width of a container view to calculate whether message should be collapsed
+    var contentWidth: CGFloat
+
     deinit {
         changeObservers.removeAll()
     }
@@ -117,13 +120,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         context: ConversationMessageContext,
         selected: Bool = false,
         userSession: UserSession,
-        useInvertedIndices: Bool
+        useInvertedIndices: Bool,
+        contentWidth: CGFloat
     ) {
         self.message = message
         self.context = context
         self.selected = selected
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
+        self.contentWidth = contentWidth
 
         super.init()
 
@@ -138,6 +143,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
     }
 
+    private var collapseOwnMessagesEnabled: Bool {
+        guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
+        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
+    }
+
     private func isCollapsedInitialValue() -> Bool {
 
         // cases when isCollapsed should be true by default
@@ -146,13 +156,21 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // then if in settings user allowed to collapse own messages
-        guard let selfUserId = userSession.selfUser.remoteIdentifier,
-              PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages) else {
+        guard collapseOwnMessagesEnabled, message.isSentBySelfUser else {
             return false
         }
-        let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
-            .isLocation || message.isImage
-        return message.isSentBySelfUser && messageSupportsCollapsing
+
+        if message.isText {
+            guard let textMessage = message.textMessageData?.messageText else {
+                return false
+            }
+
+            let margins = HorizontalMargins.conversationHorizontalMargins()
+
+            return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth - margins.right - margins.left)
+        } else {
+            return message.isSentBySelfUser && message.supportsCollapsing
+        }
     }
 
     // MARK: - Content Types
@@ -230,8 +248,16 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
-        ConversationTextMessageCellDescription
-            .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
+        if isCollapsed, !isMessageWithCollapsedByDefault() {
+            [AnyConversationMessageCellDescription(ConversationCollapsedFileMessageCellDescription(
+                message: message
+            ) { [weak self] in
+                self?.handleCollapseExpand()
+            })]
+        } else {
+            ConversationTextMessageCellDescription
+                .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
+        }
     }
 
     private func addLocationMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -580,4 +606,28 @@ extension ConversationMessageSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
+}
+
+extension ConversationMessageSectionController {
+
+    // TODO: [WPB-16627] https://wearezeta.atlassian.net/browse/WPB-16627
+    // improve by having one place to calculate width and for actual view to present text
+    func willTextExceedOneLine(text: String, availableWidth: CGFloat) -> Bool {
+
+        let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
+
+        let font = UIFont.normalLightFont
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        let boundingBox = text.boundingRect(
+            with: textSize,
+            options: .usesLineFragmentOrigin,
+            attributes: attributes,
+            context: nil
+        )
+
+        let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
+
+        return boundingBox.height > singleLineHeight
+    }
+
 }

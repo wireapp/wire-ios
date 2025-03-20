@@ -46,18 +46,34 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
         view.accessibilityLabel = L10n.Accessibility.Conversation.ProfileImage.description
         view.accessibilityHint = L10n.Accessibility.Conversation.ProfileImage.hint
         view.isUserInteractionEnabled = true
+        view.setContentHuggingPriority(.required, for: .horizontal)
+        view.setContentCompressionResistancePriority(.required, for: .horizontal)
+
         return view
     }()
 
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.italicSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize)
-        label.textColor = ColorTheme.Backgrounds.onSurfaceVariant
-        label.numberOfLines = 1
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        label.isUserInteractionEnabled = false
-        return label
+    private lazy var messageTextView: LinkInteractionTextView = {
+        let view = LinkInteractionTextView()
+
+        view.isEditable = false
+        view.isSelectable = false
+        view.backgroundColor = .clear
+        view.isScrollEnabled = false
+        view.textContainerInset = UIEdgeInsets.zero
+        view.textContainer.lineFragmentPadding = 0
+        view.isUserInteractionEnabled = false
+        view.accessibilityIdentifier = "Message"
+        view.accessibilityElementsHidden = false
+        view.dataDetectorTypes = [.link, .address, .phoneNumber, .flightNumber, .calendarEvent, .shipmentTrackingNumber]
+        view.linkTextAttributes = [.foregroundColor: UIColor.accent()]
+        view.setContentHuggingPriority(.required, for: .vertical)
+        view.setContentCompressionResistancePriority(.required, for: .vertical)
+
+        view.textContainer.maximumNumberOfLines = 1
+        view.isScrollEnabled = false
+        view.textContainer.lineBreakMode = .byTruncatingTail
+
+        return view
     }()
 
     private lazy var typeIcon: UIImageView = {
@@ -97,28 +113,43 @@ final class ConversationCollapsedFileMessageCell: UIView, ConversationMessageCel
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         avatar.user = user
-        titleLabel.text = L10n.Localizable.Content.Collapsed.File.title
+
+        if object.message.isText {
+            typeIcon.isHidden = true
+            if let textMessageData = object.message.textMessageData {
+                messageTextView.attributedText = NSAttributedString
+                    .format(
+                        message: textMessageData,
+                        isObfuscated: object.message.isObfuscated
+                    )
+            }
+        } else {
+            messageTextView.font = UIFont.italicSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize)
+            typeIcon.isHidden = false
+            messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
+        }
 
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
-
         let action = UIAction { _ in
             object.collapseExpandAction()
         }
-
         wholeViewTapButton.addAction(action, for: .touchUpInside)
     }
 
     private func configureSubviews() {
+
+        let margins = conversationHorizontalMargins
 
         addSubview(wholeViewTapButton)
         wholeViewTapButton.pin(to: self)
 
         let stack = UIStackView.horizontal(
             views: [
-                avatar.wrapInView(leadingInset: 20, bottomInset: -7),
-                titleLabel,
-                [typeIcon, collapseButton.wrapInView(trailingInset: 16)]
+                avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),
+                messageTextView,
+                [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
                     .horizontalStack(spacing: 8)
+                    .wrapInView(bottomInset: -1)
             ],
             spacing: 10,
             alignment: .center

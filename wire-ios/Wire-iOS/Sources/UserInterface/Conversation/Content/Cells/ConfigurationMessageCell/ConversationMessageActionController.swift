@@ -33,7 +33,13 @@ final class ConversationMessageActionController {
 
     /// whether message collapsed or normal | expanded
     /// nil if not applicable
-    var isCollapsed: Bool?
+    var isCollapsed: Bool? {
+        didSet {
+            isCollapsedWasUpdated = true
+        }
+    }
+
+    private var isCollapsedWasUpdated: Bool = false
 
     /// used to get collapse own messages settings for a specific user
     /// nil if not applicable
@@ -138,14 +144,12 @@ final class ConversationMessageActionController {
         case .collapse:
             guard let isCollapsed,
                   collapseOwnMessagesEnabled,
-                  !isCollapsed else {
+                  !isCollapsed,
+                  isCollapsedWasUpdated else {
                 return false
             }
 
-            let messageSupportsCollapsing = message.isFile || message.isAudio || message.isVideo || message
-                .isLocation || message.isImage
-
-            return message.isSentBySelfUser && messageSupportsCollapsing
+            return message.isSentBySelfUser && message.supportsCollapsing
         case .present,
              .openQuote,
              .resetSession:
