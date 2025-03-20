@@ -35,7 +35,12 @@ extension AlertResultConfiguration {
 extension ConversationActionController {
 
     func request<T: AlertResultConfiguration>(_ result: T.Type, handler: @escaping (T) -> Void) {
-        present(result.controller(handler))
+        let alertController = result.controller(handler)
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = sourceView?.superview
+            popoverPresentationController.sourceRect = sourceView?.frame ?? .zero
+        }
+        present(alertController)
     }
 
 }
