@@ -39,11 +39,14 @@ package struct RootView: View {
     }
     
     package var body: some View {
-        BackgroundView()
-            .universalSheet(item: $viewModel.modalDestination) { item in
-                sheetContent(for: item)
-                    .frame(width: 390, height: 422)
-            }
+        ZStack {
+            BackgroundView()
+            Color.clear
+                .frame(width: 390, height: 422)
+                .universalSheet(item: $viewModel.modalDestination) { item in
+                    sheetContent(for: item)
+                }
+        }
     }
     
     @ViewBuilder
@@ -163,7 +166,6 @@ extension View {
                         Color.clear
                             .contentShape(Rectangle())
                             .allowsHitTesting(false) // Prevents background blocking taps
-                        
                         content(value)
                             .background(Color.white)
                             .cornerRadius(10)
