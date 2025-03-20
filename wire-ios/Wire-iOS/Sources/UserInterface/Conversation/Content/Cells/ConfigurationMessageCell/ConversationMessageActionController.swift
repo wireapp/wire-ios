@@ -149,7 +149,7 @@ final class ConversationMessageActionController {
                 return false
             }
 
-            return message.isSentBySelfUser && message.supportsCollapsing
+            return message.isSentBySelfUser && message.isCollapsingSupported
         case .present,
              .openQuote,
              .resetSession:

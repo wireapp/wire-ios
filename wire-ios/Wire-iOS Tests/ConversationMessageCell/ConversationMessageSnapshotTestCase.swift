@@ -47,7 +47,7 @@ func XCTAssertArrayEqual(
 class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     var userSession: UserSessionMock!
-    var forceRecord: Bool?
+    var forceRecord: Bool = false
 
     override func setUp() {
         super.setUp()

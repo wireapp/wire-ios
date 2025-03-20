@@ -425,9 +425,7 @@ final class SettingsPropertyFactory {
             )
 
         case .collapseOwnMessages:
-            guard let userId = selfUser?.remoteIdentifier else {
-                fatalError()
-            }
+            let userId = selfUser!.remoteIdentifier!
             let storage = PrivateUserDefaults<CollapseKey>(userID: userId)
             return SettingsBlockProperty(
                 propertyName: propertyName,
