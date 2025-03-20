@@ -221,7 +221,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     private func handleOnPremLogin(email: String?, backendConfigURL: URL) async {
         guard !existsAnotherAccount else {
-            self.alert = .switchBackendFailed
+            alert = .switchBackendFailed
             return
         }
         Task {
