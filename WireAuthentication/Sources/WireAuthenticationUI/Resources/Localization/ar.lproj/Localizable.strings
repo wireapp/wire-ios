@@ -39,7 +39,7 @@
 
 "proxy_credentials.title" = "Proxy Credentials";
 "proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_email.title" = "Proxy email or username";
 "proxy_credentials.input_password.title" = "كلمة المرور";
 "proxy_credentials.input_password.placeholder" = "Enter password";
 
@@ -92,7 +92,7 @@
 "authentication.error.how_to_delete_account" = "How to delete a private account";
 
 "obsolete_client.alert.title" = "مطلوب التحديث";
-"obsolete_client.alert.message" = "أنت تفتقد مميزات جديدة.\nاحصل على آخر إصدار من Wire من خلال App Store.";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "اذهب لـApp Store";
 
 "obsolete_backend.alert.title" = "Server version not supported";
