@@ -155,6 +155,9 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var showEphemeralTimer: Bool = false
 
+    var topMargin: CGFloat = 0
+    var bottomMargin: CGFloat = 0
+
     var containsHighlightableContent: Bool = false
 
     var message: ZMConversationMessage?

@@ -34,6 +34,9 @@ final class ConversationDegradedSystemMessageSectionDescription: ConversationMes
 
     var showEphemeralTimer: Bool = false
 
+    var topMargin: CGFloat = 0
+    var bottomMargin: CGFloat = 0
+
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

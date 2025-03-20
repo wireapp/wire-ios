@@ -145,6 +145,9 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
 
     var showEphemeralTimer: Bool = false
 
+    var topMargin: CGFloat = 8
+    var bottomMargin: CGFloat = 0
+
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

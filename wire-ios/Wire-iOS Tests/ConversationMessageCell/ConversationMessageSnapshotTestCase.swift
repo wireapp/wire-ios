@@ -28,8 +28,7 @@ private extension ConversationMessageContext {
         isFirstUnreadMessage: false,
         isLastMessage: false,
         searchQueries: [],
-        previousMessageIsKnock: false,
-        spacing: 0
+        previousMessageIsKnock: false
     )
 }
 

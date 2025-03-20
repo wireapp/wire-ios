@@ -333,6 +333,10 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
+
+    var topMargin: CGFloat = 8
+    var bottomMargin: CGFloat = 0
+
     let supportsActions = false
     let containsHighlightableContent: Bool = true
 

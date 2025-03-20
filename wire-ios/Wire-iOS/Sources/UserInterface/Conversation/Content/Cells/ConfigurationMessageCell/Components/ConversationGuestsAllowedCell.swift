@@ -34,6 +34,9 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
     var showEphemeralTimer: Bool = false
 
+    var topMargin: CGFloat = 16
+    var bottomMargin: CGFloat = 0
+
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
