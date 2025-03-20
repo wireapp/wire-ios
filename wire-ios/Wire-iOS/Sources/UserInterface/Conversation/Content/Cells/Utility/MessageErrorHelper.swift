@@ -18,7 +18,7 @@
 
 import Foundation
 
-class MessageErrorHelper {
+enum MessageErrorHelper {
     static func errorMessage(_ message: ConversationMessage) -> String? {
 
         let isSentBySelfUser = message.senderUser?.isSelfUser == true

@@ -168,7 +168,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
             return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth - margins.right - margins.left)
         } else {
-            return message.isSentBySelfUser && message.supportsCollapsing
+            return message.isSentBySelfUser && message.isCollapsingSupported
         }
     }
 
