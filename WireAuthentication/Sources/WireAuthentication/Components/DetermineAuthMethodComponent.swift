@@ -117,7 +117,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
         return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
-            authenticationAPI: authenticationAPI
+            authenticationAPI: authenticationAPI,
+            urlSession: URLSession.shared
         )
     }
 
