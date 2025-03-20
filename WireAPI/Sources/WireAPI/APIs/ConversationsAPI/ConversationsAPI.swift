@@ -48,5 +48,20 @@ public protocol ConversationsAPI {
     func getConversationGuestLink(
         conversationID: String
     ) async throws -> String?
+    
+    func createGroupConversation(
+        groupType: ConversationGroupType,
+        messageProtocol: ConversationMessageProtocol,
+        creatorClientID: String,
+        qualifiedUserIDs: [QualifiedID],
+        unqualifiedUserIDs: [UUID],
+        name: String?,
+        accessMode: Set<ConversationAccessMode>,
+        accessRoles: Set<ConversationAccessRole>,
+        legacyAccessRole: ConversationAccessRole?,
+        teamID: UUID?,
+        isReadReceiptsEnabled: Bool
+    ) async throws -> Conversation
 
 }
+

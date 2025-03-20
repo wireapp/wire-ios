@@ -27,6 +27,10 @@ enum HTTPStatusCode: Int {
     /// ok - 200
 
     case ok = 200
+    
+    /// created - 201
+    
+    case created = 201
 
     // MARK: Client Errors - 4xx
 
@@ -55,5 +59,9 @@ enum HTTPStatusCode: Int {
     /// service unavailable - 503
 
     case serviceUnavailable = 503
+    
+    /// service unreachable
+    
+    case unreachable = 533
 
 }
