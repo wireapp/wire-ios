@@ -42,6 +42,7 @@ package struct RootView: View {
         BackgroundView()
             .universalSheet(item: $viewModel.modalDestination) { item in
                 sheetContent(for: item)
+                    .frame(width: 390, height: 422)
             }
     }
     
