@@ -30,6 +30,7 @@ public struct CreateChannelUseCase {
         case failedToCreateChannel(Error)
         case missingLegalholdConsent
         case nonFederatingDomains
+        case notConnected
     }
     
     private let api: ConversationsAPI
@@ -51,19 +52,18 @@ public struct CreateChannelUseCase {
     }
     
     public func invoke(
+        teamID: UUID,
         name: String?,
         users: Set<ZMUser>,
         accessMode: Set<WireAPI.ConversationAccessMode>,
         accessRoles: Set<WireAPI.ConversationAccessRole>,
         enableReceipts: Bool
-    ) async throws {
-        let (teamID,
-             selfClientID,
+    ) async throws -> ZMConversation {
+        let (selfClientID,
              qualifiedUserIds,
              unqualifiedUserIds,
              usersExcludingSelfUser) = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
-            let teamID = selfUser.teamIdentifier
 
             guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
                 throw Failure.missingSelfClientID
@@ -81,8 +81,7 @@ public struct CreateChannelUseCase {
                 unqualifiedUserIDs = usersExcludingSelfUser.compactMap(\.remoteIdentifier)
             }
             
-            return (teamID,
-                    selfClientID,
+            return (selfClientID,
                     qualifiedUserIDs,
                     unqualifiedUserIDs,
                     usersExcludingSelfUser)
@@ -112,7 +111,9 @@ public struct CreateChannelUseCase {
                 with: users
             )
             
-        } catch let error {
+            return localConversation
+            
+        } catch {
             switch error {
             case let apiError as ConversationsAPIError:
                 switch apiError {
@@ -122,6 +123,7 @@ public struct CreateChannelUseCase {
                         context.enqueueDelayedSave()
                     }
                     
+                    throw Failure.notConnected
                 case .missingLegalHoldConsent:
                     throw Failure.missingLegalholdConsent
                 case .nonFederatingBackends:
