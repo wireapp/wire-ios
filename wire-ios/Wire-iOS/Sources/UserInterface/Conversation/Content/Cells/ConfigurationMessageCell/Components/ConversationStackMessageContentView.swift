@@ -69,10 +69,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
             let lastArrangedSubview = stackView.arrangedSubviews.last
 
             stackView.addArrangedSubview(contentView)
-
-            if let lastArrangedSubview {
-                stackView.setCustomSpacing(cellDescription.topMargin, after: lastArrangedSubview)
-            }
         }
         UIView.performWithoutAnimation {
             stackView.setNeedsLayout()
@@ -88,6 +84,7 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
 
     private func setupStackView() {
         stackView.axis = .vertical
+        stackView.spacing = 2
         addSubview(stackView)
         stackView.fitIn(view: self)
     }

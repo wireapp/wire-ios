@@ -115,7 +115,6 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 2
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = "MessageToolbox"

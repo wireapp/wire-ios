@@ -162,13 +162,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             addUnknownMessageCell(showEphemeralTimer)
         }
 
-        if let topContentCellDescription = contentCellDescriptions.first {
-            if isSenderVisible, topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
-                // We only do this for text content since the text label already contains the spacing
-                topContentCellDescription.topMargin = 0
-            }
-        }
-
         cellDescriptions.append(contentsOf: contentCellDescriptions)
     }
 
@@ -340,10 +333,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 buttonAction: { self.buttonAction() }
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
-        }
-
-        if let topCellDescription = cellDescriptions.first {
-            topCellDescription.topMargin = context.spacing
         }
 
         self.cellDescriptions = Self.combineByStacking(cellDescriptions)

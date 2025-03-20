@@ -33,7 +33,6 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 16
 
     let containsHighlightableContent: Bool = false
 

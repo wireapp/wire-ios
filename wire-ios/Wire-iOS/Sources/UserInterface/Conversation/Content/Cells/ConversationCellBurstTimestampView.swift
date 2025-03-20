@@ -99,14 +99,15 @@ final class ConversationCellBurstTimestampView: UIView {
         ]
 
         NSLayoutConstraint.activate(heightConstraints + [
-            heightAnchor.constraint(equalToConstant: 40),
 
             leftSeparator.leadingAnchor.constraint(equalTo: leadingAnchor),
             leftSeparator.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left - inset),
             leftSeparator.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            label.centerYAnchor.constraint(equalTo: centerYAnchor),
             label.leadingAnchor.constraint(equalTo: leftSeparator.trailingAnchor, constant: inset),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            label.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: label.bottomAnchor),
 
             rightSeparator.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: inset),
             rightSeparator.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -121,6 +122,7 @@ final class ConversationCellBurstTimestampView: UIView {
             unreadDot.centerYAnchor.constraint(equalTo: unreadDotContainer.centerYAnchor),
             unreadDot.heightAnchor.constraint(equalToConstant: unreadDotHeight),
             unreadDot.widthAnchor.constraint(equalToConstant: unreadDotHeight)
+
         ])
     }
 
