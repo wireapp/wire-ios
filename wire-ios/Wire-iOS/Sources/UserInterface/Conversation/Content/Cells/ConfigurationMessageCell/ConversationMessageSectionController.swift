@@ -147,7 +147,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
         return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
     }
-    
+
     private func isCollapsedInitialValue() -> Bool {
 
         // cases when isCollapsed should be true by default
@@ -595,15 +595,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private func startObservingChanges(for message: ZMConversationMessage) {
         guard let userSession = ZMUserSession.shared() else { return }
-            
+
         let observer = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
         changeObservers.append(observer)
-        
+
         if let sender = message.senderUser {
             let observer = UserChangeInfo.add(observer: self, for: sender, in: userSession)!
             changeObservers.append(observer)
         }
-        
+
         if let users = message.systemMessageData?.users {
             for user in users where user.remoteIdentifier != (message.senderUser as? ZMUser)?.remoteIdentifier {
                 if let observer = UserChangeInfo.add(observer: self, for: user, in: userSession) {

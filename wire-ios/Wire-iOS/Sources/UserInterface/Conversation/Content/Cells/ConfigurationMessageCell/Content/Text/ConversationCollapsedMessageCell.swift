@@ -154,10 +154,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureSubviews() {
-        
+
         let margins = conversationHorizontalMargins
-        
-        
+
         let stack = UIStackView.horizontal(
             views: [
                 avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),
@@ -170,17 +169,16 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             alignment: .center
         ).setTranslatesAutoresizingMaskIntoConstraints(false)
             .setIsUserInteractionEnabled(false)
-        
-        
+
         addSubview(stack)
-        
+
         stack.heightConstraint(38)
-        
+
         stack.pin(to: self)
         addSubview(wholeViewTapButton)
         wholeViewTapButton.pin(to: stack)
         typeIcon.constraintToSquare(sideLength: 16)
-        
+
     }
 
     // MARK: - Tap gesture of avatar
