@@ -26,6 +26,10 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
 
     var topMargin: CGFloat = 8
     var bottomMargin: CGFloat = 8
+    var topMargin: CGFloat {
+        get { cellDescriptions.first?.topMargin ?? 0 }
+        set { fatalError() }
+    }
 
     var supportsActions: Bool {
         cellDescriptions.contains(where: \.supportsActions)
