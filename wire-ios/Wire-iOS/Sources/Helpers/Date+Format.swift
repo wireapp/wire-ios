@@ -39,6 +39,7 @@ enum WRDateFormatter {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
         formatter.dateTimeStyle = .named
+        formatter.formattingContext = .beginningOfSentence
         return formatter
     }()
 

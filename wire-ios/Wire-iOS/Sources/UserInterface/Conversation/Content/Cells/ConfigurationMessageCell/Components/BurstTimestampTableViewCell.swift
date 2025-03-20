@@ -55,7 +55,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     ) {
         self.configuration = View.Configuration(
             date: message.serverTimestamp ?? Date(),
-            includeDayOfWeek: context.isFirstMessageOfTheDay,
+            isFirstMessageOfTheDay: context.isFirstMessageOfTheDay,
             showUnreadDot: context.isFirstUnreadMessage,
             accentColor: accentColor
         )
