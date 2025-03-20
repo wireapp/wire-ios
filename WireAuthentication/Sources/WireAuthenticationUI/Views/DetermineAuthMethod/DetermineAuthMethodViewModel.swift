@@ -53,7 +53,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
     @Published var modalDestination: ModalDestination?
-    @Published var canExitFlow: Bool
+    @Published var existsAnotherAccount: Bool
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
@@ -71,7 +71,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata?,
         emailOrSSOCode: String = "",
-        canExitFlow: Bool,
+        existsAnotherAccount: Bool,
         isLoading: Bool = false
     ) {
         self.router = router
@@ -81,13 +81,13 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.backendMetadata = backendMetadata
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
-        self.canExitFlow = canExitFlow
+        self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
 
         self.cancellable = bridge.inboundEvents.sink { [self] event in
             switch event {
             case let .backendSwitchRequested(configURL):
-                guard !canExitFlow else {
+                guard !existsAnotherAccount else {
                     alert = .switchBackendFailed
                     return
                 }
