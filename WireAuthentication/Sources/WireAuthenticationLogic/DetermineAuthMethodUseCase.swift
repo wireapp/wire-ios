@@ -24,13 +24,16 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
     private let authenticationAPI: AuthenticationAPI
+    private let urlSession: URLSession
 
     package init(
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
-        authenticationAPI: AuthenticationAPI
+        authenticationAPI: AuthenticationAPI,
+        urlSession: URLSession
     ) {
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
         self.authenticationAPI = authenticationAPI
+        self.urlSession = urlSession
     }
 
     package func invoke(
@@ -93,11 +96,38 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             return .loginViaSSO(code: ssoCode)
 
         case .backend:
-            guard let backendURL = configuration.backendURL else {
+            guard let configURL = configuration.backendURL else {
                 throw AuthenticationAPIError.invalidResponse
             }
-            return .onPremLogin(email: email, backendConfig: backendURL)
+
+            do {
+                let backendURL = try await fetchBackendConfigURL(from: configURL)
+                return .onPremLogin(email: email, backendConfig: backendURL)
+            } catch {
+                throw AuthenticationAPIError.invalidResponse
+            }
         }
+    }
+
+    private func fetchBackendConfigURL(from backendURL: URL) async throws -> URL {
+        let (data, _) = try await urlSession.data(from: backendURL)
+
+        let decoder = JSONDecoder()
+        let domainInfo = try decoder.decode(DomainInfo.self, from: data)
+
+        return domainInfo.configJsonURL
+    }
+
+}
+
+private struct DomainInfo: Codable {
+
+    let configJsonURL: URL
+    let webappWelcomeURL: URL
+
+    private enum CodingKeys: String, CodingKey {
+        case configJsonURL = "config_json_url"
+        case webappWelcomeURL = "webapp_welcome_url"
     }
 
 }
