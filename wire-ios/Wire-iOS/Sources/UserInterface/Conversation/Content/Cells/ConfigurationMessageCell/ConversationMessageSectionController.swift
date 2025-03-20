@@ -21,7 +21,6 @@ import WireSyncEngine
 
 struct ConversationMessageContext: Equatable {
     var isSameSenderAsPrevious: Bool = false
-    var isTimeIntervalSinceLastMessageSignificant: Bool = false
     var isTimestampInSameMinuteAsPreviousMessage: Bool = false
     var isFirstMessageOfTheDay: Bool = false
     var isFirstUnreadMessage: Bool = false
@@ -399,8 +398,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
-        context.isTimeIntervalSinceLastMessageSignificant || context.isFirstUnreadMessage || context
-            .isFirstMessageOfTheDay
+        context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {

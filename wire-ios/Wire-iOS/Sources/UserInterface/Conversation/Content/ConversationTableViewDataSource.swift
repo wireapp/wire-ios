@@ -535,9 +535,6 @@ extension ConversationTableViewDataSource {
         firstUnreadMessage: ZMConversationMessage?,
         searchQueries: [String]
     ) -> ConversationMessageContext {
-        // 45 minutes
-        let significantTimeInterval: TimeInterval = 60 * 45
-        let isTimeIntervalSinceLastMessageSignificant: Bool
 
         let isTimestampInSameMinuteAsPreviousMessage: Bool
 
@@ -549,36 +546,17 @@ extension ConversationTableViewDataSource {
             isTimestampInSameMinuteAsPreviousMessage = false
         }
 
-        if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
-            isTimeIntervalSinceLastMessageSignificant = timeIntervalToPreviousMessage > significantTimeInterval
-        } else {
-            isTimeIntervalSinceLastMessageSignificant = false
-        }
-
         let isLastMessage = (index == 0) && !hasNewerMessagesToLoad
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
-            isTimeIntervalSinceLastMessageSignificant: isTimeIntervalSinceLastMessageSignificant,
             isTimestampInSameMinuteAsPreviousMessage: isTimestampInSameMinuteAsPreviousMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
             previousMessageIsKnock: previousMessage?.isKnock == true,
-            spacing: message.isSystem || previousMessage?
-                .isSystem == true || isTimeIntervalSinceLastMessageSignificant ? 16 : 12
+            spacing: message.isSystem || previousMessage?.isSystem == true ? 16 : 12
         )
-    }
-
-    private func timeIntervalToPreviousMessage(from message: ZMConversationMessage, at index: Int) -> TimeInterval? {
-        guard let currentMessageTimestamp = message.serverTimestamp, let previousMessageTimestamp = messagePrevious(
-            to: message,
-            at: index
-        )?.serverTimestamp else {
-            return nil
-        }
-
-        return currentMessageTimestamp.timeIntervalSince(previousMessageTimestamp)
     }
 
     private func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
