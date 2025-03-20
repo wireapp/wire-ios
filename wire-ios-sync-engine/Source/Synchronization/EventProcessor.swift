@@ -102,7 +102,12 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func processEvents(_ events: [ZMUpdateEvent], duringQuickSync: Bool) async throws {
-
+        events.forEach {
+            WireLogger.updateEvent.debug(
+                "processEvents event",
+                attributes: $0.logAttributes(source: duringQuickSync ? .pushChannel : .notificationsStream)
+            )
+        }
         try await enqueueTask {
             NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
 
@@ -114,6 +119,12 @@ actor EventProcessor: UpdateEventProcessor {
                 NotificationCenter.default.post(
                     name: .didStartDecryptingEventsNotification,
                     object: self.syncContext.notificationContext
+                )
+            }
+            events.forEach {
+                WireLogger.updateEvent.debug(
+                    "before decryptAndStoreEvents",
+                    attributes: $0.logAttributes(source: duringQuickSync ? .pushChannel : .notificationsStream)
                 )
             }
             let decryptedEvents = try await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)

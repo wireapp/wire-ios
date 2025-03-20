@@ -40,7 +40,6 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         userSession = UserSessionMock(mockUser: mockSelfUser)
         context = ConversationMessageContext(
             isSameSenderAsPrevious: false,
-            isTimeIntervalSinceLastMessageSignificant: false,
             isTimestampInSameMinuteAsPreviousMessage: false,
             isFirstMessageOfTheDay: false,
             isFirstUnreadMessage: false,

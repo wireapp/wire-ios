@@ -90,3 +90,10 @@
 "authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
 "authentication.error.how_to_change_email" = "How to change email address";
 "authentication.error.how_to_delete_account" = "How to delete a private account";
+
+"obsolete_client.alert.title" = "Potrebna posodobitev";
+"obsolete_client.alert.message" = "Zamujate nove funkcije na Wire.\nPrenesite najnovejšo različico na App Store.";
+"obsolete_client.alert.ok_button" = "Pojdi na App Store";
+
+"obsolete_backend.alert.title" = "Server version not supported";
+"obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
