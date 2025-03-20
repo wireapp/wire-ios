@@ -30,7 +30,7 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
 
     var showEphemeralTimer: Bool = false
 
-    var topMargin: CGFloat = 26.0
+    var topMargin: CGFloat = 0
     var bottomMargin: CGFloat = 0
 
     let containsHighlightableContent: Bool = false
