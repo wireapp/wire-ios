@@ -126,6 +126,7 @@ final class ConversationMessageCellTableViewAdapter<
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
+
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

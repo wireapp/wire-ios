@@ -66,6 +66,12 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
             contentView.accessibilityLabel = cellDescription.cellAccessibilityLabel
             contentView.accessibilityIdentifier = cellDescription.cellAccessibilityIdentifier
             stackView.addArrangedSubview(contentView)
+
+            // In the stack view the avatar image may reach out of its superview's bounds.
+            if let senderMessageDetailsCell = contentView as? ConversationSenderMessageDetailsCell {
+                senderMessageDetailsCell.avatarBottomAnchorConstraint?.isActive = false
+                senderMessageDetailsCell.avatarGreaterThanBottomAnchorConstraint?.isActive = false
+            }
         }
         UIView.performWithoutAnimation {
             stackView.setNeedsLayout()

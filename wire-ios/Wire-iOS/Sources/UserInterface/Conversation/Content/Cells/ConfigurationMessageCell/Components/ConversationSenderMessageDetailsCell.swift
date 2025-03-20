@@ -52,6 +52,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var actionController: ConversationMessageActionController?
 
     private var trailingDateLabelConstraint: NSLayoutConstraint?
+    private(set) var avatarBottomAnchorConstraint: NSLayoutConstraint?
+    private(set) var avatarGreaterThanBottomAnchorConstraint: NSLayoutConstraint?
     private var authorLabelNoTopPaddingConstraint: NSLayoutConstraint?
     private var authorLabelCenterVerticalConstraint: NSLayoutConstraint?
 
@@ -149,6 +151,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         let avatarTopAnchorConstraint = avatar.topAnchor.constraint(equalTo: topAnchor)
         avatarTopAnchorConstraint.priority = .defaultLow
+        let avatarBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
+        avatarBottomAnchorConstraint.priority = .defaultLow
+        self.avatarBottomAnchorConstraint = avatarBottomAnchorConstraint
+        let avatarGreaterThanBottomAnchorConstraint = bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor)
+        self.avatarGreaterThanBottomAnchorConstraint = avatarGreaterThanBottomAnchorConstraint
 
         let authorLabelNoTopPaddingConstraint = authorLabel.topAnchor.constraint(equalTo: topAnchor)
         authorLabelNoTopPaddingConstraint.isActive = true // only for not deleted messages
@@ -174,7 +181,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
 
             avatarTopAnchorConstraint,
+            avatarBottomAnchorConstraint,
             avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            avatarGreaterThanBottomAnchorConstraint,
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
         ])
     }

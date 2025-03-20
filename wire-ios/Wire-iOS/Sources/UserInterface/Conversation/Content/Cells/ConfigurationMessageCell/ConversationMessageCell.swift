@@ -199,14 +199,6 @@ extension ConversationMessageCellDescription {
         false
     }
 
-    var topMargin: CGFloat {
-        8
-    }
-
-    var bottomMargin: CGFloat {
-        8
-    }
-
     var supportsActions: Bool {
         false
     }
