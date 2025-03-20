@@ -68,6 +68,7 @@ enum SettingKey: String, CaseIterable {
     case browserOpeningRawValue = "BrowserOpeningRawValue"
     case callingConstantBitRate = "CallingConstantBitRate"
     case disableLinkPreviews = "DisableLinkPreviews"
+    case collapseOwnMessages = "CollapseOwnMessages"
 }
 
 /// Model object for locally stored (not in SE or AVS) user app settings
