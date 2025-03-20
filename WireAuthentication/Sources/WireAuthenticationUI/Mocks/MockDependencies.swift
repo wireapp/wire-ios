@@ -324,6 +324,7 @@ extension MockDependencies: VerificationCodeBuilder {
         code: [String] = ["", "", "", "", "", ""]
     ) -> VerificationCodeView {
         let viewModel = VerificationCodeViewModel(
+            factory: self,
             email: email,
             password: password,
             loginViaEmailUseCase: self,
@@ -345,6 +346,7 @@ extension MockDependencies: VerificationCodeBuilder {
     ) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: VerificationCodeViewModel(
+                factory: self,
                 email: email,
                 password: password,
                 loginViaEmailUseCase: self,

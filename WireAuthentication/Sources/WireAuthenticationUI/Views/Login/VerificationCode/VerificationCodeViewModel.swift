@@ -25,6 +25,8 @@ import WireLogging
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
 
+    package typealias Factory = LoginViaEmailUseCaseFactory2
+
     private static let numberOfDigits = 6
     private let didDetectDomainConflict: Bool
 
@@ -37,12 +39,14 @@ public final class VerificationCodeViewModel: ObservableObject {
     let password: String
     let numberOfDigits: Int
 
+    private let factory: any Factory
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol
     private let router: any Router
     private let backendEnvironment: WireAuthenticationBackendEnvironment
 
     package init(
+        factory: any Factory,
         email: String,
         password: String,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
@@ -54,6 +58,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     ) {
         precondition(numberOfDigits > 0)
 
+        self.factory = factory
         self.email = email
         self.password = password
         self.loginViaEmailUseCase = loginViaEmailUseCase
@@ -92,18 +97,9 @@ public final class VerificationCodeViewModel: ObservableObject {
     func confirm() async {
         isLoading = true
 
-        let verificationCode = code.joined()
-
-        let loginTask = Task.detached { [loginViaEmailUseCase, email, password] in
-            try await loginViaEmailUseCase.invoke(
-                email: email,
-                password: password,
-                verificationCode: verificationCode
-            )
-        }
-
         do {
-            let (cookies, token) = try await loginTask.value
+            let verificationCode = code.joined()
+            let (cookies, token) = try await logIn(verificationCode: verificationCode)
 
             let emailCredentials = EmailCredentials(
                 email: email,
@@ -137,6 +133,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
             default:
+                // TODO: handle api version errors
                 alert = .general(for: error)
             }
         }
@@ -167,6 +164,19 @@ public final class VerificationCodeViewModel: ObservableObject {
         }
 
         isResending = false
+    }
+
+    private func logIn(
+        verificationCode: String
+    ) async throws -> ([HTTPCookie], AccessToken) {
+        let useCase = try await factory.loginViaEmailUseCase()
+        return try await Task.detached { [email, password] in
+            try await useCase.invoke(
+                email: email,
+                password: password,
+                verificationCode: verificationCode
+            )
+        }.value
     }
 
 }

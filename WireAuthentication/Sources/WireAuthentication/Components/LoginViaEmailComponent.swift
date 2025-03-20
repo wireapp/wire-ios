@@ -39,7 +39,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     private let email: String
-    private let networkStack: NetworkStack
+    public let networkStack: NetworkStack
 
     // TODO: delete these
     private let environmentType: BackendEnvironmentType

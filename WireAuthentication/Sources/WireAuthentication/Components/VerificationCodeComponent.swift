@@ -30,6 +30,7 @@ protocol VerificationCodeComponentDependency: Dependency {
     var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
     var authenticationAPI: any AuthenticationAPI { get }
     var backendEnvironment: WireAuthenticationBackendEnvironment { get }
+    var networkStack: NetworkStack { get }
 
 }
 
@@ -57,6 +58,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         didDetectDomainConflict: Bool
     ) -> VerificationCodeViewModel {
         VerificationCodeViewModel(
+            factory: self,
             email: email,
             password: password,
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
@@ -65,6 +67,15 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             backendEnvironment: dependency.backendEnvironment,
             didDetectDomainConflict: didDetectDomainConflict
         )
+    }
+
+}
+
+extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
 }

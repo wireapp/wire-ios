@@ -69,6 +69,9 @@ private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: V
     var backendEnvironment: WireAuthenticationBackendEnvironment {
         return loginViaEmailComponent.backendEnvironment
     }
+    var networkStack: NetworkStack {
+        return loginViaEmailComponent.networkStack
+    }
     private let loginViaEmailComponent: LoginViaEmailComponent
     private let rootComponent: RootComponent
     init(loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
@@ -311,6 +314,7 @@ extension VerificationCodeComponent: NeedleFoundation.Registration {
         keyPathToName[\VerificationCodeComponentDependency.loginViaEmailUseCase] = "loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"
         keyPathToName[\VerificationCodeComponentDependency.authenticationAPI] = "authenticationAPI-any AuthenticationAPI"
         keyPathToName[\VerificationCodeComponentDependency.backendEnvironment] = "backendEnvironment-WireAuthenticationBackendEnvironment"
+        keyPathToName[\VerificationCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
     }
 }
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
@@ -325,6 +329,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodComponentDependency.appStoreURL] = "appStoreURL-URL"
         keyPathToName[\DetermineAuthMethodComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
+        localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
         localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
@@ -394,6 +399,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.backendConfig] = "backendConfig-BackendConfig"
         keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
+        localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
         localTable["authenticationAPI-any AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"] = { [unowned self] in self.loginViaEmailUseCase as Any }
         localTable["backendEnvironment-WireAuthenticationBackendEnvironment"] = { [unowned self] in self.backendEnvironment as Any }
