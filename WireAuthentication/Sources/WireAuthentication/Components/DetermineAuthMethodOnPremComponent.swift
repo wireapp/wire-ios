@@ -84,15 +84,19 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
     // MARK: - Children
 
     func loginViaEmailComponent(
+        email: String,
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendConfig: BackendConfig
     ) -> LoginViaEmailComponent {
-        LoginViaEmailComponent(
-            parent: self,
+        let networkStack = NetworkStack(
             environmentType: environmentType,
             backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            minTLSVersion: dependency.minTLSVersion
+        )
+        return LoginViaEmailComponent(
+            parent: self,
+            email: email,
+            networkStack: networkStack
         )
     }
 
@@ -190,9 +194,9 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
         loginViaEmailComponent(
+            email: email,
             environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: backendConfig
         ).view(
             email: email,
             canCreateAccount: canCreateAccount,

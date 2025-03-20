@@ -25,6 +25,8 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
+    package typealias Factory = LoginViaEmailUseCaseFactory2
+
     @Published var password: String = "" {
         didSet { showPasswordRules = !isPasswordValid }
     }
@@ -34,6 +36,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published var alert: Alert?
 
     private let router: any Router
+    private let factory: any Factory
     private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
     private let backendEnvironment: WireAuthenticationBackendEnvironment
     private let forgotPasswordURL: URL
@@ -48,6 +51,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     package init(
         router: any Router,
+        factory: any Factory,
         loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
         backendEnvironment: WireAuthenticationBackendEnvironment,
         email: String,
@@ -57,6 +61,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         onCreateAccount: @escaping () -> Void
     ) {
         self.router = router
+        self.factory = factory
         self.loginViaEmailUseCase = loginViaEmailUseCase
         self.backendEnvironment = backendEnvironment
         self.email = email
@@ -78,16 +83,11 @@ package final class LoginViaEmailViewModel: ObservableObject {
     func submitPassword() async {
         isLoading = true
 
-        let loginTask = Task.detached { [loginViaEmailUseCase, email, trimmedPassword] in
-            try await loginViaEmailUseCase.invoke(
-                email: email,
-                password: trimmedPassword,
-                verificationCode: nil
-            )
-        }
-
         do {
-            let (cookies, token) = try await loginTask.value
+            let (cookies, token) = try await logIn(
+                email: email,
+                password: password
+            )
 
             let emailCredentials = EmailCredentials(
                 email: email,
@@ -126,11 +126,26 @@ package final class LoginViaEmailViewModel: ObservableObject {
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
             default:
+                // TODO: handle api version errors
                 alert = .general(for: error)
             }
         }
 
         isLoading = false
+    }
+
+    private func logIn(
+        email: String,
+        password: String
+    ) async throws -> ([HTTPCookie], AccessToken) {
+        let useCase = try await factory.loginViaEmailUseCase()
+        return try await Task.detached {
+            try await useCase.invoke(
+                email: email,
+                password: password,
+                verificationCode: nil
+            )
+        }.value
     }
 
     func recoverPassword() {

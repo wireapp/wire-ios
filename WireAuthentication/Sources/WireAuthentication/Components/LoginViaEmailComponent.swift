@@ -38,32 +38,45 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
+    private let email: String
+    private let networkStack: NetworkStack
+
+    // TODO: delete these
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
-    private let backendMetadata: BackendMetadata
+
+    // TODO: delete this temp fix
+    private let backendMetadata = BackendMetadata(
+        apiVersion: .v8,
+        domain: "example.com",
+        isFederationEnabled: false
+    )
 
     init(
         parent: any Scope,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        email: String,
+        networkStack: NetworkStack
     ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
-        self.backendMetadata = backendMetadata
+        self.email = email
+        self.networkStack = networkStack
+        self.environmentType = networkStack.environmentType
+        self.backendConfig = networkStack.backendConfig
         super.init(parent: parent)
     }
 
+    // TODO: delete
     public var authenticationAPI: any AuthenticationAPI {
         AuthenticationAPIBuilder(networkService: networkService).makeAPI(
             for: .init(backendMetadata.apiVersion)
         )
     }
 
+    // TODO: delete
     public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
         LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
+    // TODO: delete
     private var networkService: NetworkService {
         shared {
             NetworkService.make(
@@ -99,6 +112,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
+            factory: self,
             loginViaEmailUseCase: loginViaEmailUseCase,
             backendEnvironment: backendEnvironment,
             email: email,
@@ -132,6 +146,15 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     var verificationCodeComponent: VerificationCodeComponent {
         VerificationCodeComponent(parent: self)
+    }
+
+}
+
+extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
 }

@@ -44,3 +44,9 @@ public protocol LoginViaEmailUseCaseFactory {
     func loginViaEmailUseCase(apiVersion: BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol
 
 }
+
+public protocol LoginViaEmailUseCaseFactory2 {
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol
+
+}

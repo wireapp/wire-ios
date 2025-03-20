@@ -277,6 +277,7 @@ extension MockDependencies: LoginViaEmailBuilder {
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
+            factory: self,
             loginViaEmailUseCase: self,
             backendEnvironment: backendEnvironment,
             email: email,
@@ -303,6 +304,14 @@ extension MockDependencies: LoginViaEmailBuilder {
             ),
             factory: self
         )
+    }
+
+}
+
+extension MockDependencies: LoginViaEmailUseCaseFactory2 {
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        MockMockLoginViaEmailUseCase()
     }
 
 }
