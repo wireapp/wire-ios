@@ -75,4 +75,21 @@ class DetermineAuthMethodViewTests: XCTestCase {
                 )
         }
     }
+<<<<<<< HEAD
+=======
+
+    @MainActor
+    func testCanExitFlow() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = NavigationStack {
+            makeDetermineAuthMethodViewPreview(existsAnotherAccount: true)
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        .tint(.primary)
+
+        snapshotHelper.verify(matching: view)
+    }
+>>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
 }

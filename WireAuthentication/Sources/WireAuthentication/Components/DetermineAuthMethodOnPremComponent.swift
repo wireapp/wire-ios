@@ -66,7 +66,11 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata,
+<<<<<<< HEAD
             bridge: dependency.bridge
+=======
+            existsAnotherAccount: dependency.existsAnotherAccount
+>>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
         )
     }
 
