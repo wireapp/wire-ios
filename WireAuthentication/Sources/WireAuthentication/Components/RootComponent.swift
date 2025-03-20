@@ -31,7 +31,6 @@ class RootComponent: BootstrapComponent {
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
-    public let accountsURL: URL
     public let howToChangeEmailURL: URL
     public let howToDeleteAccountURL: URL
     public let passwordValidator: any PasswordValidator
@@ -44,7 +43,6 @@ class RootComponent: BootstrapComponent {
         backendConfig: BackendConfig,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
-        accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
@@ -57,7 +55,6 @@ class RootComponent: BootstrapComponent {
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
-        self.accountsURL = accountsURL
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.passwordValidator = passwordValidator
@@ -76,7 +73,9 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor private var viewModel: RootViewModel {
-        shared { RootViewModel() }
+        shared {
+            RootViewModel(bridge: bridge)
+        }
     }
 
     @MainActor public var bridge: WireAuthenticationBridge {
