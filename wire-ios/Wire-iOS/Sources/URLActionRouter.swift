@@ -212,7 +212,6 @@ extension URLActionRouter: PresentationDelegate {
             if let error = sessionManager?.canSwitchBackend() {
                 let localizedError = mapToLocalizedError(error)
                 presentLocalizedErrorAlert(localizedError)
-                return
             }
 
             if DeveloperFlag.useWireAuthentication.isOn {

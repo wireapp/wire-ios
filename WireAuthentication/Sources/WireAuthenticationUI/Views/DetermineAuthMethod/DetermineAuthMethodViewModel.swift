@@ -87,10 +87,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.cancellable = bridge.inboundEvents.sink { [self] event in
             switch event {
             case let .backendSwitchRequested(configURL):
-                guard !existsAnotherAccount else {
-                    self.alert = .switchBackendFailed
-                    return
-                }
                 Task { [weak self] in
                     await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
@@ -224,6 +220,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     private func handleOnPremLogin(email: String?, backendConfigURL: URL) async {
+        guard !existsAnotherAccount else {
+            self.alert = .switchBackendFailed
+            return
+        }
         Task {
             do {
                 let useCase = factory.fetchBackendConfigUseCase()
