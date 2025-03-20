@@ -84,7 +84,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
 
-        self.cancellable = bridge.inboundEvents.sink { [self] event in
+        self.cancellable = bridge.inboundEvents.sink { event in
             switch event {
             case let .backendSwitchRequested(configURL):
                 Task { [weak self] in
