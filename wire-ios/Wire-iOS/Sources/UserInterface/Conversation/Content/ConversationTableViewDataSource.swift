@@ -553,8 +553,7 @@ extension ConversationTableViewDataSource {
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
-            previousMessageIsKnock: previousMessage?.isKnock == true,
-            spacing: message.isSystem || previousMessage?.isSystem == true ? 16 : 12
+            previousMessageIsKnock: previousMessage?.isKnock == true
         )
     }
 

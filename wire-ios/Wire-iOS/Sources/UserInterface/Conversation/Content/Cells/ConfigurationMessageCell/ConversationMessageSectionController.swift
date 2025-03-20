@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-todo  // TODO: set top and bottom margin, default 8, for subsequent messages 2
+
+// TODO: set top and bottom margin, default 8, for subsequent messages 2
 import Foundation
 import WireSyncEngine
 
@@ -27,7 +28,6 @@ struct ConversationMessageContext: Equatable {
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
-    var spacing: CGFloat = 0
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -135,6 +135,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private func addContent(
         context: ConversationMessageContext,
+        isBurstTimestampVisible: Bool,
         isSenderVisible: Bool,
         to cellDescriptions: inout [AnyConversationMessageCellDescription]
     ) {
@@ -290,9 +291,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         var cellDescriptions = [AnyConversationMessageCellDescription]()
 
+        let isBurstTimestampVisible = isBurstTimestampVisible(in: context)
         let isSenderVisible = shouldShowSenderDetails(in: context)
 
-        if isBurstTimestampVisible(in: context) {
+        if isBurstTimestampVisible {
             let description = BurstTimestampSenderMessageCellDescription(
                 message: message,
                 context: context,
@@ -312,6 +314,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         addContent(
             context: context,
+            isBurstTimestampVisible: isBurstTimestampVisible,
             isSenderVisible: isSenderVisible,
             to: &cellDescriptions
         )
@@ -333,6 +336,16 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 buttonAction: { self.buttonAction() }
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        }
+
+        if
+            !context.isFirstMessageOfTheDay,
+            !context.isFirstUnreadMessage,
+            context.isSameSenderAsPrevious,
+            context.isTimestampInSameMinuteAsPreviousMessage,
+            !context.previousMessageIsKnock
+        {
+            //cellDescriptions.first?.instance.topMargin
         }
 
         self.cellDescriptions = Self.combineByStacking(cellDescriptions)
