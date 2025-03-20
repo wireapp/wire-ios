@@ -157,6 +157,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         let margins = conversationHorizontalMargins
 
+        addSubview(wholeViewTapButton)
+        wholeViewTapButton.pin(to: self)
+
         let stack = UIStackView.horizontal(
             views: [
                 avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),
@@ -167,18 +170,17 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             ],
             spacing: 10,
             alignment: .center
-        ).setTranslatesAutoresizingMaskIntoConstraints(false)
-            .setIsUserInteractionEnabled(false)
+        )
 
         addSubview(stack)
 
-        stack.heightConstraint(38)
+        stack
+            .setTranslatesAutoresizingMaskIntoConstraints(false)
+            .setIsUserInteractionEnabled(false)
+            .pin(to: self)
+            .heightConstraint(38)
 
-        stack.pin(to: self)
-        addSubview(wholeViewTapButton)
-        wholeViewTapButton.pin(to: stack)
         typeIcon.constraintToSquare(sideLength: 16)
-
     }
 
     // MARK: - Tap gesture of avatar
@@ -188,6 +190,19 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         guard let user = avatar.user else { return }
 
         SessionManager.shared?.showUserProfile(user: user)
+    }
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let avatarPoint = convert(point, to: avatar)
+
+        // Check if the tap is inside the avatar bounds
+        if avatar.bounds.contains(avatarPoint) {
+            // Return avatar to make it receive the tap
+            return avatar
+        }
+
+        // Otherwise, let normal hit testing occur
+        return super.hitTest(point, with: event)
     }
 }
 
