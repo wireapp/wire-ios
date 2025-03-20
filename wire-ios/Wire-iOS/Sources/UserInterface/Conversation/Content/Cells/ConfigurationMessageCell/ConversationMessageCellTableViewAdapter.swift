@@ -121,6 +121,8 @@ final class ConversationMessageCellTableViewAdapter<
         cellView.configure(with: object, animated: false)
         cellView.accessibilityLabel = cellDescription?.accessibilityLabel
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
+        top.constant = cellDescription?.topMargin ?? 8
+        bottom.constant = cellDescription?.bottomMargin ?? 8
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message

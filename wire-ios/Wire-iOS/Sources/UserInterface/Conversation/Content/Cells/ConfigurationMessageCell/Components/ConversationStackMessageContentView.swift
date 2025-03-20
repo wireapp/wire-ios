@@ -65,9 +65,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
             contentView.isAccessibilityElement = cellDescription.cellIsAccessibilityElement
             contentView.accessibilityLabel = cellDescription.cellAccessibilityLabel
             contentView.accessibilityIdentifier = cellDescription.cellAccessibilityIdentifier
-
-            let lastArrangedSubview = stackView.arrangedSubviews.last
-
             stackView.addArrangedSubview(contentView)
         }
         UIView.performWithoutAnimation {
