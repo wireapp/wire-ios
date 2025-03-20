@@ -22,7 +22,7 @@ import WireSyncEngine
 
 struct BurstTimestampSenderMessageCellConfiguration {
     let date: Date
-    let includeDayOfWeek: Bool
+    let isFirstMessageOfTheDay: Bool
     let showUnreadDot: Bool
     let accentColor: UIColor
 }
@@ -52,7 +52,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
         self.configuration = View.Configuration(
             date: message.serverTimestamp ?? Date(),
-            includeDayOfWeek: context.isFirstMessageOfTheDay,
+            isFirstMessageOfTheDay: context.isFirstMessageOfTheDay,
             showUnreadDot: context.isFirstUnreadMessage,
             accentColor: accentColor
         )
@@ -145,8 +145,8 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
         configuration = object
 
         timestampView.configure(
-            with: object.date,
-            includeDayOfWeek: object.includeDayOfWeek,
+            timestamp: object.date,
+            isFirstMessageOfTheDay: object.isFirstMessageOfTheDay,
             showUnreadDot: object.showUnreadDot,
             accentColor: object.accentColor
         )

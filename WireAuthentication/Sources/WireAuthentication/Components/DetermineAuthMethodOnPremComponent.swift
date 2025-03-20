@@ -136,7 +136,8 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Facto
         )
         return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
-            authenticationAPI: authenticationAPI
+            authenticationAPI: authenticationAPI,
+            urlSession: URLSession.shared
         )
     }
 
