@@ -77,7 +77,7 @@ extension Alert {
     )
 
     static let switchBackendFailed = Alert(
-        title: L10n.SwitchBackend.Error.Title.loggedIn ,
+        title: L10n.SwitchBackend.Error.Title.loggedIn,
         message: L10n.SwitchBackend.Error.Message.loggedIn
     )
 

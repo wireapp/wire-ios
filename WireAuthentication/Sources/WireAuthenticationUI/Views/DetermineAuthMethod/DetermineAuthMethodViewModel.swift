@@ -88,7 +88,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             switch event {
             case let .backendSwitchRequested(configURL):
                 guard !existsAnotherAccount else {
-                    alert = .switchBackendFailed
+                    self.alert = .switchBackendFailed
                     return
                 }
                 Task { [weak self] in
