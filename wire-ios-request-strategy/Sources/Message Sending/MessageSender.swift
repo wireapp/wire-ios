@@ -395,6 +395,8 @@ public final class MessageSender: MessageSenderInterface {
             )
 
         await context.perform {
+            // handle 201 case failed_to_send
+            // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/556564601/Use+case+sending+a+message+MLS
             self.mlsPayloadProcessor.updateFailedRecipients(from: payload, for: message)
             message.delivered(with: response)
         }
