@@ -1212,8 +1212,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "Теперь вы являетесь владельцем команды %@.\n\nПерейдите в раздел Управление командой, чтобы: \n• Пригласить первых членов команды и начать совместную работу\n• Настроить параметры команды"
           }
         },
         "sl" : {
@@ -3332,8 +3332,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "Уже в команде"
           }
         },
         "sl" : {
@@ -3457,8 +3457,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Повторить попытку"
           }
         },
         "sl" : {
@@ -3582,8 +3582,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "Wire не удалось завершить создание вашей команды из-за неизвестной ошибки."
           }
         },
         "sl" : {
@@ -3707,8 +3707,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "Команда не создана"
           }
         },
         "sl" : {
@@ -3956,8 +3956,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "Трансформируйте свой персональный аккаунт в командный, чтобы получить больше пользы от совместной работы."
           }
         },
         "sl" : {
@@ -4080,8 +4080,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Закрыть информацию об аккаунте команды"
           }
         },
         "sl" : {
@@ -4205,8 +4205,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**Консоль администратора**: Приглашайте членов команды и управляйте настройками."
           }
         },
         "sl" : {
@@ -4330,8 +4330,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**Эффективное сотрудничество**: Общайтесь с гостями и внешними участниками."
           }
         },
         "sl" : {
@@ -4455,8 +4455,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**Обновление до Enterprise**: Получите дополнительные возможности и премиум-поддержку."
           }
         },
         "sl" : {
@@ -4580,8 +4580,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**Большие совещания**:Присоединяйтесь к видеоконференциям с участием до 150 человек."
           }
         },
         "sl" : {
@@ -4705,8 +4705,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**Статус доступности**: Сообщите своей команде, если вы свободны, заняты или отсутствуете."
           }
         },
         "sl" : {
@@ -4830,8 +4830,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "Аккаунт команды"
           }
         },
         "sl" : {
@@ -4955,8 +4955,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "Узнайте больше о тарифах Wire"
           }
         },
         "sl" : {
@@ -5080,8 +5080,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "Шаг %d из %d"
           }
         },
         "sl" : {
@@ -5205,8 +5205,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "Выберите название для своей команды. Вы можете изменить его в любое время."
           }
         },
         "sl" : {
@@ -5329,8 +5329,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Закрыть просмотр информации о названии команды"
           }
         },
         "sl" : {
@@ -5454,8 +5454,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Ваша команда"
           }
         },
         "sl" : {
@@ -5704,8 +5704,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Название команды"
           }
         },
         "sl" : {

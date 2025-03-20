@@ -29,6 +29,8 @@ package protocol Router {
 
     func presentSheet(_ modalDestination: RootView.ModalDestination)
 
+    func dismissSheet()
+
     func presentAlert(_ alert: Alert)
 
 }
