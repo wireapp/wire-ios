@@ -76,6 +76,11 @@ extension Alert {
         message: L10n.ObsoleteBackend.Alert.message
     )
 
+    static let switchBackendFailed = Alert(
+        title: L10n.SwitchBackend.Error.Title.loggedIn,
+        message: L10n.SwitchBackend.Error.Message.loggedIn
+    )
+
     static let unknownError = Alert(
         title: Title.general,
         message: Message.general
