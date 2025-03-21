@@ -89,5 +89,4 @@ class DetermineAuthMethodViewTests: XCTestCase {
 
         snapshotHelper.verify(matching: view)
     }
-
 }
