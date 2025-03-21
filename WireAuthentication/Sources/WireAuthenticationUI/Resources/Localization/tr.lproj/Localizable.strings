@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "İptal";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Sunucu değiştirilemiyor";
+"switch_backend.error.message.logged_in" = "Zaten giriş yaptınız. Bu sunucuya geçmek için tüm hesaplardan çıkış yapıp tekrar deneyin.";
 
 "verification_code.title" = "Posta geldi";
 "verification_code.message" = "%@'a gönderdiğimiz doğrulama kodunu girin.";

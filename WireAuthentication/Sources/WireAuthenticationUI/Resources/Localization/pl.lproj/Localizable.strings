@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Anuluj";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Nie można przełączyć serwerów";
+"switch_backend.error.message.logged_in" = "Jesteś już zalogowany. Aby przełączyć się na ten serwer, wyloguj się ze wszystkich kont i spróbuj ponownie.";
 
 "verification_code.title" = "Masz wiadomość";
 "verification_code.message" = "Wpisz kod weryfikacyjny wysłany do %@.";
