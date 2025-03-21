@@ -22,11 +22,7 @@ import WireDesign
 package protocol VerificationCodeBuilder {
 
     @MainActor
-    func verificationCodeView(
-        email: String,
-        password: String,
-        didDetectDomainConflict: Bool
-    ) -> VerificationCodeView
+    func verificationCodeView(password: String) -> VerificationCodeView
 
 }
 

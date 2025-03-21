@@ -38,9 +38,9 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
-    private let email: String
+    public let email: String
     private let canCreateAccount: Bool
-    private let didDetectDomainConflict: Bool
+    public let didDetectDomainConflict: Bool
     public let networkStack: NetworkStack
 
     // TODO: delete these
@@ -138,8 +138,11 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     // MARK: - Children
 
-    var verificationCodeComponent: VerificationCodeComponent {
-        VerificationCodeComponent(parent: self)
+    func verificationCodeComponent(password: String) -> VerificationCodeComponent {
+        VerificationCodeComponent(
+            parent: self,
+            password: password
+        )
     }
 
 }
@@ -155,16 +158,9 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
 extension LoginViaEmailComponent: LoginViaEmailView.Factory {
 
-    func verificationCodeView(
-        email: String,
-        password: String,
-        didDetectDomainConflict: Bool
-    ) -> VerificationCodeView {
-        verificationCodeComponent.view(
-            email: email,
-            password: password,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
+    @MainActor
+    func verificationCodeView(password: String) -> VerificationCodeView {
+        verificationCodeComponent(password: password).view
     }
 
 }

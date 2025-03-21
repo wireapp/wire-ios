@@ -339,15 +339,12 @@ extension MockDependencies: VerificationCodeBuilder {
         return VerificationCodeView(viewModel: viewModel)
     }
 
-    func verificationCodeView(
-        email: String,
-        password: String,
-        didDetectDomainConflict: Bool
-    ) -> VerificationCodeView {
+    @MainActor
+    func verificationCodeView(password: String) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: VerificationCodeViewModel(
                 factory: self,
-                email: email,
+                email: "jane@doe.com",
                 password: password,
                 loginViaEmailUseCase: self,
                 requestLoginVerificationCodeUseCase: self,

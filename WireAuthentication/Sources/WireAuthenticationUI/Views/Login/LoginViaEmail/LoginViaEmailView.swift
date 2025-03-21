@@ -82,12 +82,8 @@ package struct LoginViaEmailView: View {
         )
         .navigationDestination(for: Destination.self) { destination in
             switch destination {
-            case let .verifyLogin(email, password):
-                factory.verificationCodeView(
-                    email: email,
-                    password: password,
-                    didDetectDomainConflict: viewModel.didDetectDomainConflict
-                )
+            case let .verifyLogin(password):
+                factory.verificationCodeView(password: password)
             }
         }
         .presentationDetents([.medium, .large])
@@ -183,7 +179,7 @@ package struct LoginViaEmailView: View {
 
     enum Destination: Hashable {
 
-        case verifyLogin(email: String, password: String)
+        case verifyLogin(password: String)
 
     }
 

@@ -119,7 +119,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .invalidCredentials
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
-                    to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
+                    to: LoginViaEmailView.Destination.verifyLogin(password: password)
                 )
             case LoginViaEmailUseCaseFailure.accountPendingActivation:
                 alert = .accountPendingActivation

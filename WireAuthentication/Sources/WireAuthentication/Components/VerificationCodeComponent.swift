@@ -31,41 +31,43 @@ protocol VerificationCodeComponentDependency: Dependency {
     var authenticationAPI: any AuthenticationAPI { get }
     var backendEnvironment: WireAuthenticationBackendEnvironment { get }
     var networkStack: NetworkStack { get }
+    var email: String { get }
+    var didDetectDomainConflict: Bool { get }
 
 }
 
 class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
+
+    private let password: String
+
+    init(
+        parent: any Scope,
+        password: String
+    ) {
+        self.password = password
+        super.init(parent: parent)
+    }
 
     private var requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol {
         RequestLoginVerificationCodeUseCase(authenticationAPI: dependency.authenticationAPI)
     }
 
     @MainActor
-    func view(email: String, password: String, didDetectDomainConflict: Bool) -> VerificationCodeView {
-        VerificationCodeView(
-            viewModel: viewModel(
-                email: email,
-                password: password,
-                didDetectDomainConflict: didDetectDomainConflict
-            )
-        )
+    var view: VerificationCodeView {
+        VerificationCodeView(viewModel: viewModel)
     }
 
     @MainActor
-    private func viewModel(
-        email: String,
-        password: String,
-        didDetectDomainConflict: Bool
-    ) -> VerificationCodeViewModel {
+    private var viewModel: VerificationCodeViewModel {
         VerificationCodeViewModel(
             factory: self,
-            email: email,
+            email: dependency.email,
             password: password,
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: dependency.router,
             backendEnvironment: dependency.backendEnvironment,
-            didDetectDomainConflict: didDetectDomainConflict
+            didDetectDomainConflict: dependency.didDetectDomainConflict
         )
     }
 

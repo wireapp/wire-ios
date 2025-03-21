@@ -24,12 +24,12 @@ import WireAuthenticationAPISupport
 
 @testable import WireAuthenticationUI
 
-final class VerificationCodeViewModelTests {
+final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
 
     private let loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol
     private let requestLoginVerificationCodeUseCase: MockRequestLoginVerificationCodeUseCaseProtocol
     private let router: MockRouter
-    private let sut: VerificationCodeViewModel
+    private var sut: VerificationCodeViewModel!
     private var isLoadingCalls: [Bool] = []
     private var isResendingCalls: [Bool] = []
     private var cancellables: Set<AnyCancellable> = []
@@ -40,6 +40,7 @@ final class VerificationCodeViewModelTests {
         self.requestLoginVerificationCodeUseCase = MockRequestLoginVerificationCodeUseCaseProtocol()
         self.router = MockRouter()
         self.sut = VerificationCodeViewModel(
+            factory: self,
             email: "abc@example.com",
             password: "aaaaaa",
             loginViaEmailUseCase: loginViaEmailUseCase,
@@ -52,6 +53,12 @@ final class VerificationCodeViewModelTests {
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
         sut.$isResending.dropFirst().sink { [self] in isResendingCalls.append($0) }.store(in: &cancellables)
+    }
+
+    // MARK: - Factory
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        loginViaEmailUseCase
     }
 
     // MARK: - isConfirmButtonDisabled tests

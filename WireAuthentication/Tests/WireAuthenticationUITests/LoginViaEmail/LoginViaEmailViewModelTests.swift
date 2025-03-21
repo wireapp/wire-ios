@@ -27,7 +27,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class LoginViaEmailViewModelTests: XCTestCase {
+class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
 
     private var router: MockRouter!
     private var loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
@@ -46,6 +46,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
 
         sut = LoginViaEmailViewModel(
             router: router,
+            factory: self,
             loginViaEmailUseCase: loginViaEmailUseCase,
             backendEnvironment: Fixture.backendEnvironment,
             email: "mika@example.com",
@@ -65,6 +66,12 @@ class LoginViaEmailViewModelTests: XCTestCase {
         sut = nil
         onCreateAccountCalled = false
         isLoadingCalls = []
+    }
+
+    // MARK: - Factory
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        loginViaEmailUseCase
     }
 
     // MARK: - submitPassword tests
@@ -149,7 +156,7 @@ class LoginViaEmailViewModelTests: XCTestCase {
         XCTAssertEqual(router.navigate_Invocations.count, 1)
         XCTAssertEqual(
             router.navigate_Invocations.first as? LoginViaEmailView.Destination,
-            LoginViaEmailView.Destination.verifyLogin(email: "mika@example.com", password: "password")
+            LoginViaEmailView.Destination.verifyLogin(password: "password")
         )
     }
 

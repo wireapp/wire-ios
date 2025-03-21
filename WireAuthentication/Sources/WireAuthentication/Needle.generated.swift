@@ -72,6 +72,12 @@ private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: V
     var networkStack: NetworkStack {
         return loginViaEmailComponent.networkStack
     }
+    var email: String {
+        return loginViaEmailComponent.email
+    }
+    var didDetectDomainConflict: Bool {
+        return loginViaEmailComponent.didDetectDomainConflict
+    }
     private let loginViaEmailComponent: LoginViaEmailComponent
     private let rootComponent: RootComponent
     init(loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
@@ -315,6 +321,8 @@ extension VerificationCodeComponent: NeedleFoundation.Registration {
         keyPathToName[\VerificationCodeComponentDependency.authenticationAPI] = "authenticationAPI-any AuthenticationAPI"
         keyPathToName[\VerificationCodeComponentDependency.backendEnvironment] = "backendEnvironment-WireAuthenticationBackendEnvironment"
         keyPathToName[\VerificationCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
+        keyPathToName[\VerificationCodeComponentDependency.email] = "email-String"
+        keyPathToName[\VerificationCodeComponentDependency.didDetectDomainConflict] = "didDetectDomainConflict-Bool"
     }
 }
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
@@ -399,6 +407,8 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.backendConfig] = "backendConfig-BackendConfig"
         keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
+        localTable["email-String"] = { [unowned self] in self.email as Any }
+        localTable["didDetectDomainConflict-Bool"] = { [unowned self] in self.didDetectDomainConflict as Any }
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
         localTable["authenticationAPI-any AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
         localTable["loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"] = { [unowned self] in self.loginViaEmailUseCase as Any }
