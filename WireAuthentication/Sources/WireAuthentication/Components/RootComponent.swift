@@ -124,13 +124,13 @@ class RootComponent: BootstrapComponent {
         )
     }
 
-    func loginViaEmailOnPremComponent(
+    func loginViaEmailComponent(
         email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> LoginViaEmailOnPremComponent {
-        LoginViaEmailOnPremComponent(
+        backendMetadata: BackendMetadata
+    ) -> LoginViaEmailComponent {
+        LoginViaEmailComponent(
             parent: self,
             email: email,
             environmentType: environmentType,
@@ -184,18 +184,23 @@ extension RootComponent: RootView.Factory {
     }
 
     @MainActor
-    func loginViaEmailOnPremView(
+    func loginViaEmailView(
         email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    ) -> LoginViaEmailOnPremView {
-        loginViaEmailOnPremComponent(
+        backendMetadata: BackendMetadata
+    ) -> LoginViaEmailView {
+        loginViaEmailComponent(
             email: email,
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
-        ).view
+        ).view(
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
     }
 
     func loginViaSSOView(

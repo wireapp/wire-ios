@@ -23,7 +23,7 @@ package struct RootView: View {
 
     package typealias Factory =
         DetermineAuthMethodBuilder &
-        LoginViaEmailOnPremBuilder &
+        LoginViaEmailBuilder &
         LoginViaSSOBuilder &
         NoHistoryViewBuilder
 
@@ -68,8 +68,10 @@ package struct RootView: View {
                     backendConfig,
                     backendMetadata
                 ):
-                    factory.loginViaEmailOnPremView(
-                        email: email,
+                    factory.loginViaEmailView(
+                        email: email ?? "",
+                        canCreateAccount: false,
+                        didDetectDomainConflict: false,
                         environmentType: environmentType,
                         backendConfig: backendConfig,
                         backendMetadata: backendMetadata
@@ -103,7 +105,7 @@ package struct RootView: View {
             email: String?,
             environmentType: BackendEnvironmentType,
             environment: BackendConfig,
-            backendMetadata: BackendMetadata?
+            backendMetadata: BackendMetadata
         )
         case ssoLogin(
             url: URL,

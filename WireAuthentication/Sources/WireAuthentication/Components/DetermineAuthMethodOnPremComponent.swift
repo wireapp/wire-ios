@@ -84,12 +84,14 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
     // MARK: - Children
 
     func loginViaEmailComponent(
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailComponent {
         LoginViaEmailComponent(
             parent: self,
+            email: email,
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
@@ -175,10 +177,9 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Facto
 }
 
 extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
-
     @MainActor
     func loginViaEmailView(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
@@ -186,11 +187,11 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
         loginViaEmailComponent(
+            email: email,
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         ).view(
-            email: email,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict
         )
