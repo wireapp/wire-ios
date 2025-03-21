@@ -19,7 +19,6 @@
 import DifferenceKit
 import WireDataModel
 import WireSyncEngine
-import os
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -606,20 +605,6 @@ extension ConversationTableViewDataSource {
             } else {
                 previous.bottomMargin = 0
                 current.topMargin = 0
-            }
-        }
-
-        let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "aTaBM")
-
-        logger.info("sections:")
-        for (s, section) in sections.reversed().enumerated() {
-
-            logger.info("sections[\(s)]:")
-            for (e, element) in section.elements.reversed().enumerated() {
-                logger
-                    .info(
-                        "  element \(e): \("\(element.instance)") tM: \(element.instance.topMargin) bM: \(element.instance.bottomMargin)"
-                    )
             }
         }
 
