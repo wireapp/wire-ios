@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Annuler";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Impossible de changer de serveur";
+"switch_backend.error.message.logged_in" = "Vous êtes déjà connecté. Pour vous connecter à ce serveur, veuillez vous déconnecter de tous vos comptes et essayer à nouveau.";
 
 "verification_code.title" = "Vous avez du courrier";
 "verification_code.message" = "Saisir le code de vérification que nous avons envoyé à %@.";
