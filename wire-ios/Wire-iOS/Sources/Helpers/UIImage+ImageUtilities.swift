@@ -161,11 +161,14 @@ extension UIImage {
         }
     }
 
-    func resizeMaintainingAspectRatio(targetSize: CGSize) -> UIImage {
-
+    func resizeMaintainingAspectRatio(targetSize: CGSize) -> UIImage? {
+        guard size.width > 0, size.height > 0 else { return nil }
+        
         let originalSize = size
         let scaleFactor = min(targetSize.width / originalSize.width, targetSize.height / originalSize.height)
 
+        if scaleFactor.isNaN || scaleFactor.isInfinite { return nil }
+        
         let newSize = CGSize(width: originalSize.width * scaleFactor, height: originalSize.height * scaleFactor)
         let origin = CGPoint(
             x: (targetSize.width - newSize.width) / 2,

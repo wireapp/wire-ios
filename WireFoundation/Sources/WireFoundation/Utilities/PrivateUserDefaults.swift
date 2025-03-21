@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+public import Combine
 
 public final class PrivateUserDefaults<Key: DefaultsKey> {
 
@@ -43,6 +44,17 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
 
     private func scopeKey(_ key: Key) -> String {
         "\(Self.scopePrefix(userID: userID))\(key.rawValue)"
+    }    
+}
+
+extension PrivateUserDefaults {
+    public func boolPublisher(for key: Key) -> AnyPublisher<Bool, Never> {
+        return NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
+            .map { _ in
+                self.bool(forKey: key)
+            }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 }
 
