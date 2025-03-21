@@ -38,8 +38,7 @@ package protocol DetermineAuthMethodBuilder {
 package struct DetermineAuthMethodView: View {
 
     package typealias Factory =
-//    LoginViaEmailBuilder &
-    LoginViaEmailNewBuilder &
+    LoginViaEmailBuilder &
     LoginViaSSOBuilder &
     SwitchBackendConfirmationBuilder
 
@@ -146,15 +145,7 @@ package struct DetermineAuthMethodView: View {
                 backendConfig,
                 backendMetadata
             ):
-//                factory.loginViaEmailView(
-//                    email: email,
-//                    canCreateAccount: false,
-//                    didDetectDomainConflict: didDetectDomainConflict,
-//                    environmentType: environmentType,
-//                    backendConfig: backendConfig,
-//                    backendMetadata: backendMetadata
-//                )
-                factory.loginViaEmailViewNew(
+                factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: false,
                     didDetectDomainConflict: didDetectDomainConflict,
@@ -168,15 +159,7 @@ package struct DetermineAuthMethodView: View {
                 backendConfig,
                 backendMetadata
             ):
-//                factory.loginViaEmailView(
-//                    email: email,
-//                    canCreateAccount: true,
-//                    didDetectDomainConflict: false,
-//                    environmentType: environmentType,
-//                    backendConfig: backendConfig,
-//                    backendMetadata: backendMetadata
-//                )
-                factory.loginViaEmailViewNew(
+                factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: true,
                     didDetectDomainConflict: false,

@@ -263,55 +263,16 @@ extension MockDependencies: NoHistoryViewBuilder {
 
 }
 
-//extension MockDependencies: LoginViaEmailBuilder {
-//
-//    private func loginViewModel(
-//        email: String,
-//        canCreateAccount: Bool,
-//        backendMetadata: BackendMetadata
-//    ) -> LoginViaEmailViewModel {
-//        LoginViaEmailViewModel(
-//            router: rootViewModel,
-//            loginViaEmailUseCase: self,
-//            backendEnvironment: backendEnvironment,
-//            email: email,
-//            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-//            canCreateAccount: canCreateAccount,
-//            didDetectDomainConflict: false,
-//            onCreateAccount: {}
-//        )
-//    }
-//
-//    func loginViaEmailView(
-//        email: String,
-//        canCreateAccount: Bool,
-//        didDetectDomainConflict: Bool,
-//        environmentType: BackendEnvironmentType,
-//        backendConfig: BackendConfig,
-//        backendMetadata: BackendMetadata
-//    ) -> LoginViaEmailView {
-//        LoginViaEmailView(
-//            viewModel: loginViewModel(
-//                email: email,
-//                canCreateAccount: canCreateAccount,
-//                backendMetadata: backendMetadata
-//            ),
-//            factory: self
-//        )
-//    }
-//
-//}
-
-extension MockDependencies: LoginViaEmailNewBuilder {
+extension MockDependencies: LoginViaEmailBuilder {
     private func loginViewModel(
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> LoginViaEmailViewModelNew {
-        LoginViaEmailViewModelNew(
+        backendMetadata: BackendMetadata
+    ) -> LoginViaEmailViewModel {
+        LoginViaEmailViewModel(
             router: rootViewModel,
             factory: self,
             email: email,
@@ -324,15 +285,15 @@ extension MockDependencies: LoginViaEmailNewBuilder {
         )
     }
 
-    func loginViaEmailViewNew(
+    func loginViaEmailView(
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
-    ) -> LoginViaEmailViewNew {
-        LoginViaEmailViewNew(
+    ) -> LoginViaEmailView {
+        LoginViaEmailView(
             viewModel: loginViewModel(
                 email: email,
                 canCreateAccount: canCreateAccount,
