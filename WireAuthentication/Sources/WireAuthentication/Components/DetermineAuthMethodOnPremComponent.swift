@@ -83,13 +83,28 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
 
     // MARK: - Children
 
+//    func loginViaEmailComponent(
+//        environmentType: BackendEnvironmentType,
+//        backendConfig: BackendConfig,
+//        backendMetadata: BackendMetadata
+//    ) -> LoginViaEmailComponent {
+//        LoginViaEmailComponent(
+//            parent: self,
+//            environmentType: environmentType,
+//            backendConfig: backendConfig,
+//            backendMetadata: backendMetadata
+//        )
+//    }
+
     func loginViaEmailComponent(
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
-    ) -> LoginViaEmailComponent {
-        LoginViaEmailComponent(
+    ) -> LoginViaEmailNewComponent {
+        LoginViaEmailNewComponent(
             parent: self,
+            email: email,
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
@@ -175,26 +190,46 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Facto
 }
 
 extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
-
     @MainActor
-    func loginViaEmailView(
-        email: String,
+    func loginViaEmailViewNew(
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
-    ) -> LoginViaEmailView {
+    ) -> LoginViaEmailViewNew {
         loginViaEmailComponent(
+            email: email,
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         ).view(
-            email: email,
-            canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict
+            canCreateAccount: false,
+            didDetectDomainConflict: false
         )
     }
+
+
+//    @MainActor
+//    func loginViaEmailView(
+//        email: String,
+//        canCreateAccount: Bool,
+//        didDetectDomainConflict: Bool,
+//        environmentType: BackendEnvironmentType,
+//        backendConfig: BackendConfig,
+//        backendMetadata: BackendMetadata
+//    ) -> LoginViaEmailView {
+//        loginViaEmailComponent(
+//            environmentType: environmentType,
+//            backendConfig: backendConfig,
+//            backendMetadata: backendMetadata
+//        ).view(
+//            email: email,
+//            canCreateAccount: canCreateAccount,
+//            didDetectDomainConflict: didDetectDomainConflict
+//        )
+//    }
 
     func loginViaSSOView(
         ssoURL: URL,

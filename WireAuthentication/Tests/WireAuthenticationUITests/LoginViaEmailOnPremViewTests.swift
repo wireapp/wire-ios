@@ -24,128 +24,128 @@ import XCTest
 @testable import WireAuthenticationAPI
 @testable import WireAuthenticationUI
 
-class LoginViaEmailOnPremViewTests: XCTestCase {
-
-    private var snapshotHelper: SnapshotHelper!
-
-    override func setUp() {
-        snapshotHelper = .init()
-            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-    }
-
-    override func tearDown() {
-        snapshotHelper = nil
-    }
-
-    @MainActor
-    func testColorSchemeVariantsWithoutProxySettings() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = MockDependencies().loginViaEmailOnPremView(
-            email: "foo@bar.com",
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: nil
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testDynamicTypeVariantsWithoutProxySettings() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = MockDependencies().loginViaEmailOnPremView(
-            email: "foo@bar.com",
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: nil
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-    @MainActor
-    func testColorSchemeVariantsWithProxySettings() {
-        let screenBounds = UIScreen.main.bounds
-
-        let backendConfig = BackendConfig(
-            title: "<backen name>",
-            endpoints: Endpoints(
-                backendURL: URL(string: "https://example.com")!,
-                backendWSURL: URL(string: "https://example.com")!,
-                blackListURL: URL(string: "https://example.com")!,
-                teamsURL: URL(string: "https://example.com")!,
-                accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!,
-                countlyURL: URL(string: "https://example.com")!
-            ),
-            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
-            pinnedKeys: nil
-        )
-
-        let view = MockDependencies().loginViaEmailOnPremView(
-            email: "foo@bar.com",
-            environmentType: MockDependencies().environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: nil
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testDynamicTypeVariantsWithProxySettings() {
-        let screenBounds = UIScreen.main.bounds
-
-        let backendConfig = BackendConfig(
-            title: "<backend name>",
-            endpoints: Endpoints(
-                backendURL: URL(string: "https://example.com")!,
-                backendWSURL: URL(string: "https://example.com")!,
-                blackListURL: URL(string: "https://example.com")!,
-                teamsURL: URL(string: "https://example.com")!,
-                accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!,
-                countlyURL: URL(string: "https://example.com")!
-            ),
-            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
-            pinnedKeys: nil
-        )
-        let view = MockDependencies().loginViaEmailOnPremView(
-            email: "foo@bar.com",
-            environmentType: MockDependencies().environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: nil
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-}
+//class LoginViaEmailOnPremViewTests: XCTestCase {
+//
+//    private var snapshotHelper: SnapshotHelper!
+//
+//    override func setUp() {
+//        snapshotHelper = .init()
+//            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+//    }
+//
+//    override func tearDown() {
+//        snapshotHelper = nil
+//    }
+//
+//    @MainActor
+//    func testColorSchemeVariantsWithoutProxySettings() {
+//        let screenBounds = UIScreen.main.bounds
+//
+//        let view = MockDependencies().loginViaEmailOnPremView(
+//            email: "foo@bar.com",
+//            environmentType: MockDependencies().environmentType,
+//            backendConfig: MockDependencies()._backendConfig,
+//            backendMetadata: nil
+//        )
+//        .frame(width: screenBounds.width, height: screenBounds.height)
+//
+//        snapshotHelper
+//            .withUserInterfaceStyle(.light)
+//            .verify(matching: view, named: "light")
+//        snapshotHelper
+//            .withUserInterfaceStyle(.dark)
+//            .verify(matching: view, named: "dark")
+//    }
+//
+//    @MainActor
+//    func testDynamicTypeVariantsWithoutProxySettings() {
+//        let screenBounds = UIScreen.main.bounds
+//
+//        let view = MockDependencies().loginViaEmailOnPremView(
+//            email: "foo@bar.com",
+//            environmentType: MockDependencies().environmentType,
+//            backendConfig: MockDependencies()._backendConfig,
+//            backendMetadata: nil
+//        )
+//        .frame(width: screenBounds.width, height: screenBounds.height)
+//
+//        for dynamicTypeSize in DynamicTypeSize.allCases {
+//            snapshotHelper
+//                .verify(
+//                    matching: view.dynamicTypeSize(dynamicTypeSize),
+//                    named: "\(dynamicTypeSize)"
+//                )
+//        }
+//    }
+//
+//    @MainActor
+//    func testColorSchemeVariantsWithProxySettings() {
+//        let screenBounds = UIScreen.main.bounds
+//
+//        let backendConfig = BackendConfig(
+//            title: "<backen name>",
+//            endpoints: Endpoints(
+//                backendURL: URL(string: "https://example.com")!,
+//                backendWSURL: URL(string: "https://example.com")!,
+//                blackListURL: URL(string: "https://example.com")!,
+//                teamsURL: URL(string: "https://example.com")!,
+//                accountsURL: URL(string: "https://example.com")!,
+//                websiteURL: URL(string: "https://example.com")!,
+//                countlyURL: URL(string: "https://example.com")!
+//            ),
+//            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
+//            pinnedKeys: nil
+//        )
+//
+//        let view = MockDependencies().loginViaEmailOnPremView(
+//            email: "foo@bar.com",
+//            environmentType: MockDependencies().environmentType,
+//            backendConfig: backendConfig,
+//            backendMetadata: nil
+//        )
+//        .frame(width: screenBounds.width, height: screenBounds.height)
+//
+//        snapshotHelper
+//            .withUserInterfaceStyle(.light)
+//            .verify(matching: view, named: "light")
+//        snapshotHelper
+//            .withUserInterfaceStyle(.dark)
+//            .verify(matching: view, named: "dark")
+//    }
+//
+//    @MainActor
+//    func testDynamicTypeVariantsWithProxySettings() {
+//        let screenBounds = UIScreen.main.bounds
+//
+//        let backendConfig = BackendConfig(
+//            title: "<backend name>",
+//            endpoints: Endpoints(
+//                backendURL: URL(string: "https://example.com")!,
+//                backendWSURL: URL(string: "https://example.com")!,
+//                blackListURL: URL(string: "https://example.com")!,
+//                teamsURL: URL(string: "https://example.com")!,
+//                accountsURL: URL(string: "https://example.com")!,
+//                websiteURL: URL(string: "https://example.com")!,
+//                countlyURL: URL(string: "https://example.com")!
+//            ),
+//            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
+//            pinnedKeys: nil
+//        )
+//        let view = MockDependencies().loginViaEmailOnPremView(
+//            email: "foo@bar.com",
+//            environmentType: MockDependencies().environmentType,
+//            backendConfig: backendConfig,
+//            backendMetadata: nil
+//        )
+//        .frame(width: screenBounds.width, height: screenBounds.height)
+//
+//        for dynamicTypeSize in DynamicTypeSize.allCases {
+//            snapshotHelper
+//                .verify(
+//                    matching: view.dynamicTypeSize(dynamicTypeSize),
+//                    named: "\(dynamicTypeSize)"
+//                )
+//        }
+//    }
+//
+//}

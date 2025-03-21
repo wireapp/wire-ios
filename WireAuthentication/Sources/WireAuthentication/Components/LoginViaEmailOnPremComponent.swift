@@ -16,105 +16,105 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import NeedleFoundation
-import SwiftUI
-import WireAPI
-import WireAuthenticationAPI
-internal import WireAuthenticationUI
-internal import WireAuthenticationLogic
-import WireReusableUIComponents
-
-protocol LoginViaEmailOnPremComponentDependency: Dependency {
-
-    @MainActor var router: any Router { get }
-    var preferredAPIVersion: APIVersion? { get }
-    var minTLSVersion: TLSVersion { get }
-    var passwordValidator: any PasswordValidator { get }
-    var appStoreURL: URL { get }
-
-}
-
-class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDependency> {
-
-    private let email: String?
-    private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
-    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
-
-    init(
-        parent: any Scope,
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    ) {
-        self.email = email
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
-        self.backendMetadata = backendMetadata
-        super.init(parent: parent)
-    }
-
-    // MARK: - View
-
-    @MainActor var view: LoginViaEmailOnPremView {
-        LoginViaEmailOnPremView(viewModel: viewModel)
-    }
-
-    @MainActor private var viewModel: LoginViaEmailOnPremViewModel {
-        LoginViaEmailOnPremViewModel(
-            router: dependency.router,
-            factory: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata,
-            passwordValidator: dependency.passwordValidator,
-            canCreateAccount: false
-        )
-    }
-
-    // MARK: - Private dependencies
-
-    private var backendEnvironment: BackendEnvironment {
-        shared {
-            BackendEnvironment(backendConfig)
-        }
-    }
-
-    private var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: backendEnvironment,
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
-    }
-
-}
-
-extension LoginViaEmailOnPremComponent: LoginViaEmailOnPremViewModel.Factory {
-
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
-        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
-        return ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
-    }
-
-    func loginViaEmailUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any LoginViaEmailUseCaseProtocol {
-        let api = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
-        return LoginViaEmailUseCase(authenticationAPI: api)
-    }
-
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        OpenAppStoreUseCase(url: dependency.appStoreURL)
-    }
-
-}
+//import NeedleFoundation
+//import SwiftUI
+//import WireAPI
+//import WireAuthenticationAPI
+//internal import WireAuthenticationUI
+//internal import WireAuthenticationLogic
+//import WireReusableUIComponents
+//
+//protocol LoginViaEmailOnPremComponentDependency: Dependency {
+//
+//    @MainActor var router: any Router { get }
+//    var preferredAPIVersion: APIVersion? { get }
+//    var minTLSVersion: TLSVersion { get }
+//    var passwordValidator: any PasswordValidator { get }
+//    var appStoreURL: URL { get }
+//
+//}
+//
+//class LoginViaEmailOnPremComponent: Component<LoginViaEmailOnPremComponentDependency> {
+//
+//    private let email: String?
+//    private let environmentType: BackendEnvironmentType
+//    private let backendConfig: BackendConfig
+//    private let backendMetadata: WireAuthenticationAPI.BackendMetadata?
+//
+//    init(
+//        parent: any Scope,
+//        email: String?,
+//        environmentType: BackendEnvironmentType,
+//        backendConfig: BackendConfig,
+//        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+//    ) {
+//        self.email = email
+//        self.environmentType = environmentType
+//        self.backendConfig = backendConfig
+//        self.backendMetadata = backendMetadata
+//        super.init(parent: parent)
+//    }
+//
+//    // MARK: - View
+//
+//    @MainActor var view: LoginViaEmailOnPremView {
+//        LoginViaEmailOnPremView(viewModel: viewModel)
+//    }
+//
+//    @MainActor private var viewModel: LoginViaEmailOnPremViewModel {
+//        LoginViaEmailOnPremViewModel(
+//            router: dependency.router,
+//            factory: self,
+//            email: email,
+//            environmentType: environmentType,
+//            backendConfig: backendConfig,
+//            backendMetadata: backendMetadata,
+//            passwordValidator: dependency.passwordValidator,
+//            canCreateAccount: false
+//        )
+//    }
+//
+//    // MARK: - Private dependencies
+//
+//    private var backendEnvironment: BackendEnvironment {
+//        shared {
+//            BackendEnvironment(backendConfig)
+//        }
+//    }
+//
+//    private var networkService: NetworkService {
+//        shared {
+//            NetworkService.make(
+//                backendEnvironment: backendEnvironment,
+//                minTLSVersion: dependency.minTLSVersion
+//            )
+//        }
+//    }
+//
+//}
+//
+//extension LoginViaEmailOnPremComponent: LoginViaEmailOnPremViewModel.Factory {
+//
+//    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
+//        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
+//        return ResolveBackendMetadataUseCase(
+//            backendMetadataAPI: api,
+//            clientProductionVersions: APIVersion.productionVersions,
+//            preferredAPIVersion: dependency.preferredAPIVersion
+//        )
+//    }
+//
+//    func loginViaEmailUseCase(
+//        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
+//    ) -> any LoginViaEmailUseCaseProtocol {
+//        let api = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
+//            for: .init(apiVersion)
+//        )
+//        return LoginViaEmailUseCase(authenticationAPI: api)
+//    }
+//
+//    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+//        OpenAppStoreUseCase(url: dependency.appStoreURL)
+//    }
+//
+//}

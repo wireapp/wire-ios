@@ -263,43 +263,87 @@ extension MockDependencies: NoHistoryViewBuilder {
 
 }
 
-extension MockDependencies: LoginViaEmailBuilder {
+//extension MockDependencies: LoginViaEmailBuilder {
+//
+//    private func loginViewModel(
+//        email: String,
+//        canCreateAccount: Bool,
+//        backendMetadata: BackendMetadata
+//    ) -> LoginViaEmailViewModel {
+//        LoginViaEmailViewModel(
+//            router: rootViewModel,
+//            loginViaEmailUseCase: self,
+//            backendEnvironment: backendEnvironment,
+//            email: email,
+//            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+//            canCreateAccount: canCreateAccount,
+//            didDetectDomainConflict: false,
+//            onCreateAccount: {}
+//        )
+//    }
+//
+//    func loginViaEmailView(
+//        email: String,
+//        canCreateAccount: Bool,
+//        didDetectDomainConflict: Bool,
+//        environmentType: BackendEnvironmentType,
+//        backendConfig: BackendConfig,
+//        backendMetadata: BackendMetadata
+//    ) -> LoginViaEmailView {
+//        LoginViaEmailView(
+//            viewModel: loginViewModel(
+//                email: email,
+//                canCreateAccount: canCreateAccount,
+//                backendMetadata: backendMetadata
+//            ),
+//            factory: self
+//        )
+//    }
+//
+//}
 
+extension MockDependencies: LoginViaEmailNewBuilder {
     private func loginViewModel(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
-        backendMetadata: BackendMetadata
-    ) -> LoginViaEmailViewModel {
-        LoginViaEmailViewModel(
+        didDetectDomainConflict: Bool,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?
+    ) -> LoginViaEmailViewModelNew {
+        LoginViaEmailViewModelNew(
             router: rootViewModel,
-            loginViaEmailUseCase: self,
-            backendEnvironment: backendEnvironment,
+            factory: self,
             email: email,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: backendMetadata,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: false,
+            didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: {}
         )
     }
 
-    func loginViaEmailView(
-        email: String,
+    func loginViaEmailViewNew(
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
-    ) -> LoginViaEmailView {
-        LoginViaEmailView(
+    ) -> LoginViaEmailViewNew {
+        LoginViaEmailViewNew(
             viewModel: loginViewModel(
                 email: email,
                 canCreateAccount: canCreateAccount,
+                didDetectDomainConflict: didDetectDomainConflict,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
                 backendMetadata: backendMetadata
-            ),
-            factory: self
+            )
         )
     }
-
+    
 }
 
 extension MockDependencies: VerificationCodeBuilder {
@@ -344,42 +388,34 @@ extension MockDependencies: VerificationCodeBuilder {
 
 }
 
-extension MockDependencies: LoginViaEmailOnPremBuilder {
-
-    private func loginViaEmailOnPremViewModel(
-        email: String?,
-        backendConfig: BackendConfig
-    ) -> LoginViaEmailOnPremViewModel {
-        LoginViaEmailOnPremViewModel(
-            router: rootViewModel,
-            factory: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: nil,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: false
-        )
-    }
-
-    func loginViaEmailOnPremView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> LoginViaEmailOnPremView {
-        LoginViaEmailOnPremView(
-            viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
-        )
-    }
-}
-
-//extension MockDependencies: LoginViaEmailViewNewBuilder {
+//extension MockDependencies: LoginViaEmailOnPremBuilder {
 //
-//    func loginViaEmailViewNew(email: String?, environmentType: WireAuthenticationAPI.BackendEnvironmentType, backendConfig: WireAuthenticationAPI.BackendConfig, backendMetadata: WireAuthenticationAPI.BackendMetadata?) -> LoginViaEmailViewNew {
-//        <#code#>
+//    private func loginViaEmailOnPremViewModel(
+//        email: String?,
+//        backendConfig: BackendConfig
+//    ) -> LoginViaEmailOnPremViewModel {
+//        LoginViaEmailOnPremViewModel(
+//            router: rootViewModel,
+//            factory: self,
+//            email: email,
+//            environmentType: environmentType,
+//            backendConfig: backendConfig,
+//            backendMetadata: nil,
+//            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+//            canCreateAccount: false
+//        )
 //    }
 //
+//    func loginViaEmailOnPremView(
+//        email: String?,
+//        environmentType: BackendEnvironmentType,
+//        backendConfig: BackendConfig,
+//        backendMetadata: BackendMetadata?
+//    ) -> LoginViaEmailOnPremView {
+//        LoginViaEmailOnPremView(
+//            viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
+//        )
+//    }
 //}
 
 extension MockDependencies: LoginViaEmailUseCaseFactory {

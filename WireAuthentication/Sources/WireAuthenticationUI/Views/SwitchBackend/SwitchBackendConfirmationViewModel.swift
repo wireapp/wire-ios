@@ -126,14 +126,14 @@ package class SwitchBackendConfirmationViewModel: ObservableObject {
         // If authenticated proxy is required, go straight to email login because we need to
         // get proxy credentials first.
         if let proxySettings = backendConfig.proxySettings, proxySettings.needsAuthentication {
-            router.presentSheet(
-                RootView.ModalDestination.onPremiseLogin(
-                    email: email,
-                    environmentType: environmentType,
-                    environment: backendConfig,
-                    backendMetadata: nil
-                )
-            )
+//            router.presentSheet(
+//                RootView.ModalDestination.onPremiseLogin(
+//                    email: email,
+//                    environmentType: environmentType,
+//                    environment: backendConfig,
+//                    backendMetadata: nil
+//                )
+//            )
         } else {
             do {
                 // Before we can make requests we need to resolve the api version.

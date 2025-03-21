@@ -21,14 +21,16 @@ import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
-package protocol LoginViaEmailViewNewBuilder {
+package protocol LoginViaEmailNewBuilder {
 
     @MainActor
     func loginViaEmailViewNew(
         email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
+        backendMetadata: BackendMetadata
     ) -> LoginViaEmailViewNew
 
 }
@@ -38,7 +40,7 @@ package struct LoginViaEmailViewNew: View {
     package typealias Factory = VerificationCodeBuilder
     
     @StateObject var viewModel: LoginViaEmailViewModelNew
-    let factory: any VerificationCodeBuilder
+    //let factory: any VerificationCodeBuilder
 
     @State private var password: String = ""
     @State private var proxyPassword: String = ""
@@ -46,11 +48,11 @@ package struct LoginViaEmailViewNew: View {
     private var proxyEmail: String = ""
 
     package init(
-        viewModel: LoginViaEmailViewModelNew,
-        factory: any Factory
+        viewModel: LoginViaEmailViewModelNew
+//        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+//        self.factory = factory
     }
 
     package var body: some View {
@@ -97,16 +99,16 @@ package struct LoginViaEmailViewNew: View {
                 }
             }
         )
-        .navigationDestination(for: Destination.self) { destination in
-            switch destination {
-            case let .verifyLogin(email, password):
-                factory.verificationCodeView(
-                    email: email,
-                    password: password,
-                    didDetectDomainConflict: viewModel.didDetectDomainConflict
-                )
-            }
-        }
+//        .navigationDestination(for: Destination.self) { destination in
+//            switch destination {
+//            case let .verifyLogin(email, password):
+//                factory.verificationCodeView(
+//                    email: email,
+//                    password: password,
+//                    didDetectDomainConflict: viewModel.didDetectDomainConflict
+//                )
+//            }
+//        }
         .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)

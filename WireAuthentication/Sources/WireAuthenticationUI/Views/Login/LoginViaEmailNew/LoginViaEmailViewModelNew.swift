@@ -26,7 +26,7 @@ import WireReusableUIComponents
 package final class LoginViaEmailViewModelNew: ObservableObject {
 
     package typealias Factory =
-        LoginViaEmailUseCaseFactory &
+       LoginViaEmailUseCaseFactory &
         OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory
 
@@ -148,7 +148,7 @@ package final class LoginViaEmailViewModelNew: ObservableObject {
                 alert = .invalidCredentials
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
-                    to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
+                    to: LoginViaEmailViewNew.Destination.verifyLogin(email: email, password: password)
                 )
             case LoginViaEmailUseCaseFailure.accountPendingActivation:
                 alert = .accountPendingActivation

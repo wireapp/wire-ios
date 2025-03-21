@@ -70,9 +70,13 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     // MARK: - Children
 
-    func loginViaEmailComponent(backendMetadata: BackendMetadata) -> LoginViaEmailComponent {
-        LoginViaEmailComponent(
+    func loginViaEmailComponent(
+        email: String?,
+        backendMetadata: BackendMetadata
+    ) -> LoginViaEmailNewComponent {
+        LoginViaEmailNewComponent(
             parent: self,
+            email: email,
             environmentType: dependency.environmentType,
             backendConfig: dependency.backendConfig,
             backendMetadata: backendMetadata
@@ -160,20 +164,38 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
     @MainActor
-    func loginViaEmailView(
-        email: String,
+    func loginViaEmailViewNew(
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
-    ) -> LoginViaEmailView {
-        loginViaEmailComponent(backendMetadata: backendMetadata).view(
+    ) -> LoginViaEmailViewNew {
+        loginViaEmailComponent(
             email: email,
-            canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict
+            backendMetadata: backendMetadata
+        ).view(
+            canCreateAccount: false,
+            didDetectDomainConflict: false
         )
     }
+
+//    @MainActor
+//    func loginViaEmailView(
+//        email: String,
+//        canCreateAccount: Bool,
+//        didDetectDomainConflict: Bool,
+//        environmentType: BackendEnvironmentType,
+//        backendConfig: BackendConfig,
+//        backendMetadata: BackendMetadata
+//    ) -> LoginViaEmailView {
+//        loginViaEmailComponent(backendMetadata: backendMetadata).view(
+//            email: email,
+//            canCreateAccount: canCreateAccount,
+//            didDetectDomainConflict: didDetectDomainConflict
+//        )
+//    }
 
     func loginViaSSOView(
         ssoURL: URL,

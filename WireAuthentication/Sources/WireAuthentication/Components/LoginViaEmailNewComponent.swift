@@ -28,7 +28,7 @@ protocol LoginViaEmailNewComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
-    var networkService: NetworkService { get }
+    //var networkService: NetworkService { get }
     var preferredAPIVersion: APIVersion? { get }
     var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
@@ -39,14 +39,14 @@ protocol LoginViaEmailNewComponentDependency: Dependency {
 
 class LoginViaEmailNewComponent: Component<LoginViaEmailNewComponentDependency> {
 
-    private let email: String
+    private let email: String?
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
     private let backendMetadata: BackendMetadata
 
     init(
         parent: any Scope,
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
@@ -70,14 +70,13 @@ class LoginViaEmailNewComponent: Component<LoginViaEmailNewComponentDependency> 
                 email: email,
                 canCreateAccount: canCreateAccount,
                 didDetectDomainConflict: didDetectDomainConflict
-            ),
-            factory: self
+            )
         )
     }
 
     @MainActor
     private func viewModel(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool
     ) -> LoginViaEmailViewModelNew {
@@ -95,7 +94,7 @@ class LoginViaEmailNewComponent: Component<LoginViaEmailNewComponentDependency> 
                 dependency.router.dismissSheet()
                 dependency.bridge.sendOutboundEvent(
                     .accountRegistrationRequested(
-                        email: email,
+                        email: email ?? "",
                         backendEnvironment
                     )
                 )
@@ -103,7 +102,7 @@ class LoginViaEmailNewComponent: Component<LoginViaEmailNewComponentDependency> 
         )
     }
 
-    public var backendEnvironment: WireAuthenticationBackendEnvironment {
+    private var backendEnvironment: WireAuthenticationBackendEnvironment {
         shared {
             WireAuthenticationBackendEnvironment(
                 environmentType: environmentType,
@@ -126,9 +125,9 @@ class LoginViaEmailNewComponent: Component<LoginViaEmailNewComponentDependency> 
 
     // MARK: - Children
 
-    var verificationCodeComponent: VerificationCodeComponent {
-        VerificationCodeComponent(parent: self)
-    }
+//    var verificationCodeComponent: VerificationCodeComponent {
+//        VerificationCodeComponent(parent: self)
+//    }
 
 }
 
@@ -151,21 +150,6 @@ extension LoginViaEmailNewComponent: LoginViaEmailViewModelNew.Factory {
             backendMetadataAPI: api,
             clientProductionVersions: APIVersion.productionVersions,
             preferredAPIVersion: dependency.preferredAPIVersion
-        )
-    }
-    
-}
-
-extension LoginViaEmailNewComponent: LoginViaEmailViewNew.Factory {
-    func verificationCodeView(
-        email: String,
-        password: String,
-        didDetectDomainConflict: Bool
-    ) -> VerificationCodeView {
-        verificationCodeComponent.view(
-            email: email,
-            password: password,
-            didDetectDomainConflict: didDetectDomainConflict
         )
     }
     

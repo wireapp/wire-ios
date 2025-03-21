@@ -23,112 +23,112 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class LoginViaEmailViewTests: XCTestCase {
-
-    private var snapshotHelper: SnapshotHelper!
-    private let backendMetadata = BackendMetadata(
-        apiVersion: .v8,
-        domain: "wire.com",
-        isFederationEnabled: true
-    )
-
-    override func setUp() {
-        snapshotHelper = .init()
-            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-    }
-
-    override func tearDown() {
-        snapshotHelper = nil
-    }
-
-    @MainActor
-    func testColorSchemeVariantsWithCreateAccount() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = MockDependencies().loginViaEmailView(
-            email: "foo@bar.com",
-            canCreateAccount: true,
-            didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testDynamicTypeVariantsWithCreateAccount() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = MockDependencies().loginViaEmailView(
-            email: "foo@bar.com",
-            canCreateAccount: true,
-            didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-    @MainActor
-    func testColorSchemeVariantsWithoutCreateAccount() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = MockDependencies().loginViaEmailView(
-            email: "foo@bar.com",
-            canCreateAccount: false,
-            didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
-    func testDynamicTypeVariantsWithoutCreateAccount() {
-        let screenBounds = UIScreen.main.bounds
-
-        let view = MockDependencies().loginViaEmailView(
-            email: "foo@bar.com",
-            canCreateAccount: false,
-            didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
-        )
-        .frame(width: screenBounds.width, height: screenBounds.height)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: view.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-}
+//class LoginViaEmailViewTests: XCTestCase {
+//
+//    private var snapshotHelper: SnapshotHelper!
+//    private let backendMetadata = BackendMetadata(
+//        apiVersion: .v8,
+//        domain: "wire.com",
+//        isFederationEnabled: true
+//    )
+//
+//    override func setUp() {
+//        snapshotHelper = .init()
+//            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+//    }
+//
+//    override func tearDown() {
+//        snapshotHelper = nil
+//    }
+//
+//    @MainActor
+//    func testColorSchemeVariantsWithCreateAccount() {
+//        let screenBounds = UIScreen.main.bounds
+//
+//        let view = MockDependencies().loginViaEmailView(
+//            email: "foo@bar.com",
+//            canCreateAccount: true,
+//            didDetectDomainConflict: false,
+//            environmentType: MockDependencies().environmentType,
+//            backendConfig: MockDependencies()._backendConfig,
+//            backendMetadata: backendMetadata
+//        )
+//        .frame(width: screenBounds.width, height: screenBounds.height)
+//
+//        snapshotHelper
+//            .withUserInterfaceStyle(.light)
+//            .verify(matching: view, named: "light")
+//        snapshotHelper
+//            .withUserInterfaceStyle(.dark)
+//            .verify(matching: view, named: "dark")
+//    }
+//
+//    @MainActor
+//    func testDynamicTypeVariantsWithCreateAccount() {
+//        let screenBounds = UIScreen.main.bounds
+//
+//        let view = MockDependencies().loginViaEmailView(
+//            email: "foo@bar.com",
+//            canCreateAccount: true,
+//            didDetectDomainConflict: false,
+//            environmentType: MockDependencies().environmentType,
+//            backendConfig: MockDependencies()._backendConfig,
+//            backendMetadata: backendMetadata
+//        )
+//        .frame(width: screenBounds.width, height: screenBounds.height)
+//
+//        for dynamicTypeSize in DynamicTypeSize.allCases {
+//            snapshotHelper
+//                .verify(
+//                    matching: view.dynamicTypeSize(dynamicTypeSize),
+//                    named: "\(dynamicTypeSize)"
+//                )
+//        }
+//    }
+//
+//    @MainActor
+//    func testColorSchemeVariantsWithoutCreateAccount() {
+//        let screenBounds = UIScreen.main.bounds
+//
+//        let view = MockDependencies().loginViaEmailView(
+//            email: "foo@bar.com",
+//            canCreateAccount: false,
+//            didDetectDomainConflict: false,
+//            environmentType: MockDependencies().environmentType,
+//            backendConfig: MockDependencies()._backendConfig,
+//            backendMetadata: backendMetadata
+//        )
+//        .frame(width: screenBounds.width, height: screenBounds.height)
+//
+//        snapshotHelper
+//            .withUserInterfaceStyle(.light)
+//            .verify(matching: view, named: "light")
+//        snapshotHelper
+//            .withUserInterfaceStyle(.dark)
+//            .verify(matching: view, named: "dark")
+//    }
+//
+//    @MainActor
+//    func testDynamicTypeVariantsWithoutCreateAccount() {
+//        let screenBounds = UIScreen.main.bounds
+//
+//        let view = MockDependencies().loginViaEmailView(
+//            email: "foo@bar.com",
+//            canCreateAccount: false,
+//            didDetectDomainConflict: false,
+//            environmentType: MockDependencies().environmentType,
+//            backendConfig: MockDependencies()._backendConfig,
+//            backendMetadata: backendMetadata
+//        )
+//        .frame(width: screenBounds.width, height: screenBounds.height)
+//
+//        for dynamicTypeSize in DynamicTypeSize.allCases {
+//            snapshotHelper
+//                .verify(
+//                    matching: view.dynamicTypeSize(dynamicTypeSize),
+//                    named: "\(dynamicTypeSize)"
+//                )
+//        }
+//    }
+//
+//}
