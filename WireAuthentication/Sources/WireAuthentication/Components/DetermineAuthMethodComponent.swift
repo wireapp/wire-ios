@@ -48,7 +48,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             environmentType: dependency.environmentType,
             backendConfig: dependency.backendConfig,
             backendMetadata: nil,
-            canExitFlow: dependency.existsAnotherAccount
+            existsAnotherAccount: dependency.existsAnotherAccount
         )
     }
 
