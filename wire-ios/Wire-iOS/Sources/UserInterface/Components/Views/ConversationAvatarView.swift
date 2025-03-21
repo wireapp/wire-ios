@@ -32,6 +32,7 @@ final class ConversationAvatarView: UIView {
             connectAvatarView.configure(context: ConversationConnectAvatarView.Context(users: users))
             connectAvatarView.isHidden = false
             groupIconAvatarView.isHidden = true
+        // TODO: Use ConnectAvatarView / legacy AvatarView for OneOnOne conversations
         case let .conversation(conversation: conversation):
             groupIconAvatarView.configure(context: ConversationGroupAvatarView.Context(
                 conversation: conversation
