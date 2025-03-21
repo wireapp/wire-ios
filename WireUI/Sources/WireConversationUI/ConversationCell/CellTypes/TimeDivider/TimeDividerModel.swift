@@ -24,7 +24,7 @@ public struct TimeDividerModel: ConversationCellModelProtocol {
     var text: String
     var isUnreadIndicatorVisible: Bool
 
-    init(
+    public init(
         text: String,
         isUnreadIndicatorVisible: Bool
     ) {

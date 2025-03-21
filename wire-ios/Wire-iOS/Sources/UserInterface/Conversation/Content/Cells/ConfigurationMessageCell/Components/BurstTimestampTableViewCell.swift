@@ -24,13 +24,14 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
     var conversationCellModel: ConversationCellModel? {
 
-        let text = if configuration.includeDayOfWeek {
+        let text = if configuration.isFirstMessageOfTheDay {
             configuration.date.olderThanOneWeekdateFormatter.string(from: configuration.date)
         } else {
             configuration.date.formattedDate
         }
 
-        return .timeDivider(text: text, isUnread: configuration.showUnreadDot)
+        let model = TimeDividerModel(text: text, isUnreadIndicatorVisible: configuration.showUnreadDot)
+        return .timeDivider(model)
 
     }
 
@@ -67,7 +68,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let date: Date
-        let includeDayOfWeek: Bool
+        let isFirstMessageOfTheDay: Bool
         let showUnreadDot: Bool
         let accentColor: UIColor
     }
