@@ -86,7 +86,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         do {
             let (cookies, token) = try await logIn(
                 email: email,
-                password: password
+                password: trimmedPassword
             )
 
             let emailCredentials = EmailCredentials(
