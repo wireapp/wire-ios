@@ -28,7 +28,7 @@ public struct ExtendedTextMessageModel: ConversationCellModelProtocol {
 
 }
 
-public extension ConversationCellModel {
+extension ConversationCellModel {
 
     static var extendedTextMessage: Self {
         .extendedTextMessage(ExtendedTextMessageModel())

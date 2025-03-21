@@ -61,9 +61,6 @@ public extension ConversationCellModel {
 
         case .deletedMessage:
             "deletedMessage"
-
-        case .typingIndicator:
-            "typingIndicator"
         }
     }
 

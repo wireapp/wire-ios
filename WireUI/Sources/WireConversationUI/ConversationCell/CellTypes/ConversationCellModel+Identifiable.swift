@@ -16,55 +16,54 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*
-extension ConversationCellModel: Identifiable {
-
-    public var id: AnyHashable {
-        switch self {
-
-        case let .guestsAllowedInfo(guestsAllowedInfo):
-            guestsAllowedInfo.id
-
-        case let .timeDivider(timeDivider):
-            timeDivider.id
-
-        case let .systemMessage(systemMessage):
-            systemMessage.id
-
-        case let .ping(ping):
-            fatalError()
-
-        case let .collapsedMessage(collapsedMessage):
-            fatalError()
-
-        case let .compositeMessage(compositeMessage):
-            fatalError()
-
-        case let .simpleTextMessage(simpleTextMessage):
-            fatalError()
-
-        case let .extendedTextMessage(extendedTextMessage):
-            fatalError()
-
-        // case .audioMessage(let audioMessage):
-        //     fatalError()
-
-        // case .videoMessage(let videoMessage):
-        //     fatalError()
-
-        // case .fileMessage(let fileMessage):
-        //     fatalError()
-
-        // case .location(let location):
-        //     fatalError()
-
-        case let .deletedMessage(deletedMessage):
-            fatalError()
-
-        case let .typingIndicator(typingIndicator):
-            fatalError()
-        }
-    }
-
-}
-*/
+//
+// extension ConversationCellModel: Identifiable {
+//
+//    public var id: AnyHashable {
+//        switch self {
+//
+//        case let .guestsAllowedInfo(guestsAllowedInfo):
+//            guestsAllowedInfo.id
+//
+//        case let .timeDivider(timeDivider):
+//            timeDivider.id
+//
+//        case let .systemMessage(systemMessage):
+//            systemMessage.id
+//
+//        case let .ping(ping):
+//            fatalError()
+//
+//        case let .collapsedMessage(collapsedMessage):
+//            fatalError()
+//
+//        case let .compositeMessage(compositeMessage):
+//            fatalError()
+//
+//        case let .simpleTextMessage(simpleTextMessage):
+//            fatalError()
+//
+//        case let .extendedTextMessage(extendedTextMessage):
+//            fatalError()
+//
+//        // case .audioMessage(let audioMessage):
+//        //     fatalError()
+//
+//        // case .videoMessage(let videoMessage):
+//        //     fatalError()
+//
+//        // case .fileMessage(let fileMessage):
+//        //     fatalError()
+//
+//        // case .location(let location):
+//        //     fatalError()
+//
+//        case let .deletedMessage(deletedMessage):
+//            fatalError()
+//
+//        case let .typingIndicator(typingIndicator):
+//            fatalError()
+//        }
+//    }
+//
+// }

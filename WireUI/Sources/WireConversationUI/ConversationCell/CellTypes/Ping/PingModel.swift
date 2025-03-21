@@ -25,7 +25,7 @@ public struct PingModel: ConversationCellModelProtocol {
 
 }
 
-public extension ConversationCellModel {
+extension ConversationCellModel {
 
     static var ping: Self {
         .ping(PingModel())

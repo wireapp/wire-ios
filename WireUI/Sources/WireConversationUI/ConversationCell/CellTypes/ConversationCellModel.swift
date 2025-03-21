@@ -57,9 +57,6 @@ public enum ConversationCellModel: Hashable, Sendable {
     /// Placeholder for deleted messages.
     case deletedMessage(DeletedMessageModel)
 
-    /// Used to show that another participant in the conversation is currently typing.
-    case typingIndicator(TypingIndicatorModel)
-
     // TODO: add missing cases
     // location: sender, time, reactions, isObfuscated, ephemeral, isCollapsed
     // audio, video, file: sender, time, reactions, canBeShared?, isCollapsed

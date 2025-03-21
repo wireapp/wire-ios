@@ -64,9 +64,6 @@ public extension ConversationCellModel {
 
         case .deletedMessage:
             fatalError()
-
-        case .typingIndicator:
-            fatalError()
         }
 
         tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)

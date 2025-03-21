@@ -25,7 +25,7 @@ public struct CollapsedMessageModel: ConversationCellModelProtocol {
 
 }
 
-public extension ConversationCellModel {
+extension ConversationCellModel {
 
     static var collapsedMessage: Self {
         .collapsedMessage(CollapsedMessageModel())

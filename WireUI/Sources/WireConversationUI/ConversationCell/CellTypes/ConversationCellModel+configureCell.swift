@@ -65,9 +65,6 @@ public extension ConversationCellModel {
 
         case let .deletedMessage(deletedMessage):
             fatalError("not implemented yet")
-
-        case let .typingIndicator(typingIndicator):
-            fatalError("not implemented yet")
         }
 
         assertionFailure("unexpected cell: \(cell)")

@@ -25,7 +25,7 @@ public struct SystemMessageModel: ConversationCellModelProtocol {
 
 }
 
-public extension ConversationCellModel {
+extension ConversationCellModel {
 
     static var systemMessage: Self {
         .systemMessage(SystemMessageModel())

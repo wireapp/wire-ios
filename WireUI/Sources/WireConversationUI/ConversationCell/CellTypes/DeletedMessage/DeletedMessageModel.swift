@@ -33,7 +33,7 @@ public struct DeletedMessageModel: ConversationCellModelProtocol {
 
 }
 
-public extension ConversationCellModel {
+extension ConversationCellModel {
 
     static func deletedMessage() -> Self {
         .deletedMessage(DeletedMessageModel())

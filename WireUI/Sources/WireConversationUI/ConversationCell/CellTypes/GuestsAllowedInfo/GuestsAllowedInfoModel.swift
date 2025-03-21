@@ -23,7 +23,7 @@ public struct GuestsAllowedInfoModel: ConversationCellModelProtocol {
 
 }
 
-public extension ConversationCellModel {
+extension ConversationCellModel {
 
     static var guestsAllowedInfo: Self {
         .guestsAllowedInfo(GuestsAllowedInfoModel())
