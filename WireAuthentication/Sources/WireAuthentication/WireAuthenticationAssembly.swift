@@ -52,7 +52,8 @@ public struct WireAuthenticationAssembly {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
-        appStoreURL: URL
+        appStoreURL: URL,
+        existsAnotherAccount: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
             environmentType: environmentType,
@@ -64,7 +65,8 @@ public struct WireAuthenticationAssembly {
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             userDefaults: userDefaults,
-            appStoreURL: appStoreURL
+            appStoreURL: appStoreURL,
+            existsAnotherAccount: existsAnotherAccount
         )
 
         return (view: rootComponent.view, bridge: rootComponent.bridge)
