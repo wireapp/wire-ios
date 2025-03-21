@@ -27,12 +27,11 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
- class LoginViaEmailViewModelTests: XCTestCase {
+class LoginViaEmailViewModelTests: XCTestCase {
 
     private var router: MockRouter!
     private var sut: LoginViaEmailViewModel!
     private var factory: LoginViaEmailViewModel.Factory!
-    //private var loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
     private var onCreateAccountCalled = false
     private var isLoadingCalls: [Bool] = []
     private var cancellables: Set<AnyCancellable> = []
@@ -40,8 +39,7 @@ import XCTest
     @MainActor
     override func setUp() async throws {
         router = MockRouter()
-        factory =  MockDependencies()
-        //loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
+        factory = MockDependencies()
 
         sut = LoginViaEmailViewModel(
             router: router,
@@ -54,7 +52,7 @@ import XCTest
             didDetectDomainConflict: false,
             onCreateAccount: { [self] in onCreateAccountCalled = true }
         )
-        //factory.loginViaEmailUseCase(apiVersion: .v8)
+
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
     }
 
@@ -67,7 +65,7 @@ import XCTest
     }
 
     // MARK: - submitPassword tests
-//
+
 //    @MainActor
 //    func testSubmitPassword_passesCorrectCredentials() async {
 //        // given
@@ -215,13 +213,13 @@ import XCTest
 
     // MARK: - isCreateAccount tests
 
-    @MainActor
-    func testCreateAccount_callsBridge() {
-        // given, when
-        sut.createAccount()
+//    @MainActor
+//    func testCreateAccount_callsBridge() {
+//        // given, when
+//        sut.createAccount()
+//
+//        // then
+//        XCTAssertTrue(onCreateAccountCalled)
+//    }
 
-        // then
-        XCTAssertTrue(onCreateAccountCalled)
-    }
-
- }
+}

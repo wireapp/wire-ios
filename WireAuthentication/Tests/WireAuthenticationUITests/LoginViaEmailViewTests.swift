@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
- class LoginViaEmailViewTests: XCTestCase {
+class LoginViaEmailViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private let backendMetadata = BackendMetadata(
@@ -131,11 +131,11 @@ import XCTest
         }
     }
 
-     @MainActor
-     func testColorSchemeVariantsWithProxySettings() {
-         let screenBounds = UIScreen.main.bounds
+    @MainActor
+    func testColorSchemeVariantsWithProxySettings() {
+        let screenBounds = UIScreen.main.bounds
 
-         let backendConfig = BackendConfig(
+        let backendConfig = BackendConfig(
             title: "<backen name>",
             endpoints: Endpoints(
                 backendURL: URL(string: "https://example.com")!,
@@ -148,31 +148,31 @@ import XCTest
             ),
             proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
-         )
+        )
 
-         let view = MockDependencies().loginViaEmailView(
+        let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
             environmentType: MockDependencies().environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
-         )
-             .frame(width: screenBounds.width, height: screenBounds.height)
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
-         snapshotHelper
-             .withUserInterfaceStyle(.light)
-             .verify(matching: view, named: "light")
-         snapshotHelper
-             .withUserInterfaceStyle(.dark)
-             .verify(matching: view, named: "dark")
-     }
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
 
-     @MainActor
-     func testDynamicTypeVariantsWithProxySettings() {
-         let screenBounds = UIScreen.main.bounds
+    @MainActor
+    func testDynamicTypeVariantsWithProxySettings() {
+        let screenBounds = UIScreen.main.bounds
 
-         let backendConfig = BackendConfig(
+        let backendConfig = BackendConfig(
             title: "<backend name>",
             endpoints: Endpoints(
                 backendURL: URL(string: "https://example.com")!,
@@ -185,24 +185,24 @@ import XCTest
             ),
             proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
-         )
-         let view = MockDependencies().loginViaEmailView(
+        )
+        let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
             environmentType: MockDependencies().environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
-         )
-             .frame(width: screenBounds.width, height: screenBounds.height)
+        )
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
-         for dynamicTypeSize in DynamicTypeSize.allCases {
-             snapshotHelper
-                 .verify(
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
                     matching: view.dynamicTypeSize(dynamicTypeSize),
                     named: "\(dynamicTypeSize)"
-                 )
-         }
-     }
+                )
+        }
+    }
 
- }
+}
