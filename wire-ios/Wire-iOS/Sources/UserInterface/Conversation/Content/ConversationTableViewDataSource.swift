@@ -583,7 +583,24 @@ extension ConversationTableViewDataSource {
                 continue
             }
 
-            if true { // TODO: add conditions
+            let collapse = if current is ConversationTextMessageCellDescription ||
+                current is ConversationFileMessageCellDescription ||
+                current is ConversationImageMessageCellDescription ||
+                current is ConversationVideoMessageCellDescription ||
+                current is ConversationReplyCellDescription {
+                // no stack cell description and no sender is shown, so collapse the space
+                true
+            } else if let firstStacked = (current as? StackViewCellDescription)?.cellDescriptions.first?.instance {
+                firstStacked is ConversationTextMessageCellDescription ||
+                firstStacked is ConversationFileMessageCellDescription ||
+                firstStacked is ConversationImageMessageCellDescription ||
+                firstStacked is ConversationVideoMessageCellDescription ||
+                firstStacked is ConversationReplyCellDescription
+            } else {
+                false
+            }
+
+            if collapse {
                 previous.bottomMargin = -6
                 current.topMargin = -6
             } else {
