@@ -330,14 +330,14 @@ final class ArticleViewTests: XCTestCase {
     ) {
 
         verifyInAllPhoneWidths(
-            createSut: {
+            createSut: { _ in
                 self.sut = ArticleView(withImagePlaceholder: true)
                 self.sut.translatesAutoresizingMaskIntoConstraints = false
                 self.sut.configure(withTextMessageData: self.articleWithPicture(imageNamed: named), obfuscated: false)
                 XCTAssert(self.waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
                 return self.sut
-            } as () -> UIView,
+            } as (CGFloat) -> UIView,
             file: file,
             testName: testName,
             line: line
