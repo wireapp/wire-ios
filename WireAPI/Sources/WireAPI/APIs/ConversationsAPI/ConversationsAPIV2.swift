@@ -107,7 +107,6 @@ class ConversationsAPIV2: ConversationsAPIV1 {
     }
 }
 
-
 // MARK: Encodables
 
 struct CreateGroupConversationParametersV2: Encodable {

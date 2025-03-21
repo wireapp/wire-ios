@@ -281,10 +281,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         )
 
         guard let groupID else {
-            WireLogger.mls
-                .warn(
-                    "failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID"
-                )
+            WireLogger.mls.warn(
+                "failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID"
+            )
             throw Failure.invalidOperation
         }
 
@@ -371,8 +370,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         conversation: ZMConversation
     ) async throws {
         guard !failedUsers.isEmpty else {
-            return Flow.addParticipants
-                .checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
+            return Flow.addParticipants.checkpoint(
+                description: "unexpected failedToClaimKeyPackages but no failed users"
+            )
         }
 
         let users = Set(users)
@@ -392,10 +392,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             failedUsers.map { $0.remoteIdentifier.transportString() }
         }
 
-        Flow.addParticipants
-            .checkpoint(
-                description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))"
-            )
+        Flow.addParticipants.checkpoint(
+            description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))"
+        )
 
         await appendFailedToAddUsersMessage(
             in: conversation,
@@ -420,7 +419,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 users: Set(users)
             )
         } else {
-            try await retryAddingParticipants(
+            try await retryAddingMLSParticipants(
                 users,
                 to: conversation,
                 excludingDomains: domains
@@ -433,14 +432,14 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         users: Set<ZMUser>,
         conversation: ZMConversation
     ) async throws {
-        try await retryAddingParticipants(
+        try await retryAddingMLSParticipants(
             users,
             to: conversation,
             excludingDomains: domains
         )
     }
 
-    private func retryAddingParticipants(
+    private func retryAddingMLSParticipants(
         _ users: Set<ZMUser>,
         to conversation: ZMConversation,
         excludingDomains domains: Set<String>
@@ -460,6 +459,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             to: conversation
         )
     }
+
+    // MARK: - Helpers
 
     private func appendFailedToAddUsersMessage(
         in conversation: ZMConversation,
