@@ -75,8 +75,6 @@ class DetermineAuthMethodViewTests: XCTestCase {
                 )
         }
     }
-<<<<<<< HEAD
-=======
 
     @MainActor
     func testCanExitFlow() {
@@ -91,5 +89,5 @@ class DetermineAuthMethodViewTests: XCTestCase {
 
         snapshotHelper.verify(matching: view)
     }
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
+
 }

@@ -75,27 +75,20 @@ final class MockDependencies {
 
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
-<<<<<<< HEAD
-=======
         existsAnotherAccount: Bool,
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
         isLoading: Bool,
         alert: Alert?
     ) -> DetermineAuthMethodView {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil,
             emailOrSSOCode: emailOrSSOCode,
-<<<<<<< HEAD
-            isLoading: isLoading,
-            bridge: WireAuthenticationBridge()
-=======
             existsAnotherAccount: existsAnotherAccount,
             isLoading: isLoading
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
         )
         viewModel.alert = alert
 
@@ -167,14 +160,11 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil,
-<<<<<<< HEAD
-            bridge: WireAuthenticationBridge()
-=======
             existsAnotherAccount: false
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
         )
     }
 

@@ -108,8 +108,6 @@ package struct DetermineAuthMethodView: View {
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
         }
-<<<<<<< HEAD
-=======
         .toolbar {
             if viewModel.existsAnotherAccount {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -121,7 +119,6 @@ package struct DetermineAuthMethodView: View {
                 }
             }
         }
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
         .alert(
             item: $viewModel.alert,
             title: { Text($0.title) },
@@ -239,34 +236,26 @@ extension Alert {
 @MainActor
 func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
-<<<<<<< HEAD
-=======
     existsAnotherAccount: Bool = false,
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
     isLoading: Bool = false,
     alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
-<<<<<<< HEAD
-=======
         existsAnotherAccount: existsAnotherAccount,
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
         isLoading: isLoading,
         alert: alert
     )
 }
 
-#Preview {
+#Preview("can't exit flow") {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-<<<<<<< HEAD
             makeDetermineAuthMethodViewPreview(
                 emailOrSSOCode: "user@wire.com",
                 isLoading: false,
                 alert: .unknownError
             )
-=======
             NavigationStack {
                 makeDetermineAuthMethodViewPreview(
                     emailOrSSOCode: "user@wire.com",
@@ -289,7 +278,6 @@ func makeDetermineAuthMethodViewPreview(
                     alert: nil
                 )
             }
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
         }
 }
 

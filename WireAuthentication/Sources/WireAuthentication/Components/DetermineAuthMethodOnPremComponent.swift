@@ -32,6 +32,7 @@ protocol DetermineAuthMethodOnPremComponentDependency: Dependency {
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
     var appStoreURL: URL { get }
+    var existsAnotherAccount: Bool { get }
 
 }
 
@@ -63,14 +64,11 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
         DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
+            bridge: dependency.bridge,
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata,
-<<<<<<< HEAD
-            bridge: dependency.bridge
-=======
             existsAnotherAccount: dependency.existsAnotherAccount
->>>>>>> f6d61a27a1 (feat: Show error for invalid backend redirect - WPB-16334 (#2706))
         )
     }
 
