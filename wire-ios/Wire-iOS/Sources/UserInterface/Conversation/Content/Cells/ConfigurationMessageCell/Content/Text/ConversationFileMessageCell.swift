@@ -149,7 +149,8 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message)
     }
 
 }

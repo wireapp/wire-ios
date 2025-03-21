@@ -58,7 +58,9 @@ final class UITraitEnvironmentTests: XCTestCase {
         let mockView = MockRegularView()
 
         // WHEN
-        let margins = mockView.conversationHorizontalMargins(windowWidth: 1024)
+        let margins = HorizontalMargins.conversationHorizontalMargins(
+            windowWidth: 1024
+        )
 
         // THEN
         XCTAssertEqual(margins.left, regularMargins.left)
