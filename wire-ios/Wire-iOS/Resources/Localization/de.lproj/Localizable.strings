@@ -642,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Löschen…";
 
+"content.collapsed.file.title" = "Sie haben eine Datei gesendet";
+"content.collapsed.image.title" = "Sie haben ein Bild gesendet";
+"content.collapsed.video.title" = "Sie haben ein Video gesendet";
+"content.collapsed.audio.title" = "Sie haben eine Audionachricht gesendet";
+"content.collapsed.location.title" = "Sie haben Ihren Standort geteilt";
+
 "content.message.like" = "Gefällt mir";
 "content.message.unlike" = "Gefällt mir nicht mehr";
 "content.message.go_to_conversation" = "Öffnen";
@@ -652,6 +658,7 @@
 "content.message.download" = "Download";
 "content.message.details" = "Details";
 "content.message.reactions" = "Reaktionen";
+"content.message.collapse" = "Ausblenden";
 
 // Reply
 "content.message.reply" = "Antworten";
@@ -1312,6 +1319,9 @@
 
 "self.settings.privacy_security.disable_link_previews.title" = "Link-Vorschau erstellen";
 "self.settings.privacy_security.disable_link_previews.footer" = "Vorschauen für Links von anderen Personen können weiterhin angezeigt werden.";
+
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Geräte";
 
