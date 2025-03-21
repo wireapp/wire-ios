@@ -56,14 +56,18 @@ package struct LoginViaEmailView: View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
                 if viewModel.hasProxySupport {
-                    welcomeMessage
+                    if viewModel.isOnPremiseBackend {
+                        welcomeMessage
+                    }
                     emailField
                     passwordField
                     forgotPasswordButton
                     proxyCredentials
                     submitButton
                 } else {
-                    welcomeMessage
+                    if viewModel.isOnPremiseBackend {
+                        welcomeMessage
+                    }
                     emailField
                     passwordField
                     submitButton

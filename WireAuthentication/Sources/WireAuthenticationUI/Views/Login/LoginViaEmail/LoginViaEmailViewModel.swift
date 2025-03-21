@@ -37,7 +37,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private let factory: any Factory
     private let environmentType: BackendEnvironmentType
     package let backendConfig: BackendConfig
-    private let backendMetadata: BackendMetadata?
+    private let backendMetadata: BackendMetadata
     private let onCreateAccount: () -> Void
 
     let email: String?
@@ -52,7 +52,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?,
+        backendMetadata: BackendMetadata,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         onCreateAccount: @escaping () -> Void
@@ -87,6 +87,10 @@ package final class LoginViaEmailViewModel: ObservableObject {
     var isValidEmail: Bool {
         guard let email else { return false }
         return !email.isEmpty
+    }
+
+    var isOnPremiseBackend: Bool {
+        environmentType != .production
     }
 
     func submitPassword(_ password: String) async {
@@ -178,11 +182,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - Private
 
-    private func resolveBackendMetadataIfNeeded() async throws -> WireAuthenticationAPI.BackendMetadata {
-        if let backendMetadata {
-            return backendMetadata
-        }
-
+    private func resolveBackendMetadataIfNeeded() async throws -> BackendMetadata {
         let useCase = factory.resolveBackendMetadataUseCase()
 
         return try await Task.detached {

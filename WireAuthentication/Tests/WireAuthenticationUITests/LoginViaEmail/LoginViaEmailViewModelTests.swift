@@ -27,52 +27,51 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-// class LoginViaEmailViewModelTests: XCTestCase {
-//
-//    private var router: MockRouter!
-//    private var loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
-//    private var passwordValidator: MockPasswordValidator!
-//    private var sut: LoginViaEmailViewModel!
-//    private var onCreateAccountCalled = false
-//    private var isLoadingCalls: [Bool] = []
-//    private var cancellables: Set<AnyCancellable> = []
-//
-//    @MainActor
-//    override func setUp() async throws {
-//        router = MockRouter()
-//        loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
-//        passwordValidator = MockPasswordValidator()
-//        passwordValidator.isPasswordValid_MockMethod = { _ in true }
-//
-//        sut = LoginViaEmailViewModel(
-//            router: router,
-//            loginViaEmailUseCase: loginViaEmailUseCase,
-//            backendEnvironment: Fixture.backendEnvironment,
-//            email: "mika@example.com",
-//            passwordValidator: passwordValidator,
-//            canCreateAccount: true,
-//            didDetectDomainConflict: false,
-//            onCreateAccount: { [self] in onCreateAccountCalled = true }
-//        )
-//
-//        sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
-//    }
-//
-//    override func tearDown() {
-//        router = nil
-//        loginViaEmailUseCase = nil
-//        passwordValidator = nil
-//        sut = nil
-//        onCreateAccountCalled = false
-//        isLoadingCalls = []
-//    }
-//
-//    // MARK: - submitPassword tests
+ class LoginViaEmailViewModelTests: XCTestCase {
+
+    private var router: MockRouter!
+    private var sut: LoginViaEmailViewModel!
+    private var factory: LoginViaEmailViewModel.Factory!
+    //private var loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
+    private var onCreateAccountCalled = false
+    private var isLoadingCalls: [Bool] = []
+    private var cancellables: Set<AnyCancellable> = []
+
+    @MainActor
+    override func setUp() async throws {
+        router = MockRouter()
+        factory =  MockDependencies()
+        //loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
+
+        sut = LoginViaEmailViewModel(
+            router: router,
+            factory: factory,
+            email: "mika@example.com",
+            environmentType: MockDependencies().environmentType,
+            backendConfig: MockDependencies()._backendConfig,
+            backendMetadata: MockDependencies().backendMetadata,
+            canCreateAccount: true,
+            didDetectDomainConflict: false,
+            onCreateAccount: { [self] in onCreateAccountCalled = true }
+        )
+        //factory.loginViaEmailUseCase(apiVersion: .v8)
+        sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
+    }
+
+    override func tearDown() {
+        factory = nil
+        router = nil
+        sut = nil
+        onCreateAccountCalled = false
+        isLoadingCalls = []
+    }
+
+    // MARK: - submitPassword tests
 //
 //    @MainActor
 //    func testSubmitPassword_passesCorrectCredentials() async {
 //        // given
-//        loginViaEmailUseCase
+//        factory
 //            .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
 //        sut.password = " password "
 //
@@ -80,12 +79,12 @@ import XCTest
 //        await sut.submitPassword()
 //
 //        // then
-//        let invocations = loginViaEmailUseCase.invokeEmailPasswordVerificationCode_Invocations
+//        let invocations = factory.invokeEmailPasswordVerificationCode_Invocations
 //        XCTAssertEqual(invocations.count, 1)
 //        XCTAssertEqual(invocations.first?.email, "mika@example.com")
 //        XCTAssertEqual(invocations.first?.password, "password")
 //    }
-//
+
 //    @MainActor
 //    func testSubmitPassword_whenSuccessful() async {
 //        // given
@@ -213,60 +212,16 @@ import XCTest
 //        XCTAssertEqual(isLoadingCalls, [true, false])
 //    }
 //
-//    // MARK: - isPasswordValid tests
-//
-//    @MainActor
-//    func testIsPasswordValid() {
-//        // given
-//        passwordValidator.isPasswordValid_MockMethod = { $0.count >= 4 }
-//
-//        // when
-//        sut.password = " aaa "
-//        passwordValidator.isPasswordValid_Invocations = []
-//
-//        // then
-//        XCTAssertFalse(sut.isPasswordValid)
-//        XCTAssertEqual(passwordValidator.isPasswordValid_Invocations, ["aaa"])
-//
-//        // when
-//        sut.password = " aaaa "
-//        passwordValidator.isPasswordValid_Invocations = []
-//
-//        // then
-//        XCTAssertTrue(sut.isPasswordValid)
-//        XCTAssertEqual(passwordValidator.isPasswordValid_Invocations, ["aaaa"])
-//    }
-//
-//    // MARK: - isCreateAccount tests
-//
-//    @MainActor
-//    func testCreateAccount_callsBridge() {
-//        // given, when
-//        sut.createAccount()
-//
-//        // then
-//        XCTAssertTrue(onCreateAccountCalled)
-//    }
-//
-//    // MARK: - showPasswordRules tests
-//
-//    @MainActor
-//    func testShowPasswordRules() {
-//        // given
-//        passwordValidator.isPasswordValid_MockMethod = { $0.count >= 4 }
-//        XCTAssertFalse(sut.showPasswordRules) // initial state
-//
-//        // when
-//        sut.password = "aaa"
-//
-//        // then
-//        XCTAssertTrue(sut.showPasswordRules)
-//
-//        // when
-//        sut.password = "aaaa"
-//
-//        // then
-//        XCTAssertFalse(sut.showPasswordRules)
-//    }
-//
-// }
+
+    // MARK: - isCreateAccount tests
+
+    @MainActor
+    func testCreateAccount_callsBridge() {
+        // given, when
+        sut.createAccount()
+
+        // then
+        XCTAssertTrue(onCreateAccountCalled)
+    }
+
+ }
