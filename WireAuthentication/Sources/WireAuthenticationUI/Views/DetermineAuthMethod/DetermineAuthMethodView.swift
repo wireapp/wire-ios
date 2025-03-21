@@ -251,11 +251,6 @@ func makeDetermineAuthMethodViewPreview(
 #Preview("can't exit flow") {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: "user@wire.com",
-                isLoading: false,
-                alert: .unknownError
-            )
             NavigationStack {
                 makeDetermineAuthMethodViewPreview(
                     emailOrSSOCode: "user@wire.com",
