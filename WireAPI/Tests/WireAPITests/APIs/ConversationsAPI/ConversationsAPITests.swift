@@ -769,6 +769,55 @@ final class ConversationsAPITests: XCTestCase {
 
 }
 
+extension ConversationsAPIError: Equatable {
+    public static func == (lhs: ConversationsAPIError, rhs: ConversationsAPIError) -> Bool {
+        switch (lhs, rhs) {
+        case (.notImplemented, .notImplemented):
+            return true
+        case (.invalidBody, .invalidBody):
+            return true
+        case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion):
+            return true
+        case (.mlsNotEnabled, .mlsNotEnabled):
+            return true
+        case (.usersNotConnected, .usersNotConnected):
+            return true
+        case (.userAndDomainShouldNotBeEmpty, .userAndDomainShouldNotBeEmpty):
+            return true
+        case (.accessDenied, .accessDenied):
+            return true
+        case (.conversationNotFound, .conversationNotFound):
+            return true
+        case (.conversationCodeNotFound, .conversationCodeNotFound):
+            return true
+        case (.guestLinksDisabled, .guestLinksDisabled):
+            return true
+        case (.invalidConversationID, .invalidConversationID):
+            return true
+        case (.nonEmptyMemberList, .nonEmptyMemberList):
+            return true
+        case (.missingLegalHoldConsent, .missingLegalHoldConsent):
+            return true
+        case (.operationDenied, .operationDenied):
+            return true
+        case (.noTeamMember, .noTeamMember):
+            return true
+        case (.notConnected, .notConnected):
+            return true
+        case (.unsupportedChannelCreationForAPIEndpoint, .unsupportedChannelCreationForAPIEndpoint):
+            return true
+        case (.nonFederatingBackends, .nonFederatingBackends):
+            return true
+        case (.unreachableBackends, .unreachableBackends):
+            return true
+            
+        default: return false
+        }
+    }
+    
+    
+}
+
 private extension APIVersion {
     func buildAPI(apiService: any APIServiceProtocol) -> any ConversationsAPI {
         let builder = ConversationsAPIBuilder(apiService: apiService)
