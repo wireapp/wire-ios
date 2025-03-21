@@ -336,7 +336,10 @@ extension MockDependencies: VerificationCodeBuilder {
         )
         viewModel.code = code
 
-        return VerificationCodeView(viewModel: viewModel)
+        return VerificationCodeView(
+            viewModel: viewModel,
+            factory: self
+        )
     }
 
     @MainActor
@@ -351,7 +354,8 @@ extension MockDependencies: VerificationCodeBuilder {
                 router: rootViewModel,
                 backendEnvironment: backendEnvironment,
                 didDetectDomainConflict: false
-            )
+            ),
+            factory: self
         )
     }
 

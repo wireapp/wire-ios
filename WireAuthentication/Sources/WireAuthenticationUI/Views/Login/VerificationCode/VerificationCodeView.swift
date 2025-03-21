@@ -28,6 +28,8 @@ package protocol VerificationCodeBuilder {
 
 package struct VerificationCodeView: View {
 
+    package typealias Factory = NoHistoryViewBuilder
+
     // MARK: - Constants
 
     private enum Constants {
@@ -35,11 +37,16 @@ package struct VerificationCodeView: View {
     }
 
     @StateObject private var viewModel: VerificationCodeViewModel
+    private let factory: any Factory
 
     @FocusState private var focusedIndex: Int?
 
-    package init(viewModel: VerificationCodeViewModel) {
+    package init(
+        viewModel: VerificationCodeViewModel,
+        factory: any Factory
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.factory = factory
     }
 
     package var body: some View {
@@ -95,6 +102,18 @@ package struct VerificationCodeView: View {
                 Button(L10n.Authentication.Error.confirm, action: {})
             }
         )
+        .navigationDestination(for: VerificationCodeDestination.self) {
+            switch $0 {
+            case let .noHistory(
+                authenticationResult,
+                didDetectDomainConflict
+            ):
+                factory.noHistoryView(
+                    authenticationResult: authenticationResult,
+                    didDetectDomainConflict: didDetectDomainConflict
+                )
+            }
+        }
     }
 
     private var verificationCodeView: some View {

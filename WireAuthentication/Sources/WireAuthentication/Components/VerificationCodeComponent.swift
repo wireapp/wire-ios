@@ -48,13 +48,12 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         super.init(parent: parent)
     }
 
-    private var requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol {
-        RequestLoginVerificationCodeUseCase(authenticationAPI: dependency.authenticationAPI)
-    }
-
     @MainActor
     var view: VerificationCodeView {
-        VerificationCodeView(viewModel: viewModel)
+        VerificationCodeView(
+            viewModel: viewModel,
+            factory: self
+        )
     }
 
     @MainActor
@@ -71,6 +70,23 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         )
     }
 
+    private var requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol {
+        RequestLoginVerificationCodeUseCase(authenticationAPI: dependency.authenticationAPI)
+    }
+
+    // MARK: - Children
+
+    func noHistoryComponent(
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
+    }
+
 }
 
 extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
@@ -78,6 +94,20 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
         let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
         return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+    }
+
+}
+
+extension VerificationCodeComponent: VerificationCodeView.Factory {
+
+    func noHistoryView(
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryView {
+        noHistoryComponent(
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        ).view
     }
 
 }

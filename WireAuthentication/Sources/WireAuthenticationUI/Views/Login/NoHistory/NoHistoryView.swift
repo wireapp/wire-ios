@@ -89,6 +89,7 @@ package struct NoHistoryView: View {
         .presentationDetents([.medium])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+        .navigationBarBackButtonHidden()
     }
 
     private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {

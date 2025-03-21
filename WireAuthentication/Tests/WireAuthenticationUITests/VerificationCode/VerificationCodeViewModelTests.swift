@@ -110,10 +110,10 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         // then
         #expect(sut.alert == nil)
         #expect(isLoadingCalls == [true, false])
-        #expect(router.modalPresent_Invocations.count == 1)
+        #expect(router.navigate_Invocations.count == 1)
         #expect(
-            router.modalPresent_Invocations.first as? RootView.ModalDestination ==
-                RootView.ModalDestination.noHistory(
+            router.navigate_Invocations.first as? VerificationCodeDestination ==
+            VerificationCodeDestination.noHistory(
                     authenticationResult: AuthenticationResult(
                         userID: Fixture.someAccessToken.userID,
                         cookies: [Fixture.someCookie],

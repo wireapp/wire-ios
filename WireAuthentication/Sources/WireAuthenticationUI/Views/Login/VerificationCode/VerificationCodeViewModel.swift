@@ -115,8 +115,8 @@ public final class VerificationCodeViewModel: ObservableObject {
                 backendEnvironment: backendEnvironment
             )
 
-            router.presentSheet(
-                RootView.ModalDestination.noHistory(
+            router.navigate(
+                to: VerificationCodeDestination.noHistory(
                     authenticationResult: authenticationResult,
                     didDetectDomainConflict: didDetectDomainConflict
                 )
