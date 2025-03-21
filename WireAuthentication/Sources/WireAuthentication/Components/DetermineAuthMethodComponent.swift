@@ -176,8 +176,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
             email: email,
             backendMetadata: backendMetadata
         ).view(
-            canCreateAccount: false,
-            didDetectDomainConflict: false
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

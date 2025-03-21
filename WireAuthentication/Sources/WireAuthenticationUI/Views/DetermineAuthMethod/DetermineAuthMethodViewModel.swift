@@ -176,6 +176,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case let .loginOrRegisterViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(
                 email: email,
+                didDetectDomainConflict: false,
                 environmentType: environmentType,
                 backendConfig: backendConfig,
                 backendMetadata: backendMetadata

@@ -192,8 +192,8 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
         ).view(
-            canCreateAccount: false,
-            didDetectDomainConflict: false
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

@@ -142,7 +142,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
             router.presentSheet(RootView.ModalDestination.noHistory(
                 authenticationResult: authenticationResult,
-                didDetectDomainConflict: false
+                didDetectDomainConflict: didDetectDomainConflict
             ))
 
         } catch {

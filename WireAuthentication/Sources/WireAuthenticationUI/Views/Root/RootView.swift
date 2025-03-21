@@ -70,7 +70,7 @@ package struct RootView: View {
                 ):
                     factory.loginViaEmailView(
                         email: email ?? "",
-                        canCreateAccount: true,
+                        canCreateAccount: false,
                         didDetectDomainConflict: false,
                         environmentType: environmentType,
                         backendConfig: backendConfig,
