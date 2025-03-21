@@ -113,7 +113,7 @@ final class ConversationTableViewDataSource: NSObject {
     ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
         messages.enumerated().map { offset, element in
             let sectionIdentifier = element.objectIdentifier
-            let currentContext = context(
+            let context = context(
                 for: element,
                 at: offset,
                 firstUnreadMessage: firstUnreadMessage,
@@ -123,8 +123,8 @@ final class ConversationTableViewDataSource: NSObject {
 
             // Re-create cell description if the context has changed (message has been moved around or received new
             // neighbours).
-            if sectionController.currentContext != currentContext || forceRecalculate {
-                sectionController.recreateCellDescriptions(in: currentContext)
+            if sectionController.context != context || forceRecalculate {
+                sectionController.recreateCellDescriptions(in: context)
             }
 
             return ArraySection(model: sectionIdentifier, elements: sectionController.tableViewCellDescriptions)
@@ -207,7 +207,7 @@ final class ConversationTableViewDataSource: NSObject {
             return cachedEntry
         }
 
-        let currentContext = context(
+        let context = context(
             for: message,
             at: index,
             firstUnreadMessage: firstUnreadMessage,
@@ -215,8 +215,7 @@ final class ConversationTableViewDataSource: NSObject {
         )
         let sectionController = ConversationMessageSectionController(
             message: message,
-            currentContext: currentContext,
-            previousContext: nil,
+            context: context,
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
             useInvertedIndices: true
