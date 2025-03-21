@@ -758,6 +758,304 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    // MARK: - createGroupConversation
+
+    func testCreateGroupConversation_givenV0_To_V2_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v0, .v1, .v2]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV0AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                groupType: .group,
+                messageProtocol: .mls,
+                creatorClientID: UUID.mockID1.uuidString,
+                qualifiedUserIDs: [.mockID1],
+                unqualifiedUserIDs: [.mockID2],
+                name: "test",
+                accessMode: [.code, .invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .teamMember,
+                teamID: .mockID1,
+                isReadReceiptsEnabled: true
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV3_To_V4_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v3, .v4]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV3AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                groupType: .group,
+                messageProtocol: .mls,
+                creatorClientID: UUID.mockID1.uuidString,
+                qualifiedUserIDs: [.mockID1],
+                unqualifiedUserIDs: [.mockID2],
+                name: "test",
+                accessMode: [.code, .invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .teamMember,
+                teamID: .mockID1,
+                isReadReceiptsEnabled: true
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV5_To_V7_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v5, .v7]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV5AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                groupType: .group,
+                messageProtocol: .mls,
+                creatorClientID: UUID.mockID1.uuidString,
+                qualifiedUserIDs: [.mockID1],
+                unqualifiedUserIDs: [.mockID2],
+                name: "test",
+                accessMode: [.code, .invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .teamMember,
+                teamID: .mockID1,
+                isReadReceiptsEnabled: true
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV8_And_Next_Versions_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV8AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                groupType: .group,
+                messageProtocol: .mls,
+                creatorClientID: UUID.mockID1.uuidString,
+                qualifiedUserIDs: [.mockID1],
+                unqualifiedUserIDs: [.mockID2],
+                name: "test",
+                accessMode: [.code, .invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .teamMember,
+                teamID: .mockID1,
+                isReadReceiptsEnabled: true
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_To_V2_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v0, .v1, .v2]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV0AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                groupType: .group,
+                messageProtocol: .mls,
+                creatorClientID: UUID.mockID1.uuidString,
+                qualifiedUserIDs: [.mockID1],
+                unqualifiedUserIDs: [.mockID2],
+                name: "test",
+                accessMode: [.code, .invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .teamMember,
+                teamID: .mockID1,
+                isReadReceiptsEnabled: true
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV3_To_V4_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v3, .v4]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV3AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                groupType: .group,
+                messageProtocol: .mls,
+                creatorClientID: UUID.mockID1.uuidString,
+                qualifiedUserIDs: [.mockID1],
+                unqualifiedUserIDs: [.mockID2],
+                name: "test",
+                accessMode: [.code, .invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .teamMember,
+                teamID: .mockID1,
+                isReadReceiptsEnabled: true
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV5_To_V7_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v5, .v7]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV5AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                groupType: .group,
+                messageProtocol: .mls,
+                creatorClientID: UUID.mockID1.uuidString,
+                qualifiedUserIDs: [.mockID1],
+                unqualifiedUserIDs: [.mockID2],
+                name: "test",
+                accessMode: [.code, .invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .teamMember,
+                teamID: .mockID1,
+                isReadReceiptsEnabled: true
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV8_And_Next_Versions_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV8AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                groupType: .group,
+                messageProtocol: .mls,
+                creatorClientID: UUID.mockID1.uuidString,
+                qualifiedUserIDs: [.mockID1],
+                unqualifiedUserIDs: [.mockID2],
+                name: "test",
+                accessMode: [.code, .invite],
+                accessRoles: [.teamMember],
+                legacyAccessRole: .teamMember,
+                teamID: .mockID1,
+                isReadReceiptsEnabled: true
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
     private enum Scaffolding {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
@@ -773,49 +1071,47 @@ extension ConversationsAPIError: Equatable {
     public static func == (lhs: ConversationsAPIError, rhs: ConversationsAPIError) -> Bool {
         switch (lhs, rhs) {
         case (.notImplemented, .notImplemented):
-            return true
+            true
         case (.invalidBody, .invalidBody):
-            return true
+            true
         case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion):
-            return true
+            true
         case (.mlsNotEnabled, .mlsNotEnabled):
-            return true
+            true
         case (.usersNotConnected, .usersNotConnected):
-            return true
+            true
         case (.userAndDomainShouldNotBeEmpty, .userAndDomainShouldNotBeEmpty):
-            return true
+            true
         case (.accessDenied, .accessDenied):
-            return true
+            true
         case (.conversationNotFound, .conversationNotFound):
-            return true
+            true
         case (.conversationCodeNotFound, .conversationCodeNotFound):
-            return true
+            true
         case (.guestLinksDisabled, .guestLinksDisabled):
-            return true
+            true
         case (.invalidConversationID, .invalidConversationID):
-            return true
+            true
         case (.nonEmptyMemberList, .nonEmptyMemberList):
-            return true
+            true
         case (.missingLegalHoldConsent, .missingLegalHoldConsent):
-            return true
+            true
         case (.operationDenied, .operationDenied):
-            return true
+            true
         case (.noTeamMember, .noTeamMember):
-            return true
+            true
         case (.notConnected, .notConnected):
-            return true
+            true
         case (.unsupportedChannelCreationForAPIEndpoint, .unsupportedChannelCreationForAPIEndpoint):
-            return true
+            true
         case (.nonFederatingBackends, .nonFederatingBackends):
-            return true
+            true
         case (.unreachableBackends, .unreachableBackends):
-            return true
-            
-        default: return false
+            true
+        default: false
         }
     }
-    
-    
+
 }
 
 private extension APIVersion {
