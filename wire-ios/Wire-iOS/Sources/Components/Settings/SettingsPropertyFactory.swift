@@ -18,6 +18,7 @@
 
 import avs
 import WireCommonComponents
+import WireFoundation
 import WireSyncEngine
 import WireUtilities
 
@@ -72,7 +73,8 @@ final class SettingsPropertyFactory {
         SettingsPropertyName.tweetOpeningOption: .twitterOpeningRawValue,
         SettingsPropertyName.callingProtocolStrategy: .callingProtocolStrategy,
         SettingsPropertyName.enableBatchCollections: .enableBatchCollections,
-        SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate
+        SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate,
+        SettingsPropertyName.collapseOwnMessages: .collapseOwnMessages
     ]
 
     convenience init(
@@ -422,6 +424,20 @@ final class SettingsPropertyFactory {
                 }
             )
 
+        case .collapseOwnMessages:
+            let userId = selfUser!.remoteIdentifier!
+            let storage = PrivateUserDefaults<CollapseKey>(userID: userId)
+            return SettingsBlockProperty(
+                propertyName: propertyName,
+                getAction: { _ in
+                    SettingsPropertyValue(storage.bool(forKey: .collapseOwnMessages))
+                },
+                setAction: { _, value, _ in
+                    guard case let .number(enabled) = value else { return }
+                    storage.set(enabled.boolValue, forKey: .collapseOwnMessages)
+                }
+            )
+
         default:
             if let userDefaultsKey = type(of: self).userDefaultsPropertiesToKeys[propertyName] {
                 return SettingsUserDefaultsProperty(
@@ -434,4 +450,8 @@ final class SettingsPropertyFactory {
 
         fatalError("Cannot create SettingsProperty for \(propertyName)")
     }
+}
+
+enum CollapseKey: String, DefaultsKey {
+    case collapseOwnMessages
 }

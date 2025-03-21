@@ -87,7 +87,7 @@ public class ConversationTitleView: UIView {
         stackView.alignment = .center
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.fitIn(view: self)
+        stackView.pin(to: self)
 
         let avatarAndNameStackView = UIStackView.horizontal(spacing: 4)
         avatarAndNameStackView.alignment = .center
@@ -108,7 +108,7 @@ public class ConversationTitleView: UIView {
         stackView.center(in: self)
 
         addSubview(tapButton)
-        tapButton.fitIn(view: self)
+        tapButton.pin(to: self)
         tapButton.showsMenuAsPrimaryAction = true
     }
 
