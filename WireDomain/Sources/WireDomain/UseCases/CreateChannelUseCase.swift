@@ -20,8 +20,22 @@ import WireAPI
 import WireLogging
 import WireDataModel
 
+// sourcery: AutoMockable
+/// Creates and setup a channel.
 /// Channels are MLS conversations which belong to a team and have a name.
-public struct CreateChannelUseCase {
+public protocol CreateChannelUseCaseProtocol {
+    func invoke(
+        teamID: UUID,
+        name: String?,
+        users: Set<ZMUser>,
+        accessMode: Set<WireAPI.ConversationAccessMode>,
+        accessRoles: Set<WireAPI.ConversationAccessRole>,
+        enableReceipts: Bool
+    ) async throws -> ZMConversation
+}
+
+/// Channels are MLS conversations which belong to a team and have a name.
+public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     
     public enum Failure: Error {
         case missingSelfClientID
@@ -29,15 +43,20 @@ public struct CreateChannelUseCase {
         case conversationNotFound
         case failedToCreateChannel(Error)
         case missingLegalholdConsent
-        case nonFederatingDomains([String])
+        case nonFederatingDomains(Set<String>)
         case notConnected
+        case invalidOperation
     }
+    
+    // MARK: - Properties
     
     private let api: ConversationsAPI
     private let store: ConversationLocalStoreProtocol
     private let context: NSManagedObjectContext
     private let isFederationEnabled: Bool
     private let logger: WireLogger = .conversation
+    
+    // MARK: - Object lifecycle
 
     public init(
         api: ConversationsAPI,
@@ -61,8 +80,7 @@ public struct CreateChannelUseCase {
     ) async throws -> ZMConversation {
         let (selfClientID,
              qualifiedUserIds,
-             unqualifiedUserIds,
-             usersExcludingSelfUser) = try await context.perform {
+             unqualifiedUserIds) = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
 
             guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
@@ -83,8 +101,7 @@ public struct CreateChannelUseCase {
             
             return (selfClientID,
                     qualifiedUserIDs,
-                    unqualifiedUserIDs,
-                    usersExcludingSelfUser)
+                    unqualifiedUserIDs)
         }
         
         do {
@@ -127,7 +144,7 @@ public struct CreateChannelUseCase {
                 case .missingLegalHoldConsent:
                     throw Failure.missingLegalholdConsent
                 case .nonFederatingBackends(let domains):
-                    throw Failure.nonFederatingDomains(domains)
+                    throw Failure.nonFederatingDomains(Set(domains))
                 default:
                     throw Failure.failedToCreateChannel(error)
                 }
@@ -161,7 +178,100 @@ public struct CreateChannelUseCase {
             context.saveOrRollback()
         }
         
-        // TODO: Factor out logic from `ConversationParticipantsService` and `MLSConversationParticipantsServiceInterface` to add MLS participants.
+        try await validate(
+            users: participants,
+            conversation: conversation
+        )
+        
+        try await addMLSParticipants(
+            participants,
+            to: conversation
+        )
+    }
+    
+    private func validate(
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        try await context.perform {
+            guard
+                conversation.conversationType == .group,
+                !users.isEmpty
+            else {
+                throw Failure.invalidOperation
+            }
+        }
+    }
+    
+    private func addMLSParticipants(
+        _ users: Set<ZMUser>,
+        to conversation: ZMConversation
+    ) async throws {
+        let mlsService = await context.perform {
+            context.mlsService
+        }
+        
+        guard let mlsService else { return }
+        
+        let (qualifiedID, groupID) = await context.perform {
+            (conversation.qualifiedID, conversation.mlsGroupID)
+        }
+
+        WireLogger.mls.info(
+            "adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))"
+        )
+
+        guard let groupID else {
+            WireLogger.mls
+                .warn(
+                    "failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID"
+                )
+            throw Failure.invalidOperation
+        }
+
+        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from:)) }
+
+        do {
+
+            try await mlsService.addMembersToConversation(
+                with: mlsUsers,
+                for: groupID
+            )
+
+        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
+            let failedUsers = await context.perform {
+                users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
+            }
+            
+            try await handleNotClaimedKeyPackages(
+                failedUsers: Set(failedUsers),
+                users: users,
+                conversation: conversation
+            )
+
+        } catch let SendCommitBundleAction.Failure.nonFederatingDomains(domains: domains) {
+
+            try await handleNonFederatingDomains(
+                domains,
+                users: users,
+                conversation: conversation
+            )
+
+        } catch let SendCommitBundleAction.Failure.unreachableDomains(domains: domains) {
+
+            try await handleUnreachableDomains(
+                domains,
+                users: users,
+                conversation: conversation
+            )
+
+        } catch {
+            WireLogger.mls.warn(
+                "failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
+            )
+            throw error
+        }
+    
     }
     
     private func createConversationLocally(
@@ -192,5 +302,117 @@ public struct CreateChannelUseCase {
         }
         
         return localConversation
+    }
+    
+    // MARK: - Error handling
+    
+    private func handleNotClaimedKeyPackages(
+        failedUsers: Set<ZMUser>,
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        guard !failedUsers.isEmpty else {
+            return Flow.addParticipants
+                .checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
+        }
+        
+        let users = Set(users)
+        if failedUsers != users {
+            
+            // Operation was aborted because some users didn't have key packages
+            // We filter them out and retry once
+            Flow.addParticipants.checkpoint(description: "retrying failedUsers begin")
+            try await addMLSParticipants(
+                users.subtracting(failedUsers),
+                to: conversation
+            )
+            Flow.addParticipants.checkpoint(description: "retrying failedUsers end")
+        }
+        
+        let failedUserIds = await context.perform {
+            failedUsers.map { $0.remoteIdentifier.transportString() }
+        }
+        
+        Flow.addParticipants
+            .checkpoint(
+                description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))"
+            )
+        
+        await appendFailedToAddUsersMessage(
+            in: conversation,
+            users: users
+        )
+    }
+    
+    private func handleUnreachableDomains(
+        _ domains: Set<String>,
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        let unreachableUsers = await context.perform { users.belongingTo(domains: domains) }
+
+        if unreachableUsers.isEmpty {
+
+            /// Backend is not able to determine which users are unreachable.
+            /// We just insert a message and do not attempt to retry
+
+            await appendFailedToAddUsersMessage(
+                in: conversation,
+                users: Set(users)
+            )
+        } else {
+            try await retryAddingParticipants(
+                users,
+                to: conversation,
+                excludingDomains: domains
+            )
+        }
+    }
+    
+    private func handleNonFederatingDomains(
+        _ domains: Set<String>,
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        try await retryAddingParticipants(
+            users,
+            to: conversation,
+            excludingDomains: domains
+        )
+    }
+    
+    private func retryAddingParticipants(
+        _ users: Set<ZMUser>,
+        to conversation: ZMConversation,
+        excludingDomains domains: Set<String>
+    ) async throws {
+        let usersToExclude = await context.perform { users.belongingTo(domains: domains) }
+        let usersToAdd = Set(users).subtracting(usersToExclude)
+
+        await appendFailedToAddUsersMessage(
+            in: conversation,
+            users: usersToExclude
+        )
+
+        guard !usersToAdd.isEmpty else { return }
+
+        try await addMLSParticipants(
+            usersToAdd,
+            to: conversation
+        )
+    }
+    
+    private func appendFailedToAddUsersMessage(
+        in conversation: ZMConversation,
+        users: Set<ZMUser>
+    ) async {
+        await context.perform {
+            conversation.appendFailedToAddUsersSystemMessage(
+                users: users,
+                sender: conversation.creator,
+                at: conversation.lastServerTimeStamp ?? Date()
+            )
+            self.context.enqueueDelayedSave()
+        }
     }
 }
