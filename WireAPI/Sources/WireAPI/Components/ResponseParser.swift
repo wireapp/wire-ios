@@ -87,6 +87,19 @@ struct ResponseParser<Success> {
         }
         return copy
     }
+    
+    func failure<DecodableError: Decodable & Error>(
+        code: HTTPStatusCode,
+        decodableError: DecodableError.Type
+    ) -> ResponseParser<Success> {
+        var copy = self
+        copy.parseBlocks.append { httpCode, data in
+            guard let data, httpCode == code.rawValue else { return nil }
+            let failure = try decoder.decode(DecodableError.self, from: data)
+            throw failure
+        }
+        return copy
+    }
 
     func parse(_ response: HTTPResponse) throws -> Success {
         guard !parseBlocks.isEmpty else {

@@ -115,20 +115,30 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             requiringAccessToken: true
         )
         
-        return try ResponseParser()
-            .success(code: .ok, type: ConversationV5.self)
-            .success(code: .created, type: ConversationV5.self)
-            .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
-            .failure(code: .badRequest, label: "non-empty-member-list", error: ConversationsAPIError.nonEmptyMemberList)
-            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
-            .failure(code: .forbidden, label: "missing-legalhold-consent", error: ConversationsAPIError.missingLegalHoldConsent)
-            .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
-            .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
-            .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)
-            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
-            .failure(code: .conflict, error: ConversationsAPIError.nonFederatingBackends) // Introduced in v4
-            .failure(code: .unreachable, error: ConversationsAPIError.unreachableBackends) // Introduced in v4
-            .parse(code: response.statusCode, data: data)
+        do {
+            return try ResponseParser()
+                .success(code: .ok, type: ConversationV5.self)
+                .success(code: .created, type: ConversationV5.self)
+                .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
+                .failure(code: .badRequest, label: "non-empty-member-list", error: ConversationsAPIError.nonEmptyMemberList)
+                .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+                .failure(code: .forbidden, label: "missing-legalhold-consent", error: ConversationsAPIError.missingLegalHoldConsent)
+                .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
+                .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
+                .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)
+                .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+                .failure(code: .conflict, decodableError: NonFederatingBackendErrorResponseV4.self)
+                .failure(code: .unreachable, error: ConversationsAPIError.unreachableBackends)
+                .parse(code: response.statusCode, data: data)
+        } catch {
+            if let nonFederatingDomains = error as? NonFederatingBackendErrorResponseV4 {
+                throw ConversationsAPIError.nonFederatingBackends(
+                    nonFederatingDomains.nonFederatingBackends
+                )
+            } else {
+                throw error
+            }
+        }
     }
 }
 

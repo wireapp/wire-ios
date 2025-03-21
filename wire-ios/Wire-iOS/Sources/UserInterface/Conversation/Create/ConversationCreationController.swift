@@ -359,9 +359,8 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                         switch error {
                         case .missingLegalholdConsent:
                             showMissingLegalholdConsentAlert()
-                        case .nonFederatingDomains:
-                            // TODO: Pass domains from API error
-                            showNonFederatingDomainsAlert(domains: [])
+                        case .nonFederatingDomains(let domains):
+                            showNonFederatingDomainsAlert(domains: Set(domains))
                             
                         default:
                             showGenericErrorAlert()

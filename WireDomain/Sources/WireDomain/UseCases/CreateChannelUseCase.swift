@@ -29,7 +29,7 @@ public struct CreateChannelUseCase {
         case conversationNotFound
         case failedToCreateChannel(Error)
         case missingLegalholdConsent
-        case nonFederatingDomains
+        case nonFederatingDomains([String])
         case notConnected
     }
     
@@ -126,8 +126,8 @@ public struct CreateChannelUseCase {
                     throw Failure.notConnected
                 case .missingLegalHoldConsent:
                     throw Failure.missingLegalholdConsent
-                case .nonFederatingBackends:
-                    throw Failure.nonFederatingDomains
+                case .nonFederatingBackends(let domains):
+                    throw Failure.nonFederatingDomains(domains)
                 default:
                     throw Failure.failedToCreateChannel(error)
                 }

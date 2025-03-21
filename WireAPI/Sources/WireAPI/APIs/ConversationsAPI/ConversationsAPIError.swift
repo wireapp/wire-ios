@@ -71,7 +71,7 @@ public enum ConversationsAPIError: Error {
     case unsupportedChannelCreationForAPIEndpoint
     
     /// Non federating backends
-    case nonFederatingBackends
+    case nonFederatingBackends([String])
     
     /// Unreachable backends
     case unreachableBackends
