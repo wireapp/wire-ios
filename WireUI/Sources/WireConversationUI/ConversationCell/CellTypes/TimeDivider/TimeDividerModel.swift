@@ -24,7 +24,7 @@ public struct TimeDividerModel: ConversationCellModelProtocol {
     var text: String
     var isUnreadIndicatorVisible: Bool
 
-    init(
+    public init(
         text: String,
         isUnreadIndicatorVisible: Bool
     ) {
@@ -41,7 +41,7 @@ public struct TimeDividerModel: ConversationCellModelProtocol {
 
 }
 
-public extension ConversationCellModel {
+extension ConversationCellModel {
 
     static func timeDivider(
         text: String,
