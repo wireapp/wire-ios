@@ -282,7 +282,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
     private let _canBeCombinedWithOtherCells: () -> Bool
-    private let _topMargin: AnyMutableProperty<CGFloat>
+    private let _topMargin: AnyMutableProperty<CGFloat> // TODO: consider removing or adding bottomMargin
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
     private let _showEphemeralTimer: AnyConstantProperty<Bool>

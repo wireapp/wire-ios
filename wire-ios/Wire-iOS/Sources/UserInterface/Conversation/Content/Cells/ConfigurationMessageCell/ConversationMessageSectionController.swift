@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: set top and bottom margin, default 8, for subsequent messages 2
 import Foundation
 import WireSyncEngine
 
@@ -336,17 +335,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 buttonAction: { self.buttonAction() }
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
-        }
-
-        if
-            !context.isFirstMessageOfTheDay,
-            !context.isFirstUnreadMessage,
-            context.isSameSenderAsPrevious,
-            context.isTimestampInSameMinuteAsPreviousMessage,
-            !context.previousMessageIsKnock
-        {
-            //todo collapse subsequent
-            //cellDescriptions.first?.instance.topMargin
         }
 
         self.cellDescriptions = Self.combineByStacking(cellDescriptions)

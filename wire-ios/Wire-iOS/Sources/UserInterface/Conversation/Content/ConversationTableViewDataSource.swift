@@ -501,7 +501,9 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
-        reloadSections(newSections: calculateSections(updating: controller))
+        let sections = calculateSections(updating: controller)
+        adjustTopAndBottomMargins(of: sections)
+        reloadSections(newSections: sections)
     }
 
 }
@@ -561,6 +563,37 @@ extension ConversationTableViewDataSource {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp,
               let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
+    }
+
+    private func adjustTopAndBottomMargins(of sections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
+
+        // find subsequent messages and collapse space if needed
+        for currentIndex in sections.indices {
+
+            guard let current = sections[currentIndex].elements.first?.instance else { continue }
+
+            let previousIndex = currentIndex - 1
+            guard
+                sections.indices.contains(previousIndex),
+                let previous = sections[previousIndex].elements.last?.instance
+            else {
+                current.topMargin = 0
+                current.bottomMargin = 0
+                continue
+            }
+
+            if false { // TODO: add conditions
+                previous.bottomMargin = -6
+                current.topMargin = -6
+            } else {
+                previous.bottomMargin = 0
+                current.topMargin = 0
+            }
+
+            previous.topMargin = 0
+            current.bottomMargin = 0
+        }
+
     }
 
 }
