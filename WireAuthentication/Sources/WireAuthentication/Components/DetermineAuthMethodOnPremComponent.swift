@@ -85,6 +85,8 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
 
     func loginViaEmailComponent(
         email: String,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> LoginViaEmailComponent {
@@ -96,6 +98,8 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
         return LoginViaEmailComponent(
             parent: self,
             email: email,
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
             networkStack: networkStack
         )
     }
@@ -195,13 +199,11 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
     ) -> LoginViaEmailView {
         loginViaEmailComponent(
             email: email,
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
             environmentType: environmentType,
             backendConfig: backendConfig
-        ).view(
-            email: email,
-            canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
+        ).view
     }
 
     func loginViaSSOView(

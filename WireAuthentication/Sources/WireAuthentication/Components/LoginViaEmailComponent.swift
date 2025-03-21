@@ -39,6 +39,8 @@ protocol LoginViaEmailComponentDependency: Dependency {
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     private let email: String
+    private let canCreateAccount: Bool
+    private let didDetectDomainConflict: Bool
     public let networkStack: NetworkStack
 
     // TODO: delete these
@@ -55,9 +57,13 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     init(
         parent: any Scope,
         email: String,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
         networkStack: NetworkStack
     ) {
         self.email = email
+        self.canCreateAccount = canCreateAccount
+        self.didDetectDomainConflict = didDetectDomainConflict
         self.networkStack = networkStack
         self.environmentType = networkStack.environmentType
         self.backendConfig = networkStack.backendConfig
@@ -89,27 +95,15 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     // MARK: - View
 
     @MainActor
-    func view(
-        email: String,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
-    ) -> LoginViaEmailView {
+    var view: LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: viewModel(
-                email: email,
-                canCreateAccount: canCreateAccount,
-                didDetectDomainConflict: didDetectDomainConflict
-            ),
+            viewModel: viewModel,
             factory: self
         )
     }
 
     @MainActor
-    private func viewModel(
-        email: String,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
-    ) -> LoginViaEmailViewModel {
+    private var viewModel: LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
             factory: self,
@@ -119,7 +113,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency, backendEnvironment] in
+            onCreateAccount: { [dependency, email, backendEnvironment] in
                 guard let dependency else { return }
                 dependency.router.dismissSheet()
                 dependency.bridge.sendOutboundEvent(
