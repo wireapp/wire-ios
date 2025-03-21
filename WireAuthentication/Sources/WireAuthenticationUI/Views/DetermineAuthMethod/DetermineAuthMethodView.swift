@@ -38,9 +38,9 @@ package protocol DetermineAuthMethodBuilder {
 package struct DetermineAuthMethodView: View {
 
     package typealias Factory =
-    LoginViaEmailBuilder &
-    LoginViaSSOBuilder &
-    SwitchBackendConfirmationBuilder
+        LoginViaEmailBuilder &
+        LoginViaSSOBuilder &
+        SwitchBackendConfirmationBuilder
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 

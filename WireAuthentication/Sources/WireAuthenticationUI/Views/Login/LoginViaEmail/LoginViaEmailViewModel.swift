@@ -26,7 +26,7 @@ import WireReusableUIComponents
 package final class LoginViaEmailViewModel: ObservableObject {
 
     package typealias Factory =
-       LoginViaEmailUseCaseFactory &
+        LoginViaEmailUseCaseFactory &
         OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory
 
@@ -92,6 +92,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     func submitPassword(_ password: String) async {
         guard let email else { return }
 
+        isLoading = true
         let backendMetadata: WireAuthenticationAPI.BackendMetadata
         do {
             backendMetadata = try await resolveBackendMetadataIfNeeded()
@@ -159,6 +160,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
             }
         }
 
+        isLoading = false
     }
 
     func recoverPassword() {

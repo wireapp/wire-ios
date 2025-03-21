@@ -197,7 +197,6 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
         )
     }
 
-
     func loginViaSSOView(
         ssoURL: URL,
         backendEnvironment: WireAuthenticationBackendEnvironment

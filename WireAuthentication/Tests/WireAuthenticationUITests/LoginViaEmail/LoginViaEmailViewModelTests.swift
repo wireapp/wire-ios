@@ -27,7 +27,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-//class LoginViaEmailViewModelTests: XCTestCase {
+// class LoginViaEmailViewModelTests: XCTestCase {
 //
 //    private var router: MockRouter!
 //    private var loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
@@ -137,7 +137,8 @@ import XCTest
 //    func testSubmitPassword_when2FARequired() async {
 //        // given
 //        loginViaEmailUseCase
-//            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired
+//            .invokeEmailPasswordVerificationCode_MockError =
+//            LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired
 //        sut.password = "password"
 //
 //        // when
@@ -268,4 +269,4 @@ import XCTest
 //        XCTAssertFalse(sut.showPasswordRules)
 //    }
 //
-//}
+// }

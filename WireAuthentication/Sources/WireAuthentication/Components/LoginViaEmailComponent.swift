@@ -138,11 +138,11 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         )
         return LoginViaEmailUseCase(authenticationAPI: api)
     }
-    
+
     func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
         OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
-    
+
     func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
         let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
         return ResolveBackendMetadataUseCase(
@@ -151,5 +151,5 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             preferredAPIVersion: dependency.preferredAPIVersion
         )
     }
-    
+
 }

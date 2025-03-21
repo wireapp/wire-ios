@@ -38,7 +38,7 @@ package protocol LoginViaEmailBuilder {
 package struct LoginViaEmailView: View {
 
     package typealias Factory = VerificationCodeBuilder
-    
+
     @StateObject var viewModel: LoginViaEmailViewModel
 
     @State private var password: String = ""
@@ -257,4 +257,3 @@ package struct LoginViaEmailView: View {
             )
         }
 }
-

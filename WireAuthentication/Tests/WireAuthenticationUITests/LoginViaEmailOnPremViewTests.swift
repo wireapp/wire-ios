@@ -24,7 +24,7 @@ import XCTest
 @testable import WireAuthenticationAPI
 @testable import WireAuthenticationUI
 
-//class LoginViaEmailOnPremViewTests: XCTestCase {
+// class LoginViaEmailOnPremViewTests: XCTestCase {
 //
 //    private var snapshotHelper: SnapshotHelper!
 //
@@ -148,4 +148,4 @@ import XCTest
 //        }
 //    }
 //
-//}
+// }

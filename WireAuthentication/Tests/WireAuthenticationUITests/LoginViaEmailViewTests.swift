@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-//class LoginViaEmailViewTests: XCTestCase {
+// class LoginViaEmailViewTests: XCTestCase {
 //
 //    private var snapshotHelper: SnapshotHelper!
 //    private let backendMetadata = BackendMetadata(
@@ -131,4 +131,4 @@ import XCTest
 //        }
 //    }
 //
-//}
+// }
