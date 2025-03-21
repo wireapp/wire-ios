@@ -69,7 +69,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         useInvertedIndices ? cellDescriptions.reversed() : cellDescriptions
     }
 
-    private(set) var context: ConversationMessageContext
+    private(set) var currentContext: ConversationMessageContext
+    private(set) var previousContext: ConversationMessageContext?
 
     /// Whether we need to use inverted indices. This is `true` when the table view is upside down.
     private let useInvertedIndices: Bool
@@ -108,13 +109,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     init(
         message: ConversationMessage,
-        context: ConversationMessageContext,
+        currentContext: ConversationMessageContext,
+        previousContext: ConversationMessageContext?,
         selected: Bool = false,
         userSession: UserSession,
         useInvertedIndices: Bool
     ) {
         self.message = message
-        self.context = context
+        self.currentContext = currentContext
+        self.previousContext = previousContext
         self.selected = selected
         self.isCollapsed = true
         self.userSession = userSession
@@ -122,7 +125,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         super.init()
 
-        createCellDescriptions(in: context)
+        createCellDescriptions(in: currentContext)
 
         startObservingChanges(for: message)
 
@@ -192,7 +195,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private func addTextMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
         ConversationTextMessageCellDescription
-            .cells(for: message, searchQueries: context.searchQueries, showEphemeralTimer: showEphemeralTimer)
+            .cells(for: message, searchQueries: currentContext.searchQueries, showEphemeralTimer: showEphemeralTimer)
     }
 
     private func addLocationMessageCells(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -248,7 +251,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 cells += ConversationTextMessageCellDescription.cells(
                     textMessageData: data,
                     message: message,
-                    searchQueries: context.searchQueries,
+                    searchQueries: currentContext.searchQueries,
                     showEphemeralTimer: showEphemeralTimer
                 )
 
@@ -345,6 +348,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             context.isTimestampInSameMinuteAsPreviousMessage,
             !context.previousMessageIsKnock
         {
+            //todo collapse subsequent
             //cellDescriptions.first?.instance.topMargin
         }
 
@@ -383,16 +387,16 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func updateDelegates() {
-        cellDescriptions.forEach {
-            $0.message = message
-            $0.actionController = actionController
-            $0.delegate = cellDelegate
+        cellDescriptions.forEach { cellDescription in
+            cellDescription.message = message
+            cellDescription.actionController = actionController
+            cellDescription.delegate = cellDelegate
         }
     }
 
-    func recreateCellDescriptions(in context: ConversationMessageContext) {
-        self.context = context
-        createCellDescriptions(in: context)
+    func recreateCellDescriptions(in currentContext: ConversationMessageContext) {
+        self.currentContext = currentContext
+        createCellDescriptions(in: currentContext)
         updateDelegates()
     }
 
