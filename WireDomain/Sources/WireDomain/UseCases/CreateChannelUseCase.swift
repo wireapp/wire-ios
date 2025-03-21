@@ -144,7 +144,19 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 case .missingLegalHoldConsent:
                     throw Failure.missingLegalholdConsent
                 case .nonFederatingBackends(let domains):
-                    throw Failure.nonFederatingDomains(Set(domains))
+                    do {
+                       return try await retryExcludingDomains(
+                            domains,
+                            teamID: teamID,
+                            name: name,
+                            accessMode: accessMode,
+                            accessRoles: accessRoles,
+                            enableReceipts: enableReceipts,
+                            users: users
+                        )
+                    } catch {
+                        throw Failure.nonFederatingDomains(Set(domains))
+                    }
                 default:
                     throw Failure.failedToCreateChannel(error)
                 }
@@ -156,15 +168,56 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
 
     }
     
+    // MARK: - API error handling
+    
+    private func retryExcludingDomains(
+        _ excludedDomains: [String],
+        teamID: UUID,
+        name: String?,
+        accessMode: Set<WireAPI.ConversationAccessMode>,
+        accessRoles: Set<WireAPI.ConversationAccessRole>,
+        enableReceipts: Bool,
+        users: Set<ZMUser>
+    ) async throws -> ZMConversation {
+        let (unreachableUsers, reachableUsers) = await context.perform {
+            let unreachableUsers = users.belongingTo(domains: Set(excludedDomains))
+            let reachableUsers = Set(users).subtracting(unreachableUsers)
+            
+            return (unreachableUsers, reachableUsers)
+        }
+        
+        // Retrying with reachable users (with federated domains)
+        let conversation = try await invoke(
+            teamID: teamID,
+            name: name,
+            users: users,
+            accessMode: accessMode,
+            accessRoles: accessRoles,
+            enableReceipts: enableReceipts
+        )
+        
+        // Add system message for unreachable users (with non federated domains)
+        await appendFailedToAddUsersMessage(
+            in: conversation,
+            users: unreachableUsers
+        )
+        
+        return conversation
+    }
+    
+    // MARK: - MLS
+    
     private func setupMLS(
         for conversation: ZMConversation,
         with participants: Set<ZMUser>
     ) async throws {
-        let (mlsGroupID, mlsService) = await context.perform {
-            (conversation.mlsGroupID, context.mlsService)
+        let (mlsGroupID, mlsService, isMLSConversation) = await context.perform {
+            (conversation.mlsGroupID,
+             context.mlsService,
+             conversation.messageProtocol == .mls)
         }
         
-        guard let mlsGroupID, let mlsService else { return }
+        guard isMLSConversation, let mlsGroupID, let mlsService else { return }
         
         let ciphersuite = try await mlsService.createGroup(
             for: mlsGroupID,
@@ -304,7 +357,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         return localConversation
     }
     
-    // MARK: - Error handling
+    // MARK: - MLS error handling
     
     private func handleNotClaimedKeyPackages(
         failedUsers: Set<ZMUser>,
