@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import SwiftUIIntrospect
 
 package struct RootView: View {
     
@@ -39,14 +40,10 @@ package struct RootView: View {
     }
     
     package var body: some View {
-        ZStack {
-            BackgroundView()
-            Color.clear
-                .frame(width: 390, height: 422)
-                .universalSheet(item: $viewModel.modalDestination) { item in
-                    sheetContent(for: item)
-                }
-        }
+        BackgroundView()
+            .universalSheet(item: $viewModel.modalDestination) { item in
+                sheetContent(for: item)
+            }
     }
     
     @ViewBuilder
@@ -56,6 +53,7 @@ package struct RootView: View {
             NavigationStack(path: $viewModel.path) {
                 factory.determineAuthMethodView()
             }
+            
         case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
             NavigationStack(path: $viewModel.path) {
                 factory.determineAuthMethodView(
@@ -64,6 +62,7 @@ package struct RootView: View {
                     backendMetadata: backendMetadata
                 )
             }
+            
         case let .noHistory(
             authenticationResult,
             didDetectDomainConflict
@@ -126,7 +125,7 @@ package struct RootView: View {
 
 extension View {
     
-    nonisolated public func universalSheet<Item, Content>(
+    public func universalSheet<Item, Content>(
         item: Binding<Item?>,
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping (Item) -> Content
@@ -144,39 +143,21 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
     @ViewBuilder
     func body(content: Content) -> some View {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            content.overlaySheet(item: $item, onDismiss: onDismiss, content: self.content)
+            content
+                .overlay {
+                    if let item {
+                        self.content(item)
+                            .introspect(.navigationStack, on: .iOS(.v16,.v17,.v18)) { stack in
+                                stack.topViewController?.view.backgroundColor = .white
+                                // .cornerRadius from SwiftUI will mess with touch area, when keyboard is active and after
+                                stack.view?.layer.cornerRadius = 10
+                            }
+                            .frame(width: 390, height: 420)
+                    }
+                }
+
         } else {
             content.sheet(item: $item, onDismiss: onDismiss, content: self.content)
         }
-    }
-}
-
-extension View {
-    
-    
-    nonisolated public func overlaySheet<Item, Content>(
-        item: Binding<Item?>,
-        onDismiss: (() -> Void)? = nil,
-        @ViewBuilder content: @escaping (Item) -> Content
-    ) -> some View where Item: Identifiable, Content: View {
-        self.overlay(
-            Group {
-                if let value = item.wrappedValue {
-                    ZStack {
-                        Color.clear
-                            .contentShape(Rectangle())
-                            .allowsHitTesting(false) // Prevents background blocking taps
-                        content(value)
-                            .background(Color.white)
-                            .cornerRadius(10)
-                            .shadow(radius: 10)
-                            .contentShape(Rectangle()) // Ensures only visible parts are interactive
-                            .allowsHitTesting(true) // Ensures taps go directly to content
-                    }
-                    .transition(.opacity)
-                }
-            }
-                .animation(.easeInOut, value: item.wrappedValue != nil)
-        )
     }
 }
