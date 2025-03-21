@@ -38,25 +38,11 @@ class WireConversationGroupIconTests: XCTestCase {
     }
 
     @MainActor
-    func testColorSchemeVariantsEmptyState() {
-        let view = viewFactory.create(conversationID: conversationID)
-            .frame(width: 40, height: 40)
-            .padding()
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
     func testDynamicTypeVariantsEmptyState() {
         let view = viewFactory.create(conversationID: conversationID)
             .frame(width: 40, height: 40)
             .padding()
-
+        
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
                 .verify(
@@ -64,5 +50,18 @@ class WireConversationGroupIconTests: XCTestCase {
                     named: "\(dynamicTypeSize)"
                 )
         }
+    }
+    
+    @MainActor
+    func testColorSchemeVariantsEmptyState_uiKitView() {
+        let view = viewFactory.createUIKit(conversationID: conversationID)
+        view.frame = .init(x: 0, y: 0, width: 40, height: 40)
+        
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
     }
 }

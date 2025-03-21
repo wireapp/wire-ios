@@ -31,20 +31,16 @@ final class ConversationGroupAvatarView: UIView {
     func configure(context: Context) {
         let conversation = context.conversation
         self.conversation = conversation
+        
+        guard let id = context.conversation.qualifiedID?.uuid.uuidString else {
+            return
+        }
+        let iconView = WireConversationGroupIconFactory().createUIKit(conversationID: id)
 
-        let iconView = Self.iconView(for: context.conversation.qualifiedID)
-
-        let hostingVC = UIHostingController(rootView: iconView)
-        hostingVC.view.frame = iconContainer.frame
-        hostingVC.view.clipsToBounds = true
-
-        iconViewController?.removeFromParent()
-        iconViewController?.view.removeFromSuperview()
-
-        iconContainer.addSubview(hostingVC.view)
-        iconViewController = hostingVC
-        attachToNearestViewController(childVC: hostingVC)
-
+        iconContainer.removeSubviews()
+        iconContainer.addSubview(iconView)
+        iconView.fitIn(view: iconContainer)
+        
         accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
     }
 
@@ -60,8 +56,6 @@ final class ConversationGroupAvatarView: UIView {
         view.layer.cornerRadius = 4
         return view
     }()
-
-    private var iconViewController: UIViewController?
 
     init() {
         super.init(frame: .zero)
@@ -83,38 +77,8 @@ final class ConversationGroupAvatarView: UIView {
         }
 
         iconContainer.frame = bounds
-        iconViewController?.view.frame = iconContainer.frame
 
         layer.cornerRadius = 6
         iconContainer.layer.cornerRadius = 4
-    }
-
-    // An ugly hack to get the view controller so we can properly tie our icon's UIHostingController to it
-    // in order to preserve the SwiftUI lifecycle. This is necessary because the view controller is not available.
-    private func attachToNearestViewController(childVC: UIViewController) {
-        guard let parentVC = findViewController() else { return }
-
-        parentVC.addChild(childVC)
-        childVC.didMove(toParent: parentVC)
-    }
-
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while let nextResponder = responder?.next {
-            if let viewController = nextResponder as? UIViewController {
-                return viewController
-            }
-            responder = nextResponder
-        }
-        return nil
-    }
-
-    @ViewBuilder
-    private static func iconView(for qualifiedID: QualifiedID?) -> some View {
-        if let qualifiedID {
-            WireConversationGroupIconFactory().create(conversationID: qualifiedID.uuid.uuidString)
-        } else {
-            EmptyView()
-        }
     }
 }
