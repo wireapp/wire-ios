@@ -27,19 +27,23 @@ import XCTest
 final class DetermineAuthMethodUseCaseTests: XCTestCase {
 
     private var mockAuthenticationAPI: MockAuthenticationAPI!
+    private var session: URLSession!
     private var sut: DetermineAuthMethodUseCase!
 
     override func setUp() {
         mockAuthenticationAPI = MockAuthenticationAPI()
+        session = .mockURLSession()
 
         sut = DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase(),
-            authenticationAPI: mockAuthenticationAPI
+            authenticationAPI: mockAuthenticationAPI,
+            urlSession: session
         )
     }
 
     override func tearDown() {
         mockAuthenticationAPI = nil
+        session = nil
         sut = nil
     }
 
@@ -113,10 +117,6 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             (
                 config: .make(domainRedirect: .sso, ssoCodeString: someSSO.uuidString),
                 expected: .loginViaSSO(code: someSSO)
-            ),
-            (
-                config: .make(backendURLString: someBackendURL.absoluteString, domainRedirect: .backend),
-                expected: .onPremLogin(email: email, backendConfig: someBackendURL)
             )
         ]
 
@@ -154,6 +154,54 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
 
         // when, then
         await XCTAssertThrowsErrorAsync(URLError(.notConnectedToInternet)) { [self] in
+            _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
+        }
+    }
+
+    func testInvoke_withEmail_onPremLogin_whenSuccess() async throws {
+        // given
+        let backendURL = URL(string: "https://backend.example.com/config")!
+        let configJsonURL = URL(string: "https://example.com/deeplink.json")!
+        let json = """
+        {
+            "config_json_url": "\(configJsonURL.absoluteString)",
+            "webapp_welcome_url": "https://webapp.example.com/"
+        }
+        """
+        let data = json.data(using: .utf8)!
+
+        mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration.make(
+            backendURLString: backendURL.absoluteString,
+            domainRedirect: .backend
+        )
+        URLProtocolMock.mockHandler = { request in
+            XCTAssertEqual(request.url, backendURL)
+            return (data, HTTPURLResponse(url: backendURL, statusCode: 200, httpVersion: nil, headerFields: nil)!)
+        }
+
+        // when
+        let authMethod = try await sut.invoke(emailOrSSOCode: "user@example.com")
+
+        // then
+        XCTAssertEqual(authMethod, .onPremLogin(email: "user@example.com", backendConfig: configJsonURL))
+    }
+
+    func testInvoke_onPremLogin_WhenBackendConfigJsonURLIsMissing() async throws {
+        // given
+        let backendURL = URL(string: "https://backend.example.com/config")!
+        let jsonData = Data("{}".utf8)
+
+        mockAuthenticationAPI.getDomainRegistrationForEmail_MockValue = DomainRegistrationConfiguration.make(
+            backendURLString: backendURL.absoluteString,
+            domainRedirect: .backend
+        )
+        URLProtocolMock.mockHandler = { request in
+            XCTAssertEqual(request.url, backendURL)
+            return (jsonData, HTTPURLResponse(url: backendURL, statusCode: 200, httpVersion: nil, headerFields: nil)!)
+        }
+
+        // when, then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidResponse) { [self] in
             _ = try await sut.invoke(emailOrSSOCode: "user@example.com")
         }
     }
