@@ -68,7 +68,7 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata,
-            canExitFlow: dependency.existsAnotherAccount
+            existsAnotherAccount: dependency.existsAnotherAccount
         )
     }
 
