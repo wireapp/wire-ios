@@ -79,8 +79,8 @@ struct ResponseParser<Success> {
         error: some Error
     ) -> ResponseParser<Success> {
         var copy = self
-        copy.parseBlocks.append { _, data in
-            guard let data else { return nil }
+        copy.parseBlocks.append { httpCode, data in
+            guard let data, httpCode == code.rawValue else { return nil }
             let failure = try decoder.decode(FailureResponse.self, from: data)
             guard failure.code == code.rawValue, failure.label == label else { return nil }
             throw error

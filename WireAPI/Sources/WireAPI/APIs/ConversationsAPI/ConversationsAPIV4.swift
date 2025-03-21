@@ -118,8 +118,7 @@ class ConversationsAPIV4: ConversationsAPIV3 {
                 .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
                 .failure(
                     code: .conflict,
-                    decodableError: NonFederatingBackendErrorResponseV4
-                        .self
+                    decodableError: NonFederatingBackendErrorResponseV4.self
                 ) // Introduced in v4, provides a custom error object to decode
                 .failure(code: .unreachable, error: ConversationsAPIError.unreachableBackends) // Introduced in v4
                 .parse(code: response.statusCode, data: data)
