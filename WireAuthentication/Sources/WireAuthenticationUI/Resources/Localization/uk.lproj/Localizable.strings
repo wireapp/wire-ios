@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Скасувати";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Не вдалося переключити сервер";
+"switch_backend.error.message.logged_in" = "Ви вже увійшли. Вийдіть з усіх акаунтів та повторіть спробу, щоб переключитися на інший сервер.";
 
 "verification_code.title" = "Ви отримали нового листа";
 "verification_code.message" = "Введіть код, який ми вислали на %@.";

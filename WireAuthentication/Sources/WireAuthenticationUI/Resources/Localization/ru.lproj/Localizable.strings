@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Продолжить";
 "switch_backend_confirmation.cancel" = "Отмена";
 "switch_backend_confirmation.show_details" = "Подробнее";
+"switch_backend.error.title.logged_in" = "Невозможно переключить серверы";
+"switch_backend.error.message.logged_in" = "Вы уже авторизованы. Чтобы переключиться на этот сервер, выйдите из всех учетных записей и повторите попытку.";
 
 "verification_code.title" = "Вам письмо";
 "verification_code.message" = "Введите код подтверждения, который мы отправили на %@.";

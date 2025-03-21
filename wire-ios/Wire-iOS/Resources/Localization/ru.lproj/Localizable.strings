@@ -642,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Удаление…";
 
+"content.collapsed.file.title" = "Вы отправили файл";
+"content.collapsed.image.title" = "Вы отправили изображение";
+"content.collapsed.video.title" = "Вы отправили видео";
+"content.collapsed.audio.title" = "Вы отправили аудиосообщение";
+"content.collapsed.location.title" = "Вы отправили свое местоположение";
+
 "content.message.like" = "Нравится";
 "content.message.unlike" = "Не нравится";
 "content.message.go_to_conversation" = "Показать";
@@ -652,6 +658,7 @@
 "content.message.download" = "Загрузить";
 "content.message.details" = "Профиль";
 "content.message.reactions" = "Реакции";
+"content.message.collapse" = "Свернуть";
 
 // Reply
 "content.message.reply" = "Ответить";
@@ -1312,6 +1319,9 @@
 
 "self.settings.privacy_security.disable_link_previews.title" = "Показывать предпросмотр отправляемых вами ссылок";
 "self.settings.privacy_security.disable_link_previews.footer" = "Эта опция не влияет на предварительный просмотр ссылок от других пользователей.";
+
+"self.settings.privacy_security.collapse_own_messages.title" = "Свернуть собственные сообщения";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Если эта опция включена, все ваши сообщения сворачиваются в одну строку.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Устройства";
 
