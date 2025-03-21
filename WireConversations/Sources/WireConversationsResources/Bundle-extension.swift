@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 
-@MainActor
-public protocol SidebarViewControllerDelegate: AnyObject {
-    func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController)
-    func sidebarViewController(_ viewController: SidebarViewController, didTapFoldersMenuItem frame: CGRect)
-    func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarSelectableMenuItem)
-    func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController)
+package extension Bundle {
+    static var resources: Bundle {
+        .module
+    }
 }

@@ -16,4 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import SwiftUI
+public import WireConversationsAPI
+import WireConversationsImplementation
+import WireConversationsUI
+import WireFoundation
 
+public final class WireConversationTypePickerFactory {
+    public init() {}
+
+    @MainActor
+    public func create(
+        availableConversationTypes: Set<WireConversationType>,
+        onConversationTypeSelected: @escaping @Sendable (WireConversationType) -> Void
+    ) -> some View {
+        WireConversationTypePicker(
+            availableConversationTypes: availableConversationTypes,
+            onConversationTypeSelected: onConversationTypeSelected
+        )
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    }
+}
