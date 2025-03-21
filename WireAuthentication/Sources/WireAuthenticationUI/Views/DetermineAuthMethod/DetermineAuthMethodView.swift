@@ -109,7 +109,7 @@ package struct DetermineAuthMethodView: View {
             }.padding()
         }
         .toolbar {
-            if viewModel.canExitFlow {
+            if viewModel.existsAnotherAccount {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         viewModel.exitFlow()
@@ -236,13 +236,13 @@ extension Alert {
 @MainActor
 func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
-    canExitFlow: Bool = false,
+    existsAnotherAccount: Bool = false,
     isLoading: Bool = false,
     alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
-        canExitFlow: canExitFlow,
+        existsAnotherAccount: existsAnotherAccount,
         isLoading: isLoading,
         alert: alert
     )
@@ -254,7 +254,7 @@ func makeDetermineAuthMethodViewPreview(
             NavigationStack {
                 makeDetermineAuthMethodViewPreview(
                     emailOrSSOCode: "user@wire.com",
-                    canExitFlow: false,
+                    existsAnotherAccount: false,
                     isLoading: false,
                     alert: nil
                 )
@@ -268,7 +268,7 @@ func makeDetermineAuthMethodViewPreview(
             NavigationStack {
                 makeDetermineAuthMethodViewPreview(
                     emailOrSSOCode: "user@wire.com",
-                    canExitFlow: true,
+                    existsAnotherAccount: true,
                     isLoading: false,
                     alert: nil
                 )

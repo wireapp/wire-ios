@@ -81,7 +81,7 @@ class DetermineAuthMethodViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            makeDetermineAuthMethodViewPreview(canExitFlow: true)
+            makeDetermineAuthMethodViewPreview(existsAnotherAccount: true)
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
