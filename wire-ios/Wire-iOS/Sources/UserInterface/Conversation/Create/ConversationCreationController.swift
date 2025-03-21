@@ -17,13 +17,13 @@
 //
 
 import UIKit
+import WireAPI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomain
 import WireLogging
 import WireSyncEngine
-import WireDomain
-import WireAPI
 
 protocol ConversationCreationControllerDelegate: AnyObject {
 
@@ -303,12 +303,12 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             let users = values.participants
                 .union([userSession.selfUser])
                 .materialize(in: userSession.viewContext)
-            
+
             let team = userSession.syncContext.performAndWait {
                 let selfUser = ZMUser.selfUser(in: userSession.syncContext)
                 return selfUser.teamIdentifier
             }
-            
+
             Task { @MainActor in
                 if canCreateChannel(for: team) {
                     await createChannel(
@@ -316,7 +316,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                         session: userSession,
                         users: users
                     )
-                    
+
                 } else {
                     await createGroupConversation(
                         teamID: team,
@@ -324,13 +324,12 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                         users: users
                     )
                 }
-                
+
                 addParticipantsViewController.setLoadingView(isVisible: false)
             }
-            
         }
     }
-    
+
     /// Checks whether a channel can be created, conditions are:
     /// - conversation message protocol is MLS
     /// - conversation belongs to a team
@@ -342,15 +341,15 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         guard let backendInfoApiVersion = BackendInfo.apiVersion else {
             return false
         }
-        
+
         let isMLSConversation = values.encryptionProtocol == .mls
         let isMLSEnabled = BackendInfo.isMLSEnabled
         let isAPIVersionValid = backendInfoApiVersion >= .v8
         let isTeam = teamID != nil
-        
+
         return isMLSConversation && isMLSEnabled && isAPIVersionValid && isTeam
     }
-    
+
     private func createChannel(
         teamID: UUID,
         session: ZMUserSession,
@@ -359,15 +358,15 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else { return }
-        
+
         let context = session.syncContext
-        
+
         let channelUseCase = makeCreateChannelUseCase(
             apiService: apiService,
             apiVersion: apiVersion,
             context: context
         )
-        
+
         let accessMode: [WireAPI.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
@@ -375,7 +374,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         ).compactMap {
             WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
         }
-        
+
         do {
             let conversation = try await channelUseCase.invoke(
                 teamID: teamID,
@@ -385,20 +384,21 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 accessRoles: Set(accessRoles),
                 enableReceipts: values.enableReceipts
             )
-            
+
             delegate?.conversationCreationController(
                 self,
                 didCreateConversation: conversation
             )
-            
+
         } catch let error as CreateChannelUseCase.Failure {
-            
+
             switch error {
             case .missingLegalholdConsent:
                 showMissingLegalholdConsentAlert()
-            case .nonFederatingDomains(let domains):
+
+            case let .nonFederatingDomains(domains):
                 showNonFederatingDomainsAlert(domains: Set(domains))
-                
+
             default:
                 WireLogger.conversation.error(
                     "failed to create conversation: \(String(describing: error))"
@@ -412,7 +412,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             showGenericErrorAlert()
         }
     }
-    
+
     private func createGroupConversation(
         teamID: UUID?,
         session: ZMUserSession,
@@ -421,15 +421,15 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else { return }
-        
+
         let context = session.syncContext
-        
+
         let groupConversationUseCase = makeCreateGroupConversationUseCase(
             apiService: apiService,
             apiVersion: apiVersion,
             context: context
         )
-        
+
         let accessMode: [WireAPI.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
@@ -437,16 +437,16 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         ).compactMap {
             WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
         }
-        
+
         let conversationMessageProtocol: WireAPI.ConversationMessageProtocol = switch values.encryptionProtocol {
         case .mls:
-                .mls
+            .mls
         case .proteus:
-                .proteus
+            .proteus
         case .mixed:
-                .mixed
+            .mixed
         }
-        
+
         do {
             let conversation = try await groupConversationUseCase.invoke(
                 teamID: teamID,
@@ -458,20 +458,21 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 enableReceipts: values.enableReceipts,
                 isMLSEnabled: BackendInfo.isMLSEnabled
             )
-            
+
             delegate?.conversationCreationController(
                 self,
                 didCreateConversation: conversation
             )
-            
+
         } catch let error as CreateGroupConversationUseCase.Failure {
-            
+
             switch error {
             case .missingLegalholdConsent:
                 showMissingLegalholdConsentAlert()
-            case .nonFederatingDomains(let domains):
+
+            case let .nonFederatingDomains(domains):
                 showNonFederatingDomainsAlert(domains: Set(domains))
-                
+
             default:
                 WireLogger.conversation.error(
                     "failed to create conversation: \(String(describing: error))"
@@ -485,7 +486,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             showGenericErrorAlert()
         }
     }
-    
+
     private func makeCreateChannelUseCase(
         apiService: any APIServiceProtocol,
         apiVersion: WireAPI.APIVersion,
@@ -494,20 +495,20 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let conversationsAPI = ConversationsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
-        
+
         let userLocalStore = UserLocalStore(context: context)
         let messageLocalStore = MessageLocalStore(
             context: context,
             userLocalStore: userLocalStore
         )
-        
+
         let store = ConversationLocalStore(
             context: context,
             mlsService: nil,
             userLocalStore: userLocalStore,
             messageLocalStore: messageLocalStore
         )
-        
+
         return CreateChannelUseCase(
             api: conversationsAPI,
             store: store,
@@ -515,7 +516,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             isFederationEnabled: BackendInfo.isFederationEnabled
         )
     }
-    
+
     private func makeCreateGroupConversationUseCase(
         apiService: any APIServiceProtocol,
         apiVersion: WireAPI.APIVersion,
@@ -524,20 +525,20 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         let conversationsAPI = ConversationsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
-        
+
         let userLocalStore = UserLocalStore(context: context)
         let messageLocalStore = MessageLocalStore(
             context: context,
             userLocalStore: userLocalStore
         )
-        
+
         let store = ConversationLocalStore(
             context: context,
             mlsService: nil,
             userLocalStore: userLocalStore,
             messageLocalStore: messageLocalStore
         )
-        
+
         return CreateGroupConversationUseCase(
             api: conversationsAPI,
             store: store,

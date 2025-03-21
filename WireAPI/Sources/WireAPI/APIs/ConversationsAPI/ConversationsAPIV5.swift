@@ -71,7 +71,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
             .parse(code: response.statusCode, data: data)
     }
-    
+
     override func createGroupConversation(
         groupType: ConversationGroupType,
         messageProtocol: ConversationMessageProtocol,
@@ -88,7 +88,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         guard groupType != .channel else {
             throw ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint
         }
-        
+
         let parameters = CreateGroupConversationParametersV3(
             users: messageProtocol == .proteus ? unqualifiedUserIDs : nil,
             qualifiedUsers: messageProtocol == .proteus ? qualifiedUserIDs : nil,
@@ -97,11 +97,11 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             name: name,
             team: teamID.map { .init(teamID: $0) },
             messageTimer: nil,
-            readReceiptMode: isReadReceiptsEnabled ? 1: 0,
+            readReceiptMode: isReadReceiptsEnabled ? 1 : 0,
             conversationRole: "wire_member",
             messageProtocol: messageProtocol.rawValue
         )
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)"
 
@@ -114,15 +114,23 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             request,
             requiringAccessToken: true
         )
-        
+
         do {
             return try ResponseParser()
                 .success(code: .ok, type: ConversationV5.self)
                 .success(code: .created, type: ConversationV5.self)
                 .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
-                .failure(code: .badRequest, label: "non-empty-member-list", error: ConversationsAPIError.nonEmptyMemberList)
+                .failure(
+                    code: .badRequest,
+                    label: "non-empty-member-list",
+                    error: ConversationsAPIError.nonEmptyMemberList
+                )
                 .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
-                .failure(code: .forbidden, label: "missing-legalhold-consent", error: ConversationsAPIError.missingLegalHoldConsent)
+                .failure(
+                    code: .forbidden,
+                    label: "missing-legalhold-consent",
+                    error: ConversationsAPIError.missingLegalHoldConsent
+                )
                 .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
                 .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
                 .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)

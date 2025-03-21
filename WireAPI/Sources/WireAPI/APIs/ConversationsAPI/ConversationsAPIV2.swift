@@ -43,7 +43,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
             .parse(code: response.statusCode, data: data)
     }
-    
+
     override func createGroupConversation(
         groupType: ConversationGroupType,
         messageProtocol: ConversationMessageProtocol,
@@ -60,7 +60,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
         guard groupType != .channel else {
             throw ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint
         }
-        
+
         let parameters = CreateGroupConversationParametersV2(
             users: messageProtocol == .proteus ? unqualifiedUserIDs : nil,
             qualifiedUsers: messageProtocol == .proteus ? qualifiedUserIDs : nil,
@@ -70,12 +70,12 @@ class ConversationsAPIV2: ConversationsAPIV1 {
             name: name,
             team: teamID.map { .init(teamID: $0) },
             messageTimer: nil,
-            readReceiptMode: isReadReceiptsEnabled ? 1: 0,
+            readReceiptMode: isReadReceiptsEnabled ? 1 : 0,
             conversationRole: "wire_member",
             messageProtocol: messageProtocol.rawValue,
             creatorClient: messageProtocol == .proteus ? nil : creatorClientID
         )
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)"
 
@@ -88,13 +88,17 @@ class ConversationsAPIV2: ConversationsAPIV1 {
             request,
             requiringAccessToken: true
         )
-        
+
         return try ResponseParser()
             .success(code: .ok, type: ConversationV0.self)
             .success(code: .created, type: ConversationV0.self)
             .failure(code: .badRequest, label: "non-empty-member-list", error: ConversationsAPIError.nonEmptyMemberList)
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
-            .failure(code: .forbidden, label: "missing-legalhold-consent", error: ConversationsAPIError.missingLegalHoldConsent)
+            .failure(
+                code: .forbidden,
+                label: "missing-legalhold-consent",
+                error: ConversationsAPIError.missingLegalHoldConsent
+            )
             .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
             .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)
@@ -119,7 +123,7 @@ struct CreateGroupConversationParametersV2: Encodable {
     let conversationRole: String?
     let messageProtocol: String
     let creatorClient: String? // v2 only
-    
+
     enum CodingKeys: String, CodingKey {
         case users
         case qualifiedUsers = "qualified_users"

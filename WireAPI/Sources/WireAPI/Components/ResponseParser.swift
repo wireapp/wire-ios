@@ -87,7 +87,7 @@ struct ResponseParser<Success> {
         }
         return copy
     }
-    
+
     func failure<DecodableError: Decodable & Error>(
         code: HTTPStatusCode,
         decodableError: DecodableError.Type

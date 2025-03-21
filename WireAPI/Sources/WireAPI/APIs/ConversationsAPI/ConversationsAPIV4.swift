@@ -52,7 +52,7 @@ class ConversationsAPIV4: ConversationsAPIV3 {
             .failure(code: .conflict, label: "guest-links-disabled", error: ConversationsAPIError.guestLinksDisabled)
             .parse(code: response.statusCode, data: data)
     }
-    
+
     override func createGroupConversation(
         groupType: ConversationGroupType,
         messageProtocol: ConversationMessageProtocol,
@@ -69,7 +69,7 @@ class ConversationsAPIV4: ConversationsAPIV3 {
         guard groupType != .channel else {
             throw ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint
         }
-        
+
         let parameters = CreateGroupConversationParametersV3(
             users: messageProtocol == .proteus ? unqualifiedUserIDs : nil,
             qualifiedUsers: messageProtocol == .proteus ? qualifiedUserIDs : nil,
@@ -78,11 +78,11 @@ class ConversationsAPIV4: ConversationsAPIV3 {
             name: name,
             team: teamID.map { .init(teamID: $0) },
             messageTimer: nil,
-            readReceiptMode: isReadReceiptsEnabled ? 1: 0,
+            readReceiptMode: isReadReceiptsEnabled ? 1 : 0,
             conversationRole: "wire_member",
             messageProtocol: messageProtocol.rawValue
         )
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)"
 
@@ -95,20 +95,32 @@ class ConversationsAPIV4: ConversationsAPIV3 {
             request,
             requiringAccessToken: true
         )
-        
+
         do {
             return try ResponseParser()
                 .success(code: .ok, type: ConversationV3.self)
                 .success(code: .created, type: ConversationV3.self)
                 .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
-                .failure(code: .badRequest, label: "non-empty-member-list", error: ConversationsAPIError.nonEmptyMemberList)
+                .failure(
+                    code: .badRequest,
+                    label: "non-empty-member-list",
+                    error: ConversationsAPIError.nonEmptyMemberList
+                )
                 .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
-                .failure(code: .forbidden, label: "missing-legalhold-consent", error: ConversationsAPIError.missingLegalHoldConsent)
+                .failure(
+                    code: .forbidden,
+                    label: "missing-legalhold-consent",
+                    error: ConversationsAPIError.missingLegalHoldConsent
+                )
                 .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
                 .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
                 .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)
                 .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
-                .failure(code: .conflict, decodableError: NonFederatingBackendErrorResponseV4.self) // Introduced in v4, provides a custom error object to decode
+                .failure(
+                    code: .conflict,
+                    decodableError: NonFederatingBackendErrorResponseV4
+                        .self
+                ) // Introduced in v4, provides a custom error object to decode
                 .failure(code: .unreachable, error: ConversationsAPIError.unreachableBackends) // Introduced in v4
                 .parse(code: response.statusCode, data: data)
         } catch {
@@ -121,7 +133,7 @@ class ConversationsAPIV4: ConversationsAPIV3 {
             }
         }
     }
-    
+
 }
 
 struct ConversationCodeV4: Decodable, ToAPIModelConvertible {
@@ -145,7 +157,7 @@ struct ConversationCodeV4: Decodable, ToAPIModelConvertible {
 
 struct NonFederatingBackendErrorResponseV4: Decodable, Error {
     let nonFederatingBackends: [String]
-    
+
     enum CodingKeys: String, CodingKey {
         case nonFederatingBackends = "non_federating_backends"
     }

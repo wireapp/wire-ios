@@ -17,8 +17,8 @@
 //
 
 import WireAPI
-import WireLogging
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Creates and setup a channel.
@@ -36,7 +36,7 @@ public protocol CreateChannelUseCaseProtocol {
 
 /// Channels are MLS conversations which belong to a team and have a name.
 public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
-    
+
     public enum Failure: Error {
         case missingSelfClientID
         case missingConversationID
@@ -47,15 +47,15 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         case notConnected
         case invalidOperation
     }
-    
+
     // MARK: - Properties
-    
+
     private let api: ConversationsAPI
     private let store: ConversationLocalStoreProtocol
     private let context: NSManagedObjectContext
     private let isFederationEnabled: Bool
     private let logger: WireLogger = .conversation
-    
+
     // MARK: - Object lifecycle
 
     public init(
@@ -69,7 +69,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         self.context = context
         self.isFederationEnabled = isFederationEnabled
     }
-    
+
     public func invoke(
         teamID: UUID,
         name: String?,
@@ -78,9 +78,11 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         accessRoles: Set<WireAPI.ConversationAccessRole>,
         enableReceipts: Bool
     ) async throws -> ZMConversation {
-        let (selfClientID,
-             qualifiedUserIds,
-             unqualifiedUserIds) = try await context.perform {
+        let (
+            selfClientID,
+            qualifiedUserIds,
+            unqualifiedUserIds
+        ) = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
 
             guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
@@ -98,12 +100,14 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 qualifiedUserIDs = []
                 unqualifiedUserIDs = usersExcludingSelfUser.compactMap(\.remoteIdentifier)
             }
-            
-            return (selfClientID,
-                    qualifiedUserIDs,
-                    unqualifiedUserIDs)
+
+            return (
+                selfClientID,
+                qualifiedUserIDs,
+                unqualifiedUserIDs
+            )
         }
-        
+
         do {
             let remoteConversation = try await api.createGroupConversation(
                 groupType: .channel,
@@ -118,18 +122,18 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 teamID: teamID,
                 isReadReceiptsEnabled: enableReceipts
             )
-            
+
             let localConversation = try await createConversationLocally(
                 remoteConversation
             )
-            
+
             try await setupMLS(
                 for: localConversation,
                 with: users
             )
-            
+
             return localConversation
-            
+
         } catch {
             switch error {
             case let apiError as ConversationsAPIError:
@@ -139,13 +143,13 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                         users.forEach { $0.needsToBeUpdatedFromBackend = true }
                         context.enqueueDelayedSave()
                     }
-                    
+
                     throw Failure.notConnected
                 case .missingLegalHoldConsent:
                     throw Failure.missingLegalholdConsent
-                case .nonFederatingBackends(let domains):
+                case let .nonFederatingBackends(domains):
                     do {
-                       return try await retryExcludingDomains(
+                        return try await retryExcludingDomains(
                             domains,
                             teamID: teamID,
                             name: name,
@@ -167,9 +171,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         }
 
     }
-    
+
     // MARK: - API error handling
-    
+
     private func retryExcludingDomains(
         _ excludedDomains: [String],
         teamID: UUID,
@@ -182,10 +186,10 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         let (unreachableUsers, reachableUsers) = await context.perform {
             let unreachableUsers = users.belongingTo(domains: Set(excludedDomains))
             let reachableUsers = Set(users).subtracting(unreachableUsers)
-            
+
             return (unreachableUsers, reachableUsers)
         }
-        
+
         // Retrying with reachable users (with federated domains)
         let conversation = try await invoke(
             teamID: teamID,
@@ -195,53 +199,55 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             accessRoles: accessRoles,
             enableReceipts: enableReceipts
         )
-        
+
         // Add system message for unreachable users (with non federated domains)
         await appendFailedToAddUsersMessage(
             in: conversation,
             users: unreachableUsers
         )
-        
+
         return conversation
     }
-    
+
     // MARK: - MLS
-    
+
     private func setupMLS(
         for conversation: ZMConversation,
         with participants: Set<ZMUser>
     ) async throws {
         let (mlsGroupID, mlsService, isMLSConversation) = await context.perform {
-            (conversation.mlsGroupID,
-             context.mlsService,
-             conversation.messageProtocol == .mls)
+            (
+                conversation.mlsGroupID,
+                context.mlsService,
+                conversation.messageProtocol == .mls
+            )
         }
-        
+
         guard isMLSConversation, let mlsGroupID, let mlsService else { return }
-        
+
         let ciphersuite = try await mlsService.createGroup(
             for: mlsGroupID,
             removalKeys: nil
         )
-        
+
         await context.perform {
             // Self user is creator, so we don't need to process a welcome message
             conversation.mlsStatus = .ready
             conversation.ciphersuite = ciphersuite
             context.saveOrRollback()
         }
-        
+
         try await validate(
             users: participants,
             conversation: conversation
         )
-        
+
         try await addMLSParticipants(
             participants,
             to: conversation
         )
     }
-    
+
     private func validate(
         users: Set<ZMUser>,
         conversation: ZMConversation
@@ -255,7 +261,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             }
         }
     }
-    
+
     private func addMLSParticipants(
         _ users: Set<ZMUser>,
         to conversation: ZMConversation
@@ -263,9 +269,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         let mlsService = await context.perform {
             context.mlsService
         }
-        
+
         guard let mlsService else { return }
-        
+
         let (qualifiedID, groupID) = await context.perform {
             (conversation.qualifiedID, conversation.mlsGroupID)
         }
@@ -295,7 +301,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             let failedUsers = await context.perform {
                 users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
             }
-            
+
             try await handleNotClaimedKeyPackages(
                 failedUsers: Set(failedUsers),
                 users: users,
@@ -324,9 +330,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             )
             throw error
         }
-    
+
     }
-    
+
     private func createConversationLocally(
         _ conversation: WireAPI.Conversation
     ) async throws -> ZMConversation {
@@ -336,29 +342,29 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             isFederationEnabled: isFederationEnabled,
             isMLSEnabled: true
         )
-        
+
         let qualifiedID = conversation.qualifiedID?.uuid
         guard let conversationID = conversation.id ?? qualifiedID else {
             throw Failure.missingConversationID
         }
-        
+
         let conversationDomain = conversation.qualifiedID?.domain
-        
+
         let localConversation = await store.fetchConversation(
             id: conversationID,
             domain: conversationDomain
         )
-        
+
         // Conversation should be stored locally
         guard let localConversation else {
             throw Failure.conversationNotFound
         }
-        
+
         return localConversation
     }
-    
+
     // MARK: - MLS error handling
-    
+
     private func handleNotClaimedKeyPackages(
         failedUsers: Set<ZMUser>,
         users: Set<ZMUser>,
@@ -368,10 +374,10 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             return Flow.addParticipants
                 .checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
         }
-        
+
         let users = Set(users)
         if failedUsers != users {
-            
+
             // Operation was aborted because some users didn't have key packages
             // We filter them out and retry once
             Flow.addParticipants.checkpoint(description: "retrying failedUsers begin")
@@ -381,22 +387,22 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             )
             Flow.addParticipants.checkpoint(description: "retrying failedUsers end")
         }
-        
+
         let failedUserIds = await context.perform {
             failedUsers.map { $0.remoteIdentifier.transportString() }
         }
-        
+
         Flow.addParticipants
             .checkpoint(
                 description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))"
             )
-        
+
         await appendFailedToAddUsersMessage(
             in: conversation,
             users: users
         )
     }
-    
+
     private func handleUnreachableDomains(
         _ domains: Set<String>,
         users: Set<ZMUser>,
@@ -421,7 +427,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             )
         }
     }
-    
+
     private func handleNonFederatingDomains(
         _ domains: Set<String>,
         users: Set<ZMUser>,
@@ -433,7 +439,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             excludingDomains: domains
         )
     }
-    
+
     private func retryAddingParticipants(
         _ users: Set<ZMUser>,
         to conversation: ZMConversation,
@@ -454,7 +460,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             to: conversation
         )
     }
-    
+
     private func appendFailedToAddUsersMessage(
         in conversation: ZMConversation,
         users: Set<ZMUser>
@@ -465,7 +471,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 sender: conversation.creator,
                 at: conversation.lastServerTimeStamp ?? Date()
             )
-            self.context.enqueueDelayedSave()
+            context.enqueueDelayedSave()
         }
     }
 }

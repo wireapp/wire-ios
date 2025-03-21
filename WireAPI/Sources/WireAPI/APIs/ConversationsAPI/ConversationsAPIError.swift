@@ -51,28 +51,28 @@ public enum ConversationsAPIError: Error {
 
     /// Invalid conversation id
     case invalidConversationID
-    
+
     /// Non empty member list
     case nonEmptyMemberList
-    
+
     /// Missing legalhold consent
     case missingLegalHoldConsent
-    
+
     /// Operation denied
     case operationDenied
-    
+
     /// No team member
     case noTeamMember
-    
+
     /// Not connected
     case notConnected
-    
+
     /// Unsupported conversation group type for API endpoint
     case unsupportedChannelCreationForAPIEndpoint
-    
+
     /// Non federating backends
     case nonFederatingBackends([String])
-    
+
     /// Unreachable backends
     case unreachableBackends
 }

@@ -48,7 +48,7 @@ public protocol ConversationsAPI {
     func getConversationGuestLink(
         conversationID: String
     ) async throws -> String?
-    
+
     func createGroupConversation(
         groupType: ConversationGroupType,
         messageProtocol: ConversationMessageProtocol,

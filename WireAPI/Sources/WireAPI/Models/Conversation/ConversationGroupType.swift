@@ -20,5 +20,5 @@ import Foundation
 
 public enum ConversationGroupType: String, Codable {
     case group = "group_conversation"
-    case channel = "channel"
+    case channel
 }
