@@ -19,6 +19,7 @@
 import DifferenceKit
 import WireDataModel
 import WireSyncEngine
+import os
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -84,6 +85,7 @@ final class ConversationTableViewDataSource: NSObject {
     var searchQueries: [String] = [] {
         didSet {
             currentSections = calculateSections()
+            adjustTopAndBottomMargins(of: currentSections)
             tableView.reloadData()
         }
     }
@@ -159,6 +161,7 @@ final class ConversationTableViewDataSource: NSObject {
             model: sectionIdentifier,
             elements: sectionController.tableViewCellDescriptions
         )
+        adjustTopAndBottomMargins(of: updatedSections)
 
         return updatedSections
     }
@@ -297,6 +300,7 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
         currentSections = calculateSections(forceRecalculate: forceRecalculate)
+        adjustTopAndBottomMargins(of: currentSections)
         tableView.reloadData()
     }
 
@@ -501,9 +505,7 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
-        let sections = calculateSections(updating: controller)
-        adjustTopAndBottomMargins(of: sections)
-        reloadSections(newSections: sections)
+        reloadSections(newSections: calculateSections(updating: controller))
     }
 
 }
@@ -568,30 +570,40 @@ extension ConversationTableViewDataSource {
     private func adjustTopAndBottomMargins(of sections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
 
         // find subsequent messages and collapse space if needed
-        for currentIndex in sections.indices {
+        for currentIndex in sections.indices.reversed() {
+            guard let current = sections[currentIndex].elements.last?.instance else { continue }
 
-            guard let current = sections[currentIndex].elements.first?.instance else { continue }
-
-            let previousIndex = currentIndex - 1
+            let previousIndex = currentIndex + 1
             guard
                 sections.indices.contains(previousIndex),
-                let previous = sections[previousIndex].elements.last?.instance
+                let previous = sections[previousIndex].elements.first?.instance
             else {
                 current.topMargin = 0
                 current.bottomMargin = 0
                 continue
             }
 
-            if false { // TODO: add conditions
+            if true { // TODO: add conditions
                 previous.bottomMargin = -6
                 current.topMargin = -6
             } else {
                 previous.bottomMargin = 0
                 current.topMargin = 0
             }
+        }
 
-            previous.topMargin = 0
-            current.bottomMargin = 0
+        let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "aTaBM")
+
+        logger.info("sections:")
+        for (s, section) in sections.reversed().enumerated() {
+
+            logger.info("sections[\(s)]:")
+            for (e, element) in section.elements.reversed().enumerated() {
+                logger
+                    .info(
+                        "  element \(e): \("\(element.instance)") tM: \(element.instance.topMargin) bM: \(element.instance.bottomMargin)"
+                    )
+            }
         }
 
     }

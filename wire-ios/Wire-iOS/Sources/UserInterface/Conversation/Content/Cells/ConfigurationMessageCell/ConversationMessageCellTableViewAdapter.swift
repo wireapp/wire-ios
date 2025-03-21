@@ -123,10 +123,10 @@ final class ConversationMessageCellTableViewAdapter<
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         top.constant = 8 + (cellDescription?.topMargin ?? 0)
         bottom.constant = 8 + (cellDescription?.bottomMargin ?? 0)
+        print("cD: \(String(describing: cellDescription)) tM: \(top.constant) bM: \(bottom.constant)")
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
-
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
