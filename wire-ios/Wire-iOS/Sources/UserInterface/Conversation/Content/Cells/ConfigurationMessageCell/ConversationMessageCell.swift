@@ -148,6 +148,12 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// If `false` the resulting view will always end up in a single table view cell.
     var canBeCombinedWithOtherCells: Bool { get }
 
+    /// The top margin is used to configure the spacing between the current and the previous cell.
+    var topMargin: CGFloat { get set }
+
+    /// The bottom margin is used to configure the spacing between the current and the following cell.
+    var bottomMargin: CGFloat { get set }
+
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
 

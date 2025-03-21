@@ -33,6 +33,9 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
 
     var showEphemeralTimer: Bool = false
 
+    var topMargin: CGFloat = 5
+    var bottomMargin: CGFloat = 0
+
     var supportsActions: Bool = false
     var containsHighlightableContent: Bool = false
 

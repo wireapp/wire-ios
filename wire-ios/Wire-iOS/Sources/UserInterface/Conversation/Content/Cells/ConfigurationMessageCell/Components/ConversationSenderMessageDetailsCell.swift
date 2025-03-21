@@ -52,6 +52,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var actionController: ConversationMessageActionController?
 
     private var trailingDateLabelConstraint: NSLayoutConstraint?
+    private(set) var avatarBottomAnchorConstraint: NSLayoutConstraint?
+    private(set) var avatarGreaterThanBottomAnchorConstraint: NSLayoutConstraint?
     private var authorLabelNoTopPaddingConstraint: NSLayoutConstraint?
     private var authorLabelCenterVerticalConstraint: NSLayoutConstraint?
 
@@ -151,6 +153,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         avatarTopAnchorConstraint.priority = .defaultLow
         let avatarBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
         avatarBottomAnchorConstraint.priority = .defaultLow
+        self.avatarBottomAnchorConstraint = avatarBottomAnchorConstraint
+        let avatarGreaterThanBottomAnchorConstraint = bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor)
+        self.avatarGreaterThanBottomAnchorConstraint = avatarGreaterThanBottomAnchorConstraint
 
         let authorLabelNoTopPaddingConstraint = authorLabel.topAnchor.constraint(equalTo: topAnchor)
         authorLabelNoTopPaddingConstraint.isActive = true // only for not deleted messages
@@ -178,7 +183,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             avatarTopAnchorConstraint,
             avatarBottomAnchorConstraint,
             avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
-            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
+            avatarGreaterThanBottomAnchorConstraint,
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
         ])
     }
@@ -310,6 +315,9 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
+
+    var topMargin: CGFloat = 0
+    var bottomMargin: CGFloat = 0
 
     let containsHighlightableContent: Bool = false
 
