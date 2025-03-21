@@ -28,7 +28,7 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
 
     override func setUp() {
         super.setUp()
-
+        DeveloperFlag.useWireAuthentication.enable(false, storage: .temporary())
         delegate = MockAuthenticationStatusDelegate()
         let userInfoParser = MockUserInfoParser()
         let groupQueue = DispatchGroupQueue(queue: .main)
