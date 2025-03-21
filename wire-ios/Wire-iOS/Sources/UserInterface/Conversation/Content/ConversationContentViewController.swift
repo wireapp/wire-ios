@@ -299,7 +299,7 @@ final class ConversationContentViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        dataSource.contentWidth = tableView.bounds.width
         scrollToFirstUnreadMessageIfNeeded()
     }
 
