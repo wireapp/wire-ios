@@ -16,31 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationUI
+import Foundation
 
-final class MockRouter: Router {
+extension URLSession {
 
-    public var navigate_Invocations: [any Hashable] = []
-    public var modalPresent_Invocations: [any Hashable] = []
-    public var alert_Invocations: [Alert] = []
-    public var dismissSheet_InvocationCount = 0
+    /// A url session powered by `URLProtocolMock`.
+    ///
+    /// Set `URLProtocolMock.mockHandler` with a mocking function to
+    /// control how request received by this URL session are handled.
 
-    func popToRoot() {}
-
-    func navigate(to destination: some Hashable) {
-        navigate_Invocations.append(destination)
-    }
-
-    func presentSheet(_ modalDestination: some Hashable) {
-        modalPresent_Invocations.append(modalDestination)
-    }
-
-    func presentAlert(_ alert: Alert) {
-        alert_Invocations.append(alert)
-    }
-
-    func dismissSheet() {
-        dismissSheet_InvocationCount += 1
+    static func mockURLSession() -> URLSession {
+        let config = URLSessionConfiguration.default
+        config.protocolClasses = [URLProtocolMock.self]
+        return URLSession(configuration: config)
     }
 
 }

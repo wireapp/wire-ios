@@ -424,6 +424,10 @@ extension AuthenticationStepController {
         }
     }
 
+    func didRewindToThisView() {
+        // no-op
+    }
+
     func valueSubmitted(_ value: Any) {
         dismissKeyboard()
         authenticationCoordinator?.handleUserInput(value)
