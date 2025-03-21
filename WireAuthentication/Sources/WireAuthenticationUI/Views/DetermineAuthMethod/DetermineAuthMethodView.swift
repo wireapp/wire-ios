@@ -108,6 +108,17 @@ package struct DetermineAuthMethodView: View {
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
         }
+        .toolbar {
+            if viewModel.canExitFlow {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.exitFlow()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+            }
+        }
         .alert(
             item: $viewModel.alert,
             title: { Text($0.title) },
@@ -225,24 +236,43 @@ extension Alert {
 @MainActor
 func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
+    canExitFlow: Bool = false,
     isLoading: Bool = false,
     alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
+        canExitFlow: canExitFlow,
         isLoading: isLoading,
         alert: alert
     )
 }
 
-#Preview {
+#Preview("can't exit flow") {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: "user@wire.com",
-                isLoading: false,
-                alert: .unknownError
-            )
+            NavigationStack {
+                makeDetermineAuthMethodViewPreview(
+                    emailOrSSOCode: "user@wire.com",
+                    canExitFlow: false,
+                    isLoading: false,
+                    alert: nil
+                )
+            }
+        }
+}
+
+#Preview("can exit flow") {
+    BackgroundView()
+        .sheet(isPresented: .constant(true)) {
+            NavigationStack {
+                makeDetermineAuthMethodViewPreview(
+                    emailOrSSOCode: "user@wire.com",
+                    canExitFlow: true,
+                    isLoading: false,
+                    alert: nil
+                )
+            }
         }
 }
 
