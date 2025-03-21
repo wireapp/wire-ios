@@ -136,6 +136,11 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     override var isAddingEmailNecessary: Bool {
         isAddingEmailNecessaryValue
     }
+
+    var didRegisterMLSClient: Bool = false
+    override func didRegisterMLSClient(_ client: UserClient) {
+        didRegisterMLSClient = true
+    }
 }
 
 class ZMMockClientUpdateStatus: ClientUpdateStatus {
