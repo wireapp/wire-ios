@@ -591,10 +591,10 @@ extension ConversationTableViewDataSource {
                 true
             } else if let firstStacked = (current as? StackViewCellDescription)?.cellDescriptions.first?.instance {
                 firstStacked is ConversationTextMessageCellDescription ||
-                firstStacked is ConversationFileMessageCellDescription ||
-                firstStacked is ConversationImageMessageCellDescription ||
-                firstStacked is ConversationVideoMessageCellDescription ||
-                firstStacked is ConversationReplyCellDescription
+                    firstStacked is ConversationFileMessageCellDescription ||
+                    firstStacked is ConversationImageMessageCellDescription ||
+                    firstStacked is ConversationVideoMessageCellDescription ||
+                    firstStacked is ConversationReplyCellDescription
             } else {
                 false
             }
