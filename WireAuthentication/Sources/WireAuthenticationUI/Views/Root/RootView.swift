@@ -78,10 +78,7 @@ package struct RootView: View {
                     ssoURL,
                     backendEnvironment
                 ):
-                    factory.loginViaSSOView(
-                        ssoURL: ssoURL,
-                        backendEnvironment: backendEnvironment
-                    )
+                    factory.loginViaSSOView(ssoURL: ssoURL)
                 }
             }
     }

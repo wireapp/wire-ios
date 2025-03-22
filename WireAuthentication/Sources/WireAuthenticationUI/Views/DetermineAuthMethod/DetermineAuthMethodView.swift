@@ -37,7 +37,11 @@ package protocol DetermineAuthMethodBuilder {
 
 package struct DetermineAuthMethodView: View {
 
-    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
+    package typealias Factory =
+        LoginViaEmailBuilder &
+        LoginViaSSOBuilder &
+        SwitchBackendConfirmationBuilder &
+        NoHistoryViewBuilder
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
@@ -164,6 +168,11 @@ package struct DetermineAuthMethodView: View {
                     backendConfig: backendConfig,
                     backendMetadata: backendMetadata
                 )
+            case let .noHistory(authenticationResult):
+                factory.noHistoryView(
+                    authenticationResult: authenticationResult,
+                    didDetectDomainConflict: false
+                )
             }
         }
         .sheet(
@@ -174,10 +183,7 @@ package struct DetermineAuthMethodView: View {
                     ssoURL,
                     backendEnvironment
                 ):
-                    factory.loginViaSSOView(
-                        ssoURL: ssoURL,
-                        backendEnvironment: backendEnvironment
-                    )
+                    factory.loginViaSSOView(ssoURL: ssoURL)
                 case let .switchBackend(
                     email,
                     environmentType,
@@ -219,7 +225,7 @@ package struct DetermineAuthMethodView: View {
             backendConfig: BackendConfig,
             backendMetadata: BackendMetadata
         )
-
+        case noHistory(AuthenticationResult)
     }
 
 }

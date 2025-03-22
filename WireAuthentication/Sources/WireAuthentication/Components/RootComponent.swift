@@ -148,14 +148,10 @@ class RootComponent: BootstrapComponent {
         )
     }
 
-    func loginViaSSOComponent(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOComponent {
+    func loginViaSSOComponent(ssoURL: URL) -> LoginViaSSOComponent {
         LoginViaSSOComponent(
             parent: self,
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            ssoURL: ssoURL
         )
     }
 
@@ -207,13 +203,9 @@ extension RootComponent: RootView.Factory {
         ).view
     }
 
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            ssoURL: ssoURL
         ).view
     }
 

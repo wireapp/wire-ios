@@ -27,6 +27,10 @@ private func parent3(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
     return component.parent.parent.parent
 }
 
+private func parent4(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Scope {
+    return component.parent.parent.parent.parent
+}
+
 // MARK: - Providers
 
 #if !NEEDLE_DYNAMIC
@@ -161,30 +165,17 @@ private func factorye1144df20d596f07c3bea9403e3301bb54f80df0(_ component: Needle
     return SwitchBackendConfirmationComponentDependency7a1956d88810c08ef169Provider(rootComponent: parent2(component) as! RootComponent)
 }
 private class LoginViaSSODependencycb22423a897409b8b5faProvider: LoginViaSSODependency {
-    var router: any Router {
-        return rootComponent.router
-    }
-    var bridge: WireAuthenticationBridge {
-        return rootComponent.bridge
-    }
-    private let rootComponent: RootComponent
-    init(rootComponent: RootComponent) {
-        self.rootComponent = rootComponent
+
+
+    init() {
+
     }
 }
 /// ^->RootComponent->DetermineAuthMethodComponent->LoginViaSSOComponent
-private func factory075263b25e612b6948d3a9403e3301bb54f80df0(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return LoginViaSSODependencycb22423a897409b8b5faProvider(rootComponent: parent2(component) as! RootComponent)
+private func factory075263b25e612b6948d3e3b0c44298fc1c149afb(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return LoginViaSSODependencycb22423a897409b8b5faProvider()
 }
-/// ^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent
-private func factory075263b25e612b6948d342f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return LoginViaSSODependencycb22423a897409b8b5faProvider(rootComponent: parent3(component) as! RootComponent)
-}
-/// ^->RootComponent->LoginViaSSOComponent
-private func factory075263b25e612b6948d3b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return LoginViaSSODependencycb22423a897409b8b5faProvider(rootComponent: parent1(component) as! RootComponent)
-}
-private class NoHistoryComponentDependency0df6cc26e7db3dd9d951Provider: NoHistoryComponentDependency {
+private class NoHistoryComponentDependencya1005f718577ea03ea08Provider: NoHistoryComponentDependency {
     var howToChangeEmailURL: URL {
         return rootComponent.howToChangeEmailURL
     }
@@ -199,9 +190,17 @@ private class NoHistoryComponentDependency0df6cc26e7db3dd9d951Provider: NoHistor
         self.rootComponent = rootComponent
     }
 }
+/// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent
+private func factory5f94de319ad3e04a942321a9c45ed079aafca21f(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return NoHistoryComponentDependencya1005f718577ea03ea08Provider(rootComponent: parent4(component) as! RootComponent)
+}
+/// ^->RootComponent->DetermineAuthMethodComponent->NoHistoryComponent
+private func factory5f94de319ad3e04a9423a9403e3301bb54f80df0(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return NoHistoryComponentDependencya1005f718577ea03ea08Provider(rootComponent: parent2(component) as! RootComponent)
+}
 /// ^->RootComponent->NoHistoryComponent
-private func factory3bfed346df783964230ab3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return NoHistoryComponentDependency0df6cc26e7db3dd9d951Provider(rootComponent: parent1(component) as! RootComponent)
+private func factory5f94de319ad3e04a9423b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return NoHistoryComponentDependencya1005f718577ea03ea08Provider(rootComponent: parent1(component) as! RootComponent)
 }
 private class DetermineAuthMethodOnPremComponentDependencyb4a02ddb77e5a66140fbProvider: DetermineAuthMethodOnPremComponentDependency {
     var router: any Router {
@@ -323,6 +322,7 @@ extension VerificationCodeComponent: NeedleFoundation.Registration {
         keyPathToName[\VerificationCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\VerificationCodeComponentDependency.email] = "email-String"
         keyPathToName[\VerificationCodeComponentDependency.didDetectDomainConflict] = "didDetectDomainConflict-Bool"
+
     }
 }
 extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
@@ -355,8 +355,7 @@ extension SwitchBackendConfirmationComponent: NeedleFoundation.Registration {
 }
 extension LoginViaSSOComponent: NeedleFoundation.Registration {
     public func registerItems() {
-        keyPathToName[\LoginViaSSODependency.router] = "router-any Router"
-        keyPathToName[\LoginViaSSODependency.bridge] = "bridge-WireAuthenticationBridge"
+
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
@@ -437,13 +436,17 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent", factorye1144df20d596f07c3bea9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->SwitchBackendConfirmationComponent", factorye1144df20d596f07c3bea9403e3301bb54f80df0)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaSSOComponent", factory075263b25e612b6948d3a9403e3301bb54f80df0)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d342f5655bf2362a8495f6)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d342f5655bf2362a8495f6)
-    registerProviderFactory("^->RootComponent->LoginViaSSOComponent", factory075263b25e612b6948d3b3a8f24c1d289f2c0f2e)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->LoginViaSSOComponent", factory075263b25e612b6948d3a9403e3301bb54f80df0)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
+    registerProviderFactory("^->RootComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
-    registerProviderFactory("^->RootComponent->NoHistoryComponent", factory3bfed346df783964230ab3a8f24c1d289f2c0f2e)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a942321a9c45ed079aafca21f)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a942321a9c45ed079aafca21f)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->NoHistoryComponent", factory5f94de319ad3e04a9423a9403e3301bb54f80df0)
+    registerProviderFactory("^->RootComponent->NoHistoryComponent", factory5f94de319ad3e04a9423b3a8f24c1d289f2c0f2e)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->NoHistoryComponent", factory5f94de319ad3e04a9423a9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent", factorydbdff85f3341dce5e925b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent", factory9bda312c16141c932061c770221f242f9204cf85)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->LoginViaEmailComponent", factoryf72dc3dd3ed336197337cd4281a5bfff6e29e9ef)

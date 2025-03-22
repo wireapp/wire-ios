@@ -403,18 +403,10 @@ extension MockDependencies: LoginViaEmailUseCaseFactory {
 extension MockDependencies: LoginViaSSOBuilder {
 
     private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(
-            ssoURL: ssoURL,
-            bridge: WireAuthenticationBridge(),
-            router: rootViewModel,
-            backendEnvironment: backendEnvironment
-        )
+        LoginViaSSOViewModel(ssoURL: ssoURL)
     }
 
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
     }
 

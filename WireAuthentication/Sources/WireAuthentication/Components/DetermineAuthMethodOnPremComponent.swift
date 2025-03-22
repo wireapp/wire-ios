@@ -104,14 +104,10 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
         )
     }
 
-    func loginViaSSOComponent(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOComponent {
+    func loginViaSSOComponent(ssoURL: URL) -> LoginViaSSOComponent {
         LoginViaSSOComponent(
             parent: self,
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            ssoURL: ssoURL
         )
     }
 
@@ -125,6 +121,17 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
             email: email,
             environmentType: environmentType,
             backendConfig: backendConfig
+        )
+    }
+
+    func noHistoryComponent(
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConfict: Bool
+    ) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConfict
         )
     }
 
@@ -206,14 +213,8 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
         ).view
     }
 
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
-        ).view
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent(ssoURL: ssoURL).view
     }
 
     func switchBackendView(
@@ -225,6 +226,16 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
             email: email,
             environmentType: environmentType,
             backendConfig: backendConfig
+        ).view
+    }
+
+    func noHistoryView(
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) -> NoHistoryView {
+        noHistoryComponent(
+            authenticationResult: authenticationResult,
+            didDetectDomainConfict: didDetectDomainConflict
         ).view
     }
 

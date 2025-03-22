@@ -73,13 +73,11 @@ class SwitchBackendConfirmationComponent: Component<SwitchBackendConfirmationCom
     // MARK: - Children
 
     func loginViaSSOComponent(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
+        ssoURL: URL
     ) -> LoginViaSSOComponent {
         LoginViaSSOComponent(
             parent: self,
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            ssoURL: ssoURL
         )
     }
 
@@ -139,14 +137,8 @@ extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationViewModel
 
 extension SwitchBackendConfirmationComponent: SwitchBackendConfirmationView.Factory {
 
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
-        ).view
+    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+        loginViaSSOComponent(ssoURL: ssoURL).view
     }
 
 }

@@ -97,6 +97,44 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 Task { [weak self] in
                     await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
+
+            case let .ssoAuthenticationSuccess(userID, cookies):
+                // TODO: delete this temp hack
+                let backendEnvironment = WireAuthenticationBackendEnvironment(
+                    environmentType: .production,
+                    config: BackendConfig(
+                        title: "example",
+                        endpoints: Endpoints(
+                            backendURL: URL(string: "")!,
+                            backendWSURL: URL(string: "")!,
+                            blackListURL: URL(string: "")!,
+                            teamsURL: URL(string: "")!,
+                            accountsURL: URL(string: "")!,
+                            websiteURL: URL(string: "")!,
+                            countlyURL: nil
+                        ),
+                        proxySettings: nil,
+                        pinnedKeys: nil
+                    ),
+                    metadata: .init(
+                        apiVersion: .v8,
+                        domain: "example",
+                        isFederationEnabled: false
+                    )
+                )
+                let authenticationResult = AuthenticationResult(
+                    userID: userID,
+                    cookies: cookies,
+                    accessToken: nil,
+                    emailCredentials: nil,
+                    backendEnvironment: backendEnvironment
+                )
+
+                router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authenticationResult))
+
+            case .ssoAutheticationFailure:
+                router.presentAlert(Alert.ssoLoginFailed)
+
             default:
                 break
             }
