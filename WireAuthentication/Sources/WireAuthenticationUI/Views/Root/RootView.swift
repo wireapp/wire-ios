@@ -24,7 +24,6 @@ package struct RootView: View {
     package typealias Factory =
         DetermineAuthMethodBuilder &
         LoginViaEmailOnPremBuilder &
-        LoginViaSSOBuilder &
         NoHistoryViewBuilder
 
     @StateObject var viewModel: RootViewModel
@@ -74,11 +73,6 @@ package struct RootView: View {
                         backendConfig: backendConfig,
                         backendMetadata: backendMetadata
                     )
-                case let .ssoLogin(
-                    ssoURL,
-                    backendEnvironment
-                ):
-                    factory.loginViaSSOView(ssoURL: ssoURL)
                 }
             }
     }
@@ -101,10 +95,6 @@ package struct RootView: View {
             environmentType: BackendEnvironmentType,
             environment: BackendConfig,
             backendMetadata: BackendMetadata?
-        )
-        case ssoLogin(
-            url: URL,
-            backendEnvironment: WireAuthenticationBackendEnvironment
         )
     }
 

@@ -439,7 +439,6 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
-    registerProviderFactory("^->RootComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->LoginViaSSOComponent", factory075263b25e612b6948d3e3b0c44298fc1c149afb)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a942321a9c45ed079aafca21f)

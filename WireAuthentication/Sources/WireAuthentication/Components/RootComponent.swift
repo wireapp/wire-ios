@@ -148,13 +148,6 @@ class RootComponent: BootstrapComponent {
         )
     }
 
-    func loginViaSSOComponent(ssoURL: URL) -> LoginViaSSOComponent {
-        LoginViaSSOComponent(
-            parent: self,
-            ssoURL: ssoURL
-        )
-    }
-
 }
 
 extension RootComponent: RootView.Factory {
@@ -200,12 +193,6 @@ extension RootComponent: RootView.Factory {
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata
-        ).view
-    }
-
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL
         ).view
     }
 
