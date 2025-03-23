@@ -61,7 +61,7 @@ struct PreferredSizeModifier: ViewModifier {
 extension View {
     
     @ViewBuilder
-    func setiPadFrame(navigationBarHidden: Bool = true) -> some View {
+    func setPreferredSize(navigationBarHidden: Bool = true) -> some View {
             self.background(
                 GeometryReader { proxy in
                     Color.clear

@@ -72,7 +72,7 @@ package struct LoginViaEmailView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
-            .setiPadFrame(navigationBarHidden: false)
+            .setPreferredSize(navigationBarHidden: false)
             .customBackButton()
         }
         .alert(

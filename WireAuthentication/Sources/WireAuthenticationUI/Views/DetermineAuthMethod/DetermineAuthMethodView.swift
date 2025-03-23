@@ -109,7 +109,7 @@ package struct DetermineAuthMethodView: View {
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }
             .padding()
-            .setiPadFrame()
+            .setPreferredSize()
         }
         .toolbar {
             if viewModel.existsAnotherAccount {

@@ -86,7 +86,7 @@ package struct NoHistoryView: View {
             viewModel.onAppear()
         }
         .padding()
-        .setiPadFrame()
+        .setPreferredSize()
         .presentationDetents([.medium])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
