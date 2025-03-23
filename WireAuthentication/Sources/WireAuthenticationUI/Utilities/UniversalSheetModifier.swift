@@ -36,7 +36,10 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
             
             
         } else {
-            content.sheet(item: $item, onDismiss: onDismiss, content: self.content)
+            content.sheet(item: $item, onDismiss: onDismiss) { item in
+                self.content(item)
+                    .adjustiPadFrame()
+            }
         }
     }
 }

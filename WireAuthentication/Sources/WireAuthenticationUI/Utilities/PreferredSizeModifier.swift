@@ -46,6 +46,14 @@ struct PreferredSizeModifier: ViewModifier {
                 }
         } else {
             content
+                .onPreferenceChange(PreferredSizeKey.self) { value in
+                    DispatchQueue.main.async {
+                        if let value {
+                            self.size.height = value.height
+                        }
+                    }
+                }
+                .presentationDetents([.height(self.size.height)])
         }
     }
 }
@@ -54,7 +62,6 @@ extension View {
     
     @ViewBuilder
     func setiPadFrame(navigationBarHidden: Bool = true) -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
             self.background(
                 GeometryReader { proxy in
                     Color.clear
@@ -62,17 +69,10 @@ extension View {
                                     value: CGSize(width: proxy.size.width, height: navigationBarHidden ? proxy.size.height : proxy.size.height + 44))
                 }
             )
-        } else {
-            self
-        }
     }
     
     @ViewBuilder
     func adjustiPadFrame() -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
             self.modifier(PreferredSizeModifier())
-        } else {
-            self
-        }
     }
 }
