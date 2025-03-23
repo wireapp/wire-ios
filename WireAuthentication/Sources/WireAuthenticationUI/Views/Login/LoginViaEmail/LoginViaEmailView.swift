@@ -54,6 +54,7 @@ package struct LoginViaEmailView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
+                
                 emailField
                 passwordField
                 submitButton
@@ -71,6 +72,8 @@ package struct LoginViaEmailView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
+            .setiPadFrame()
+            .customBackButton()
         }
         .alert(
             item: $viewModel.alert,
@@ -93,6 +96,7 @@ package struct LoginViaEmailView: View {
         .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+        
     }
 
     @ViewBuilder private var emailField: some View {
