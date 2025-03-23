@@ -1,0 +1,85 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+import SwiftUI
+
+struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModifier {
+    
+    @Binding var item: Item?
+    var onDismiss: (() -> Void)?
+    var content: (Item) -> SheetContent
+    
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            content
+                .overlay {
+                    if let item {
+                        self.content(item)
+                            .adjustiPadFrame()
+                    }
+                }
+            
+            
+        } else {
+            content.sheet(item: $item, onDismiss: onDismiss, content: self.content)
+        }
+    }
+}
+
+
+extension View {
+    
+    @ViewBuilder
+    func sheetCornerRadius(_ radius: CGFloat, inNavigationStack: Bool) -> some View {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            self.modifier(SheetCornerRadiusModifier(isInNavStack: inNavigationStack, radius: radius))
+        } else {
+            self
+        }
+    }
+    
+    public func universalSheet<Item, Content>(
+        item: Binding<Item?>,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) -> some View where Item: Identifiable, Content: View {
+        self.modifier(UniversalSheetModifier(item: item, onDismiss: onDismiss, content: content))
+    }
+}
+
+// MARK: - Specific helpers
+
+private struct SheetCornerRadiusModifier: ViewModifier {
+    let isInNavStack: Bool
+    let radius: CGFloat
+
+    func body(content: Content) -> some View {
+        if isInNavStack {
+            content
+                .introspect(.navigationStack, on: .iOS(.v16,.v17,.v18)) { stack in
+                    stack.topViewController?.view.backgroundColor = .white
+                    // .cornerRadius from SwiftUI will mess with touch area with NavigationStack, when keyboard is active and after
+                    stack.view?.layer.cornerRadius = 10
+                }
+        } else {
+            content
+                .cornerRadius(10)
+                .background(Color.white)
+        }
+    }
+}

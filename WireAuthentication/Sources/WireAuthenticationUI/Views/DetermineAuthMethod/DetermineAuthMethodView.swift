@@ -107,7 +107,8 @@ package struct DetermineAuthMethodView: View {
                 })
                 .wireButtonStyle(.primary)
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
-            }.padding()
+            }
+            .padding()
             .setiPadFrame()
         }
         .toolbar {

@@ -53,6 +53,7 @@ package struct RootView: View {
             NavigationStack(path: $viewModel.path) {
                 factory.determineAuthMethodView()
             }
+            .sheetCornerRadius(10, inNavigationStack: true)
             
         case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
             NavigationStack(path: $viewModel.path) {
@@ -62,7 +63,7 @@ package struct RootView: View {
                     backendMetadata: backendMetadata
                 )
             }
-            
+            .sheetCornerRadius(10, inNavigationStack: true)
         case let .noHistory(
             authenticationResult,
             didDetectDomainConflict
@@ -71,6 +72,8 @@ package struct RootView: View {
                 authenticationResult: authenticationResult,
                 didDetectDomainConflict: didDetectDomainConflict
             )
+            .sheetCornerRadius(10, inNavigationStack: false)
+            
         case let .onPremiseLogin(
             email,
             environmentType,
@@ -83,6 +86,8 @@ package struct RootView: View {
                 backendConfig: backendConfig,
                 backendMetadata: backendMetadata
             )
+            .sheetCornerRadius(10, inNavigationStack: false)
+            
         case let .ssoLogin(
             ssoURL,
             backendEnvironment
@@ -90,6 +95,7 @@ package struct RootView: View {
             factory.loginViaSSOView(
                 ssoURL: ssoURL,
                 backendEnvironment: backendEnvironment)
+            .sheetCornerRadius(10, inNavigationStack: false)
         }
     }
     
@@ -121,123 +127,4 @@ package struct RootView: View {
 
 #Preview {
     MockDependencies().rootView
-}
-
-extension View {
-    
-    public func universalSheet<Item, Content>(
-        item: Binding<Item?>,
-        onDismiss: (() -> Void)? = nil,
-        @ViewBuilder content: @escaping (Item) -> Content
-    ) -> some View where Item: Identifiable, Content: View {
-        self.modifier(UniversalSheetModifier(item: item, onDismiss: onDismiss, content: content))
-    }
-}
-
-
-struct PreferredSizeKey: PreferenceKey {
-    static var defaultValue: CGSize?
-    static func reduce(value: inout CGSize?, nextValue: () -> CGSize?) {
-        let next = nextValue()
-        print("🍒 reducer", value, next)
-        
-        if next != nil {
-            value = next
-        }
-    }
-}
-
-struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModifier {
-    
-    @Binding var item: Item?
-    var onDismiss: (() -> Void)?
-    var content: (Item) -> SheetContent
-    
-    @ViewBuilder
-    func body(content: Content) -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            content
-                .overlay {
-                    if let item {
-                        self.content(item)
-                            .adjustiPadFrame()
-                            .introspect(.navigationStack, on: .iOS(.v16,.v17,.v18)) { stack in
-//                                stack.topViewController?.view.backgroundColor = .white
-                                // .cornerRadius from SwiftUI will mess with touch area, when keyboard is active and after
-                                stack.view?.layer.cornerRadius = 10
-                            }
-                    }
-                }
-            
-            
-        } else {
-            content.sheet(item: $item, onDismiss: onDismiss, content: self.content)
-        }
-    }
-}
-
-extension View {
-    
-    @ViewBuilder
-    func setiPadFrame() -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            self.background(
-                GeometryReader { geo in
-                    Color.clear
-                        .preference(key: PreferredSizeKey.self, value: geo.size)
-                }
-            )
-            
-        }
-    }
-    
-    @ViewBuilder
-    func adjustiPadFrame() -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            self.modifier(PreferredSizeModifier())
-        }
-    }
-    
-    func customBackButton() -> some View {
-        self.modifier(CustomBackButtonModifier())
-    }
-}
-
-struct CustomBackButtonModifier: ViewModifier {
-    @Environment(\.dismiss) private var dismiss
-
-    
-    func body(content: Content) -> some View {
-        content
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 17, weight: .medium))
-                    }
-                }
-            }
-    }
-}
-struct PreferredSizeModifier: ViewModifier {
-    @State var size: CGSize = .init(width: 390, height: 420)
-    
-    func body(content: Content) -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            content
-                .frame(width: size.width, height: size.height)
-                .onPreferenceChange(PreferredSizeKey.self) { value in
-                    DispatchQueue.main.async {
-                        if let value {
-                            self.size.height = value.height
-                        }
-                    }
-                }
-        } else {
-            content
-        }
-    }
 }
