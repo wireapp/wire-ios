@@ -149,7 +149,8 @@ protocol ConversationMessageCellDescription: AnyObject {
     typealias ZMConversationMessage = WireDataModel.ZMConversationMessage
 
     /// A new type of model to replace the cell descriptions eventually.
-    /// In order to allow incremental migration to the new approach, the model will be part of the cell description for now.
+    /// In order to allow incremental migration to the new approach, the model will be part of the cell description for
+    /// now.
     var conversationCellModel: ConversationCellModel? { get }
 
     /// The views of neighbouring cell descriptions which return `true` might be

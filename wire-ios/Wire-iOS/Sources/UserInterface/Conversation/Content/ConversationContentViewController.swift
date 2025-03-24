@@ -131,7 +131,7 @@ final class ConversationContentViewController: UIViewController {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
-        logger = .conversation
+        self.logger = .conversation
 
         super.init(nibName: nil, bundle: nil)
 
