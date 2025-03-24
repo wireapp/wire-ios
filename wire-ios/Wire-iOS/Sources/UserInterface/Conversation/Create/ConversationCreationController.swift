@@ -512,6 +512,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         return CreateChannelUseCase(
             api: conversationsAPI,
             store: store,
+            mlsService: context.mlsService,
             context: context,
             isFederationEnabled: BackendInfo.isFederationEnabled
         )
@@ -542,6 +543,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         return CreateGroupConversationUseCase(
             api: conversationsAPI,
             store: store,
+            mlsService: context.mlsService,
             context: context,
             isFederationEnabled: BackendInfo.isFederationEnabled,
             isMLSEnabled: BackendInfo.isMLSEnabled
