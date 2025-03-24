@@ -95,7 +95,6 @@ package struct LoginViaEmailView: View {
         }
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
-
     }
 
     @ViewBuilder private var emailField: some View {
