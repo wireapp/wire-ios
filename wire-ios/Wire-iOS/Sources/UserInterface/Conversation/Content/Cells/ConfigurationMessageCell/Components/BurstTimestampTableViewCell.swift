@@ -79,9 +79,6 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     var isSelected: Bool = false
 
-    func willDisplay() {}
-    func didEndDisplaying() {}
-
     func configure(with object: Configuration, animated: Bool) {}
 
 }
