@@ -84,7 +84,7 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
     // MARK: - Children
 
     func loginViaEmailComponent(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
@@ -194,10 +194,9 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Facto
 }
 
 extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
-
     @MainActor
     func loginViaEmailView(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,

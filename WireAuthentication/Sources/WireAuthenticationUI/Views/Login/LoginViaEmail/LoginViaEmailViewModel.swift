@@ -25,25 +25,25 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
-    package typealias Factory = LoginViaEmailUseCaseFactory2
+    package typealias Factory =
+        LoginViaEmailUseCaseFactory2 &
+        OpenAppStoreUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory
 
-    @Published var password: String = "" {
-        didSet { showPasswordRules = !isPasswordValid }
-    }
-
-    @Published private(set) var showPasswordRules = false
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
 
     private let router: any Router
     private let factory: any Factory
-    private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
-    private let backendEnvironment: WireAuthenticationBackendEnvironment
-    private let forgotPasswordURL: URL
-    private let passwordValidator: any PasswordValidator
+    private let environmentType: BackendEnvironmentType
+    package let backendConfig: BackendConfig
+
+    // TODO: delete
+    private let backendMetadata = BackendMetadata.dummy
+
     private let onCreateAccount: () -> Void
 
-    let email: String
+    let email: String?
     let canCreateAccount: Bool
     let didDetectDomainConflict: Bool
 
@@ -52,65 +52,88 @@ package final class LoginViaEmailViewModel: ObservableObject {
     package init(
         router: any Router,
         factory: any Factory,
-        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
-        backendEnvironment: WireAuthenticationBackendEnvironment,
-        email: String,
-        passwordValidator: any PasswordValidator,
+        email: String?,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         onCreateAccount: @escaping () -> Void
     ) {
         self.router = router
         self.factory = factory
-        self.loginViaEmailUseCase = loginViaEmailUseCase
-        self.backendEnvironment = backendEnvironment
         self.email = email
-        self.forgotPasswordURL = backendEnvironment.config.endpoints.accountsURL.appendingPathComponent("forgot")
-        self.passwordValidator = passwordValidator
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.onCreateAccount = onCreateAccount
     }
 
-    var localizedPasswordRules: String? {
-        passwordValidator.localizedRulesDescription
+    private var forgotPasswordURL: URL {
+        backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
     }
 
-    var isPasswordValid: Bool {
-        passwordValidator.isPasswordValid(trimmedPassword)
+    var hasProxySupport: Bool {
+        backendConfig.proxySettings != nil
     }
 
-    func submitPassword() async {
+    var proxyServer: String {
+        backendConfig.endpoints.backendURL.absoluteString
+    }
+
+    func isValidPassword(_ password: String) -> Bool {
+        true
+    }
+
+    var isValidEmail: Bool {
+        guard let email else { return false }
+        return !email.isEmpty
+    }
+
+    var isOnPremiseBackend: Bool {
+        environmentType != .production
+    }
+
+    func submitPassword(_ password: String) async {
+        guard let email else { return }
+
         isLoading = true
 
+        let sanitizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
+
         do {
-            let (cookies, token) = try await logIn(
+            let (cookies, accessToken) = try await logIn(
                 email: email,
-                password: trimmedPassword
+                password: sanitizedPassword
             )
+
+            WireLogger.authentication.info("Login via email succeeded")
 
             let emailCredentials = EmailCredentials(
                 email: email,
-                password: trimmedPassword,
+                password: sanitizedPassword,
                 verificationCode: nil
             )
 
+            let backendEnvironment = WireAuthenticationBackendEnvironment(
+                environmentType: environmentType,
+                config: backendConfig,
+                metadata: backendMetadata
+            )
+
             let authenticationResult = AuthenticationResult(
-                userID: token.userID,
+                userID: accessToken.userID,
                 cookies: cookies,
-                accessToken: token,
+                accessToken: accessToken,
                 emailCredentials: emailCredentials,
                 backendEnvironment: backendEnvironment
             )
 
-            WireLogger.authentication.error("Login via email succeeded")
+            router.presentSheet(RootView.ModalDestination.noHistory(
+                authenticationResult: authenticationResult,
+                didDetectDomainConflict: didDetectDomainConflict
+            ))
 
-            router.presentSheet(
-                RootView.ModalDestination.noHistory(
-                    authenticationResult: authenticationResult,
-                    didDetectDomainConflict: didDetectDomainConflict
-                )
-            )
         } catch {
             WireLogger.authentication.error("Login via email failed: \(error)")
 
@@ -119,7 +142,11 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .invalidCredentials
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
-                    to: LoginViaEmailView.Destination.verifyLogin(password: password)
+                    to: LoginViaEmailView.Destination
+                        .verifyLogin(
+                            email: email,
+                            password: password
+                        )
                 )
             case LoginViaEmailUseCaseFailure.accountPendingActivation:
                 alert = .accountPendingActivation
@@ -133,6 +160,21 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
         isLoading = false
     }
+
+    func recoverPassword() {
+        UIApplication.shared.open(forgotPasswordURL)
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
+    }
+
+    func createAccount() {
+        onCreateAccount()
+    }
+
+    // MARK: - Private
 
     private func logIn(
         email: String,
@@ -148,18 +190,15 @@ package final class LoginViaEmailViewModel: ObservableObject {
         }.value
     }
 
-    func recoverPassword() {
-        UIApplication.shared.open(forgotPasswordURL)
-    }
+}
 
-    func createAccount() {
-        onCreateAccount()
-    }
+// TODO: delete
+extension BackendMetadata {
 
-    // MARK: - Private
-
-    private var trimmedPassword: String {
-        password.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
+    static let dummy = BackendMetadata(
+        apiVersion: .v8,
+        domain: "dummy.com",
+        isFederationEnabled: false
+    )
 
 }

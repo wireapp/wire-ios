@@ -133,18 +133,18 @@ class RootComponent: BootstrapComponent {
         )
     }
 
-    func loginViaEmailOnPremComponent(
+    func loginViaEmailComponent(
         email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> LoginViaEmailOnPremComponent {
-        LoginViaEmailOnPremComponent(
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        networkStack: NetworkStack
+    ) -> LoginViaEmailComponent {
+        LoginViaEmailComponent(
             parent: self,
             email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
+            networkStack: networkStack
         )
     }
 
@@ -182,18 +182,16 @@ extension RootComponent: RootView.Factory {
     }
 
     @MainActor
-    func loginViaEmailOnPremView(
+    func loginViaEmailView(
         email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    ) -> LoginViaEmailOnPremView {
-        loginViaEmailOnPremComponent(
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
-        ).view
+        backendMetadata: BackendMetadata
+    ) -> LoginViaEmailView {
+        // TODO: fix
+        fatalError()
     }
 
 }

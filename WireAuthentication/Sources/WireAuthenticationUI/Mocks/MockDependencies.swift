@@ -269,27 +269,28 @@ extension MockDependencies: NoHistoryViewBuilder {
 }
 
 extension MockDependencies: LoginViaEmailBuilder {
-
     private func loginViewModel(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
             factory: self,
-            loginViaEmailUseCase: self,
-            backendEnvironment: backendEnvironment,
             email: email,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            environmentType: environmentType,
+            backendConfig: backendConfig,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: false,
+            didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: {}
         )
     }
 
     func loginViaEmailView(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
@@ -300,6 +301,9 @@ extension MockDependencies: LoginViaEmailBuilder {
             viewModel: loginViewModel(
                 email: email,
                 canCreateAccount: canCreateAccount,
+                didDetectDomainConflict: didDetectDomainConflict,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
                 backendMetadata: backendMetadata
             ),
             factory: self
@@ -343,7 +347,10 @@ extension MockDependencies: VerificationCodeBuilder {
     }
 
     @MainActor
-    func verificationCodeView(password: String) -> VerificationCodeView {
+    func verificationCodeView(
+        email: String,
+        password: String
+    ) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: VerificationCodeViewModel(
                 factory: self,
@@ -359,36 +366,6 @@ extension MockDependencies: VerificationCodeBuilder {
         )
     }
 
-}
-
-extension MockDependencies: LoginViaEmailOnPremBuilder {
-
-    private func loginViaEmailOnPremViewModel(
-        email: String?,
-        backendConfig: BackendConfig
-    ) -> LoginViaEmailOnPremViewModel {
-        LoginViaEmailOnPremViewModel(
-            router: rootViewModel,
-            factory: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: nil,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: false
-        )
-    }
-
-    func loginViaEmailOnPremView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> LoginViaEmailOnPremView {
-        LoginViaEmailOnPremView(
-            viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
-        )
-    }
 }
 
 extension MockDependencies: LoginViaEmailUseCaseFactory {

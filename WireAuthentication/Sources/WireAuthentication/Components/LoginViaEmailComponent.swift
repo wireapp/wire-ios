@@ -27,18 +27,18 @@ import WireReusableUIComponents
 protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var passwordValidator: any PasswordValidator { get }
-    var networkService: NetworkService { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
+    var preferredAPIVersion: APIVersion? { get }
     var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
     var minTLSVersion: TLSVersion { get }
-    @MainActor var bridge: WireAuthenticationBridge { get }
+    var appStoreURL: URL { get }
 
 }
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
-    public let email: String
+    public let email: String?
     private let canCreateAccount: Bool
     public let didDetectDomainConflict: Bool
     public let networkStack: NetworkStack
@@ -56,7 +56,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     init(
         parent: any Scope,
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         networkStack: NetworkStack
@@ -107,10 +107,9 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         LoginViaEmailViewModel(
             router: dependency.router,
             factory: self,
-            loginViaEmailUseCase: loginViaEmailUseCase,
-            backendEnvironment: backendEnvironment,
             email: email,
-            passwordValidator: dependency.passwordValidator,
+            environmentType: environmentType,
+            backendConfig: backendConfig,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: { [dependency, email, backendEnvironment] in
@@ -138,9 +137,13 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     // MARK: - Children
 
-    func verificationCodeComponent(password: String) -> VerificationCodeComponent {
+    func verificationCodeComponent(
+        email: String,
+        password: String
+    ) -> VerificationCodeComponent {
         VerificationCodeComponent(
             parent: self,
+            email: email,
             password: password
         )
     }
@@ -154,13 +157,32 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: dependency.appStoreURL)
+    }
+
+    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
+        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
+        return ResolveBackendMetadataUseCase(
+            backendMetadataAPI: api,
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
+    }
+
 }
 
 extension LoginViaEmailComponent: LoginViaEmailView.Factory {
 
     @MainActor
-    func verificationCodeView(password: String) -> VerificationCodeView {
-        verificationCodeComponent(password: password).view
+    func verificationCodeView(
+        email: String,
+        password: String
+    ) -> VerificationCodeView {
+        verificationCodeComponent(
+            email: email,
+            password: password
+        ).view
     }
 
 }

@@ -31,19 +31,21 @@ protocol VerificationCodeComponentDependency: Dependency {
     var authenticationAPI: any AuthenticationAPI { get }
     var backendEnvironment: WireAuthenticationBackendEnvironment { get }
     var networkStack: NetworkStack { get }
-    var email: String { get }
     var didDetectDomainConflict: Bool { get }
 
 }
 
 class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
+    private let email: String
     private let password: String
 
     init(
         parent: any Scope,
+        email: String,
         password: String
     ) {
+        self.email = email
         self.password = password
         super.init(parent: parent)
     }
@@ -60,7 +62,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
     private var viewModel: VerificationCodeViewModel {
         VerificationCodeViewModel(
             factory: self,
-            email: dependency.email,
+            email: email,
             password: password,
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
