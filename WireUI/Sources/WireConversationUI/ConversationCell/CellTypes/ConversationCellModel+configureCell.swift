@@ -16,8 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum Availability: CaseIterable, Hashable, Sendable {
-    case available
-    case busy
-    case away
+import UIKit
+
+public extension ConversationCellModel {
+
+    @MainActor
+    func configureCell(_ cell: UITableViewCell) {
+        switch self {
+
+        case let .timeDivider(timeDivider):
+            guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
+            return cell.model = timeDivider
+        }
+
+        assertionFailure("unexpected cell: \(cell)")
+    }
+
 }

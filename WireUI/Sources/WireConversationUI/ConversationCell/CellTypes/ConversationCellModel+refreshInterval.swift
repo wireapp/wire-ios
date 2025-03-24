@@ -16,8 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum Availability: CaseIterable, Hashable, Sendable {
-    case available
-    case busy
-    case away
+import Foundation
+
+public extension ConversationCellModel {
+
+    var refreshInterval: TimeInterval {
+        switch self {
+        case .timeDivider:
+            10
+        default:
+            .zero
+        }
+    }
+
 }
