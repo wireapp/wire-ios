@@ -35,11 +35,14 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
             // For the unread indicator we have custom rules, unless it is the first messsage of the day.
             let difference = now.timeIntervalSince(configuration.date)
-            text = if difference < 60 { // less than one minute
+            text = if difference < 60 {
+                // less than one minute
                 String(localized: "time.just_now")
-            } else if difference <= 30 * 60 { // within 30 minutes display "xy minutes ago"
+            } else if difference <= 30 * 60 {
+                // within 30 minutes display "xy minutes ago"
                 WRDateFormatter.timeIntervalFormatter.localizedString(for: configuration.date, relativeTo: now)
-            } else if isToday { // for same day just show "Today"
+            } else if isToday {
+                // for same day just show "Today"
                 todayDateFormatter.string(from: configuration.date)
             } else if calendar.isDateInYesterday(configuration.date) { // for the day before show "Yesterday"
                 // construct two dates with a difference between 1 and 2 days (e.g. 36h): it should return "Yesterday"
@@ -47,8 +50,8 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
                     for: now.addingTimeInterval(-36 * 2600),
                     relativeTo: now
                 )
-            } else if difference < 7 * 24 * 60 * 60 { // within 7 days print weekday and date
-                //
+            } else if difference < 7 * 24 * 60 * 60 {
+                // within 7 days print weekday and date
                 weekdayAndDateDateFormatter.string(from: configuration.date)
             } else if calendar.component(.year, from: configuration.date) == calendar.component(.year, from: now) { // same year
                 // date + month
@@ -60,7 +63,6 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
         } else {
 
-            // It's a simple time divider, or it's an unread indicator and a time divier.
             text = if isToday {
                 // for same day just show "Today"
                 todayDateFormatter.string(from: configuration.date)
@@ -71,15 +73,6 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
             }
 
         }
-
-//        isSeparatorHidden = false
-//        label.font = burstBoldFont
-//        leftSeparator.backgroundColor = color
-//        rightSeparator.backgroundColor = color
-//        isShowingUnreadDot = showUnreadDot
-//        unreadDot.backgroundColor = accentColor
-
-
 
         let model = TimeDividerModel(text: text, isUnreadIndicatorVisible: configuration.showUnreadDot)
         return .timeDivider(model)
