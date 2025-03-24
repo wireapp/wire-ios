@@ -18,10 +18,10 @@
 
 import Foundation
 
-public protocol DetermineAuthMethodUseCaseProtocol {
+public protocol DetermineAuthMethodUseCaseProtocol: Sendable {
 
     @MainActor
-    func invoke(emailOrSSOCode: String) async throws(DetermineAuthMethodUseCaseFailure) -> AuthenticationMethod
+    func invoke(emailOrSSOCode: String) async throws -> AuthenticationMethod
 
 }
 
@@ -41,19 +41,20 @@ public enum AuthenticationMethod: Sendable, Hashable {
 
     /// On-prem login, either via email or SSO
 
-    case onPremLogin(email: String, backendConfig: URL)
+    case onPremLogin(email: String?, backendConfig: URL)
 
 }
 
 public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
 
+    /// The email or SSO code is invalid.
+
     case invalidEmailOrSSOCode
 
-    /// Indicates that the domain registration response was invalid.
+}
 
-    case invalidResponse
+public protocol DetermineAuthMethodUseCaseFactory {
 
-    case urlError(URLError)
+    func determineAuthMethodUseCase(apiVersion: BackendMetadata.APIVersion) -> any DetermineAuthMethodUseCaseProtocol
 
-    case unknown
 }

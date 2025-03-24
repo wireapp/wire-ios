@@ -1233,16 +1233,16 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
     public init() {}
 
 
-    // MARK: - waitForQuickSyncToFinish
+    // MARK: - waitForDecryptionOfEventsToFinish
 
-    public var waitForQuickSyncToFinish_Invocations: [Void] = []
-    public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
+    public var waitForDecryptionOfEventsToFinish_Invocations: [Void] = []
+    public var waitForDecryptionOfEventsToFinish_MockMethod: (() async -> Void)?
 
-    public func waitForQuickSyncToFinish() async {
-        waitForQuickSyncToFinish_Invocations.append(())
+    public func waitForDecryptionOfEventsToFinish() async {
+        waitForDecryptionOfEventsToFinish_Invocations.append(())
 
-        guard let mock = waitForQuickSyncToFinish_MockMethod else {
-            fatalError("no mock for `waitForQuickSyncToFinish`")
+        guard let mock = waitForDecryptionOfEventsToFinish_MockMethod else {
+            fatalError("no mock for `waitForDecryptionOfEventsToFinish`")
         }
 
         await mock()

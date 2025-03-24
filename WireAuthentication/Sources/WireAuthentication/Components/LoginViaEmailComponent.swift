@@ -27,17 +27,50 @@ import WireReusableUIComponents
 protocol LoginViaEmailComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var accountsURL: URL { get }
     var passwordValidator: any PasswordValidator { get }
-    var authenticationAPI: AuthenticationAPI { get }
+    var networkService: NetworkService { get }
+    var environmentType: BackendEnvironmentType { get }
+    var backendConfig: BackendConfig { get }
+    var minTLSVersion: TLSVersion { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
+    private let environmentType: BackendEnvironmentType
+    private let backendConfig: BackendConfig
+    private let backendMetadata: BackendMetadata
+
+    init(
+        parent: any Scope,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata
+    ) {
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
+        self.backendMetadata = backendMetadata
+        super.init(parent: parent)
+    }
+
+    public var authenticationAPI: any AuthenticationAPI {
+        AuthenticationAPIBuilder(networkService: networkService).makeAPI(
+            for: .init(backendMetadata.apiVersion)
+        )
+    }
+
     public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: dependency.authenticationAPI)
+        LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+    }
+
+    private var networkService: NetworkService {
+        shared {
+            NetworkService.make(
+                backendEnvironment: BackendEnvironment(backendConfig),
+                minTLSVersion: dependency.minTLSVersion
+            )
+        }
     }
 
     // MARK: - View
@@ -67,15 +100,32 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         LoginViaEmailViewModel(
             router: dependency.router,
             loginViaEmailUseCase: loginViaEmailUseCase,
+            backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: dependency.accountsURL,
             passwordValidator: dependency.passwordValidator,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [weak dependency] in
-                dependency?.bridge.registerAccount()
+            onCreateAccount: { [dependency, backendEnvironment] in
+                guard let dependency else { return }
+                dependency.router.dismissSheet()
+                dependency.bridge.sendOutboundEvent(
+                    .accountRegistrationRequested(
+                        email: email,
+                        backendEnvironment
+                    )
+                )
             }
         )
+    }
+
+    public var backendEnvironment: WireAuthenticationBackendEnvironment {
+        shared {
+            WireAuthenticationBackendEnvironment(
+                environmentType: environmentType,
+                config: backendConfig,
+                metadata: backendMetadata
+            )
+        }
     }
 
     // MARK: - Children

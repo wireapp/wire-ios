@@ -53,9 +53,7 @@ private final class MockURLSession: SessionProtocol {
 private final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
 
     let mayBeReachable = true
-    let isMobileConnection = true
     let oldMayBeReachable = true
-    let oldIsMobileConnection = true
 
     func tearDown() {}
     func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any { NSObject() }

@@ -78,7 +78,7 @@ final class MessageSenderTests: MessagingTestBase {
         XCTAssertEqual(1, arrangement.messageDependencyResolver.waitForDependenciesToResolveFor_Invocations.count)
     }
 
-    func testThatBeforeSendingMessage_thenWaitForQuickSyncToFinish() async throws {
+    func testThatBeforeSendingMessage_thenWaitForDecryptionOfEventsToFinish() async throws {
         // given
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -97,7 +97,7 @@ final class MessageSenderTests: MessagingTestBase {
         try? await messageSender.sendMessage(message: message)
 
         // then
-        XCTAssertEqual(1, arrangement.quickSyncObserver.waitForQuickSyncToFinish_Invocations.count)
+        XCTAssertEqual(1, arrangement.quickSyncObserver.waitForDecryptionOfEventsToFinish_Invocations.count)
     }
 
     func testThatWhenApiVersionIsNotResolved_thenFailWithUnresolvedApiVersion() async throws {
@@ -567,6 +567,39 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+    func testThatWhenSendingMlsMessageFailsWithMLSError_thenThrowError() async throws {
+        // given
+        await syncMOC.performGrouped {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+        }
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
+        let networkError = SendMLSMessageFailure.mlsMissingSenderClient(message: "test")
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withQuickSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v5)
+            .withMLServiceConfigured()
+            .withSendMlsMessage(returning: .failure(networkError))
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+
+        // then
+        await assertItThrows(error: networkError) {
+            try await messageSender.sendMessage(message: message)
+        }
+    }
+
     func testThatWhenSendingMlsMessageWithoutMlsService_thenThrowError() async throws {
         // given
         await syncMOC.performGrouped {
@@ -692,7 +725,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withQuickSyncObserverCompleting() -> Arrangement {
-            quickSyncObserver.waitForQuickSyncToFinish_MockMethod = {}
+            quickSyncObserver.waitForDecryptionOfEventsToFinish_MockMethod = {}
             return self
         }
 
@@ -764,7 +797,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withBroadcastProteusMessage(returning result: Result<
             (Payload.MessageSendingStatus, ZMTransportResponse),
-            NetworkError
+            Error
         >) -> Arrangement {
 
             switch result {
@@ -778,7 +811,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withSendProteusMessage(returning result: Result<
             (Payload.MessageSendingStatus, ZMTransportResponse),
-            NetworkError
+            Error
         >) -> Arrangement {
 
             switch result {
@@ -791,8 +824,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withSendMlsMessage(returning result: Result<
-            (Payload.MLSMessageSendingStatus, ZMTransportResponse),
-            NetworkError
+            (Payload.MLSMessageSendingStatus, ZMTransportResponse), Error
         >) -> Arrangement {
 
             switch result {

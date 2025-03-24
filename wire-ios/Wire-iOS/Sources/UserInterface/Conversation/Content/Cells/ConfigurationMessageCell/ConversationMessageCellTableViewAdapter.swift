@@ -23,12 +23,12 @@ extension UITableViewCell {
 
     @objc
     func willDisplayCell() {
-        // to be overriden in subclasses
+        // to be overridden in subclasses
     }
 
     @objc
     func didEndDisplayingCell() {
-        // to be overriden in subclasses
+        // to be overridden in subclasses
     }
 
 }
@@ -51,26 +51,6 @@ final class ConversationMessageCellTableViewAdapter<
     var topMargin: CGFloat = 0 {
         didSet {
             top.constant = CGFloat(topMargin)
-        }
-    }
-
-    override var accessibilityIdentifier: String? {
-        get {
-            cellDescription?.accessibilityIdentifier
-        }
-
-        set {
-            super.accessibilityIdentifier = newValue
-        }
-    }
-
-    override var accessibilityLabel: String? {
-        get {
-            cellDescription?.accessibilityLabel
-        }
-
-        set {
-            super.accessibilityLabel = newValue
         }
     }
 
@@ -145,6 +125,8 @@ final class ConversationMessageCellTableViewAdapter<
 
     func configure(with object: C.View.Configuration, topMargin: CGFloat) {
         cellView.configure(with: object, animated: false)
+        cellView.accessibilityLabel = cellDescription?.accessibilityLabel
+        cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
         self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
@@ -178,7 +160,13 @@ final class ConversationMessageCellTableViewAdapter<
 
     @objc
     private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+        guard gestureRecognizer.state == .recognized else { return }
+
+        if let cellDescription = nestedCellDescription(
+            using: gestureRecognizer.location(in:)
+        ), cellDescription.supportsActions {
+            cellDescription.actionController?.performSingleTapAction()
+        } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
     }
@@ -187,9 +175,35 @@ final class ConversationMessageCellTableViewAdapter<
 
     @objc
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
+        guard gestureRecognizer.state == .recognized else { return }
+
+        if let cellDescription = nestedCellDescription(
+            using: gestureRecognizer.location(in:)
+        ), cellDescription.supportsActions {
+            cellDescription.actionController?.performDoubleTapAction()
+        } else if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }
+    }
+
+    /// For stack cells get the cell description of the arranged subview.
+    /// If no view matches, the top level cell description is returned.
+    private func nestedCellDescription(
+        using locationInCell: (UIView?) -> CGPoint
+    ) -> AnyConversationMessageCellDescription? {
+        guard
+            let cellView = cellView as? ConversationStackMessageContentView,
+            let cellDescription = cellDescription as? StackViewCellDescription
+        else { return nil }
+
+        for (index, cell) in cellView.conversationMessageCells.enumerated() {
+            let location = locationInCell(cell)
+            if cell.bounds.contains(location) {
+                return cellDescription.cellDescriptions[index]
+            }
+        }
+
+        return nil
     }
 
     // MARK: - SelectableView
@@ -228,7 +242,11 @@ final class ConversationMessageCellTableViewAdapter<
 
         // We fail the single tap gesture recognizer if there's no single tap action to perform, which gives
         // other gesture recognizers the opportunity to fire.
-        return cellDescription?.actionController?.singleTapAction != nil
+        if let cellDescription = nestedCellDescription(using: gestureRecognizer.location(in:)) {
+            return cellDescription.supportsActions && cellDescription.actionController?.singleTapAction != nil
+        } else {
+            return cellDescription?.actionController?.singleTapAction != nil
+        }
     }
 
     override func prepareForReuse() {

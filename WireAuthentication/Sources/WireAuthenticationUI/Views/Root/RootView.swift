@@ -21,7 +21,10 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory = DetermineAuthMethodBuilder & LoginViaEmailOnPremBuilder & LoginViaSSOBuilder &
+    package typealias Factory =
+        DetermineAuthMethodBuilder &
+        LoginViaEmailOnPremBuilder &
+        LoginViaSSOBuilder &
         NoHistoryViewBuilder
 
     @StateObject var viewModel: RootViewModel
@@ -41,57 +44,71 @@ package struct RootView: View {
                 switch sheet {
                 case .authFlow:
                     NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView
-                            .alert(
-                                item: $viewModel.alert,
-                                title: titleForAlert,
-                                message: messageForAlert,
-                                actions: { _ in
-                                    Button(L10n.Authentication.Error.confirm, action: {})
-                                }
-                            )
+                        factory.determineAuthMethodView()
                     }
-                case let .noHistory(userID, cookies, accessToken, didDetectDomainConflict):
+                case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
+                    NavigationStack(path: $viewModel.path) {
+                        factory.determineAuthMethodView(
+                            environmentType: environmentType,
+                            backendConfig: backendConfig,
+                            backendMetadata: backendMetadata
+                        )
+                    }
+                case let .noHistory(
+                    authenticationResult,
+                    didDetectDomainConflict
+                ):
                     factory.noHistoryView(
-                        userID: userID,
-                        cookies: cookies,
-                        accessToken: accessToken,
+                        authenticationResult: authenticationResult,
                         didDetectDomainConflict: didDetectDomainConflict
                     )
-                case let .onPremiseLogin(email, environment):
-                    factory.loginViaEmailOnPremView(email: email, backendConfig: environment)
-                case let .ssoLogin(url: ssoURL):
-                    factory.loginViaSSOView(ssoURL: ssoURL)
+                case let .onPremiseLogin(
+                    email,
+                    environmentType,
+                    backendConfig,
+                    backendMetadata
+                ):
+                    factory.loginViaEmailOnPremView(
+                        email: email,
+                        environmentType: environmentType,
+                        backendConfig: backendConfig,
+                        backendMetadata: backendMetadata
+                    )
+                case let .ssoLogin(
+                    ssoURL,
+                    backendEnvironment
+                ):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
                 }
             }
-    }
-
-    private func titleForAlert(_ alert: RootViewModel.Alert) -> Text {
-        switch alert {
-        case .ssoLoginFailed:
-            Text(L10n.Authentication.Error.Title.ssoLoginFailed)
-        }
-    }
-
-    private func messageForAlert(_ alert: RootViewModel.Alert) -> Text {
-        switch alert {
-        case .ssoLoginFailed:
-            Text(L10n.Authentication.Error.Message.ssoLoginFailed)
-        }
     }
 
     package enum ModalDestination: Identifiable, Hashable {
         public var id: Self { self }
 
         case authFlow
+        case onPremiseAuthFlow(
+            environmentType: BackendEnvironmentType,
+            backendConfig: BackendConfig,
+            backendMetadata: BackendMetadata
+        )
         case noHistory(
-            userID: UUID,
-            cookies: [HTTPCookie],
-            accessToken: AccessToken?,
+            authenticationResult: AuthenticationResult,
             didDetectDomainConflict: Bool
         )
-        case onPremiseLogin(email: String, environment: BackendConfig)
-        case ssoLogin(url: URL)
+        case onPremiseLogin(
+            email: String?,
+            environmentType: BackendEnvironmentType,
+            environment: BackendConfig,
+            backendMetadata: BackendMetadata?
+        )
+        case ssoLogin(
+            url: URL,
+            backendEnvironment: WireAuthenticationBackendEnvironment
+        )
     }
 
 }

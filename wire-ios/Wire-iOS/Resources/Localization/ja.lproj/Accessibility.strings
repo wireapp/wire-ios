@@ -118,6 +118,7 @@
 "messageAction.saveButton.description" = "Save picture";
 "messageAction.revealButton.description" = "Reveal in conversation";
 "messageAction.deleteButton.description" = "Delete picture";
+"messageAction.collapseButton.description" = "Collapse";
 
 "audioMessage.pause.value" = "一時停止";
 "audioMessage.play.value" = "再生";

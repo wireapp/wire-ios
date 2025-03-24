@@ -43,7 +43,9 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: MockDependencies()._backendConfig
+            environmentType: MockDependencies().environmentType,
+            backendConfig: MockDependencies()._backendConfig,
+            backendMetadata: nil
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -61,7 +63,9 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: MockDependencies()._backendConfig
+            environmentType: MockDependencies().environmentType,
+            backendConfig: MockDependencies()._backendConfig,
+            backendMetadata: nil
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -86,7 +90,8 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
                 blackListURL: URL(string: "https://example.com")!,
                 teamsURL: URL(string: "https://example.com")!,
                 accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
             ),
             proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
@@ -94,7 +99,9 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
 
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: backendConfig
+            environmentType: MockDependencies().environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: nil
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -111,21 +118,24 @@ class LoginViaEmailOnPremViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let backendConfig = BackendConfig(
-            title: "<backen name>",
+            title: "<backend name>",
             endpoints: Endpoints(
                 backendURL: URL(string: "https://example.com")!,
                 backendWSURL: URL(string: "https://example.com")!,
                 blackListURL: URL(string: "https://example.com")!,
                 teamsURL: URL(string: "https://example.com")!,
                 accountsURL: URL(string: "https://example.com")!,
-                websiteURL: URL(string: "https://example.com")!
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
             ),
             proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
         let view = MockDependencies().loginViaEmailOnPremView(
             email: "foo@bar.com",
-            backendConfig: backendConfig
+            environmentType: MockDependencies().environmentType,
+            backendConfig: backendConfig,
+            backendMetadata: nil
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

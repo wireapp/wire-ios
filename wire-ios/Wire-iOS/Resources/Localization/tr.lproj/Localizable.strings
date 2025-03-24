@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " ve ";
 
 "conversation.action.search" = "Arama";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Resim";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Sil…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Beğen";
 "content.message.unlike" = "Beğenme";
 "content.message.go_to_conversation" = "Göster";
@@ -651,6 +658,7 @@
 "content.message.download" = "İndir";
 "content.message.details" = "Ayrıntılar";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Cevapla";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Bağlantı Önizlemeleri Oluştur";
 "self.settings.privacy_security.disable_link_previews.footer" = "Ön izlemeler hala başkalarından gelen bağlantılar için görüntülenebilir olabilir.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Cihazlar";
 
 "self.settings.privacy.clear_history.title" = "Geçmişi Temizle";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "Bu hesap artık giriş yapmak için yeterli yetkiye sahip değil.";
 "error.user.account_limit_reached" = "3'ten fazla hesap ekleyemezsiniz.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Parolanızı güncelleştiremedik.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Aramak için çok insan var";
 "error.group_call.too_many_members_in_conversation" = "Aramalar %d kişiye kadar yapılabilir.";
 "error.group_call.too_many_participants_in_the_call.title" = "Çağrı dolu";
 "error.group_call.too_many_participants_in_the_call" = "Burada yalnızca %d katılımcı için yer var.";
-"error.call.gsm_ongoing.title" = "Hücresel arama";
-"error.call.gsm_ongoing" = "Lütfen Wire üzerinden arama yapmadan önce hücresel aramayı kapatın.";
-"error.call.general.title" = "Arama hatası";
-"error.call.general" = "Lütfen aramayı birkaç dakika sonra tekrar deneyin.";
-"error.call.slow_connection.title" = "Yavaş bağlantı";
-"error.call.slow_connection" = "Arama sırasında sorunlarla karşılaşabilirsiniz";
-"error.call.slow_connection.call_anyway" = "Yine de ara";
 
 "error.invite.no_email_provider" = "Lütfen e-posta ile davet göndermek için e-posta istemcinizi yapılandırın";
 "error.invite.no_messaging_provider" = "Lütfen SMS göndermek için SMS'inizi yapılandırın";

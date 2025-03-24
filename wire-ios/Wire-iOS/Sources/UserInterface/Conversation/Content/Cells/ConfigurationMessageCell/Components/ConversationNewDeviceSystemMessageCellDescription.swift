@@ -24,7 +24,7 @@ import WireSyncEngine
 
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationNewDeviceSystemMessageCell
+    typealias View = ConversationNewDeviceSystemMessageCell<ConversationNewDeviceSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration

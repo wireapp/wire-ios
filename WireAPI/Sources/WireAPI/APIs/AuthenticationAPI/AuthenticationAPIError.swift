@@ -48,7 +48,7 @@ public enum AuthenticationAPIError: Error {
 
 }
 
-extension AuthenticationAPIError {
+public extension AuthenticationAPIError {
 
     enum SSOLoginError: Equatable, Error {
 

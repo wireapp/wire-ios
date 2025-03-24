@@ -852,6 +852,10 @@ internal enum L10n {
       }
     }
     internal enum MessageAction {
+      internal enum CollapseButton {
+        /// Collapse
+        internal static let description = L10n.tr("Accessibility", "messageAction.collapseButton.description", fallback: "Collapse")
+      }
       internal enum CopyButton {
         /// Copy picture
         internal static let description = L10n.tr("Accessibility", "messageAction.copyButton.description", fallback: "Copy picture")
@@ -1668,6 +1672,28 @@ internal enum L10n {
       }
     }
     internal enum Content {
+      internal enum Collapsed {
+        internal enum Audio {
+          /// You sent an audio message
+          internal static let title = L10n.tr("Localizable", "content.collapsed.audio.title", fallback: "You sent an audio message")
+        }
+        internal enum File {
+          /// You sent a file
+          internal static let title = L10n.tr("Localizable", "content.collapsed.file.title", fallback: "You sent a file")
+        }
+        internal enum Image {
+          /// You sent a picture
+          internal static let title = L10n.tr("Localizable", "content.collapsed.image.title", fallback: "You sent a picture")
+        }
+        internal enum Location {
+          /// You sent your location
+          internal static let title = L10n.tr("Localizable", "content.collapsed.location.title", fallback: "You sent your location")
+        }
+        internal enum Video {
+          /// You sent a video
+          internal static let title = L10n.tr("Localizable", "content.collapsed.video.title", fallback: "You sent a video")
+        }
+      }
       internal enum File {
         /// Browse
         internal static let browse = L10n.tr("Localizable", "content.file.browse", fallback: "Browse")
@@ -1697,6 +1723,8 @@ internal enum L10n {
         internal static let saveImage = L10n.tr("Localizable", "content.image.save_image", fallback: "Save")
       }
       internal enum Message {
+        /// Collapse
+        internal static let collapse = L10n.tr("Localizable", "content.message.collapse", fallback: "Collapse")
         /// Copy
         internal static let copy = L10n.tr("Localizable", "content.message.copy", fallback: "Copy")
         /// Delete
@@ -2330,6 +2358,8 @@ internal enum L10n {
     }
     internal enum Conversation {
       internal enum Action {
+        /// Conversation Details
+        internal static let conversationDetails = L10n.tr("Localizable", "conversation.action.conversationDetails", fallback: "Conversation Details")
         /// Search
         internal static let search = L10n.tr("Localizable", "conversation.action.search", fallback: "Search")
       }
@@ -3155,30 +3185,6 @@ internal enum L10n {
       internal static let fullName = L10n.tr("Localizable", "error.full_name", fallback: "Please enter your full name")
       /// Please enter your full name and a valid email address
       internal static let nameAndEmail = L10n.tr("Localizable", "error.name_and_email", fallback: "Please enter your full name and a valid email address")
-      /// Couldn’t update your password.
-      internal static let updatingPassword = L10n.tr("Localizable", "error.updating_password", fallback: "Couldn’t update your password.")
-      internal enum Call {
-        /// Please try calling again in several minutes.
-        internal static let general = L10n.tr("Localizable", "error.call.general", fallback: "Please try calling again in several minutes.")
-        /// Please cancel the cellular call before calling on Wire.
-        internal static let gsmOngoing = L10n.tr("Localizable", "error.call.gsm_ongoing", fallback: "Please cancel the cellular call before calling on Wire.")
-        /// You might experience issues during the call
-        internal static let slowConnection = L10n.tr("Localizable", "error.call.slow_connection", fallback: "You might experience issues during the call")
-        internal enum General {
-          /// Call error
-          internal static let title = L10n.tr("Localizable", "error.call.general.title", fallback: "Call error")
-        }
-        internal enum GsmOngoing {
-          /// Cellular call
-          internal static let title = L10n.tr("Localizable", "error.call.gsm_ongoing.title", fallback: "Cellular call")
-        }
-        internal enum SlowConnection {
-          /// Call anyway
-          internal static let callAnyway = L10n.tr("Localizable", "error.call.slow_connection.call_anyway", fallback: "Call anyway")
-          /// Slow connection
-          internal static let title = L10n.tr("Localizable", "error.call.slow_connection.title", fallback: "Slow connection")
-        }
-      }
       internal enum Connection {
         /// Your backend does not federate with the backend of %@. You can not connect with them.
         internal static func federationDeniedMessage(_ p1: Any) -> String {
@@ -5653,6 +5659,12 @@ internal enum L10n {
         internal enum PrivacySecurity {
           /// Lock With Passcode
           internal static let lockApp = L10n.tr("Localizable", "self.settings.privacy_security.lock_app", fallback: "Lock With Passcode")
+          internal enum CollapseOwnMessages {
+            /// If this is enabled, all your messages are collapsed to a single line.
+            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "If this is enabled, all your messages are collapsed to a single line.")
+            /// Collapse own messages
+            internal static let title = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.title", fallback: "Collapse own messages")
+          }
           internal enum DisableLinkPreviews {
             /// Previews may still be shown for links from other people.
             internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.disable_link_previews.footer", fallback: "Previews may still be shown for links from other people.")

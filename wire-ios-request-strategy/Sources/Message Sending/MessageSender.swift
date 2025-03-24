@@ -76,7 +76,7 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
-        await quickSyncObserver.waitForQuickSyncToFinish()
+        await quickSyncObserver.waitForDecryptionOfEventsToFinish()
 
         do {
             guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
@@ -92,7 +92,7 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
-        await quickSyncObserver.waitForQuickSyncToFinish()
+        await quickSyncObserver.waitForDecryptionOfEventsToFinish()
         WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
 
         do {
@@ -395,6 +395,8 @@ public final class MessageSender: MessageSenderInterface {
             )
 
         await context.perform {
+            // handle 201 case failed_to_send
+            // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/556564601/Use+case+sending+a+message+MLS
             self.mlsPayloadProcessor.updateFailedRecipients(from: payload, for: message)
             message.delivered(with: response)
         }

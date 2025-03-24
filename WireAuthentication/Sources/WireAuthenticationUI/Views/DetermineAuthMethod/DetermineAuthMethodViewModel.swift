@@ -25,134 +25,231 @@ import WireLogging
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
-    package enum Alert: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        case noInternet
-        case invalidResponse
-        case unknownError
-        case invalidSSOLink
-
-    }
+    package typealias Factory =
+        DetermineAuthMethodUseCaseFactory &
+        FetchBackendConfigUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
+        ResolveBackendMetadataUseCaseFactory &
+        SSOLinkGeneratorFactory &
+        ValidateEmailOrSSOCodeUseCaseFactory
 
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
-        case ssoLogin(url: URL)
-        case switchBackend(email: String, environment: BackendConfig)
+        case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
+        case switchBackend(email: String?, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
     }
 
     private let router: any Router
-    private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
-    private let determineAuthMethod: any DetermineAuthMethodUseCaseProtocol
-    private let fetchBackendConfig: any FetchBackendConfigUseCaseProtocol
-    private let ssoLinkGenerator: SSOLinkGeneratorProtocol
+    private let factory: any Factory
+    private let bridge: WireAuthenticationBridge
+    private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
+    private let environmentType: BackendEnvironmentType
+    private let backendMetadata: BackendMetadata?
+    package let backendConfig: BackendConfig
+    private var cancellable: AnyCancellable?
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
     @Published var modalDestination: ModalDestination?
+    @Published var existsAnotherAccount: Bool
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
     }
 
+    var isOnPremiseBackend: Bool {
+        environmentType != .production
+    }
+
     package init(
         router: any Router,
-        validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
-        determineAuthMethod: any DetermineAuthMethodUseCaseProtocol,
-        fetchBackendConfig: any FetchBackendConfigUseCaseProtocol,
-        ssoLinkGenerator: any SSOLinkGeneratorProtocol,
+        factory: any Factory,
+        bridge: WireAuthenticationBridge,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?,
         emailOrSSOCode: String = "",
-        isLoading: Bool = false,
-        alert: Alert? = nil
+        existsAnotherAccount: Bool,
+        isLoading: Bool = false
     ) {
         self.router = router
-        self.validateEmailOrSSOCode = validateEmailOrSSOCode
-        self.determineAuthMethod = determineAuthMethod
-        self.fetchBackendConfig = fetchBackendConfig
-        self.ssoLinkGenerator = ssoLinkGenerator
+        self.factory = factory
+        self.bridge = bridge
+        self.environmentType = environmentType
+        self.backendMetadata = backendMetadata
+        self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
+        self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
-        self.alert = alert
+
+        self.cancellable = bridge.inboundEvents.sink { event in
+            switch event {
+            case let .backendSwitchRequested(configURL):
+                Task { [weak self] in
+                    await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
+                }
+            default:
+                break
+            }
+        }
     }
 
     func submitEmailOrSSOCode() async {
         isLoading = true
-
-        do {
-            let method = try await determineAuthMethod.invoke(emailOrSSOCode: emailOrSSOCode)
-            await handleAuthenticationMethod(method)
-        } catch {
-            switch error {
-            case .invalidEmailOrSSOCode:
-                // No need to do anything here. In general this shouldn't happen. It is probably worth restructuring
-                // things a little to make this error impossible to happen.
-                break
-            case .invalidResponse:
-                alert = .invalidResponse
-            case let .urlError(urlError):
-                switch urlError.code {
-                case .notConnectedToInternet, .networkConnectionLost:
-                    alert = .noInternet
-                default:
-                    alert = .unknownError
-                }
-            case .unknown:
-                alert = .unknownError
-            }
+        defer {
+            isLoading = false
         }
 
-        isLoading = false
+        let backendMetadata: BackendMetadata
+        do {
+            let useCase = factory.resolveBackendMetadataUseCase()
+            backendMetadata = try await Task.detached { [useCase] in
+                try await useCase.invoke()
+            }.value
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            return
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            return
+        } catch {
+            alert = .general(for: error)
+            return
+        }
+
+        do {
+            let useCase = factory.determineAuthMethodUseCase(apiVersion: backendMetadata.apiVersion)
+            let authMethod = try await Task.detached { [useCase, emailOrSSOCode] in
+                try await useCase.invoke(emailOrSSOCode: emailOrSSOCode)
+            }.value
+
+            await handleAuthenticationMethod(
+                authMethod,
+                backendMetadata: backendMetadata
+            )
+        } catch {
+            WireLogger.authentication.error("Error determining authentication method: \(error)")
+
+            switch error {
+            case DetermineAuthMethodUseCaseFailure.invalidEmailOrSSOCode:
+                // No need to do anything here. In general this shouldn't happen because we validate before submitting.
+                // It is probably worth restructuring the code to avoid this.
+                break
+            default:
+                alert = .general(for: error)
+            }
+        }
     }
 
-    func dismissmodalView() {
-        ssoLinkGenerator.flushToken()
+    func onAlertDismiss() {
+        ssoLinkGenerator?.flushToken()
         modalDestination = nil
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
+    }
+
+    func exitFlow() {
+        bridge.sendOutboundEvent(.exitFlowRequested)
     }
 
     // MARK: - Private
 
-    private func handleAuthenticationMethod(_ method: AuthenticationMethod) async {
+    private func handleAuthenticationMethod(
+        _ method: AuthenticationMethod,
+        backendMetadata: BackendMetadata
+    ) async {
         switch method {
         case let .loginViaEmail(email, didDetectDomainConflict):
             router.navigate(to: DetermineAuthMethodView.Destination.login(
                 email: email,
-                didDetectDomainConflict: didDetectDomainConflict
+                didDetectDomainConflict: didDetectDomainConflict,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
+                backendMetadata: backendMetadata
             ))
 
         case let .loginOrRegisterViaEmail(email):
-            router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(email: email))
+            router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(
+                email: email,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
+                backendMetadata: backendMetadata
+            ))
 
         case let .loginViaSSO(code):
-            Task.detached {
-                do {
-                    let url = try await self.ssoLinkGenerator.generateSSOLink(ssoCode: code)
-                    await MainActor.run {
-                        self.modalDestination = .ssoLogin(url: url)
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.alert = .invalidSSOLink
-                    }
+            let generator = factory.ssoLinkGenerator(apiVersion: backendMetadata.apiVersion)
+            ssoLinkGenerator = generator
+
+            do {
+                let url = try await Task.detached { [generator] in
+                    try await generator.generateSSOLink(ssoCode: code)
+                }.value
+                WireLogger.authentication.error("Generating SSO link succeeded")
+
+                let backendEnvironment = WireAuthenticationBackendEnvironment(
+                    environmentType: environmentType,
+                    config: backendConfig,
+                    metadata: backendMetadata
+                )
+
+                modalDestination = .ssoLogin(
+                    url: url,
+                    backendEnvironment: backendEnvironment
+                )
+            } catch {
+                WireLogger.authentication.error("Generating SSO link failed: \(error)")
+
+                switch error {
+                case SSOLinkGeneratorFailure.invalidSSOCode:
+                    alert = .incorrectSSOCode
+                case SSOLinkGeneratorFailure.invalidSSOURL:
+                    alert = .invalidSSOLink
+                default:
+                    alert = .general(for: error)
                 }
             }
 
-        case let .onPremLogin(email, backendConfig):
+        case let .onPremLogin(email, backendConfigURL):
+            await handleOnPremLogin(email: email, backendConfigURL: backendConfigURL)
+        }
+    }
+
+    private func handleOnPremLogin(email: String?, backendConfigURL: URL) async {
+        guard !existsAnotherAccount else {
+            alert = .switchBackendFailed
+            return
+        }
+        Task {
             do {
-                let environmentInfo = try await Task.detached {
-                    try await self.fetchBackendConfig.invoke(at: backendConfig)
+                let useCase = factory.fetchBackendConfigUseCase()
+                let backendConfig = try await Task.detached {
+                    try await useCase.invoke(at: backendConfigURL)
                 }.value
-                modalDestination = .switchBackend(email: email, environment: environmentInfo)
+
+                WireLogger.authentication.info("Fetching backend config succeeded")
+
+                modalDestination = .switchBackend(
+                    email: email,
+                    environmentType: .custom(url: backendConfigURL),
+                    backendConfig: backendConfig
+                )
             } catch {
-                WireLogger.authentication.error("Unexpected error while fetching backend config: \(error)")
+                WireLogger.authentication.error("Fetching backend config failed: \(error)")
+
+                alert = .general(for: error)
             }
         }
     }
 
     private func isValidEmailOrSSOCode() -> Bool {
         do {
-            _ = try validateEmailOrSSOCode.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
+            let useCase = factory.validateEmailOrSSOCodeUseCase()
+            _ = try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
             return true
         } catch {
             return false

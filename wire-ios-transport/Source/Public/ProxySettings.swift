@@ -18,13 +18,13 @@
 
 import Foundation
 
-final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
+public final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
 
-    let host: String
-    let port: Int
-    let needsAuthentication: Bool
+    public let host: String
+    public let port: Int
+    public let needsAuthentication: Bool
 
-    init(
+    public init(
         host: String,
         port: Int,
         needsAuthentication: Bool = false
@@ -36,7 +36,7 @@ final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
         super.init()
     }
 
-    func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
+    public func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
         var proxyDictionary: [AnyHashable: Any] = [
             "SOCKSEnable": 1,
             "SOCKSProxy": host,

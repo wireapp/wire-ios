@@ -45,6 +45,7 @@ final class VerificationCodeViewModelTests {
             loginViaEmailUseCase: loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: router,
+            backendEnvironment: Fixture.backendEnvironment,
             numberOfDigits: 3, // Lets use a 3 digit code for simplicity
             didDetectDomainConflict: false
         )
@@ -106,9 +107,17 @@ final class VerificationCodeViewModelTests {
         #expect(
             router.modalPresent_Invocations.first as? RootView.ModalDestination ==
                 RootView.ModalDestination.noHistory(
-                    userID: Fixture.someAccessToken.userID,
-                    cookies: [Fixture.someCookie],
-                    accessToken: Fixture.someAccessToken,
+                    authenticationResult: AuthenticationResult(
+                        userID: Fixture.someAccessToken.userID,
+                        cookies: [Fixture.someCookie],
+                        accessToken: Fixture.someAccessToken,
+                        emailCredentials: EmailCredentials(
+                            email: "abc@example.com",
+                            password: "aaaaaa",
+                            verificationCode: "123"
+                        ),
+                        backendEnvironment: Fixture.backendEnvironment
+                    ),
                     didDetectDomainConflict: false
                 )
         )
@@ -117,7 +126,8 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test
     func submitPassword_withInvalidCode() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .twoFactorAuthenticationFailed
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed
 
         // when
         await sut.confirm()
@@ -127,10 +137,14 @@ final class VerificationCodeViewModelTests {
         #expect(isLoadingCalls == [true, false])
     }
 
-    @MainActor @Test
-    func submitPassword_whenNoInternet() async {
+    @MainActor
+    @Test(arguments: [
+        URLError(.notConnectedToInternet),
+        URLError(.networkConnectionLost)
+    ])
+    func submitPassword_whenNoInternet(error: Error) async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .noInternet
+        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = error
 
         // when
         await sut.confirm()
@@ -143,7 +157,8 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test
     func submitPassword_whenAccountPendingActivation() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .accountPendingActivation
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.accountPendingActivation
 
         // when
         await sut.confirm()
@@ -156,7 +171,8 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test
     func submitPassword_whenAccountSuspended() async {
         // given
-        loginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = .accountSuspended
+        loginViaEmailUseCase
+            .invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.accountSuspended
 
         // when
         await sut.confirm()
@@ -168,7 +184,6 @@ final class VerificationCodeViewModelTests {
 
     @MainActor @Test(arguments: [
         LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired,
-        LoginViaEmailUseCaseFailure.other,
         LoginViaEmailUseCaseFailure.invalidCredentials
     ])
     func submitPassword_whenAnUnhandledError(error: LoginViaEmailUseCaseFailure) async {
@@ -223,7 +238,10 @@ final class VerificationCodeViewModelTests {
 
     @MainActor @Test
     func resend_whenSuccess() async {
-        // given, when
+        // given
+        requestLoginVerificationCodeUseCase.invokeEmail_MockMethod = { _ in }
+
+        // when
         await sut.resend()
 
         // then
@@ -234,7 +252,8 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test
     func resend_withInvalidEmail() async {
         // given
-        requestLoginVerificationCodeUseCase.invokeEmail_MockError = .invalidEmail
+        requestLoginVerificationCodeUseCase
+            .invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure.invalidEmail
 
         // when
         await sut.resend()
@@ -245,10 +264,10 @@ final class VerificationCodeViewModelTests {
     }
 
     @MainActor @Test(arguments: [
-        RequestLoginVerificationCodeUseCaseFailure.unexpected(URLError(.notConnectedToInternet)),
-        RequestLoginVerificationCodeUseCaseFailure.unexpected(URLError(.networkConnectionLost))
+        URLError(.notConnectedToInternet),
+        URLError(.networkConnectionLost)
     ])
-    func resend_whenNoInternet(error: RequestLoginVerificationCodeUseCaseFailure) async {
+    func resend_whenNoInternet(error: Error) async {
         // given
         requestLoginVerificationCodeUseCase.invokeEmail_MockError = error
 
@@ -263,8 +282,7 @@ final class VerificationCodeViewModelTests {
     @MainActor @Test
     func resend_whenSomeOtherError() async {
         // given
-        requestLoginVerificationCodeUseCase.invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure
-            .unexpected(URLError(.badURL))
+        requestLoginVerificationCodeUseCase.invokeEmail_MockError = URLError(.badURL)
 
         // when
         await sut.resend()

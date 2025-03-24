@@ -22,7 +22,7 @@ import WireConversationsUI
 
 public final class WireConversationGroupIconFactory {
 
-    private let mapper = ConversationIDToIconMapper()
+    private let mapper = ConversationIDToGroupIconMapper()
 
     public init() {}
 

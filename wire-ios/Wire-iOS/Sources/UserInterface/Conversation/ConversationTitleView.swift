@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class ConversationTitleView: TitleView {
+
     var conversation: GroupDetailsConversationType
     var interactive: Bool = true
 
