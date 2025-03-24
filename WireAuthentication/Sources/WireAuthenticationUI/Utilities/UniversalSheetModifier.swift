@@ -18,6 +18,7 @@
 import SwiftUI
 
 /// This ViewModifier creates a custom overlay for iPad and fallback to .sheet on iPhone
+/// - Note: On iPad, `sheet` modifier is presented as a page. PresentationDetents have no effect
 struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModifier {
 
     @Binding var item: Item?

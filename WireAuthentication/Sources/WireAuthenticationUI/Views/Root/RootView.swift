@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
 import WireAuthenticationAPI
 
 package struct RootView: View {
