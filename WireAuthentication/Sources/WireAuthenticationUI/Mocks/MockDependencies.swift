@@ -201,50 +201,6 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 }
 
-extension MockDependencies: SwitchBackendConfirmationBuilder {
-
-    private func switchBackendConfirmationViewModel(
-        email: String?,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationViewModel {
-        SwitchBackendConfirmationViewModel(
-            router: rootViewModel,
-            factory: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: BackendConfig(
-                title: backendConfig.title,
-                endpoints: Endpoints(
-                    backendURL: backendConfig.endpoints.backendURL,
-                    backendWSURL: backendConfig.endpoints.backendWSURL,
-                    blackListURL: backendConfig.endpoints.blackListURL,
-                    teamsURL: backendConfig.endpoints.teamsURL,
-                    accountsURL: backendConfig.endpoints.accountsURL,
-                    websiteURL: backendConfig.endpoints.websiteURL,
-                    countlyURL: backendConfig.endpoints.countlyURL
-                ),
-                proxySettings: nil,
-                pinnedKeys: nil
-            )
-        )
-    }
-
-    func switchBackendView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(
-            viewModel: switchBackendConfirmationViewModel(
-                email: email,
-                backendConfig: backendConfig
-            ),
-            factory: self
-        )
-    }
-
-}
-
 extension MockDependencies: FetchSSOURLUseCaseFactory {
 
     nonisolated

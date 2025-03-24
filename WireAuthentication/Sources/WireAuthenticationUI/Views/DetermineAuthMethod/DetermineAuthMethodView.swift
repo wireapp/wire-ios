@@ -40,7 +40,6 @@ package struct DetermineAuthMethodView: View {
     package typealias Factory =
         LoginViaEmailBuilder &
         LoginViaSSOBuilder &
-        SwitchBackendConfirmationBuilder &
         NoHistoryViewBuilder
 
     @StateObject var viewModel: DetermineAuthMethodViewModel

@@ -111,19 +111,6 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
         )
     }
 
-    func switchBackendConfirmationComponent(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationComponent {
-        SwitchBackendConfirmationComponent(
-            parent: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        )
-    }
-
     func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
         NoHistoryComponent(
             parent: self,
@@ -232,18 +219,6 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         loginViaSSOComponent(ssoURL: ssoURL).view
-    }
-
-    func switchBackendView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationView {
-        switchBackendConfirmationComponent(
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        ).view
     }
 
     func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {

@@ -20,6 +20,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireLogging
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
@@ -105,19 +106,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         LoginViaSSOComponent(
             parent: self,
             ssoURL: ssoURL
-        )
-    }
-
-    func switchBackendConfirmationComponent(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationComponent {
-        SwitchBackendConfirmationComponent(
-            parent: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
         )
     }
 
@@ -237,18 +225,6 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         loginViaSSOComponent(ssoURL: ssoURL).view
     }
 
-    func switchBackendView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationView {
-        switchBackendConfirmationComponent(
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        ).view
-    }
-
     func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
         noHistoryComponent(authenticationResult: authenticationResult).view
     }
@@ -278,6 +254,70 @@ extension WireAPI.APIVersion {
             self = .v7
         case .v8:
             self = .v8
+        }
+    }
+
+}
+
+// TODO: move this somewhere else
+extension BackendEnvironment {
+
+    init(_ backendConfig: BackendConfig) {
+        var pinnedKeys = [PinnedKey]()
+        do {
+            for trustData in backendConfig.pinnedKeys ?? [] {
+                pinnedKeys.append(try PinnedKey(trustData))
+            }
+        } catch {
+            WireLogger.authentication.error("Failed to create PinnedKey: \(error)")
+            pinnedKeys.removeAll()
+        }
+
+        self.init(
+            url: backendConfig.endpoints.backendURL,
+            webSocketURL: backendConfig.endpoints.backendWSURL,
+            pinnedKeys: pinnedKeys,
+            proxySettings: backendConfig.proxySettings.map(WireAPI.ProxySettings.init)
+        )
+    }
+
+}
+
+private extension PinnedKey {
+
+    init(_ trustData: TrustData) throws {
+        try self.init(
+            key: trustData.certificateKey,
+            hosts: trustData.hosts.map { host in
+                switch host.rule {
+                case .equals:
+                    .equals(host.value)
+                case .endsWith:
+                    .endsWith(host.value)
+                }
+            }
+        )
+    }
+
+}
+
+private extension WireAPI.ProxySettings {
+
+    init(_ proxySettings: WireAuthenticationAPI.ProxySettings) {
+
+        // TODO: [WPB-16266] add credentials
+        if proxySettings.needsAuthentication {
+            self = .authenticated(
+                host: proxySettings.host,
+                port: proxySettings.port,
+                username: "",
+                password: ""
+            )
+        } else {
+            self = .unauthenticated(
+                host: proxySettings.host,
+                port: proxySettings.port
+            )
         }
     }
 
