@@ -49,6 +49,7 @@ struct PreferredSizeModifier: ViewModifier {
         if let value {
             DispatchQueue.main.async {
                 size.height = min(value.height, maxSize.height)
+                size.width = min(value.width, maxSize.width)
             }
         }
     }
