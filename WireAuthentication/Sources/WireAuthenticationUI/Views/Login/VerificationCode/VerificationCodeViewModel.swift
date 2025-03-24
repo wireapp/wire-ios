@@ -116,6 +116,7 @@ public final class VerificationCodeViewModel: ObservableObject {
                 cookies: cookies,
                 accessToken: token,
                 emailCredentials: emailCredentials,
+                proxyCredentials: nil,
                 backendEnvironment: backendEnvironment
             )
 

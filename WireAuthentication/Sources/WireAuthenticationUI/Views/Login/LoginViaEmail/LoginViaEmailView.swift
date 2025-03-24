@@ -150,7 +150,11 @@ package struct LoginViaEmailView: View {
     @ViewBuilder private var submitButton: some View {
         Button(action: {
             Task {
-                await viewModel.submitPassword(password)
+                await viewModel.submit(
+                    password: password,
+                    proxyEmail: proxyEmail,
+                    proxyPassword: proxyPassword
+                )
             }
         }, label: {
             Text(L10n.CloudUserLogin.submit)
@@ -158,7 +162,7 @@ package struct LoginViaEmailView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password) && viewModel.email != nil)
+        .disabled(!canSubmitPassword)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -238,6 +242,17 @@ package struct LoginViaEmailView: View {
             )
             Spacer()
         }
+    }
+
+    private var canSubmitPassword: Bool {
+        let validCredentials = viewModel.isValidEmail && viewModel.isValidPassword(password)
+
+        guard viewModel.hasProxySupport else {
+            return validCredentials
+        }
+
+        let validProxyCredentials = !proxyEmail.isEmpty && !proxyPassword.isEmpty
+        return validCredentials && validProxyCredentials
     }
 
     enum Destination: Hashable {

@@ -81,7 +81,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func isValidPassword(_ password: String) -> Bool {
-        true
+        !password.isEmpty
     }
 
     var isValidEmail: Bool {
@@ -93,7 +93,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         environmentType != .production
     }
 
-    func submitPassword(_ password: String) async {
+    func submit(password: String, proxyEmail: String?, proxyPassword: String?) async {
         guard let email else { return }
 
         isLoading = true
@@ -126,6 +126,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 verificationCode: nil
             )
 
+            let proxyCredentials = proxyEmail.flatMap { email in
+                proxyPassword.map { password in
+                    EmailCredentials(email: email, password: password, verificationCode: nil)
+                }
+            }
+
             let backendEnvironment = WireAuthenticationBackendEnvironment(
                 environmentType: environmentType,
                 config: backendConfig,
@@ -137,6 +143,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 cookies: cookies,
                 accessToken: accessToken,
                 emailCredentials: emailCredentials,
+                proxyCredentials: proxyCredentials,
                 backendEnvironment: backendEnvironment
             )
 

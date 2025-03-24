@@ -49,6 +49,7 @@ package final class LoginViaSSOViewModel: ObservableObject {
                     cookies: cookies,
                     accessToken: nil,
                     emailCredentials: nil,
+                    proxyCredentials: nil,
                     backendEnvironment: backendEnvironment
                 )
 

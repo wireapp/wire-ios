@@ -116,6 +116,7 @@ final class VerificationCodeViewModelTests {
                             password: "aaaaaa",
                             verificationCode: "123"
                         ),
+                        proxyCredentials: nil,
                         backendEnvironment: Fixture.backendEnvironment
                     ),
                     didDetectDomainConflict: false

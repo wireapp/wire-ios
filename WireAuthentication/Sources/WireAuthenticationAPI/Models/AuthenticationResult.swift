@@ -38,6 +38,10 @@ public struct AuthenticationResult: Equatable, Hashable {
 
     public let emailCredentials: EmailCredentials?
 
+    /// Temp
+
+    public let proxyCredentials: EmailCredentials?
+
     /// The connected backend.
 
     public let backendEnvironment: WireAuthenticationBackendEnvironment
@@ -47,12 +51,14 @@ public struct AuthenticationResult: Equatable, Hashable {
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
         emailCredentials: EmailCredentials?,
+        proxyCredentials: EmailCredentials?,
         backendEnvironment: WireAuthenticationBackendEnvironment
     ) {
         self.userID = userID
         self.cookies = cookies
         self.accessToken = accessToken
         self.emailCredentials = emailCredentials
+        self.proxyCredentials = proxyCredentials
         self.backendEnvironment = backendEnvironment
     }
 
