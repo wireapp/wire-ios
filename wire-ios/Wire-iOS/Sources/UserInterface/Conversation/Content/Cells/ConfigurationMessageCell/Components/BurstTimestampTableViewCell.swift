@@ -18,17 +18,68 @@
 
 import UIKit
 import WireConversationUI
+import WireSystem
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
 
+    @MainActor
     var conversationCellModel: ConversationCellModel? {
 
-        let text = if configuration.isFirstMessageOfTheDay {
-            configuration.date.olderThanOneWeekdateFormatter.string(from: configuration.date)
+        let now = currentDateProvider.now
+        let calendar = Calendar.current
+        let isToday = calendar.isDateInToday(configuration.date)
+
+        let text: String
+        if configuration.showUnreadDot, !configuration.isFirstMessageOfTheDay {
+
+            // For the unread indicator we have custom rules, unless it is the first messsage of the day.
+            let difference = now.timeIntervalSince(configuration.date)
+            text = if difference < 60 { // less than one minute
+                String(localized: "time.just_now")
+            } else if difference <= 30 * 60 { // within 30 minutes display "xy minutes ago"
+                WRDateFormatter.timeIntervalFormatter.localizedString(for: configuration.date, relativeTo: now)
+            } else if isToday { // for same day just show "Today"
+                todayDateFormatter.string(from: configuration.date)
+            } else if calendar.isDateInYesterday(configuration.date) { // for the day before show "Yesterday"
+                // construct two dates with a difference between 1 and 2 days (e.g. 36h): it should return "Yesterday"
+                WRDateFormatter.timeIntervalFormatter.localizedString(
+                    for: now.addingTimeInterval(-36 * 2600),
+                    relativeTo: now
+                )
+            } else if difference < 7 * 24 * 60 * 60 { // within 7 days print weekday and date
+                //
+                weekdayAndDateDateFormatter.string(from: configuration.date)
+            } else if calendar.component(.year, from: configuration.date) == calendar.component(.year, from: now) { // same year
+                // date + month
+                monthAndDayDateFormatter.string(from: configuration.date)
+            } else {
+                // date + month + year
+                monthDayAndYearDateFormatter.string(from: configuration.date)
+            }
+
         } else {
-            configuration.date.formattedDate
+
+            // It's a simple time divider, or it's an unread indicator and a time divier.
+            text = if isToday {
+                // for same day just show "Today"
+                todayDateFormatter.string(from: configuration.date)
+            } else if calendar.component(.year, from: configuration.date) == calendar.component(.year, from: now) {
+                weekdayAndDateDateFormatter.string(from: configuration.date)
+            } else {
+                weekdayDateAndYearDateFormatter.string(from: configuration.date)
+            }
+
         }
+
+//        isSeparatorHidden = false
+//        label.font = burstBoldFont
+//        leftSeparator.backgroundColor = color
+//        rightSeparator.backgroundColor = color
+//        isShowingUnreadDot = showUnreadDot
+//        unreadDot.backgroundColor = accentColor
+
+
 
         let model = TimeDividerModel(text: text, isUnreadIndicatorVisible: configuration.showUnreadDot)
         return .timeDivider(model)
@@ -48,6 +99,8 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
     let accessibilityIdentifier = String?.none
     let accessibilityLabel = String?.none
+
+    var currentDateProvider: CurrentDateProviding = SystemDateProvider()
 
     init(
         message: ZMConversationMessage,
@@ -82,3 +135,51 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {}
 
 }
+
+@MainActor private let todayDateFormatter = {
+    let sameDayDateFormatter = DateFormatter()
+    sameDayDateFormatter.timeStyle = .none
+    sameDayDateFormatter.dateStyle = .medium
+    sameDayDateFormatter.doesRelativeDateFormatting = true
+    return sameDayDateFormatter
+}()
+
+@MainActor private let monthAndDayDateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = DateFormatter.dateFormat(
+        fromTemplate: "MMM d",
+        options: 0,
+        locale: .current
+    )
+    return dateFormatter
+}()
+
+@MainActor private let monthDayAndYearDateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = DateFormatter.dateFormat(
+        fromTemplate: "MMM d, yyyy",
+        options: 0,
+        locale: .current
+    )
+    return dateFormatter
+}()
+
+@MainActor private let weekdayAndDateDateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = DateFormatter.dateFormat(
+        fromTemplate: "EEEEdMMM",
+        options: 0,
+        locale: .current
+    )
+    return dateFormatter
+}()
+
+@MainActor private let weekdayDateAndYearDateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = DateFormatter.dateFormat(
+        fromTemplate: "EEEEdMMMYYYY",
+        options: 0,
+        locale: .current
+    )
+    return dateFormatter
+}()
