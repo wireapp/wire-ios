@@ -133,6 +133,14 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
     }
 
     nonisolated
+    func fetchSSOURLUseCase(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig
+    ) async throws -> any FetchSSOURLUseCaseProtocol {
+        MockFetchSSOURLUseCase()
+    }
+
+    nonisolated
     func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
         MockOpenAppStoreUseCase()
     }
@@ -271,8 +279,7 @@ extension MockDependencies: LoginViaEmailBuilder {
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendConfig: BackendConfig
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
@@ -291,8 +298,7 @@ extension MockDependencies: LoginViaEmailBuilder {
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendConfig: BackendConfig
     ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: loginViewModel(
@@ -300,8 +306,7 @@ extension MockDependencies: LoginViaEmailBuilder {
                 canCreateAccount: canCreateAccount,
                 didDetectDomainConflict: didDetectDomainConflict,
                 environmentType: environmentType,
-                backendConfig: backendConfig,
-                backendMetadata: backendMetadata
+                backendConfig: backendConfig
             ),
             factory: self
         )

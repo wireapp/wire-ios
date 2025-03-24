@@ -164,8 +164,7 @@ extension RootComponent: RootView.Factory {
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendConfig: BackendConfig
     ) -> LoginViaEmailView {
         // TODO: fix
         fatalError()

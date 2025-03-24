@@ -186,6 +186,28 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         FetchBackendConfigUseCase()
     }
 
+    func fetchSSOURLUseCase(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig
+    ) async throws -> any FetchSSOURLUseCaseProtocol {
+        let networkStack = NetworkStack(
+            environmentType: environmentType,
+            backendConfig: backendConfig,
+            minTLSVersion: dependency.minTLSVersion
+        )
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        let linkGenerator = SSOLinkGenerator(
+            authenticationAPI: authenticationAPI,
+            baseURL: backendConfig.endpoints.backendURL,
+            callbackScheme: dependency.ssoCallbackURLScheme,
+            defaults: dependency.userDefaults
+        )
+        return FetchSSOURLUseCase(
+            authenticationAPI: authenticationAPI,
+            linkGenerator: linkGenerator
+        )
+    }
+
     func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
         OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
@@ -200,8 +222,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendConfig: BackendConfig
     ) -> LoginViaEmailView {
         loginViaEmailComponent(
             email: email,

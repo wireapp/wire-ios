@@ -143,16 +143,14 @@ package struct DetermineAuthMethodView: View {
                 email,
                 didDetectDomainConflict,
                 environmentType,
-                backendConfig,
-                backendMetadata
+                backendConfig
             ):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: false,
                     didDetectDomainConflict: didDetectDomainConflict,
                     environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
+                    backendConfig: backendConfig
                 )
             case let .loginOrRegister(
                 email,
@@ -166,8 +164,7 @@ package struct DetermineAuthMethodView: View {
                     canCreateAccount: true,
                     didDetectDomainConflict: didDetectDomainConflict,
                     environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
+                    backendConfig: backendConfig
                 )
             case let .noHistory(authenticationResult):
                 factory.noHistoryView(authenticationResult: authenticationResult)
@@ -177,28 +174,35 @@ package struct DetermineAuthMethodView: View {
             item: $viewModel.modalDestination,
             content: {
                 switch $0 {
-                case let .ssoLogin(
-                    ssoURL,
-                    backendEnvironment
-                ):
+                case let .ssoLogin(ssoURL):
                     factory.loginViaSSOView(ssoURL: ssoURL)
-                case let .switchBackend(
+                case let .switchBackendConfirmation(
                     email,
                     environmentType,
                     backendConfig
                 ):
                     if #available(iOS 16.4, *) {
-                        factory.switchBackendView(
-                            email: email,
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        ).presentationBackground(Color.black.opacity(0.7))
+                        SwitchBackendConfirmation(backendConfig: backendConfig) { didConfirm in
+                            guard didConfirm else { return }
+                            Task {
+                                await viewModel.switchBackend(
+                                    email: email,
+                                    environmentType: environmentType,
+                                    backendConfig: backendConfig
+                                )
+                            }
+                        }.presentationBackground(Color.black.opacity(0.7))
                     } else {
-                        factory.switchBackendView(
-                            email: email,
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        ).background(TransparentBackgroundView())
+                        SwitchBackendConfirmation(backendConfig: backendConfig) { didConfirm in
+                            guard didConfirm else { return }
+                            Task {
+                                await viewModel.switchBackend(
+                                    email: email,
+                                    environmentType: environmentType,
+                                    backendConfig: backendConfig
+                                )
+                            }
+                        }.background(TransparentBackgroundView())
                     }
                 }
             }
@@ -214,15 +218,14 @@ package struct DetermineAuthMethodView: View {
             email: String,
             didDetectDomainConflict: Bool,
             environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
+            backendConfig: BackendConfig
         )
         case loginOrRegister(
             email: String,
             didDetectDomainConflict: Bool,
             environmentType: BackendEnvironmentType,
             backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
+            backendMetadata: BackendMetadata // TODO: delete
         )
         case noHistory(AuthenticationResult)
     }

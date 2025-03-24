@@ -24,8 +24,23 @@ public protocol FetchSSOURLUseCaseProtocol: Sendable {
 
 }
 
+public enum FetchSSOURLUseCaseError: Error {
+
+    case proxyCredentialsRequired
+
+}
+
 public protocol FetchSSOURLUseCaseFactory {
 
     func fetchSSOURLUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol
+
+}
+
+public protocol FetchSSOURLUseCaseFactory2 {
+
+    func fetchSSOURLUseCase(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig
+    ) async throws -> any FetchSSOURLUseCaseProtocol
 
 }

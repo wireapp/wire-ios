@@ -63,8 +63,7 @@ package struct RootView: View {
                         canCreateAccount: false,
                         didDetectDomainConflict: false,
                         environmentType: environmentType,
-                        backendConfig: backendConfig,
-                        backendMetadata: backendMetadata
+                        backendConfig: backendConfig
                     )
                 }
             }

@@ -29,8 +29,7 @@ package protocol LoginViaEmailBuilder {
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendConfig: BackendConfig
     ) -> LoginViaEmailView
 
 }
@@ -271,8 +270,7 @@ package struct LoginViaEmailView: View {
                 canCreateAccount: false,
                 didDetectDomainConflict: false,
                 environmentType: MockDependencies().environmentType,
-                backendConfig: MockDependencies()._backendConfig,
-                backendMetadata: MockDependencies().backendMetadata
+                backendConfig: MockDependencies()._backendConfig
             )
         }
 }

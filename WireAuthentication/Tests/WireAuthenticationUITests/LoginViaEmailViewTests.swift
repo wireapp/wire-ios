@@ -26,11 +26,6 @@ import XCTest
 class LoginViaEmailViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private let backendMetadata = BackendMetadata(
-        apiVersion: .v8,
-        domain: "wire.com",
-        isFederationEnabled: true
-    )
 
     override func setUp() {
         snapshotHelper = .init()
@@ -50,8 +45,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: true,
             didDetectDomainConflict: false,
             environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: MockDependencies()._backendConfig
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -72,8 +66,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: true,
             didDetectDomainConflict: false,
             environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: MockDependencies()._backendConfig
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -95,8 +88,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: false,
             didDetectDomainConflict: false,
             environmentType: .anta,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: MockDependencies()._backendConfig
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -117,8 +109,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: false,
             didDetectDomainConflict: false,
             environmentType: .anta,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: MockDependencies()._backendConfig
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -155,8 +146,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: false,
             didDetectDomainConflict: false,
             environmentType: MockDependencies().environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: backendConfig
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -191,8 +181,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: false,
             didDetectDomainConflict: false,
             environmentType: MockDependencies().environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: backendConfig
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

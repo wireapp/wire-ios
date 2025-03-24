@@ -25,6 +25,7 @@ package final class NetworkStack {
 
     enum Failure: Error {
 
+        // TODO: rename `proxyCredentialsRequired
         case awaitingProxyCredentials
 
     }
