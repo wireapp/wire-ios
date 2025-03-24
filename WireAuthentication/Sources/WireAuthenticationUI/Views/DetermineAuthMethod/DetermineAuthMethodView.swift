@@ -108,6 +108,17 @@ package struct DetermineAuthMethodView: View {
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }.padding()
         }
+        .toolbar {
+            if viewModel.existsAnotherAccount {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.exitFlow()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+            }
+        }
         .alert(
             item: $viewModel.alert,
             title: { Text($0.title) },
@@ -225,24 +236,43 @@ extension Alert {
 @MainActor
 func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
+    existsAnotherAccount: Bool = false,
     isLoading: Bool = false,
     alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
+        existsAnotherAccount: existsAnotherAccount,
         isLoading: isLoading,
         alert: alert
     )
 }
 
-#Preview {
+#Preview("can't exit flow") {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: "user@wire.com",
-                isLoading: false,
-                alert: .unknownError
-            )
+            NavigationStack {
+                makeDetermineAuthMethodViewPreview(
+                    emailOrSSOCode: "user@wire.com",
+                    existsAnotherAccount: false,
+                    isLoading: false,
+                    alert: nil
+                )
+            }
+        }
+}
+
+#Preview("can exit flow") {
+    BackgroundView()
+        .sheet(isPresented: .constant(true)) {
+            NavigationStack {
+                makeDetermineAuthMethodViewPreview(
+                    emailOrSSOCode: "user@wire.com",
+                    existsAnotherAccount: true,
+                    isLoading: false,
+                    alert: nil
+                )
+            }
         }
 }
 

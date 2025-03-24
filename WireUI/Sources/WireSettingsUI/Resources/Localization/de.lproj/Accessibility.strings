@@ -17,6 +17,6 @@
 //
 
 "exportBackup.cancel.label" = "Backup abbrechen";
-"importBackup.cancel.label" = "Cancel restore";
+"importBackup.cancel.label" = "Wiederherstellung abbrechen";
 "backup.password.show.label" = "Passwort anzeigen";
 "backup.password.hide.label" = "Passwort ausblenden";

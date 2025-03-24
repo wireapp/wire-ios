@@ -119,6 +119,7 @@
 "messageAction.saveButton.description" = "Сохранить изображение";
 "messageAction.revealButton.description" = "Показать в беседе";
 "messageAction.deleteButton.description" = "Удалить изображение";
+"messageAction.collapseButton.description" = "Свернуть";
 
 "audioMessage.pause.value" = "Пауза";
 "audioMessage.play.value" = "Воспроизвести";
