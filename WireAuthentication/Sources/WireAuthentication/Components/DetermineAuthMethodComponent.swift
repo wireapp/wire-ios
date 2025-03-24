@@ -51,6 +51,13 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         super.init(parent: parent)
     }
 
+    @MainActor var view: DetermineAuthMethodView {
+        DetermineAuthMethodView(
+            viewModel: viewModel,
+            factory: self
+        )
+    }
+
     @MainActor private var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
             router: dependency.router,
@@ -60,13 +67,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             backendConfig: dependency.backendConfig,
             backendMetadata: nil,
             canExitFlow: dependency.existsAnotherAccount
-        )
-    }
-
-    @MainActor var view: DetermineAuthMethodView {
-        DetermineAuthMethodView(
-            viewModel: viewModel,
-            factory: self
         )
     }
 

@@ -81,13 +81,13 @@ class RootComponent: BootstrapComponent {
         }
     }
 
+    // MARK: - Public dependencies
+
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
             WireAuthenticationBridge()
         }
     }
-
-    // MARK: - Public dependencies
 
     @MainActor public var router: any Router {
         viewModel
@@ -121,21 +121,6 @@ class RootComponent: BootstrapComponent {
         )
     }
 
-    func loginViaEmailComponent(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        networkStack: NetworkStack
-    ) -> LoginViaEmailComponent {
-        LoginViaEmailComponent(
-            parent: self,
-            email: email,
-            canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            networkStack: networkStack
-        )
-    }
-
 }
 
 extension RootComponent: RootView.Factory {
@@ -156,18 +141,6 @@ extension RootComponent: RootView.Factory {
     @MainActor
     func determineAuthMethodView() -> DetermineAuthMethodView {
         determineAuthMethodComponent.view
-    }
-
-    @MainActor
-    func loginViaEmailView(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> LoginViaEmailView {
-        // TODO: fix
-        fatalError()
     }
 
 }

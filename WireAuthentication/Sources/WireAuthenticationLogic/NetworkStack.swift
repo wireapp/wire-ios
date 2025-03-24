@@ -25,8 +25,7 @@ package final class NetworkStack {
 
     enum Failure: Error {
 
-        // TODO: rename `proxyCredentialsRequired
-        case awaitingProxyCredentials
+        case proxyCredentialsRequired
 
     }
 
@@ -117,7 +116,7 @@ package final class NetworkStack {
         get throws {
             switch state {
             case .awaitingProxyCredentials:
-                throw Failure.awaitingProxyCredentials
+                throw Failure.proxyCredentialsRequired
             case let .ready(networkService):
                 networkService
             }

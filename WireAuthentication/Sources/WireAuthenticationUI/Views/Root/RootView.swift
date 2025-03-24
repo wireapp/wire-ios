@@ -21,9 +21,7 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory =
-        DetermineAuthMethodBuilder &
-        LoginViaEmailBuilder
+    package typealias Factory = DetermineAuthMethodBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -52,19 +50,6 @@ package struct RootView: View {
                             backendMetadata: backendMetadata
                         )
                     }
-                case let .onPremiseLogin(
-                    email,
-                    environmentType,
-                    backendConfig,
-                    backendMetadata
-                ):
-                    factory.loginViaEmailView(
-                        email: email ?? "",
-                        canCreateAccount: false,
-                        didDetectDomainConflict: false,
-                        environmentType: environmentType,
-                        backendConfig: backendConfig
-                    )
                 }
             }
     }
@@ -76,12 +61,6 @@ package struct RootView: View {
         case onPremiseAuthFlow(
             environmentType: BackendEnvironmentType,
             backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
-        )
-        case onPremiseLogin(
-            email: String?,
-            environmentType: BackendEnvironmentType,
-            environment: BackendConfig,
             backendMetadata: BackendMetadata
         )
     }
