@@ -17,30 +17,10 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-// sourcery: AutoMockable
-public protocol LoginViaEmailUseCaseProtocol: Sendable {
+struct MockRequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
 
-    func invoke(
-        email: String,
-        password: String,
-        verificationCode: String?
-    ) async throws -> ([HTTPCookie], AccessToken)
-
-}
-
-public enum LoginViaEmailUseCaseFailure: Error, Equatable {
-
-    case invalidCredentials
-    case twoFactorAuthenticationRequired
-    case twoFactorAuthenticationFailed
-    case accountPendingActivation
-    case accountSuspended
-
-}
-
-public protocol LoginViaEmailUseCaseFactory {
-
-    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol
+    func invoke(email: String) async throws {}
 
 }

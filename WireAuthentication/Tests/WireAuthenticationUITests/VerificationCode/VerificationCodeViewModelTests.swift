@@ -43,8 +43,6 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
             factory: self,
             email: "abc@example.com",
             password: "aaaaaa",
-            loginViaEmailUseCase: loginViaEmailUseCase,
-            requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: router,
             backendEnvironment: Fixture.backendEnvironment,
             numberOfDigits: 3 // Lets use a 3 digit code for simplicity
@@ -58,6 +56,10 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
 
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
         loginViaEmailUseCase
+    }
+
+    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
+        requestLoginVerificationCodeUseCase
     }
 
     // MARK: - isConfirmButtonDisabled tests

@@ -27,8 +27,6 @@ import WireReusableUIComponents
 protocol VerificationCodeComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol { get }
-    var authenticationAPI: any AuthenticationAPI { get }
     var backendEnvironment: WireAuthenticationBackendEnvironment { get }
     var networkStack: NetworkStack { get }
     var didDetectDomainConflict: Bool { get }
@@ -64,15 +62,9 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             factory: self,
             email: email,
             password: password,
-            loginViaEmailUseCase: dependency.loginViaEmailUseCase,
-            requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: dependency.router,
             backendEnvironment: dependency.backendEnvironment
         )
-    }
-
-    private var requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol {
-        RequestLoginVerificationCodeUseCase(authenticationAPI: dependency.authenticationAPI)
     }
 
     // MARK: - Children
@@ -92,6 +84,11 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
         let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
         return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+    }
+
+    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
+        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        return RequestLoginVerificationCodeUseCase(authenticationAPI: authenticationAPI)
     }
 
 }

@@ -26,9 +26,8 @@ import WireReusableUIComponents
 package final class LoginViaEmailViewModel: ObservableObject {
 
     package typealias Factory =
-        LoginViaEmailUseCaseFactory2 &
-        OpenAppStoreUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory
+        LoginViaEmailUseCaseFactory &
+        OpenAppStoreUseCaseFactory
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?

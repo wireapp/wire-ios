@@ -70,28 +70,6 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         super.init(parent: parent)
     }
 
-    // TODO: delete
-    public var authenticationAPI: any AuthenticationAPI {
-        AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(backendMetadata.apiVersion)
-        )
-    }
-
-    // TODO: delete
-    public var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
-        LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
-    }
-
-    // TODO: delete
-    private var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: BackendEnvironment(backendConfig),
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
-    }
-
     // MARK: - View
 
     @MainActor
@@ -169,15 +147,6 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
     func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
         OpenAppStoreUseCase(url: dependency.appStoreURL)
-    }
-
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
-        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
-        return ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
     }
 
 }

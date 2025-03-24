@@ -39,12 +39,6 @@ private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: V
     var router: any Router {
         return rootComponent.router
     }
-    var loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol {
-        return loginViaEmailComponent.loginViaEmailUseCase
-    }
-    var authenticationAPI: any AuthenticationAPI {
-        return loginViaEmailComponent.authenticationAPI
-    }
     var backendEnvironment: WireAuthenticationBackendEnvironment {
         return loginViaEmailComponent.backendEnvironment
     }
@@ -221,8 +215,6 @@ private func factory9bda312c16141c932061b3a8f24c1d289f2c0f2e(_ component: Needle
 extension VerificationCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\VerificationCodeComponentDependency.router] = "router-any Router"
-        keyPathToName[\VerificationCodeComponentDependency.loginViaEmailUseCase] = "loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"
-        keyPathToName[\VerificationCodeComponentDependency.authenticationAPI] = "authenticationAPI-any AuthenticationAPI"
         keyPathToName[\VerificationCodeComponentDependency.backendEnvironment] = "backendEnvironment-WireAuthenticationBackendEnvironment"
         keyPathToName[\VerificationCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\VerificationCodeComponentDependency.didDetectDomainConflict] = "didDetectDomainConflict-Bool"
@@ -242,7 +234,6 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.appStoreURL] = "appStoreURL-URL"
         keyPathToName[\DetermineAuthMethodComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
-        localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
 extension LoginViaSSOComponent: NeedleFoundation.Registration {
@@ -286,7 +277,7 @@ extension DetermineAuthMethodOnPremComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.appStoreURL] = "appStoreURL-URL"
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
-        localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
+
     }
 }
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
@@ -301,8 +292,6 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         localTable["email-String?"] = { [unowned self] in self.email as Any }
         localTable["didDetectDomainConflict-Bool"] = { [unowned self] in self.didDetectDomainConflict as Any }
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
-        localTable["authenticationAPI-any AuthenticationAPI"] = { [unowned self] in self.authenticationAPI as Any }
-        localTable["loginViaEmailUseCase-any LoginViaEmailUseCaseProtocol"] = { [unowned self] in self.loginViaEmailUseCase as Any }
         localTable["backendEnvironment-WireAuthenticationBackendEnvironment"] = { [unowned self] in self.backendEnvironment as Any }
     }
 }

@@ -263,10 +263,17 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 }
 
-extension MockDependencies: LoginViaEmailUseCaseFactory2 {
+extension MockDependencies: LoginViaEmailUseCaseFactory {
 
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
         MockMockLoginViaEmailUseCase()
+    }
+
+}
+
+extension MockDependencies: RequestLoginVerificationCodeUseCaseFactory {
+    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
+        MockRequestLoginVerificationCodeUseCase()
     }
 
 }
@@ -282,8 +289,6 @@ extension MockDependencies: VerificationCodeBuilder {
             factory: self,
             email: email,
             password: password,
-            loginViaEmailUseCase: self,
-            requestLoginVerificationCodeUseCase: self,
             router: rootViewModel,
             backendEnvironment: backendEnvironment,
             numberOfDigits: code.count
@@ -306,22 +311,11 @@ extension MockDependencies: VerificationCodeBuilder {
                 factory: self,
                 email: "jane@doe.com",
                 password: password,
-                loginViaEmailUseCase: self,
-                requestLoginVerificationCodeUseCase: self,
                 router: rootViewModel,
                 backendEnvironment: backendEnvironment
             ),
             factory: self
         )
-    }
-
-}
-
-extension MockDependencies: LoginViaEmailUseCaseFactory {
-
-    nonisolated
-    func loginViaEmailUseCase(apiVersion: BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol {
-        MockMockLoginViaEmailUseCase()
     }
 
 }

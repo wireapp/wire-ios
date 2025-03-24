@@ -25,7 +25,9 @@ import WireLogging
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
 
-    package typealias Factory = LoginViaEmailUseCaseFactory2
+    package typealias Factory =
+        LoginViaEmailUseCaseFactory &
+        RequestLoginVerificationCodeUseCaseFactory
 
     private static let numberOfDigits = 6
 
@@ -39,8 +41,6 @@ public final class VerificationCodeViewModel: ObservableObject {
     let numberOfDigits: Int
 
     private let factory: any Factory
-    private let loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol
-    private let requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol
     private let router: any Router
     private let backendEnvironment: WireAuthenticationBackendEnvironment
 
@@ -48,8 +48,6 @@ public final class VerificationCodeViewModel: ObservableObject {
         factory: any Factory,
         email: String,
         password: String,
-        loginViaEmailUseCase: any LoginViaEmailUseCaseProtocol,
-        requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol,
         router: any Router,
         backendEnvironment: WireAuthenticationBackendEnvironment,
         numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
@@ -59,8 +57,6 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.factory = factory
         self.email = email
         self.password = password
-        self.loginViaEmailUseCase = loginViaEmailUseCase
-        self.requestLoginVerificationCodeUseCase = requestLoginVerificationCodeUseCase
         self.router = router
         self.backendEnvironment = backendEnvironment
         self.code = Array(repeating: "", count: numberOfDigits)
@@ -138,13 +134,8 @@ public final class VerificationCodeViewModel: ObservableObject {
     func resend() async {
         isResending = true
 
-        let requestTask = Task.detached { [requestLoginVerificationCodeUseCase, email] in
-            try await requestLoginVerificationCodeUseCase.invoke(email: email)
-        }
-
         do {
-            try await requestTask.value
-
+            try await resendVerificationCode(email: email)
             WireLogger.authentication.info("Resend 2FA code succeeded")
         } catch {
             WireLogger.authentication.error("Resend 2FA login failed: \(error)")
@@ -153,6 +144,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
             default:
+                // TODO: handle network stack errors
                 alert = .general(for: error)
             }
         }
@@ -170,6 +162,13 @@ public final class VerificationCodeViewModel: ObservableObject {
                 password: password,
                 verificationCode: verificationCode
             )
+        }.value
+    }
+
+    private func resendVerificationCode(email: String) async throws {
+        let useCase = try await factory.requestLoginVerificationCodeUseCase()
+        try await Task.detached {
+            try await useCase.invoke(email: email)
         }.value
     }
 
