@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import SwiftUI
+import SwiftUIIntrospect
 
 /// This ViewModifier creates a custom overlay for iPad and fallback to .sheet on iPhone
 /// - Note: On iPad, `sheet` modifier is presented as a page. PresentationDetents have no effect
@@ -77,14 +78,14 @@ private struct SheetCornerRadiusModifier: ViewModifier {
             content
                 .introspect(.navigationStack, on: .iOS(.v16, .v17, .v18)) { stack in
                     stack.topViewController?.view.backgroundColor = .white
-                    // .cornerRadius from SwiftUI will mess with touch area with NavigationStack, when keyboard is
-                    // active and after
+                    // .cornerRadius from SwiftUI will mess with touch area with NavigationStack,
+                    // when keyboard is active and after it's dismissed
                     stack.view?.layer.cornerRadius = 10
                 }
         } else {
             content
-                .cornerRadius(10)
                 .background(Color.white)
+                .cornerRadius(10)
         }
     }
 }

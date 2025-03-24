@@ -93,7 +93,6 @@ package struct LoginViaEmailView: View {
                 )
             }
         }
-        .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
 

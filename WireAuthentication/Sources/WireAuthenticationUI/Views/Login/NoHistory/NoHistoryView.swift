@@ -67,6 +67,7 @@ package struct NoHistoryView: View {
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
+
         }
         .alert(
             item: $viewModel.alert,
@@ -85,9 +86,9 @@ package struct NoHistoryView: View {
         .onAppear {
             viewModel.onAppear()
         }
+        .padding(.vertical, 32)
         .padding()
         .setPreferredSize()
-        .presentationDetents([.medium])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
