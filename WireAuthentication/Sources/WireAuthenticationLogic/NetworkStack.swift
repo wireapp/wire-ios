@@ -103,7 +103,6 @@ package final class NetworkStack {
 
         let api = BackendMetadataAPIBuilder(networkService: try networkService).makeAPI()
 
-        // TODO: make this a private function
         let useCase = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
             clientProductionVersions: APIVersion.productionVersions,
