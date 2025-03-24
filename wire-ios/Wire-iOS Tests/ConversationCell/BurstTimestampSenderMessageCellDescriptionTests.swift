@@ -76,124 +76,111 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
         XCTAssertEqual(model?.text, "Today")
     }
 
-    /*
-    func testUnreadIndicatorYesterday() {
-        // When
-        sut.configure(
-            timestamp: .now.addingTimeInterval(-24 * 3600), // 1d ago
+    func testUnreadIndicatorYesterday() async {
+        // Given
+        let sut = createSUT(
+            now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+            targetDate: { now in now.addingTimeInterval(-24 * 3600) }, // 1d ago
             isFirstMessageOfTheDay: false,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+            showUnreadDot: true
         )
 
+        // When
+        let model = await TimeDividerModel(sut.conversationCellModel)
+
         // Then
-        XCTAssertEqual(sut.label.text, "Yesterday")
+        XCTAssertEqual(model?.text, "Yesterday")
     }
 
-    func testUnreadIndicatorThreeDaysAgo() {
+    func testUnreadIndicatorThreeDaysAgo() async {
         // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // When
-        sut.configure(
-            timestamp: mockedNow.addingTimeInterval(-3 * 24 * 3600), // 3d ago
+        let sut = createSUT(
+            now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+            targetDate: { now in now.addingTimeInterval(-3 * 24 * 3600) }, // 3d ago
             isFirstMessageOfTheDay: false,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+            showUnreadDot: true
         )
 
+        // When
+        let model = await TimeDividerModel(sut.conversationCellModel)
+
         // Then
-        XCTAssertEqual(sut.label.text, "Sunday, Mar 16")
+        XCTAssertEqual(model?.text, "Sunday, Mar 16")
     }
 
-    func testUnreadIndicatorSameYear() {
+    func testUnreadIndicatorSameYear() async {
         // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // When
-        sut.configure(
-            timestamp: ISO8601DateFormatter().date(from: "2025-01-03T00:44:10+01:00")!,
+        let sut = createSUT(
+            now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+            targetDate: { _ in ISO8601DateFormatter().date(from: "2025-01-03T00:44:10+01:00")! },
             isFirstMessageOfTheDay: false,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+            showUnreadDot: true
         )
 
+        // When
+        let model = await TimeDividerModel(sut.conversationCellModel)
+
         // Then
-        XCTAssertEqual(sut.label.text, "Jan 3")
+        XCTAssertEqual(model?.text, "Jan 3")
     }
 
-    func testUnreadIndicatorLastYear() {
+    func testUnreadIndicatorLastYear() async {
         // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // When
-        sut.configure(
-            timestamp: ISO8601DateFormatter().date(from: "2024-12-31T00:44:10+01:00")!,
+        let sut = createSUT(
+            now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+            targetDate: { _ in ISO8601DateFormatter().date(from: "2024-12-31T00:44:10+01:00")! },
             isFirstMessageOfTheDay: false,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+            showUnreadDot: true
         )
 
+        // When
+        let model = await TimeDividerModel(sut.conversationCellModel)
+
         // Then
-        XCTAssertEqual(sut.label.text, "Dec 31, 2024")
+        XCTAssertEqual(model?.text, "Dec 31, 2024")
     }
 
     // MARK: - Time Divider
 
-    func testTimeDividerToday() throws {
-        // Given
-        let then = Date.now.addingTimeInterval(-45 * 60)
-        if !Calendar.current.isDate(.now, inSameDayAs: then) {
-            // if the test runs before 00:45, add another hour
-            throw XCTSkip("This test needs to run between 00:45 and 23:59")
-        }
-
+    func testTimeDividerToday() async {
         // When
         for flag in [true, false] {
+            // Given
             // unread indicators have the same text as time dividers when they're for the first message of a day
-            sut.configure(
-                timestamp: then, // 30s ago
+            let sut = createSUT(
+                now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+                targetDate: { now in now.addingTimeInterval(-45 * 60) }, // 45 min ago
                 isFirstMessageOfTheDay: flag,
-                showUnreadDot: flag,
-                accentColor: userSession.selfUser.accentColor
+                showUnreadDot: flag
             )
 
+            // When
+            let model = await TimeDividerModel(sut.conversationCellModel)
+
             // Then
-            XCTAssertEqual(sut.label.text, "Today")
+            XCTAssertEqual(model?.text, "Today")
         }
     }
 
-    func testTimeDividerSameYear() {
-        // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // When
+    func testTimeDividerSameYear() async {
         for flag in [true, false] {
-            // unread indicators have the same text as time dividers when they're for the first message of a day
-            sut.configure(
-                timestamp: ISO8601DateFormatter().date(from: "2025-01-19T09:44:10+01:00")!,
+            // Given
+            let sut = createSUT(
+                now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+                targetDate: { _ in ISO8601DateFormatter().date(from: "2025-01-19T09:44:10+01:00")! },
                 isFirstMessageOfTheDay: flag,
-                showUnreadDot: flag,
-                accentColor: userSession.selfUser.accentColor
+                showUnreadDot: flag
             )
 
+            // When
+            let model = await TimeDividerModel(sut.conversationCellModel)
+
             // Then
-            XCTAssertEqual(sut.label.text, "Sunday, Jan 19")
+            XCTAssertEqual(model?.text, "Sunday, Jan 19")
         }
     }
 
+    /*
     func testTimeDividerLastYear() {
         // Given
         let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!

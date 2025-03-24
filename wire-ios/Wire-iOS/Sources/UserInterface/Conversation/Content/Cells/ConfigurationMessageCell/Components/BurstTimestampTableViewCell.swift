@@ -48,10 +48,11 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
                 text = WRDateFormatter.timeIntervalFormatter.localizedString(for: configuration.date, relativeTo: now)
             } else if isToday {
                 // for same day just show "Today"
+                // the relative date formatting refers to the current system time
                 let now = Date.now
                 var then = now.addingTimeInterval(-60 * 60)
                 if !calendar.isDate(now, equalTo: then, toGranularity: .day) {
-                    then = now.addingTimeInterval(60 * 60)
+                    then = now.addingTimeInterval(60 * 60) // in case the test runs before 01:00 AM
                 }
                 text = todayDateFormatter.string(from: then)
             } else if isYesterday { // for the day before show "Yesterday"
