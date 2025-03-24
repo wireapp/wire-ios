@@ -50,8 +50,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
 
     // MARK: - Properties
 
-    private let api: ConversationsAPI
-    private let store: ConversationLocalStoreProtocol
+    private let api: any ConversationsAPI
+    private let store: any ConversationLocalStoreProtocol
+    private let mlsService: (any MLSServiceInterface)?
     private let context: NSManagedObjectContext
     private let isFederationEnabled: Bool
     private let logger: WireLogger = .conversation
@@ -59,18 +60,72 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     // MARK: - Object lifecycle
 
     public init(
-        api: ConversationsAPI,
-        store: ConversationLocalStoreProtocol,
+        api: any ConversationsAPI,
+        store: any ConversationLocalStoreProtocol,
+        mlsService: (any MLSServiceInterface)?,
         context: NSManagedObjectContext,
         isFederationEnabled: Bool
     ) {
         self.api = api
         self.store = store
+        self.mlsService = mlsService
         self.context = context
         self.isFederationEnabled = isFederationEnabled
     }
 
     public func invoke(
+        teamID: UUID,
+        name: String?,
+        users: Set<ZMUser>,
+        accessMode: Set<WireAPI.ConversationAccessMode>,
+        accessRoles: Set<WireAPI.ConversationAccessRole>,
+        enableReceipts: Bool
+    ) async throws -> ZMConversation {
+        do {
+            return try await createChannel(
+                teamID: teamID,
+                name: name,
+                users: users,
+                accessMode: accessMode,
+                accessRoles: accessRoles,
+                enableReceipts: enableReceipts
+            )
+
+        } catch let error as ConversationsAPIError {
+            switch error {
+            case .notConnected:
+                await context.perform {
+                    users.forEach { $0.needsToBeUpdatedFromBackend = true }
+                    context.enqueueDelayedSave()
+                }
+                
+                throw Failure.notConnected
+            case .missingLegalHoldConsent:
+                throw Failure.missingLegalholdConsent
+            case let .nonFederatingBackends(domains):
+                do {
+                    return try await createChannelExcludingDomains(
+                        domains,
+                        teamID: teamID,
+                        name: name,
+                        accessMode: accessMode,
+                        accessRoles: accessRoles,
+                        enableReceipts: enableReceipts,
+                        users: users
+                    )
+                } catch {
+                    throw Failure.nonFederatingDomains(Set(domains))
+                }
+            default:
+                throw Failure.failedToCreateChannel(error)
+            }
+            
+        } catch {
+            throw Failure.failedToCreateChannel(error)
+        }
+    }
+    
+    private func createChannel(
         teamID: UUID,
         name: String?,
         users: Set<ZMUser>,
@@ -107,8 +162,6 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 unqualifiedUserIDs
             )
         }
-
-        do {
             let remoteConversation = try await api.createGroupConversation(
                 groupType: .channel,
                 messageProtocol: .mls,
@@ -133,48 +186,11 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             )
 
             return localConversation
-
-        } catch {
-            switch error {
-            case let apiError as ConversationsAPIError:
-                switch apiError {
-                case .notConnected:
-                    await context.perform {
-                        users.forEach { $0.needsToBeUpdatedFromBackend = true }
-                        context.enqueueDelayedSave()
-                    }
-
-                    throw Failure.notConnected
-                case .missingLegalHoldConsent:
-                    throw Failure.missingLegalholdConsent
-                case let .nonFederatingBackends(domains):
-                    do {
-                        return try await retryExcludingDomains(
-                            domains,
-                            teamID: teamID,
-                            name: name,
-                            accessMode: accessMode,
-                            accessRoles: accessRoles,
-                            enableReceipts: enableReceipts,
-                            users: users
-                        )
-                    } catch {
-                        throw Failure.nonFederatingDomains(Set(domains))
-                    }
-                default:
-                    throw Failure.failedToCreateChannel(error)
-                }
-
-            default:
-                throw Failure.failedToCreateChannel(error)
-            }
-        }
-
     }
 
     // MARK: - API error handling
 
-    private func retryExcludingDomains(
+    private func createChannelExcludingDomains(
         _ excludedDomains: [String],
         teamID: UUID,
         name: String?,
@@ -191,10 +207,10 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         }
 
         // Retrying with reachable users (with federated domains)
-        let conversation = try await invoke(
+        let conversation = try await createChannel(
             teamID: teamID,
             name: name,
-            users: users,
+            users: reachableUsers,
             accessMode: accessMode,
             accessRoles: accessRoles,
             enableReceipts: enableReceipts
@@ -215,10 +231,9 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         for conversation: ZMConversation,
         with participants: Set<ZMUser>
     ) async throws {
-        let (mlsGroupID, mlsService, isMLSConversation) = await context.perform {
+        let (mlsGroupID, isMLSConversation) = await context.perform {
             (
                 conversation.mlsGroupID,
-                context.mlsService,
                 conversation.messageProtocol == .mls
             )
         }
@@ -266,10 +281,6 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         _ users: Set<ZMUser>,
         to conversation: ZMConversation
     ) async throws {
-        let mlsService = await context.perform {
-            context.mlsService
-        }
-
         guard let mlsService else { return }
 
         let (qualifiedID, groupID) = await context.perform {

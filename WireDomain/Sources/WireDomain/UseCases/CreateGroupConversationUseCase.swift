@@ -51,8 +51,9 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
 
     // MARK: - Properties
 
-    private let api: ConversationsAPI
-    private let store: ConversationLocalStoreProtocol
+    private let api: any ConversationsAPI
+    private let store: any ConversationLocalStoreProtocol
+    private let mlsService: (any MLSServiceInterface)?
     private let context: NSManagedObjectContext
     private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
@@ -63,18 +64,76 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
     public init(
         api: ConversationsAPI,
         store: ConversationLocalStoreProtocol,
+        mlsService: (any MLSServiceInterface)?,
         context: NSManagedObjectContext,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool
     ) {
         self.api = api
         self.store = store
+        self.mlsService = mlsService
         self.context = context
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
     }
 
     public func invoke(
+        teamID: UUID?,
+        messageProtocol: WireAPI.ConversationMessageProtocol,
+        name: String?,
+        users: Set<ZMUser>,
+        accessMode: Set<WireAPI.ConversationAccessMode>,
+        accessRoles: Set<WireAPI.ConversationAccessRole>,
+        enableReceipts: Bool,
+        isMLSEnabled: Bool
+    ) async throws -> ZMConversation {
+        do {
+            return try await createGroup(
+                teamID: teamID,
+                messageProtocol: messageProtocol,
+                name: name,
+                users: users,
+                accessMode: accessMode,
+                accessRoles: accessRoles,
+                enableReceipts: enableReceipts,
+                isMLSEnabled: isMLSEnabled
+            )
+        } catch let error as ConversationsAPIError {
+            switch error {
+            case .notConnected:
+                await context.perform {
+                    users.forEach { $0.needsToBeUpdatedFromBackend = true }
+                    context.enqueueDelayedSave()
+                }
+                
+                throw Failure.notConnected
+            case .missingLegalHoldConsent:
+                throw Failure.missingLegalholdConsent
+            case let .nonFederatingBackends(domains):
+                do {
+                    return try await createGroupExcludingDomains(
+                        domains,
+                        teamID: teamID,
+                        messageProtocol: messageProtocol,
+                        name: name,
+                        accessMode: accessMode,
+                        accessRoles: accessRoles,
+                        enableReceipts: enableReceipts,
+                        users: users
+                    )
+                } catch {
+                    throw Failure.nonFederatingDomains(Set(domains))
+                }
+            default:
+                throw Failure.failedToCreateGroup(error)
+            }
+        } catch {
+            throw Failure.failedToCreateGroup(error)
+        }
+
+    }
+    
+    private func createGroup(
         teamID: UUID?,
         messageProtocol: WireAPI.ConversationMessageProtocol,
         name: String?,
@@ -113,8 +172,6 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 unqualifiedUserIDs
             )
         }
-
-        do {
             let remoteConversation = try await api.createGroupConversation(
                 groupType: .group,
                 messageProtocol: teamID == nil ? .proteus : messageProtocol,
@@ -146,49 +203,11 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             }
 
             return localConversation
-
-        } catch {
-            switch error {
-            case let apiError as ConversationsAPIError:
-                switch apiError {
-                case .notConnected:
-                    await context.perform {
-                        users.forEach { $0.needsToBeUpdatedFromBackend = true }
-                        context.enqueueDelayedSave()
-                    }
-
-                    throw Failure.notConnected
-                case .missingLegalHoldConsent:
-                    throw Failure.missingLegalholdConsent
-                case let .nonFederatingBackends(domains):
-                    do {
-                        return try await retryExcludingDomains(
-                            domains,
-                            teamID: teamID,
-                            messageProtocol: messageProtocol,
-                            name: name,
-                            accessMode: accessMode,
-                            accessRoles: accessRoles,
-                            enableReceipts: enableReceipts,
-                            users: users
-                        )
-                    } catch {
-                        throw Failure.nonFederatingDomains(Set(domains))
-                    }
-                default:
-                    throw Failure.failedToCreateGroup(error)
-                }
-
-            default:
-                throw Failure.failedToCreateGroup(error)
-            }
-        }
-
     }
 
     // MARK: - API error handling
 
-    private func retryExcludingDomains(
+    private func createGroupExcludingDomains(
         _ excludedDomains: [String],
         teamID: UUID?,
         messageProtocol: WireAPI.ConversationMessageProtocol,
@@ -206,7 +225,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         }
 
         // Retrying with reachable users (with federated domains)
-        let conversation = try await invoke(
+        let conversation = try await createGroup(
             teamID: teamID,
             messageProtocol: messageProtocol,
             name: name,
@@ -232,10 +251,9 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         for conversation: ZMConversation,
         with participants: Set<ZMUser>
     ) async throws {
-        let (mlsGroupID, mlsService, isMLSConversation) = await context.perform {
+        let (mlsGroupID, isMLSConversation) = await context.perform {
             (
                 conversation.mlsGroupID,
-                context.mlsService,
                 conversation.messageProtocol == .mls
             )
         }
@@ -283,10 +301,6 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         _ users: Set<ZMUser>,
         to conversation: ZMConversation
     ) async throws {
-        let mlsService = await context.perform {
-            context.mlsService
-        }
-
         guard let mlsService else { return }
 
         let (qualifiedID, groupID) = await context.perform {
