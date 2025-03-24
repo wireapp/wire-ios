@@ -31,6 +31,7 @@ public extension ConversationCellModel {
         }
 
         tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)
+        tableView.registeredIdentifiers.insert(cellReuseIdentifier)
     }
 
 }
