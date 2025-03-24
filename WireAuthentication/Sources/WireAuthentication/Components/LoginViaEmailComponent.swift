@@ -43,17 +43,6 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     public let didDetectDomainConflict: Bool
     public let networkStack: NetworkStack
 
-    // TODO: delete these
-    private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
-
-    // TODO: delete this temp fix
-    private let backendMetadata = BackendMetadata(
-        apiVersion: .v8,
-        domain: "example.com",
-        isFederationEnabled: false
-    )
-
     init(
         parent: any Scope,
         email: String?,
@@ -65,8 +54,6 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.networkStack = networkStack
-        self.environmentType = networkStack.environmentType
-        self.backendConfig = networkStack.backendConfig
         super.init(parent: parent)
     }
 
@@ -86,8 +73,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             router: dependency.router,
             factory: self,
             email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
+            environmentType: networkStack.environmentType,
+            backendConfig: networkStack.backendConfig,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: { [dependency, email, backendEnvironment] in
@@ -104,13 +91,11 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     }
 
     public var backendEnvironment: WireAuthenticationBackendEnvironment {
-        shared {
-            WireAuthenticationBackendEnvironment(
-                environmentType: environmentType,
-                config: backendConfig,
-                metadata: backendMetadata
-            )
-        }
+        WireAuthenticationBackendEnvironment(
+            environmentType: networkStack.environmentType,
+            config: networkStack.backendConfig,
+            metadata: .dummy // TODO: fix
+        )
     }
 
     // MARK: - Children

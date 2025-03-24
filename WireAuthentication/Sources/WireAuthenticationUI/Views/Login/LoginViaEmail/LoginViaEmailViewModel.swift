@@ -191,7 +191,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 }
 
 // TODO: delete
-extension BackendMetadata {
+public extension BackendMetadata {
 
     static let dummy = BackendMetadata(
         apiVersion: .v8,
