@@ -304,6 +304,15 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 .union([userSession.selfUser])
                 .materialize(in: userSession.viewContext)
 
+            // Switching to sync context
+            let syncedUsers = userSession.syncContext.performAndWait {
+                let objectIDs = users.map(\.objectID)
+
+                return objectIDs.compactMap {
+                    try? userSession.syncContext.existingObject(with: $0) as? ZMUser
+                }
+            }
+
             let team = userSession.syncContext.performAndWait {
                 let selfUser = ZMUser.selfUser(in: userSession.syncContext)
                 return selfUser.teamIdentifier
@@ -314,14 +323,14 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                     await createChannel(
                         teamID: team!, // safe force unwrapped, we already checked team is not null
                         session: userSession,
-                        users: users
+                        users: syncedUsers
                     )
 
                 } else {
                     await createGroupConversation(
                         teamID: team,
                         session: userSession,
-                        users: users
+                        users: syncedUsers
                     )
                 }
 
@@ -459,9 +468,14 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 isMLSEnabled: BackendInfo.isMLSEnabled
             )
 
+            // Switching back to UI context
+            let syncedConversation = try session.viewContext.performAndWait {
+                try session.viewContext.existingObject(with: conversation.objectID) as! ZMConversation
+            }
+
             delegate?.conversationCreationController(
                 self,
-                didCreateConversation: conversation
+                didCreateConversation: syncedConversation
             )
 
         } catch let error as CreateGroupConversationUseCase.Failure {
@@ -509,10 +523,14 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             messageLocalStore: messageLocalStore
         )
 
+        let mlsService = context.performAndWait {
+            context.mlsService
+        }
+
         return CreateChannelUseCase(
             api: conversationsAPI,
             store: store,
-            mlsService: context.mlsService,
+            mlsService: mlsService,
             context: context,
             isFederationEnabled: BackendInfo.isFederationEnabled
         )
@@ -540,10 +558,14 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             messageLocalStore: messageLocalStore
         )
 
+        let mlsService = context.performAndWait {
+            context.mlsService
+        }
+
         return CreateGroupConversationUseCase(
             api: conversationsAPI,
             store: store,
-            mlsService: context.mlsService,
+            mlsService: mlsService,
             context: context,
             isFederationEnabled: BackendInfo.isFederationEnabled,
             isMLSEnabled: BackendInfo.isMLSEnabled
