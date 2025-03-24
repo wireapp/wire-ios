@@ -172,9 +172,10 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 unqualifiedUserIDs
             )
         }
-        let remoteConversation = try await api.createGroupConversation(
+
+        let apiParameters = CreateGroupConversationParameters(
             groupType: .group,
-            messageProtocol: teamID == nil ? .proteus : messageProtocol,
+            messageProtocol: messageProtocol,
             creatorClientID: selfClientID,
             qualifiedUserIDs: qualifiedUserIds,
             unqualifiedUserIDs: unqualifiedUserIds,
@@ -184,6 +185,10 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             legacyAccessRole: nil,
             teamID: teamID,
             isReadReceiptsEnabled: teamID == nil ? false : enableReceipts
+        )
+
+        let remoteConversation = try await api.createGroupConversation(
+            parameters: apiParameters
         )
 
         let localConversation = try await createConversationLocally(

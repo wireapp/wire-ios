@@ -22,34 +22,11 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
 
     override func createGroupConversation(
-        groupType: ConversationGroupType,
-        messageProtocol: ConversationMessageProtocol,
-        creatorClientID: String,
-        qualifiedUserIDs: [QualifiedID],
-        unqualifiedUserIDs: [UUID],
-        name: String?,
-        accessMode: Set<ConversationAccessMode>,
-        accessRoles: Set<ConversationAccessRole>,
-        legacyAccessRole: ConversationAccessRole?,
-        teamID: UUID?,
-        isReadReceiptsEnabled: Bool
+        parameters: CreateGroupConversationParameters
     ) async throws -> Conversation {
         // removed `guard` condition in api v8 since conversation group can be either `channel` or `group_conversation`
-        let parameters = CreateGroupConversationParametersV8(
-            users: messageProtocol == .proteus ? unqualifiedUserIDs : nil,
-            qualifiedUsers: messageProtocol == .proteus ? qualifiedUserIDs : nil,
-            access: accessMode.map(\.rawValue),
-            accessRoles: accessRoles.map(\.rawValue),
-            name: name,
-            team: teamID.map { .init(teamID: $0) },
-            messageTimer: nil,
-            readReceiptMode: isReadReceiptsEnabled ? 1 : 0,
-            conversationRole: "wire_member",
-            messageProtocol: messageProtocol.rawValue,
-            conversationGroupType: groupType
-        )
-
-        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let input = CreateGroupConversationParametersV0(from: parameters)
+        let body = try JSONEncoder.defaultEncoder.encode(input)
         let path = "\(pathPrefix)\(basePath)"
 
         let request = try URLRequestBuilder(path: path)

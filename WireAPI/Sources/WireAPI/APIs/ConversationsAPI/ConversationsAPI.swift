@@ -49,18 +49,12 @@ public protocol ConversationsAPI {
         conversationID: String
     ) async throws -> String?
 
+    /// Creates a group conversation given provided parameters.
+    /// - parameter parameters: API parameters required to create the group.
+    /// - returns: The created group conversation.
+
     func createGroupConversation(
-        groupType: ConversationGroupType,
-        messageProtocol: ConversationMessageProtocol,
-        creatorClientID: String,
-        qualifiedUserIDs: [QualifiedID],
-        unqualifiedUserIDs: [UUID],
-        name: String?,
-        accessMode: Set<ConversationAccessMode>,
-        accessRoles: Set<ConversationAccessRole>,
-        legacyAccessRole: ConversationAccessRole?,
-        teamID: UUID?,
-        isReadReceiptsEnabled: Bool
+        parameters: CreateGroupConversationParameters
     ) async throws -> Conversation
 
 }

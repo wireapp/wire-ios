@@ -162,7 +162,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 unqualifiedUserIDs
             )
         }
-        let remoteConversation = try await api.createGroupConversation(
+
+        let apiParameters = CreateGroupConversationParameters(
             groupType: .channel,
             messageProtocol: .mls,
             creatorClientID: selfClientID,
@@ -174,6 +175,10 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             legacyAccessRole: nil,
             teamID: teamID,
             isReadReceiptsEnabled: enableReceipts
+        )
+
+        let remoteConversation = try await api.createGroupConversation(
+            parameters: apiParameters
         )
 
         let localConversation = try await createConversationLocally(

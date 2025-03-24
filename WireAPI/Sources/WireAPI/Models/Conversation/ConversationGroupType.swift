@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum ConversationGroupType: String, Codable {
+public enum ConversationGroupType: String, Codable, Sendable {
     case group = "group_conversation"
     case channel
 }

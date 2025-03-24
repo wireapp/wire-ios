@@ -88,9 +88,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
             return (mlsConversation, participant1, participant2)
         }
 
-        conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
-            Scaffolding.conversation
+        conversationsAPI.createGroupConversationParameters_MockValue = Scaffolding.conversation
 
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
 
@@ -114,7 +112,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         XCTAssertEqual(conversation, mlsConversation)
         XCTAssertEqual(
             conversationsAPI
-                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .createGroupConversationParameters_Invocations
                 .count,
             1
         )
@@ -146,28 +144,25 @@ final class CreateChannelUseCaseTests: XCTestCase {
 
         var apiRetryCount = 0
 
-        conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockMethod =
-            {
-                _, _, _, qualifiedIDs, _, _, _, _, _, _, _ in
-                defer { apiRetryCount += 1 }
-                if apiRetryCount == 0 {
-                    // First, we try to create conversation with all users
-                    XCTAssertEqual(
-                        Set(qualifiedIDs.map(\.uuid)),
-                        Set([UUID.mockID1, .mockID2, .mockID3])
-                    )
+        conversationsAPI.createGroupConversationParameters_MockMethod = { parameters in
+            defer { apiRetryCount += 1 }
+            if apiRetryCount == 0 {
+                // First, we try to create conversation with all users
+                XCTAssertEqual(
+                    Set(parameters.qualifiedUserIDs.map(\.uuid)),
+                    Set([UUID.mockID1, .mockID2, .mockID3])
+                )
 
-                    throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
-                } else {
-                    // On retry, we only try to create conversation with federated domains
-                    XCTAssertEqual(
-                        Set(qualifiedIDs.map(\.uuid)),
-                        Set([UUID.mockID1, .mockID2])
-                    )
-                    return Scaffolding.conversation
-                }
+                throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
+            } else {
+                // On retry, we only try to create conversation with federated domains
+                XCTAssertEqual(
+                    Set(parameters.qualifiedUserIDs.map(\.uuid)),
+                    Set([UUID.mockID1, .mockID2])
+                )
+                return Scaffolding.conversation
             }
+        }
 
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
 
@@ -191,7 +186,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         XCTAssertEqual(conversation, mlsConversation)
         XCTAssertEqual(
             conversationsAPI
-                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .createGroupConversationParameters_Invocations
                 .count,
             2
         ) // called twice, first try then retry excluding non federated domains
@@ -224,7 +219,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         var apiRetryCount = 0
 
         conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
+            .createGroupConversationParameters_MockValue =
             Scaffolding.conversation
 
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
@@ -273,7 +268,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         XCTAssertEqual(conversation, mlsConversation)
         XCTAssertEqual(
             conversationsAPI
-                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .createGroupConversationParameters_Invocations
                 .count,
             1
         )
@@ -309,7 +304,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         var apiRetryCount = 0
 
         conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
+            .createGroupConversationParameters_MockValue =
             Scaffolding.conversation
 
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
@@ -354,7 +349,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         XCTAssertEqual(conversation, mlsConversation)
         XCTAssertEqual(
             conversationsAPI
-                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .createGroupConversationParameters_Invocations
                 .count,
             1
         )
@@ -391,7 +386,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         var apiRetryCount = 0
 
         conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
+            .createGroupConversationParameters_MockValue =
             Scaffolding.conversation
 
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
@@ -436,7 +431,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         XCTAssertEqual(conversation, mlsConversation)
         XCTAssertEqual(
             conversationsAPI
-                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .createGroupConversationParameters_Invocations
                 .count,
             1
         )
@@ -461,12 +456,8 @@ final class CreateChannelUseCaseTests: XCTestCase {
             return modelHelper.createUser(id: .mockID3, domain: "nonfederated", in: context)
         }
 
-        conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockMethod =
-            {
-                _, _, _, _, _, _, _, _, _, _, _ in
-                throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
-            }
+        conversationsAPI.createGroupConversationParameters_MockError = ConversationsAPIError
+            .nonFederatingBackends(["nonfederated"])
 
         // Then
 
@@ -498,7 +489,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         }
 
         conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError =
+            .createGroupConversationParameters_MockError =
             ConversationsAPIError.notConnected
 
         // Then
@@ -529,7 +520,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         }
 
         conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError =
+            .createGroupConversationParameters_MockError =
             ConversationsAPIError.missingLegalHoldConsent
 
         // Then
@@ -560,7 +551,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         }
 
         conversationsAPI
-            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError =
+            .createGroupConversationParameters_MockError =
             ConversationsAPIError.nonEmptyMemberList
 
         struct MockError: Error {}

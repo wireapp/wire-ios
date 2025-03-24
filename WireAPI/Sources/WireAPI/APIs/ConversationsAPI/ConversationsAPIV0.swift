@@ -138,37 +138,14 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     func createGroupConversation(
-        groupType: ConversationGroupType,
-        messageProtocol: ConversationMessageProtocol,
-        creatorClientID: String,
-        qualifiedUserIDs: [QualifiedID],
-        unqualifiedUserIDs: [UUID],
-        name: String?,
-        accessMode: Set<ConversationAccessMode>,
-        accessRoles: Set<ConversationAccessRole>,
-        legacyAccessRole: ConversationAccessRole?,
-        teamID: UUID?,
-        isReadReceiptsEnabled: Bool
+        parameters: CreateGroupConversationParameters
     ) async throws -> Conversation {
-        guard groupType != .channel else {
+        guard parameters.groupType != .channel else {
             throw ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint
         }
 
-        let parameters = CreateGroupConversationParametersV0(
-            users: messageProtocol == .proteus ? unqualifiedUserIDs : nil,
-            qualifiedUsers: messageProtocol == .proteus ? qualifiedUserIDs : nil,
-            access: accessMode.map(\.rawValue),
-            legacyAccessRole: legacyAccessRole?.rawValue,
-            accessRoles: accessRoles.map(\.rawValue),
-            name: name,
-            team: teamID.map { .init(teamID: $0) },
-            messageTimer: nil,
-            readReceiptMode: isReadReceiptsEnabled ? 1 : 0,
-            conversationRole: "wire_member",
-            messageProtocol: messageProtocol.rawValue
-        )
-
-        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let input = CreateGroupConversationParametersV0(from: parameters)
+        let body = try JSONEncoder.defaultEncoder.encode(input)
         let path = "\(pathPrefix)\(basePath)"
 
         let request = try URLRequestBuilder(path: path)
@@ -227,6 +204,20 @@ struct CreateGroupConversationParametersV0: Encodable {
         case readReceiptMode = "receipt_mode"
         case conversationRole = "conversation_role"
         case messageProtocol = "protocol"
+    }
+
+    init(from parameters: CreateGroupConversationParameters) {
+        self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs : nil
+        self.access = parameters.accessMode.map(\.rawValue)
+        self.legacyAccessRole = parameters.legacyAccessRole?.rawValue
+        self.accessRoles = parameters.accessRoles.map(\.rawValue)
+        self.name = parameters.name
+        self.team = parameters.teamID.map { .init(teamID: $0) }
+        self.messageTimer = nil
+        self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
+        self.conversationRole = "wire_member"
+        self.messageProtocol = parameters.messageProtocol.rawValue
     }
 
 }

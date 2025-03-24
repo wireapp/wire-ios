@@ -778,17 +778,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .group,
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createGroupConversationParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -815,17 +805,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .group,
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createGroupConversationParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -852,17 +832,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .group,
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createGroupConversationParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -889,17 +859,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .group,
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createGroupConversationParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -926,17 +886,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .group,
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createGroupConversationParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -963,17 +913,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .group,
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createGroupConversationParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -1000,17 +940,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .group,
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createGroupConversationParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -1037,17 +967,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .group,
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createGroupConversationParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -1069,17 +989,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.nonEmptyMemberList) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1098,17 +1008,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.invalidBody) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1128,17 +1028,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.missingLegalHoldConsent) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1157,17 +1047,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.operationDenied) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1186,17 +1066,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.noTeamMember) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1215,17 +1085,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.notConnected) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1244,17 +1104,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.accessDenied) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1273,17 +1123,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.mlsNotEnabled) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1308,17 +1148,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.nonFederatingBackends(["string"])) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1337,17 +1167,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.unreachableBackends) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .group,
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createGroupConversationParameters
                 )
             }
         }
@@ -1366,17 +1186,7 @@ final class ConversationsAPITests: XCTestCase {
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint) {
                 _ = try await sut.createGroupConversation(
-                    groupType: .channel, // channel
-                    messageProtocol: .mls,
-                    creatorClientID: UUID.mockID1.uuidString,
-                    qualifiedUserIDs: [.mockID1],
-                    unqualifiedUserIDs: [.mockID2],
-                    name: "test",
-                    accessMode: [.code, .invite],
-                    accessRoles: [.teamMember],
-                    legacyAccessRole: .teamMember,
-                    teamID: .mockID1,
-                    isReadReceiptsEnabled: true
+                    parameters: Scaffolding.createChannelParameters
                 )
             }
         }
@@ -1401,17 +1211,7 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             let conversation = try await sut.createGroupConversation(
-                groupType: .channel, // channel
-                messageProtocol: .mls,
-                creatorClientID: UUID.mockID1.uuidString,
-                qualifiedUserIDs: [.mockID1],
-                unqualifiedUserIDs: [.mockID2],
-                name: "test",
-                accessMode: [.code, .invite],
-                accessRoles: [.teamMember],
-                legacyAccessRole: .teamMember,
-                teamID: .mockID1,
-                isReadReceiptsEnabled: true
+                parameters: Scaffolding.createChannelParameters
             )
 
             XCTAssertEqual(conversation.access, [.private])
@@ -1427,6 +1227,33 @@ final class ConversationsAPITests: XCTestCase {
         static let conversationID = UUID.mockID1
         static let guestLinkV0 = "https://exampleV0.com"
         static let guestLinkV4 = "https://exampleV4.com"
+        static let createGroupConversationParameters = CreateGroupConversationParameters(
+            groupType: .group,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.code, .invite],
+            accessRoles: [.teamMember],
+            legacyAccessRole: .teamMember,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true
+        )
+
+        static let createChannelParameters = CreateGroupConversationParameters(
+            groupType: .channel,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.code, .invite],
+            accessRoles: [.teamMember],
+            legacyAccessRole: .teamMember,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true
+        )
     }
 
 }
