@@ -39,6 +39,7 @@ package struct LoginViaEmailView: View {
 
     package typealias Factory = VerificationCodeBuilder
 
+    @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel: LoginViaEmailViewModel
 
     @State private var password: String = ""
@@ -54,10 +55,10 @@ package struct LoginViaEmailView: View {
 
     package var body: some View {
         ScrollView {
-            VStack(alignment: .center, spacing: 14) {
+            VStack(alignment: .center, spacing: 10) {
                 if viewModel.hasProxySupport {
                     if viewModel.isOnPremiseBackend {
-                        welcomeMessage
+                        OnPremHeaderView(backendConfig: viewModel.backendConfig)
                     }
                     emailField
                     passwordField
@@ -66,7 +67,7 @@ package struct LoginViaEmailView: View {
                     submitButton
                 } else {
                     if viewModel.isOnPremiseBackend {
-                        welcomeMessage
+                        OnPremHeaderView(backendConfig: viewModel.backendConfig)
                     }
                     emailField
                     passwordField
@@ -79,7 +80,8 @@ package struct LoginViaEmailView: View {
             }
             .navigationTitle(L10n.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
-            .padding(32)
+            .navigationBarBackButtonHidden(true)
+            .padding(.horizontal, 32)
             .background(ColorTheme.Backgrounds.surface.color)
             .cornerRadius(16)
             .overlay(
@@ -110,20 +112,18 @@ package struct LoginViaEmailView: View {
 //                )
 //            }
 //        }
-        .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "arrow.left")
+                }
+            }
+        }
+        .presentationDetents(viewModel.hasProxySupport ? [.large] : [.fraction(0.65), .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
-    }
-
-    @ViewBuilder private var welcomeMessage: some View {
-        VStack(spacing: 14) {
-            OnPremHeaderView(backendConfig: viewModel.backendConfig)
-            Text(L10n.OnPremUserLogin.message)
-                .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-        }
     }
 
     @ViewBuilder private var emailField: some View {
@@ -195,17 +195,25 @@ package struct LoginViaEmailView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background {
-            if #available(iOS 17.0, *) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    .background(ColorTheme.Backgrounds.backgroundVariant.color)
-                    .cornerRadius(12)
-            }
+            RoundedRectangle(cornerRadius: 10)
+                .fill(ColorTheme.Backgrounds.backgroundVariant.color)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(ColorTheme.Strokes.outline.color)
+                )
         }
+//        .background {
+//            if #available(iOS 17.0, *) {
+//                RoundedRectangle(cornerRadius: 10)
+//                    .fill(ColorTheme.Backgrounds.backgroundVariant.color)
+//                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
+//            } else {
+//                RoundedRectangle(cornerRadius: 10)
+//                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
+//                    .background(ColorTheme.Backgrounds.backgroundVariant.color)
+//                    .cornerRadius(12)
+//            }
+//        }
     }
 
     @ViewBuilder private var proxyCredentials: some View {

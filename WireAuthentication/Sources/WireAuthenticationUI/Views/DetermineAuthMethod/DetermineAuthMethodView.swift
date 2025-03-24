@@ -203,7 +203,8 @@ package struct DetermineAuthMethodView: View {
                 }
             }
         )
-        .presentationDetents([.medium, .large])
+//        .presentationDetents([.medium, .large])
+        .presentationDetents([.fraction(0.65), .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
