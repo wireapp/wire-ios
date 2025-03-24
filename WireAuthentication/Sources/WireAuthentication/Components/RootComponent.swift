@@ -77,7 +77,10 @@ class RootComponent: BootstrapComponent {
 
     @MainActor private var viewModel: RootViewModel {
         shared {
-            RootViewModel(bridge: bridge)
+            RootViewModel(
+                factory: self,
+                bridge: bridge
+            )
         }
     }
 
@@ -120,6 +123,14 @@ class RootComponent: BootstrapComponent {
             parent: self,
             networkStack: networkStack
         )
+    }
+
+}
+
+extension RootComponent: RootViewModel.Factory {
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: appStoreURL)
     }
 
 }

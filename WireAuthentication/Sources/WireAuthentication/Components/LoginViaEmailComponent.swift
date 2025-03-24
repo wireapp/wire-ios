@@ -32,7 +32,6 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var environmentType: BackendEnvironmentType { get }
     var backendConfig: BackendConfig { get }
     var minTLSVersion: TLSVersion { get }
-    var appStoreURL: URL { get }
 
 }
 
@@ -128,10 +127,6 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
-    }
-
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
 }

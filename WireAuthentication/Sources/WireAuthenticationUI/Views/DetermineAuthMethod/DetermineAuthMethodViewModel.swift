@@ -29,7 +29,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
         FetchSSOURLUseCaseFactory &
-        OpenAppStoreUseCaseFactory &
         SSOLinkGeneratorFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
 
@@ -159,14 +158,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 // No need to do anything here. In general this shouldn't happen because we validate before submitting.
                 // It is probably worth restructuring the code to avoid this.
                 break
-            case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
-                // TODO: this should probably be an alert on the root view
-                alert = .obsoleteClient
-            case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
-                // TODO: this should probably be an alert on the root view
-                alert = .obsoleteBackend
             default:
-                alert = .general(for: error)
+                router.presentAlert(for: error)
             }
         }
     }
@@ -174,11 +167,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     func onAlertDismiss() {
         ssoLinkGenerator?.flushToken()
         modalDestination = nil
-    }
-
-    func goToAppStore() {
-        factory.openAppStoreUseCase().invoke()
-        alert = nil
     }
 
     func exitFlow() {
@@ -227,8 +215,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 case SSOLinkGeneratorFailure.invalidSSOURL:
                     alert = .invalidSSOLink
                 default:
-                    // TODO: handle networkStack errors
-                    alert = .general(for: error)
+                    router.presentAlert(for: error)
                 }
             }
 
@@ -264,8 +251,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             )
         } catch {
             WireLogger.authentication.error("Fetching backend config failed: \(error)")
-
-            alert = .general(for: error)
+            router.presentAlert(for: error)
         }
     }
 
@@ -314,8 +300,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 )
             )
         } catch {
-            // TODO: handle
-            alert = .general(for: error)
+            router.presentAlert(for: error)
         }
     }
 

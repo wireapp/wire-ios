@@ -24,7 +24,10 @@ import WireReusableUIComponents
 final class MockDependencies {
 
     private var rootViewModel: RootViewModel {
-        RootViewModel(bridge: WireAuthenticationBridge())
+        RootViewModel(
+            factory: self,
+            bridge: WireAuthenticationBridge()
+        )
     }
 
     var environmentType: BackendEnvironmentType {
@@ -100,6 +103,15 @@ final class MockDependencies {
 
 }
 
+extension MockDependencies: OpenAppStoreUseCaseFactory {
+
+    nonisolated
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        MockOpenAppStoreUseCase()
+    }
+
+}
+
 extension MockDependencies: DetermineAuthMethodViewModel.Factory {
 
     nonisolated
@@ -133,11 +145,6 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
         backendConfig: BackendConfig
     ) async throws -> any FetchSSOURLUseCaseProtocol {
         MockFetchSSOURLUseCase()
-    }
-
-    nonisolated
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        MockOpenAppStoreUseCase()
     }
 
 }

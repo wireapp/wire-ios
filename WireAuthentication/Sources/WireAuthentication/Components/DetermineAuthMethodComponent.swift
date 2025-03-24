@@ -34,7 +34,6 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var userDefaults: UserDefaults { get }
-    var appStoreURL: URL { get }
     var existsAnotherAccount: Bool { get }
 
 }
@@ -161,10 +160,6 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             authenticationAPI: authenticationAPI,
             linkGenerator: linkGenerator
         )
-    }
-
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
 }

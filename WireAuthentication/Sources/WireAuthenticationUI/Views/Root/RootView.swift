@@ -52,6 +52,19 @@ package struct RootView: View {
                     }
                 }
             }
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { alert in
+                    switch alert {
+                    case .obsoleteClient:
+                        Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                    default:
+                        Button(L10n.Authentication.Error.confirm, action: {})
+                    }
+                }
+            )
     }
 
     package enum ModalDestination: Identifiable, Hashable {

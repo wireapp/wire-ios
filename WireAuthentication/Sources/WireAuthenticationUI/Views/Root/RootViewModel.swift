@@ -24,14 +24,21 @@ import WireAuthenticationAPI
 @MainActor
 package final class RootViewModel: ObservableObject, Router {
 
+    package typealias Factory = OpenAppStoreUseCaseFactory
+
     @Published var path = NavigationPath()
     @Published var modalDestination: RootView.ModalDestination? = .authFlow
     @Published var alert: Alert?
 
+    private let factory: any Factory
     private var cancellable: AnyCancellable?
     private var lastModalDestination: RootView.ModalDestination?
 
-    package init(bridge: WireAuthenticationBridge) {
+    package init(
+        factory: any Factory,
+        bridge: WireAuthenticationBridge
+    ) {
+        self.factory = factory
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:
@@ -68,6 +75,10 @@ package final class RootViewModel: ObservableObject, Router {
             modalDestination = lastModalDestination
             self.lastModalDestination = nil
         }
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
     }
 
 }

@@ -25,9 +25,7 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
-    package typealias Factory =
-        LoginViaEmailUseCaseFactory &
-        OpenAppStoreUseCaseFactory
+    package typealias Factory = LoginViaEmailUseCaseFactory
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
@@ -151,8 +149,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
             default:
-                // TODO: handle api version errors
-                alert = .general(for: error)
+                router.presentAlert(for: error)
             }
         }
 
@@ -161,11 +158,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     func recoverPassword() {
         UIApplication.shared.open(forgotPasswordURL)
-    }
-
-    func goToAppStore() {
-        factory.openAppStoreUseCase().invoke()
-        alert = nil
     }
 
     func createAccount() {

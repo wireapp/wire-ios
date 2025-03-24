@@ -123,8 +123,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
             default:
-                // TODO: handle api version errors
-                alert = .general(for: error)
+                router.presentAlert(for: error)
             }
         }
 
@@ -144,8 +143,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
             default:
-                // TODO: handle network stack errors
-                alert = .general(for: error)
+                router.presentAlert(for: error)
             }
         }
 
