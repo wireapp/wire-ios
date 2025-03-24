@@ -19,8 +19,23 @@
 import Foundation
 import WireAuthenticationAPI
 
-struct MockOpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
+extension MockDependencies: DetermineAuthMethodUseCaseFactory {
 
-    func invoke() {}
+    nonisolated
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
+        MockDetermineAuthMethodUseCase()
+    }
+
+}
+
+struct MockDetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
+
+    func invoke(
+        emailOrSSOCode: String
+    ) async -> AuthenticationMethod {
+        try! await Task.sleep(for: .seconds(3))
+
+        return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
+    }
 
 }

@@ -19,16 +19,18 @@
 import Foundation
 import WireAuthenticationAPI
 
-struct MockValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
+extension MockDependencies: RequestLoginVerificationCodeUseCaseFactory {
 
-    func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
-        if input.contains("@") {
-            return .email(email: input, domain: input.components(separatedBy: "@").last!)
-        } else if input.hasSuffix("wire") {
-            return .ssoCode(UUID())
-        } else {
-            throw ValidatedEmailOrSSOCodeFailure.invalidInput
-        }
+    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
+        MockRequestLoginVerificationCodeUseCase()
+    }
+
+}
+
+struct MockRequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
+
+    func invoke(email: String) async throws {
+        try! await Task.sleep(for: .seconds(3))
     }
 
 }

@@ -19,6 +19,15 @@
 import Foundation
 import WireAuthenticationAPI
 
+extension MockDependencies: SSOLinkGeneratorFactory {
+
+    nonisolated
+    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol {
+        MockSSOLinkGenerator()
+    }
+
+}
+
 struct MockSSOLinkGenerator: SSOLinkGeneratorProtocol {
 
     func generateSSOLink(ssoCode: UUID) async throws -> URL {

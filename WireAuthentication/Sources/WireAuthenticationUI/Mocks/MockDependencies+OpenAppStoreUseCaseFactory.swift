@@ -19,23 +19,17 @@
 import Foundation
 import WireAuthenticationAPI
 
-struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
+extension MockDependencies: OpenAppStoreUseCaseFactory {
 
-    func invoke(at configURL: URL) async throws -> BackendConfig {
-        BackendConfig(
-            title: "backend name",
-            endpoints: Endpoints(
-                backendURL: URL(string: "example")!,
-                backendWSURL: URL(string: "example")!,
-                blackListURL: URL(string: "example")!,
-                teamsURL: URL(string: "example")!,
-                accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!,
-                countlyURL: URL(string: "example")!
-            ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        )
+    nonisolated
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        MockOpenAppStoreUseCase()
     }
+
+}
+
+struct MockOpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
+
+    func invoke() {}
 
 }

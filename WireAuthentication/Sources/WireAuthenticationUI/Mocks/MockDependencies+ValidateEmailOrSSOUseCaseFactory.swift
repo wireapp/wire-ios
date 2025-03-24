@@ -19,10 +19,25 @@
 import Foundation
 import WireAuthenticationAPI
 
-struct MockFetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
+extension MockDependencies: ValidateEmailOrSSOCodeUseCaseFactory {
 
-    func invoke() async throws -> URL? {
-        URL(string: "https://example.com/login/\(UUID().uuidString)")!
+    nonisolated
+    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
+        MockValidateEmailOrSSOCodeUseCase()
+    }
+
+}
+
+struct MockValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
+
+    func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        if input.contains("@") {
+            return .email(email: input, domain: input.components(separatedBy: "@").last!)
+        } else if input.hasSuffix("wire") {
+            return .ssoCode(UUID())
+        } else {
+            throw ValidatedEmailOrSSOCodeFailure.invalidInput
+        }
     }
 
 }

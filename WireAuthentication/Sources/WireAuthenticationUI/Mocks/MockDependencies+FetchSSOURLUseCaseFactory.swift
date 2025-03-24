@@ -16,16 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireAuthenticationAPI
 
-struct MockDetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
+extension MockDependencies: FetchSSOURLUseCaseFactory {
 
-    func invoke(
-        emailOrSSOCode: String
-    ) async -> AuthenticationMethod {
-        try! await Task.sleep(for: .seconds(3))
+    nonisolated
+    func fetchSSOURLUseCase(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig
+    ) async throws -> any FetchSSOURLUseCaseProtocol {
+        MockFetchSSOURLUseCase()
+    }
 
-        return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
+}
+
+struct MockFetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
+
+    func invoke() async throws -> URL? {
+        URL(string: "https://example.com/login/\(UUID().uuidString)")!
     }
 
 }

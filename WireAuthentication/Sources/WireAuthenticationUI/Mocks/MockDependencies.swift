@@ -103,72 +103,6 @@ final class MockDependencies {
 
 }
 
-extension MockDependencies: OpenAppStoreUseCaseFactory {
-
-    nonisolated
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        MockOpenAppStoreUseCase()
-    }
-
-}
-
-extension MockDependencies: DetermineAuthMethodViewModel.Factory {
-
-    nonisolated
-    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
-        MockDetermineAuthMethodUseCase()
-    }
-
-    nonisolated
-    func determineAuthMethodUseCase(apiVersion: BackendMetadata.APIVersion) -> any DetermineAuthMethodUseCaseProtocol {
-        MockDetermineAuthMethodUseCase()
-    }
-
-    nonisolated
-    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
-        MockValidateEmailOrSSOCodeUseCase()
-    }
-
-    nonisolated
-    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol {
-        MockSSOLinkGenerator()
-    }
-
-    nonisolated
-    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
-        MockFetchBackendConfigUseCase()
-    }
-
-    nonisolated
-    func fetchSSOURLUseCase(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) async throws -> any FetchSSOURLUseCaseProtocol {
-        MockFetchSSOURLUseCase()
-    }
-
-}
-
-extension MockDependencies: LoginViaEmailUseCaseProtocol {
-
-    func invoke(
-        email: String,
-        password: String,
-        verificationCode: String?
-    ) async throws -> ([HTTPCookie], AccessToken) {
-        ([], AccessToken(userID: UUID(), token: "", type: "", expirationDate: Date()))
-    }
-
-}
-
-extension MockDependencies: RequestLoginVerificationCodeUseCaseProtocol {
-
-    func invoke(email: String) async throws {
-        try! await Task.sleep(for: .seconds(3))
-    }
-
-}
-
 extension MockDependencies: DetermineAuthMethodBuilder {
 
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
@@ -261,21 +195,6 @@ extension MockDependencies: LoginViaEmailBuilder {
 
 }
 
-extension MockDependencies: LoginViaEmailUseCaseFactory {
-
-    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
-        MockMockLoginViaEmailUseCase()
-    }
-
-}
-
-extension MockDependencies: RequestLoginVerificationCodeUseCaseFactory {
-    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
-        MockRequestLoginVerificationCodeUseCase()
-    }
-
-}
-
 extension MockDependencies: VerificationCodeBuilder {
 
     func previewVerificationCodeView(
@@ -326,24 +245,6 @@ extension MockDependencies: LoginViaSSOBuilder {
 
     func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
         LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
-    }
-
-}
-
-private struct MockPasswordValidator: PasswordValidator {
-
-    let validationCallback: @Sendable (String) -> Bool
-
-    init(validationCallback: @Sendable @escaping (String) -> Bool) {
-        self.validationCallback = validationCallback
-    }
-
-    func isPasswordValid(_ password: String) -> Bool {
-        validationCallback(password)
-    }
-
-    var localizedRulesDescription: String? {
-        "Password rules"
     }
 
 }

@@ -19,7 +19,16 @@
 import Foundation
 import WireAuthenticationAPI
 
-struct MockMockLoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
+extension MockDependencies: LoginViaEmailUseCaseFactory {
+
+    nonisolated
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        MockLoginViaEmailUseCase()
+    }
+
+}
+
+struct MockLoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
 
     func invoke(
         email: String,
@@ -30,3 +39,4 @@ struct MockMockLoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
     }
 
 }
+
