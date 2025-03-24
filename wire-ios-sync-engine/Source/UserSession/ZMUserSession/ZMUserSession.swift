@@ -467,7 +467,6 @@ public final class ZMUserSession: NSObject {
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
         configuration: Configuration,
-        apiService: WireAPI.APIServiceProtocol,
         isDeveloperModeEnabled: Bool
     ) {
         coreDataStack.linkCaches(dependencies.caches)
