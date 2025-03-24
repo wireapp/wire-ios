@@ -46,6 +46,10 @@ extension ShareDestination where Self: ConversationGroupAvatarViewConversation {
         )
         return avatarView
     }
+
+    var qualifiedID: WireDataModel.QualifiedID? {
+        nil
+    }
 }
 
 extension [ZMConversation] {

@@ -20,7 +20,7 @@ import SwiftUI
 import WireConversationsUIBindings
 import WireSyncEngine
 
-typealias ConversationGroupAvatarViewConversation = ConversationLike & HasQualifiedID
+typealias ConversationGroupAvatarViewConversation = ConversationLike & HasQualifiedID & StableRandomParticipantsProvider
 
 final class ConversationGroupAvatarView: UIView {
     struct Context {
@@ -31,7 +31,7 @@ final class ConversationGroupAvatarView: UIView {
     func configure(context: Context) {
         let conversation = context.conversation
         self.conversation = conversation
-        
+
         guard let id = context.conversation.qualifiedID?.uuid.uuidString else {
             return
         }
@@ -40,7 +40,7 @@ final class ConversationGroupAvatarView: UIView {
         iconContainer.removeSubviews()
         iconContainer.addSubview(iconView)
         iconView.fitIn(view: iconContainer)
-        
+
         accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
     }
 
@@ -51,7 +51,6 @@ final class ConversationGroupAvatarView: UIView {
     lazy var iconContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.frame = bounds
         view.clipsToBounds = true
         view.layer.cornerRadius = 4
         return view
@@ -63,6 +62,7 @@ final class ConversationGroupAvatarView: UIView {
         autoresizesSubviews = false
         layer.masksToBounds = true
         addSubview(iconContainer)
+        iconContainer.fitIn(view: self)
     }
 
     @available(*, unavailable)

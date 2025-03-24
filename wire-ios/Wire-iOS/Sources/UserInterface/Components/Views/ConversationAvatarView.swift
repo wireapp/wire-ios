@@ -26,26 +26,10 @@ final class ConversationAvatarView: UIView {
         case conversation(conversation: ConversationGroupAvatarViewConversation)
     }
 
-    func configure(context: Context) {
-        switch context {
-        case let .connect(users: users):
-            connectAvatarView.configure(context: ConversationConnectAvatarView.Context(users: users))
-            connectAvatarView.isHidden = false
-            groupIconAvatarView.isHidden = true
-        // TODO: Use ConnectAvatarView / legacy AvatarView for OneOnOne conversations
-        case let .conversation(conversation: conversation):
-            groupIconAvatarView.configure(context: ConversationGroupAvatarView.Context(
-                conversation: conversation
-            ))
-            connectAvatarView.isHidden = true
-            groupIconAvatarView.isHidden = false
-        }
-    }
-
     lazy var connectAvatarView: ConversationConnectAvatarView = {
         let view = ConversationConnectAvatarView()
         addSubview(view)
-        view.frame = bounds
+        view.fitIn(view: self)
         view.isHidden = true
         return view
     }()
@@ -53,14 +37,43 @@ final class ConversationAvatarView: UIView {
     lazy var groupIconAvatarView: ConversationGroupAvatarView = {
         let view = ConversationGroupAvatarView()
         addSubview(view)
-        view.frame = bounds
+        view.fitIn(view: self)
         view.isHidden = true
         return view
     }()
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        connectAvatarView.frame = bounds
-        groupIconAvatarView.frame = bounds
+    fileprivate func configureForOneOnOne(_ users: [any UserType]) {
+        connectAvatarView.configure(context: ConversationConnectAvatarView.Context(users: users))
+        connectAvatarView.isHidden = false
+        groupIconAvatarView.isHidden = true
+    }
+
+    func configure(context: Context) {
+
+        switch context {
+        case let .connect(users: users):
+            configureForOneOnOne(users)
+        case let .conversation(conversation: conversation) where conversation.conversationType == .group:
+            let users = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
+            if let user = users.first, user.isServiceUser {
+                configureForOneOnOne(users)
+                break
+            }
+
+            configureForGroup(conversation)
+        case let .conversation(conversation: conversation) where conversation.conversationType == .oneOnOne:
+            let users = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
+            configureForOneOnOne(users)
+        default:
+            configureForOneOnOne([])
+        }
+    }
+
+    private func configureForGroup(_ conversation: any ConversationGroupAvatarViewConversation) {
+        groupIconAvatarView.configure(context: ConversationGroupAvatarView.Context(
+            conversation: conversation
+        ))
+        connectAvatarView.isHidden = true
+        groupIconAvatarView.isHidden = false
     }
 }

@@ -18,11 +18,14 @@
 
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
-class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider {
+class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider,
+    HasQualifiedID {
+
     var stableRandomParticipants: [UserType] = []
+
+    var qualifiedID: WireDataModel.QualifiedID? = .mockID1
 
     override required init() {}
 
@@ -70,52 +73,19 @@ final class ConversationAvatarViewTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
-    func testThatItRendersNoUserImages() {
+    func testThatItRendersGroup() {
         // GIVEN
         let conversation = MockStableRandomParticipantsConversation()
+        let mockConversations = [QualifiedID.mockID1, .mockID2, .mockID3].map { id in
+            let conversation = MockStableRandomParticipantsConversation()
+            conversation.qualifiedID = id
+            return conversation
+        }
 
-        // WHEN
-        sut.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
-
-        // THEN
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersSomeAndThenNoUserImages() {
-        // GIVEN
-        let otherUserConversation = MockStableRandomParticipantsConversation()
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: otherUserConversation, qualifiedID: nil))
-
-        // AND WHEN
-        _ = sut.prepareForSnapshots()
-
-        // AND WHEN
-
-        let conversation = MockStableRandomParticipantsConversation()
-
-        sut.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
-
-        // THEN
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersSingleUserImage() {
-        // GIVEN
-        let otherUserConversation = MockStableRandomParticipantsConversation()
-        let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.zmAccentColor = .green
-        otherUserConversation.conversationType = .oneOnOne
-        otherUserConversation.stableRandomParticipants = [otherUser]
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: otherUserConversation, qualifiedID: nil))
-
-        // THEN
-        snapshotHelper
-            .withPerceptualPrecision(0.98)
-            .verify(matching: sut.prepareForSnapshots())
+        mockConversations.enumerated().forEach { index, conversation in
+            sut.configure(context: .conversation(conversation: conversation))
+            snapshotHelper.verify(matching: sut.prepareForSnapshots(), named: "\(index)")
+        }
     }
 
     func testThatItRendersPendingConnection() {
@@ -150,47 +120,10 @@ final class ConversationAvatarViewTests: XCTestCase {
         otherUserConversation.stableRandomParticipants = [otherUser]
 
         // WHEN
-        sut.configure(context: .conversation(conversation: otherUserConversation, qualifiedID: nil))
+        sut.configure(context: .conversation(conversation: otherUserConversation))
 
         // THEN
         snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersTwoUserImages() {
-        // GIVEN
-        let conversation = MockStableRandomParticipantsConversation()
-        let otherUser = MockUserType.createDefaultOtherUser()
-        let thirdUser = MockUserType.createConnectedUser(name: "Anna")
-        thirdUser.zmAccentColor = .red
-        conversation.stableRandomParticipants = [thirdUser, otherUser]
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
-
-        // THEN
-        snapshotHelper
-            .withPerceptualPrecision(0.98)
-            .verify(matching: sut.prepareForSnapshots())
-    }
-
-    func testThatItRendersManyUsers() {
-        // GIVEN
-        let conversation = MockStableRandomParticipantsConversation()
-        conversation.stableRandomParticipants = MockUserType.usernames
-            .map { MockUserType.createConnectedUser(name: $0) }
-
-        (conversation.stableRandomParticipants[0] as! MockUserType).zmAccentColor = .red
-        (conversation.stableRandomParticipants[1] as! MockUserType).zmAccentColor = .amber
-        (conversation.stableRandomParticipants[2] as! MockUserType).zmAccentColor = .purple
-        (conversation.stableRandomParticipants[3] as! MockUserType).zmAccentColor = .blue
-
-        // WHEN
-        sut.configure(context: .conversation(conversation: conversation, qualifiedID: nil))
-
-        // THEN
-        snapshotHelper
-            .withPerceptualPrecision(0.98)
-            .verify(matching: sut.prepareForSnapshots())
     }
 }
 

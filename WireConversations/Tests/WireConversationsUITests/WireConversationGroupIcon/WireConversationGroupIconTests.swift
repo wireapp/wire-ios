@@ -42,7 +42,7 @@ class WireConversationGroupIconTests: XCTestCase {
         let view = viewFactory.create(conversationID: conversationID)
             .frame(width: 40, height: 40)
             .padding()
-        
+
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
                 .verify(
@@ -51,12 +51,12 @@ class WireConversationGroupIconTests: XCTestCase {
                 )
         }
     }
-    
+
     @MainActor
     func testColorSchemeVariantsEmptyState_uiKitView() {
         let view = viewFactory.createUIKit(conversationID: conversationID)
         view.frame = .init(x: 0, y: 0, width: 40, height: 40)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")

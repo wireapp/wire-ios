@@ -59,19 +59,6 @@ final class ConversationConnectAvatarViewModeTests: XCTestCase {
         XCTAssertEqual(sut.mode, .one(serviceUser: true))
     }
 
-    func testThatModeIsFourWhenGroupConversationWithOneUser() {
-        // GIVEN
-        users = [otherUser]
-
-        // WHEN
-        sut.configure(context: ConversationConnectAvatarView.Context(
-            users: users
-        ))
-
-        // THEN
-        XCTAssertEqual(sut.mode, .four)
-    }
-
     func testThatModeIsNoneWhenGroupConversationIsEmpty() {
         // GIVEN
 
