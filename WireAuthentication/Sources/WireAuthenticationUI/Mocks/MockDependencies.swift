@@ -100,12 +100,16 @@ final class MockDependencies {
 
 }
 
-extension MockDependencies: DetermineAuthMethodViewModel.Factory {
+extension MockDependencies: ResolveBackendMetadataUseCaseFactory {
 
     nonisolated
     func resolveBackendMetadataUseCase() -> any WireAuthenticationAPI.ResolveBackendMetadataUseCaseProtocol {
         MockResolveBackendMetadataUseCase()
     }
+
+}
+
+extension MockDependencies: DetermineAuthMethodViewModel.Factory {
 
     nonisolated
     func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
@@ -123,7 +127,7 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
     }
 
     nonisolated
-    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol {
+    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol {
         MockSSOLinkGenerator()
     }
 

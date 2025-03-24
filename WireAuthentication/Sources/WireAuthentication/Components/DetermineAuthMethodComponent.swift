@@ -70,15 +70,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    public var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: .init(dependency.backendConfig),
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
-    }
-
     // MARK: - Children
 
     func loginViaEmailComponent(
@@ -134,34 +125,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func determineAuthMethodUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any DetermineAuthMethodUseCaseProtocol {
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
-        return DetermineAuthMethodUseCase(
-            validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
-            authenticationAPI: authenticationAPI,
-            urlSession: URLSession.shared
-        )
-    }
-
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
-        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
-        return ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
-    }
-
-    func ssoLinkGenerator(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any SSOLinkGeneratorProtocol {
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
+    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol {
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         return SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
             baseURL: dependency.backendConfig.endpoints.backendURL,

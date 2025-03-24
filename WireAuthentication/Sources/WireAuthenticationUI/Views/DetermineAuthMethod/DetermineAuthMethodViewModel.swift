@@ -32,12 +32,10 @@ package protocol DetermineAuthMethodUseCaseFactory2 {
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
-        DetermineAuthMethodUseCaseFactory &
         DetermineAuthMethodUseCaseFactory2 &
         FetchBackendConfigUseCaseFactory &
         FetchSSOURLUseCaseFactory2 &
         OpenAppStoreUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory &
         SSOLinkGeneratorFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
 
@@ -223,25 +221,19 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             ))
 
         case let .loginViaSSO(code):
-            let generator = factory.ssoLinkGenerator(apiVersion: backendMetadata.apiVersion)
-            ssoLinkGenerator = generator
-
             do {
-                let url = try await Task.detached { [generator] in
-                    try await generator.generateSSOLink(ssoCode: code)
-                }.value
-
+                let url = try await generateSSOLink(code: code)
                 WireLogger.authentication.error("Generating SSO link succeeded")
                 modalDestination = .ssoLogin(url: url)
             } catch {
                 WireLogger.authentication.error("Generating SSO link failed: \(error)")
-
                 switch error {
                 case SSOLinkGeneratorFailure.invalidSSOCode:
                     alert = .incorrectSSOCode
                 case SSOLinkGeneratorFailure.invalidSSOURL:
                     alert = .invalidSSOLink
                 default:
+                    // TODO: handle networkStack errors
                     alert = .general(for: error)
                 }
             }
@@ -249,6 +241,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case let .onPremLogin(email, backendConfigURL):
             await handleOnPremLogin(email: email, backendConfigURL: backendConfigURL)
         }
+    }
+
+    private func generateSSOLink(code: UUID) async throws -> URL {
+        let linkGenerator = try await factory.ssoLinkGenerator()
+        ssoLinkGenerator = linkGenerator
+        return try await Task.detached {
+            try await linkGenerator.generateSSOLink(ssoCode: code)
+        }.value
     }
 
     private func handleOnPremLogin(

@@ -72,15 +72,6 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
         )
     }
 
-    public var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: .init(backendConfig),
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
-    }
-
     // MARK: - Children
 
     func loginViaEmailComponent(
@@ -131,40 +122,8 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Facto
         fatalError()
     }
 
-    func determineAuthMethodUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any DetermineAuthMethodUseCaseProtocol {
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
-        return DetermineAuthMethodUseCase(
-            validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
-            authenticationAPI: authenticationAPI,
-            urlSession: URLSession.shared
-        )
-    }
-
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
-        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
-        return ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
-    }
-
-    func ssoLinkGenerator(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any SSOLinkGeneratorProtocol {
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
-        return SSOLinkGenerator(
-            authenticationAPI: authenticationAPI,
-            baseURL: backendConfig.endpoints.backendURL,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
-        )
+    func ssoLinkGenerator() -> any SSOLinkGeneratorProtocol {
+        fatalError()
     }
 
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
