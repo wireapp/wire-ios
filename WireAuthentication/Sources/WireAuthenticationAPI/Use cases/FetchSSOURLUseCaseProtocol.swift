@@ -32,12 +32,6 @@ public enum FetchSSOURLUseCaseError: Error {
 
 public protocol FetchSSOURLUseCaseFactory {
 
-    func fetchSSOURLUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol
-
-}
-
-public protocol FetchSSOURLUseCaseFactory2 {
-
     func fetchSSOURLUseCase(
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig

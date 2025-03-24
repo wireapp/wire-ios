@@ -205,17 +205,6 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 }
 
-extension MockDependencies: FetchSSOURLUseCaseFactory {
-
-    nonisolated
-    func fetchSSOURLUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any FetchSSOURLUseCaseProtocol {
-        MockFetchSSOURLUseCase()
-    }
-
-}
-
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {

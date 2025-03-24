@@ -22,19 +22,13 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
 
-package protocol DetermineAuthMethodUseCaseFactory2 {
-
-    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol
-
-}
-
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
-        DetermineAuthMethodUseCaseFactory2 &
+        DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
-        FetchSSOURLUseCaseFactory2 &
+        FetchSSOURLUseCaseFactory &
         OpenAppStoreUseCaseFactory &
         SSOLinkGeneratorFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
