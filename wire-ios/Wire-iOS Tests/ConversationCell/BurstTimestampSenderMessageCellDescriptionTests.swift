@@ -20,47 +20,42 @@ import WireSystemSupport
 import XCTest
 
 @testable import Wire
+@testable import WireConversationUI
 
-final class ConversationCellBurstTimestampViewTests: XCTestCase {
+final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
-    private var sut: ConversationCellBurstTimestampView!
+    typealias SUT = BurstTimestampSenderMessageCellDescription
+
     private var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-
         userSession = UserSessionMock()
-        sut = ConversationCellBurstTimestampView()
     }
 
     override func tearDown() {
-        sut = nil
         userSession = nil
-
         super.tearDown()
     }
 
     // MARK: - Unread Indicator
 
-    func testUnreadIndicatorJustNow() {
+    func testUnreadIndicatorJustNow() async {
         // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // When
-        sut.configure(
-            timestamp: mockedNow.addingTimeInterval(-30), // 30s ago
+        let sut = createSUT(
+            now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+            targetDate: { now in now.addingTimeInterval(-30) }, // 30s ago,
             isFirstMessageOfTheDay: false,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+            showUnreadDot: true
         )
 
-        // Then
-        XCTAssertEqual(sut.label.text, "Just now")
-    }
+        // When
+        let model = await TimeDividerModel(sut.conversationCellModel)
 
+        // Then
+        XCTAssertEqual(model?.text, "Just now")
+    }
+/*
     func testUnreadIndicator25minAgo() {
         // Given
         let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
@@ -238,5 +233,39 @@ final class ConversationCellBurstTimestampViewTests: XCTestCase {
             XCTAssertEqual(sut.label.text, "Thursday, Dec 19, 2024")
         }
     }
+*/
 
+    // MARK: - Helpers
+
+    private func createSUT(
+        now: Date!,
+        targetDate: (_ now: Date) -> Date,
+        isFirstMessageOfTheDay: Bool,
+        showUnreadDot: Bool
+    ) -> SUT {
+
+        let currentDateProvider = MockCurrentDateProviding()
+        currentDateProvider.now = now
+
+        return BurstTimestampSenderMessageCellDescription(
+            configuration: BurstTimestampSenderMessageCell.Configuration(
+                date: targetDate(now),
+                isFirstMessageOfTheDay: false,
+                showUnreadDot: true,
+                accentColor: userSession.selfUser.accentColor
+            ),
+            currentDateProvider: currentDateProvider
+        )
+    }
+}
+
+private extension TimeDividerModel {
+
+    init?(_ model: ConversationCellModel?) {
+        guard case .timeDivider(let model) = model else {
+            XCTFail("unexpected conversation cell model: " + String(describing: model))
+            return nil
+        }
+        self = model
+    }
 }

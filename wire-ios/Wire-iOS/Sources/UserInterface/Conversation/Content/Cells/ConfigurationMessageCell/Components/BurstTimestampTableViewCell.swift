@@ -93,19 +93,28 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     let accessibilityIdentifier = String?.none
     let accessibilityLabel = String?.none
 
-    var currentDateProvider: CurrentDateProviding = SystemDateProvider()
+    var currentDateProvider: CurrentDateProviding
 
     init(
+        configuration: View.Configuration,
+        currentDateProvider: CurrentDateProviding = SystemDateProvider()
+    ) {
+        self.configuration = configuration
+        self.currentDateProvider = currentDateProvider
+    }
+
+    convenience init(
         message: ZMConversationMessage,
         context: ConversationMessageContext,
         accentColor: UIColor
     ) {
-        self.configuration = View.Configuration(
+        let configuration = View.Configuration(
             date: message.serverTimestamp ?? Date(),
             isFirstMessageOfTheDay: context.isFirstMessageOfTheDay,
             showUnreadDot: context.isFirstUnreadMessage,
             accentColor: accentColor
         )
+        self.init(configuration: configuration)
     }
 
 }
