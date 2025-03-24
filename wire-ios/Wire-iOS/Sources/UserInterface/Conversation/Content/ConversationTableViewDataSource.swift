@@ -41,12 +41,12 @@ extension AnyConversationMessageCellDescription: Differentiable {
 }
 
 extension ZMConversationMessage {
+
     var isSentFromThisDevice: Bool {
-        guard let sender = senderUser else {
-            return false
-        }
+        guard let sender = senderUser else { return false }
         return sender.isSelfUser && deliveryState == .pending
     }
+
 }
 
 final class ConversationTableViewDataSource: NSObject {
@@ -498,16 +498,24 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         }
 
         let section = currentSections[indexPath.section]
-
         guard section.elements.indices.contains(indexPath.row) else {
             fatal("section.elements has \(section.elements.count) elements, but try to access #\(indexPath)")
         }
 
         let cellDescription = section.elements[indexPath.row]
+        if let model = cellDescription.conversationCellModel {
 
-        registerCellIfNeeded(with: cellDescription, in: tableView)
+            model.registerIfNeeded(in: tableView)
+            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
+            model.configureCell(cell)
+            return cell
 
-        return cellDescription.makeCell(for: tableView, at: indexPath)
+        } else {
+
+            registerCellIfNeeded(with: cellDescription, in: tableView)
+            return cellDescription.makeCell(for: tableView, at: indexPath)
+
+        }
     }
 }
 
