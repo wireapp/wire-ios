@@ -28,10 +28,10 @@ struct CustomBackButtonModifier: ViewModifier {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         dismiss()
-                    }) {
+                    }, label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 17, weight: .medium))
-                    }
+                    })
                 }
             }
     }
@@ -39,6 +39,6 @@ struct CustomBackButtonModifier: ViewModifier {
 
 extension View {
     func customBackButton() -> some View {
-        self.modifier(CustomBackButtonModifier())
+        modifier(CustomBackButtonModifier())
     }
 }

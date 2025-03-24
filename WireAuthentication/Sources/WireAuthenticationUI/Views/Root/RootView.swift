@@ -17,20 +17,20 @@
 //
 
 import SwiftUI
-import WireAuthenticationAPI
 import SwiftUIIntrospect
+import WireAuthenticationAPI
 
 package struct RootView: View {
-    
+
     package typealias Factory =
-    DetermineAuthMethodBuilder &
-    LoginViaEmailOnPremBuilder &
-    LoginViaSSOBuilder &
-    NoHistoryViewBuilder
-    
+        DetermineAuthMethodBuilder &
+        LoginViaEmailOnPremBuilder &
+        LoginViaSSOBuilder &
+        NoHistoryViewBuilder
+
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
-    
+
     package init(
         viewModel: RootViewModel,
         factory: any Factory
@@ -38,14 +38,14 @@ package struct RootView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.factory = factory
     }
-    
+
     package var body: some View {
         BackgroundView()
             .universalSheet(item: $viewModel.modalDestination) { item in
                 sheetContent(for: item)
             }
     }
-    
+
     @ViewBuilder
     private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
         switch sheet {
@@ -54,7 +54,7 @@ package struct RootView: View {
                 factory.determineAuthMethodView()
             }
             .sheetCornerRadius(10, inNavigationStack: true)
-            
+
         case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
             NavigationStack(path: $viewModel.path) {
                 factory.determineAuthMethodView(
@@ -64,6 +64,7 @@ package struct RootView: View {
                 )
             }
             .sheetCornerRadius(10, inNavigationStack: true)
+
         case let .noHistory(
             authenticationResult,
             didDetectDomainConflict
@@ -73,7 +74,7 @@ package struct RootView: View {
                 didDetectDomainConflict: didDetectDomainConflict
             )
             .sheetCornerRadius(10, inNavigationStack: false)
-            
+
         case let .onPremiseLogin(
             email,
             environmentType,
@@ -87,21 +88,22 @@ package struct RootView: View {
                 backendMetadata: backendMetadata
             )
             .sheetCornerRadius(10, inNavigationStack: false)
-            
+
         case let .ssoLogin(
             ssoURL,
             backendEnvironment
         ):
             factory.loginViaSSOView(
                 ssoURL: ssoURL,
-                backendEnvironment: backendEnvironment)
+                backendEnvironment: backendEnvironment
+            )
             .sheetCornerRadius(10, inNavigationStack: false)
         }
     }
-    
+
     package enum ModalDestination: Identifiable, Hashable {
         public var id: Self { self }
-        
+
         case authFlow
         case onPremiseAuthFlow(
             environmentType: BackendEnvironmentType,

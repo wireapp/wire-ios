@@ -18,11 +18,11 @@
 import SwiftUI
 
 struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModifier {
-    
+
     @Binding var item: Item?
     var onDismiss: (() -> Void)?
     var content: (Item) -> SheetContent
-    
+
     @ViewBuilder
     func body(content: Content) -> some View {
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -30,38 +30,36 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
                 .overlay {
                     if let item {
                         self.content(item)
-                            .adjustiPadFrame()
+                            .applyPreferredSize()
                     }
                 }
-            
-            
+
         } else {
             content.sheet(item: $item, onDismiss: onDismiss) { item in
                 self.content(item)
-                    .adjustiPadFrame()
+                    .applyPreferredSize()
             }
         }
     }
 }
 
-
 extension View {
-    
+
     @ViewBuilder
     func sheetCornerRadius(_ radius: CGFloat, inNavigationStack: Bool) -> some View {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            self.modifier(SheetCornerRadiusModifier(isInNavStack: inNavigationStack, radius: radius))
+            modifier(SheetCornerRadiusModifier(isInNavStack: inNavigationStack, radius: radius))
         } else {
             self
         }
     }
-    
-    public func universalSheet<Item, Content>(
+
+    public func universalSheet<Item>(
         item: Binding<Item?>,
         onDismiss: (() -> Void)? = nil,
-        @ViewBuilder content: @escaping (Item) -> Content
-    ) -> some View where Item: Identifiable, Content: View {
-        self.modifier(UniversalSheetModifier(item: item, onDismiss: onDismiss, content: content))
+        @ViewBuilder content: @escaping (Item) -> some View
+    ) -> some View where Item: Identifiable {
+        modifier(UniversalSheetModifier(item: item, onDismiss: onDismiss, content: content))
     }
 }
 
@@ -74,9 +72,10 @@ private struct SheetCornerRadiusModifier: ViewModifier {
     func body(content: Content) -> some View {
         if isInNavStack {
             content
-                .introspect(.navigationStack, on: .iOS(.v16,.v17,.v18)) { stack in
+                .introspect(.navigationStack, on: .iOS(.v16, .v17, .v18)) { stack in
                     stack.topViewController?.view.backgroundColor = .white
-                    // .cornerRadius from SwiftUI will mess with touch area with NavigationStack, when keyboard is active and after
+                    // .cornerRadius from SwiftUI will mess with touch area with NavigationStack, when keyboard is
+                    // active and after
                     stack.view?.layer.cornerRadius = 10
                 }
         } else {

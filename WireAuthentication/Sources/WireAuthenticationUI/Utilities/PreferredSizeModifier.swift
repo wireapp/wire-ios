@@ -23,7 +23,7 @@ struct PreferredSizeKey: PreferenceKey {
     static func reduce(value: inout CGSize?, nextValue: () -> CGSize?) {
         let next = nextValue()
         print("🍒 reducer", value, next)
-        
+
         if next != nil {
             value = next
         }
@@ -32,7 +32,7 @@ struct PreferredSizeKey: PreferenceKey {
 
 struct PreferredSizeModifier: ViewModifier {
     @State var size: CGSize = .init(width: 390, height: 420)
-    
+
     func body(content: Content) -> some View {
         if UIDevice.current.userInterfaceIdiom == .pad {
             content
@@ -40,7 +40,7 @@ struct PreferredSizeModifier: ViewModifier {
                 .onPreferenceChange(PreferredSizeKey.self) { value in
                     DispatchQueue.main.async {
                         if let value {
-                            self.size.height = value.height
+                            size.height = value.height
                         }
                     }
                 }
@@ -49,30 +49,35 @@ struct PreferredSizeModifier: ViewModifier {
                 .onPreferenceChange(PreferredSizeKey.self) { value in
                     DispatchQueue.main.async {
                         if let value {
-                            self.size.height = value.height
+                            size.height = value.height
                         }
                     }
                 }
-                .presentationDetents([.height(self.size.height)])
+                .presentationDetents([.height(size.height)])
         }
     }
 }
 
 extension View {
-    
+
     @ViewBuilder
     func setPreferredSize(navigationBarHidden: Bool = true) -> some View {
-            self.background(
-                GeometryReader { proxy in
-                    Color.clear
-                        .preference(key: PreferredSizeKey.self,
-                                    value: CGSize(width: proxy.size.width, height: navigationBarHidden ? proxy.size.height : proxy.size.height + 44))
-                }
-            )
+        background(
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(
+                        key: PreferredSizeKey.self,
+                        value: CGSize(
+                            width: proxy.size.width,
+                            height: navigationBarHidden ? proxy.size.height : proxy.size.height + 44
+                        )
+                    )
+            }
+        )
     }
-    
+
     @ViewBuilder
-    func adjustiPadFrame() -> some View {
-            self.modifier(PreferredSizeModifier())
+    func applyPreferredSize() -> some View {
+        modifier(PreferredSizeModifier())
     }
 }
