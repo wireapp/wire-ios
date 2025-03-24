@@ -82,7 +82,8 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         let networkStack = NetworkStack(
             environmentType: environmentType,
             backendConfig: backendConfig,
-            minTLSVersion: dependency.minTLSVersion
+            minTLSVersion: dependency.minTLSVersion,
+            preferredAPIVersion: dependency.preferredAPIVersion
         )
         return LoginViaEmailComponent(
             parent: self,
@@ -146,7 +147,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         let networkStack = NetworkStack(
             environmentType: environmentType,
             backendConfig: backendConfig,
-            minTLSVersion: dependency.minTLSVersion
+            minTLSVersion: dependency.minTLSVersion,
+            preferredAPIVersion: dependency.preferredAPIVersion
         )
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         let linkGenerator = SSOLinkGenerator(

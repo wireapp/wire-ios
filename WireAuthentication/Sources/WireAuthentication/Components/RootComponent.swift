@@ -112,7 +112,8 @@ class RootComponent: BootstrapComponent {
         let networkStack = NetworkStack(
             environmentType: environmentType,
             backendConfig: backendConfig,
-            minTLSVersion: minTLSVersion
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion
         )
 
         return DetermineAuthMethodComponent(

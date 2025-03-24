@@ -100,15 +100,6 @@ final class MockDependencies {
 
 }
 
-extension MockDependencies: ResolveBackendMetadataUseCaseFactory {
-
-    nonisolated
-    func resolveBackendMetadataUseCase() -> any WireAuthenticationAPI.ResolveBackendMetadataUseCaseProtocol {
-        MockResolveBackendMetadataUseCase()
-    }
-
-}
-
 extension MockDependencies: DetermineAuthMethodViewModel.Factory {
 
     nonisolated

@@ -32,6 +32,7 @@ package final class NetworkStack {
     package let environmentType: BackendEnvironmentType
     package let backendConfig: BackendConfig
     package let minTLSVersion: TLSVersion
+    package let preferredAPIVersion: APIVersion?
 
     private var backendMetadata: WireAuthenticationAPI.BackendMetadata?
     private var state: NetworkState
@@ -39,11 +40,13 @@ package final class NetworkStack {
     package init(
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        minTLSVersion: TLSVersion
+        minTLSVersion: TLSVersion,
+        preferredAPIVersion: APIVersion?
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.minTLSVersion = minTLSVersion
+        self.preferredAPIVersion = preferredAPIVersion
 
         do {
             state = .ready(try NetworkService.make(
@@ -104,7 +107,7 @@ package final class NetworkStack {
         let useCase = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
             clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: .v8
+            preferredAPIVersion: preferredAPIVersion
         )
 
         let backendMetadata = try await useCase.invoke()
