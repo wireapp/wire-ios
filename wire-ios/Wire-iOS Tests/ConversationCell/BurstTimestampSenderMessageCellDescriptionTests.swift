@@ -26,18 +26,6 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
     typealias SUT = BurstTimestampSenderMessageCellDescription
 
-    private var userSession: UserSessionMock!
-
-    override func setUp() {
-        super.setUp()
-        userSession = UserSessionMock()
-    }
-
-    override func tearDown() {
-        userSession = nil
-        super.tearDown()
-    }
-
     // MARK: - Unread Indicator
 
     func testUnreadIndicatorJustNow() async {
@@ -55,46 +43,40 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
         // Then
         XCTAssertEqual(model?.text, "Just now")
     }
-/*
-    func testUnreadIndicator25minAgo() {
-        // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
 
-        // When
-        sut.configure(
-            timestamp: mockedNow.addingTimeInterval(-25 * 60), // 25 min ago
+    func testUnreadIndicator25minAgo() async {
+        // Given
+        let sut = createSUT(
+            now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+            targetDate: { now in now.addingTimeInterval(-25 * 60) }, // 25 min ago
             isFirstMessageOfTheDay: false,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+            showUnreadDot: true
         )
 
+        // When
+        let model = await TimeDividerModel(sut.conversationCellModel)
+
         // Then
-        XCTAssertEqual(sut.label.text, "25 minutes ago")
+        XCTAssertEqual(model?.text, "25 minutes ago")
     }
 
-    func testUnreadIndicatorToday() throws {
+    func testUnreadIndicatorToday() async {
         // Given
-        let then = Date.now.addingTimeInterval(-45 * 60)
-        if !Calendar.current.isDate(.now, inSameDayAs: then) {
-            // if the test runs before 00:45, add another hour
-            throw XCTSkip("This test needs to run between 00:45 and 23:59")
-        }
-
-        // When
-        sut.configure(
-            timestamp: then, // 45 min ago
+        let sut = createSUT(
+            now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+            targetDate: { now in now.addingTimeInterval(-45 * 60) }, // 45 min ago
             isFirstMessageOfTheDay: false,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+            showUnreadDot: true
         )
 
+        // When
+        let model = await TimeDividerModel(sut.conversationCellModel)
+
         // Then
-        XCTAssertEqual(sut.label.text, "Today")
+        XCTAssertEqual(model?.text, "Today")
     }
 
+    /*
     func testUnreadIndicatorYesterday() {
         // When
         sut.configure(
@@ -252,7 +234,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
                 date: targetDate(now),
                 isFirstMessageOfTheDay: false,
                 showUnreadDot: true,
-                accentColor: userSession.selfUser.accentColor
+                accentColor: .systemPink
             ),
             currentDateProvider: currentDateProvider
         )

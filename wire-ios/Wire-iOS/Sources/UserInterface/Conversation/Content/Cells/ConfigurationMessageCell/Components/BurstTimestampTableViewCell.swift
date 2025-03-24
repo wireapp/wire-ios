@@ -28,37 +28,47 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
         let now = currentDateProvider.now
         let calendar = Calendar.current
-        let isToday = calendar.isDateInToday(configuration.date)
+        let isToday = calendar.isDate(now, equalTo: configuration.date, toGranularity: .day)
+        lazy var isYesterday = calendar.isDate(
+            now.addingTimeInterval(-24 * 60 * 60),
+            equalTo: configuration.date,
+            toGranularity: .day
+        )
 
         let text: String
         if configuration.showUnreadDot, !configuration.isFirstMessageOfTheDay {
 
             // For the unread indicator we have custom rules, unless it is the first messsage of the day.
             let difference = now.timeIntervalSince(configuration.date)
-            text = if difference < 60 {
+            if difference < 60 {
                 // less than one minute
-                String(localized: "time.just_now")
+                text = String(localized: "time.just_now")
             } else if difference <= 30 * 60 {
                 // within 30 minutes display "xy minutes ago"
-                WRDateFormatter.timeIntervalFormatter.localizedString(for: configuration.date, relativeTo: now)
+                text = WRDateFormatter.timeIntervalFormatter.localizedString(for: configuration.date, relativeTo: now)
             } else if isToday {
                 // for same day just show "Today"
-                todayDateFormatter.string(from: configuration.date)
-            } else if calendar.isDateInYesterday(configuration.date) { // for the day before show "Yesterday"
+                let now = Date.now
+                var then = now.addingTimeInterval(-60 * 60)
+                if !calendar.isDate(now, equalTo: then, toGranularity: .day) {
+                    then = now.addingTimeInterval(60 * 60)
+                }
+                text = todayDateFormatter.string(from: then)
+            } else if isYesterday { // for the day before show "Yesterday"
                 // construct two dates with a difference between 1 and 2 days (e.g. 36h): it should return "Yesterday"
-                WRDateFormatter.timeIntervalFormatter.localizedString(
+                text = WRDateFormatter.timeIntervalFormatter.localizedString(
                     for: now.addingTimeInterval(-36 * 2600),
                     relativeTo: now
                 )
             } else if difference < 7 * 24 * 60 * 60 {
                 // within 7 days print weekday and date
-                weekdayAndDateDateFormatter.string(from: configuration.date)
+                text = weekdayAndDateDateFormatter.string(from: configuration.date)
             } else if calendar.component(.year, from: configuration.date) == calendar.component(.year, from: now) { // same year
                 // date + month
-                monthAndDayDateFormatter.string(from: configuration.date)
+                text = monthAndDayDateFormatter.string(from: configuration.date)
             } else {
                 // date + month + year
-                monthDayAndYearDateFormatter.string(from: configuration.date)
+                text = monthDayAndYearDateFormatter.string(from: configuration.date)
             }
 
         } else {
