@@ -121,14 +121,11 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    func noHistoryComponent(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConfict: Bool
-    ) -> NoHistoryComponent {
+    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConfict
+            didDetectDomainConflict: false
         )
     }
 
@@ -231,14 +228,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         ).view
     }
 
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView {
-        noHistoryComponent(
-            authenticationResult: authenticationResult,
-            didDetectDomainConfict: didDetectDomainConflict
-        ).view
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
+        noHistoryComponent(authenticationResult: authenticationResult).view
     }
 
 }

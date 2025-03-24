@@ -28,7 +28,6 @@ public final class VerificationCodeViewModel: ObservableObject {
     package typealias Factory = LoginViaEmailUseCaseFactory2
 
     private static let numberOfDigits = 6
-    private let didDetectDomainConflict: Bool
 
     @Published var code: [String]
     @Published private(set) var isLoading = false
@@ -53,8 +52,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         requestLoginVerificationCodeUseCase: any RequestLoginVerificationCodeUseCaseProtocol,
         router: any Router,
         backendEnvironment: WireAuthenticationBackendEnvironment,
-        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits,
-        didDetectDomainConflict: Bool
+        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
     ) {
         precondition(numberOfDigits > 0)
 
@@ -67,7 +65,6 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.backendEnvironment = backendEnvironment
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
-        self.didDetectDomainConflict = didDetectDomainConflict
     }
 
     var isConfirmButtonDisabled: Bool {
@@ -116,10 +113,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             )
 
             router.navigate(
-                to: VerificationCodeDestination.noHistory(
-                    authenticationResult: authenticationResult,
-                    didDetectDomainConflict: didDetectDomainConflict
-                )
+                to: VerificationCodeDestination.noHistory(authenticationResult: authenticationResult)
             )
             WireLogger.authentication.info("2FA login via email succeeded")
         } catch {

@@ -107,14 +107,8 @@ package struct VerificationCodeView: View {
         )
         .navigationDestination(for: VerificationCodeDestination.self) {
             switch $0 {
-            case let .noHistory(
-                authenticationResult,
-                didDetectDomainConflict
-            ):
-                factory.noHistoryView(
-                    authenticationResult: authenticationResult,
-                    didDetectDomainConflict: didDetectDomainConflict
-                )
+            case let .noHistory(authenticationResult):
+                factory.noHistoryView(authenticationResult: authenticationResult)
             }
         }
     }

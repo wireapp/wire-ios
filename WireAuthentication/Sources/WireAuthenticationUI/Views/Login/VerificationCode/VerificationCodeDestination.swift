@@ -25,9 +25,6 @@ enum VerificationCodeDestination: Identifiable, Hashable {
         self
     }
 
-    case noHistory(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool // TODO: delete this if possible
-    )
+    case noHistory(authenticationResult: AuthenticationResult)
 
 }

@@ -23,8 +23,7 @@ package struct RootView: View {
 
     package typealias Factory =
         DetermineAuthMethodBuilder &
-        LoginViaEmailBuilder &
-        NoHistoryViewBuilder
+        LoginViaEmailBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -53,14 +52,6 @@ package struct RootView: View {
                             backendMetadata: backendMetadata
                         )
                     }
-                case let .noHistory(
-                    authenticationResult,
-                    didDetectDomainConflict
-                ):
-                    factory.noHistoryView(
-                        authenticationResult: authenticationResult,
-                        didDetectDomainConflict: didDetectDomainConflict
-                    )
                 case let .onPremiseLogin(
                     email,
                     environmentType,
@@ -87,10 +78,6 @@ package struct RootView: View {
             environmentType: BackendEnvironmentType,
             backendConfig: BackendConfig,
             backendMetadata: BackendMetadata
-        )
-        case noHistory(
-            authenticationResult: AuthenticationResult,
-            didDetectDomainConflict: Bool
         )
         case onPremiseLogin(
             email: String?,

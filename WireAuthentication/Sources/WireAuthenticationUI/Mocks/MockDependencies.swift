@@ -259,10 +259,7 @@ extension MockDependencies: NoHistoryViewBuilder {
         )
     }
 
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView {
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 
@@ -335,8 +332,7 @@ extension MockDependencies: VerificationCodeBuilder {
             requestLoginVerificationCodeUseCase: self,
             router: rootViewModel,
             backendEnvironment: backendEnvironment,
-            numberOfDigits: code.count,
-            didDetectDomainConflict: false
+            numberOfDigits: code.count
         )
         viewModel.code = code
 
@@ -359,8 +355,7 @@ extension MockDependencies: VerificationCodeBuilder {
                 loginViaEmailUseCase: self,
                 requestLoginVerificationCodeUseCase: self,
                 router: rootViewModel,
-                backendEnvironment: backendEnvironment,
-                didDetectDomainConflict: false
+                backendEnvironment: backendEnvironment
             ),
             factory: self
         )

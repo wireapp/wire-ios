@@ -129,10 +129,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 backendEnvironment: backendEnvironment
             )
 
-            router.presentSheet(RootView.ModalDestination.noHistory(
-                authenticationResult: authenticationResult,
-                didDetectDomainConflict: didDetectDomainConflict
-            ))
+            router.navigate(
+                to: LoginViaEmailView.Destination.noHistory(authenticationResult: authenticationResult)
+            )
 
         } catch {
             WireLogger.authentication.error("Login via email failed: \(error)")

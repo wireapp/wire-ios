@@ -121,18 +121,6 @@ class RootComponent: BootstrapComponent {
         )
     }
 
-    @MainActor
-    func noHistoryComponent(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
-    }
-
     func loginViaEmailComponent(
         email: String?,
         canCreateAccount: Bool,
@@ -168,17 +156,6 @@ extension RootComponent: RootView.Factory {
     @MainActor
     func determineAuthMethodView() -> DetermineAuthMethodView {
         determineAuthMethodComponent.view
-    }
-
-    @MainActor
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView {
-        noHistoryComponent(
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
-        ).view
     }
 
     @MainActor

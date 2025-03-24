@@ -37,7 +37,9 @@ package protocol LoginViaEmailBuilder {
 
 package struct LoginViaEmailView: View {
 
-    package typealias Factory = VerificationCodeBuilder
+    package typealias Factory =
+        VerificationCodeBuilder &
+        NoHistoryViewBuilder
 
     @StateObject var viewModel: LoginViaEmailViewModel
     private let factory: any Factory
@@ -113,6 +115,8 @@ package struct LoginViaEmailView: View {
                     email: email,
                     password: password
                 )
+            case let .noHistory(authenticationResult):
+                factory.noHistoryView(authenticationResult: authenticationResult)
             }
         }
         .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
@@ -250,6 +254,9 @@ package struct LoginViaEmailView: View {
         case verifyLogin(
             email: String,
             password: String
+        )
+        case noHistory(
+            authenticationResult: AuthenticationResult
         )
 
     }

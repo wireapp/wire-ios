@@ -47,8 +47,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: router,
             backendEnvironment: Fixture.backendEnvironment,
-            numberOfDigits: 3, // Lets use a 3 digit code for simplicity
-            didDetectDomainConflict: false
+            numberOfDigits: 3 // Lets use a 3 digit code for simplicity
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)
@@ -124,8 +123,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
                             verificationCode: "123"
                         ),
                         backendEnvironment: Fixture.backendEnvironment
-                    ),
-                    didDetectDomainConflict: false
+                    )
                 )
         )
     }

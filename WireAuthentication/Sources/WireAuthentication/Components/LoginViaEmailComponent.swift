@@ -148,6 +148,16 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         )
     }
 
+    func noHistoryComponent(
+        authenticationResult: AuthenticationResult
+    ) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
+    }
+
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
@@ -183,6 +193,11 @@ extension LoginViaEmailComponent: LoginViaEmailView.Factory {
             email: email,
             password: password
         ).view
+    }
+
+    @MainActor
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
+        noHistoryComponent(authenticationResult: authenticationResult).view
     }
 
 }

@@ -67,8 +67,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             loginViaEmailUseCase: dependency.loginViaEmailUseCase,
             requestLoginVerificationCodeUseCase: requestLoginVerificationCodeUseCase,
             router: dependency.router,
-            backendEnvironment: dependency.backendEnvironment,
-            didDetectDomainConflict: dependency.didDetectDomainConflict
+            backendEnvironment: dependency.backendEnvironment
         )
     }
 
@@ -78,14 +77,11 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
 
     // MARK: - Children
 
-    func noHistoryComponent(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryComponent {
+    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
+            didDetectDomainConflict: dependency.didDetectDomainConflict
         )
     }
 
@@ -102,14 +98,9 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
 
 extension VerificationCodeComponent: VerificationCodeView.Factory {
 
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView {
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
         noHistoryComponent(
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
-        ).view
+            authenticationResult: authenticationResult).view
     }
 
 }

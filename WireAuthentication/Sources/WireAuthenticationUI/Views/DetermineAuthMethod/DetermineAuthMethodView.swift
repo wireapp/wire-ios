@@ -170,10 +170,7 @@ package struct DetermineAuthMethodView: View {
                     backendMetadata: backendMetadata
                 )
             case let .noHistory(authenticationResult):
-                factory.noHistoryView(
-                    authenticationResult: authenticationResult,
-                    didDetectDomainConflict: false
-                )
+                factory.noHistoryView(authenticationResult: authenticationResult)
             }
         }
         .sheet(
