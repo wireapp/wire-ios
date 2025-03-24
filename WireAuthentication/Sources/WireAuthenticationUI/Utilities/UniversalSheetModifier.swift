@@ -17,6 +17,7 @@
 //
 import SwiftUI
 
+/// This ViewModifier creates a custom overlay for iPad and fallback to .sheet on iPhone
 struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModifier {
 
     @Binding var item: Item?
@@ -48,7 +49,7 @@ extension View {
     @ViewBuilder
     func sheetCornerRadius(_ radius: CGFloat, inNavigationStack: Bool) -> some View {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            modifier(SheetCornerRadiusModifier(isInNavStack: inNavigationStack, radius: radius))
+            modifier(SheetCornerRadiusModifier(radius: radius, inNavigationStack: inNavigationStack))
         } else {
             self
         }
@@ -65,12 +66,13 @@ extension View {
 
 // MARK: - Specific helpers
 
+/// ViewModifier to deal with cornerRadius and NavigationStack
 private struct SheetCornerRadiusModifier: ViewModifier {
-    let isInNavStack: Bool
     let radius: CGFloat
+    let inNavigationStack: Bool
 
     func body(content: Content) -> some View {
-        if isInNavStack {
+        if inNavigationStack {
             content
                 .introspect(.navigationStack, on: .iOS(.v16, .v17, .v18)) { stack in
                     stack.topViewController?.view.backgroundColor = .white

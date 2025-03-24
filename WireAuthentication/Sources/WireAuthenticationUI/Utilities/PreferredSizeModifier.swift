@@ -29,6 +29,7 @@ struct PreferredSizeKey: PreferenceKey, Sendable {
     }
 }
 
+/// Set PreferredSize of child to parent view
 struct PreferredSizeModifier: ViewModifier {
 
     @State var size: CGSize = .init(width: 390, height: 420)
@@ -44,7 +45,7 @@ struct PreferredSizeModifier: ViewModifier {
                 .presentationDetents([.height(size.height)])
         }
     }
-    
+
     private func setSize(value: CGSize?) {
         if let value {
             DispatchQueue.main.async {
@@ -63,6 +64,9 @@ struct PreferredSizeModifier: ViewModifier {
 
 extension View {
 
+    /// Calculates the size of a view and communicate it to parents in order to set container size
+    /// - Parameter navigationBarHidden: whether the navigationBar of the NavigationStack is visible or not
+    /// - Returns: a View
     @ViewBuilder
     func setPreferredSize(navigationBarHidden: Bool = true) -> some View {
         background(

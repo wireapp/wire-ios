@@ -30,6 +30,7 @@ package struct RootView: View {
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
+    private let cornerRadius: CGFloat = 10
 
     package init(
         viewModel: RootViewModel,
@@ -53,7 +54,7 @@ package struct RootView: View {
             NavigationStack(path: $viewModel.path) {
                 factory.determineAuthMethodView()
             }
-            .sheetCornerRadius(10, inNavigationStack: true)
+            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
 
         case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
             NavigationStack(path: $viewModel.path) {
@@ -63,7 +64,7 @@ package struct RootView: View {
                     backendMetadata: backendMetadata
                 )
             }
-            .sheetCornerRadius(10, inNavigationStack: true)
+            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
 
         case let .noHistory(
             authenticationResult,
@@ -73,7 +74,7 @@ package struct RootView: View {
                 authenticationResult: authenticationResult,
                 didDetectDomainConflict: didDetectDomainConflict
             )
-            .sheetCornerRadius(10, inNavigationStack: false)
+            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
 
         case let .onPremiseLogin(
             email,
@@ -87,7 +88,7 @@ package struct RootView: View {
                 backendConfig: backendConfig,
                 backendMetadata: backendMetadata
             )
-            .sheetCornerRadius(10, inNavigationStack: false)
+            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
 
         case let .ssoLogin(
             ssoURL,
@@ -97,7 +98,7 @@ package struct RootView: View {
                 ssoURL: ssoURL,
                 backendEnvironment: backendEnvironment
             )
-            .sheetCornerRadius(10, inNavigationStack: false)
+            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
         }
     }
 
