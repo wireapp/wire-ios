@@ -634,5 +634,4 @@ extension CreateChannelUseCase.Failure: @retroactive Equatable {
         }
     }
 
-
 }

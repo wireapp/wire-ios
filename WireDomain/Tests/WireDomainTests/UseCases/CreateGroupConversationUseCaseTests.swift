@@ -796,5 +796,4 @@ extension CreateGroupConversationUseCase.Failure: @retroactive Equatable {
         }
     }
 
-
 }
