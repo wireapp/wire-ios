@@ -20,33 +20,6 @@ import WireTestingPackage
 import XCTest
 @testable import Wire
 
-class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider,
-    HasQualifiedID {
-
-    var stableRandomParticipants: [UserType] = []
-
-    var qualifiedID: WireDataModel.QualifiedID? = .mockID1
-
-    override required init() {}
-
-    static func createOneOnOneConversation<T: MockStableRandomParticipantsConversation>(otherUser: MockUserType) -> T {
-        SelfUser.setupMockSelfUser()
-        let otherUserConversation = T()
-
-        // avatar
-        otherUserConversation.stableRandomParticipants = [otherUser]
-        otherUserConversation.conversationType = .oneOnOne
-
-        // title
-        otherUserConversation.displayName = otherUser.name!
-
-        // subtitle
-        otherUserConversation.connectedUserType = otherUser
-
-        return otherUserConversation
-    }
-}
-
 final class ConversationAvatarViewTests: XCTestCase {
 
     // MARK: - Properties

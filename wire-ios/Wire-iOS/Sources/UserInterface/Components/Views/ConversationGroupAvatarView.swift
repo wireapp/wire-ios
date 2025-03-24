@@ -33,6 +33,7 @@ final class ConversationGroupAvatarView: UIView {
         self.conversation = conversation
 
         guard let id = context.conversation.qualifiedID?.uuid.uuidString else {
+            iconContainer.removeSubviews()
             return
         }
         let iconView = WireConversationGroupIconFactory().createUIKit(conversationID: id)
