@@ -17,12 +17,11 @@
 //
 import SwiftUI
 
-struct PreferredSizeKey: PreferenceKey {
+struct PreferredSizeKey: PreferenceKey, Sendable {
     static var defaultValue: CGSize?
 
     static func reduce(value: inout CGSize?, nextValue: () -> CGSize?) {
         let next = nextValue()
-        print("🍒 reducer", value, next)
 
         if next != nil {
             value = next
@@ -31,30 +30,33 @@ struct PreferredSizeKey: PreferenceKey {
 }
 
 struct PreferredSizeModifier: ViewModifier {
+
     @State var size: CGSize = .init(width: 390, height: 420)
 
     func body(content: Content) -> some View {
         if UIDevice.current.userInterfaceIdiom == .pad {
             content
                 .frame(width: size.width, height: size.height)
-                .onPreferenceChange(PreferredSizeKey.self) { value in
-                    DispatchQueue.main.async {
-                        if let value {
-                            size.height = value.height
-                        }
-                    }
-                }
+                .onPreferenceChange(PreferredSizeKey.self, perform: setSize)
         } else {
             content
-                .onPreferenceChange(PreferredSizeKey.self) { value in
-                    DispatchQueue.main.async {
-                        if let value {
-                            size.height = value.height
-                        }
-                    }
-                }
+                .onPreferenceChange(PreferredSizeKey.self, perform: setSize)
                 .presentationDetents([.height(size.height)])
         }
+    }
+    
+    private func setSize(value: CGSize?) {
+        if let value {
+            DispatchQueue.main.async {
+                size.height = min(value.height, maxSize.height)
+            }
+        }
+    }
+
+    var maxSize: CGSize {
+        let ratio = 0.75
+        let size = UIScreen.main.bounds.size
+        return .init(width: size.width * ratio, height: size.height * ratio)
     }
 }
 

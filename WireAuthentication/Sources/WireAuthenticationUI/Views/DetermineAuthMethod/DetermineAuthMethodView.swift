@@ -109,7 +109,7 @@ package struct DetermineAuthMethodView: View {
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
             }
             .padding()
-            .setPreferredSize()
+            .setPreferredSize(navigationBarHidden: !viewModel.existsAnotherAccount)
         }
         .toolbar {
             if viewModel.existsAnotherAccount {
