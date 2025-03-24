@@ -44,18 +44,6 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
         .padding(.vertical, 8)
     }
 
-    @ViewBuilder private var withoutUnreadIndicator: some View {
-
-        leadingDivider
-
-        if !model.text.isEmpty {
-            text
-        }
-
-        trailingDivider
-
-    }
-
     @ViewBuilder private var text: some View {
         Text(model.text)
             .multilineTextAlignment(.center)

@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireRequestStrategy
 import WireReusableUIComponents
@@ -114,6 +115,8 @@ final class ConversationContentViewController: UIViewController {
 
     private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
+    private let logger: WireLogger
+
     init(
         conversation: ZMConversation,
         message: ZMConversationMessage? = nil,
@@ -128,6 +131,7 @@ final class ConversationContentViewController: UIViewController {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
+        self.logger = .conversation
 
         super.init(nibName: nil, bundle: nil)
 
@@ -499,7 +503,7 @@ final class ConversationContentViewController: UIViewController {
         }
 
         guard timeInterval > 0 else { return }
-        print("starting refresh timer with interval: \(timeInterval)")
+        logger.info("starting refresh timer with interval: \(timeInterval)")
         refreshTimer = .scheduledTimer(
             timeInterval: timeInterval,
             target: self,
@@ -512,12 +516,12 @@ final class ConversationContentViewController: UIViewController {
     private func stopRefreshTimer() {
         refreshTimer?.invalidate()
         refreshTimer = nil
-        print("stopped refresh timer")
+        logger.info("stopped refresh timer")
     }
 
     @objc
     private func refreshTimerFire(_ timer: Timer) {
-        print("refresh timer fire")
+        logger.info("refresh timer fire")
 
         var indexPathsToReload = [IndexPath]()
         for indexPath in tableView.indexPathsForVisibleRows ?? [] {

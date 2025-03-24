@@ -37,8 +37,8 @@ final class ConversationCellSnapshotTests: XCTestCase {
 
     @MainActor
     func testUIUserInterfaceStyleDark() {
-        let sut = ConversationCellPreviews(
-            models: [
+        let sut = ConversationCellsPreview(
+            itemIdentifiers: [
                 .timeDivider(text: "Friday", isUnread: false),
                 .timeDivider(text: "Saturday\nMulti-line-text", isUnread: false),
                 .timeDivider(text: "Today", isUnread: true)
@@ -52,8 +52,8 @@ final class ConversationCellSnapshotTests: XCTestCase {
 
     @available(iOS 17, *) @MainActor
     func testUIFontContentSizeCategories() {
-        let sut = ConversationCellPreviews(
-            models: [
+        let sut = ConversationCellsPreview(
+            itemIdentifiers: [
                 .timeDivider(text: "Friday", isUnread: false),
                 .timeDivider(text: "Saturday\nMulti-line-text", isUnread: false),
                 .timeDivider(text: "Today", isUnread: true)
