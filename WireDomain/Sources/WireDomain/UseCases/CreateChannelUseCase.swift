@@ -98,7 +98,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                     users.forEach { $0.needsToBeUpdatedFromBackend = true }
                     context.enqueueDelayedSave()
                 }
-                
+
                 throw Failure.notConnected
             case .missingLegalHoldConsent:
                 throw Failure.missingLegalholdConsent
@@ -119,12 +119,12 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             default:
                 throw Failure.failedToCreateChannel(error)
             }
-            
+
         } catch {
             throw Failure.failedToCreateChannel(error)
         }
     }
-    
+
     private func createChannel(
         teamID: UUID,
         name: String?,
@@ -162,30 +162,30 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 unqualifiedUserIDs
             )
         }
-            let remoteConversation = try await api.createGroupConversation(
-                groupType: .channel,
-                messageProtocol: .mls,
-                creatorClientID: selfClientID,
-                qualifiedUserIDs: qualifiedUserIds,
-                unqualifiedUserIDs: unqualifiedUserIds,
-                name: name,
-                accessMode: accessMode,
-                accessRoles: accessRoles,
-                legacyAccessRole: nil,
-                teamID: teamID,
-                isReadReceiptsEnabled: enableReceipts
-            )
+        let remoteConversation = try await api.createGroupConversation(
+            groupType: .channel,
+            messageProtocol: .mls,
+            creatorClientID: selfClientID,
+            qualifiedUserIDs: qualifiedUserIds,
+            unqualifiedUserIDs: unqualifiedUserIds,
+            name: name,
+            accessMode: accessMode,
+            accessRoles: accessRoles,
+            legacyAccessRole: nil,
+            teamID: teamID,
+            isReadReceiptsEnabled: enableReceipts
+        )
 
-            let localConversation = try await createConversationLocally(
-                remoteConversation
-            )
+        let localConversation = try await createConversationLocally(
+            remoteConversation
+        )
 
-            try await setupMLS(
-                for: localConversation,
-                with: users
-            )
+        try await setupMLS(
+            for: localConversation,
+            with: users
+        )
 
-            return localConversation
+        return localConversation
     }
 
     // MARK: - API error handling

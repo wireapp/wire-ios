@@ -26,22 +26,22 @@ import XCTest
 @testable import WireDomainSupport
 
 final class CreateGroupConversationUseCaseTests: XCTestCase {
-    
+
     private var sut: CreateGroupConversationUseCase!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var conversationsAPI: MockConversationsAPI!
     private var mlsService: MockMLSServiceInterface!
-    
+
     private var coreDataStackHelper: CoreDataStackHelper!
     private var stack: CoreDataStack!
     private var modelHelper: ModelHelper!
-    
+
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
-    
+
     // MARK: - Life cycle
-    
+
     override func setUp() async throws {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
@@ -49,7 +49,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
         conversationsAPI = MockConversationsAPI()
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
-        
+
         sut = CreateGroupConversationUseCase(
             api: conversationsAPI,
             store: conversationLocalStore,
@@ -59,7 +59,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             isMLSEnabled: true
         )
     }
-    
+
     override func tearDown() async throws {
         conversationsAPI = nil
         conversationLocalStore = nil
@@ -70,12 +70,12 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
     }
-    
+
     // MARK: - Proteus group conversation
-    
+
     func testInvoke_It_Succeeds_Returning_Created_Proteus_Conversation() async throws {
         // Mock
-        
+
         let (proteusConversation, participant1, participant2) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
             let participant1 = modelHelper.createUser(in: context)
@@ -84,20 +84,22 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 with: [participant1, participant2],
                 in: context
             )
-            
+
             return (proteusConversation, participant1, participant2)
         }
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue = Scaffolding.conversation
-        
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
+            Scaffolding.conversation
+
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        
+
         conversationLocalStore.fetchConversationIdDomain_MockValue = proteusConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
         mlsService.createGroupForRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        
+
         // When
-        
+
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             messageProtocol: .proteus,
@@ -108,63 +110,80 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             enableReceipts: true,
             isMLSEnabled: true
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(conversation, proteusConversation)
-        XCTAssertEqual(conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.count, 0) // does not call mls service methods since this is a Proteus protocol
-        XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 0) // does not call mls service methods since this is a Proteus protocol
+        XCTAssertEqual(
+            mlsService.addMembersToConversationWithFor_Invocations.count,
+            0
+        ) // does not call mls service methods since this is a Proteus protocol
+        XCTAssertEqual(
+            mlsService.createGroupForRemovalKeys_Invocations.count,
+            0
+        ) // does not call mls service methods since this is a Proteus protocol
     }
-    
+
     func testInvoke_When_Proteus_Protocol_And_API_Failure_It_Retries_Once_With_Federating_Domains() async throws {
         // Mock
-        
-        let (proteusConversation, participant1, participant2, nonFederatedParticipant3) = await context.perform { [self] in
-            modelHelper.createSelfClient(in: context)
-            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1",in: context)
-            let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated2", in: context)
-            let nonFederatedParticipant3 = modelHelper.createUser(id: .mockID3, domain: "nonfederated", in: context)
-            let proteusConversation = modelHelper.createMLSConversation(
-                mlsGroupID: .random(),
-                with: [participant1, participant2, nonFederatedParticipant3],
-                in: context
-            )
-            
-            return (proteusConversation, participant1, participant2, nonFederatedParticipant3)
-        }
-        
-        var apiRetryCount = 0
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockMethod = {
-            _, _, _, qualifiedIDs, unqualifiedIDs, _, _, _, _, _, _ in
-            defer { apiRetryCount += 1 }
-            if apiRetryCount == 0 {
-                // First, we try to create conversation with all users
-                XCTAssertEqual(
-                    Set(qualifiedIDs.map(\.uuid)),
-                    Set([UUID.mockID1, .mockID2, .mockID3])
+
+        let (proteusConversation, participant1, participant2, nonFederatedParticipant3) = await context
+            .perform { [self] in
+                modelHelper.createSelfClient(in: context)
+                let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
+                let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated2", in: context)
+                let nonFederatedParticipant3 = modelHelper.createUser(id: .mockID3, domain: "nonfederated", in: context)
+                let proteusConversation = modelHelper.createMLSConversation(
+                    mlsGroupID: .random(),
+                    with: [participant1, participant2, nonFederatedParticipant3],
+                    in: context
                 )
-                
-                throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
-            } else {
-                // On retry, we only try to create conversation with federated domains
-                XCTAssertEqual(
-                    Set(qualifiedIDs.map(\.uuid)),
-                    Set([UUID.mockID1, .mockID2])
-                )
-                return Scaffolding.conversation
+
+                return (proteusConversation, participant1, participant2, nonFederatedParticipant3)
             }
-        }
-        
+
+        var apiRetryCount = 0
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockMethod =
+            {
+                _, _, _, qualifiedIDs, _, _, _, _, _, _, _ in
+                defer { apiRetryCount += 1 }
+                if apiRetryCount == 0 {
+                    // First, we try to create conversation with all users
+                    XCTAssertEqual(
+                        Set(qualifiedIDs.map(\.uuid)),
+                        Set([UUID.mockID1, .mockID2, .mockID3])
+                    )
+
+                    throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
+                } else {
+                    // On retry, we only try to create conversation with federated domains
+                    XCTAssertEqual(
+                        Set(qualifiedIDs.map(\.uuid)),
+                        Set([UUID.mockID1, .mockID2])
+                    )
+                    return Scaffolding.conversation
+                }
+            }
+
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        
+
         conversationLocalStore.fetchConversationIdDomain_MockValue = proteusConversation
-        
+
         // When
-        
+
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             messageProtocol: .proteus,
@@ -175,20 +194,28 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             enableReceipts: true,
             isMLSEnabled: true
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(conversation, proteusConversation)
-        XCTAssertEqual(conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations.count, 2) // called twice, first try then retry excluding non federated domains
-        XCTAssertEqual(conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .count,
+            2
+        ) // called twice, first try then retry excluding non federated domains
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
     }
-    
+
     // MARK: - MLS group conversation (for API version < v8)
-    
+
     func testInvoke_It_Succeeds_Returning_Created_MLS_Conversation() async throws {
         // Mock
-        
+
         let (mlsConversation, participant1, participant2) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
             let participant1 = modelHelper.createUser(in: context)
@@ -198,20 +225,22 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 with: [participant1, participant2],
                 in: context
             )
-            
+
             return (mlsConversation, participant1, participant2)
         }
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue = Scaffolding.conversation
-        
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
+            Scaffolding.conversation
+
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        
+
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
         mlsService.createGroupForRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        
+
         // When
-        
+
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             messageProtocol: .mls,
@@ -222,23 +251,31 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             enableReceipts: true,
             isMLSEnabled: true
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(conversation, mlsConversation)
-        XCTAssertEqual(conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.count, 1)
         XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 1)
     }
-    
+
     func testInvoke_When_MLS_Protocol_And_API_Failure_It_Retries_Once_With_Federating_Domains() async throws {
         // Mock
-        
+
         let (mlsConversation, participant1, participant2, nonFederatedParticipant3) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
-            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1",in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
             let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated2", in: context)
             let nonFederatedParticipant3 = modelHelper.createUser(id: .mockID3, domain: "nonfederated", in: context)
             let mlsConversation = modelHelper.createMLSConversation(
@@ -246,41 +283,43 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
                 with: [participant1, participant2, nonFederatedParticipant3],
                 in: context
             )
-            
+
             return (mlsConversation, participant1, participant2, nonFederatedParticipant3)
         }
-        
+
         var apiRetryCount = 0
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockMethod = {
-            _, _, _, qualifiedIDs, unqualifiedIDs, _, _, _, _, _, _ in
-            defer { apiRetryCount += 1 }
-            if apiRetryCount == 0 {
-                // First, we try to create conversation with all users
-                XCTAssertEqual(
-                    Set(qualifiedIDs.map(\.uuid)),
-                    Set([UUID.mockID1, .mockID2, .mockID3])
-                )
-                
-                throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
-            } else {
-                // On retry, we only try to create conversation with federated domains
-                XCTAssertEqual(
-                    Set(qualifiedIDs.map(\.uuid)),
-                    Set([UUID.mockID1, .mockID2])
-                )
-                return Scaffolding.conversation
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockMethod =
+            {
+                _, _, _, qualifiedIDs, _, _, _, _, _, _, _ in
+                defer { apiRetryCount += 1 }
+                if apiRetryCount == 0 {
+                    // First, we try to create conversation with all users
+                    XCTAssertEqual(
+                        Set(qualifiedIDs.map(\.uuid)),
+                        Set([UUID.mockID1, .mockID2, .mockID3])
+                    )
+
+                    throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
+                } else {
+                    // On retry, we only try to create conversation with federated domains
+                    XCTAssertEqual(
+                        Set(qualifiedIDs.map(\.uuid)),
+                        Set([UUID.mockID1, .mockID2])
+                    )
+                    return Scaffolding.conversation
+                }
             }
-        }
-        
+
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        
+
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
         mlsService.createGroupForRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        
+
         // When
-        
+
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             messageProtocol: .mls,
@@ -291,54 +330,67 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             enableReceipts: true,
             isMLSEnabled: true
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(conversation, mlsConversation)
-        XCTAssertEqual(conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations.count, 2) // called twice, first try then retry excluding non federated domains
-        XCTAssertEqual(conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .count,
+            2
+        ) // called twice, first try then retry excluding non federated domains
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.count, 1)
         XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 1)
     }
-    
+
     func testInvoke_MLS_Claimed_Key_Packages_Failure_It_Retries_Once_With_Failed_Users() async throws {
         // Mock
-        
+
         let (mlsConversation, participant1, participant2) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
-            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1",in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
             let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated1", in: context)
-    
+
             let mlsConversation = modelHelper.createMLSConversation(
                 mlsGroupID: .random(),
                 with: [participant1, participant2],
                 in: context
             )
-            
+
             return (mlsConversation, participant1, participant2)
         }
-        
+
         var apiRetryCount = 0
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue = Scaffolding.conversation
-        
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
+            Scaffolding.conversation
+
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        
+
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
             defer { apiRetryCount += 1 }
             let usersIds = Set(await context.perform { users.map(\.id) })
             let failedUserID = usersIds.randomElement()!
-            
+
             if apiRetryCount == 0 {
                 // First, we try to add all MLS participants
                 XCTAssertEqual(
                     Set(usersIds),
                     Set([UUID.mockID1, .mockID2])
                 )
-                
-                throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [.init(id: failedUserID, domain: "federated1")])
+
+                throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [.init(
+                    id: failedUserID,
+                    domain: "federated1"
+                )])
             } else {
                 // On retry, we only try to add MLS participants that failed
                 XCTAssertEqual(
@@ -349,9 +401,9 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             }
         }
         mlsService.createGroupForRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        
+
         // When
-        
+
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             messageProtocol: .mls,
@@ -362,52 +414,65 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             enableReceipts: true,
             isMLSEnabled: true
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(conversation, mlsConversation)
-        XCTAssertEqual(conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.count, 2) // called twice, first try to add all MLS participants, on retry try to add only failed MLS participant
+        XCTAssertEqual(
+            mlsService.addMembersToConversationWithFor_Invocations.count,
+            2
+        ) // called twice, first try to add all MLS participants, on retry try to add only failed MLS participant
         XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 1)
     }
-    
+
     func testInvoke_MLS_Non_Federating_Domains_Failure_It_Retries_Once_With_Federated_Users() async throws {
         // Mock
-        
+
         let (mlsConversation, participant1, participant2) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
-            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1",in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
             let participant2 = modelHelper.createUser(id: .mockID2, domain: "nonfederated2", in: context)
-    
+
             let mlsConversation = modelHelper.createMLSConversation(
                 mlsGroupID: .random(),
                 with: [participant1, participant2],
                 in: context
             )
-            
+
             return (mlsConversation, participant1, participant2)
         }
-        
+
         var apiRetryCount = 0
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue = Scaffolding.conversation
-        
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
+            Scaffolding.conversation
+
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        
+
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
             defer { apiRetryCount += 1 }
             let usersIds = Set(await context.perform { users.map(\.id) })
-            
+
             if apiRetryCount == 0 {
                 // First, we try to add all MLS participants
                 XCTAssertEqual(
                     Set(usersIds),
                     Set([UUID.mockID1, .mockID2])
                 )
-                
+
                 throw SendCommitBundleAction.Failure.nonFederatingDomains(Set(["nonfederated2"]))
             } else {
                 // On retry, we only try to add MLS participants which are on a federated domain
@@ -419,9 +484,9 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             }
         }
         mlsService.createGroupForRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        
+
         // When
-        
+
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             messageProtocol: .mls,
@@ -432,52 +497,66 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             enableReceipts: true,
             isMLSEnabled: true
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(conversation, mlsConversation)
-        XCTAssertEqual(conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.count, 2) // called twice, first try to add all MLS participants, on retry try to add only MLS participants which are on a federated domain
+        XCTAssertEqual(
+            mlsService.addMembersToConversationWithFor_Invocations.count,
+            2
+        ) // called twice, first try to add all MLS participants, on retry try to add only MLS participants which are on
+        // a federated domain
         XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 1)
     }
-    
+
     func testInvoke_MLS_Unreachable_Domains_Failure_It_Retries_Once_With_Unreachable_Users() async throws {
         // Mock
-        
+
         let (mlsConversation, participant1, participant2) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
-            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1",in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
             let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated2", in: context)
-    
+
             let mlsConversation = modelHelper.createMLSConversation(
                 mlsGroupID: .random(),
                 with: [participant1, participant2],
                 in: context
             )
-            
+
             return (mlsConversation, participant1, participant2)
         }
-        
+
         var apiRetryCount = 0
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue = Scaffolding.conversation
-        
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockValue =
+            Scaffolding.conversation
+
         conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
-        
+
         conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
         mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
             defer { apiRetryCount += 1 }
             let usersIds = Set(await context.perform { users.map(\.id) })
-            
+
             if apiRetryCount == 0 {
                 // First, we try to add all MLS participants
                 XCTAssertEqual(
                     Set(usersIds),
                     Set([UUID.mockID1, .mockID2])
                 )
-                
+
                 throw SendCommitBundleAction.Failure.unreachableDomains(Set(["federated2"]))
             } else {
                 // On retry, we try to add all MLS participants that are on a reachable domain
@@ -489,9 +568,9 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             }
         }
         mlsService.createGroupForRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        
+
         // When
-        
+
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             messageProtocol: .mls,
@@ -502,35 +581,50 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             enableReceipts: true,
             isMLSEnabled: true
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(conversation, mlsConversation)
-        XCTAssertEqual(conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(mlsService.addMembersToConversationWithFor_Invocations.count, 2) // called twice, first try to add all MLS participants, on retry try to add only participants that are on a reachable domain
+        XCTAssertEqual(
+            mlsService.addMembersToConversationWithFor_Invocations.count,
+            2
+        ) // called twice, first try to add all MLS participants, on retry try to add only participants that are on a
+        // reachable domain
         XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 1)
     }
-    
+
     func testInvoke_API_Failure_It_Throws_Non_Federating_Domains() async throws {
         // Mock
-        
-        let (nonFederatedParticipant3) = await context.perform { [self] in
+
+        let nonFederatedParticipant3 = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
-            let nonFederatedParticipant3 = modelHelper.createUser(id: .mockID3, domain: "nonfederated", in: context)
-            
-            return (nonFederatedParticipant3)
+            return modelHelper.createUser(id: .mockID3, domain: "nonfederated", in: context)
         }
 
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockMethod = {
-            _, _, _, qualifiedIDs, unqualifiedIDs, _, _, _, _, _, _ in
-            throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
-        }
-        
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockMethod =
+            {
+                _, _, _, _, _, _, _, _, _, _, _ in
+                throw ConversationsAPIError.nonFederatingBackends(["nonfederated"])
+            }
+
         // Then
-        
-        await XCTAssertThrowsErrorAsync(CreateGroupConversationUseCase.Failure.nonFederatingDomains(Set(["nonfederated"]))) { [self] in
+
+        await XCTAssertThrowsErrorAsync(
+            CreateGroupConversationUseCase.Failure
+                .nonFederatingDomains(Set(["nonfederated"]))
+        ) { [self] in
             // When
             try await sut.invoke(
                 teamID: .mockID1,
@@ -544,22 +638,24 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
             )
         }
     }
-    
+
     func testInvoke_API_Failure_It_Throws_Not_Connected_Error() async throws {
         // Mock
-        
+
         let (participant1, participant2) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
-            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1",in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
             let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated2", in: context)
-            
+
             return (participant1, participant2)
         }
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError = ConversationsAPIError.notConnected
-        
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError =
+            ConversationsAPIError.notConnected
+
         // Then
-        
+
         await XCTAssertThrowsErrorAsync(CreateGroupConversationUseCase.Failure.notConnected) { [self] in
             // When
             try await sut.invoke(
@@ -575,22 +671,24 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
         }
 
     }
-    
+
     func testInvoke_API_Failure_It_Throws_Missing_Legalhold_Consent() async throws {
         // Mock
-        
+
         let (participant1, participant2) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
-            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1",in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
             let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated2", in: context)
-            
+
             return (participant1, participant2)
         }
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError = ConversationsAPIError.missingLegalHoldConsent
-        
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError =
+            ConversationsAPIError.missingLegalHoldConsent
+
         // Then
-        
+
         await XCTAssertThrowsErrorAsync(CreateGroupConversationUseCase.Failure.missingLegalholdConsent) { [self] in
             // When
             try await sut.invoke(
@@ -606,25 +704,30 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
         }
 
     }
-    
+
     func testInvoke_API_Failure_It_Throws_Failed_To_Create_Group() async throws {
         // Mock
-        
+
         let (participant1, participant2) = await context.perform { [self] in
             modelHelper.createSelfClient(in: context)
-            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1",in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
             let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated2", in: context)
-            
+
             return (participant1, participant2)
         }
-        
-        conversationsAPI.createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError = ConversationsAPIError.nonEmptyMemberList
-        
+
+        conversationsAPI
+            .createGroupConversationGroupTypeMessageProtocolCreatorClientIDQualifiedUserIDsUnqualifiedUserIDsNameAccessModeAccessRolesLegacyAccessRoleTeamIDIsReadReceiptsEnabled_MockError =
+            ConversationsAPIError.nonEmptyMemberList
+
         struct MockError: Error {}
-        
+
         // Then
-        
-        await XCTAssertThrowsErrorAsync(CreateGroupConversationUseCase.Failure.failedToCreateGroup(MockError())) { [self] in
+
+        await XCTAssertThrowsErrorAsync(
+            CreateGroupConversationUseCase.Failure
+                .failedToCreateGroup(MockError())
+        ) { [self] in
             // When
             _ = try await sut.invoke(
                 teamID: .mockID1,
@@ -639,7 +742,7 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
         }
 
     }
-    
+
     private enum Scaffolding {
         static let conversationID = UUID.mockID1
         static let conversation = WireAPI.Conversation(
@@ -667,28 +770,31 @@ final class CreateGroupConversationUseCaseTests: XCTestCase {
 }
 
 extension CreateGroupConversationUseCase.Failure: @retroactive Equatable {
-    public static func == (lhs: WireDomain.CreateGroupConversationUseCase.Failure, rhs: WireDomain.CreateGroupConversationUseCase.Failure) -> Bool {
+    public static func == (
+        lhs: WireDomain.CreateGroupConversationUseCase.Failure,
+        rhs: WireDomain.CreateGroupConversationUseCase.Failure
+    ) -> Bool {
         switch (lhs, rhs) {
         case (.notConnected, .notConnected):
-            return true
+            true
         case (.failedToCreateGroup, .failedToCreateGroup):
-            return true
+            true
         case (.conversationNotFound, .conversationNotFound):
-            return true
+            true
         case (.invalidOperation, .invalidOperation):
-            return true
+            true
         case (.missingConversationID, .missingConversationID):
-            return true
+            true
         case (.missingLegalholdConsent, .missingLegalholdConsent):
-            return true
+            true
         case (.missingSelfClientID, .missingSelfClientID):
-            return true
+            true
         case (.nonFederatingDomains, .nonFederatingDomains):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
-    
-    
+
+
 }

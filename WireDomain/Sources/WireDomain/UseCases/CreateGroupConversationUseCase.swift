@@ -105,7 +105,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                     users.forEach { $0.needsToBeUpdatedFromBackend = true }
                     context.enqueueDelayedSave()
                 }
-                
+
                 throw Failure.notConnected
             case .missingLegalHoldConsent:
                 throw Failure.missingLegalholdConsent
@@ -132,7 +132,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         }
 
     }
-    
+
     private func createGroup(
         teamID: UUID?,
         messageProtocol: WireAPI.ConversationMessageProtocol,
@@ -172,37 +172,37 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 unqualifiedUserIDs
             )
         }
-            let remoteConversation = try await api.createGroupConversation(
-                groupType: .group,
-                messageProtocol: teamID == nil ? .proteus : messageProtocol,
-                creatorClientID: selfClientID,
-                qualifiedUserIDs: qualifiedUserIds,
-                unqualifiedUserIDs: unqualifiedUserIds,
-                name: name,
-                accessMode: teamID == nil ? [] : accessMode,
-                accessRoles: teamID == nil ? [] : accessRoles,
-                legacyAccessRole: nil,
-                teamID: teamID,
-                isReadReceiptsEnabled: teamID == nil ? false : enableReceipts
+        let remoteConversation = try await api.createGroupConversation(
+            groupType: .group,
+            messageProtocol: teamID == nil ? .proteus : messageProtocol,
+            creatorClientID: selfClientID,
+            qualifiedUserIDs: qualifiedUserIds,
+            unqualifiedUserIDs: unqualifiedUserIds,
+            name: name,
+            accessMode: teamID == nil ? [] : accessMode,
+            accessRoles: teamID == nil ? [] : accessRoles,
+            legacyAccessRole: nil,
+            teamID: teamID,
+            isReadReceiptsEnabled: teamID == nil ? false : enableReceipts
+        )
+
+        let localConversation = try await createConversationLocally(
+            remoteConversation
+        )
+
+        switch messageProtocol {
+        case .mls:
+
+            try await setupMLS(
+                for: localConversation,
+                with: users
             )
 
-            let localConversation = try await createConversationLocally(
-                remoteConversation
-            )
+        case .mixed, .proteus:
+            break
+        }
 
-            switch messageProtocol {
-            case .mls:
-
-                try await setupMLS(
-                    for: localConversation,
-                    with: users
-                )
-
-            case .mixed, .proteus:
-                break
-            }
-
-            return localConversation
+        return localConversation
     }
 
     // MARK: - API error handling
