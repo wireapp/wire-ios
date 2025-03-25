@@ -28,7 +28,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
         let now = currentDateProvider.now
         let calendar = Calendar.current
-        let isToday = calendar.isDate(now, equalTo: configuration.date, toGranularity: .day)
+        lazy var isToday = calendar.isDate(now, equalTo: configuration.date, toGranularity: .day)
         lazy var isYesterday = calendar.isDate(
             now.addingTimeInterval(-24 * 60 * 60),
             equalTo: configuration.date,
@@ -74,13 +74,19 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
         } else {
 
-            text = if isToday {
+            if isToday {
                 // for same day just show "Today"
-                todayDateFormatter.string(from: configuration.date)
+                // the relative date formatting refers to the current system time
+                let now = Date.now
+                var then = now.addingTimeInterval(-60 * 60)
+                if !calendar.isDate(now, equalTo: then, toGranularity: .day) {
+                    then = now.addingTimeInterval(60 * 60) // in case the test runs before 01:00 AM
+                }
+                text = todayDateFormatter.string(from: then)
             } else if calendar.component(.year, from: configuration.date) == calendar.component(.year, from: now) {
-                weekdayAndDateDateFormatter.string(from: configuration.date)
+                text = weekdayAndDateDateFormatter.string(from: configuration.date)
             } else {
-                weekdayDateAndYearDateFormatter.string(from: configuration.date)
+                text = weekdayDateAndYearDateFormatter.string(from: configuration.date)
             }
 
         }

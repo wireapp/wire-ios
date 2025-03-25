@@ -180,29 +180,23 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
         }
     }
 
-    /*
-    func testTimeDividerLastYear() {
-        // Given
-        let mockedNow = ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00")!
-        let currentDateProvider = MockCurrentDateProviding()
-        currentDateProvider.now = mockedNow
-        sut.currentDateProvider = currentDateProvider
-
-        // When
+    func testTimeDividerLastYear() async {
         for flag in [true, false] {
-            // unread indicators have the same text as time dividers when they're for the first message of a day
-            sut.configure(
-                timestamp: ISO8601DateFormatter().date(from: "2024-12-19T09:44:10+01:00")!,
+            // Given
+            let sut = createSUT(
+                now: ISO8601DateFormatter().date(from: "2025-03-19T09:44:10+01:00"),
+                targetDate: { _ in ISO8601DateFormatter().date(from: "2024-12-19T09:44:10+01:00")! },
                 isFirstMessageOfTheDay: flag,
-                showUnreadDot: flag,
-                accentColor: userSession.selfUser.accentColor
+                showUnreadDot: flag
             )
 
+            // When
+            let model = await TimeDividerModel(sut.conversationCellModel)
+
             // Then
-            XCTAssertEqual(sut.label.text, "Thursday, Dec 19, 2024")
+            XCTAssertEqual(model?.text, "Thursday, Dec 19, 2024")
         }
     }
-*/
 
     // MARK: - Helpers
 
