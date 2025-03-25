@@ -49,7 +49,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let bridge: WireAuthenticationBridge
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     private let environmentType: BackendEnvironmentType
-    private let backendMetadata: BackendMetadata?
     package let backendConfig: BackendConfig
     private var cancellable: AnyCancellable?
 
@@ -73,7 +72,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         bridge: WireAuthenticationBridge,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?,
         emailOrSSOCode: String = "",
         canExitFlow: Bool,
         isLoading: Bool = false
@@ -82,7 +80,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.factory = factory
         self.bridge = bridge
         self.environmentType = environmentType
-        self.backendMetadata = backendMetadata
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
         self.canExitFlow = canExitFlow
@@ -150,12 +147,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private func handleAuthenticationMethod(
         _ method: AuthenticationMethod
     ) async {
-        // TODO: remove this temp fix
-        let backendMetadata = BackendMetadata(
-            apiVersion: .v8,
-            domain: "example.com",
-            isFederationEnabled: false
-        )
         switch method {
         case let .loginViaEmail(email, didDetectDomainConflict):
             router.navigate(to: DetermineAuthMethodView.Destination.login(
@@ -170,8 +161,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 email: email,
                 didDetectDomainConflict: false,
                 environmentType: environmentType,
-                backendConfig: backendConfig,
-                backendMetadata: backendMetadata
+                backendConfig: backendConfig
             ))
 
         case let .loginViaSSO(code):
@@ -256,8 +246,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 router.presentSheet(
                     RootView.ModalDestination.onPremiseAuthFlow(
                         environmentType: environmentType,
-                        backendConfig: backendConfig,
-                        backendMetadata: .dummy // TODO: remove
+                        backendConfig: backendConfig
                     )
                 )
             }
@@ -265,7 +254,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             // Login via email is the only place we ask from proxy credentials.
             router.navigate(
                 to: DetermineAuthMethodView.Destination.login(
-                    email: email ?? "", // TODO: fix
+                    email: email,
                     didDetectDomainConflict: false,
                     environmentType: environmentType,
                     backendConfig: backendConfig

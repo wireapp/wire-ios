@@ -37,19 +37,17 @@ protocol DetermineAuthMethodOnPremComponentDependency: Dependency {
 }
 
 class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremComponentDependency> {
+
     private let environmentType: BackendEnvironmentType
     private let backendConfig: BackendConfig
-    private let backendMetadata: BackendMetadata?
 
     init(
         parent: any Scope,
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
+        backendConfig: BackendConfig
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig
-        self.backendMetadata = backendMetadata
         super.init(parent: parent)
     }
 
@@ -67,7 +65,6 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
             bridge: dependency.bridge,
             environmentType: environmentType,
             backendConfig: backendConfig,
-            backendMetadata: backendMetadata,
             canExitFlow: dependency.existsAnotherAccount
         )
     }

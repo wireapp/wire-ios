@@ -37,9 +37,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
     private let environmentType: BackendEnvironmentType
     package let backendConfig: BackendConfig
 
-    // TODO: delete
-    private let backendMetadata = BackendMetadata.dummy
-
     private let onCreateAccount: () -> Void
 
     let email: String?
@@ -189,16 +186,5 @@ package final class LoginViaEmailViewModel: ObservableObject {
             )
         }.value
     }
-
-}
-
-// TODO: delete
-public extension BackendMetadata {
-
-    static let dummy = BackendMetadata(
-        apiVersion: .v8,
-        domain: "dummy.com",
-        isFederationEnabled: false
-    )
 
 }

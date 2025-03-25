@@ -42,12 +42,14 @@ package struct RootView: View {
                     NavigationStack(path: $viewModel.path) {
                         factory.determineAuthMethodView()
                     }
-                case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
+                case let .onPremiseAuthFlow(
+                    environmentType,
+                    backendConfig
+                ):
                     NavigationStack(path: $viewModel.path) {
                         factory.determineAuthMethodView(
                             environmentType: environmentType,
-                            backendConfig: backendConfig,
-                            backendMetadata: backendMetadata
+                            backendConfig: backendConfig
                         )
                     }
                 }
@@ -73,8 +75,7 @@ package struct RootView: View {
         case authFlow
         case onPremiseAuthFlow(
             environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
+            backendConfig: BackendConfig
         )
     }
 

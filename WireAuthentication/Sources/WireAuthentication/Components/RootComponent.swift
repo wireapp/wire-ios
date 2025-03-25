@@ -100,14 +100,12 @@ class RootComponent: BootstrapComponent {
 
     func determineAuthMethodOnPremComponent(
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
+        backendConfig: BackendConfig
     ) -> DetermineAuthMethodOnPremComponent {
         DetermineAuthMethodOnPremComponent(
             parent: self,
             environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: backendConfig
         )
     }
 
@@ -140,13 +138,11 @@ extension RootComponent: RootView.Factory {
     @MainActor
     func determineAuthMethodView(
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
+        backendConfig: BackendConfig
     ) -> DetermineAuthMethodView {
         determineAuthMethodOnPremComponent(
             environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendConfig: backendConfig
         ).view
     }
 

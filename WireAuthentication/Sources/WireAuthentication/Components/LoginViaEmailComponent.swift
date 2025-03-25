@@ -76,25 +76,29 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             backendConfig: networkStack.backendConfig,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency, email, backendEnvironment] in
+            onCreateAccount: { [dependency, networkStack, email] in
                 guard let dependency else { return }
-                dependency.router.dismissSheet()
-                dependency.bridge.sendOutboundEvent(
-                    .accountRegistrationRequested(
-                        email: email,
-                        backendEnvironment
-                    )
-                )
-            }
-        )
-    }
+                Task.detached {
+                    do {
+                        let backendEnvironment = try await networkStack.makeBackendEnvironment()
+                        await MainActor.run {
+                            dependency.router.dismissSheet()
+                            dependency.bridge.sendOutboundEvent(
+                                .accountRegistrationRequested(
+                                    email: email,
+                                    backendEnvironment
+                                )
+                            )
+                        }
+                    } catch {
+                        await MainActor.run {
+                            dependency.router.presentAlert(for: error)
+                        }
+                    }
 
-    public var backendEnvironment: WireAuthenticationBackendEnvironment {
-        WireAuthenticationBackendEnvironment(
-            environmentType: networkStack.environmentType,
-            config: networkStack.backendConfig,
-            metadata: .dummy, // TODO: fix
-            proxySettings: nil
+                }
+
+            }
         )
     }
 

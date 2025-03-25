@@ -26,8 +26,7 @@ package protocol DetermineAuthMethodBuilder {
     @MainActor
     func determineAuthMethodView(
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
+        backendConfig: BackendConfig
     ) -> DetermineAuthMethodView
 
     @MainActor
@@ -150,8 +149,7 @@ package struct DetermineAuthMethodView: View {
                 email,
                 didDetectDomainConflict,
                 environmentType,
-                backendConfig,
-                backendMetadata
+                backendConfig
             ):
                 factory.loginViaEmailView(
                     email: email,
@@ -209,7 +207,7 @@ package struct DetermineAuthMethodView: View {
     package enum Destination: Hashable {
 
         case login(
-            email: String,
+            email: String?,
             didDetectDomainConflict: Bool,
             environmentType: BackendEnvironmentType,
             backendConfig: BackendConfig
@@ -218,8 +216,7 @@ package struct DetermineAuthMethodView: View {
             email: String,
             didDetectDomainConflict: Bool,
             environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata // TODO: delete
+            backendConfig: BackendConfig
         )
         case noHistory(AuthenticationResult)
     }

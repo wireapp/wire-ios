@@ -89,7 +89,6 @@ final class MockDependencies {
             bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
-            backendMetadata: nil,
             emailOrSSOCode: emailOrSSOCode,
             canExitFlow: canExitFlow,
             isLoading: isLoading
@@ -113,15 +112,13 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
-            backendMetadata: nil,
             canExitFlow: false
         )
     }
 
     func determineAuthMethodView(
         environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
+        backendConfig: BackendConfig
     ) -> DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
