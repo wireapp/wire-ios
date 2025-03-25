@@ -4,6 +4,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.123.0
+
+* added `groupConversationTypeValue` attribute on the Conversation entity
+
 ### 2.122.0
 
 * Remove `ToDeleted` entity from 2.120.0
