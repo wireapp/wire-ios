@@ -45,7 +45,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             isFirstUnreadMessage: false,
             isLastMessage: false,
             searchQueries: [],
-            previousMessageIsKnock: false
+            previousMessageIsKnock: false,
+            previousSectionController: ConversationMessageSectionController?.none
         )
     }
 
@@ -110,7 +111,16 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     func testCellGrouping_SenderIsDifferentFromPrevious() throws {
         // Given
         let message = MockMessageFactory.textMessage(withText: "Hello")
-        let context = ConversationMessageContext(isSameSenderAsPrevious: false)
+        let context = ConversationMessageContext(
+            isSameSenderAsPrevious: false,
+            isTimestampInSameMinuteAsPreviousMessage: false,
+            isFirstMessageOfTheDay: false,
+            isFirstUnreadMessage: false,
+            isLastMessage: false,
+            searchQueries: [],
+            previousMessageIsKnock:  false,
+            previousSectionController: ConversationMessageSectionController?.none
+        )
 
         // When
         let section = ConversationMessageSectionController(
@@ -140,7 +150,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "Welcome to Dub Dub")
         let context = ConversationMessageContext(
             isSameSenderAsPrevious: true,
-            isTimestampInSameMinuteAsPreviousMessage: true
+            isTimestampInSameMinuteAsPreviousMessage: true,
+            isFirstMessageOfTheDay: false,
+            isFirstUnreadMessage: false,
+            isLastMessage: false,
+            searchQueries: [],
+            previousMessageIsKnock:  false,
+            previousSectionController: ConversationMessageSectionController?.none
         )
 
         // WHEN
@@ -168,7 +184,16 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     func testCellGrouping_PreviousMessageIsKnock() throws {
         // Given
         let message = MockMessageFactory.textMessage(withText: "Hello")
-        let context = ConversationMessageContext(previousMessageIsKnock: true)
+        let context = ConversationMessageContext(
+            isSameSenderAsPrevious: false,
+            isTimestampInSameMinuteAsPreviousMessage: false,
+            isFirstMessageOfTheDay: false,
+            isFirstUnreadMessage: false,
+            isLastMessage: false,
+            searchQueries: [],
+            previousMessageIsKnock:  true,
+            previousSectionController: ConversationMessageSectionController?.none
+        )
 
         // When
         let section = ConversationMessageSectionController(
@@ -198,7 +223,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "Hello")
         let context = ConversationMessageContext(
             isSameSenderAsPrevious: true,
-            isTimestampInSameMinuteAsPreviousMessage: false
+            isTimestampInSameMinuteAsPreviousMessage: false,
+            isFirstMessageOfTheDay: false,
+            isFirstUnreadMessage: false,
+            isLastMessage: false,
+            searchQueries: [],
+            previousMessageIsKnock:  false,
+            previousSectionController: ConversationMessageSectionController?.none
         )
         // WHEN
         let section = ConversationMessageSectionController(
@@ -226,7 +257,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let message = MockMessageFactory.textMessage(withText: "Hello")
         let context = ConversationMessageContext(
             isSameSenderAsPrevious: true,
-            isTimestampInSameMinuteAsPreviousMessage: false
+            isTimestampInSameMinuteAsPreviousMessage: false,
+            isFirstMessageOfTheDay: false,
+            isFirstUnreadMessage: false,
+            isLastMessage: false,
+            searchQueries: [],
+            previousMessageIsKnock:  false,
+            previousSectionController: ConversationMessageSectionController?.none
         )
         // WHEN
         let section = ConversationMessageSectionController(
@@ -336,7 +373,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     private func makeSUT(message: MockMessage) -> ConversationMessageSectionController {
         let context = ConversationMessageContext(
             isSameSenderAsPrevious: true,
-            isTimestampInSameMinuteAsPreviousMessage: false
+            isTimestampInSameMinuteAsPreviousMessage: false,
+            isFirstMessageOfTheDay: false,
+            isFirstUnreadMessage: false,
+            isLastMessage: false,
+            searchQueries: [],
+            previousMessageIsKnock:  false,
+            previousSectionController: ConversationMessageSectionController?.none
         )
         // WHEN
         let section = ConversationMessageSectionController(

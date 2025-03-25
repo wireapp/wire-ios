@@ -535,12 +535,10 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
 
 extension ConversationTableViewDataSource {
 
-    func messagePrevious(to message: ZMConversationMessage, at index: Int) -> ZMConversationMessage? {
-        guard (index + 1) < messages.count else {
-            return nil
-        }
-
-        return messages[index + 1]
+    func messageBeforeMessage(at index: Int) -> ZMConversationMessage? {
+        let previousIndex = index + 1
+        guard messages.indices.contains(previousIndex) else { return nil }
+        return messages[previousIndex]
     }
 
     func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int) -> Bool {
@@ -548,7 +546,7 @@ extension ConversationTableViewDataSource {
               Message.isNormal(message),
               !Message.isKnock(message) else { return false }
 
-        guard let previousMessage = messagePrevious(to: message, at: index),
+        guard let previousMessage = messageBeforeMessage(at: index),
               previousMessage.senderUser === message.senderUser,
               Message.isNormal(previousMessage) else { return false }
 
@@ -564,7 +562,7 @@ extension ConversationTableViewDataSource {
 
         let isTimestampInSameMinuteAsPreviousMessage: Bool
 
-        let previousMessage = messagePrevious(to: message, at: index)
+        let previousMessage = messageBeforeMessage(at: index)
 
         if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
             isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
@@ -581,12 +579,12 @@ extension ConversationTableViewDataSource {
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
             previousMessageIsKnock: previousMessage?.isKnock == true,
-            previousSectionController: ConversationMessageSectionController?
+            previousSectionController: ConversationMessageSectionController?.none
         )
     }
 
     private func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
-        guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp,
+        guard let previous = messageBeforeMessage(at: index)?.serverTimestamp,
               let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
