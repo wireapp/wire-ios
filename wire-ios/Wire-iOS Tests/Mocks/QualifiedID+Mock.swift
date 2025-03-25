@@ -16,23 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-import WireConversationsImplementation
-import WireConversationsUI
+import WireFoundation
+import WireSyncEngine
 
-public final class WireConversationGroupIconFactory {
-
-    private let mapper = ConversationIDToGroupIconMapper()
-
-    public init() {}
-
-    @MainActor
-    public func create(conversationID: String) -> some View {
-        WireConversationGroupIcon(asset: mapper.palette(for: conversationID))
-    }
-
-    @MainActor
-    public func createUIKit(conversationID: String) -> UIImageView {
-        UIImageView(image: mapper.palette(for: conversationID).uiKitImage)
-    }
+extension QualifiedID {
+    static let mockID1 = QualifiedID(uuid: .mockID1, domain: "example.com")
+    static let mockID2 = QualifiedID(uuid: .mockID2, domain: "example.com")
+    static let mockID3 = QualifiedID(uuid: .mockID3, domain: "example.com")
 }
