@@ -29,26 +29,6 @@ struct ConversationMessageContext: Equatable {
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
     weak var previousSectionController: ConversationMessageSectionController?
-
-    init(
-        isSameSenderAsPrevious: Bool,
-        isTimestampInSameMinuteAsPreviousMessage: Bool,
-        isFirstMessageOfTheDay: Bool,
-        isFirstUnreadMessage: Bool,
-        isLastMessage: Bool,
-        searchQueries: [String],
-        previousMessageIsKnock: Bool,
-        previousSectionController: ConversationMessageSectionController?
-    ) {
-        self.isSameSenderAsPrevious = isSameSenderAsPrevious
-        self.isTimestampInSameMinuteAsPreviousMessage = isTimestampInSameMinuteAsPreviousMessage
-        self.isFirstMessageOfTheDay = isFirstMessageOfTheDay
-        self.isFirstUnreadMessage = isFirstUnreadMessage
-        self.isLastMessage = isLastMessage
-        self.searchQueries = searchQueries
-        self.previousMessageIsKnock = previousMessageIsKnock
-        self.previousSectionController = previousSectionController
-    }
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -424,7 +404,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             to: &cellDescriptions
         )
 
-        if !isSenderVisible {
+        if false { // TODO: check context.previousSectionController
             cellDescriptions.last?.instance.topMargin = -6
         }
 

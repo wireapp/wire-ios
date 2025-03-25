@@ -118,11 +118,10 @@ final class ConversationTableViewDataSource: NSObject {
             let sectionIdentifier = element.objectIdentifier
             let context = context(
                 for: element,
-                at: offset,
                 firstUnreadMessage: firstUnreadMessage,
                 searchQueries: searchQueries
             )
-            let sectionController = sectionController(for: element, at: offset)
+            let sectionController = sectionController(for: element)
 
             // Re-create cell description if the context has changed (message has been moved around or received new
             // neighbours).
@@ -151,7 +150,6 @@ final class ConversationTableViewDataSource: NSObject {
 
         let context = context(
             for: sectionController.message,
-            at: section,
             firstUnreadMessage: firstUnreadMessage,
             searchQueries: searchQueries
         )
@@ -211,7 +209,7 @@ final class ConversationTableViewDataSource: NSObject {
         return actionController
     }
 
-    func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
+    func sectionController(for message: ConversationMessage) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers[message.objectIdentifier] {
             cachedEntry.contentWidth = contentWidth
             return cachedEntry
@@ -219,7 +217,6 @@ final class ConversationTableViewDataSource: NSObject {
 
         let context = context(
             for: message,
-            at: index,
             firstUnreadMessage: firstUnreadMessage,
             searchQueries: searchQueries
         )
@@ -240,10 +237,8 @@ final class ConversationTableViewDataSource: NSObject {
         return sectionController
     }
 
-    func sectionController(at sectionIndex: Int, in tableView: UITableView) -> ConversationMessageSectionController {
-        let message = messages[sectionIndex]
-
-        return sectionController(for: message, at: sectionIndex)
+    func sectionController(at sectionIndex: Int) -> ConversationMessageSectionController {
+        sectionController(for: messages[sectionIndex])
     }
 
     func loadMessages(
@@ -448,13 +443,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func select(indexPath: IndexPath) {
-        let sectionController = sectionController(at: indexPath.section, in: tableView)
+        let sectionController = sectionController(at: indexPath.section)
         sectionController.didSelect()
         reloadSections(newSections: calculateSections(updating: sectionController))
     }
 
     func deselect(indexPath: IndexPath) {
-        let sectionController = sectionController(at: indexPath.section, in: tableView)
+        let sectionController = sectionController(at: indexPath.section)
         sectionController.didDeselect()
         reloadSections(newSections: calculateSections(updating: sectionController))
     }
@@ -464,7 +459,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
             return
         }
 
-        let sectionController = sectionController(at: section, in: tableView)
+        let sectionController = sectionController(at: section)
         sectionController.highlight(in: tableView, sectionIndex: section)
     }
 
@@ -535,7 +530,7 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
 
 extension ConversationTableViewDataSource {
 
-    func messageBeforeMessage(at index: Int) -> ZMConversationMessage? {
+    func messageBeforeMessage(at index: Int) -> (ZMConversationMessage & SwiftConversationMessage)? {
         let previousIndex = index + 1
         guard messages.indices.contains(previousIndex) else { return nil }
         return messages[previousIndex]
@@ -555,13 +550,13 @@ extension ConversationTableViewDataSource {
 
     func context(
         for message: ZMConversationMessage,
-        at index: Int,
         firstUnreadMessage: ZMConversationMessage?,
         searchQueries: [String]
     ) -> ConversationMessageContext {
 
         let isTimestampInSameMinuteAsPreviousMessage: Bool
 
+        let index = indexOfMessage(message)
         let previousMessage = messageBeforeMessage(at: index)
 
         if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
@@ -579,7 +574,7 @@ extension ConversationTableViewDataSource {
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
             previousMessageIsKnock: previousMessage?.isKnock == true,
-            previousSectionController: ConversationMessageSectionController?.none
+            previousSectionController: previousMessage.map { sectionController(for: $0) }
         )
     }
 
