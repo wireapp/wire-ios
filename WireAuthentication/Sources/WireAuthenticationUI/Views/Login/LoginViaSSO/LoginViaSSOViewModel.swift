@@ -24,10 +24,66 @@ import WireAuthenticationAPI
 @MainActor
 package final class LoginViaSSOViewModel: ObservableObject {
 
-    let ssoURL: URL
+    package typealias Factory = CreateAuthenticationResultUseCaseFactory
 
-    package init(ssoURL: URL) {
+    let ssoURL: URL
+    private let factory: any Factory
+    private let onResult: (Result<AuthenticationResult, Error>) -> Void
+    private var cancellable: AnyCancellable?
+
+    package init(
+        factory: any Factory,
+        bridge: WireAuthenticationBridge,
+        ssoURL: URL,
+        onResult: @escaping (Result<AuthenticationResult, Error>) -> Void
+    ) {
+        self.factory = factory
         self.ssoURL = ssoURL
+        self.onResult = onResult
+        self.cancellable = bridge.inboundEvents.sink { [weak self] in
+            switch $0 {
+            case let .ssoAuthenticationSuccess(
+                userID,
+                cookies
+            ):
+                Task { [weak self] in
+                    await self?.handleSSOSuccess(
+                        userID: userID,
+                        cookies: cookies
+                    )
+                }
+
+            case .ssoAutheticationFailure:
+                self?.handleSSOFailure()
+
+            default:
+                break
+            }
+        }
+    }
+
+    private func handleSSOSuccess(
+        userID: UUID,
+        cookies: [HTTPCookie]
+    ) async {
+        do {
+            let useCase = factory.createAuthenticationResultUseCase()
+            let result = try await Task.detached {
+                try await useCase.invoke(
+                    userID: userID,
+                    cookies: cookies,
+                    accessToken: nil,
+                    emailCredentials: nil
+                )
+            }.value
+            onResult(.success(result))
+        } catch {
+            onResult(.failure(error))
+        }
+    }
+
+    private func handleSSOFailure() {
+        onResult(.failure(SSOAuthenticationError.unknown))
     }
 
 }

@@ -30,13 +30,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         FetchBackendConfigUseCaseFactory &
         FetchSSOURLUseCaseFactory &
         SSOLinkGeneratorFactory &
-        ValidateEmailOrSSOCodeUseCaseFactory &
-        CreateAuthenticationResultUseCaseFactory
+        ValidateEmailOrSSOCodeUseCaseFactory
 
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
-        case ssoLogin(url: URL)
+        case ssoLogin(
+            url: URL,
+            backendInfo: BackendInfo?
+        )
         case switchBackendConfirmation(
             email: String?,
             environmentType: BackendEnvironmentType,
@@ -91,15 +93,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 Task { [weak self] in
                     await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
-
-            case let .ssoAuthenticationSuccess(userID, cookies):
-                Task { [weak self] in
-                    await self?.handleSSOSuccess(userID: userID, cookies: cookies)
-                }
-
-            case .ssoAutheticationFailure:
-                router.presentAlert(Alert.ssoLoginFailed)
-
             default:
                 break
             }
@@ -168,7 +161,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             do {
                 let url = try await generateSSOLink(code: code)
                 WireLogger.authentication.error("Generating SSO link succeeded")
-                modalDestination = .ssoLogin(url: url)
+                modalDestination = .ssoLogin(
+                    url: url,
+                    backendInfo: nil
+                )
             } catch {
                 WireLogger.authentication.error("Generating SSO link failed: \(error)")
                 switch error {
@@ -231,8 +227,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 backendConfig: backendConfig
             )
 
+            let backendInfo = BackendInfo(
+                environmentType: environmentType,
+                backendConfig: backendConfig
+            )
+
             if let ssoURL = try await useCase.invoke() {
-                modalDestination = .ssoLogin(url: ssoURL)
+                modalDestination = .ssoLogin(
+                    url: ssoURL,
+                    backendInfo: backendInfo
+                )
             } else if let email {
                 router.navigate(
                     to: DetermineAuthMethodView.Destination.login(
@@ -265,6 +269,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
+    func onSSOAuthenticationResult(_ result: Result<AuthenticationResult, any Error>) {
+        modalDestination = nil
+        switch result {
+        case let .success(authenticationResult):
+            router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authenticationResult))
+        case .failure:
+            router.presentAlert(Alert.ssoLoginFailed)
+        }
+    }
+
     private func isValidEmailOrSSOCode() -> Bool {
         do {
             let useCase = factory.validateEmailOrSSOCodeUseCase()
@@ -272,26 +286,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return true
         } catch {
             return false
-        }
-    }
-
-    private func handleSSOSuccess(
-        userID: UUID,
-        cookies: [HTTPCookie]
-    ) async {
-        do {
-            let useCase = factory.createAuthenticationResultUseCase()
-            let result = try await Task.detached {
-                try await useCase.invoke(
-                    userID: userID,
-                    cookies: cookies,
-                    accessToken: nil,
-                    emailCredentials: nil
-                )
-            }.value
-            router.navigate(to: DetermineAuthMethodView.Destination.noHistory(result))
-        } catch {
-            router.presentAlert(for: error)
         }
     }
 

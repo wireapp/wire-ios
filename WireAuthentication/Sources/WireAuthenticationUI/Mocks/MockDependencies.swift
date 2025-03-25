@@ -238,10 +238,19 @@ extension MockDependencies: VerificationCodeBuilder {
 extension MockDependencies: LoginViaSSOBuilder {
 
     private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoURL: ssoURL)
+        LoginViaSSOViewModel(
+            factory: self,
+            bridge: WireAuthenticationBridge(),
+            ssoURL: ssoURL,
+            onResult: { _ in }
+        )
     }
 
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendInfo: BackendInfo?,
+        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
+    ) -> LoginViaSSOView {
         LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
     }
 

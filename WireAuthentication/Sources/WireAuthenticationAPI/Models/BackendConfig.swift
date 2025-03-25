@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct BackendConfig: Decodable, Sendable, Hashable {
+public struct BackendConfig: Decodable, Sendable, Hashable, Equatable {
 
     /// The  name of the backend.
 

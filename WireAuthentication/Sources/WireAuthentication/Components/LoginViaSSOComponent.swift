@@ -20,18 +20,30 @@ import Foundation
 import NeedleFoundation
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
 
-protocol LoginViaSSODependency: Dependency {}
+protocol LoginViaSSODependency: Dependency {
+
+    @MainActor
+    var bridge: WireAuthenticationBridge { get }
+
+}
 
 class LoginViaSSOComponent: Component<LoginViaSSODependency> {
 
     private let ssoURL: URL
+    private let networkStack: NetworkStack
+    private let onAuthenticationResult: (Result<AuthenticationResult, any Error>) -> Void
 
     init(
         parent: any Scope,
-        ssoURL: URL
+        ssoURL: URL,
+        networkStack: NetworkStack,
+        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
     ) {
         self.ssoURL = ssoURL
+        self.networkStack = networkStack
+        self.onAuthenticationResult = onAuthenticationResult
         super.init(parent: parent)
     }
 
@@ -42,7 +54,20 @@ class LoginViaSSOComponent: Component<LoginViaSSODependency> {
     }
 
     @MainActor private var viewModel: LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoURL: ssoURL)
+        LoginViaSSOViewModel(
+            factory: self,
+            bridge: dependency.bridge,
+            ssoURL: ssoURL,
+            onResult: onAuthenticationResult
+        )
+    }
+
+}
+
+extension LoginViaSSOComponent: LoginViaSSOViewModel.Factory {
+
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        CreateAuthenticationResultUseCase(networkStack: networkStack)
     }
 
 }

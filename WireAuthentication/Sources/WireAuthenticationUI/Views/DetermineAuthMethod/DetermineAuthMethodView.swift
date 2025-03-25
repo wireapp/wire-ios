@@ -163,8 +163,13 @@ package struct DetermineAuthMethodView: View {
             item: $viewModel.modalDestination,
             content: {
                 switch $0 {
-                case let .ssoLogin(ssoURL):
-                    factory.loginViaSSOView(ssoURL: ssoURL)
+                case let .ssoLogin(ssoURL, backendInfo):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendInfo: backendInfo
+                    ) { result in
+                        viewModel.onSSOAuthenticationResult(result)
+                    }
                 case let .switchBackendConfirmation(
                     email,
                     environmentType,

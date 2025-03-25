@@ -22,7 +22,11 @@ import WireAuthenticationAPI
 package protocol LoginViaSSOBuilder {
 
     @MainActor
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendInfo: BackendInfo?,
+        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
+    ) -> LoginViaSSOView
 
 }
 
@@ -43,5 +47,9 @@ package struct LoginViaSSOView: View {
 
 #Preview {
     let url = URL(string: "https://www.wire.com")!
-    MockDependencies().loginViaSSOView(ssoURL: url)
+    MockDependencies().loginViaSSOView(
+        ssoURL: url,
+        backendInfo: nil,
+        onAuthenticationResult: { _ in }
+    )
 }

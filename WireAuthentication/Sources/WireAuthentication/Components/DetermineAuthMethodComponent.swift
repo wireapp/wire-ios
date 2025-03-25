@@ -90,10 +90,28 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    func loginViaSSOComponent(ssoURL: URL) -> LoginViaSSOComponent {
-        LoginViaSSOComponent(
+    func loginViaSSOComponent(
+        ssoURL: URL,
+        backendInfo: BackendInfo?,
+        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
+    ) -> LoginViaSSOComponent {
+        let networkStack: NetworkStack
+        if let backendInfo {
+            networkStack = NetworkStack(
+                environmentType: backendInfo.environmentType,
+                backendConfig: backendInfo.backendConfig,
+                minTLSVersion: dependency.minTLSVersion,
+                preferredAPIVersion: dependency.preferredAPIVersion
+            )
+        } else {
+            networkStack = self.networkStack
+        }
+
+        return LoginViaSSOComponent(
             parent: self,
-            ssoURL: ssoURL
+            ssoURL: ssoURL,
+            networkStack: networkStack,
+            onAuthenticationResult: onAuthenticationResult
         )
     }
 
@@ -159,12 +177,6 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
-        // FIXME: this might not necessarily be the right stack. Eg sso after backend switch.
-        // idea: observe the callback at the site of presenting sso
-        CreateAuthenticationResultUseCase(networkStack: networkStack)
-    }
-
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
@@ -186,8 +198,17 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         ).view
     }
 
-    func loginViaSSOView(ssoURL: URL) -> LoginViaSSOView {
-        loginViaSSOComponent(ssoURL: ssoURL).view
+    @MainActor
+    func loginViaSSOView(
+        ssoURL: URL,
+        backendInfo: BackendInfo?,
+        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
+    ) -> LoginViaSSOView {
+        loginViaSSOComponent(
+            ssoURL: ssoURL,
+            backendInfo: backendInfo,
+            onAuthenticationResult: onAuthenticationResult
+        ).view
     }
 
     func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
