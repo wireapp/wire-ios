@@ -375,6 +375,10 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             throw Failure.conversationNotFound
         }
 
+        await context.perform {
+            _ = context.saveOrRollback()
+        }
+
         return localConversation
     }
 

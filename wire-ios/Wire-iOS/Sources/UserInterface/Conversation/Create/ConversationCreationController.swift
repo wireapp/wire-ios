@@ -394,9 +394,16 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 enableReceipts: values.enableReceipts
             )
 
+            // Switching back to UI context
+            let syncedConversation = try session.viewContext.performAndWait {
+                try session.viewContext.existingObject(with: conversation.objectID) as? ZMConversation
+            }
+
+            guard let syncedConversation else { return }
+
             delegate?.conversationCreationController(
                 self,
-                didCreateConversation: conversation
+                didCreateConversation: syncedConversation
             )
 
         } catch let error as CreateChannelUseCase.Failure {
@@ -470,8 +477,10 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
             // Switching back to UI context
             let syncedConversation = try session.viewContext.performAndWait {
-                try session.viewContext.existingObject(with: conversation.objectID) as! ZMConversation
+                try session.viewContext.existingObject(with: conversation.objectID) as? ZMConversation
             }
+
+            guard let syncedConversation else { return }
 
             delegate?.conversationCreationController(
                 self,

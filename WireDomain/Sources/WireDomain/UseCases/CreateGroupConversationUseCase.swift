@@ -395,6 +395,10 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             throw Failure.conversationNotFound
         }
 
+        await context.perform {
+            _ = context.saveOrRollback()
+        }
+
         return localConversation
     }
 
