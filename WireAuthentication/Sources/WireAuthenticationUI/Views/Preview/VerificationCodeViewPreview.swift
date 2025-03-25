@@ -27,10 +27,12 @@ public struct VerificationCodeView_Previews: View {
     }
 
     public var body: some View {
-        MockDependencies().previewVerificationCodeView(
-            email: "name.name@mail.com",
-            password: "password"
-        )
+        NavigationStack {
+            MockDependencies().previewVerificationCodeView(
+                email: "name.name@mail.com",
+                password: "password"
+            )
+        }
     }
 
 }
