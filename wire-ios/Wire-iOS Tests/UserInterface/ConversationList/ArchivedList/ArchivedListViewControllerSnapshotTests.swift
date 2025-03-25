@@ -56,8 +56,10 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
 
         let fixture = CoreDataFixture()
         let modelHelper = ModelHelper()
-        let selfUser = modelHelper.createSelfUser(in: fixture.coreDataStack.viewContext)
-        let conversation = modelHelper.createGroupConversation(in: fixture.coreDataStack.viewContext)
+        let conversation = modelHelper.createGroupConversation(
+            id: .init(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E56")!,
+            in: fixture.coreDataStack.viewContext
+        )
         conversation.userDefinedName = "Lorem Ipsum"
         conversation.isArchived = true
         userSessionMock.mockConversationList = ConversationList(

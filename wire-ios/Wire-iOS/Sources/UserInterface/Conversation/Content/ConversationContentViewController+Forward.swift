@@ -35,12 +35,20 @@ extension ZMConversation: ShareDestination {
     }
 }
 
-extension ShareDestination where Self: ConversationAvatarViewConversation {
+extension ShareDestination where Self: ConversationGroupAvatarViewConversation {
 
     var avatarView: UIView? {
-        let avatarView = ConversationAvatarView()
-        avatarView.configure(context: .conversation(conversation: self))
+        let avatarView = ConversationGroupAvatarView()
+        avatarView.configure(
+            context: ConversationGroupAvatarView.Context(
+                conversation: self
+            )
+        )
         return avatarView
+    }
+
+    var qualifiedID: WireDataModel.QualifiedID? {
+        nil
     }
 }
 
