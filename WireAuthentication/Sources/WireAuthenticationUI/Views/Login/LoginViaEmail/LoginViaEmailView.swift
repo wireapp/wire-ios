@@ -150,7 +150,10 @@ package struct LoginViaEmailView: View {
     @ViewBuilder private var submitButton: some View {
         Button(action: {
             Task {
-                await viewModel.submitPassword(password)
+                await viewModel.submit(
+                    password: password,
+                    proxy: viewModel.hasProxySupport ? (proxyEmail, proxyPassword) : nil
+                )
             }
         }, label: {
             Text(L10n.CloudUserLogin.submit)
@@ -158,7 +161,10 @@ package struct LoginViaEmailView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password) && viewModel.email != nil)
+        .disabled(!viewModel.canSubmitPassword(
+            password: password,
+            proxy: (proxyEmail, proxyPassword)
+        ))
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
