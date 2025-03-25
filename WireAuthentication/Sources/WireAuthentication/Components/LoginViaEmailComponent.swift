@@ -93,7 +93,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         WireAuthenticationBackendEnvironment(
             environmentType: networkStack.environmentType,
             config: networkStack.backendConfig,
-            metadata: .dummy // TODO: fix
+            metadata: .dummy, // TODO: fix
+            proxySettings: nil
         )
     }
 

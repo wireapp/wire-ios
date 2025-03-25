@@ -115,7 +115,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
             let backendEnvironment = WireAuthenticationBackendEnvironment(
                 environmentType: environmentType,
                 config: backendConfig,
-                metadata: backendMetadata
+                metadata: backendMetadata,
+                proxySettings: nil
             )
 
             let authenticationResult = AuthenticationResult(

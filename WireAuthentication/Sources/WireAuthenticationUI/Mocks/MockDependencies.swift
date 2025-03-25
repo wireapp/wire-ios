@@ -50,7 +50,8 @@ final class MockDependencies {
         WireAuthenticationBackendEnvironment(
             environmentType: environmentType,
             config: backendConfig,
-            metadata: backendMetadata
+            metadata: backendMetadata,
+            proxySettings: nil
         )
     }
 

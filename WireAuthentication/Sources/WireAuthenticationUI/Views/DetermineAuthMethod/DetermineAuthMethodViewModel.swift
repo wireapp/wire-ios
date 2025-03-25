@@ -116,7 +116,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                         apiVersion: .v8,
                         domain: "example",
                         isFederationEnabled: false
-                    )
+                    ),
+                    proxySettings: nil
                 )
                 let authenticationResult = AuthenticationResult(
                     userID: userID,

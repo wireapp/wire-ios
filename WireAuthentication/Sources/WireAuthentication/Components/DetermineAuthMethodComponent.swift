@@ -265,7 +265,7 @@ private extension PinnedKey {
 
 private extension WireAPI.ProxySettings {
 
-    init(_ proxySettings: WireAuthenticationAPI.ProxySettings) {
+    init(_ proxySettings: WireAuthenticationAPI.UnresolvedProxySettings) {
 
         // TODO: [WPB-16266] add credentials
         if proxySettings.needsAuthentication {

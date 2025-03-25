@@ -41,7 +41,8 @@ public enum Fixture {
             apiVersion: .v8,
             domain: "mock.com",
             isFederationEnabled: true
-        )
+        ),
+        proxySettings: nil
     )
 
     public static let someCookie = HTTPCookie(properties: [

@@ -137,7 +137,7 @@ class LoginViaEmailViewTests: XCTestCase {
                 websiteURL: URL(string: "https://example.com")!,
                 countlyURL: URL(string: "https://example.com")!
             ),
-            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
+            proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
 
@@ -173,7 +173,7 @@ class LoginViaEmailViewTests: XCTestCase {
                 websiteURL: URL(string: "https://example.com")!,
                 countlyURL: URL(string: "https://example.com")!
             ),
-            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
+            proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
         let view = MockDependencies().loginViaEmailView(

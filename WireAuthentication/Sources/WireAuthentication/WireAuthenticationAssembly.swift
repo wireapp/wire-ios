@@ -30,7 +30,7 @@ public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.Wi
 public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
 public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
 public typealias Endpoints = WireAuthenticationAPI.Endpoints
-public typealias ProxySettings = WireAuthenticationAPI.ProxySettings
+public typealias ProxySettings = WireAuthenticationAPI.UnresolvedProxySettings
 public typealias TrustData = WireAuthenticationAPI.TrustData
 public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
 

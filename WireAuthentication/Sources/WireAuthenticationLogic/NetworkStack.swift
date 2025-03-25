@@ -80,7 +80,8 @@ package final class NetworkStack {
         return WireAuthenticationBackendEnvironment(
             environmentType: environmentType,
             config: backendConfig,
-            metadata: backendMetadata
+            metadata: backendMetadata,
+            proxySettings: nil // TODO: fix me
         )
     }
 
