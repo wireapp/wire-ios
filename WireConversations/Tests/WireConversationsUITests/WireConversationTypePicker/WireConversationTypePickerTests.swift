@@ -58,12 +58,15 @@ class WireConversationTypePickerTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = viewFactory.create(
-            availableConversationTypes: [.channel, .group],
-            onConversationTypeSelected: { _ in }
-        )
-        .frame(width: 350, height: 200)
-        .padding()
+        let view = VStack {
+            viewFactory.create(
+                availableConversationTypes: [.channel, .group],
+                onConversationTypeSelected: { _ in }
+            )
+            .frame(width: 350, height: 200)
+            .padding()
+        }
+        .background(Color.blue)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

@@ -27,8 +27,8 @@ public final class WireConversationTypePickerFactory {
 
     @MainActor
     public func create(
-        availableConversationTypes: Set<WireConversationType>,
-        onConversationTypeSelected: @escaping @Sendable (WireConversationType) -> Void
+        availableConversationTypes: Set<WireMultiParticipantConversationType>,
+        onConversationTypeSelected: @escaping @Sendable (WireMultiParticipantConversationType) -> Void
     ) -> some View {
         WireConversationTypePicker(
             availableConversationTypes: availableConversationTypes,

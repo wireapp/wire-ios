@@ -34,7 +34,7 @@ package struct WireConversationTypePicker: View {
         case group
         case divider
 
-        init(_ conversationType: WireConversationType) {
+        init(_ conversationType: WireMultiParticipantConversationType) {
             switch conversationType {
             case .channel:
                 self = .channel
@@ -44,16 +44,14 @@ package struct WireConversationTypePicker: View {
         }
     }
 
-    @State private var selection: WireConversationType?
-
     private let displayedItems: [DisplayedItem]
-    private let onConversationTypeSelected: @Sendable (WireConversationType) -> Void
+    private let onConversationTypeSelected: @Sendable (WireMultiParticipantConversationType) -> Void
 
     package init(
-        availableConversationTypes: Set<WireConversationType>,
-        onConversationTypeSelected: @escaping @Sendable (WireConversationType) -> Void
+        availableConversationTypes: Set<WireMultiParticipantConversationType>,
+        onConversationTypeSelected: @escaping @Sendable (WireMultiParticipantConversationType) -> Void
     ) {
-        let orderedConversationTypes: [WireConversationType] = [.channel, .group]
+        let orderedConversationTypes: [WireMultiParticipantConversationType] = [.channel, .group]
 
         self.displayedItems = Array(
             orderedConversationTypes
@@ -73,10 +71,6 @@ package struct WireConversationTypePicker: View {
         }
         .background(ColorTheme.Backgrounds.surface.color)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .onChange(of: selection) { newValue in
-            guard let newValue else { return }
-            onConversationTypeSelected(newValue)
-        }
     }
 
     @ViewBuilder
@@ -100,7 +94,7 @@ package struct WireConversationTypePicker: View {
 
     func channelItem() -> some View {
         Button(action: {
-            selection = .channel
+            onConversationTypeSelected(.channel)
         }, label: {
             HStack(alignment: .center, spacing: Constants.verticalSpacing) {
                 iconView(for: "wire_conversation_channel_icon")
@@ -108,9 +102,11 @@ package struct WireConversationTypePicker: View {
                     Text(L10n.Localizable.Conversation.Create.Channel.title)
                         .wireTextStyle(.body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        .multilineTextAlignment(.leading)
                     Text(L10n.Localizable.Conversation.Create.Channel.subtitle)
                         .wireTextStyle(.h4)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        .multilineTextAlignment(.leading)
                 }
                 Spacer()
                 chevronView()
@@ -120,7 +116,7 @@ package struct WireConversationTypePicker: View {
 
     func groupItem() -> some View {
         Button(action: {
-            selection = .group
+            onConversationTypeSelected(.group)
         }, label: {
             HStack(alignment: .center, spacing: Constants.verticalSpacing) {
                 iconView(for: "wire_conversation_group_icon")

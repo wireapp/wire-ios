@@ -42,7 +42,7 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireConversationType> = if DeveloperFlag.wireChannels.isOn {
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if DeveloperFlag.wireChannels.isOn {
             [.channel, .group]
         } else {
             [.group]
