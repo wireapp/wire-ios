@@ -116,9 +116,9 @@ package struct LoginViaEmailView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: {
                     dismiss()
-                }) {
+                }, label: {
                     Image(systemName: "arrow.left")
-                }
+                })
             }
         }
         .presentationDetents(viewModel.hasProxySupport ? [.large] : [.fraction(0.65), .large])
@@ -202,18 +202,6 @@ package struct LoginViaEmailView: View {
                         .strokeBorder(ColorTheme.Strokes.outline.color)
                 )
         }
-//        .background {
-//            if #available(iOS 17.0, *) {
-//                RoundedRectangle(cornerRadius: 10)
-//                    .fill(ColorTheme.Backgrounds.backgroundVariant.color)
-//                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-//            } else {
-//                RoundedRectangle(cornerRadius: 10)
-//                    .stroke(ColorTheme.Strokes.outline.color, lineWidth: 1)
-//                    .background(ColorTheme.Backgrounds.backgroundVariant.color)
-//                    .cornerRadius(12)
-//            }
-//        }
     }
 
     @ViewBuilder private var proxyCredentials: some View {

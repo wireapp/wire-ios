@@ -32,6 +32,7 @@ package protocol NoHistoryViewBuilder {
 package struct NoHistoryView: View {
 
     @StateObject var viewModel: NoHistoryViewModel
+    @State private var shouldShowAlertSheet = false
 
     package init(
         viewModel: NoHistoryViewModel
@@ -79,10 +80,37 @@ package struct NoHistoryView: View {
                 Button(L10n.Authentication.Error.howToDeleteAccount, action: {
                     viewModel.howToDeleteAccount()
                 })
-                Button(L10n.Authentication.Error.confirm, action: {})
+                Button(L10n.Authentication.Error.confirm, action: {
+                    viewModel.confirmAlert()
+                })
             }
         )
+//        .alert(
+//            item: $viewModel.alert,
+//            title: { alert in
+//                Text("Email claimed by an on-premises backend")
+//            },
+//            message: { alert in
+//                Text("This email's domain belongs to an on-premises backend. Please change your email or delete your account.")
+//            },
+//            actions: { alert in
+//                Button("How to change email address") {
+//                    viewModel.howToChangeEmail()
+//                }
+//
+//                Button("How to delete a personal account") {
+//                    viewModel.howToDeleteAccount()
+//                }
+//
+//                Button("OK", role: .cancel) {
+//                    viewModel.confirmAlert()
+//                }
+//            }
+//        )
         .onAppear {
+            viewModel.onAppear()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             viewModel.onAppear()
         }
         .padding()
@@ -102,6 +130,12 @@ package struct NoHistoryView: View {
         switch alert {
         case .cloudAccountAlreadyRegistered:
             Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
+        }
+    }
+
+    private func handleAppDidBecomeActive() {
+        if viewModel.alert != nil {
+            shouldShowAlertSheet = true
         }
     }
 

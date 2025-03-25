@@ -32,6 +32,7 @@ package final class NoHistoryViewModel: ObservableObject {
 
     @Published var isLoading = false
     @Published var alert: Alert?
+    var shouldReshowAlertOnReturn = true
 
     private let howToChangeEmailURL: URL
     private let howToDeleteAccountURL: URL
@@ -61,17 +62,24 @@ package final class NoHistoryViewModel: ObservableObject {
     }
 
     func onAppear() {
-        if didDetectDomainConflict {
+        if shouldReshowAlertOnReturn, didDetectDomainConflict {
             alert = .cloudAccountAlreadyRegistered
         }
     }
 
     func howToChangeEmail() {
+        shouldReshowAlertOnReturn = true
         UIApplication.shared.open(howToChangeEmailURL)
     }
 
     func howToDeleteAccount() {
+        shouldReshowAlertOnReturn = true
         UIApplication.shared.open(howToDeleteAccountURL)
+    }
+
+    func confirmAlert() {
+        shouldReshowAlertOnReturn = false
+        alert = nil
     }
 
 }

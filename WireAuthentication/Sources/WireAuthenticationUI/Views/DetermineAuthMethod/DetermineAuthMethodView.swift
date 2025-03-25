@@ -57,23 +57,13 @@ package struct DetermineAuthMethodView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 16) {
-                HStack {
-                    Spacer()
-                        .frame(maxWidth: .infinity)
-                    if viewModel.isOnPremiseBackend {
-                        OnPremHeaderView(backendConfig: viewModel.backendConfig)
-                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                            .frame(width: 164, height: 95)
-                    } else {
-                        Logo()
-                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                            .frame(width: 164, height: 95)
-                    }
-
-                    Spacer()
-                        .frame(maxWidth: .infinity)
+                if viewModel.isOnPremiseBackend {
+                    OnPremHeaderView(backendConfig: viewModel.backendConfig)
+                } else {
+                    Logo()
+                        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                        .frame(width: 164, height: 95)
                 }
-
                 Text(L10n.Authentication.Identity.Input.body)
                     .multilineTextAlignment(.leading)
                     .wireTextStyle(.body1)
@@ -110,7 +100,8 @@ package struct DetermineAuthMethodView: View {
                 })
                 .wireButtonStyle(.primary)
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
-            }.padding()
+            }
+            .padding()
         }
         .toolbar {
             if viewModel.canExitFlow {
@@ -203,7 +194,6 @@ package struct DetermineAuthMethodView: View {
                 }
             }
         )
-//        .presentationDetents([.medium, .large])
         .presentationDetents([.fraction(0.65), .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
