@@ -107,7 +107,9 @@ package struct DetermineAuthMethodView: View {
                 })
                 .wireButtonStyle(.primary)
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
-            }.padding()
+            }
+            .padding()
+            .setPreferredSize(navigationBarHidden: !viewModel.existsAnotherAccount)
         }
         .toolbar {
             if viewModel.existsAnotherAccount {
@@ -199,7 +201,6 @@ package struct DetermineAuthMethodView: View {
                 }
             }
         )
-        .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
