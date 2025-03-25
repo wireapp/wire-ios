@@ -452,6 +452,51 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
+    
+    func test_ItProcessesEvent_Channels() {
+        // Mock
+        mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }
+
+        // Given
+        syncMOC.performAndWait {
+            let channels = Feature.Channels(status: .disabled, config: .init())
+            self.featureRepository.storeChannels(channels)
+
+            let config: NSDictionary = [
+                "allowed_to_create_channels": "team-members",
+                "allowed_to_open_channels": "admins"
+            ]
+
+            let data: NSDictionary = [
+                "status": "enabled",
+                "config": config
+            ]
+
+            let payload: NSDictionary = [
+                "type": "feature-config.update",
+                "data": data,
+                "name": "channels"
+            ]
+
+            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
+
+            // When
+            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        syncMOC.performGroupedAndWait {
+            let channels = self.featureRepository.fetchChannels()
+            XCTAssertEqual(channels.status, .enabled)
+            XCTAssertEqual(channels.config.allowedToCreateChannels, .teamMembers)
+            XCTAssertEqual(channels.config.allowedToOpenChannels, .admins)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
 }
 
 // MARK: JSON
