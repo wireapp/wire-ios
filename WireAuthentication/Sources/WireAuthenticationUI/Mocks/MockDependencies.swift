@@ -208,7 +208,6 @@ extension MockDependencies: VerificationCodeBuilder {
             email: email,
             password: password,
             router: rootViewModel,
-            backendEnvironment: backendEnvironment,
             numberOfDigits: code.count
         )
         viewModel.code = code
@@ -229,8 +228,7 @@ extension MockDependencies: VerificationCodeBuilder {
                 factory: self,
                 email: "jane@doe.com",
                 password: password,
-                router: rootViewModel,
-                backendEnvironment: backendEnvironment
+                router: rootViewModel
             ),
             factory: self
         )

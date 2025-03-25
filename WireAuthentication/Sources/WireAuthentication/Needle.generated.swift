@@ -39,9 +39,6 @@ private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: V
     var router: any Router {
         return rootComponent.router
     }
-    var backendEnvironment: WireAuthenticationBackendEnvironment {
-        return loginViaEmailComponent.backendEnvironment
-    }
     var networkStack: NetworkStack {
         return loginViaEmailComponent.networkStack
     }
@@ -201,7 +198,6 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 extension VerificationCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\VerificationCodeComponentDependency.router] = "router-any Router"
-        keyPathToName[\VerificationCodeComponentDependency.backendEnvironment] = "backendEnvironment-WireAuthenticationBackendEnvironment"
         keyPathToName[\VerificationCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\VerificationCodeComponentDependency.didDetectDomainConflict] = "didDetectDomainConflict-Bool"
 

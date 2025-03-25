@@ -130,6 +130,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        CreateAuthenticationResultUseCase(networkStack: networkStack)
+    }
+
 }
 
 extension LoginViaEmailComponent: LoginViaEmailView.Factory {

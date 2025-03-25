@@ -28,6 +28,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
 
     private let loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol
     private let requestLoginVerificationCodeUseCase: MockRequestLoginVerificationCodeUseCaseProtocol
+    private let mockCreateAuthenticationResultUseCase: MockCreateAuthenticationResultUseCaseProtocol!
     private let router: MockRouter
     private var sut: VerificationCodeViewModel!
     private var isLoadingCalls: [Bool] = []
@@ -38,13 +39,13 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
     init() {
         self.loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
         self.requestLoginVerificationCodeUseCase = MockRequestLoginVerificationCodeUseCaseProtocol()
+        self.mockCreateAuthenticationResultUseCase = MockCreateAuthenticationResultUseCaseProtocol()
         self.router = MockRouter()
         self.sut = VerificationCodeViewModel(
             factory: self,
             email: "abc@example.com",
             password: "aaaaaa",
             router: router,
-            backendEnvironment: Fixture.backendEnvironment,
             numberOfDigits: 3 // Lets use a 3 digit code for simplicity
         )
 
@@ -60,6 +61,10 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
 
     func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
         requestLoginVerificationCodeUseCase
+    }
+
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        mockCreateAuthenticationResultUseCase
     }
 
     // MARK: - isConfirmButtonDisabled tests

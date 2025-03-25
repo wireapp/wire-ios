@@ -158,6 +158,10 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Facto
         OpenAppStoreUseCase(url: dependency.appStoreURL)
     }
 
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        fatalError()
+    }
+
 }
 
 extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodView.Factory {

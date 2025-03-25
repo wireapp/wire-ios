@@ -25,7 +25,9 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
-    package typealias Factory = LoginViaEmailUseCaseFactory
+    package typealias Factory =
+        LoginViaEmailUseCaseFactory &
+        CreateAuthenticationResultUseCaseFactory
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
@@ -112,19 +114,10 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 verificationCode: nil
             )
 
-            let backendEnvironment = WireAuthenticationBackendEnvironment(
-                environmentType: environmentType,
-                config: backendConfig,
-                metadata: backendMetadata,
-                proxySettings: nil
-            )
-
-            let authenticationResult = AuthenticationResult(
-                userID: accessToken.userID,
+            let authenticationResult = try await createAuthenticationResult(
                 cookies: cookies,
                 accessToken: accessToken,
-                emailCredentials: emailCredentials,
-                backendEnvironment: backendEnvironment
+                emailCredentials: emailCredentials
             )
 
             router.navigate(
@@ -177,6 +170,22 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 email: email,
                 password: password,
                 verificationCode: nil
+            )
+        }.value
+    }
+
+    private func createAuthenticationResult(
+        cookies: [HTTPCookie],
+        accessToken: AccessToken,
+        emailCredentials: EmailCredentials
+    ) async throws -> AuthenticationResult {
+        let useCase = factory.createAuthenticationResultUseCase()
+        return try await Task.detached {
+            try await useCase.invoke(
+                userID: accessToken.userID,
+                cookies: cookies,
+                accessToken: accessToken,
+                emailCredentials: emailCredentials
             )
         }.value
     }

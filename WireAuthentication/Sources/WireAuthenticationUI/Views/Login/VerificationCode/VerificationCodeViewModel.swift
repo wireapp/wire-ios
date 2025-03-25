@@ -27,7 +27,8 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     package typealias Factory =
         LoginViaEmailUseCaseFactory &
-        RequestLoginVerificationCodeUseCaseFactory
+        RequestLoginVerificationCodeUseCaseFactory &
+        CreateAuthenticationResultUseCaseFactory
 
     private static let numberOfDigits = 6
 
@@ -42,14 +43,12 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     private let factory: any Factory
     private let router: any Router
-    private let backendEnvironment: WireAuthenticationBackendEnvironment
 
     package init(
         factory: any Factory,
         email: String,
         password: String,
         router: any Router,
-        backendEnvironment: WireAuthenticationBackendEnvironment,
         numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
     ) {
         precondition(numberOfDigits > 0)
@@ -58,7 +57,6 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.email = email
         self.password = password
         self.router = router
-        self.backendEnvironment = backendEnvironment
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
     }
@@ -92,7 +90,7 @@ public final class VerificationCodeViewModel: ObservableObject {
 
         do {
             let verificationCode = code.joined()
-            let (cookies, token) = try await logIn(verificationCode: verificationCode)
+            let (cookies, accessToken) = try await logIn(verificationCode: verificationCode)
 
             let emailCredentials = EmailCredentials(
                 email: email,
@@ -100,12 +98,10 @@ public final class VerificationCodeViewModel: ObservableObject {
                 verificationCode: verificationCode
             )
 
-            let authenticationResult = AuthenticationResult(
-                userID: token.userID,
+            let authenticationResult = try await createAuthenticationResult(
                 cookies: cookies,
-                accessToken: token,
-                emailCredentials: emailCredentials,
-                backendEnvironment: backendEnvironment
+                accessToken: accessToken,
+                emailCredentials: emailCredentials
             )
 
             router.navigate(
@@ -150,6 +146,8 @@ public final class VerificationCodeViewModel: ObservableObject {
         isResending = false
     }
 
+    // MARK: - Private
+
     private func logIn(
         verificationCode: String
     ) async throws -> ([HTTPCookie], AccessToken) {
@@ -167,6 +165,22 @@ public final class VerificationCodeViewModel: ObservableObject {
         let useCase = try await factory.requestLoginVerificationCodeUseCase()
         try await Task.detached {
             try await useCase.invoke(email: email)
+        }.value
+    }
+
+    private func createAuthenticationResult(
+        cookies: [HTTPCookie],
+        accessToken: AccessToken,
+        emailCredentials: EmailCredentials
+    ) async throws -> AuthenticationResult {
+        let useCase = factory.createAuthenticationResultUseCase()
+        return try await Task.detached {
+            try await useCase.invoke(
+                userID: accessToken.userID,
+                cookies: cookies,
+                accessToken: accessToken,
+                emailCredentials: emailCredentials
+            )
         }.value
     }
 

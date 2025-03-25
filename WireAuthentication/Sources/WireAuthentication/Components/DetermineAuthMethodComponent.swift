@@ -162,6 +162,12 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        // FIXME: this might not necessarily be the right stack. Eg sso after backend switch.
+        // idea: observe the callback at the site of presenting sso
+        CreateAuthenticationResultUseCase(networkStack: networkStack)
+    }
+
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {

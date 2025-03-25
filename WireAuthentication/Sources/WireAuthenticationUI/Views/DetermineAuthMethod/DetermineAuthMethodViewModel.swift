@@ -30,7 +30,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         FetchBackendConfigUseCaseFactory &
         FetchSSOURLUseCaseFactory &
         SSOLinkGeneratorFactory &
-        ValidateEmailOrSSOCodeUseCaseFactory
+        ValidateEmailOrSSOCodeUseCaseFactory &
+        CreateAuthenticationResultUseCaseFactory
 
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
@@ -95,39 +96,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 }
 
             case let .ssoAuthenticationSuccess(userID, cookies):
-                // TODO: delete this temp hack
-                let backendEnvironment = WireAuthenticationBackendEnvironment(
-                    environmentType: .production,
-                    config: BackendConfig(
-                        title: "example",
-                        endpoints: Endpoints(
-                            backendURL: URL(string: "")!,
-                            backendWSURL: URL(string: "")!,
-                            blackListURL: URL(string: "")!,
-                            teamsURL: URL(string: "")!,
-                            accountsURL: URL(string: "")!,
-                            websiteURL: URL(string: "")!,
-                            countlyURL: nil
-                        ),
-                        proxySettings: nil,
-                        pinnedKeys: nil
-                    ),
-                    metadata: .init(
-                        apiVersion: .v8,
-                        domain: "example",
-                        isFederationEnabled: false
-                    ),
-                    proxySettings: nil
-                )
-                let authenticationResult = AuthenticationResult(
-                    userID: userID,
-                    cookies: cookies,
-                    accessToken: nil,
-                    emailCredentials: nil,
-                    backendEnvironment: backendEnvironment
-                )
-
-                router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authenticationResult))
+                Task { [weak self] in
+                    await self?.handleSSOSuccess(userID: userID, cookies: cookies)
+                }
 
             case .ssoAutheticationFailure:
                 router.presentAlert(Alert.ssoLoginFailed)
@@ -312,6 +283,26 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return true
         } catch {
             return false
+        }
+    }
+
+    private func handleSSOSuccess(
+        userID: UUID,
+        cookies: [HTTPCookie]
+    ) async {
+        do {
+            let useCase = factory.createAuthenticationResultUseCase()
+            let result = try await Task.detached {
+                try await useCase.invoke(
+                    userID: userID,
+                    cookies: cookies,
+                    accessToken: nil,
+                    emailCredentials: nil
+                )
+            }.value
+            router.navigate(to: DetermineAuthMethodView.Destination.noHistory(result))
+        } catch {
+            router.presentAlert(for: error)
         }
     }
 
