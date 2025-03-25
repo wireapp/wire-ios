@@ -204,6 +204,106 @@ struct FeatureConfigsPayloadProcessor {
             )
         }
     }
+    
+    func processActionPayloadAPIV8(data: Data, repository: FeatureRepositoryInterface) throws {
+        let payload = try decoder.decode(FeatureConfigsPayloadAPIV8.self, from: data)
+
+        if let appLock = payload.appLock {
+            repository.storeAppLock(
+                Feature.AppLock(
+                    status: appLock.status,
+                    config: appLock.config
+                )
+            )
+        }
+
+        if let classifiedDomains = payload.classifiedDomains {
+            repository.storeClassifiedDomains(
+                Feature.ClassifiedDomains(
+                    status: classifiedDomains.status,
+                    config: classifiedDomains.config
+                )
+            )
+        }
+
+        if let conferenceCalling = payload.conferenceCalling {
+            repository.storeConferenceCalling(
+                Feature.ConferenceCalling(
+                    status: conferenceCalling.status,
+                    config: conferenceCalling.config
+                )
+            )
+        }
+
+        if let conversationGuestLinks = payload.conversationGuestLinks {
+            repository.storeConversationGuestLinks(
+                Feature.ConversationGuestLinks(
+                    status: conversationGuestLinks.status
+                )
+            )
+        }
+
+        if let digitalSignatures = payload.digitalSignatures {
+            repository.storeDigitalSignature(
+                Feature.DigitalSignature(
+                    status: digitalSignatures.status
+                )
+            )
+        }
+
+        if let fileSharing = payload.fileSharing {
+            repository.storeFileSharing(
+                Feature.FileSharing(
+                    status: fileSharing.status
+                )
+            )
+        }
+
+        if let mls = payload.mls {
+            repository.storeMLS(
+                Feature.MLS(
+                    status: mls.status,
+                    config: mls.config
+                )
+            )
+        }
+
+        if let selfDeletingMessages = payload.selfDeletingMessages {
+            repository.storeSelfDeletingMessages(
+                Feature.SelfDeletingMessages(
+                    status: selfDeletingMessages.status,
+                    config: selfDeletingMessages.config
+                )
+            )
+        }
+
+        if let mlsMigration = payload.mlsMigration {
+            repository.storeMLSMigration(
+                Feature.MLSMigration(
+                    status: mlsMigration.status,
+                    config: mlsMigration.config
+                )
+            )
+        }
+
+        if let e2ei = payload.mlsE2EId {
+            repository.storeE2EI(
+                Feature.E2EI(
+                    status: e2ei.status,
+                    config: e2ei.config
+                )
+            )
+        }
+        
+        if let channels = payload.channels {
+            repository.storeChannels(
+                Feature.Channels(
+                    status: channels.status,
+                    config: channels.config
+                )
+            )
+        }
+    }
 
     func processEventPayload(
         data: Data,
@@ -275,6 +375,10 @@ struct FeatureConfigsPayloadProcessor {
         case .e2ei:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
+
+        case .channels:
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.Channels.Config>.self, from: data)
+            repository.storeChannels(.init(status: response.status, config: response.config))
         }
     }
 
