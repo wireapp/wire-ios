@@ -98,6 +98,12 @@ public enum FeatureConfig: Equatable, Codable, Sendable {
     /// after a specified time.
 
     case selfDeletingMessages(SelfDeletingMessagesFeatureConfig)
+    
+    /// Config for **Channels** feature
+    ///
+    /// **Channels** are discoverable groups
+    /// with history sharing capabilities
+    case channels(ChannelsFeatureConfig)
 
     /// An unknown feature.
 

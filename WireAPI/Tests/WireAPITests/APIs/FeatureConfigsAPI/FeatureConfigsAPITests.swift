@@ -21,11 +21,11 @@ import XCTest
 @testable import WireAPISupport
 
 final class FeatureConfigsAPITests: XCTestCase {
-
+    
     private var apiSnapshotHelper: APIServiceSnapshotHelper<any FeatureConfigsAPI>!
-
+    
     // MARK: - Setup
-
+    
     override func setUp() {
         super.setUp()
         apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
@@ -33,31 +33,31 @@ final class FeatureConfigsAPITests: XCTestCase {
             return builder.makeAPI(for: apiVersion)
         }
     }
-
+    
     override func tearDown() {
         apiSnapshotHelper = nil
         super.tearDown()
     }
-
+    
     // MARK: - Request generation
-
+    
     func testGetFeatureConfigs() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getFeatureConfigs()
         }
     }
-
+    
     // MARK: - Response handling
-
+    
     // MARK: - V0
-
+    
     func testGetFeatureConfigs_SuccessResponse_200_V0() async throws {
         // Given
-
+        
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV0")
         ])
-
+        
         // When
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             let result = try await sut.getFeatureConfigs()
@@ -68,17 +68,17 @@ final class FeatureConfigsAPITests: XCTestCase {
             )
         }
     }
-
+    
     // MARK: - V1 to V3
-
+    
     func testGetFeatureConfigs_SuccessResponse_200_V1_to_V3_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV1")
         ])
-
+        
         let supportedVersions: [APIVersion] = [.v1, .v2, .v3]
-
+        
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
@@ -90,66 +90,66 @@ final class FeatureConfigsAPITests: XCTestCase {
             )
         }
     }
-
+    
     func testGetFeatureConfigs_FailureResponse_No_Team() async throws {
         // Given
-
+        
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "no-team"
         )
-
+        
         let sut = FeatureConfigsAPIV0(apiService: apiService)
-
+        
         // Then
         await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.teamNotFound) {
             // When
             try await sut.getFeatureConfigs()
         }
     }
-
+    
     func testGetFeatureConfigs_FailureResponse_No_Team_Member() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "no-team-member"
         )
-
+        
         let sut = FeatureConfigsAPIV0(apiService: apiService)
-
+        
         // Then
         await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.userIsNotTeamMember) {
             // When
             try await sut.getFeatureConfigs()
         }
     }
-
+    
     func testGetFeatureConfigs_FailureResponse_Insufficient_Permissions() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "operation-denied"
         )
-
+        
         let sut = FeatureConfigsAPIV0(apiService: apiService)
-
+        
         // Then
         await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.insufficientPermissions) {
             // When
             try await sut.getFeatureConfigs()
         }
     }
-
+    
     // MARK: - V4 & V5
-
+    
     func testGetFeatureConfigs_SuccessResponse_200_V4_To_V5_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV4")
         ])
-
+        
         let supportedVersions: [APIVersion] = [.v4, .v5]
-
+        
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
@@ -161,17 +161,17 @@ final class FeatureConfigsAPITests: XCTestCase {
             )
         }
     }
-
+    
     // MARK: - V6 and next versions
-
+    
     func testGetFeatureConfigs_SuccessResponse_200_V6_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV6")
         ])
-
-        let supportedVersions = APIVersion.v6.andNextVersions
-
+        
+        let supportedVersions = [APIVersion.v6, APIVersion.v7]
+        
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
@@ -183,21 +183,43 @@ final class FeatureConfigsAPITests: XCTestCase {
             )
         }
     }
-
+    
+    // MARK: - V8 and next versions
+    
+    func testGetFeatureConfigs_SuccessResponse_200_V8_And_Next_Versions_Then_Verify_Requests() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV8")
+        ])
+        
+        let supportedVersions = APIVersion.v8.andNextVersions
+        
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.featureConfigsV8
+            )
+        }
+    }
+    
 }
 
 extension FeatureConfigsAPITests {
-
+    
     enum Scaffolding {
-
+        
         static func dateV4(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
         }
-
+        
         static func dateV6(from string: String) -> Date {
             ISO8601DateFormatter.internetDateTime.date(from: string)!
         }
-
+        
         static let featureConfigsV0: [FeatureConfig] = [
             .appLock(
                 .init(
@@ -240,7 +262,7 @@ extension FeatureConfigsAPITests {
                 )
             )
         ]
-
+        
         static let featureConfigsV1: [FeatureConfig] = [
             .appLock(
                 .init(
@@ -297,7 +319,7 @@ extension FeatureConfigsAPITests {
                 )
             )
         ]
-
+        
         static let featureConfigsV4: [FeatureConfig] = [
             .appLock(
                 .init(
@@ -358,7 +380,7 @@ extension FeatureConfigsAPITests {
                 )
             )
         ]
-
+        
         static let featureConfigsV6: [FeatureConfig] = [
             .appLock(
                 .init(
@@ -421,6 +443,76 @@ extension FeatureConfigsAPITests {
                 )
             )
         ]
+        
+        static let featureConfigsV8: [FeatureConfig] = [
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
+            ),
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
+            ),
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: true
+                )
+            ),
+            .conversationGuestLinks(
+                .init(status: .enabled)
+            ),
+            .digitalSignature(.init(status: .enabled)),
+            .fileSharing(.init(status: .enabled)),
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
+            ),
+            .mls(
+                .init(
+                    status: .enabled,
+                    protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
+                    defaultProtocol: .proteus,
+                    allowedCipherSuites: [
+                        .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
+                        .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                        .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                    ],
+                    defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                    supportedProtocols: [.proteus]
+                )
+            ),
+            .mlsMigration(
+                .init(
+                    status: .enabled,
+                    startTime: dateV6(from: "2021-05-12T10:52:02Z"),
+                    finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z")
+                )
+            ),
+            .endToEndIdentity(
+                .init(
+                    status: .enabled,
+                    acmeDiscoveryURL: "https://example.com",
+                    verificationExpiration: 9_223_372_036_854_776_000,
+                    crlProxy: "https://example.com",
+                    useProxyOnMobile: true
+                )
+            ),
+            .channels(
+                .init(status: .enabled,
+                      allowedToCreateChannels: .everyone,
+                      allowedToOpenChannels: .admins
+                     )
+            )
+        ]
+        
     }
-
+    
 }
