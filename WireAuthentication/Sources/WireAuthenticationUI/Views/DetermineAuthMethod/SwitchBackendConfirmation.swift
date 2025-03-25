@@ -20,7 +20,7 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
 
-struct SwitchBackendConfirmation: View {
+public struct SwitchBackendConfirmation: View {
 
     private typealias Strings = L10n.SwitchBackendConfirmation
 
@@ -40,7 +40,7 @@ struct SwitchBackendConfirmation: View {
     private let items: [Item]
     private let onConfirm: (Bool) -> Void
 
-    init(
+    public init(
         backendConfig: BackendConfig,
         onConfirm: @escaping (Bool) -> Void
     ) {
@@ -98,7 +98,7 @@ struct SwitchBackendConfirmation: View {
 
     // MARK: - UI
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 20) {
             title
             backendDetails
