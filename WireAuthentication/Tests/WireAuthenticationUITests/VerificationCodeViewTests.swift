@@ -41,8 +41,7 @@ class VerificationCodeViewTests: XCTestCase {
 
         let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
             .frame(width: screenBounds.width, height: screenBounds.height)
-            .background(Color.blue)
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")
@@ -57,7 +56,6 @@ class VerificationCodeViewTests: XCTestCase {
 
         let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
             .frame(width: screenBounds.width, height: screenBounds.height)
-            .background(Color.blue)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
