@@ -39,7 +39,7 @@
 
 "proxy_credentials.title" = "Proxy Credentials";
 "proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_email.title" = "Proxy email or username";
 "proxy_credentials.input_password.title" = "Пароль";
 "proxy_credentials.input_password.placeholder" = "Enter password";
 
@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Скасувати";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Не вдалося переключити сервер";
+"switch_backend.error.message.logged_in" = "Ви вже увійшли. Вийдіть з усіх акаунтів та повторіть спробу, щоб переключитися на інший сервер.";
 
 "verification_code.title" = "Ви отримали нового листа";
 "verification_code.message" = "Введіть код, який ми вислали на %@.";
@@ -92,7 +94,7 @@
 "authentication.error.how_to_delete_account" = "How to delete a private account";
 
 "obsolete_client.alert.title" = "Необхідне оновлення";
-"obsolete_client.alert.message" = "Не пропустіть нові функції.\nОтримайте найновішу версію Wire з App Store.";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "Перейти в App Store";
 
 "obsolete_backend.alert.title" = "Server version not supported";
