@@ -404,8 +404,37 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             to: &cellDescriptions
         )
 
-        if false { // TODO: check context.previousSectionController
-            cellDescriptions.last?.instance.topMargin = -6
+        let collapse: Bool
+        if !isSenderVisible,
+           let previousSectionController = context.previousSectionController,
+           let current = cellDescriptions.last?.instance,
+           let previous = previousSectionController.cellDescriptions.first?.instance {
+
+            collapse = if current is ConversationTextMessageCellDescription ||
+                current is ConversationFileMessageCellDescription ||
+                current is ConversationImageMessageCellDescription ||
+                current is ConversationVideoMessageCellDescription ||
+                current is ConversationReplyCellDescription ||
+                current is ConversationCollapsedMessageCellDescription {
+                // no stack cell description and no sender is shown, so collapse the space if needed
+                true
+            } else if let firstStacked = (current as? StackViewCellDescription)?.cellDescriptions.first?.instance {
+                firstStacked is ConversationTextMessageCellDescription ||
+                    firstStacked is ConversationFileMessageCellDescription ||
+                    firstStacked is ConversationImageMessageCellDescription ||
+                    firstStacked is ConversationVideoMessageCellDescription ||
+                    firstStacked is ConversationReplyCellDescription
+            } else {
+                false
+            }
+
+        } else {
+            collapse = false
+        }
+
+        if collapse {
+            cellDescriptions.last?.instance.topMargin = collapse ? -6 : 0
+            context.previousSectionController?.cellDescriptions.first?.instance.bottomMargin = collapse ? -6 : 0
         }
 
         if isToolboxVisible(in: context) {
