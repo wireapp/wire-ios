@@ -79,7 +79,9 @@ class RootComponent: BootstrapComponent {
         shared {
             RootViewModel(
                 factory: self,
-                bridge: bridge
+                bridge: bridge,
+                environmentType: environmentType,
+                backendConfig: backendConfig
             )
         }
     }
@@ -98,18 +100,10 @@ class RootComponent: BootstrapComponent {
 
     // MARK: - Children
 
-    func determineAuthMethodOnPremComponent(
+    func determineAuthMethodComponent(
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
-    ) -> DetermineAuthMethodOnPremComponent {
-        DetermineAuthMethodOnPremComponent(
-            parent: self,
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        )
-    }
-
-    var determineAuthMethodComponent: DetermineAuthMethodComponent {
+    ) -> DetermineAuthMethodComponent {
         let networkStack = NetworkStack(
             environmentType: environmentType,
             backendConfig: backendConfig,
@@ -140,15 +134,10 @@ extension RootComponent: RootView.Factory {
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> DetermineAuthMethodView {
-        determineAuthMethodOnPremComponent(
+        determineAuthMethodComponent(
             environmentType: environmentType,
             backendConfig: backendConfig
         ).view
-    }
-
-    @MainActor
-    func determineAuthMethodView() -> DetermineAuthMethodView {
-        determineAuthMethodComponent.view
     }
 
 }

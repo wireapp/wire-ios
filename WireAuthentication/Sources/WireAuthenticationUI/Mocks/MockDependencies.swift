@@ -26,7 +26,9 @@ final class MockDependencies {
     private var rootViewModel: RootViewModel {
         RootViewModel(
             factory: self,
-            bridge: WireAuthenticationBridge()
+            bridge: WireAuthenticationBridge(),
+            environmentType: environmentType,
+            backendConfig: backendConfig
         )
     }
 

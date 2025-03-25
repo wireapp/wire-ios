@@ -28,8 +28,6 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
-    var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
@@ -62,8 +60,8 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             router: dependency.router,
             factory: self,
             bridge: dependency.bridge,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig,
+            environmentType: networkStack.environmentType,
+            backendConfig: networkStack.backendConfig,
             canExitFlow: dependency.existsAnotherAccount
         )
     }
@@ -128,7 +126,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         return SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
-            baseURL: dependency.backendConfig.endpoints.backendURL,
+            baseURL: networkStack.backendConfig.endpoints.backendURL,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
         )

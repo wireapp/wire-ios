@@ -29,9 +29,6 @@ package protocol DetermineAuthMethodBuilder {
         backendConfig: BackendConfig
     ) -> DetermineAuthMethodView
 
-    @MainActor
-    func determineAuthMethodView() -> DetermineAuthMethodView
-
 }
 
 package struct DetermineAuthMethodView: View {

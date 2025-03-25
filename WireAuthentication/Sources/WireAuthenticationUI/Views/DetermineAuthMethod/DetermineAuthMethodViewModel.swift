@@ -244,7 +244,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 )
             } else {
                 router.presentSheet(
-                    RootView.ModalDestination.onPremiseAuthFlow(
+                    RootView.ModalDestination.authFlow(
                         environmentType: environmentType,
                         backendConfig: backendConfig
                     )
