@@ -23,8 +23,7 @@ import WireSystem
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
 
-    @MainActor
-    var conversationCellModel: ConversationCellModel? {
+    @MainActor var conversationCellModel: ConversationCellModel? {
 
         let now = currentDateProvider.now
         let calendar = Calendar.current
@@ -64,7 +63,8 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
             } else if difference < 7 * 24 * 60 * 60 {
                 // within 7 days print weekday and date
                 text = weekdayAndDateDateFormatter.string(from: configuration.date)
-            } else if calendar.component(.year, from: configuration.date) == calendar.component(.year, from: now) { // same year
+            } else if calendar.component(.year, from: configuration.date) == calendar
+                .component(.year, from: now) { // same year
                 // date + month
                 text = monthAndDayDateFormatter.string(from: configuration.date)
             } else {

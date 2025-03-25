@@ -225,7 +225,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 private extension TimeDividerModel {
 
     init?(_ model: ConversationCellModel?) {
-        guard case .timeDivider(let model) = model else {
+        guard case let .timeDivider(model) = model else {
             XCTFail("unexpected conversation cell model: " + String(describing: model))
             return nil
         }
