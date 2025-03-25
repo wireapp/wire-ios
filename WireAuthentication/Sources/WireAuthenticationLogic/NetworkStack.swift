@@ -36,6 +36,7 @@ package final class NetworkStack {
 
     private var backendMetadata: WireAuthenticationAPI.BackendMetadata?
     private var state: NetworkState
+    private var proxyCredentials: (username: String, password: String)?
 
     package init(
         environmentType: BackendEnvironmentType,
@@ -67,7 +68,7 @@ package final class NetworkStack {
         username: String,
         password: String
     ) throws {
-        // TODO: how do we know if the credentials were correct? Will the network service throw an error?
+        proxyCredentials = (username, password)
         state = .ready(try NetworkService.make(
             backendConfig: backendConfig,
             minTLSVersion: minTLSVersion,
@@ -77,11 +78,33 @@ package final class NetworkStack {
 
     package func makeBackendEnvironment() async throws -> WireAuthenticationBackendEnvironment {
         let backendMetadata = try await resolvedBackendMetadata()
+
+        var resolvedProxySettings: ResolvedProxySettings?
+        if let proxySettings = backendConfig.proxySettings {
+            if proxySettings.needsAuthentication {
+                guard let proxyCredentials else {
+                    throw Failure.proxyCredentialsRequired
+                }
+
+                resolvedProxySettings = .authenticated(
+                    host: proxySettings.host,
+                    port: proxySettings.port,
+                    username: proxyCredentials.username,
+                    password: proxyCredentials.password
+                )
+            } else {
+                resolvedProxySettings = .unauthenticated(
+                    host: proxySettings.host,
+                    port: proxySettings.port
+                )
+            }
+        }
+
         return WireAuthenticationBackendEnvironment(
             environmentType: environmentType,
             config: backendConfig,
             metadata: backendMetadata,
-            proxySettings: nil // TODO: fix me
+            proxySettings: resolvedProxySettings
         )
     }
 
