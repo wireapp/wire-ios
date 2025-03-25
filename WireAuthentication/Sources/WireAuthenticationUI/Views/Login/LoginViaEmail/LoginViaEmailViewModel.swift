@@ -26,6 +26,7 @@ import WireReusableUIComponents
 package final class LoginViaEmailViewModel: ObservableObject {
 
     package typealias Factory =
+        SubmitProxyCredentialsUseCaseFactory &
         LoginViaEmailUseCaseFactory &
         CreateAuthenticationResultUseCaseFactory
 
@@ -95,6 +96,10 @@ package final class LoginViaEmailViewModel: ObservableObject {
         let sanitizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
 
         do {
+            if let proxyCredentials {
+                try submitProxyCredentials(proxyCredentials)
+            }
+
             let (cookies, accessToken) = try await logIn(
                 email: email,
                 password: sanitizedPassword
@@ -164,6 +169,11 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
+        let useCase = factory.submitProxyCredentialsUseCase()
+        try useCase.invoke(proxyCredentials: proxyCredentials)
+    }
 
     private func logIn(
         email: String,

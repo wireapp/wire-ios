@@ -35,7 +35,7 @@ package final class NetworkStack {
 
     private var backendMetadata: WireAuthenticationAPI.BackendMetadata?
     private var state: NetworkState
-    private var proxyCredentials: (username: String, password: String)?
+    private var proxyCredentials: ProxyCredentials?
 
     package init(
         backendInfo: BackendInfo,
@@ -61,15 +61,12 @@ package final class NetworkStack {
 
     // MARK: - Methods
 
-    package func setProxyCredentials(
-        username: String,
-        password: String
-    ) throws {
-        proxyCredentials = (username, password)
+    package func setProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
+        self.proxyCredentials = proxyCredentials
         state = .ready(try NetworkService.make(
             backendConfig: backendInfo.backendConfig,
             minTLSVersion: minTLSVersion,
-            proxyCredentials: (username, password)
+            proxyCredentials: proxyCredentials
         ))
     }
 
@@ -213,7 +210,7 @@ private extension NetworkService {
     static func make(
         backendConfig: BackendConfig,
         minTLSVersion: TLSVersion,
-        proxyCredentials: (username: String, password: String)? = nil
+        proxyCredentials: ProxyCredentials? = nil
     ) throws(InitializationError) -> NetworkService {
         var pinnedKeys = [PinnedKey]()
 

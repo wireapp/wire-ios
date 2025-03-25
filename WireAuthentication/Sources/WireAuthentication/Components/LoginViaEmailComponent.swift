@@ -127,6 +127,10 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
+    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
+        SubmitProxyCredentialsUseCase(networkStack: networkStack)
+    }
+
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
