@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import UIKit
 import WireAccountImageUI
 import WireDesign
 import WireReusableUIComponents

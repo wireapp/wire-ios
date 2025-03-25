@@ -30,4 +30,9 @@ public final class WireConversationGroupIconFactory {
     public func create(conversationID: String) -> some View {
         WireConversationGroupIcon(asset: mapper.palette(for: conversationID))
     }
+
+    @MainActor
+    public func createUIKit(conversationID: String) -> UIImageView {
+        UIImageView(image: mapper.palette(for: conversationID).uiKitImage)
+    }
 }
