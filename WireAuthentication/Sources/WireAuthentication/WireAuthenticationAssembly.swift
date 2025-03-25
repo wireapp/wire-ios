@@ -42,7 +42,8 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        backendInfo: BackendInfo,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
         accountsURL: URL,
@@ -54,6 +55,10 @@ public struct WireAuthenticationAssembly {
         appStoreURL: URL,
         existsAnotherAccount: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
+        let backendInfo = BackendInfo(
+            environmentType: environmentType,
+            backendConfig: backendConfig
+        )
         let rootComponent = RootComponent(
             backendInfo: backendInfo,
             preferredAPIVersion: preferredAPIVersion,
