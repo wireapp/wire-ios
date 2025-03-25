@@ -39,7 +39,7 @@
 
 "proxy_credentials.title" = "Proxy Credentials";
 "proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_email.title" = "Proxy email or username";
 "proxy_credentials.input_password.title" = "Slaptažodis";
 "proxy_credentials.input_password.placeholder" = "Enter password";
 
@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Atsisakyti";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Nepavyko perjungti serverių";
+"switch_backend.error.message.logged_in" = "Esate prisijungę. Norėdami perjungti serverį, atsijunkite nuo visų paskyrų ir bandykite dar kartą.";
 
 "verification_code.title" = "Gavote el. laišką";
 "verification_code.message" = "Įrašykite patvirtinimo kodą, kuris buvo išsiųstas į %@.";
@@ -92,7 +94,7 @@
 "authentication.error.how_to_delete_account" = "How to delete a private account";
 
 "obsolete_client.alert.title" = "Naujinti būtina";
-"obsolete_client.alert.message" = "Negalite naudotis naujausiomis galimybėmis.\nAtsisiųskite naujausią „Wire“ versiją iš „App Store“.";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "Eiti į „App Store“";
 
 "obsolete_backend.alert.title" = "Server version not supported";

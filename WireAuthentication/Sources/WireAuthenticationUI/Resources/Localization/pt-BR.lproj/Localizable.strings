@@ -39,7 +39,7 @@
 
 "proxy_credentials.title" = "Proxy Credentials";
 "proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_email.title" = "Proxy email or username";
 "proxy_credentials.input_password.title" = "Senha";
 "proxy_credentials.input_password.placeholder" = "Enter password";
 
@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Cancelar";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Não é possível mudar os servidores";
+"switch_backend.error.message.logged_in" = "Você já está logado. Para mudar para este servidor, saia de todas as contas e tente novamente.";
 
 "verification_code.title" = "Você tem um e-mail";
 "verification_code.message" = "Digite o código de verificação que enviamos para %@.";
@@ -92,8 +94,8 @@
 "authentication.error.how_to_delete_account" = "How to delete a private account";
 
 "obsolete_client.alert.title" = "Atualização necessária";
-"obsolete_client.alert.message" = "Você está perdendo novas funcionalidades. \nObtenha a última versão do Wire na App Store.";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "Vá para a App Store";
 
-"obsolete_backend.alert.title" ="Versão do servidor não suportada";
+"obsolete_backend.alert.title" = "Versão do servidor não suportada";
 "obsolete_backend.alert.message" = "A versão do servidor não é suportada por este aplicativo. Por favor, entre em contato com o administrador do sistema.";

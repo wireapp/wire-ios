@@ -22,44 +22,44 @@
 ///  "<screen>.<component>.<usage>"
 
 
-"conversation.backButton.description" = "Go back to conversation list";
-"conversation.searchButton.description" = "Open search";
+"conversation.backButton.description" = "返回到对话列表";
+"conversation.searchButton.description" = "打开搜索";
 "conversation.profileImage.description" = "个人图像";
-"conversation.profileImage.hint" = "Double tap to open profile";
-"conversation.titleViewForGroup.hint" = "Double tap to open conversation details";
-"conversation.titleViewForOneToOne.hint" = "Double tap to open profile";
-"conversation.legalHoldIcon.description" = "Legal hold";
+"conversation.profileImage.hint" = "双击打开个人资料";
+"conversation.titleViewForGroup.hint" = "双击打开对话详情";
+"conversation.titleViewForOneToOne.hint" = "双击打开个人资料";
+"conversation.legalHoldIcon.description" = "合法保留";
 "conversation.verifiedIcon.description" = "已验证";
 
-"conversation.sendButton.description" = "Send this message";
-"conversation.openFormattingButton.description" = "Open formatting options";
-"conversation.hideFormattingButton.description" = "Hide formatting options";
-"conversation.timerButton.description" = "Set a timer for self-deleting messages";
-"conversation.mentionButton.description" = "Mention someone";
-"conversation.cameraButton.description" = "Take or select a photo";
-"conversation.sketchButton.description" = "Open sketch to draw or write";
-"conversation.gifButton.description" = "Select a GIF";
-"conversation.audioButton.description" = "Record an audio message";
-"conversation.pingButton.description" = "Send a ping";
-"conversation.uploadFileButton.description" = "Share a file";
-"conversation.locationButton.description" = "Share your location";
+"conversation.sendButton.description" = "发送这条消息";
+"conversation.openFormattingButton.description" = "打开格式选项";
+"conversation.hideFormattingButton.description" = "隐藏格式选项";
+"conversation.timerButton.description" = "设置自动删除邮件计时器";
+"conversation.mentionButton.description" = "提及某人";
+"conversation.cameraButton.description" = "拍摄或选择照片";
+"conversation.sketchButton.description" = "打开草图进行绘画或书写";
+"conversation.gifButton.description" = "选择 GIF";
+"conversation.audioButton.description" = "录制一条音频消息";
+"conversation.pingButton.description" = "发送 @";
+"conversation.uploadFileButton.description" = "分享文件";
+"conversation.locationButton.description" = "分享您的位置";
 "conversation.videoButton.description" = "录制视频";
-"conversation.moreButton.description" = "Open more messaging options";
-"conversation.emphemeralButton.description" = "Set a timer for self-deleting messages";
-"conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ seconds";
-"conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ minutes";
-"conversation.timerForSelfDeletingMessagesHour.value" = "%@ hour";
-"conversation.timerForSelfDeletingMessagesDay.value" = "%@ day";
-"conversation.timerForSelfDeletingMessagesWeek.value" = "%@ week";
-"conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ weeks";
+"conversation.moreButton.description" = "打开更多消息选项";
+"conversation.emphemeralButton.description" = "设置自动删除邮件计时器";
+"conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ 秒";
+"conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ 分钟";
+"conversation.timerForSelfDeletingMessagesHour.value" = "%@ 小时";
+"conversation.timerForSelfDeletingMessagesDay.value" = "%@ 天";
+"conversation.timerForSelfDeletingMessagesWeek.value" = "%@ 周";
+"conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ 周";
 
-"conversation.headerButton.description" = "Use a heading";
-"conversation.boldButton.description" = "Use bolded text";
-"conversation.italicButton.description" = "Use italic text";
-"conversation.numberListButton.description" = "Use number list";
-"conversation.bulletListButton.description" = "Use bullet list";
-"conversation.codeButton.description" = "Use code format";
-"conversation.messageInfo.hint" = "Double tap to hide or show message info";
+"conversation.headerButton.description" = "使用标题";
+"conversation.boldButton.description" = "使用粗体文本";
+"conversation.italicButton.description" = "使用斜体文本";
+"conversation.numberListButton.description" = "使用数字列表";
+"conversation.bulletListButton.description" = "使用项目符号列表";
+"conversation.codeButton.description" = "使用代码格式";
+"conversation.messageInfo.hint" = "双击隐藏或显示消息信息";
 "conversation.messageOptions.hint" = "Triple tap to open messaging options";
 
 "conversationSearch.closeButton.description" = "Close search";
@@ -114,10 +114,11 @@
 "messageAction.sketchButton.description" = "Sketch over picture";
 "messageAction.emojiButton.description" = "Sketch emoji over picture";
 "messageAction.copyButton.description" = "Copy picture";
-"messageAction.moreButton.description" = "Open more messaging options";
+"messageAction.moreButton.description" = "打开更多消息选项";
 "messageAction.saveButton.description" = "Save picture";
 "messageAction.revealButton.description" = "Reveal in conversation";
 "messageAction.deleteButton.description" = "Delete picture";
+"messageAction.collapseButton.description" = "Collapse";
 
 "audioMessage.pause.value" = "Pause";
 "audioMessage.play.value" = "Play";
@@ -141,7 +142,7 @@
 "conversationDetails.closeButton.description" = "Close conversation details";
 "conversationDetails.moreButton.description" = "Open conversation options";
 "conversationDetails.showParticipantsButton.hint" = "Double tap to open participant list";
-"conversationDetails.participantCell.hint" = "Double tap to open profile";
+"conversationDetails.participantCell.hint" = "双击打开个人资料";
 
 "createConversation.backButton.description" = "Go back to contact list";
 "createConversation.hideSettings.hint" = "Double tap to hide settings";
@@ -202,7 +203,7 @@
 "contactsList.federatedIcon.description" = "联邦";
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
-"contactsList.pendingConnection.hint" = "Double tap to open profile";
+"contactsList.pendingConnection.hint" = "双击打开个人资料";
 "contactsList.cancelButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
@@ -224,7 +225,7 @@
 "conversationsList.joinButton.description" = "加入";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
-"conversationsList.connectionRequest.hint" = "Double tap to open profile";
+"conversationsList.connectionRequest.hint" = "双击打开个人资料";
 
 "conversationList.startConversationButton.description" = "Create group or search for people";
 "conversationsList.filterButton.description" = "Filter conversations";

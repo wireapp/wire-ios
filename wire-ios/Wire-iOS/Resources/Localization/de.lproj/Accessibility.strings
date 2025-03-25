@@ -118,6 +118,7 @@
 "messageAction.saveButton.description" = "Bild speichern";
 "messageAction.revealButton.description" = "In Unterhaltung anzeigen";
 "messageAction.deleteButton.description" = "Bild löschen";
+"messageAction.collapseButton.description" = "Ausblenden";
 
 "audioMessage.pause.value" = "Pause";
 "audioMessage.play.value" = "Wiedergabe";
