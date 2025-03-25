@@ -580,7 +580,8 @@ extension ConversationTableViewDataSource {
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
-            previousMessageIsKnock: previousMessage?.isKnock == true
+            previousMessageIsKnock: previousMessage?.isKnock == true,
+            previousSectionController: ConversationMessageSectionController?
         )
     }
 
