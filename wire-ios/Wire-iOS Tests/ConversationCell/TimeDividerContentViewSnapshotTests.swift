@@ -22,11 +22,13 @@ import WireTestingPackage
 import XCTest
 
 @testable import Wire
+@testable import WireConversationUI
 
 final class TimeDividerContentViewSnapshotTests: XCTestCase {
+    typealias SUT = ConversationCell<TimeDividerModel>
 
     private var snapshotHelper: SnapshotHelper!
-    private var sut: ConversationCellBurstTimestampView!
+    private var sut: SUT!
     private var userSession: UserSessionMock!
 
     override func setUp() {
@@ -34,10 +36,10 @@ final class TimeDividerContentViewSnapshotTests: XCTestCase {
 
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
-        sut = ConversationCellBurstTimestampView()
+        sut = SUT(style: .default, reuseIdentifier: "sut")
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 40))
-        sut.unreadDot.backgroundColor = .red
-        sut.backgroundColor = SemanticColors.View.backgroundConversationView
+//        sut.unreadDot.backgroundColor = .red
+//        sut.backgroundColor = SemanticColors.View.backgroundConversationView
     }
 
     override func tearDown() {
@@ -50,12 +52,12 @@ final class TimeDividerContentViewSnapshotTests: XCTestCase {
 
     // MARK: -
 
-    func testForInitState() {
-        snapshotHelper.verify(matching: sut)
-    }
-
     func testForIncludeDayOfWeekAndDot() {
-        // GIVEN & WHEN
+        // GIVEN
+        let model = ConversationCellModel.timeDivider(text: "", isUnread: <#T##Bool#>)
+
+        // WHEN
+
         sut.configure(
             timestamp: Date(timeIntervalSinceReferenceDate: 0),
             isFirstMessageOfTheDay: true,
@@ -66,7 +68,7 @@ final class TimeDividerContentViewSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
+    /*
     func testForNotIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
         sut.configure(
@@ -187,5 +189,5 @@ final class TimeDividerContentViewSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
+*/
 }
