@@ -51,7 +51,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
             throw ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint
         }
 
-        let input = CreateGroupConversationParametersV0(from: parameters)
+        let input = CreateGroupConversationParametersV2(from: parameters)
         let body = try JSONEncoder.defaultEncoder.encode(input)
         let path = "\(pathPrefix)\(basePath)"
 
@@ -112,6 +112,21 @@ struct CreateGroupConversationParametersV2: Encodable {
         case conversationRole = "conversation_role"
         case messageProtocol = "protocol"
         case creatorClient = "creator_client"
+    }
+
+    init(from parameters: CreateGroupConversationParameters) {
+        self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs : nil
+        self.access = parameters.accessMode.map(\.rawValue)
+        self.legacyAccessRole = parameters.legacyAccessRole?.rawValue
+        self.accessRoles = parameters.accessRoles.map(\.rawValue)
+        self.name = parameters.name
+        self.team = parameters.teamID.map { .init(teamID: $0) }
+        self.messageTimer = nil
+        self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
+        self.conversationRole = "wire_member"
+        self.messageProtocol = parameters.messageProtocol.rawValue
+        self.creatorClient = parameters.creatorClientID
     }
 
 }

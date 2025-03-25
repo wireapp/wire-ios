@@ -25,7 +25,7 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation {
         // removed `guard` condition in api v8 since conversation group can be either `channel` or `group_conversation`
-        let input = CreateGroupConversationParametersV0(from: parameters)
+        let input = CreateGroupConversationParametersV8(from: parameters)
         let body = try JSONEncoder.defaultEncoder.encode(input)
         let path = "\(pathPrefix)\(basePath)"
 
@@ -101,6 +101,20 @@ struct CreateGroupConversationParametersV8: Encodable {
         case conversationRole = "conversation_role"
         case messageProtocol = "protocol"
         case conversationGroupType = "group_conv_type"
+    }
+
+    init(from parameters: CreateGroupConversationParameters) {
+        self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs : nil
+        self.access = parameters.accessMode.map(\.rawValue)
+        self.accessRoles = parameters.accessRoles.map(\.rawValue)
+        self.name = parameters.name
+        self.team = parameters.teamID.map { .init(teamID: $0) }
+        self.messageTimer = nil
+        self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
+        self.conversationRole = "wire_member"
+        self.messageProtocol = parameters.messageProtocol.rawValue
+        self.conversationGroupType = parameters.groupType
     }
 
 }
