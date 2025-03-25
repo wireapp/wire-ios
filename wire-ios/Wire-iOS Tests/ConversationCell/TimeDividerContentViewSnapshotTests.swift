@@ -23,7 +23,7 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
+final class TimeDividerContentViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private var sut: ConversationCellBurstTimestampView!
