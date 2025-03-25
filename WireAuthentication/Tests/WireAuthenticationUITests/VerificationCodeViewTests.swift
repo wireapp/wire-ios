@@ -41,6 +41,10 @@ class VerificationCodeViewTests: XCTestCase {
 
         let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
             .frame(width: screenBounds.width, height: screenBounds.height)
+<<<<<<< HEAD
+=======
+            .background(Color.blue)
+>>>>>>> 36f3fbb255 (chore: Collapse final fixes - WPB-16351 (#2720))
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
