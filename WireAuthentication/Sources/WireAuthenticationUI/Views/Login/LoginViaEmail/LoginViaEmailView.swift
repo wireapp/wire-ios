@@ -148,11 +148,13 @@ package struct LoginViaEmailView: View {
         )
     }
 
-    // TODO: [WPB-16256] Implement proxy support
     @ViewBuilder private var submitButton: some View {
         Button(action: {
             Task {
-                await viewModel.submitPassword(password)
+                await viewModel.submit(
+                    password: password,
+                    proxyCredentials: viewModel.hasProxySupport ? ProxyCredentials(username: proxyEmail, password: proxyPassword) : nil
+                )
             }
         }, label: {
             Text(L10n.CloudUserLogin.submit)
@@ -160,7 +162,15 @@ package struct LoginViaEmailView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password) && viewModel.email != nil)
+        .disabled(
+            !viewModel.canSubmitPassword(
+                password: password,
+                proxyCredentials: ProxyCredentials(
+                    username: proxyEmail,
+                    password: proxyPassword
+                )
+            )
+        )
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {

@@ -75,7 +75,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func isValidPassword(_ password: String) -> Bool {
-        true
+        !password.isEmpty
     }
 
     var isValidEmail: Bool {
@@ -87,7 +87,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         backendInfo.environmentType != .production
     }
 
-    func submitPassword(_ password: String) async {
+    func submit(password: String, proxyCredentials: ProxyCredentials?) async {
         guard let email else { return }
 
         isLoading = true
@@ -150,6 +150,17 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     func createAccount() {
         onCreateAccount()
+    }
+
+    func canSubmitPassword(password: String, proxyCredentials: ProxyCredentials) -> Bool {
+        let validCredentials = isValidEmail && isValidPassword(password)
+
+        guard hasProxySupport else {
+            return validCredentials
+        }
+
+        let validProxyCredentials = !proxyCredentials.username.isEmpty && !proxyCredentials.password.isEmpty
+        return validCredentials && validProxyCredentials
     }
 
     // MARK: - Private

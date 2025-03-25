@@ -326,6 +326,13 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     cookies: result.cookies
                 )
 
+                if let proxyCredentials = result.proxyCredentials {
+                    sessionManager.saveProxyCredentials(
+                        username: proxyCredentials.email,
+                        password: proxyCredentials.password
+                    )
+                }
+
                 unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)
 
             case let .executeFeedbackAction(action):

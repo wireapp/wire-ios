@@ -17,3 +17,25 @@
 //
 
 import Foundation
+
+/// Proxy credentials for a user.
+
+public struct ProxyCredentials: Equatable, Hashable {
+
+    /// The proxy username.
+
+    public let username: String
+
+    /// The proxy password.
+
+    public let password: String
+
+    public init(
+        username: String,
+        password: String
+    ) {
+        self.username = username
+        self.password = password
+    }
+
+}
