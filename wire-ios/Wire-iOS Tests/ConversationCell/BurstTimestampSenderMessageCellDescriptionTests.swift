@@ -219,8 +219,8 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
         return BurstTimestampSenderMessageCellDescription(
             configuration: BurstTimestampSenderMessageCell.Configuration(
                 date: targetDate(now),
-                isFirstMessageOfTheDay: false,
-                showUnreadDot: true,
+                isFirstMessageOfTheDay: isFirstMessageOfTheDay,
+                showUnreadDot: showUnreadDot,
                 accentColor: .systemPink
             ),
             currentDateProvider: currentDateProvider
