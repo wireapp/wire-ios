@@ -28,7 +28,6 @@ struct ConversationMessageContext: Equatable {
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
-    weak var previousSectionController: ConversationMessageSectionController?
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -214,14 +213,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private func handleCollapseExpand() {
         isCollapsed = !isCollapsed
-        if let previousMessage = context.previousSectionController?.message {
-            sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: previousMessage)
-        }
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
-        // TODO: we would need to have a reference to the next message's section controller
-//        if let nextMessage = context.nextSectionController?.message {
-//            sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: nextMessage)
-//        }
     }
 
     func collapse() {
@@ -411,34 +403,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             to: &cellDescriptions
         )
 
-        let collapse: Bool
-        if !isSenderVisible,
-           let previousSectionController = context.previousSectionController,
-           let current = cellDescriptions.last?.instance {
-           // let previous = previousSectionController.cellDescriptions.first?.instance
-
-            collapse = if current is ConversationTextMessageCellDescription ||
-                current is ConversationFileMessageCellDescription ||
-                current is ConversationImageMessageCellDescription ||
-                current is ConversationVideoMessageCellDescription ||
-                current is ConversationReplyCellDescription ||
-                current is ConversationCollapsedMessageCellDescription {
-                // no stack cell description and no sender is shown, so collapse the space if needed
-                true
-            } else if let firstStacked = (current as? StackViewCellDescription)?.cellDescriptions.first?.instance {
-                firstStacked is ConversationTextMessageCellDescription ||
-                    firstStacked is ConversationFileMessageCellDescription ||
-                    firstStacked is ConversationImageMessageCellDescription ||
-                    firstStacked is ConversationVideoMessageCellDescription ||
-                    firstStacked is ConversationReplyCellDescription
-            } else {
-                false
-            }
-
-        } else {
-            collapse = false
-        }
-
         if isToolboxVisible(in: context) {
             let description = ConversationMessageToolboxCellDescription(message: message)
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
@@ -459,9 +423,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         self.cellDescriptions = Self.combineByStacking(cellDescriptions)
-
-        self.cellDescriptions.last?.instance.topMargin = collapse ? -6 : 0
-        context.previousSectionController?.cellDescriptions.first?.instance.bottomMargin = collapse ? -6 : 0
     }
 
     private static func combineByStacking(
