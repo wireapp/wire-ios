@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireConversationUI
 import WireDataModel
 import WireUtilities
 
@@ -60,6 +61,8 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 protocol ConversationMessageCell: UIView {
     /// The object that contains the configuration of the view.
     associatedtype Configuration
+
+    typealias ZMConversationMessage = WireDataModel.ZMConversationMessage
 
     /// Whether the cell is selected.
     var isSelected: Bool { get set }
@@ -143,6 +146,13 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
     associatedtype View: ConversationMessageCell, UIView
 
+    typealias ZMConversationMessage = WireDataModel.ZMConversationMessage
+
+    /// A new type of model to replace the cell descriptions eventually.
+    /// In order to allow incremental migration to the new approach, the model will be part of the cell description for
+    /// now.
+    var conversationCellModel: ConversationCellModel? { get }
+
     /// The views of neighbouring cell descriptions which return `true` might be
     /// arranged in a vertical stack view inside a single table view cell.
     /// If `false` the resulting view will always end up in a single table view cell.
@@ -194,6 +204,10 @@ protocol ConversationMessageCellDescription: AnyObject {
 // MARK: - Table View Dequeuing
 
 extension ConversationMessageCellDescription {
+
+    var conversationCellModel: ConversationCellModel? {
+        nil
+    }
 
     var canBeCombinedWithOtherCells: Bool {
         false
@@ -278,6 +292,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let instanceGetter: () -> any ConversationMessageCellDescription
     private let isConfigurationEqualBlock: (AnyConversationMessageCellDescription) -> Bool
 
+    private let _conversationCellModel: () -> ConversationCellModel?
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
@@ -322,6 +337,7 @@ final class AnyConversationMessageCellDescription: NSObject {
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
+        self._conversationCellModel = { description.conversationCellModel }
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
@@ -340,6 +356,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     var baseType: AnyClass {
         baseTypeGetter()
+    }
+
+    var conversationCellModel: ConversationCellModel? {
+        _conversationCellModel()
     }
 
     var delegate: ConversationMessageCellDelegate? {
