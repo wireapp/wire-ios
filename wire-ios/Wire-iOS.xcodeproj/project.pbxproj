@@ -586,7 +586,6 @@
 				ConversationCell/MultiParagraphSnapshotTests.swift,
 				ConversationCell/StartedConversationCellTests.swift,
 				ConversationCell/TextMessageMentionsTests.swift,
-				ConversationCell/TimeDividerContentViewSnapshotTests.swift,
 				ConversationCell/UnknownMessageCellTests.swift,
 				ConversationContentViewControllerTests.swift,
 				ConversationCreationControllerSnapshotTests.swift,
