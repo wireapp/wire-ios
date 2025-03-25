@@ -51,21 +51,45 @@ final class TimeDividerContentViewSnapshotTests: XCTestCase {
     }
 
     // MARK: -
+/*
+    #Preview("with unread indicator") {
+        let model = TimeDividerModel(
+            text: "Friday Lorem Ipsum Dolor",
+            isUnreadIndicatorVisible: true
+        )
+        TimeDividerContentView(model: model)
+    }
 
-    func testForIncludeDayOfWeekAndDot() {
-        // GIVEN
-        let model = ConversationCellModel.timeDivider(text: "", isUnread: <#T##Bool#>)
+    #Preview("without unread indicator") {
+        let model = TimeDividerModel(
+            text: "Friday Lorem Ipsum Dolor",
+            isUnreadIndicatorVisible: false
+        )
+        TimeDividerContentView(model: model)
+    }
 
-        // WHEN
+    #Preview("no text") {
+        let model = TimeDividerModel()
+        TimeDividerContentView(model: model)
+    }
 
-        sut.configure(
-            timestamp: Date(timeIntervalSinceReferenceDate: 0),
-            isFirstMessageOfTheDay: true,
-            showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+    #Preview("no text but unread indicator") {
+        let model = TimeDividerModel(
+            text: "",
+            isUnreadIndicatorVisible: true
+        )
+        TimeDividerContentView(model: model)
+    }
+
+*/
+    func testWithUnreadIndicator() {
+        // When
+        sut.model = TimeDividerModel(
+            text: "Friday Lorem Ipsum Dolor",
+            isUnreadIndicatorVisible: true
         )
 
-        // THEN
+        // Then
         snapshotHelper.verify(matching: sut)
     }
     /*
