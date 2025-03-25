@@ -170,7 +170,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func isCollapsedInitialValue() -> Bool {
 
         // cases when isCollapsed should be true by default
-        if Self.isMessageWithCollapsedByDefault(message) {
+        if isMessageWithCollapsedByDefault() {
             return true
         }
 
@@ -264,7 +264,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func needToAddCollapsedCell() -> Bool {
-        !Self.isMessageWithCollapsedByDefault(message) && isCollapsed
+        !isMessageWithCollapsedByDefault() && isCollapsed
     }
 
     private func addCollapsedCell(_ showEphemeralTimer: Bool) -> [AnyConversationMessageCellDescription] {
@@ -396,8 +396,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         var cellDescriptions = [AnyConversationMessageCellDescription]()
 
-        let isBurstTimestampVisible = Self.isBurstTimestampVisible(in: context)
-        let isSenderVisible = Self.shouldShowSenderDetails(for: message, in: context, isCurrentlyCollapsed: isCollapsed)
+        let isBurstTimestampVisible = isBurstTimestampVisible(in: context)
+        let isSenderVisible = shouldShowSenderDetails(in: context)
 
         if isBurstTimestampVisible {
             let description = BurstTimestampSenderMessageCellDescription(
@@ -495,7 +495,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         updateDelegates()
     }
 
-    static func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
+    func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
         context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
     }
 
@@ -505,7 +505,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // for all messages that support collapsing and is collapsed
-        if !Self.isMessageWithCollapsedByDefault(message) && isCollapsed {
+        if !isMessageWithCollapsedByDefault() && isCollapsed {
             // if message failed, always show footer with error message and retry button
             if message.deliveryState == .failedToSend {
                 return true
@@ -517,22 +517,16 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         return message.deliveryState == .failedToSend || message.isSentBySelfUser
     }
 
-    private static func isMessageWithCollapsedByDefault(
-        _ message: ConversationMessage
-    ) -> Bool {
+    private func isMessageWithCollapsedByDefault() -> Bool {
         message.isSystem || !message.failedToSendUsers.isEmpty
     }
 
-    static func shouldShowSenderDetails(
-        for message: ConversationMessage,
-        in context: ConversationMessageContext,
-        isCurrentlyCollapsed: Bool
-    ) -> Bool {
+    func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
         guard message.senderUser != nil else {
             return false
         }
 
-        if !isMessageWithCollapsedByDefault(message) && isCurrentlyCollapsed {
+        if !isMessageWithCollapsedByDefault() && isCollapsed {
             return false
         }
 
