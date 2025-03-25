@@ -214,7 +214,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private func handleCollapseExpand() {
         isCollapsed = !isCollapsed
+        if let previousMessage = context.previousSectionController?.message {
+            sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: previousMessage)
+        }
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
+        // TODO: we would need to have a reference to the next message's section controller
+//        if let nextMessage = context.nextSectionController?.message {
+//            sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: nextMessage)
+//        }
     }
 
     func collapse() {
@@ -407,8 +414,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         let collapse: Bool
         if !isSenderVisible,
            let previousSectionController = context.previousSectionController,
-           let current = cellDescriptions.last?.instance,
-           let previous = previousSectionController.cellDescriptions.first?.instance {
+           let current = cellDescriptions.last?.instance {
+           // let previous = previousSectionController.cellDescriptions.first?.instance
 
             collapse = if current is ConversationTextMessageCellDescription ||
                 current is ConversationFileMessageCellDescription ||
@@ -432,11 +439,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             collapse = false
         }
 
-        if collapse {
-            cellDescriptions.last?.instance.topMargin = collapse ? -6 : 0
-            context.previousSectionController?.cellDescriptions.first?.instance.bottomMargin = collapse ? -6 : 0
-        }
-
         if isToolboxVisible(in: context) {
             let description = ConversationMessageToolboxCellDescription(message: message)
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
@@ -457,6 +459,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         self.cellDescriptions = Self.combineByStacking(cellDescriptions)
+
+        self.cellDescriptions.last?.instance.topMargin = collapse ? -6 : 0
+        context.previousSectionController?.cellDescriptions.first?.instance.bottomMargin = collapse ? -6 : 0
     }
 
     private static func combineByStacking(

@@ -545,6 +545,12 @@ extension ConversationTableViewDataSource {
         return true
     }
 
+    func messageAfterMessage(at index: Int) -> (ZMConversationMessage & SwiftConversationMessage)? {
+        let nextIndex = index - 1
+        guard messages.indices.contains(nextIndex) else { return nil }
+        return messages[nextIndex]
+    }
+
     func context(
         for message: ZMConversationMessage,
         firstUnreadMessage: ZMConversationMessage?,
@@ -555,6 +561,7 @@ extension ConversationTableViewDataSource {
 
         let index = indexOfMessage(message)
         let previousMessage = messageBeforeMessage(at: index)
+        let nextMessage = messageAfterMessage(at: index)
 
         if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
             isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
