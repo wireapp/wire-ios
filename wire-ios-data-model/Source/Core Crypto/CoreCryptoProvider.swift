@@ -88,7 +88,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 ciphersuites: [UInt16(defaultCiphersuite.rawValue)],
                 nbKeyPackage: nil
             )
-            try await generateClientPublicKeys(with: coreCrypto, credentialType: .basic)
+            try await self.generateClientPublicKeys(with: coreCrypto, credentialType: .basic)
         }
     }
 
@@ -103,7 +103,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 certificateChain: certificateChain,
                 nbKeyPackage: nil
             )
-            try await generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
+            try await self.generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
     }
@@ -254,7 +254,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     private func generateClientPublicKeys(
-        with coreCrypto: CoreCryptoProtocol,
+        with coreCrypto: CoreCryptoContextProtocol,
         credentialType: MlsCredentialType
     ) async throws {
         WireLogger.mls.info("generating public key")

@@ -94,60 +94,62 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             throw Error.invalidIdentity
         }
 
-        // Get the rotate bundle from core crypto
-        let rotateBundle = try await coreCrypto.perform {
-            try await $0.e2eiRotateAll(
-                enrollment: enrollment,
-                certificateChain: certificateChain,
-                newKeyPackagesCount: newKeyPackageCount
-            )
-        }
-
-        guard !rotateBundle.commits.isEmpty else {
-            // TODO: [WPB-6281] [jacob] remove this guard when implementing
-            return
-        }
-
-        // Replace the key packages with the ones including the certificate
-        try await replaceKeyPackages(rotateBundle: rotateBundle)
-
-        // Send migration commits after key packages rotations
-        for (groupID, commit) in rotateBundle.commits {
-            do {
-                try await migrateConversation(with: groupID, commit: commit)
-            } catch {
-                WireLogger.e2ei.warn("failed to rotate keys for group: \(String(describing: error))")
-            }
-        }
-
-        // Publish new certificate revocation lists (CRLs) distribution points
-        if let newDistributionPoints = CRLsDistributionPoints(from: rotateBundle.crlNewDistributionPoints) {
-            onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
-        }
+        // TODO: jacob update iterate over all conversation with e2eiRotate
+//        // Get the rotate bundle from core crypto
+//        let rotateBundle = try await coreCrypto.perform {
+//            try await $0.e2eiRotateAll(
+//                enrollment: enrollment,
+//                certificateChain: certificateChain,
+//                newKeyPackagesCount: newKeyPackageCount
+//            )
+//        }
+//
+//        guard !rotateBundle.commits.isEmpty else {
+//            // TODO: [WPB-6281] [jacob] remove this guard when implementing
+//            return
+//        }
+//
+//        // Replace the key packages with the ones including the certificate
+//        try await replaceKeyPackages(rotateBundle: rotateBundle)
+//
+//        // Send migration commits after key packages rotations
+//        for (groupID, commit) in rotateBundle.commits {
+//            do {
+//                try await migrateConversation(with: groupID, commit: commit)
+//            } catch {
+//                WireLogger.e2ei.warn("failed to rotate keys for group: \(String(describing: error))")
+//            }
+//        }
+//
+//        // Publish new certificate revocation lists (CRLs) distribution points
+//        if let newDistributionPoints = CRLsDistributionPoints(from: rotateBundle.crlNewDistributionPoints) {
+//            onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+//        }
     }
 
     // MARK: - Helpers
 
-    private func replaceKeyPackages(rotateBundle: RotateBundle) async throws {
-
-        guard let clientID = await context.perform({ [self] in
-            ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
-        }) else {
-            throw Error.noSelfClient
-        }
-
-        let newKeyPackages = rotateBundle.newKeyPackages.map { $0.base64String() }
-        let mlsConfig = await featureRepository.fetchMLS().config
-        guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
-            throw Error.invalidCiphersuite
-        }
-        var action = ReplaceSelfMLSKeyPackagesAction(
-            clientID: clientID,
-            keyPackages: newKeyPackages,
-            ciphersuite: ciphersuite
-        )
-        try await action.perform(in: context.notificationContext)
-    }
+    // TODO: jacob update iterate over all conversation with e2eiRotate
+//    private func replaceKeyPackages(rotateBundle: RotateBundle) async throws {
+//
+//        guard let clientID = await context.perform({ [self] in
+//            ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
+//        }) else {
+//            throw Error.noSelfClient
+//        }
+//
+//        let newKeyPackages = rotateBundle.newKeyPackages.map { $0.base64String() }
+//        let mlsConfig = await featureRepository.fetchMLS().config
+//        guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
+//            throw Error.invalidCiphersuite
+//        }
+//        var action = ReplaceSelfMLSKeyPackagesAction(
+//            clientID: clientID,
+//            keyPackages: newKeyPackages,
+//            ciphersuite: ciphersuite
+//        )
+//        try await action.perform(in: context.notificationContext)
+//    }
 
     private func migrateConversation(with groupID: String, commit: CommitBundle) async throws {
         guard let groupData = groupID.zmHexDecodedData() else {

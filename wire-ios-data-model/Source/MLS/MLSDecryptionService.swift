@@ -202,6 +202,9 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             // Message arrive in future epoch, it has been buffered and will be consumed later.
             case .BufferedFutureMessage: return []
+            
+            // Commit arrive in future epoch, it has been buffered and will be consumed later.
+            case .BufferedCommit: return []
 
             // Received already sent or received message, can safely be ignored.
             case .DuplicateMessage: return []
@@ -224,7 +227,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             // commit has been buffered, and will be automatically unbuffered when possible.
             case .Other(coreCryptoCommitForMissingProposalError): return []
 
-            case .Other, .ConversationAlreadyExists, .MessageEpochTooOld, .OrphanWelcome:
+            case .Other, .ConversationAlreadyExists, .MessageEpochTooOld, .OrphanWelcome, .MessageRejected:
+                throw MLSMessageDecryptionError.failedToDecryptMessage
+            
+            @unknown default:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
         } catch MLSActionExecutor.Failure.bufferedDecryptedMessage {

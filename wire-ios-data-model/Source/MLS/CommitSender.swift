@@ -204,9 +204,10 @@ public actor CommitSender: CommitSending {
             // No need to handle buffered messages here. We will not run into a scenario where we need to handle
             // buffered decrypted messages, because sending a commit and decrypting a message are non-rentrant
             // operations and therefore we will never attempt to decrypt a message while sending a commit.
-            _ = try await coreCrypto.perform {
-                try await $0.commitAccepted(conversationId: groupID.data)
-            }
+            // TODO: jacob commit sending will be handled by the mls transport
+//            _ = try await coreCrypto.perform {
+//                try await $0.commitAccepted(conversationId: groupID.data)
+//            }
             onEpochChangedSubject.send(groupID)
         } catch {
             WireLogger.mls.error(
@@ -223,9 +224,10 @@ public actor CommitSender: CommitSending {
                 "discarding pending commit for group",
                 attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
             )
-            try await coreCrypto.perform {
-                try await $0.clearPendingCommit(conversationId: groupID.data)
-            }
+            // TODO: jacob commit sending will be handled by the mls transport
+//            try await coreCrypto.perform {
+//                try await $0.clearPendingCommit(conversationId: groupID.data)
+//            }
         } catch {
             WireLogger.mls.error(
                 "failed to discard pending commit for group (failedToClearCommit). Error: \(error.localizedDescription)",
@@ -241,11 +243,12 @@ public actor CommitSender: CommitSending {
             // No need to handle buffered messages here. We will not run into a scenario where we need to handle
             // buffered decrypted messages, because sending a commit and decrypting a message are non-rentrant
             // operations and therefore we will never attempt to decrypt a message while sending a commit.
-            _ = try await coreCrypto.perform {
-                try await $0.mergePendingGroupFromExternalCommit(
-                    conversationId: groupID.data
-                )
-            }
+            // TODO: jacob commit sending will be handled by the mls transport
+//            _ = try await coreCrypto.perform {
+//                try await $0.mergePendingGroupFromExternalCommit(
+//                    conversationId: groupID.data
+//                )
+//            }
         } catch {
             WireLogger.mls.error(
                 "failed to merge pending group. Error: \(error.localizedDescription)",
@@ -258,9 +261,10 @@ public actor CommitSender: CommitSending {
     private func clearPendingGroup(in groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("clearing pending group", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
-            try await coreCrypto.perform {
-                try await $0.clearPendingGroupFromExternalCommit(conversationId: groupID.data)
-            }
+            // TODO: jacob commit sending will be handled by the mls transport
+//            try await coreCrypto.perform {
+//                try await $0.clearPendingGroupFromExternalCommit(conversationId: groupID.data)
+//            }
         } catch {
             WireLogger.mls.error(
                 "failed to clear pending group. Error: \(error.localizedDescription)",

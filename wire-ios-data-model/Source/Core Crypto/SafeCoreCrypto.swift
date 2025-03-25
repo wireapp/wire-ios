@@ -23,8 +23,8 @@ import WireLogging
 // MARK: - Protocols
 
 public protocol SafeCoreCryptoProtocol {
-    func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
-    func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
+    func perform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T
+    func unsafePerform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T
     func tearDown() throws
 }
 
@@ -39,12 +39,12 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     private let databasePath: String
 
     public convenience init(path: String, key: String) async throws {
-        let coreCrypto = try await coreCryptoDeferredInit(
-            path: path,
-            key: key
+        
+        let coreCrypto = try await CoreCrypto(
+            keystorePath: path,
+            keystoreSecret: Data(key.utf8)
         )
 
-        try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
         setLogger(logger: CoreCryptoLoggerProxy(), level: .info)
         self.init(coreCrypto: coreCrypto, databasePath: path)
     }
@@ -60,24 +60,27 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         _ = try FileManager.default.removeItem(atPath: databasePath)
     }
 
-    public func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
+    public func perform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T {
         safeContext.acquireDirectoryLock()
         await restoreFromDisk()
-
+        
         defer {
             safeContext.releaseDirectoryLock()
         }
-
-        return try await block(coreCrypto)
+        
+        return try await coreCrypto.transaction(block)
     }
 
-    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
-        try await block(coreCrypto)
+    public func unsafePerform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T {
+        try await coreCrypto.transaction(block)
     }
 
     private func restoreFromDisk() async {
         do {
-            try await coreCrypto.restoreFromDisk()
+
+            try await coreCrypto.transaction { context in
+                try await context.proteusReloadSessions()
+            }
         } catch {
             WireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)", attributes: .safePublic)
         }

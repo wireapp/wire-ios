@@ -604,6 +604,7 @@ public final class MLSService: MLSServiceInterface {
         encryptionService: MLSEncryptionServiceInterface? = nil,
         decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
+        // TODO: jacob remove since it's no longer used
         conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
@@ -811,9 +812,10 @@ public final class MLSService: MLSServiceInterface {
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
-            let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
+            try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
-            await conversationEventProcessor.processConversationEvents(events)
+            // TODO: jacob events will returned by the MlsTransportsAPI
+            // await conversationEventProcessor.processConversationEvents(events)
         } catch {
             WireLogger.mls
                 .warn(
@@ -939,7 +941,7 @@ public final class MLSService: MLSServiceInterface {
             }
             let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
 
-            let events = if keyPackages.isEmpty {
+            if keyPackages.isEmpty {
                 // CC does not accept empty keypackages in addMembers, but
                 // when creating a group we still need to send a commit to backend
                 // to inform we are in the group
@@ -947,7 +949,8 @@ public final class MLSService: MLSServiceInterface {
             } else {
                 try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             }
-            await conversationEventProcessor.processConversationEvents(events)
+            // TODO: jacob events will returned by the MlsTransportsAPI
+            // await conversationEventProcessor.processConversationEvents(events)
 
         } catch {
             logger
@@ -1018,8 +1021,9 @@ public final class MLSService: MLSServiceInterface {
             logger.info("removing members from group (\(groupID.safeForLoggingDescription)), members: \(clientIds)")
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
             let clientIds = clientIds.compactMap(\.rawValue.utf8Data)
-            let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
-            await conversationEventProcessor.processConversationEvents(events)
+            try await mlsActionExecutor.removeClients(clientIds, from: groupID)
+            // TODO: jacob events will returned by the MlsTransportsAPI
+            // await conversationEventProcessor.processConversationEvents(events)
         } catch {
             logger
                 .warn(
@@ -1500,7 +1504,7 @@ public final class MLSService: MLSServiceInterface {
 
             var outOfSyncConversations = [ZMConversation]()
             for conversation in allMLSConversations {
-                guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context)
+                guard await self.isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context)
                 else { continue }
                 outOfSyncConversations.append(conversation)
             }
@@ -1520,7 +1524,7 @@ public final class MLSService: MLSServiceInterface {
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
         subgroup: MLSSubgroup? = nil,
-        coreCrypto: CoreCryptoProtocol,
+        coreCrypto: CoreCryptoContextProtocol,
         context: NSManagedObjectContext
     ) async -> Bool {
         var groupID: MLSGroupID?
@@ -1557,7 +1561,7 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext
     ) async throws -> Bool {
         try await coreCrypto.perform {
-            await isConversationOutOfSync(
+            await self.isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
                 coreCrypto: $0,
@@ -1631,12 +1635,12 @@ public final class MLSService: MLSServiceInterface {
             let updateEvents: [ZMUpdateEvent]
 
             if let subgroupID {
-                updateEvents = try await mlsActionExecutor.joinGroup(
+                try await mlsActionExecutor.joinGroup(
                     subgroupID,
                     groupInfo: groupInfo
                 )
             } else {
-                updateEvents = try await mlsActionExecutor.joinGroup(
+                try await mlsActionExecutor.joinGroup(
                     parentID,
                     groupInfo: groupInfo
                 )
@@ -1646,7 +1650,8 @@ public final class MLSService: MLSServiceInterface {
                 }
             }
 
-            await conversationEventProcessor.processConversationEvents(updateEvents)
+            // TODO: jacob events will returned by the MlsTransportsAPI
+            //await conversationEventProcessor.processConversationEvents(updateEvents)
             logger.info("success: joined group with external commit (\(logInfo))")
 
         } catch {
@@ -1865,8 +1870,9 @@ public final class MLSService: MLSServiceInterface {
     private func internalCommitPendingProposals(in groupID: MLSGroupID) async throws {
         do {
             logger.info("committing pending proposals in: \(groupID.safeForLoggingDescription)")
-            let events = try await mlsActionExecutor.commitPendingProposals(in: groupID)
-            await conversationEventProcessor.processConversationEvents(events)
+            try await mlsActionExecutor.commitPendingProposals(in: groupID)
+            // TODO: jacob events will returned by the MlsTransportsAPI
+            // await conversationEventProcessor.processConversationEvents(events)
             clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
         } catch CommitError.noPendingProposals {
