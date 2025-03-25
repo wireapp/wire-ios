@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireConversationUI
 
-final class ConversationCellSnapshotTests: XCTestCase {
+final class ConversationCellTimeDividerSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
