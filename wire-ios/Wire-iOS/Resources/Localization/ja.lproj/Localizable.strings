@@ -642,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "削除…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "いいね！";
 "content.message.unlike" = "いいね！を取消す";
 "content.message.go_to_conversation" = "開く";
@@ -652,6 +658,7 @@
 "content.message.download" = "ダウンロード";
 "content.message.details" = "詳細";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "返信";
@@ -1312,6 +1319,9 @@
 
 "self.settings.privacy_security.disable_link_previews.title" = "リンクプレビューを作成";
 "self.settings.privacy_security.disable_link_previews.footer" = "他ユーザーからのリンクがプレビュー表示されれます";
+
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "デバイス";
 

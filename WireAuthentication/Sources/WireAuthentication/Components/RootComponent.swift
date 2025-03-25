@@ -31,39 +31,39 @@ class RootComponent: BootstrapComponent {
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
-    public let accountsURL: URL
     public let howToChangeEmailURL: URL
     public let howToDeleteAccountURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let userDefaults: UserDefaults
     public let appStoreURL: URL
+    public let existsAnotherAccount: Bool
 
     init(
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
-        accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         userDefaults: UserDefaults,
-        appStoreURL: URL
+        appStoreURL: URL,
+        existsAnotherAccount: Bool
     ) {
         self.environmentType = environmentType
         self.backendConfig = backendConfig
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
-        self.accountsURL = accountsURL
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.userDefaults = userDefaults
         self.appStoreURL = appStoreURL
+        self.existsAnotherAccount = existsAnotherAccount
     }
 
     // MARK: - View
@@ -76,7 +76,9 @@ class RootComponent: BootstrapComponent {
     }
 
     @MainActor private var viewModel: RootViewModel {
-        shared { RootViewModel() }
+        shared {
+            RootViewModel(bridge: bridge)
+        }
     }
 
     @MainActor public var bridge: WireAuthenticationBridge {

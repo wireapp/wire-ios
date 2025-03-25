@@ -41,12 +41,12 @@ extension AnyConversationMessageCellDescription: Differentiable {
 }
 
 extension ZMConversationMessage {
+
     var isSentFromThisDevice: Bool {
-        guard let sender = senderUser else {
-            return false
-        }
+        guard let sender = senderUser else { return false }
         return sender.isSelfUser && deliveryState == .pending
     }
+
 }
 
 final class ConversationTableViewDataSource: NSObject {
@@ -80,6 +80,8 @@ final class ConversationTableViewDataSource: NSObject {
 
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
+
+    var contentWidth: CGFloat = UIScreen.main.bounds.width
 
     var searchQueries: [String] = [] {
         didSet {
@@ -185,7 +187,10 @@ final class ConversationTableViewDataSource: NSObject {
         currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
     }
 
-    func actionController(for message: ZMConversationMessage) -> ConversationMessageActionController {
+    func actionController(
+        for message: ZMConversationMessage,
+        sectionController: ConversationMessageSectionController
+    ) -> ConversationMessageActionController {
         if let cachedEntry = actionControllers[message.objectIdentifier] {
             return cachedEntry
         }
@@ -194,7 +199,9 @@ final class ConversationTableViewDataSource: NSObject {
             responder: messageActionResponder,
             message: message,
             context: .content,
-            view: tableView
+            view: tableView,
+            isCollapsed: sectionController.isCollapsed,
+            selfUserId: userSession.selfUser.remoteIdentifier
         )
 
         actionControllers[message.objectIdentifier] = actionController
@@ -204,6 +211,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers[message.objectIdentifier] {
+            cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
 
@@ -218,11 +226,12 @@ final class ConversationTableViewDataSource: NSObject {
             context: context,
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
-            useInvertedIndices: true
+            useInvertedIndices: true,
+            contentWidth: contentWidth
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
-        sectionController.actionController = actionController(for: message)
+        sectionController.actionController = actionController(for: message, sectionController: sectionController)
 
         sectionControllers[message.objectIdentifier] = sectionController
 
@@ -456,6 +465,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         sectionController.highlight(in: tableView, sectionIndex: section)
     }
 
+    func collapse(message: ZMConversationMessage) {
+        guard let section = sectionControllers[message.objectIdentifier] else {
+            return
+        }
+        section.collapse()
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard currentSections.indices.contains(section) else { return 0 }
 
@@ -482,16 +498,24 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         }
 
         let section = currentSections[indexPath.section]
-
         guard section.elements.indices.contains(indexPath.row) else {
             fatal("section.elements has \(section.elements.count) elements, but try to access #\(indexPath)")
         }
 
         let cellDescription = section.elements[indexPath.row]
+        if let model = cellDescription.conversationCellModel {
 
-        registerCellIfNeeded(with: cellDescription, in: tableView)
+            model.registerIfNeeded(in: tableView)
+            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
+            model.configureCell(cell)
+            return cell
 
-        return cellDescription.makeCell(for: tableView, at: indexPath)
+        } else {
+
+            registerCellIfNeeded(with: cellDescription, in: tableView)
+            return cellDescription.makeCell(for: tableView, at: indexPath)
+
+        }
     }
 }
 

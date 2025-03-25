@@ -166,7 +166,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         snapshotHelper.verify(
             matching: sut,
-            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height)
+            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: 1400)
         )
     }
 

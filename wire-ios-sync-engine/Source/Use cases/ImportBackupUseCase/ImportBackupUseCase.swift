@@ -20,6 +20,7 @@ import Foundation
 import WireCrypto
 import WireDataModel
 import WireDomainPkg
+import WireFoundation
 import WireLogging
 import WireSystem
 
@@ -164,12 +165,16 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
             let outputStream = OutputStream(url: decryptedURL, append: false)
         else { throw ImportBackupError.failedToCreateStreamForDecryption }
 
-        try streamDecryptor.decrypt(
-            input: inputStream,
-            output: outputStream,
-            accountID: accountID,
-            password: password
-        )
+        do {
+            try streamDecryptor.decrypt(
+                input: inputStream,
+                output: outputStream,
+                accountID: accountID,
+                password: password
+            )
+        } catch WireCrypto.ChaCha20Poly1305.StreamEncryption.EncryptionError.mismatchingUUID {
+            throw ImportBackupError.invalidAccountID
+        }
 
         try fileArchiver.unzipFile(at: decryptedURL, to: unzippedURL)
         return unzippedURL
