@@ -60,8 +60,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             router: dependency.router,
             factory: self,
             bridge: dependency.bridge,
-            environmentType: networkStack.environmentType,
-            backendConfig: networkStack.backendConfig,
+            backendInfo: networkStack.backendInfo,
             canExitFlow: dependency.existsAnotherAccount
         )
     }
@@ -72,12 +71,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) -> LoginViaEmailComponent {
         let networkStack = NetworkStack(
-            environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendInfo: backendInfo,
             minTLSVersion: dependency.minTLSVersion,
             preferredAPIVersion: dependency.preferredAPIVersion
         )
@@ -98,8 +95,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         let networkStack: NetworkStack
         if let backendInfo {
             networkStack = NetworkStack(
-                environmentType: backendInfo.environmentType,
-                backendConfig: backendInfo.backendConfig,
+                backendInfo: backendInfo,
                 minTLSVersion: dependency.minTLSVersion,
                 preferredAPIVersion: dependency.preferredAPIVersion
             )
@@ -144,7 +140,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         return SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
-            baseURL: networkStack.backendConfig.endpoints.backendURL,
+            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
         )
@@ -155,19 +151,17 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     }
 
     func fetchSSOURLUseCase(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) async throws -> any FetchSSOURLUseCaseProtocol {
         let networkStack = NetworkStack(
-            environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendInfo: backendInfo,
             minTLSVersion: dependency.minTLSVersion,
             preferredAPIVersion: dependency.preferredAPIVersion
         )
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         let linkGenerator = SSOLinkGenerator(
             authenticationAPI: authenticationAPI,
-            baseURL: backendConfig.endpoints.backendURL,
+            baseURL: backendInfo.backendConfig.endpoints.backendURL,
             callbackScheme: dependency.ssoCallbackURLScheme,
             defaults: dependency.userDefaults
         )
@@ -186,15 +180,13 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) -> LoginViaEmailView {
         loginViaEmailComponent(
             email: email,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            environmentType: environmentType,
-            backendConfig: backendConfig
+            backendInfo: backendInfo
         ).view
     }
 

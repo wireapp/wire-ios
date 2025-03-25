@@ -28,8 +28,7 @@ package protocol LoginViaEmailBuilder {
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) -> LoginViaEmailView
 
 }
@@ -120,7 +119,7 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var welcomeMessage: some View {
         VStack(spacing: 14) {
-            OnPremHeaderView(backendConfig: viewModel.backendConfig)
+            OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
             Text(L10n.OnPremUserLogin.message)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
@@ -264,8 +263,7 @@ package struct LoginViaEmailView: View {
                 email: "foo@bar.com",
                 canCreateAccount: false,
                 didDetectDomainConflict: false,
-                environmentType: MockDependencies().environmentType,
-                backendConfig: MockDependencies()._backendConfig
+                backendInfo: MockDependencies().backendInfo
             )
         }
 }

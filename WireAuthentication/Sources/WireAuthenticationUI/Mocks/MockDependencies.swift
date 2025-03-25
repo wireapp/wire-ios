@@ -27,6 +27,13 @@ final class MockDependencies {
         RootViewModel(
             factory: self,
             bridge: WireAuthenticationBridge(),
+            backendInfo: backendInfo
+
+        )
+    }
+
+    var backendInfo: BackendInfo {
+        BackendInfo(
             environmentType: environmentType,
             backendConfig: backendConfig
         )
@@ -89,8 +96,7 @@ final class MockDependencies {
             router: rootViewModel,
             factory: self,
             bridge: WireAuthenticationBridge(),
-            environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendInfo: backendInfo,
             emailOrSSOCode: emailOrSSOCode,
             canExitFlow: canExitFlow,
             isLoading: isLoading
@@ -112,15 +118,13 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             factory: self,
             bridge: WireAuthenticationBridge(),
-            environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendInfo: backendInfo,
             canExitFlow: false
         )
     }
 
     func determineAuthMethodView(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) -> DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
@@ -159,15 +163,13 @@ extension MockDependencies: LoginViaEmailBuilder {
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
             factory: self,
             email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendInfo: backendInfo,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: {}
@@ -178,16 +180,14 @@ extension MockDependencies: LoginViaEmailBuilder {
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: loginViewModel(
                 email: email,
                 canCreateAccount: canCreateAccount,
                 didDetectDomainConflict: didDetectDomainConflict,
-                environmentType: environmentType,
-                backendConfig: backendConfig
+                backendInfo: backendInfo
             ),
             factory: self
         )

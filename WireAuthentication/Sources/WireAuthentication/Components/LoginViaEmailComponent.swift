@@ -29,8 +29,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
-    var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
+    var backendInfo: BackendInfo { get }
     var minTLSVersion: TLSVersion { get }
 
 }
@@ -72,8 +71,7 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             router: dependency.router,
             factory: self,
             email: email,
-            environmentType: networkStack.environmentType,
-            backendConfig: networkStack.backendConfig,
+            backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: { [dependency, networkStack, email] in

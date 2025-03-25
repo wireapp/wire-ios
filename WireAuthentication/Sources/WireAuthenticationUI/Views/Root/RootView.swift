@@ -38,15 +38,9 @@ package struct RootView: View {
         BackgroundView()
             .sheet(item: $viewModel.modalDestination) { sheet in
                 switch sheet {
-                case let .authFlow(
-                    environmentType,
-                    backendConfig
-                ):
+                case let .authFlow(backedInfo):
                     NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView(
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        )
+                        factory.determineAuthMethodView(backendInfo: backedInfo)
                     }
                 }
             }
@@ -68,10 +62,7 @@ package struct RootView: View {
     package enum ModalDestination: Identifiable, Hashable {
         public var id: Self { self }
 
-        case authFlow(
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig
-        )
+        case authFlow(backendInfo: BackendInfo)
     }
 
 }

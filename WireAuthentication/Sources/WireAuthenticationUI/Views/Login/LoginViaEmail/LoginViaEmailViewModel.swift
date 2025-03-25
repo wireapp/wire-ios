@@ -34,8 +34,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     private let router: any Router
     private let factory: any Factory
-    private let environmentType: BackendEnvironmentType
-    package let backendConfig: BackendConfig
+    let backendInfo: BackendInfo
 
     private let onCreateAccount: () -> Void
 
@@ -49,8 +48,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
+        backendInfo: BackendInfo,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         onCreateAccount: @escaping () -> Void
@@ -58,23 +56,22 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.router = router
         self.factory = factory
         self.email = email
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
+        self.backendInfo = backendInfo
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.onCreateAccount = onCreateAccount
     }
 
     private var forgotPasswordURL: URL {
-        backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
+        backendInfo.backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
     }
 
     var hasProxySupport: Bool {
-        backendConfig.proxySettings != nil
+        backendInfo.backendConfig.proxySettings != nil
     }
 
     var proxyServer: String {
-        backendConfig.endpoints.backendURL.absoluteString
+        backendInfo.backendConfig.endpoints.backendURL.absoluteString
     }
 
     func isValidPassword(_ password: String) -> Bool {
@@ -87,7 +84,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var isOnPremiseBackend: Bool {
-        environmentType != .production
+        backendInfo.environmentType != .production
     }
 
     func submitPassword(_ password: String) async {

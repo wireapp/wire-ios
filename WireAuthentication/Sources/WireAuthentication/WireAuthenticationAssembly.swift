@@ -42,8 +42,7 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
+        backendInfo: BackendInfo,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?,
         accountsURL: URL,
@@ -56,8 +55,7 @@ public struct WireAuthenticationAssembly {
         existsAnotherAccount: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let rootComponent = RootComponent(
-            environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendInfo: backendInfo,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             howToChangeEmailURL: howToChangeEmailURL,

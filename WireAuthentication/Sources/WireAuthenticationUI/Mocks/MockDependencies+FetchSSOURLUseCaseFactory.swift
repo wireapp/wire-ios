@@ -23,8 +23,7 @@ extension MockDependencies: FetchSSOURLUseCaseFactory {
 
     nonisolated
     func fetchSSOURLUseCase(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) async throws -> any FetchSSOURLUseCaseProtocol {
         MockFetchSSOURLUseCase()
     }

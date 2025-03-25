@@ -137,11 +137,8 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var preferredAPIVersion: APIVersion? {
         return rootComponent.preferredAPIVersion
     }
-    var environmentType: BackendEnvironmentType {
-        return rootComponent.environmentType
-    }
-    var backendConfig: BackendConfig {
-        return rootComponent.backendConfig
+    var backendInfo: BackendInfo {
+        return rootComponent.backendInfo
     }
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
@@ -185,8 +182,7 @@ extension LoginViaSSOComponent: NeedleFoundation.Registration {
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["environmentType-BackendEnvironmentType"] = { [unowned self] in self.environmentType as Any }
-        localTable["backendConfig-BackendConfig"] = { [unowned self] in self.backendConfig as Any }
+        localTable["backendInfo-BackendInfo"] = { [unowned self] in self.backendInfo as Any }
         localTable["preferredAPIVersion-APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
         localTable["productionVersions-Set<APIVersion>"] = { [unowned self] in self.productionVersions as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
@@ -213,8 +209,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\LoginViaEmailComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
-        keyPathToName[\LoginViaEmailComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"
-        keyPathToName[\LoginViaEmailComponentDependency.backendConfig] = "backendConfig-BackendConfig"
+        keyPathToName[\LoginViaEmailComponentDependency.backendInfo] = "backendInfo-BackendInfo"
         keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         localTable["email-String?"] = { [unowned self] in self.email as Any }
         localTable["didDetectDomainConflict-Bool"] = { [unowned self] in self.didDetectDomainConflict as Any }

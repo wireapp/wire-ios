@@ -44,8 +44,7 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: true,
             didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig
+            backendInfo: MockDependencies().backendInfo
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -65,8 +64,7 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: true,
             didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig
+            backendInfo: MockDependencies().backendInfo
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -87,8 +85,10 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            environmentType: .anta,
-            backendConfig: MockDependencies()._backendConfig
+            backendInfo: BackendInfo(
+                environmentType: .anta,
+                backendConfig: MockDependencies()._backendConfig
+            )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -108,8 +108,10 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            environmentType: .anta,
-            backendConfig: MockDependencies()._backendConfig
+            backendInfo: BackendInfo(
+                environmentType: .anta,
+                backendConfig: MockDependencies()._backendConfig
+            )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -145,8 +147,10 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: backendConfig
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: backendConfig
+            )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -180,8 +184,10 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: backendConfig
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: backendConfig
+            )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

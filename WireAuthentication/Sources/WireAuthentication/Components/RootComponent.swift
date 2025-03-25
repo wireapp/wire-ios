@@ -26,8 +26,7 @@ internal import WireAuthenticationLogic
 
 class RootComponent: BootstrapComponent {
 
-    public let environmentType: BackendEnvironmentType
-    public let backendConfig: BackendConfig
+    public let backendInfo: BackendInfo
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
@@ -40,8 +39,7 @@ class RootComponent: BootstrapComponent {
     public let existsAnotherAccount: Bool
 
     init(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
+        backendInfo: BackendInfo,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         howToChangeEmailURL: URL,
@@ -52,8 +50,7 @@ class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         existsAnotherAccount: Bool
     ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
+        self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
@@ -80,8 +77,7 @@ class RootComponent: BootstrapComponent {
             RootViewModel(
                 factory: self,
                 bridge: bridge,
-                environmentType: environmentType,
-                backendConfig: backendConfig
+                backendInfo: backendInfo
             )
         }
     }
@@ -100,13 +96,9 @@ class RootComponent: BootstrapComponent {
 
     // MARK: - Children
 
-    func determineAuthMethodComponent(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> DetermineAuthMethodComponent {
+    func determineAuthMethodComponent(backendInfo: BackendInfo) -> DetermineAuthMethodComponent {
         let networkStack = NetworkStack(
-            environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendInfo: backendInfo,
             minTLSVersion: minTLSVersion,
             preferredAPIVersion: preferredAPIVersion
         )
@@ -130,14 +122,8 @@ extension RootComponent: RootViewModel.Factory {
 extension RootComponent: RootView.Factory {
 
     @MainActor
-    func determineAuthMethodView(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> DetermineAuthMethodView {
-        determineAuthMethodComponent(
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        ).view
+    func determineAuthMethodView(backendInfo: BackendInfo) -> DetermineAuthMethodView {
+        determineAuthMethodComponent(backendInfo: backendInfo).view
     }
 
 }

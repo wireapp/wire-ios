@@ -29,8 +29,7 @@ package final class NetworkStack {
 
     }
 
-    package let environmentType: BackendEnvironmentType
-    package let backendConfig: BackendConfig
+    package let backendInfo: BackendInfo
     package let minTLSVersion: TLSVersion
     package let preferredAPIVersion: APIVersion?
 
@@ -39,19 +38,17 @@ package final class NetworkStack {
     private var proxyCredentials: (username: String, password: String)?
 
     package init(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
+        backendInfo: BackendInfo,
         minTLSVersion: TLSVersion,
         preferredAPIVersion: APIVersion?
     ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
+        self.backendInfo = backendInfo
         self.minTLSVersion = minTLSVersion
         self.preferredAPIVersion = preferredAPIVersion
 
         do {
             state = .ready(try NetworkService.make(
-                backendConfig: backendConfig,
+                backendConfig: backendInfo.backendConfig,
                 minTLSVersion: minTLSVersion,
                 proxyCredentials: nil
             ))
@@ -70,7 +67,7 @@ package final class NetworkStack {
     ) throws {
         proxyCredentials = (username, password)
         state = .ready(try NetworkService.make(
-            backendConfig: backendConfig,
+            backendConfig: backendInfo.backendConfig,
             minTLSVersion: minTLSVersion,
             proxyCredentials: (username, password)
         ))
@@ -80,7 +77,7 @@ package final class NetworkStack {
         let backendMetadata = try await resolvedBackendMetadata()
 
         var resolvedProxySettings: ResolvedProxySettings?
-        if let proxySettings = backendConfig.proxySettings {
+        if let proxySettings = backendInfo.backendConfig.proxySettings {
             if proxySettings.needsAuthentication {
                 guard let proxyCredentials else {
                     throw Failure.proxyCredentialsRequired
@@ -101,8 +98,8 @@ package final class NetworkStack {
         }
 
         return WireAuthenticationBackendEnvironment(
-            environmentType: environmentType,
-            config: backendConfig,
+            environmentType: backendInfo.environmentType,
+            config: backendInfo.backendConfig,
             metadata: backendMetadata,
             proxySettings: resolvedProxySettings
         )

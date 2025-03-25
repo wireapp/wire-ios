@@ -33,8 +33,7 @@ public enum FetchSSOURLUseCaseError: Error {
 public protocol FetchSSOURLUseCaseFactory {
 
     func fetchSSOURLUseCase(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) async throws -> any FetchSSOURLUseCaseProtocol
 
 }

@@ -41,8 +41,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         )
         case switchBackendConfirmation(
             email: String?,
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig
+            backendInfo: BackendInfo
         )
     }
 
@@ -50,8 +49,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let factory: any Factory
     private let bridge: WireAuthenticationBridge
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
-    private let environmentType: BackendEnvironmentType
-    package let backendConfig: BackendConfig
+    package let backendInfo: BackendInfo
     private var cancellable: AnyCancellable?
 
     @Published var emailOrSSOCode: String = ""
@@ -65,15 +63,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     var isOnPremiseBackend: Bool {
-        environmentType != .production
+        backendInfo.environmentType != .production
     }
 
     package init(
         router: any Router,
         factory: any Factory,
         bridge: WireAuthenticationBridge,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
+        backendInfo: BackendInfo,
         emailOrSSOCode: String = "",
         canExitFlow: Bool,
         isLoading: Bool = false
@@ -81,8 +78,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.router = router
         self.factory = factory
         self.bridge = bridge
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
+        self.backendInfo = backendInfo
         self.emailOrSSOCode = emailOrSSOCode
         self.canExitFlow = canExitFlow
         self.isLoading = isLoading
@@ -145,16 +141,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.login(
                 email: email,
                 didDetectDomainConflict: didDetectDomainConflict,
-                environmentType: environmentType,
-                backendConfig: backendConfig
+                backendInfo: backendInfo
             ))
 
         case let .loginOrRegisterViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(
                 email: email,
                 didDetectDomainConflict: false,
-                environmentType: environmentType,
-                backendConfig: backendConfig
+                backendInfo: backendInfo
             ))
 
         case let .loginViaSSO(code):
@@ -204,8 +198,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
             modalDestination = .switchBackendConfirmation(
                 email: email,
-                environmentType: .custom(url: backendConfigURL),
-                backendConfig: backendConfig
+                backendInfo: BackendInfo(
+                    environmentType: .custom(url: backendConfigURL),
+                    backendConfig: backendConfig
+                )
             )
         } catch {
             WireLogger.authentication.error("Fetching backend config failed: \(error)")
@@ -215,21 +211,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     func switchBackend(
         email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
+        backendInfo: BackendInfo
     ) async {
         isLoading = true
         defer { isLoading = false }
 
         do {
             let useCase = try await factory.fetchSSOURLUseCase(
-                environmentType: environmentType,
-                backendConfig: backendConfig
-            )
-
-            let backendInfo = BackendInfo(
-                environmentType: environmentType,
-                backendConfig: backendConfig
+                backendInfo: backendInfo
             )
 
             if let ssoURL = try await useCase.invoke() {
@@ -242,16 +231,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     to: DetermineAuthMethodView.Destination.login(
                         email: email,
                         didDetectDomainConflict: false,
-                        environmentType: environmentType,
-                        backendConfig: backendConfig
+                        backendInfo: backendInfo
                     )
                 )
             } else {
                 router.presentSheet(
-                    RootView.ModalDestination.authFlow(
-                        environmentType: environmentType,
-                        backendConfig: backendConfig
-                    )
+                    RootView.ModalDestination.authFlow(backendInfo: backendInfo)
                 )
             }
         } catch FetchSSOURLUseCaseError.proxyCredentialsRequired {
@@ -260,8 +245,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 to: DetermineAuthMethodView.Destination.login(
                     email: email,
                     didDetectDomainConflict: false,
-                    environmentType: environmentType,
-                    backendConfig: backendConfig
+                    backendInfo: backendInfo
                 )
             )
         } catch {
