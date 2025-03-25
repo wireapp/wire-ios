@@ -32,12 +32,6 @@ package protocol VerificationCodeBuilder {
 
 package struct VerificationCodeView: View {
 
-    // MARK: - Constants
-
-    private enum Constants {
-        static let backgroundCornerRadius: CGFloat = 16
-    }
-
     @StateObject private var viewModel: VerificationCodeViewModel
 
     @FocusState private var focusedIndex: Int?
@@ -80,11 +74,6 @@ package struct VerificationCodeView: View {
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
-        .cornerRadius(Constants.backgroundCornerRadius)
-        .overlay(
-            RoundedRectangle(cornerRadius: Constants.backgroundCornerRadius)
-                .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
-        )
         .navigationTitle(L10n.VerificationCode.title)
         .navigationBarTitleDisplayMode(.inline)
         .setPreferredSize(navigationBarHidden: false)
