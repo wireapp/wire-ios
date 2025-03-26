@@ -28,8 +28,7 @@ private extension ConversationMessageContext {
         isFirstUnreadMessage: false,
         isLastMessage: false,
         searchQueries: [],
-        previousMessageIsKnock: false,
-        spacing: 0
+        previousMessageIsKnock: false
     )
 }
 
@@ -185,6 +184,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
+        stackView.spacing = 2
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.backgroundColor = snapshotBackgroundColor ?? (ColorScheme.default.variant == .light ? .white : .black)
 
@@ -215,7 +215,7 @@ private extension ConversationMessageCellDescription {
 
         let leading = view.leadingAnchor.constraint(equalTo: container.leadingAnchor)
         let trailing = view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
-        let top = view.topAnchor.constraint(equalTo: container.topAnchor, constant: topMargin)
+        let top = view.topAnchor.constraint(equalTo: container.topAnchor)
         let bottom = view.bottomAnchor.constraint(equalTo: container.bottomAnchor)
 
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
