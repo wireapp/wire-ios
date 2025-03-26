@@ -42,21 +42,23 @@ package struct RootView: View {
                     NavigationStack(path: $viewModel.path) {
                         factory.determineAuthMethodView(backendInfo: backedInfo)
                     }
+                    // The alert should be shown on the navigation stack, otherwise
+                    // it will dismiss the sheet.
+                    .alert(
+                        item: $viewModel.alert,
+                        title: { Text($0.title) },
+                        message: { Text($0.message) },
+                        actions: { alert in
+                            switch alert {
+                            case .obsoleteClient:
+                                Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                            default:
+                                Button(L10n.Authentication.Error.confirm, action: {})
+                            }
+                        }
+                    )
                 }
             }
-            .alert(
-                item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
-                actions: { alert in
-                    switch alert {
-                    case .obsoleteClient:
-                        Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
-                    default:
-                        Button(L10n.Authentication.Error.confirm, action: {})
-                    }
-                }
-            )
     }
 
     package enum ModalDestination: Identifiable, Hashable {
