@@ -24,7 +24,7 @@ import WireReusableUIComponents
 final class MockDependencies {
 
     private var rootViewModel: RootViewModel {
-        RootViewModel()
+        RootViewModel(bridge: WireAuthenticationBridge())
     }
 
     var environmentType: BackendEnvironmentType {
@@ -75,18 +75,20 @@ final class MockDependencies {
 
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
+        existsAnotherAccount: Bool,
         isLoading: Bool,
         alert: Alert?
     ) -> DetermineAuthMethodView {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil,
             emailOrSSOCode: emailOrSSOCode,
-            isLoading: isLoading,
-            bridge: WireAuthenticationBridge()
+            existsAnotherAccount: existsAnotherAccount,
+            isLoading: isLoading
         )
         viewModel.alert = alert
 
@@ -158,10 +160,11 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: nil,
-            bridge: WireAuthenticationBridge()
+            existsAnotherAccount: false
         )
     }
 
@@ -272,7 +275,6 @@ extension MockDependencies: LoginViaEmailBuilder {
             loginViaEmailUseCase: self,
             backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: false,

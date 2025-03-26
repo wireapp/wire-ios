@@ -642,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Delete…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Tykkää";
 "content.message.unlike" = "Poista tykkäys";
 "content.message.go_to_conversation" = "Näytä";
@@ -652,6 +658,7 @@
 "content.message.download" = "Lataa";
 "content.message.details" = "Lisätietoja";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Vastaa";
@@ -1312,6 +1319,9 @@
 
 "self.settings.privacy_security.disable_link_previews.title" = "Luo linkin esikatselukuvat";
 "self.settings.privacy_security.disable_link_previews.footer" = "Esikatselut saattavat silti näkyä muiden lähettämissä linkeissä.";
+
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Laitteet";
 

@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Cancel";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Can’t switch servers";
+"switch_backend.error.message.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
 
 "verification_code.title" = "You’ve got mail";
 "verification_code.message" = "Enter the verification code we sent to %@.";

@@ -108,6 +108,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var appStoreURL: URL {
         return rootComponent.appStoreURL
     }
+    var existsAnotherAccount: Bool {
+        return rootComponent.existsAnotherAccount
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -213,6 +216,9 @@ private class DetermineAuthMethodOnPremComponentDependencyb4a02ddb77e5a66140fbPr
     var appStoreURL: URL {
         return rootComponent.appStoreURL
     }
+    var existsAnotherAccount: Bool {
+        return rootComponent.existsAnotherAccount
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -225,9 +231,6 @@ private func factorydbdff85f3341dce5e925b3a8f24c1d289f2c0f2e(_ component: Needle
 private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: LoginViaEmailComponentDependency {
     var router: any Router {
         return rootComponent.router
-    }
-    var accountsURL: URL {
-        return rootComponent.accountsURL
     }
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
@@ -261,9 +264,6 @@ private func factory9bda312c16141c932061c770221f242f9204cf85(_ component: Needle
 private class LoginViaEmailComponentDependency02acc83f1ad8d17e18e1Provider: LoginViaEmailComponentDependency {
     var router: any Router {
         return rootComponent.router
-    }
-    var accountsURL: URL {
-        return rootComponent.accountsURL
     }
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
@@ -324,6 +324,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodComponentDependency.appStoreURL] = "appStoreURL-URL"
+        keyPathToName[\DetermineAuthMethodComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
@@ -353,13 +354,13 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["preferredAPIVersion-APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
         localTable["productionVersions-Set<APIVersion>"] = { [unowned self] in self.productionVersions as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
-        localTable["accountsURL-URL"] = { [unowned self] in self.accountsURL as Any }
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["userDefaults-UserDefaults"] = { [unowned self] in self.userDefaults as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
+        localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
@@ -380,13 +381,13 @@ extension DetermineAuthMethodOnPremComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodOnPremComponentDependency.appStoreURL] = "appStoreURL-URL"
+        keyPathToName[\DetermineAuthMethodOnPremComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
 }
 extension LoginViaEmailComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
-        keyPathToName[\LoginViaEmailComponentDependency.accountsURL] = "accountsURL-URL"
         keyPathToName[\LoginViaEmailComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\LoginViaEmailComponentDependency.networkService] = "networkService-NetworkService"
         keyPathToName[\LoginViaEmailComponentDependency.environmentType] = "environmentType-BackendEnvironmentType"

@@ -20,7 +20,7 @@ import Foundation
 
 public final class SendCommitBundleAction: EntityAction {
     public typealias Result = [ZMUpdateEvent]
-    public typealias Failure = SendMLSMessageAction.Failure
+    public typealias Failure = SendMLSMessageFailure
 
     public var resultHandler: ResultHandler?
     public var commitBundle: Data

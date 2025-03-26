@@ -17,6 +17,7 @@
 //
 
 import WireCommonComponents
+import WireFoundation
 import XCTest
 
 @testable import Wire
@@ -28,6 +29,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     var context: ConversationMessageContext!
     var mockSelfUser: MockUserType!
     var userSession: UserSessionMock!
+
+    lazy var collapseOwnMessagesStorage = PrivateUserDefaults<CollapseKey>(userID: mockSelfUser.remoteIdentifier!)
 
     // MARK: - setUp
 
@@ -42,8 +45,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             isFirstUnreadMessage: false,
             isLastMessage: false,
             searchQueries: [],
-            previousMessageIsKnock: false,
-            spacing: 0
+            previousMessageIsKnock: false
         )
     }
 
@@ -65,7 +67,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: MockMessage(),
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
         section.cellDescriptionsForTesting.removeAll()
 
@@ -87,7 +90,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: MockMessage(),
             context: context,
             userSession: userSession,
-            useInvertedIndices: true
+            useInvertedIndices: true,
+            contentWidth: 0
         )
         section.cellDescriptionsForTesting.removeAll()
 
@@ -113,7 +117,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         // Then
@@ -143,7 +148,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         // THEN
@@ -169,7 +175,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         // Then
@@ -198,7 +205,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             message: message,
             context: context,
             userSession: userSession,
-            useInvertedIndices: false
+            useInvertedIndices: false,
+            contentWidth: 0
         )
 
         let cellDescriptions = section.cellDescriptionsForTesting
@@ -212,6 +220,136 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationSenderMessageCellDescription)
         XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationTextMessageCellDescription)
         XCTAssertTrue(stackedCellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+    }
+
+    func testPassIsCollapsedToActionController() {
+        let message = MockMessageFactory.textMessage(withText: "Hello")
+        let context = ConversationMessageContext(
+            isSameSenderAsPrevious: true,
+            isTimestampInSameMinuteAsPreviousMessage: false
+        )
+        // WHEN
+        let section = ConversationMessageSectionController(
+            message: message,
+            context: context,
+            userSession: userSession,
+            useInvertedIndices: false,
+            contentWidth: 0
+        )
+
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
+
+        section.actionController = actionController
+
+        XCTAssertEqual(section.isCollapsed, false)
+        XCTAssertNil(actionController.isCollapsed)
+
+        section.collapse()
+
+        XCTAssertEqual(section.isCollapsed, true)
+        XCTAssertEqual(actionController.isCollapsed, true)
+
+        section.collapse()
+
+        XCTAssertEqual(section.isCollapsed, false)
+        XCTAssertEqual(actionController.isCollapsed, false)
+    }
+
+    func testInitialCollapseValue_systemMessage_collapseOwnMessagesDisabled() throws {
+        let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
+        let sut = makeSUT(message: message)
+        XCTAssertTrue(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_systemMessage_collapseOwnMessagesEnabled() throws {
+        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
+        let sut = makeSUT(message: message)
+        XCTAssertTrue(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_textMessageWithFailedToSendUsers_collapseOwnMessagesDisabled() throws {
+        let message = try XCTUnwrap(
+            MockMessageFactory.systemMessage(with: .domainsStoppedFederating)
+        )
+        message.failedToSendUsers = [MockUserType.createDefaultOtherUser()]
+        let sut = makeSUT(message: message)
+        XCTAssertTrue(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_textMessageWithFailedToSendUsers_collapseOwnMessagesEnabled() throws {
+        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
+        message.failedToSendUsers = [MockUserType.createDefaultOtherUser()]
+        let sut = makeSUT(message: message)
+        XCTAssertTrue(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_textMessage_collapseOwnMessagesDisabled() throws {
+        let message = try XCTUnwrap(MockMessageFactory.textMessage(withText: "Hello"))
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_textMessage_collapseOwnMessagesEnabled() throws {
+        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        let message = try XCTUnwrap(MockMessageFactory.textMessage())
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_fileMessage_sentBySelfUser_collapseOwnMessagesDisabled() throws {
+        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
+        message.senderUser = mockSelfUser
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_fileMessage_sentBySelfUser_collapseOwnMessagesEnabled() throws {
+        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
+        message.senderUser = mockSelfUser
+        let sut = makeSUT(message: message)
+        XCTAssertTrue(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_fileMessage_sentByOtherUser_collapseOwnMessagesDisabled() throws {
+        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
+        message.senderUser = MockUserType.createDefaultOtherUser()
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+    }
+
+    func testInitialCollapseValue_fileMessage_sentByOtherUser_collapseOwnMessagesEnabled() throws {
+        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
+        message.senderUser = MockUserType.createDefaultOtherUser()
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+    }
+
+    private func makeSUT(message: MockMessage) -> ConversationMessageSectionController {
+        let context = ConversationMessageContext(
+            isSameSenderAsPrevious: true,
+            isTimestampInSameMinuteAsPreviousMessage: false
+        )
+        // WHEN
+        let section = ConversationMessageSectionController(
+            message: message,
+            context: context,
+            userSession: userSession,
+            useInvertedIndices: false,
+            contentWidth: 0
+        )
+
+        trackForMemoryLeaks(section)
+
+        return section
     }
 
 }

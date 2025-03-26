@@ -39,7 +39,7 @@
 
 "proxy_credentials.title" = "Proxy Credentials";
 "proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_email.title" = "Proxy email or username";
 "proxy_credentials.input_password.title" = "Adgangskode";
 "proxy_credentials.input_password.placeholder" = "Enter password";
 
@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "Annuller";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "Can’t switch servers";
+"switch_backend.error.message.logged_in" = "You are already logged in. To switch to this server, log out of all accounts and try again.";
 
 "verification_code.title" = "You’ve got mail";
 "verification_code.message" = "Enter the verification code we sent to %@.";
@@ -92,7 +94,7 @@
 "authentication.error.how_to_delete_account" = "How to delete a private account";
 
 "obsolete_client.alert.title" = "Opdatering nødvendig";
-"obsolete_client.alert.message" = "Du går glip af nye funktioner.\nHent den seneste version af Wire i App Store.";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "Gå til App Store";
 
 "obsolete_backend.alert.title" = "Server version not supported";

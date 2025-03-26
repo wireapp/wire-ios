@@ -118,6 +118,7 @@
 "messageAction.saveButton.description" = "Зберегти картинку";
 "messageAction.revealButton.description" = "Показати в розмові";
 "messageAction.deleteButton.description" = "Видалити картинку";
+"messageAction.collapseButton.description" = "Collapse";
 
 "audioMessage.pause.value" = "Призупинити";
 "audioMessage.play.value" = "Відтворити";

@@ -148,7 +148,6 @@ final class MessageToolboxView: UIView {
     fileprivate var tapGestureRecogniser: UITapGestureRecognizer!
 
     fileprivate let separatorView = UIView()
-    fileprivate var heightConstraint: NSLayoutConstraint!
     fileprivate var previousLayoutBounds: CGRect = .zero
 
     // MARK: - Initialization
@@ -199,11 +198,7 @@ final class MessageToolboxView: UIView {
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         messageFailureView.translatesAutoresizingMaskIntoConstraints = false
 
-        heightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 16)
-        heightConstraint.priority = UILayoutPriority(999)
-
         NSLayoutConstraint.activate([
-            heightConstraint,
 
             separatorView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
             separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -216,7 +211,7 @@ final class MessageToolboxView: UIView {
                 lessThanOrEqualTo: trailingAnchor,
                 constant: -conversationHorizontalMargins.right
             ),
-            contentStack.topAnchor.constraint(equalTo: topAnchor),
+            contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 2),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),

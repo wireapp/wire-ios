@@ -51,6 +51,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
 
+    private(set) var avatarBottomAnchorConstraint: NSLayoutConstraint?
+    private(set) var avatarGreaterThanBottomAnchorConstraint: NSLayoutConstraint?
+    private var authorLabelNoTopPaddingConstraint: NSLayoutConstraint?
+    private var authorLabelCenterVerticalConstraint: NSLayoutConstraint?
+
     var isSelected: Bool = false
 
     private lazy var avatar: UserImageView = {
@@ -170,12 +175,15 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         switch object.indicator {
 
         case .deleted:
+            authorLabelNoTopPaddingConstraint?.isActive = false
+            authorLabelCenterVerticalConstraint?.isActive = true
             if let attachment = attachment(from: .trash, size: 8) {
                 attributedString.append(attachment)
             }
 
         default:
-            break
+            authorLabelNoTopPaddingConstraint?.isActive = true
+            authorLabelCenterVerticalConstraint?.isActive = false
         }
 
         switch object.teamRoleIndicator {
@@ -268,7 +276,9 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 16
+
+    var topMargin: CGFloat = 0
+    var bottomMargin: CGFloat = 0
 
     let containsHighlightableContent: Bool = false
 
