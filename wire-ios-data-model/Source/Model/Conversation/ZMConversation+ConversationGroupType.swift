@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc public enum GroupConversationType: Int {
+@objc public enum ConversationGroupType: Int {
 
     /// A group conversation
 
@@ -34,23 +34,23 @@ public extension ZMConversation {
 
     /// The underlying group conversation type string value.
 
-    @NSManaged private var groupConversationTypeValue: NSNumber?
+    @NSManaged private var groupTypeValue: NSNumber?
 
     /// The group conversation type.
     ///
     /// - note: `nil` if the conversation is not a group conversation. Defaults to `.group` if not set.
 
-    var groupConversationType: GroupConversationType? {
+    var groupType: ConversationGroupType? {
         get {
             guard conversationType == .group else { return nil }
 
             // Default to `group` type if not set.
-            guard let value = groupConversationTypeValue?.intValue else { return .group }
+            guard let value = groupTypeValue?.intValue else { return .group }
 
-            return GroupConversationType(rawValue: value)
+            return ConversationGroupType(rawValue: value)
         }
         set {
-            groupConversationTypeValue = newValue.map { NSNumber(value: $0.rawValue) }
+            groupTypeValue = newValue.map { NSNumber(value: $0.rawValue) }
         }
     }
 
