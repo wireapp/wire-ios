@@ -32,3 +32,10 @@ package struct WireConversationGroupIcon: View {
             .aspectRatio(contentMode: .fit)
     }
 }
+
+#Preview {
+    WireConversationGroupIcon(asset: WireConversationGroupIconAsset._1)
+        .frame(width: 40, height: 40)
+    WireConversationGroupIcon(asset: WireConversationGroupIconAsset._2)
+        .frame(width: 40, height: 40)
+}
