@@ -85,6 +85,8 @@ package struct DetermineAuthMethodView: View {
                     )
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
+                    .textContentType(.username)
+                    .keyboardType(.emailAddress)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }

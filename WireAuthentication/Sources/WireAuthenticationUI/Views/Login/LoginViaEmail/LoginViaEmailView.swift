@@ -123,6 +123,8 @@ package struct LoginViaEmailView: View {
             string: $viewModel.email
         )
         .autocorrectionDisabled()
+        .textContentType(.username)
+        .keyboardType(.emailAddress)
         .disabled(viewModel.isEmailPrefilled)
     }
 
