@@ -38,7 +38,7 @@ final class ConversationMessageCellTableViewAdapter<
 >: UITableViewCell, SelectableView, HighlightableView {
 
     let cellView: C.View
-    let ephemeralCountdownView: EphemeralCountdownView
+    let ephemeralCountdownView: EphemeralCountdownView // TODO: delete
 
     var cellDescription: C? {
         didSet {

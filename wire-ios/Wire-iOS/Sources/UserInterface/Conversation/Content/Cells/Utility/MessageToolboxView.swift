@@ -132,6 +132,10 @@ final class MessageToolboxView: UIView {
         return stackView
     }()
 
+    private lazy var countdownView = {
+        EphemeralCountdownView()
+    }()
+
     private lazy var countdownLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
@@ -185,8 +189,12 @@ final class MessageToolboxView: UIView {
             editedLabel,
             statusContainerView,
             statusSeparatorLabel,
+            countdownView,
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
+
+        contentStack.setCustomSpacing(6, after: statusSeparatorLabel)
+        contentStack.setCustomSpacing(6, after: countdownView)
 
         [separatorView, contentStack, messageFailureView].forEach(addSubview)
         
@@ -288,6 +296,7 @@ final class MessageToolboxView: UIView {
             hideAndCleanStatusLabel()
             timestampSeparatorLabel.isHidden = true
             statusSeparatorLabel.isHidden = true
+            countdownView.isHidden = true
             countdownLabel.isHidden = true
             messageFailureView.isHidden = true
             editedLabel.isHidden = true
@@ -295,6 +304,7 @@ final class MessageToolboxView: UIView {
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
             statusSeparatorLabel.isHidden = true
+            countdownView.isHidden = true
             countdownLabel.isHidden = true
             timestampSeparatorLabel.isHidden = false
             messageFailureView.isHidden = false
@@ -310,6 +320,13 @@ final class MessageToolboxView: UIView {
             
             timestampSeparatorLabel.isHidden = timestamp == nil || state == nil
             statusSeparatorLabel.isHidden = (timestamp == nil && state == nil) || countdown == nil
+            countdownView.message = dataSource.message
+            if countdown != nil {
+                countdownView.startCountDown()
+            } else {
+                countdownView.stopCountDown()
+            }
+            countdownView.isHidden = countdown == nil
             countdownLabel.text = countdown
             countdownLabel.isHidden = countdown == nil
 
@@ -320,7 +337,7 @@ final class MessageToolboxView: UIView {
             messageFailureView.isHidden = true
         }
     }
-    
+
     private func updateState(_ state: MessageToolboxState?) {
         statusLabel.isHidden = true
         statusContainerView.isHidden = false

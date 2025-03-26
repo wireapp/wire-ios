@@ -110,6 +110,30 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         mainWindow = .init(windowScene: windowScene)
 
+        /*
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+            self.mainWindow.rootViewController = PIVC()
+
+            final class PIVC: UIViewController {
+                override func viewDidLoad() {
+                    super.viewDidLoad()
+
+                    let pi = DestructionCountdownView()
+                    pi.translatesAutoresizingMaskIntoConstraints = false
+                    view.addSubview(pi)
+                    pi.widthAnchor.constraint(equalToConstant: 10).isActive = true
+                    pi.heightAnchor.constraint(equalToConstant: 10).isActive = true
+                    pi.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+                    pi.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                        pi.setProgress(0.5)
+                    }
+                }
+            }
+        }
+         */
+
         setNavigationAppearance()
         // enable logs
         _ = Settings.shared
