@@ -121,7 +121,6 @@ public extension PrivateUserDefaults where Key == Never {
 
 }
 
-
 // sourcery: AutoMockable
 public protocol UserDefaultsProtocol {
     func set(_ value: Any?, forKey defaultName: String)

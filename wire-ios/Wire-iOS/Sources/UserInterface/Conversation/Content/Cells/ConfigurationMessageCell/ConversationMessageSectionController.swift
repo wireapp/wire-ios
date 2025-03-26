@@ -106,7 +106,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     private let userDefaults: UserDefaultsProtocol
-    
+
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
 
@@ -130,7 +130,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.useInvertedIndices = useInvertedIndices
         self.contentWidth = contentWidth
         self.userDefaults = userDefaults
-        
+
         super.init()
 
         self.isCollapsed = isCollapsedInitialValue()

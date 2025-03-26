@@ -48,7 +48,7 @@ final class ConversationMessageActionController {
     weak var responder: MessageActionResponder?
     weak var view: UIView!
     private let userDefaults: UserDefaultsProtocol
-    
+
     init(
         responder: MessageActionResponder?,
         message: ZMConversationMessage,

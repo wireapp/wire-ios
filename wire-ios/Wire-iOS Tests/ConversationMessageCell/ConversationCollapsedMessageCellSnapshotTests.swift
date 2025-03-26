@@ -65,7 +65,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
         mockUserDefaults.boolForKey_MockValue = false
-        
+
         verify(message: message)
     }
 
