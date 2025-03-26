@@ -175,6 +175,14 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    func addChannelPermission(
+        conversationID: String,
+        conversationDomain: String,
+        permission: ChannelPermission
+    ) async throws {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }
 
 // MARK: Encodables

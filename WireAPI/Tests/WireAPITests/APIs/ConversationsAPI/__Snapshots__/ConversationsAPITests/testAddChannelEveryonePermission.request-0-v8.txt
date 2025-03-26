@@ -1,0 +1,5 @@
+curl \
+	--request PUT \
+	--header "Content-Type: application/json" \
+	--data "{\"add_permission\":{\"everyone\":{}}}" \
+	"/v8/conversations"
