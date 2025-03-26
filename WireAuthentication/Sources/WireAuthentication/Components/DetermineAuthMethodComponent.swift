@@ -92,15 +92,14 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         backendInfo: BackendInfo?,
         onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
     ) -> LoginViaSSOComponent {
-        let networkStack: NetworkStack
-        if let backendInfo {
-            networkStack = NetworkStack(
+        let networkStack: NetworkStack = if let backendInfo {
+            NetworkStack(
                 backendInfo: backendInfo,
                 minTLSVersion: dependency.minTLSVersion,
                 preferredAPIVersion: dependency.preferredAPIVersion
             )
         } else {
-            networkStack = self.networkStack
+            self.networkStack
         }
 
         return LoginViaSSOComponent(

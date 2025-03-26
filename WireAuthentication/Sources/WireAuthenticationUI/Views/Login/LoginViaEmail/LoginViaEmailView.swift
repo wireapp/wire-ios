@@ -36,8 +36,8 @@ package protocol LoginViaEmailBuilder {
 package struct LoginViaEmailView: View {
 
     package typealias Factory =
-        VerificationCodeBuilder &
-        NoHistoryViewBuilder
+        NoHistoryViewBuilder &
+        VerificationCodeBuilder
 
     @StateObject var viewModel: LoginViaEmailViewModel
     private let factory: any Factory
@@ -153,7 +153,10 @@ package struct LoginViaEmailView: View {
             Task {
                 await viewModel.submit(
                     password: password,
-                    proxyCredentials: viewModel.hasProxySupport ? ProxyCredentials(username: proxyEmail, password: proxyPassword) : nil
+                    proxyCredentials: viewModel.hasProxySupport ? ProxyCredentials(
+                        username: proxyEmail,
+                        password: proxyPassword
+                    ) : nil
                 )
             }
         }, label: {

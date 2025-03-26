@@ -67,23 +67,25 @@ public struct WireAuthenticationUIDebugView: View {
                                             backendConfig: .preview,
                                             onConfirm: { _ in }
                                         ).padding()
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        )
-                })
-            case .verificationCode:
-                fullscreenCover(content: {
-                    BackgroundView()
-                        .overlay {
-                            VStack(spacing: 0) {
-                                Spacer()
-                                    .frame(maxHeight: .infinity)
-                                VerificationCodeView_Previews(code: [])
-                            }
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                )
                         }
-                })
+                    )
+                case .verificationCode:
+                    fullscreenCover(content: {
+                        BackgroundView()
+                            .overlay {
+                                VStack(spacing: 0) {
+                                    Spacer()
+                                        .frame(maxHeight: .infinity)
+                                    VerificationCodeView_Previews(code: [])
+                                }
+                            }
+                    })
+                }
             }
-        })
+        )
     }
 
     @ViewBuilder

@@ -26,9 +26,9 @@ import WireReusableUIComponents
 package final class LoginViaEmailViewModel: ObservableObject {
 
     package typealias Factory =
-        SubmitProxyCredentialsUseCaseFactory &
+        CreateAuthenticationResultUseCaseFactory &
         LoginViaEmailUseCaseFactory &
-        CreateAuthenticationResultUseCaseFactory
+        SubmitProxyCredentialsUseCaseFactory
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?

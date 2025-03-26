@@ -57,16 +57,14 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     // MARK: - View
 
-    @MainActor
-    var view: LoginViaEmailView {
+    @MainActor var view: LoginViaEmailView {
         LoginViaEmailView(
             viewModel: viewModel,
             factory: self
         )
     }
 
-    @MainActor
-    private var viewModel: LoginViaEmailViewModel {
+    @MainActor private var viewModel: LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
             factory: self,

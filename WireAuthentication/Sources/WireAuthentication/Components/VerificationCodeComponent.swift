@@ -47,16 +47,14 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         super.init(parent: parent)
     }
 
-    @MainActor
-    var view: VerificationCodeView {
+    @MainActor var view: VerificationCodeView {
         VerificationCodeView(
             viewModel: viewModel,
             factory: self
         )
     }
 
-    @MainActor
-    private var viewModel: VerificationCodeViewModel {
+    @MainActor private var viewModel: VerificationCodeViewModel {
         VerificationCodeViewModel(
             factory: self,
             email: email,
@@ -99,7 +97,8 @@ extension VerificationCodeComponent: VerificationCodeView.Factory {
 
     func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
         noHistoryComponent(
-            authenticationResult: authenticationResult).view
+            authenticationResult: authenticationResult
+        ).view
     }
 
 }

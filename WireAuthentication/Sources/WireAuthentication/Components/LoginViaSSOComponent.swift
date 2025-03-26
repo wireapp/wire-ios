@@ -24,8 +24,7 @@ internal import WireAuthenticationLogic
 
 protocol LoginViaSSODependency: Dependency {
 
-    @MainActor
-    var bridge: WireAuthenticationBridge { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 

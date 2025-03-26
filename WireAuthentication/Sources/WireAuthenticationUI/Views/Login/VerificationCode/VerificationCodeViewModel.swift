@@ -26,9 +26,9 @@ import WireLogging
 public final class VerificationCodeViewModel: ObservableObject {
 
     package typealias Factory =
+        CreateAuthenticationResultUseCaseFactory &
         LoginViaEmailUseCaseFactory &
-        RequestLoginVerificationCodeUseCaseFactory &
-        CreateAuthenticationResultUseCaseFactory
+        RequestLoginVerificationCodeUseCaseFactory
 
     private static let numberOfDigits = 6
 

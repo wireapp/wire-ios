@@ -103,8 +103,12 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         )
 
         // mock
-        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
-        mockCreateAuthenticationResultUseCase.invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = authenticationResult
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockValue = (
+            [Fixture.someCookie],
+            Fixture.someAccessToken
+        )
+        mockCreateAuthenticationResultUseCase
+            .invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = authenticationResult
 
         // when
         await sut.submit(
@@ -135,8 +139,12 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         )
 
         // mock
-        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
-        mockCreateAuthenticationResultUseCase.invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = authenticationResult
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockValue = (
+            [Fixture.someCookie],
+            Fixture.someAccessToken
+        )
+        mockCreateAuthenticationResultUseCase
+            .invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = authenticationResult
 
         // when
         await sut.submit(
@@ -156,7 +164,8 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     @MainActor
     func testSubmitPassword_withInvalidCredentials() async {
         // mock
-        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.invalidCredentials
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .invalidCredentials
 
         // when
         await sut.submit(
@@ -172,7 +181,8 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     @MainActor
     func testSubmitPassword_when2FARequired() async throws {
         // mock
-        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .twoFactorAuthenticationRequired
 
         // when
         await sut.submit(
@@ -194,7 +204,8 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     @MainActor
     func testSubmitPassword_whenAccountPendingActivation() async {
         // mock
-        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.accountPendingActivation
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .accountPendingActivation
 
         // when
         await sut.submit(
@@ -210,7 +221,8 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     @MainActor
     func testSubmitPassword_whenAccountSuspended() async {
         // given
-        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure.accountSuspended
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .accountSuspended
 
         // when
         await sut.submit(

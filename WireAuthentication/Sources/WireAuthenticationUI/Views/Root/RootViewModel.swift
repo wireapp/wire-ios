@@ -40,7 +40,7 @@ package final class RootViewModel: ObservableObject, Router {
         backendInfo: BackendInfo
     ) {
         self.factory = factory
-        modalDestination = .authFlow(backendInfo: backendInfo)
+        self.modalDestination = .authFlow(backendInfo: backendInfo)
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:

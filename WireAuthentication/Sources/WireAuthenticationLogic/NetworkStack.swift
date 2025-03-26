@@ -47,16 +47,14 @@ package final class NetworkStack {
         self.preferredAPIVersion = preferredAPIVersion
 
         do {
-            state = .ready(try NetworkService.make(
+            self.state = .ready(try NetworkService.make(
                 backendConfig: backendInfo.backendConfig,
                 minTLSVersion: minTLSVersion,
                 proxyCredentials: nil
             ))
         } catch .proxyCredentialsRequired {
-            state = .awaitingProxyCredentials
-        } catch {
-
-        }
+            self.state = .awaitingProxyCredentials
+        } catch {}
     }
 
     // MARK: - Methods

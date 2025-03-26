@@ -98,7 +98,7 @@ extension Alert {
         case URLError.notConnectedToInternet, URLError.networkConnectionLost:
             .noInternet
         case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
-             .obsoleteClient
+            .obsoleteClient
         case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
             .obsoleteBackend
         default:

@@ -91,17 +91,18 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         loginViaEmailUseCase
             .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
         sut.code = ["1", "2", "3"]
-        mockCreateAuthenticationResultUseCase.invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = AuthenticationResult(
-            userID: Fixture.someAccessToken.userID,
-            cookies: [Fixture.someCookie],
-            accessToken: Fixture.someAccessToken,
-            emailCredentials: EmailCredentials(
-                email: "abc@example.com",
-                password: "aaaaaa",
-                verificationCode: "123"
-            ),
-            backendEnvironment: Fixture.backendEnvironment
-        )
+        mockCreateAuthenticationResultUseCase
+            .invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = AuthenticationResult(
+                userID: Fixture.someAccessToken.userID,
+                cookies: [Fixture.someCookie],
+                accessToken: Fixture.someAccessToken,
+                emailCredentials: EmailCredentials(
+                    email: "abc@example.com",
+                    password: "aaaaaa",
+                    verificationCode: "123"
+                ),
+                backendEnvironment: Fixture.backendEnvironment
+            )
 
         // when
         await sut.confirm()
@@ -120,17 +121,18 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         loginViaEmailUseCase
             .invokeEmailPasswordVerificationCode_MockValue = ([Fixture.someCookie], Fixture.someAccessToken)
         sut.code = ["1", "2", "3"]
-        mockCreateAuthenticationResultUseCase.invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = AuthenticationResult(
-            userID: Fixture.someAccessToken.userID,
-            cookies: [Fixture.someCookie],
-            accessToken: Fixture.someAccessToken,
-            emailCredentials: EmailCredentials(
-                email: "abc@example.com",
-                password: "aaaaaa",
-                verificationCode: "123"
-            ),
-            backendEnvironment: Fixture.backendEnvironment
-        )
+        mockCreateAuthenticationResultUseCase
+            .invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = AuthenticationResult(
+                userID: Fixture.someAccessToken.userID,
+                cookies: [Fixture.someCookie],
+                accessToken: Fixture.someAccessToken,
+                emailCredentials: EmailCredentials(
+                    email: "abc@example.com",
+                    password: "aaaaaa",
+                    verificationCode: "123"
+                ),
+                backendEnvironment: Fixture.backendEnvironment
+            )
 
         // when
         await sut.confirm()
@@ -141,7 +143,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         #expect(router.navigate_Invocations.count == 1)
         #expect(
             router.navigate_Invocations.first as? VerificationCodeDestination ==
-            VerificationCodeDestination.noHistory(
+                VerificationCodeDestination.noHistory(
                     authenticationResult: AuthenticationResult(
                         userID: Fixture.someAccessToken.userID,
                         cookies: [Fixture.someCookie],
