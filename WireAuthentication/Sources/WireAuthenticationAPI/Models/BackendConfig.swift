@@ -36,6 +36,15 @@ public struct BackendConfig: Decodable, Sendable, Hashable, Equatable {
 
     public let pinnedKeys: [TrustData]?
 
+    public enum CodingKeys: String, CodingKey {
+
+        case title
+        case endpoints
+        case proxySettings = "apiProxy"
+        case pinnedKeys
+
+    }
+
     public init(
         title: String,
         endpoints: Endpoints,
