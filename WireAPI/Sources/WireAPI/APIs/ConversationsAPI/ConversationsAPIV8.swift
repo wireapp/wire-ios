@@ -80,7 +80,7 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
     ) async throws {
         let input = ChannelPermissionParametersV8(from: permission)
         let body = try JSONEncoder.defaultEncoder.encode(input)
-        let path = "\(pathPrefix)\(basePath)"
+        let path = "\(pathPrefix)/conversation/\(conversationDomain)/\(conversationID)/add-permission"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.put)
