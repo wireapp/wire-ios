@@ -68,7 +68,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            shouldShowAuthor: true
         )
         section.cellDescriptionsForTesting.removeAll()
 
@@ -91,7 +92,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: true,
-            contentWidth: 0
+            contentWidth: 0,
+            shouldShowAuthor: true
         )
         section.cellDescriptionsForTesting.removeAll()
 
@@ -118,7 +120,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            shouldShowAuthor: true
         )
 
         // Then
@@ -149,7 +152,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            shouldShowAuthor: true
         )
 
         // THEN
@@ -176,7 +180,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            shouldShowAuthor: true
         )
 
         // Then
@@ -206,7 +211,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            shouldShowAuthor: true
         )
 
         let cellDescriptions = section.cellDescriptionsForTesting
@@ -234,7 +240,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            shouldShowAuthor: true
         )
 
         let actionController = ConversationMessageActionController(
@@ -344,7 +351,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            shouldShowAuthor: true
         )
 
         trackForMemoryLeaks(section)
