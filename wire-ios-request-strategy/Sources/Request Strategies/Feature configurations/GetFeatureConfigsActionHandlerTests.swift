@@ -206,11 +206,11 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .disabled)
             XCTAssertEqual(mlsMigration.config, .init())
-            
+
             let channels = featureRepository.fetchChannels()
             XCTAssertEqual(channels.status, .disabled)
             XCTAssertEqual(channels.config, .init())
-            
+
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

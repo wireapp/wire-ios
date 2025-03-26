@@ -19,23 +19,22 @@
 /// A configuration for the *Channels* feature.
 
 public struct ChannelsFeatureConfig: Codable, Equatable, Sendable {
-    
+
     /// The feature's status.
-    
+
     public let status: FeatureConfigStatus
-    
+
     /// This determines which users can create channels
-    
+
     public let allowedToCreateChannels: ChannelsPermision
-    
+
     /// This determines which users can create public channels
-    
+
     public let allowedToOpenChannels: ChannelsPermision
 }
 
-
 public enum ChannelsPermision: String, Codable, Sendable {
-    
+
     /// Member, Admin, Owner
     case teamMembers = "team-members"
     /// Partner (a.k.a. external), Member, Admin, Owner

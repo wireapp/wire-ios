@@ -204,7 +204,7 @@ struct FeatureConfigsPayloadProcessor {
             )
         }
     }
-    
+
     func processActionPayloadAPIV8(data: Data, repository: FeatureRepositoryInterface) throws {
         let payload = try decoder.decode(FeatureConfigsPayloadAPIV8.self, from: data)
 
@@ -294,7 +294,7 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
-        
+
         if let channels = payload.channels {
             repository.storeChannels(
                 Feature.Channels(

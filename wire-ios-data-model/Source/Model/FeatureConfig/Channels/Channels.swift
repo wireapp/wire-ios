@@ -49,7 +49,7 @@ public extension Feature {
                 case allowedToCreateChannels = "allowed_to_create_channels"
                 case allowedToOpenChannels = "allowed_to_open_channels"
             }
-            
+
             public let allowedToCreateChannels: ChannelsPermision
             public let allowedToOpenChannels: ChannelsPermision
 
@@ -60,17 +60,23 @@ public extension Feature {
                 self.allowedToCreateChannels = allowedToCreateChannels
                 self.allowedToOpenChannels = allowedToOpenChannels
             }
-            
+
             public init(from decoder: any Decoder) throws {
                 let container: KeyedDecodingContainer<Feature.Channels.Config.CodingKeys> = try decoder
                     .container(keyedBy: Feature.Channels.Config.CodingKeys.self)
-                
-                allowedToCreateChannels = try container.decode(ChannelsPermision.self, forKey: .allowedToCreateChannels)
-                allowedToOpenChannels = try container.decode(ChannelsPermision.self, forKey: .allowedToOpenChannels)
+
+                self.allowedToCreateChannels = try container.decode(
+                    ChannelsPermision.self,
+                    forKey: .allowedToCreateChannels
+                )
+                self.allowedToOpenChannels = try container.decode(
+                    ChannelsPermision.self,
+                    forKey: .allowedToOpenChannels
+                )
             }
 
             public enum ChannelsPermision: String, Codable {
-                
+
                 /// Member, Admin, Owner
                 case teamMembers = "team-members"
                 /// Partner (a.k.a. external), Member, Admin, Owner

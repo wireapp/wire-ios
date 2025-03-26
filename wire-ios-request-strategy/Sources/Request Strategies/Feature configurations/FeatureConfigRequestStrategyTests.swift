@@ -452,7 +452,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-    
+
     func test_ItProcessesEvent_Channels() {
         // Mock
         mockMLSClientManager.initializeMLSClientIfNeededForHasRegisteredMLSClientMlsFeature_MockMethod = { _, _, _ in }

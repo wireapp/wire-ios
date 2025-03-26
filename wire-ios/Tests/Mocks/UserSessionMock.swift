@@ -370,7 +370,7 @@ final class UserSessionMock: UserSession {
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)
 
     var channelsFeature: Feature.Channels = .init(status: .disabled)
-    
+
     var mlsFeature: Feature.MLS = .init(
         status: .enabled,
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)

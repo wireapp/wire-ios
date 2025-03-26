@@ -427,7 +427,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
     }
 
     // MARK: - Channels
-    
+
     public func fetchChannels() -> Feature.Channels {
         guard
             let feature = Feature.fetch(name: .channels, context: context),
@@ -460,8 +460,6 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
-    
-    
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
@@ -496,6 +494,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
             case .mlsMigration:
                 storeMLSMigration(.init())
+
             case .channels:
                 storeChannels(.init())
             }

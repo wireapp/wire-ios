@@ -63,7 +63,6 @@ struct FeatureConfigsPayloadAPIV8: Decodable {
     let channels: FeatureStatusWithConfig<Feature.Channels.Config>?
 }
 
-
 struct FeatureStatus: Decodable {
     let status: Feature.Status
 }

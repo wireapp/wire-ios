@@ -151,7 +151,7 @@ public final class ZMUserSession: NSObject {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchMLS()
     }
-    
+
     public var channelsFeature: Feature.Channels {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchChannels()

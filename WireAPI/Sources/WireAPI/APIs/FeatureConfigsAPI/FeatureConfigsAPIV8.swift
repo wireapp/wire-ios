@@ -18,7 +18,7 @@
 
 final class FeatureConfigsAPIV8: FeatureConfigsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
-    
+
     override func getFeatureConfigs() async throws -> [FeatureConfig] {
         let request = try URLRequestBuilder(path: resourcePath)
             .withMethod(.get)
@@ -110,9 +110,11 @@ struct FeatureConfigsResponseAPIV8: Decodable, ToAPIModelConvertible {
 
         featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
 
-        let channelsConfig = ChannelsFeatureConfig(status: channels.status, // this is added in v8
-                                                   allowedToCreateChannels: channels.config.allowedToCreateChannels,
-                                                   allowedToOpenChannels: channels.config.allowedToOpenChannels)
+        let channelsConfig = ChannelsFeatureConfig(
+            status: channels.status, // this is added in v8
+            allowedToCreateChannels: channels.config.allowedToCreateChannels,
+            allowedToOpenChannels: channels.config.allowedToOpenChannels
+        )
         featureConfigs.append(.channels(channelsConfig))
 
         return featureConfigs
@@ -127,17 +129,19 @@ extension FeatureConfigResponse {
             case allowedToCreateChannels = "allowed_to_create_channels"
             case allowedToOpenChannels = "allowed_to_open_channels"
         }
-        
+
         public let allowedToCreateChannels: ChannelsPermision
         public let allowedToOpenChannels: ChannelsPermision
-        
-        
+
         public init(from decoder: any Decoder) throws {
             let container: KeyedDecodingContainer<CodingKeys> = try decoder
                 .container(keyedBy: CodingKeys.self)
-            
-            allowedToCreateChannels = try container.decode(ChannelsPermision.self, forKey: .allowedToCreateChannels)
-            allowedToOpenChannels = try container.decode(ChannelsPermision.self, forKey: .allowedToOpenChannels)
+
+            self.allowedToCreateChannels = try container.decode(
+                ChannelsPermision.self,
+                forKey: .allowedToCreateChannels
+            )
+            self.allowedToOpenChannels = try container.decode(ChannelsPermision.self, forKey: .allowedToOpenChannels)
         }
     }
 }

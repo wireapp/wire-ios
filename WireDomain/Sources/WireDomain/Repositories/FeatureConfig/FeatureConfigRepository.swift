@@ -230,7 +230,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: channelsFeatureConfig.status == .enabled,
                 shouldNotifyUser: needsToNotifyUser
             )
-            
+
         case let .unknown(featureName):
             logger.warn(
                 "Unknown feature name: \(featureName)"
@@ -323,9 +323,9 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 selfDeletingMessagesFeatureConfig.status == .enabled,
                 selfDeletingMessagesFeatureConfig.toDomainModel()
             )
-            
+
         case let .channels(channelsFeatureConfig):
-            
+
             return (
                 .channels,
                 channelsFeatureConfig.status == .enabled,
