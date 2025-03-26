@@ -30,7 +30,7 @@ import Foundation
 
 }
 
-public extension ZMConversation {
+extension ZMConversation: HasConversationGroupType {
 
     /// The underlying group conversation type string value.
 
@@ -40,7 +40,7 @@ public extension ZMConversation {
     ///
     /// - note: `nil` if the conversation is not a group conversation. Defaults to `.group` if not set.
 
-    var groupType: ConversationGroupType? {
+    public var groupType: ConversationGroupType? {
         get {
             guard conversationType == .group else { return nil }
 
@@ -53,5 +53,11 @@ public extension ZMConversation {
             groupTypeValue = newValue.map { NSNumber(value: $0.rawValue) }
         }
     }
+
+}
+
+public protocol HasConversationGroupType {
+
+    var groupType: ConversationGroupType? { get }
 
 }
