@@ -133,6 +133,8 @@ package struct LoginViaEmailView: View {
             string: .constant(viewModel.email ?? "")
         )
         .autocorrectionDisabled()
+        .textContentType(.username)
+        .keyboardType(.emailAddress)
         .disabled(viewModel.isValidEmail)
     }
 
