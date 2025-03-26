@@ -118,14 +118,7 @@ package struct LoginViaEmailView: View {
     }
 
     @ViewBuilder private var welcomeMessage: some View {
-        VStack(spacing: 14) {
-            OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
-            Text(L10n.OnPremUserLogin.message)
-                .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-        }
+        OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
     }
 
     @ViewBuilder private var emailField: some View {
