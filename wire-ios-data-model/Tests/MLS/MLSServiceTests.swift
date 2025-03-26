@@ -1283,6 +1283,74 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Joining conversations
 
+    func test_PerformPendingJoins_It_Establishes_Group() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let conversationID = UUID.create()
+        let domain = "example.domain.com"
+        let publicGroupState = Data()
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = domain
+            conversation.mlsGroupID = groupID
+            conversation.mlsStatus = .pendingJoin
+            conversation.messageProtocol = .mls
+            return conversation
+        }
+
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: Mock properly
+        let mockUpdateEvents = [ZMUpdateEvent]()
+
+        // expectation
+        let expectation = XCTestExpectation(description: "Send Message")
+
+        // mock MLS action executor
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            mockUpdateEvents
+        }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            mockUpdateEvents
+        }
+
+        // mock CC
+        mockCoreCrypto.conversationExistsConversationId_MockValue = false
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
+
+        // mock processing conversation events
+        var processConversationEventsArguments = [[ZMUpdateEvent]]()
+        mockConversationEventProcessor.processConversationEvents_MockMethod = {
+            processConversationEventsArguments.append($0)
+            expectation.fulfill()
+        }
+
+        // When
+        try await sut.performPendingJoins()
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 1)
+
+        // it creates CC conversation
+        let createCoreCryptoConversationInvocations = mockCoreCrypto
+            .createConversationConversationIdCreatorCredentialTypeConfig_Invocations
+        XCTAssertEqual(createCoreCryptoConversationInvocations.count, 1)
+
+        // it commits pending proposals
+        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 1)
+
+        // it updates key material
+        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 1)
+
+        // it sets conversation state to ready
+        let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
+        XCTAssertEqual(conversationMLSStatus, .ready)
+
+        // it processes conversation events
+        XCTAssertEqual(processConversationEventsArguments.count, 2)
+        XCTAssertEqual(processConversationEventsArguments, [mockUpdateEvents, mockUpdateEvents])
+    }
+
     func test_PerformPendingJoins_IsSuccessful() async throws {
         // Given
         let groupID = MLSGroupID.random()
@@ -1316,6 +1384,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             joinGroupArguments.append(($0, $1))
             return mockUpdateEvents
         }
+
+        // mock CC conversation exists
+        mockCoreCrypto.conversationExistsConversationId_MockValue = true
 
         // mock processing conversation events
         var processConversationEventsArguments = [[ZMUpdateEvent]]()
@@ -1402,6 +1473,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
             return []
         }
+
+        // mock CC conversation exists
+        mockCoreCrypto.conversationExistsConversationId_MockValue = true
 
         // mock processing conversation events
         var processConversationEventsCount = 0
