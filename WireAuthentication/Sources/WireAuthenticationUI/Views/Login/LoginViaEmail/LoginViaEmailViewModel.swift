@@ -143,7 +143,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
                     to: LoginViaEmailView.Destination
                         .verifyLogin(
                             email: sanitizedEmail,
-                            password: sanitizedPassword
+                            password: sanitizedPassword,
+                            proxyCredentials: proxyCredentials
                         )
                 )
             case LoginViaEmailUseCaseFailure.accountPendingActivation:

@@ -97,11 +97,13 @@ package struct LoginViaEmailView: View {
             switch destination {
             case let .verifyLogin(
                 email,
-                password
+                password,
+                proxyCredentials
             ):
                 factory.verificationCodeView(
                     email: email,
-                    password: password
+                    password: password,
+                    proxyCredentials: proxyCredentials
                 )
             case let .noHistory(authenticationResult):
                 factory.noHistoryView(authenticationResult: authenticationResult)
@@ -235,7 +237,8 @@ package struct LoginViaEmailView: View {
 
         case verifyLogin(
             email: String,
-            password: String
+            password: String,
+            proxyCredentials: ProxyCredentials?
         )
         case noHistory(
             authenticationResult: AuthenticationResult

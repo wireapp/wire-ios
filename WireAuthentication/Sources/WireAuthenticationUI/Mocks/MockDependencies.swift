@@ -206,6 +206,7 @@ extension MockDependencies: VerificationCodeBuilder {
             factory: self,
             email: email,
             password: password,
+            proxyCredentials: nil,
             router: rootViewModel,
             numberOfDigits: code.count
         )
@@ -220,13 +221,15 @@ extension MockDependencies: VerificationCodeBuilder {
     @MainActor
     func verificationCodeView(
         email: String,
-        password: String
+        password: String,
+        proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: VerificationCodeViewModel(
                 factory: self,
                 email: "jane@doe.com",
                 password: password,
+                proxyCredentials: proxyCredentials,
                 router: rootViewModel
             ),
             factory: self

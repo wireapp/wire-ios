@@ -36,14 +36,17 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
 
     private let email: String
     private let password: String
+    private let proxyCredentials: ProxyCredentials?
 
     init(
         parent: any Scope,
         email: String,
-        password: String
+        password: String,
+        proxyCredentials: ProxyCredentials?
     ) {
         self.email = email
         self.password = password
+        self.proxyCredentials = proxyCredentials
         super.init(parent: parent)
     }
 
@@ -59,6 +62,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             factory: self,
             email: email,
             password: password,
+            proxyCredentials: proxyCredentials,
             router: dependency.router
         )
     }
@@ -76,6 +80,10 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
 }
 
 extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
+
+    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
+        SubmitProxyCredentialsUseCase(networkStack: dependency.networkStack)
+    }
 
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
         let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()

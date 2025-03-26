@@ -28,7 +28,8 @@ public final class VerificationCodeViewModel: ObservableObject {
     package typealias Factory =
         CreateAuthenticationResultUseCaseFactory &
         LoginViaEmailUseCaseFactory &
-        RequestLoginVerificationCodeUseCaseFactory
+        RequestLoginVerificationCodeUseCaseFactory &
+        SubmitProxyCredentialsUseCaseFactory
 
     private static let numberOfDigits = 6
 
@@ -41,6 +42,8 @@ public final class VerificationCodeViewModel: ObservableObject {
     let password: String
     let numberOfDigits: Int
 
+    private let proxyCredentials: ProxyCredentials?
+
     private let factory: any Factory
     private let router: any Router
 
@@ -48,6 +51,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         factory: any Factory,
         email: String,
         password: String,
+        proxyCredentials: ProxyCredentials?,
         router: any Router,
         numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
     ) {
@@ -56,6 +60,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.factory = factory
         self.email = email
         self.password = password
+        self.proxyCredentials = proxyCredentials
         self.router = router
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
@@ -89,6 +94,10 @@ public final class VerificationCodeViewModel: ObservableObject {
         isLoading = true
 
         do {
+            if let proxyCredentials {
+                try submitProxyCredentials(proxyCredentials)
+            }
+
             let verificationCode = code.joined()
             let (cookies, accessToken) = try await logIn(verificationCode: verificationCode)
 
@@ -130,6 +139,10 @@ public final class VerificationCodeViewModel: ObservableObject {
         isResending = true
 
         do {
+            if let proxyCredentials {
+                try submitProxyCredentials(proxyCredentials)
+            }
+
             try await resendVerificationCode(email: email)
             WireLogger.authentication.info("Resend 2FA code succeeded")
         } catch {
@@ -147,6 +160,11 @@ public final class VerificationCodeViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
+        let useCase = factory.submitProxyCredentialsUseCase()
+        try useCase.invoke(proxyCredentials: proxyCredentials)
+    }
 
     private func logIn(
         verificationCode: String

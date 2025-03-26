@@ -102,12 +102,14 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     func verificationCodeComponent(
         email: String,
-        password: String
+        password: String,
+        proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeComponent {
         VerificationCodeComponent(
             parent: self,
             email: email,
-            password: password
+            password: password,
+            proxyCredentials: proxyCredentials
         )
     }
 
@@ -149,11 +151,13 @@ extension LoginViaEmailComponent: LoginViaEmailView.Factory {
     @MainActor
     func verificationCodeView(
         email: String,
-        password: String
+        password: String,
+        proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView {
         verificationCodeComponent(
             email: email,
-            password: password
+            password: password,
+            proxyCredentials: proxyCredentials
         ).view
     }
 

@@ -18,13 +18,15 @@
 
 import SwiftUI
 import WireDesign
+import WireAuthenticationAPI
 
 package protocol VerificationCodeBuilder {
 
     @MainActor
     func verificationCodeView(
         email: String,
-        password: String
+        password: String,
+        proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView
 
 }
