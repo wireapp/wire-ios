@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAccountImageUI
 import WireDesign
 import WireSyncEngine
-import WireAccountImageUI
 
 final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 

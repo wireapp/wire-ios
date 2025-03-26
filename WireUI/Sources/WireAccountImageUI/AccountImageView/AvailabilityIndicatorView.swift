@@ -169,9 +169,9 @@ public final class AvailabilityIndicatorView: UIView {
 
 // MARK: AvailabilityIndicatorView + init(availability:)
 
-extension AvailabilityIndicatorView {
+public extension AvailabilityIndicatorView {
 
-    public convenience init(availability: Availability) {
+    convenience init(availability: Availability) {
         self.init()
         self.availability = availability
         setNeedsLayout()

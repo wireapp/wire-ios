@@ -17,12 +17,12 @@
 //
 
 import UIKit
+import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
-import WireAccountImageUI
 
 enum Indicator {
     case deleted

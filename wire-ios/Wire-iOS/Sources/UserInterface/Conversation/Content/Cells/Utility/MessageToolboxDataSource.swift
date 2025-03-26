@@ -152,10 +152,10 @@ final class MessageToolboxDataSource {
             message.deliveryState != .pending
 
         guard let destructionDate = message.destructionDate, showDestructionTimer else { return nil }
-        
+
         // We need to add one second to start with the correct value
         let remaining = destructionDate.timeIntervalSinceNow + 1
-        
+
         if remaining > 0 {
             if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
                 return string
@@ -179,7 +179,7 @@ final class MessageToolboxDataSource {
         case .pending:
             return .sending
         case .read where message.conversationLike?.conversationType == .group:
-                return .seenByMultiple(message.readReceipts.count)
+            return .seenByMultiple(message.readReceipts.count)
         case .read where message.conversationLike?.conversationType == .oneOnOne:
             return .seen
         case .delivered:
@@ -210,7 +210,7 @@ final class MessageToolboxDataSource {
             return nil
         }
     }
-    
+
     // MARK: - Call List
 
     /// Create a timestamp list for all calls associated with a call system message
@@ -224,12 +224,10 @@ final class MessageToolboxDataSource {
             .compactMap { $0 as? ZMConversationMessage }
             .sortedAscendingPrependingNil(by: \.serverTimestamp)
             .compactMap(timestampString)
-        
-        let finalText = childrenTimestamps.reduce(timestamp) { text, current in
+
+        return childrenTimestamps.reduce(timestamp) { text, current in
             "\(text)\n\(current)"
         }
-        
-        return finalText
     }
 
     /// Creates the timestamp text.

@@ -68,7 +68,7 @@ final class MessageToolboxView: UIView {
         stack.alignment = .center
         return stack
     }()
-    
+
     lazy var font = FontSpec.smallRegularFont.font!
     lazy var color = SemanticColors.Label.textMessageDetails
 
@@ -118,7 +118,7 @@ final class MessageToolboxView: UIView {
         label.textColor = color
         return label
     }()
-    
+
     lazy var statusImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -126,7 +126,7 @@ final class MessageToolboxView: UIView {
         imageView.tintColor = color
         return imageView
     }()
-    
+
     lazy var statusContainerView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [statusImageView, statusLabel])
         stackView.spacing = 4
@@ -209,7 +209,7 @@ final class MessageToolboxView: UIView {
         ].forEach(contentStack.addArrangedSubview)
 
         [separatorView, contentStack, messageFailureView].forEach(addSubview)
-        
+
         statusImageView.constraintToSquare(sideLength: 13)
     }
 
@@ -343,9 +343,9 @@ final class MessageToolboxView: UIView {
             detailsLabel.text = timestamp
             detailsLabel.isHidden = timestamp == nil
             detailsLabel.numberOfLines = 1
-            
+
             updateState(state)
-            
+
             timestampSeparatorContainer.isHidden = timestamp == nil || state == nil
             statusSeparatorContainer.isHidden = (timestamp == nil && state == nil) || countdown == nil
             countdownView.setProgress(dataSource.message.countdownProgress ?? 0)
@@ -377,7 +377,7 @@ final class MessageToolboxView: UIView {
         case .seen:
             statusImageView.image = UIImage(resource: .seen)
             statusContainerView.accessibilityLabel = "seen"
-        case .seenByMultiple(let count):
+        case let .seenByMultiple(count):
             statusImageView.image = UIImage(resource: .seen)
             statusLabel.isHidden = false
             statusLabel.text = "\(count)"
