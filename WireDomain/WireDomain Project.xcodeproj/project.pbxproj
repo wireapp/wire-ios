@@ -20,6 +20,7 @@
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
 		59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59DBDE972D395BB50069C64C /* WireDomainPackage */; };
 		59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59EA774E2D00CE0C002CA0B8 /* WireLogging */; };
+		C93BFE8B2D93CF25000F6573 /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = C93BFE8A2D93CF25000F6573 /* WireAPISupport */; };
 		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
@@ -90,6 +91,7 @@
 			files = (
 				C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */,
 				59202AD22D54D3D500143413 /* WireDomainPackage in Frameworks */,
+				C93BFE8B2D93CF25000F6573 /* WireAPISupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +195,7 @@
 			name = WireDomainSupport;
 			packageProductDependencies = (
 				59202AD12D54D3D500143413 /* WireDomainPackage */,
+				C93BFE8A2D93CF25000F6573 /* WireAPISupport */,
 			);
 			productName = WireDomainSupport;
 			productReference = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */;
@@ -768,6 +771,10 @@
 		59EA774E2D00CE0C002CA0B8 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
+		};
+		C93BFE8A2D93CF25000F6573 /* WireAPISupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPISupport;
 		};
 		C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
