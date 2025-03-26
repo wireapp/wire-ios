@@ -31,7 +31,10 @@ final class ConversationListItemView: UIView {
     static let minHeight: CGFloat = 64
 
     // Please use `updateForConversation:` to set conversation.
-    private var conversation: ConversationAvatarViewConversation?
+    private var conversation: (
+        ConversationGroupAvatarViewConversation &
+            ConversationConnectAvatarViewConversation
+    )?
 
     var titleText: NSAttributedString? {
         didSet {
@@ -92,6 +95,7 @@ final class ConversationListItemView: UIView {
     }
 
     func setupConversationListItemView() {
+        setupAvatar()
         setupContentStack()
         setupLabelsStack()
         setupTitleField()
@@ -101,7 +105,6 @@ final class ConversationListItemView: UIView {
 
         rightAccessory.accessibilityIdentifier = "status"
 
-        contentStack.addArrangedSubview(avatarView)
         contentStack.addArrangedSubview(labelsStack)
         contentStack.addArrangedSubview(rightAccessory)
 
@@ -127,6 +130,7 @@ final class ConversationListItemView: UIView {
     }
 
     private func createConstraints() {
+        avatarView.translatesAutoresizingMaskIntoConstraints = false
         contentStack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
@@ -134,8 +138,19 @@ final class ConversationListItemView: UIView {
             heightAnchor.constraint(greaterThanOrEqualToConstant: ConversationListItemView.minHeight),
 
             // avatar
-            contentStack.leadingAnchor.constraint(
+            avatarView.leadingAnchor.constraint(
                 equalTo: leadingAnchor,
+                constant: CGFloat.ConversationList.horizontalMargin
+            ),
+            avatarView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
+            avatarView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -8),
+            avatarView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            avatarView.heightAnchor.constraint(equalToConstant: .ConversationAvatarView.iconSize),
+            avatarView.widthAnchor.constraint(equalToConstant: .ConversationAvatarView.iconSize),
+
+            // content stack
+            contentStack.leadingAnchor.constraint(
+                equalTo: avatarView.trailingAnchor,
                 constant: CGFloat.ConversationList.horizontalMargin
             ),
             contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 8),
@@ -145,6 +160,10 @@ final class ConversationListItemView: UIView {
             ),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ])
+    }
+
+    private func setupAvatar() {
+        addSubview(avatarView)
     }
 
     private func setupLabelsStack() {

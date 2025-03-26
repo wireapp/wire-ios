@@ -224,6 +224,7 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIView,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -235,6 +236,7 @@ public struct SnapshotHelper {
                 of: value,
                 as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
                 named: name,
+                record: record,
                 snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
@@ -343,6 +345,7 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIImage,
         named name: String? = nil,
+        record recording: Bool = false,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -354,6 +357,7 @@ public struct SnapshotHelper {
                 of: value,
                 as: .image,
                 named: name,
+                record: recording,
                 snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
