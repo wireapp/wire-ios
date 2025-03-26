@@ -28,7 +28,7 @@ struct ConversationMessageContext: Equatable {
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
-    var previousMessageDeliveryState: ZMDeliveryState = .invalid
+    var followingMessageDeliveryState: ZMDeliveryState?
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -493,10 +493,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return !message.isSent
         }
 
-        let isDeliveryStateDifferentFromPreviousMessage = context.previousMessageDeliveryState != message.deliveryState
+        let isDeliveryStateDifferentFromNextMessage = context.followingMessageDeliveryState != message.deliveryState
         return message.deliveryState == .failedToSend ||
         context.isLastMessage || 
-        message.isSentBySelfUser && isDeliveryStateDifferentFromPreviousMessage
+        message.isSentBySelfUser && isDeliveryStateDifferentFromNextMessage
         // TODO: check if is self deleting
     }
 
@@ -532,13 +532,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return true
         }
 
-        // We see the self deleting countdown.
+        // A time divider / unread indicator is shown before the actual message.
         if isBurstTimestampVisible(in: context) {
             return true
         }
 
         // This message is from the same sender but in a different minute.
-        if context.isSameSenderAsPrevious, !context.isTimestampInSameMinuteAsPreviousMessage {
+        if !context.isTimestampInSameMinuteAsPreviousMessage {
             return true
         }
 
