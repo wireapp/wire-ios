@@ -37,6 +37,8 @@ package final class NoHistoryViewModel: ObservableObject {
     private let howToChangeEmailURL: URL
     private let howToDeleteAccountURL: URL
     private let onFlowCompletion: () -> Void
+
+    /// Tracks if the user has already acknowledged the alert.
     private var didConfirmAlert = false
 
     package init(
