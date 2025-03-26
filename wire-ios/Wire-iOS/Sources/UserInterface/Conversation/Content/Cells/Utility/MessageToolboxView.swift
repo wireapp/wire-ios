@@ -132,8 +132,11 @@ final class MessageToolboxView: UIView {
         return stackView
     }()
 
+    private lazy var countdownContainer = UIView()
     private lazy var countdownView = {
-        EphemeralCountdownView()
+        let view = DestructionCountdownView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
 
     private lazy var countdownLabel: UILabel = {
@@ -179,6 +182,10 @@ final class MessageToolboxView: UIView {
 
     private func setupViews() {
 
+        countdownContainer = UIView()
+        countdownView.translatesAutoresizingMaskIntoConstraints = false
+        countdownContainer.addSubview(countdownView)
+
         messageFailureView.tapHandler = { [weak self] _ in
             self?.resendMessage()
         }
@@ -189,12 +196,12 @@ final class MessageToolboxView: UIView {
             editedLabel,
             statusContainerView,
             statusSeparatorLabel,
-            countdownView,
+            countdownContainer,
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
 
-        contentStack.setCustomSpacing(6, after: statusSeparatorLabel)
-        contentStack.setCustomSpacing(6, after: countdownView)
+//        contentStack.setCustomSpacing(6, after: statusSeparatorLabel)
+//        contentStack.setCustomSpacing(6, after: countdownView)
 
         [separatorView, contentStack, messageFailureView].forEach(addSubview)
         
@@ -228,7 +235,15 @@ final class MessageToolboxView: UIView {
                 constant: -conversationHorizontalMargins.right
             ),
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
-            messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            countdownView.widthAnchor.constraint(equalToConstant: 10),
+            countdownView.heightAnchor.constraint(equalToConstant: 10),
+            countdownView.leadingAnchor.constraint(equalTo: countdownContainer.leadingAnchor),
+            countdownContainer.trailingAnchor.constraint(equalTo: countdownView.trailingAnchor, constant: 3),
+            countdownView.centerYAnchor.constraint(equalTo: countdownContainer.centerYAnchor),
+            countdownView.topAnchor.constraint(greaterThanOrEqualTo: countdownContainer.topAnchor),
+            countdownContainer.bottomAnchor.constraint(greaterThanOrEqualTo: countdownView.bottomAnchor)
         ])
     }
 
@@ -320,12 +335,7 @@ final class MessageToolboxView: UIView {
             
             timestampSeparatorLabel.isHidden = timestamp == nil || state == nil
             statusSeparatorLabel.isHidden = (timestamp == nil && state == nil) || countdown == nil
-            countdownView.message = dataSource.message
-            if countdown != nil {
-                countdownView.startCountDown()
-            } else {
-                countdownView.stopCountDown()
-            }
+            countdownView.setProgress(dataSource.message.countdownProgress ?? 0)
             countdownView.isHidden = countdown == nil
             countdownLabel.text = countdown
             countdownLabel.isHidden = countdown == nil
