@@ -17,3 +17,6 @@
 //
 
 
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.subtitle" = "Conversation history and more";
+"conversation.create.group.title" = "New group";
