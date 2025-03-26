@@ -28,7 +28,6 @@ struct ConversationMessageContext: Equatable {
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
-    var followingMessageDeliveryState: ZMDeliveryState?
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -493,11 +492,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return !message.isSent
         }
 
-        let isDeliveryStateDifferentFromNextMessage = context.followingMessageDeliveryState != message.deliveryState
-        return message.deliveryState == .failedToSend ||
-        context.isLastMessage || 
-        message.isSentBySelfUser && isDeliveryStateDifferentFromNextMessage
-        // TODO: check if is self deleting
+        return message.deliveryState == .failedToSend || message.isSentBySelfUser
     }
 
     private func isMessageWithCollapsedByDefault() -> Bool {

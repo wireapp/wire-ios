@@ -542,11 +542,12 @@ extension ConversationTableViewDataSource {
         return messages[previousIndex]
     }
 
-    private func messageAfterMessage(at index: Int) -> ZMConversationMessage? {
-        let followingIndex = index - 1
-        guard messages.indices.contains(followingIndex) else { return nil }
-        return messages[followingIndex]
-    }
+    // TODO: delete if not needed
+//    private func messageAfterMessage(at index: Int) -> ZMConversationMessage? {
+//        let followingIndex = index - 1
+//        guard messages.indices.contains(followingIndex) else { return nil }
+//        return messages[followingIndex]
+//    }
 
     func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int) -> Bool {
         guard let message,
@@ -570,7 +571,6 @@ extension ConversationTableViewDataSource {
         let isTimestampInSameMinuteAsPreviousMessage: Bool
 
         let previousMessage = messageBeforeMessage(at: index)
-        let followingMessage = messageAfterMessage(at: index)
 
         if let currentMessage = message.serverTimestamp, let prevMessage = previousMessage?.serverTimestamp {
             isTimestampInSameMinuteAsPreviousMessage = currentMessage.isInSameMinute(asDate: prevMessage)
@@ -586,8 +586,7 @@ extension ConversationTableViewDataSource {
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
-            previousMessageIsKnock: previousMessage?.isKnock == true,
-            followingMessageDeliveryState: followingMessage?.deliveryState ?? .invalid
+            previousMessageIsKnock: previousMessage?.isKnock == true
         )
     }
 
