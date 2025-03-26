@@ -77,13 +77,14 @@ final class AuthenticationInterfaceBuilder {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
             let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
+            let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
+                WireAPI.APIVersion(rawValue: UInt($0.rawValue))
+            }
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
-                preferredAPIVersion: BackendInfo.preferredAPIVersion.flatMap {
-                    WireAPI.APIVersion(rawValue: UInt($0.rawValue))
-                },
+                preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
