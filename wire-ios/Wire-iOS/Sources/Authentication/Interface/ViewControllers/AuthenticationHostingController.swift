@@ -86,8 +86,9 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
         NotificationCenter.default
             .publisher(for: AccountManagerDidUpdateAccountsNotificationName)
-            .sink { _ in
-                let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
+            .compactMap { $0.object as? AccountManager }
+            .sink { accountManager in
+                let numberOfAccounts = accountManager.accounts.count
                 bridge.sendInboundEvent(.updateAnotherAccountExistence(newValue: numberOfAccounts > 0))
 
             }
