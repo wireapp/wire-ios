@@ -25,12 +25,18 @@ import XCTest
 final class MessageActionsViewControllerTests: XCTestCase {
 
     // MARK: - setUp
+    var userDefaults: PrivateUserDefaults<CollapseKey>?
 
     override func setUp() {
         super.setUp()
 
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
+    }
+    
+    override func tearDown() {
+        super.tearDown()
+        userDefaults?.set(false, forKey: .collapseOwnMessages)
     }
 
     // MARK: - Unit Tests
@@ -160,8 +166,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
     func testMenuActionsForFileMessage_collapseOwnMessagesEnabled() {
         // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
-        let userDefaults = PrivateUserDefaults<CollapseKey>(userID: selfUser.remoteIdentifier!)
-        userDefaults.set(true, forKey: .collapseOwnMessages)
+        userDefaults = PrivateUserDefaults<CollapseKey>(userID: selfUser.remoteIdentifier!)
+        userDefaults?.set(true, forKey: .collapseOwnMessages)
 
         let message = MockMessageFactory.fileTransferMessage()
 
@@ -200,8 +206,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // GIVEN
         let message = MockMessageFactory.fileTransferMessage()
         let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
-        let userDefaults = PrivateUserDefaults<CollapseKey>(userID: selfUser.remoteIdentifier!)
-        userDefaults.set(true, forKey: .collapseOwnMessages)
+        userDefaults = PrivateUserDefaults<CollapseKey>(userID: selfUser.remoteIdentifier!)
+        userDefaults?.set(true, forKey: .collapseOwnMessages)
 
         // WHEN
         let (actionController, sut) = makeSut(
