@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireDesign
 import WireAuthenticationAPI
+import WireDesign
 
 package protocol VerificationCodeBuilder {
 
