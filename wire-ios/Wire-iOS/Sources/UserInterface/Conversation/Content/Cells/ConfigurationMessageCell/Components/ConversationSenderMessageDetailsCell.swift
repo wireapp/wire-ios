@@ -77,7 +77,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     }()
 
     private lazy var availabilityIndicatorView = {
-        let view = AvailabilityIndicatorView(availability: .away)
+        let view = AvailabilityIndicatorView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.widthAnchor.constraint(equalToConstant: 11).isActive = true
         view.heightAnchor.constraint(equalToConstant: 11).isActive = true
@@ -109,6 +109,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     lazy var stackView = UIStackView()
         .setClipsToBounds(false)
 
+    private var userObservation: NSObjectProtocol?
+
     // MARK: - Init
 
     override init(frame: CGRect) {
@@ -128,6 +130,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         avatar.user = user
+        availabilityIndicatorView.availability = user.availability.mapToAccountImageAvailability()
+
+        if let session = ZMUserSession.shared() {
+            userObservation = UserChangeInfo.add(observer: self, for: user, in: session)
+        }
 
         configureAuthorLabel(object: object)
 
@@ -394,5 +401,14 @@ extension ConversationSenderMessageDetailsCell: UIGestureRecognizerDelegate {
         }
 
         return super.hitTest(point, with: event)
+    }
+}
+
+extension ConversationSenderMessageDetailsCell: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.availabilityChanged {
+            availabilityIndicatorView.availability = changeInfo.user.availability.mapToAccountImageAvailability()
+        }
     }
 }

@@ -117,6 +117,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     private lazy var wholeViewTapButton = UIButton()
 
+    private var userObservation: NSObjectProtocol?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubviews()
@@ -130,6 +132,11 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         avatar.user = user
+        availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
+
+        if let session = ZMUserSession.shared(), let user {
+            userObservation = UserChangeInfo.add(observer: self, for: user, in: session)
+        }
 
         let message = object.message
         if message.isText {
@@ -263,4 +270,13 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
         )
     }
 
+}
+
+extension ConversationCollapsedMessageCell: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.availabilityChanged {
+            availabilityIndicatorView.availability = changeInfo.user.availability.mapToAccountImageAvailability()
+        }
+    }
 }
