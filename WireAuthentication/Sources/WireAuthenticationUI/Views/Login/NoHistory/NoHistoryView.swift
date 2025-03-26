@@ -88,8 +88,10 @@ package struct NoHistoryView: View {
         .onAppear {
             viewModel.onAppear()
         }
-        .onReceive(NotificationCenter.default.publisher(
-            for: UIApplication.willEnterForegroundNotification)
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: UIApplication.willEnterForegroundNotification
+            )
         ) { _ in
             viewModel.onAppear()
         }
