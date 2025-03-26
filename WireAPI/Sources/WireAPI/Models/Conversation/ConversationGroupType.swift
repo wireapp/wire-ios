@@ -18,50 +18,7 @@
 
 import Foundation
 
-/// A list of HTTP status codes (https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#successful_responses)
-
-enum HTTPStatusCode: Int {
-
-    // MARK: Success - 2xx
-
-    /// ok - 200
-
-    case ok = 200
-
-    /// created - 201
-
-    case created = 201
-
-    // MARK: Client Errors - 4xx
-
-    /// bad request - 400
-
-    case badRequest = 400
-
-    /// unauthorized - 401
-
-    case unauthorized = 401
-
-    /// not found - 404
-
-    case notFound = 404
-
-    /// forbidden - 403
-
-    case forbidden = 403
-
-    /// conflict - 409
-
-    case conflict = 409
-
-    // MARK: Server Errors - 5xx
-
-    /// service unavailable - 503
-
-    case serviceUnavailable = 503
-
-    /// service unreachable
-
-    case unreachable = 533
-
+public enum ConversationGroupType: String, Codable, Sendable {
+    case group = "group_conversation"
+    case channel
 }
