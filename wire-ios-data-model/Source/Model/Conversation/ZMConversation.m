@@ -55,6 +55,7 @@ NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
 NSString *const ZMNormalizedUserDefinedNameKey = @"normalizedUserDefinedName";
 NSString *const ZMConversationListIndicatorKey = @"conversationListIndicator";
 NSString *const ZMConversationConversationTypeKey = @"conversationType";
+NSString *const ZMConversationGroupTypeValueKey = @"groupTypeValue";
 NSString *const ZMConversationLastServerTimeStampKey = @"lastServerTimeStamp";
 NSString *const ZMConversationLastReadServerTimeStampKey = @"lastReadServerTimeStamp";
 NSString *const ZMConversationClearedTimeStampKey = @"clearedTimeStamp";
@@ -356,7 +357,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey,
             PrimaryKey,
-            ZMConversationIsPendingInitialFetch
+            ZMConversationIsPendingInitialFetch,
+            ZMConversationGroupTypeValueKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
