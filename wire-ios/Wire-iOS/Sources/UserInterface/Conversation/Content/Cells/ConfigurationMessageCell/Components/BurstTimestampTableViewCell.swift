@@ -104,11 +104,14 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
     var showEphemeralTimer = false
     var topMargin = CGFloat()
+    var bottomMargin = CGFloat()
 
     let containsHighlightableContent = false
 
-    let accessibilityIdentifier = String?.none
-    let accessibilityLabel = String?.none
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String? = nil
+
+    var currentDateProvider: CurrentDateProviding
 
     var currentDateProvider: CurrentDateProviding
 
