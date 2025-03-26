@@ -237,14 +237,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     url: ssoURL,
                     backendInfo: backendInfo
                 )
-            } else if let email {
-                router.navigate(
-                    to: DetermineAuthMethodView.Destination.login(
-                        email: email,
-                        didDetectDomainConflict: false,
-                        backendInfo: backendInfo
-                    )
-                )
             } else {
                 router.presentSheet(
                     RootView.ModalDestination.authFlow(backendInfo: backendInfo)
