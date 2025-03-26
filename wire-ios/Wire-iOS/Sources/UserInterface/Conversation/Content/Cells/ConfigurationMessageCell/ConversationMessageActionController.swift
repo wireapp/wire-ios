@@ -47,14 +47,16 @@ final class ConversationMessageActionController {
 
     weak var responder: MessageActionResponder?
     weak var view: UIView!
-
+    private let userDefaults: UserDefaultsProtocol
+    
     init(
         responder: MessageActionResponder?,
         message: ZMConversationMessage,
         context: Context,
         view: UIView,
         isCollapsed: Bool? = nil,
-        selfUserId: UUID? = nil
+        selfUserId: UUID? = nil,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.responder = responder
         self.message = message
@@ -62,6 +64,7 @@ final class ConversationMessageActionController {
         self.view = view
         self.isCollapsed = isCollapsed
         self.selfUserId = selfUserId
+        self.userDefaults = userDefaults
     }
 
     // MARK: - List of Actions
@@ -73,7 +76,8 @@ final class ConversationMessageActionController {
 
     private var collapseOwnMessagesEnabled: Bool {
         guard let selfUserId else { return false }
-        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
+        return PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
+            .bool(forKey: .collapseOwnMessages)
     }
 
     func allMessageMenuElements() -> [UIAction] {

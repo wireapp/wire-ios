@@ -105,7 +105,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var changeObservers: [Any] = []
 
     private let userSession: UserSession
-
+    private let userDefaults: UserDefaultsProtocol
+    
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
 
@@ -119,7 +120,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         selected: Bool = false,
         userSession: UserSession,
         useInvertedIndices: Bool,
-        contentWidth: CGFloat
+        contentWidth: CGFloat,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.message = message
         self.context = context
@@ -127,7 +129,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
         self.contentWidth = contentWidth
-
+        self.userDefaults = userDefaults
+        
         super.init()
 
         self.isCollapsed = isCollapsedInitialValue()
@@ -143,7 +146,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private var collapseOwnMessagesEnabled: Bool {
         guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
-        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
+        return PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
+            .bool(forKey: .collapseOwnMessages)
     }
 
     private func isCollapsedInitialValue() -> Bool {

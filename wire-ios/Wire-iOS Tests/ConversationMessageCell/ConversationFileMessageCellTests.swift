@@ -33,9 +33,6 @@ final class ConversationFileMessageCellTests: ConversationMessageSnapshotTestCas
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
         message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
-
-        PrivateUserDefaults<CollapseKey>(userID: mockSelfUser.remoteIdentifier!)
-            .set(false, forKey: .collapseOwnMessages)
     }
 
     override func tearDown() {
