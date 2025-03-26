@@ -167,6 +167,19 @@ extension ConversationContentViewController {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
     }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        // TODO: [WPB-16431] this is to update the cells on iPad when sidebar
+        // is hidden or shown. This is a quick fix for now. To improve later
+        coordinator.animate(alongsideTransition: nil) { _ in
+            self.dataSource.resetSectionControllers()
+            self.dataSource.reloadSections(newSections: self.dataSource.calculateSections())
+            self.tableView.reloadData()
+        }
+    }
+
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {

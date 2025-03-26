@@ -120,15 +120,15 @@ node("Job_distributor") {
             opCLIPath: "/usr/local/bin/"
     ]
     def secrets = [
-            [envVar: 'OKTA_API_KEY', secretRef: 'op://QA automation/OKTA_API_KEY/password'],
-            [envVar: 'KEYCLOAK_PASSWORD', secretRef: 'op://QA automation/KEYCLOAK_PASSWORD/password'],
-            [envVar: 'LH_SERVICE_AUTH_TOKEN', secretRef: 'op://QA automation/LH_SERVICE_AUTH_TOKEN/password'],
-            [envVar: 'STRIPE_API_KEY', secretRef: 'op://QA automation/STRIPE_API_KEY/password'],
-            [envVar: 'MS_EMAIL', secretRef: 'op://QA automation/MS_CREDENTIALS/username'],
-            [envVar: 'MS_PASSWORD', secretRef: 'op://QA automation/MS_CREDENTIALS/password'],
-            [envVar: 'BLACKLIST_S3_SECRET', secretRef: 'op://QA automation/BLACKLIST_S3_SECRET/password'],
-            [envVar: 'TESTINY_API_KEY', secretRef: 'op://QA automation/TESTINY_API_KEY_IOS/password'],
-            [envVar: 'CALLINGSERVICE_BASIC_AUTH', secretRef: 'op://QA automation/CALLINGSERVICE_BASIC_AUTH/password'],
+            [envVar: 'OKTA_API_KEY', secretRef: 'op://Test Automation/OKTA_API_KEY/password'],
+            [envVar: 'KEYCLOAK_PASSWORD', secretRef: 'op://Test Automation/KEYCLOAK_PASSWORD/password'],
+            [envVar: 'LH_SERVICE_AUTH_TOKEN', secretRef: 'op://Test Automation/LH_SERVICE_AUTH_TOKEN/password'],
+            [envVar: 'STRIPE_API_KEY', secretRef: 'op://Test Automation/STRIPE_API_KEY/password'],
+            [envVar: 'MS_EMAIL', secretRef: 'op://Test Automation/MS_CREDENTIALS/username'],
+            [envVar: 'MS_PASSWORD', secretRef: 'op://Test Automation/MS_CREDENTIALS/password'],
+            [envVar: 'BLACKLIST_S3_SECRET', secretRef: 'op://Test Automation/BLACKLIST_S3_SECRET/password'],
+            [envVar: 'TESTINY_API_KEY', secretRef: 'op://Test Automation/TESTINY_API_KEY_IOS/password'],
+            [envVar: 'CALLINGSERVICE_BASIC_AUTH', secretRef: 'op://Test Automation/CALLINGSERVICE_BASIC_AUTH/password'],
     ]
 
     // Use 1Password secrets

@@ -67,6 +67,7 @@ package struct NoHistoryView: View {
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
+
         }
         .alert(
             item: $viewModel.alert,
@@ -79,14 +80,24 @@ package struct NoHistoryView: View {
                 Button(L10n.Authentication.Error.howToDeleteAccount, action: {
                     viewModel.howToDeleteAccount()
                 })
-                Button(L10n.Authentication.Error.confirm, action: {})
+                Button(L10n.Authentication.Error.confirm, action: {
+                    viewModel.confirmAlert()
+                })
             }
         )
         .onAppear {
             viewModel.onAppear()
         }
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: UIApplication.willEnterForegroundNotification
+            )
+        ) { _ in
+            viewModel.onAppear()
+        }
+        .padding(.vertical, 32)
         .padding()
-        .presentationDetents([.medium])
+        .setPreferredSize()
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }

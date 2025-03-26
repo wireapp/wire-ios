@@ -340,8 +340,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Закрыть информацию об аккаунте команды"
           }
         },
         "sl" : {
@@ -465,8 +465,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Закрыть просмотр информации о названии команды"
           }
         },
         "sl" : {

@@ -68,7 +68,7 @@ class DetermineAuthMethodOnPremComponent: Component<DetermineAuthMethodOnPremCom
             environmentType: environmentType,
             backendConfig: backendConfig,
             backendMetadata: backendMetadata,
-            canExitFlow: dependency.existsAnotherAccount
+            existsAnotherAccount: dependency.existsAnotherAccount
         )
     }
 
@@ -136,7 +136,8 @@ extension DetermineAuthMethodOnPremComponent: DetermineAuthMethodViewModel.Facto
         )
         return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
-            authenticationAPI: authenticationAPI
+            authenticationAPI: authenticationAPI,
+            urlSession: URLSession.shared
         )
     }
 

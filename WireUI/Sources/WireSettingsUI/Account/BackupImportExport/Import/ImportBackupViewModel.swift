@@ -208,9 +208,10 @@ final class ImportBackupViewModel: ObservableObject {
             false
         }
 
-        let isAlertPresented = if case .success = state {
+        let isAlertPresented = switch state {
+        case .success, .restoreFailed:
             true
-        } else {
+        default:
             false
         }
 

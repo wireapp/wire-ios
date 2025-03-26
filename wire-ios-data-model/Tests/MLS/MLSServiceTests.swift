@@ -2174,7 +2174,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         do {
             // When
             try await sut.updateKeyMaterial(for: groupID)
-        } catch let error as SendMLSMessageAction.Failure {
+        } catch let error as SendMLSMessageFailure {
             // Then, infinite loop is broken after a few attempts, it throws an error
             XCTAssertEqual(error, .mlsStaleMessage)
         }
@@ -2201,7 +2201,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         do {
             // When
             try await sut.updateKeyMaterial(for: groupID)
-        } catch let error as SendMLSMessageAction.Failure {
+        } catch let error as SendMLSMessageFailure {
             // Then, infinite loop is broken after a few attempts, it throws an error
             XCTAssertEqual(error, .mlsStaleMessage)
         }
@@ -3246,7 +3246,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw SendMLSMessageAction.Failure.mlsStaleMessage
+            throw SendMLSMessageFailure.mlsStaleMessage
         }
         let wipeConversationExpectation = XCTestExpectation(description: "wipeConversation must be called")
         mockCoreCrypto.wipeConversationConversationId_MockMethod = { conversationID in
