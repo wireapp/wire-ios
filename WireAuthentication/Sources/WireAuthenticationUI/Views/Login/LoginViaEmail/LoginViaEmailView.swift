@@ -42,11 +42,6 @@ package struct LoginViaEmailView: View {
     @StateObject var viewModel: LoginViaEmailViewModel
     private let factory: any Factory
 
-    @State private var password: String = ""
-    @State private var proxyPassword: String = ""
-
-    private var proxyEmail: String = ""
-
     package init(
         viewModel: LoginViaEmailViewModel,
         factory: any Factory
@@ -58,7 +53,7 @@ package struct LoginViaEmailView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-                if viewModel.hasProxySupport {
+                if viewModel.areProxyCredentialsRequired {
                     if viewModel.isOnPremiseBackend {
                         welcomeMessage
                     }
@@ -112,7 +107,7 @@ package struct LoginViaEmailView: View {
                 factory.noHistoryView(authenticationResult: authenticationResult)
             }
         }
-        .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
+        .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
@@ -125,32 +120,26 @@ package struct LoginViaEmailView: View {
         LabeledTextField(
             placeholder: L10n.CloudUserLogin.InputEmail.placeholder,
             title: L10n.CloudUserLogin.InputEmail.title,
-            string: .constant(viewModel.email ?? "")
+            string: $viewModel.email
         )
         .autocorrectionDisabled()
-        .disabled(viewModel.isValidEmail)
+        .disabled(viewModel.isEmailPrefilled)
     }
 
     @ViewBuilder private var passwordField: some View {
         PasswordField(
-            password: $password,
+            password: $viewModel.password,
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
             passwordRules: "viewModel.localizedPasswordRules",
-            isValidPassword: viewModel.isValidPassword
+            isValidPassword: viewModel.isPasswordValid
         )
     }
 
     @ViewBuilder private var submitButton: some View {
         Button(action: {
             Task {
-                await viewModel.submit(
-                    password: password,
-                    proxyCredentials: viewModel.hasProxySupport ? ProxyCredentials(
-                        username: proxyEmail,
-                        password: proxyPassword
-                    ) : nil
-                )
+                await viewModel.submitCredentials()
             }
         }, label: {
             Text(L10n.CloudUserLogin.submit)
@@ -158,15 +147,7 @@ package struct LoginViaEmailView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(
-            !viewModel.canSubmitPassword(
-                password: password,
-                proxyCredentials: ProxyCredentials(
-                    username: proxyEmail,
-                    password: proxyPassword
-                )
-            )
-        )
+        .disabled(!viewModel.canSubmitCredentials)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -234,15 +215,15 @@ package struct LoginViaEmailView: View {
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: L10n.ProxyCredentials.InputEmail.title,
-                string: .constant(proxyEmail)
+                string: $viewModel.proxyUsername
             )
 
             PasswordField(
-                password: $proxyPassword,
+                password: $viewModel.proxyPassword,
                 placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
                 title: L10n.CloudUserLogin.InputPassword.title,
                 passwordRules: "viewModel.localizedPasswordRules",
-                isValidPassword: viewModel.isValidPassword
+                isValidPassword: viewModel.isPasswordValid
             )
             Spacer()
         }

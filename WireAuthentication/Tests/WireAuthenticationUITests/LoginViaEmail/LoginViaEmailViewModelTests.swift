@@ -39,6 +39,7 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     private var mockSubmitProxyCredentialsUseCase: MockSubmitProxyCredentialsUseCaseProtocol!
     private var mockLoginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol!
     private var mockCreateAuthenticationResultUseCase: MockCreateAuthenticationResultUseCaseProtocol!
+    private var mockValidateEmailUseCase: MockValidateEmailUseCaseProtocol!
 
     @MainActor
     override func setUp() async throws {
@@ -46,6 +47,7 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         mockSubmitProxyCredentialsUseCase = MockSubmitProxyCredentialsUseCaseProtocol()
         mockLoginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
         mockCreateAuthenticationResultUseCase = MockCreateAuthenticationResultUseCaseProtocol()
+        mockValidateEmailUseCase = MockValidateEmailUseCaseProtocol()
 
         sut = LoginViaEmailViewModel(
             router: router,
@@ -69,6 +71,7 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         mockSubmitProxyCredentialsUseCase = nil
         mockLoginViaEmailUseCase = nil
         mockCreateAuthenticationResultUseCase = nil
+        mockValidateEmailUseCase = nil
     }
 
     // MARK: - Factory
@@ -85,11 +88,18 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         mockCreateAuthenticationResultUseCase
     }
 
+    func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
+        mockValidateEmailUseCase
+    }
+
     // MARK: - submitPassword tests
 
     @MainActor
     func testSubmitPassword_passesCorrectCredentials() async {
         // given
+        sut.email = " mika@example.com "
+        sut.password = " password  "
+
         let authenticationResult = AuthenticationResult(
             userID: Fixture.someAccessToken.userID,
             cookies: [Fixture.someCookie],
@@ -111,10 +121,7 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
             .invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = authenticationResult
 
         // when
-        await sut.submit(
-            password: "password",
-            proxyCredentials: nil
-        )
+        await sut.submitCredentials()
 
         // then
         let invocations = mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_Invocations
@@ -126,6 +133,9 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     @MainActor
     func testSubmitPassword_whenSuccessful() async throws {
         // given
+        sut.email = " mika@example.com "
+        sut.password = " password  "
+
         let authenticationResult = AuthenticationResult(
             userID: Fixture.someAccessToken.userID,
             cookies: [Fixture.someCookie],
@@ -147,10 +157,7 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
             .invokeUserIDCookiesAccessTokenEmailCredentials_MockValue = authenticationResult
 
         // when
-        await sut.submit(
-            password: "password",
-            proxyCredentials: nil
-        )
+        await sut.submitCredentials()
 
         // then
         XCTAssertNil(sut.alert)
@@ -163,15 +170,16 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
 
     @MainActor
     func testSubmitPassword_withInvalidCredentials() async {
+        // given
+        sut.email = " mika@example.com "
+        sut.password = " bad password  "
+
         // mock
         mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
             .invalidCredentials
 
         // when
-        await sut.submit(
-            password: "bad password",
-            proxyCredentials: nil
-        )
+        await sut.submitCredentials()
 
         // then
         XCTAssertEqual(sut.alert, .invalidCredentials)
@@ -180,15 +188,15 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
 
     @MainActor
     func testSubmitPassword_when2FARequired() async throws {
+        // given
+        sut.email = " mika@example.com "
+        sut.password = " password  "
         // mock
         mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
             .twoFactorAuthenticationRequired
 
         // when
-        await sut.submit(
-            password: "password",
-            proxyCredentials: nil
-        )
+        await sut.submitCredentials()
 
         // then
         XCTAssertNil(sut.alert)
@@ -203,15 +211,16 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
 
     @MainActor
     func testSubmitPassword_whenAccountPendingActivation() async {
+        // given
+        sut.email = " mika@example.com "
+        sut.password = " password  "
+
         // mock
         mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
             .accountPendingActivation
 
         // when
-        await sut.submit(
-            password: "password",
-            proxyCredentials: nil
-        )
+        await sut.submitCredentials()
 
         // then
         XCTAssertEqual(sut.alert, .accountPendingActivation)
@@ -221,14 +230,15 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     @MainActor
     func testSubmitPassword_whenAccountSuspended() async {
         // given
+        sut.email = " mika@example.com "
+        sut.password = " password  "
+
+        // mock
         mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
             .accountSuspended
 
         // when
-        await sut.submit(
-            password: "password",
-            proxyCredentials: nil
-        )
+        await sut.submitCredentials()
 
         // then
         XCTAssertEqual(sut.alert, .accountSuspended)
@@ -238,14 +248,14 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     @MainActor
     func testSubmitPassword_whenUnknownErrorOccurs() async {
         // given
+        sut.email = " mika@example.com "
+        sut.password = " password  "
+
+        // mock
         mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = URLError(.badURL)
 
         // when
-        await sut.submit(
-            password: "password",
-            proxyCredentials: nil
-        )
-
+        await sut.submitCredentials()
         // then
         XCTAssertEqual(router.alert_Invocations, [.unknownError])
         XCTAssertEqual(isLoadingCalls, [true, false])
@@ -255,10 +265,10 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
 
     @MainActor
     func testIsValidPassword() {
-        XCTAssertTrue(sut.isValidPassword("p"))
-        XCTAssertTrue(sut.isValidPassword("password"))
-        XCTAssertFalse(sut.isValidPassword(""))
-        XCTAssertFalse(sut.isValidPassword(" "))
+        XCTAssertTrue(sut.isPasswordValid("p"))
+        XCTAssertTrue(sut.isPasswordValid("password"))
+        XCTAssertFalse(sut.isPasswordValid(""))
+        XCTAssertFalse(sut.isPasswordValid(" "))
     }
 
 }

@@ -138,6 +138,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         CreateAuthenticationResultUseCase(networkStack: networkStack)
     }
 
+    func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
+        ValidateEmailUseCase()
+    }
+
 }
 
 extension LoginViaEmailComponent: LoginViaEmailView.Factory {
