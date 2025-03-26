@@ -114,8 +114,8 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
 
     var canBeCombinedWithOtherCells: Bool { true }
 
-    var topMargin: CGFloat = 2
-    var bottomMargin: CGFloat = 0
+    var topMargin: CGFloat = -6
+    var bottomMargin: CGFloat = -6
 
     let containsHighlightableContent: Bool = false
 

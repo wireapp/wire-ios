@@ -304,8 +304,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     var canBeCombinedWithOtherCells: Bool { true }
 
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
+    var topMargin: CGFloat = -6
+    var bottomMargin: CGFloat = -6
 
     let containsHighlightableContent: Bool = false
 
