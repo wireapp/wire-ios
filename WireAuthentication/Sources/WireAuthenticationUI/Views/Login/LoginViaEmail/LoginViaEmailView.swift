@@ -123,7 +123,7 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var emailField: some View {
         LabeledTextField(
-            placeholder: nil,
+            placeholder: L10n.CloudUserLogin.InputEmail.placeholder,
             title: L10n.CloudUserLogin.InputEmail.title,
             string: .constant(viewModel.email ?? "")
         )
