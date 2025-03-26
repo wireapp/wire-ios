@@ -515,7 +515,7 @@ struct ConversationEventPayloadProcessor {
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
             conversation.isPendingInitialFetch = false
-            conversation.groupConversationType = payload.groupType.map { groupType in
+            conversation.groupType = payload.groupType.map { groupType in
                 switch groupType {
                 case .group:
                     .group

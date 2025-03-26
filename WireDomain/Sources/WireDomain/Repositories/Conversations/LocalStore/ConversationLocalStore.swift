@@ -910,7 +910,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.remoteIdentifier = id
             localConversation.isPendingMetadataRefresh = false
             localConversation.isPendingInitialFetch = false
-            localConversation.groupConversationType = conversation.groupType.map { groupType in
+            localConversation.groupType = conversation.groupType.map { groupType in
                 switch groupType {
                 case .group:
                     .group
