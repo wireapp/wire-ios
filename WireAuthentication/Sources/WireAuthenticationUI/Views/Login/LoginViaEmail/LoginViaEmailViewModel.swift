@@ -76,7 +76,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func isValidPassword(_ password: String) -> Bool {
-        !password.isEmpty
+        !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var isValidEmail: Bool {

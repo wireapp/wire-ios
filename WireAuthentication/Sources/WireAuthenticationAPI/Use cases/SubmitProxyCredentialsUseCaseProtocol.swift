@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
 
     func invoke(proxyCredentials: ProxyCredentials) throws
