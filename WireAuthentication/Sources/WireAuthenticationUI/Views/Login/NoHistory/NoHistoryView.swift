@@ -87,8 +87,6 @@ package struct NoHistoryView: View {
         .onAppear {
             viewModel.onAppear()
         }
-<<<<<<< HEAD
-=======
         .onReceive(
             NotificationCenter.default.publisher(
                 for: UIApplication.willEnterForegroundNotification
@@ -97,7 +95,6 @@ package struct NoHistoryView: View {
             viewModel.onAppear()
         }
         .padding(.vertical, 32)
->>>>>>> d8fd7e999f (feat: track alert confirmation - WPB-15936 (#2749))
         .padding()
         .presentationDetents([.medium])
         .interactiveDismissDisabled()
