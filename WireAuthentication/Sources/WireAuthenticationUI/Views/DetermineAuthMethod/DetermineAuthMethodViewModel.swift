@@ -116,6 +116,17 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 // No need to do anything here. In general this shouldn't happen because we validate before submitting.
                 // It is probably worth restructuring the code to avoid this.
                 break
+
+            case ProxyModeError.proxyCredentialsRequired:
+                // Login via email is the only place we ask from proxy credentials.
+                router.navigate(
+                    to: DetermineAuthMethodView.Destination.login(
+                        email: nil,
+                        didDetectDomainConflict: false,
+                        backendInfo: backendInfo
+                    )
+                )
+
             default:
                 router.presentAlert(for: error)
             }
@@ -239,7 +250,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     RootView.ModalDestination.authFlow(backendInfo: backendInfo)
                 )
             }
-        } catch FetchSSOURLUseCaseError.proxyCredentialsRequired {
+        } catch ProxyModeError.proxyCredentialsRequired {
             // Login via email is the only place we ask from proxy credentials.
             router.navigate(
                 to: DetermineAuthMethodView.Destination.login(

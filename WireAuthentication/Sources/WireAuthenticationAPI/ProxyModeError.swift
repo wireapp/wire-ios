@@ -16,18 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public enum ProxyModeError: Error {
 
-public protocol FetchSSOURLUseCaseProtocol: Sendable {
-
-    func invoke() async throws -> URL?
-
-}
-
-public protocol FetchSSOURLUseCaseFactory {
-
-    func fetchSSOURLUseCase(
-        backendInfo: BackendInfo
-    ) async throws -> any FetchSSOURLUseCaseProtocol
+    case proxyCredentialsRequired
 
 }

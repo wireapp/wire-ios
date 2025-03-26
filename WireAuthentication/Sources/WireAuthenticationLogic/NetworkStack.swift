@@ -23,12 +23,6 @@ import WireLogging
 
 package final class NetworkStack {
 
-    enum Failure: Error {
-
-        case proxyCredentialsRequired
-
-    }
-
     package let backendInfo: BackendInfo
     package let minTLSVersion: TLSVersion
     package let preferredAPIVersion: APIVersion?
@@ -78,7 +72,7 @@ package final class NetworkStack {
         if let proxySettings = backendInfo.backendConfig.proxySettings {
             if proxySettings.needsAuthentication {
                 guard let proxyCredentials else {
-                    throw Failure.proxyCredentialsRequired
+                    throw ProxyModeError.proxyCredentialsRequired
                 }
 
                 resolvedProxySettings = .authenticated(
@@ -137,7 +131,7 @@ package final class NetworkStack {
         get throws {
             switch state {
             case .awaitingProxyCredentials:
-                throw Failure.proxyCredentialsRequired
+                throw ProxyModeError.proxyCredentialsRequired
             case let .ready(networkService):
                 networkService
             }
