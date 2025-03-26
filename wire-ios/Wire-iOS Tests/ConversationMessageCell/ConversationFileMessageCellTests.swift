@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireFoundation
+import XCTest
 
 @testable import Wire
 
@@ -33,7 +33,7 @@ final class ConversationFileMessageCellTests: ConversationMessageSnapshotTestCas
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
         message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)
-        
+
         PrivateUserDefaults<CollapseKey>(userID: mockSelfUser.remoteIdentifier!)
             .set(false, forKey: .collapseOwnMessages)
     }

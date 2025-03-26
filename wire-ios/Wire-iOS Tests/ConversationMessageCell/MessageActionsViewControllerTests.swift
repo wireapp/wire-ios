@@ -25,6 +25,7 @@ import XCTest
 final class MessageActionsViewControllerTests: XCTestCase {
 
     // MARK: - setUp
+
     var userDefaults: PrivateUserDefaults<CollapseKey>?
 
     override func setUp() {
@@ -33,7 +34,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
-    
+
     override func tearDown() {
         super.tearDown()
         userDefaults?.set(false, forKey: .collapseOwnMessages)
