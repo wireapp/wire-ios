@@ -25,6 +25,10 @@ import XCTest
 final class MockShareViewControllerConversation: SwiftMockConversation {}
 
 extension MockShareViewControllerConversation: ShareDestination {
+    var avatarView: UIView? {
+        nil
+    }
+
     var showsGuestIcon: Bool {
         false
     }
