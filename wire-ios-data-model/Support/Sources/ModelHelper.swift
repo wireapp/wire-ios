@@ -360,7 +360,7 @@ public struct ModelHelper {
     @discardableResult
     public func createMLSConversation(
         id: UUID = UUID(),
-        domain: String? = "domain.com",
+        domain: String = "domain.com",
         mlsGroupID: MLSGroupID? = nil,
         mlsStatus: MLSGroupStatus = .ready,
         conversationType: ZMConversationType = .group,
