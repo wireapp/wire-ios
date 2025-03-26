@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireAccountImageUI
 
 enum Indicator {
     case deleted
@@ -70,6 +71,22 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         view.accessibilityTraits = .button
         view.accessibilityLabel = L10n.Accessibility.Conversation.ProfileImage.description
         view.accessibilityHint = L10n.Accessibility.Conversation.ProfileImage.hint
+        view.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        return view
+    }()
+
+    private lazy var availabilityIndicatorView = {
+        let view = AvailabilityIndicatorView(availability: .away)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.widthAnchor.constraint(equalToConstant: 11).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 11).isActive = true
+
+        let design = AccountImageViewDesign().availabilityIndicator
+        view.availableColor = design.availableColor
+        view.awayColor = design.awayColor
+        view.busyColor = design.busyColor
+        view.backgroundViewColor = design.backgroundViewColor
 
         return view
     }()
@@ -128,6 +145,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - Configure subviews and setup constraints
 
     private func configureSubviews() {
+
+        avatar.addSubview(availabilityIndicatorView)
+        availabilityIndicatorView.leadingAnchor.constraint(equalTo: avatar.leadingAnchor, constant: 23).isActive = true
+        availabilityIndicatorView.topAnchor.constraint(equalTo: avatar.topAnchor, constant: 23).isActive = true
+
         let avatarContainerView = UIView()
             .setClipsToBounds(false)
         avatarContainerView.addSubview(avatar)

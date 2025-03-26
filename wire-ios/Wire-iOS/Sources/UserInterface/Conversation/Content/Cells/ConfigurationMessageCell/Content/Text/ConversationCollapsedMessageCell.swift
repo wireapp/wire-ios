@@ -18,6 +18,7 @@
 
 import WireDesign
 import WireSyncEngine
+import WireAccountImageUI
 
 final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
@@ -48,6 +49,22 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.isUserInteractionEnabled = true
         view.setContentHuggingPriority(.required, for: .horizontal)
         view.setContentCompressionResistancePriority(.required, for: .horizontal)
+        view.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        return view
+    }()
+
+    private lazy var availabilityIndicatorView = {
+        let view = AvailabilityIndicatorView(availability: .away)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.widthAnchor.constraint(equalToConstant: 11).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 11).isActive = true
+
+        let design = AccountImageViewDesign().availabilityIndicator
+        view.availableColor = design.availableColor
+        view.awayColor = design.awayColor
+        view.busyColor = design.busyColor
+        view.backgroundViewColor = design.backgroundViewColor
 
         return view
     }()
@@ -160,17 +177,22 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         addSubview(wholeViewTapButton)
         wholeViewTapButton.pin(to: self)
 
+        avatar.addSubview(availabilityIndicatorView)
+        availabilityIndicatorView.leadingAnchor.constraint(equalTo: avatar.leadingAnchor, constant: 23).isActive = true
+        availabilityIndicatorView.topAnchor.constraint(equalTo: avatar.topAnchor, constant: 23).isActive = true
+
         let stack = UIStackView.horizontal(
             views: [
-                avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),
+                avatar.wrapInView(leadingInset: margins.left - 39, bottomInset: -7),
                 messageTextView,
                 [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
                     .horizontalStack(spacing: 8)
                     .wrapInView(bottomInset: -1)
             ],
-            spacing: 10,
+            spacing: 7,
             alignment: .center
         )
+        stack.setCustomSpacing(10, after: messageTextView)
 
         addSubview(stack)
 
