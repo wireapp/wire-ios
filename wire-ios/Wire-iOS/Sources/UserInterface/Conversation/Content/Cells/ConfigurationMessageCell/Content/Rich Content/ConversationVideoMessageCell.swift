@@ -141,7 +141,7 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     typealias View = ConversationVideoMessageCell
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { true }
+    var canBeCombinedWithOtherCells: Bool { false }
 
     var showEphemeralTimer: Bool = false
 
