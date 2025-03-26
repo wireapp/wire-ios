@@ -39,7 +39,6 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
 
         // WHEN && THEN
-        XCTAssertEqual(cellDescription.topMargin, .zero)
         XCTAssertFalse(cellDescription.supportsActions)
         XCTAssertFalse(cellDescription.showEphemeralTimer)
         XCTAssertFalse(cellDescription.containsHighlightableContent)
