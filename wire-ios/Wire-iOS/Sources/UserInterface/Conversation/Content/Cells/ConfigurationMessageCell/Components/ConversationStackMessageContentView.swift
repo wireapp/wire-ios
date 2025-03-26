@@ -89,12 +89,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
         if let senderView {
             stackView.bringSubviewToFront(senderView)
         }
-
-        if
-            let index = configuration.firstIndex(where: \.showEphemeralTimer),
-            let contentView = stackView.arrangedSubviews[index] as? any ConversationMessageCell {
-            ephemeralTimerTopInset = contentView.frame.origin.y + contentView.ephemeralTimerTopInset
-        }
     }
 
     private func setupStackView() {
@@ -132,8 +126,6 @@ final class ConversationStackMessageContentView: UIView, ConversationMessageCell
     var selectionRect: CGRect {
         conversationMessageCells.first { $0.selectionView != nil }?.selectionRect ?? .zero
     }
-
-    private(set) var ephemeralTimerTopInset: CGFloat = 8
 
     func willDisplay() {
         for cell in conversationMessageCells {

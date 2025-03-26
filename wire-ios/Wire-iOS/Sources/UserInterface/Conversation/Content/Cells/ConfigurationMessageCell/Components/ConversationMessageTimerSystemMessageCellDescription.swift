@@ -33,8 +33,6 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-
     var topMargin: CGFloat = 0
     var bottomMargin: CGFloat = 0
 

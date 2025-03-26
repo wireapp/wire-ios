@@ -31,10 +31,6 @@ final class StackViewCellDescription: ConversationMessageCellDescription {
         cellDescriptions.contains(where: \.supportsActions)
     }
 
-    var showEphemeralTimer: Bool {
-        cellDescriptions.contains(where: \.showEphemeralTimer)
-    }
-
     var containsHighlightableContent: Bool {
         cellDescriptions.contains(where: \.containsHighlightableContent)
     }

@@ -24,8 +24,7 @@ enum ConversationSystemMessageCellDescription {
     static func cells(
         for message: ZMConversationMessage,
         isCollapsed: Bool,
-        buttonAction: Completion?,
-        showEphemeralTimer: Bool
+        buttonAction: Completion?
     ) -> [AnyConversationMessageCellDescription] {
 
         guard let systemMessageData = message.systemMessageData,
@@ -50,7 +49,6 @@ enum ConversationSystemMessageCellDescription {
                 sender: sender,
                 newName: newName
             )
-            renamedCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(renamedCell)]
 
         case .missedCall:
@@ -58,7 +56,6 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 data: systemMessageData
             )
-            missedCallCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(missedCallCell)]
 
         case .performedCall:
@@ -71,7 +68,6 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 shouldShowAuthor: true
             )
-            senderCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(senderCell)]
 
         case .messageTimerUpdate:
@@ -85,22 +81,18 @@ enum ConversationSystemMessageCellDescription {
                 timer: timer,
                 sender: sender
             )
-            timerCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(timerCell)]
 
         case .conversationIsSecure:
             let shieldCell = ConversationSecureSystemMessageSectionDescription()
-            shieldCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(shieldCell)]
 
         case .conversationIsVerified:
             let shieldCell = ConversationVerifiedSystemMessageSectionDescription()
-            shieldCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(shieldCell)]
 
         case .conversationIsDegraded:
             let shieldCell = ConversationDegradedSystemMessageSectionDescription()
-            shieldCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(shieldCell)]
 
         case .sessionReset:
@@ -109,7 +101,6 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData,
                 sender: sender
             )
-            sessionResetCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(sessionResetCell)]
 
         case .decryptionFailed, .decryptionFailedResolved, .decryptionFailed_RemoteIdentityChanged:
@@ -118,7 +109,6 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData,
                 sender: sender
             )
-            decryptionCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(decryptionCell)]
 
         case .newClient:
@@ -127,7 +117,6 @@ enum ConversationSystemMessageCellDescription {
                 systemMessageData: systemMessageData,
                 conversation: conversation as! ZMConversation
             )
-            newClientCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(newClientCell)]
 
         case .ignoredClient:
@@ -137,7 +126,6 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData,
                 user: user
             )
-            ignoredClientCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(ignoredClientCell)]
 
         case .potentialGap:
@@ -145,7 +133,6 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 data: systemMessageData
             )
-            missingMessagesCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(missingMessagesCell)]
 
         case .participantsAdded, .participantsRemoved, .teamMemberLeave:
@@ -153,7 +140,6 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 data: systemMessageData
             )
-            participantsChangedCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(participantsChangedCell)]
 
         case .readReceiptsEnabled,
@@ -163,7 +149,6 @@ enum ConversationSystemMessageCellDescription {
                 sender: sender,
                 systemMessageType: systemMessageData.systemMessageType
             )
-            cell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(cell)]
 
         case .legalHoldEnabled, .legalHoldDisabled:
@@ -171,7 +156,6 @@ enum ConversationSystemMessageCellDescription {
                 systemMessageType: systemMessageData.systemMessageType,
                 conversation: conversation as! ZMConversation
             )
-            cell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(cell)]
 
         case .newConversation:
@@ -180,7 +164,6 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 data: systemMessageData
             )
-            startedConversationCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
             // Only display invite user cell for team members
@@ -205,20 +188,17 @@ enum ConversationSystemMessageCellDescription {
                     isCollapsed: isCollapsed,
                     buttonAction: buttonAction
                 )
-                cellDescription.showEphemeralTimer = showEphemeralTimer
                 return [AnyConversationMessageCellDescription(cellDescription)]
             }
 
         case .domainsStoppedFederating:
             let domainsStoppedFederatingCell =
                 ConversationDomainsStoppedFederatingSystemMessageCellDescription(systemMessageData: systemMessageData)
-            domainsStoppedFederatingCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
         case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted,
              .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
             let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
-            description.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(description)]
 
         case .mlsNotSupportedSelfUser, .mlsNotSupportedOtherUser:
@@ -227,7 +207,6 @@ enum ConversationSystemMessageCellDescription {
                     messageType: systemMessageData.systemMessageType,
                     for: user
                 )
-                description.showEphemeralTimer = showEphemeralTimer
                 return [AnyConversationMessageCellDescription(description)]
             } else {
                 assertionFailure("connectedUserType should not be nil in this case")
@@ -235,7 +214,6 @@ enum ConversationSystemMessageCellDescription {
 
         case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
-            unknownMessage.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(unknownMessage)]
         }
 

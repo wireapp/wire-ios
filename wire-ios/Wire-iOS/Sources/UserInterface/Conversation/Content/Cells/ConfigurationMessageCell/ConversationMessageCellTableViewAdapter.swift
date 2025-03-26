@@ -38,7 +38,6 @@ final class ConversationMessageCellTableViewAdapter<
 >: UITableViewCell, SelectableView, HighlightableView {
 
     let cellView: C.View
-    let ephemeralCountdownView: EphemeralCountdownView // TODO: delete
 
     var cellDescription: C? {
         didSet {
@@ -52,7 +51,6 @@ final class ConversationMessageCellTableViewAdapter<
     private var top: NSLayoutConstraint!
     private var trailing: NSLayoutConstraint!
     private var bottom: NSLayoutConstraint!
-    private var ephemeralTop: NSLayoutConstraint!
 
     private var longPressGesture: UILongPressGestureRecognizer!
     private var doubleTapGesture: UITapGestureRecognizer!
@@ -61,8 +59,6 @@ final class ConversationMessageCellTableViewAdapter<
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellView = C.View(frame: .zero)
         cellView.translatesAutoresizingMaskIntoConstraints = false
-        self.ephemeralCountdownView = EphemeralCountdownView()
-        ephemeralCountdownView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -72,32 +68,19 @@ final class ConversationMessageCellTableViewAdapter<
         isOpaque = false
 
         contentView.addSubview(cellView)
-        contentView.addSubview(ephemeralCountdownView)
 
         self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8)
         self.bottom = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: 8)
         bottom.priority = UILayoutPriority(999)
-        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(
-            equalTo: cellView.topAnchor,
-            constant: cellView.ephemeralTimerTopInset
-        )
 
-        let countdownViewLeftInset = conversationHorizontalMargins.left
         NSLayoutConstraint.activate([
-            ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            ephemeralCountdownView.trailingAnchor.constraint(
-                equalTo: contentView.leadingAnchor,
-                constant: countdownViewLeftInset
-            ),
-            ephemeralTop,
             leading,
             trailing,
             top,
             bottom
         ])
-        ephemeralTop.constant = cellView.ephemeralTimerTopInset
 
         self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
@@ -123,14 +106,6 @@ final class ConversationMessageCellTableViewAdapter<
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         top.constant = 8 + (cellDescription?.topMargin ?? 0)
         bottom.constant = 8 + (cellDescription?.bottomMargin ?? 0)
-        ephemeralTop.constant = cellView.ephemeralTimerTopInset
-        ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
-        ephemeralCountdownView.message = cellDescription?.message
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        ephemeralTop.constant = cellView.ephemeralTimerTopInset
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -222,13 +197,11 @@ final class ConversationMessageCellTableViewAdapter<
     override func willDisplayCell() {
         cellDescription?.willDisplayCell()
         cellView.willDisplay()
-        ephemeralCountdownView.startCountDown()
     }
 
     override func didEndDisplayingCell() {
         cellDescription?.didEndDisplayingCell()
         cellView.didEndDisplaying()
-        ephemeralCountdownView.stopCountDown()
     }
 
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

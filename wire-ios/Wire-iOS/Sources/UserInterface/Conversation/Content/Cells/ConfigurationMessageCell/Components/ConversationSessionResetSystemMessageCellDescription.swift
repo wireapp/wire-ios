@@ -33,7 +33,6 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var bottomMargin: CGFloat = 0
 
     var supportsActions: Bool = false
-    var showEphemeralTimer: Bool = false
     var containsHighlightableContent: Bool = false
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?

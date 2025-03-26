@@ -153,8 +153,6 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var supportsActions: Bool = false
 
-    var showEphemeralTimer: Bool = false
-
     var topMargin: CGFloat = 0
     var bottomMargin: CGFloat = 0
 
