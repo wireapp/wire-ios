@@ -263,7 +263,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         requestLoginVerificationCodeUseCase.invokeEmail_MockMethod = { _ in }
 
         // when
-        await sut.resend()
+        await sut.requestVerificationCode()
 
         // then
         #expect(isResendingCalls == [true, false])
@@ -277,7 +277,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
             .invokeEmail_MockError = RequestLoginVerificationCodeUseCaseFailure.invalidEmail
 
         // when
-        await sut.resend()
+        await sut.requestVerificationCode()
 
         // then
         #expect(isResendingCalls == [true, false])
@@ -290,7 +290,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         requestLoginVerificationCodeUseCase.invokeEmail_MockError = URLError(.badURL)
 
         // when
-        await sut.resend()
+        await sut.requestVerificationCode()
 
         // then
         #expect(isResendingCalls == [true, false])

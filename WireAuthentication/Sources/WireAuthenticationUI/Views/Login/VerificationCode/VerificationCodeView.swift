@@ -84,7 +84,7 @@ package struct VerificationCodeView: View {
             .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
-                Task.detached { await viewModel.resend() }
+                Task.detached { await viewModel.requestVerificationCode() }
             }, label: {
                 Text(L10n.VerificationCode.resendCode)
             })
@@ -111,6 +111,11 @@ package struct VerificationCodeView: View {
             switch $0 {
             case let .noHistory(authenticationResult):
                 factory.noHistoryView(authenticationResult: authenticationResult)
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.requestVerificationCode()
             }
         }
     }

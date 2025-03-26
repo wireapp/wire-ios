@@ -135,7 +135,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         isLoading = false
     }
 
-    func resend() async {
+    func requestVerificationCode() async {
         isResending = true
 
         do {
@@ -151,6 +151,7 @@ public final class VerificationCodeViewModel: ObservableObject {
             switch error {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
+
             default:
                 router.presentAlert(for: error)
             }
