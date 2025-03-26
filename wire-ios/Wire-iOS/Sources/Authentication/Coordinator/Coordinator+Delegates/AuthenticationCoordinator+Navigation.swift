@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireAuthentication
 
 extension AuthenticationCoordinator: UINavigationControllerDelegate {
 
@@ -57,6 +58,7 @@ extension AuthenticationCoordinator: UINavigationControllerDelegate {
         }
 
         self.currentViewController = authenticationViewController
+        self.currentViewController?.didRewindToThisView()
         stateController.unwindState()
     }
 

@@ -919,6 +919,88 @@ extension UserClientRequestStrategyTests {
         }
     }
 
+    func test_It_Calls_DidRegisterMLSClient_For_Self_Client() {
+        var existingClient: UserClient!
+
+        syncMOC.performGroupedBlock {
+            // Given
+            self.clientRegistrationStatus.mockPhase = .registered
+
+            existingClient = self.createSelfClient()
+            self.syncMOC.saveOrRollback()
+            let existingClientSet: Set<NSManagedObject> = [existingClient]
+
+            // When
+            existingClient.needsToUploadMLSPublicKeys = true
+            existingClient.setLocallyModifiedKeys(Set([UserClient.needsToUploadMLSPublicKeysKey]))
+
+            self.sut.contextChangeTrackers.forEach {
+                $0.objectsDidChange(existingClientSet)
+            }
+
+            let request = self.sut.nextRequest(for: .v1)
+
+            // Then
+            XCTAssertNotNil(request)
+
+            // And when
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v1.rawValue
+            )
+
+            request?.complete(with: response)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(clientRegistrationStatus.didRegisterMLSClient, true)
+    }
+
+    func test_It_Does_Not_Call_DidRegisterMLSClient_For_Not_Self_Client() {
+        var existingClient: UserClient!
+
+        syncMOC.performGroupedBlock {
+            // Given
+            self.clientRegistrationStatus.mockPhase = .registered
+
+            existingClient = self.createClient(for: .selfUser(in: self.syncMOC))
+            self.syncMOC.saveOrRollback()
+            let existingClientSet: Set<NSManagedObject> = [existingClient]
+
+            // When
+            existingClient.needsToUploadMLSPublicKeys = true
+            existingClient.setLocallyModifiedKeys(Set([UserClient.needsToUploadMLSPublicKeysKey]))
+
+            self.sut.contextChangeTrackers.forEach {
+                $0.objectsDidChange(existingClientSet)
+            }
+
+            let request = self.sut.nextRequest(for: .v1)
+
+            // Then
+            XCTAssertNotNil(request)
+
+            // And when
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v1.rawValue
+            )
+
+            request?.complete(with: response)
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        XCTAssertEqual(clientRegistrationStatus.didRegisterMLSClient, false)
+    }
+
 }
 
 extension UserClientRequestStrategy {

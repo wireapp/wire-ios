@@ -675,19 +675,19 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - commitPendingProposals
+    // MARK: - updateCommitPendingProposal
 
-    public var commitPendingProposalsConversationDateCommitDelay_Invocations: [(conversation: ZMConversation, date: Date, commitDelay: UInt64)] = []
-    public var commitPendingProposalsConversationDateCommitDelay_MockMethod: ((ZMConversation, Date, UInt64) async -> Void)?
+    public var updateCommitPendingProposalDateForCommitDelay_Invocations: [(date: Date, conversation: ZMConversation, commitDelay: UInt64)] = []
+    public var updateCommitPendingProposalDateForCommitDelay_MockMethod: ((Date, ZMConversation, UInt64) async -> Void)?
 
-    public func commitPendingProposals(conversation: ZMConversation, date: Date, commitDelay: UInt64) async {
-        commitPendingProposalsConversationDateCommitDelay_Invocations.append((conversation: conversation, date: date, commitDelay: commitDelay))
+    public func updateCommitPendingProposal(date: Date, for conversation: ZMConversation, commitDelay: UInt64) async {
+        updateCommitPendingProposalDateForCommitDelay_Invocations.append((date: date, conversation: conversation, commitDelay: commitDelay))
 
-        guard let mock = commitPendingProposalsConversationDateCommitDelay_MockMethod else {
-            fatalError("no mock for `commitPendingProposalsConversationDateCommitDelay`")
+        guard let mock = updateCommitPendingProposalDateForCommitDelay_MockMethod else {
+            fatalError("no mock for `updateCommitPendingProposalDateForCommitDelay`")
         }
 
-        await mock(conversation, date, commitDelay)
+        await mock(date, conversation, commitDelay)
     }
 
     // MARK: - updateSecurityLevelAfterReceivingMessage
@@ -1181,6 +1181,70 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
 }
 
+public class MockCreateChannelUseCaseProtocol: CreateChannelUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool)] = []
+    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockError: Error?
+    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, Set<ZMUser>, Set<WireAPI.ConversationAccessMode>, Set<WireAPI.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockValue: ZMConversation?
+
+    public func invoke(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
+        invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_Invocations.append((teamID: teamID, name: name, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts))
+
+        if let error = invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockError {
+            throw error
+        }
+
+        if let mock = invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockMethod {
+            return try await mock(teamID, name, users, accessMode, accessRoles, enableReceipts)
+        } else if let mock = invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts`")
+        }
+    }
+
+}
+
+public class MockCreateGroupConversationUseCaseProtocol: CreateGroupConversationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations: [(teamID: UUID?, messageProtocol: WireAPI.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool)] = []
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockError: Error?
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockMethod: ((UUID?, WireAPI.ConversationMessageProtocol, String?, Set<ZMUser>, Set<WireAPI.ConversationAccessMode>, Set<WireAPI.ConversationAccessRole>, Bool, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockValue: ZMConversation?
+
+    public func invoke(teamID: UUID?, messageProtocol: WireAPI.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool) async throws -> ZMConversation {
+        invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations.append((teamID: teamID, messageProtocol: messageProtocol, name: name, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts, isMLSEnabled: isMLSEnabled))
+
+        if let error = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockError {
+            throw error
+        }
+
+        if let mock = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockMethod {
+            return try await mock(teamID, messageProtocol, name, users, accessMode, accessRoles, enableReceipts, isMLSEnabled)
+        } else if let mock = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled`")
+        }
+    }
+
+}
+
 public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -1328,6 +1392,21 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
         } else {
             fatalError("no mock for `decryptedEventDataFrom`")
         }
+    }
+
+    // MARK: - commitPendingProposalsIfNeeded
+
+    var commitPendingProposalsIfNeeded_Invocations: [Void] = []
+    var commitPendingProposalsIfNeeded_MockMethod: (() async -> Void)?
+
+    func commitPendingProposalsIfNeeded() async {
+        commitPendingProposalsIfNeeded_Invocations.append(())
+
+        guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
+            fatalError("no mock for `commitPendingProposalsIfNeeded`")
+        }
+
+        await mock()
     }
 
 }

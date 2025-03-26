@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "検索";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "画像";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "削除…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "いいね！";
 "content.message.unlike" = "いいね！を取消す";
 "content.message.go_to_conversation" = "開く";
@@ -651,6 +658,7 @@
 "content.message.download" = "ダウンロード";
 "content.message.details" = "詳細";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "返信";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "リンクプレビューを作成";
 "self.settings.privacy_security.disable_link_previews.footer" = "他ユーザーからのリンクがプレビュー表示されれます";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "デバイス";
 
 "self.settings.privacy.clear_history.title" = "履歴をクリア";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "このアカウントは、もはやログイン権限はありません";
 "error.user.account_limit_reached" = "３アカウント以上は追加できません。";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "パスワードの更新ができませんでした。";
-
 "error.group_call.too_many_members_in_conversation.title" = "呼び出す人が多すぎます";
 "error.group_call.too_many_members_in_conversation" = "電話は最大%d人までとの間ですることができます。";
 "error.group_call.too_many_participants_in_the_call.title" = "この通話は満員です";
 "error.group_call.too_many_participants_in_the_call" = "このチャットルームには、あと%d 人まで入ることができます。";
-"error.call.gsm_ongoing.title" = "携帯電話通話";
-"error.call.gsm_ongoing" = "Wireでの通話の前に、携帯電話の通話を終わらせてください。";
-"error.call.general.title" = "呼び出しエラー";
-"error.call.general" = "数分後に再度電話をしてみてください。";
-"error.call.slow_connection.title" = "インターネット接続が遅いです";
-"error.call.slow_connection" = "通話中に問題が発生する可能性があります";
-"error.call.slow_connection.call_anyway" = "とにかく電話をする";
 
 "error.invite.no_email_provider" = "メールで招待状を送るために、メールクライアントの設定をしてください。";
 "error.invite.no_messaging_provider" = "SMSで招待状を送るために、SMSの設定をしてください。";

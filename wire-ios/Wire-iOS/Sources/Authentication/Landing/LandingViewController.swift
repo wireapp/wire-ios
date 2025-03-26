@@ -565,4 +565,8 @@ final class LandingViewController: AuthenticationStepViewController {
     func displayError(_ error: Error) {
         // no-op
     }
+
+    func didRewindToThisView() {
+        // no-op
+    }
 }

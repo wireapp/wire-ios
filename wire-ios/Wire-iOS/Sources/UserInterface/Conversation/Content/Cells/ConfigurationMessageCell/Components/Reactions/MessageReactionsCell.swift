@@ -31,7 +31,16 @@ final class MessageReactionsCell: UIView, ConversationMessageCell, UICollectionV
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
+/*
+    private let reactionsView = GridLayoutView()
 
+    private lazy var insets = UIEdgeInsets(
+        top: 2,
+        left: conversationHorizontalMargins.left,
+        bottom: 0,
+        right: conversationHorizontalMargins.right
+    )
+*/
     private let cellReuseIdentifier = "ReactionsCell"
 
     private lazy var dataSource = MessageReactionsDiffableDataSource(

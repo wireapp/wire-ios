@@ -130,8 +130,10 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
 
     var canBeCombinedWithOtherCells: Bool { true }
 
-    var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false
+
+    var topMargin: CGFloat = 8
+    var bottomMargin: CGFloat = 0
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
@@ -147,7 +149,8 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message)
     }
 
 }

@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "Søg";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Delete…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Synes om";
 "content.message.unlike" = "Synes ikke godt om";
 "content.message.go_to_conversation" = "Vis";
@@ -651,6 +658,7 @@
 "content.message.download" = "Download";
 "content.message.details" = "Detaljer";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Svar";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Create Link Previews";
 "self.settings.privacy_security.disable_link_previews.footer" = "Previews kan stadig blive vist for link fra andre.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Enheder";
 
 "self.settings.privacy.clear_history.title" = "Ryd historik";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "Denne konto har ikke længere tilladelse til at logge ind.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Kunne ikke opdatere din adgangskode.";
-
 "error.group_call.too_many_members_in_conversation.title" = "For mange personer til opkald";
 "error.group_call.too_many_members_in_conversation" = "Opkald virker i samtaler med op til %d personer.";
 "error.group_call.too_many_participants_in_the_call.title" = "Opkaldet er fuldt";
 "error.group_call.too_many_participants_in_the_call" = "There’s only room for %d participants in here.";
-"error.call.gsm_ongoing.title" = "Mobilt opkald";
-"error.call.gsm_ongoing" = "Venligst annuller det mobile opkald inden opkald med Wire.";
-"error.call.general.title" = "Opkaldsfejl";
-"error.call.general" = "Venligst prøv igen om flere minutter.";
-"error.call.slow_connection.title" = "Langsom forbindelse";
-"error.call.slow_connection" = "Du kan opleve problemer under opkaldet";
-"error.call.slow_connection.call_anyway" = "Ring alligevel";
 
 "error.invite.no_email_provider" = "Konfigurer din e-mail klient for at kunne sende invitationer via e-mail";
 "error.invite.no_messaging_provider" = "Konfigurer din SMS for at kunne sende invitationer vis SMS";

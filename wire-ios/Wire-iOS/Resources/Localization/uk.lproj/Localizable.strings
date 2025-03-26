@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " та ";
 
 "conversation.action.search" = "Пошук";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Картинка";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Видалити…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Подобається";
 "content.message.unlike" = "Не подобається";
 "content.message.go_to_conversation" = "Показати в розмові";
@@ -651,6 +658,7 @@
 "content.message.download" = "Завантажити";
 "content.message.details" = "Подробиці";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Відповісти";
@@ -793,7 +801,7 @@
 
 "call.mls.degraded.alert.title" = "Conversation no longer verified";
 "call.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to start the call?";
-"call.mls.degraded.alert.action.continue" = "Подзвонити все одно";
+"call.mls.degraded.alert.action.continue" = "Подзвонити все-одно";
 
 "call.mls.degraded.incoming.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to join the call?";
 "call.mls.degraded.incoming.alert.action.continue" = "Приєднатися все-одно";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Генерувати попередній перегляд для посилань";
 "self.settings.privacy_security.disable_link_previews.footer" = "Дана опція не впливає на попередній перегляд лінків від інших людей.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Пристрої";
 
 "self.settings.privacy.clear_history.title" = "Очистити Історію";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "Даний акаунт був заблокований.";
 "error.user.account_limit_reached" = "Ви не можете додати більше трьох акаунтів.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Не вдалося оновити ваш пароль.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Забагато учасників для здійснення дзвінка";
 "error.group_call.too_many_members_in_conversation" = "Дзвінки можливі в розмовах до %d людей.";
 "error.group_call.too_many_participants_in_the_call.title" = "Забагато людей в дзвінку";
 "error.group_call.too_many_participants_in_the_call" = "Тут залишилось місце тільки для %d учасників(-а).";
-"error.call.gsm_ongoing.title" = "Стільниковий дзвінок";
-"error.call.gsm_ongoing" = "Будь ласка, завершіть стільниковий дзвінок перед тим, як дзвонити з Wire.";
-"error.call.general.title" = "Помилка дзвінка";
-"error.call.general" = "Будь ласка, спробуйте подзвонити знову через кілька хвилин.";
-"error.call.slow_connection.title" = "Повільне з'єднання";
-"error.call.slow_connection" = "Можуть виникнути проблеми під час дзвінка";
-"error.call.slow_connection.call_anyway" = "Подзвонити все одно";
 
 "error.invite.no_email_provider" = "Будь ласка, налаштуйте ваш поштовий клієнт, щоб надсилати запрошення через email";
 "error.invite.no_messaging_provider" = "Будь ласка, налаштуйте службу надсилання SMS, щоб запрошувати людей через SMS";

@@ -41,12 +41,12 @@ extension AnyConversationMessageCellDescription: Differentiable {
 }
 
 extension ZMConversationMessage {
+
     var isSentFromThisDevice: Bool {
-        guard let sender = senderUser else {
-            return false
-        }
+        guard let sender = senderUser else { return false }
         return sender.isSelfUser && deliveryState == .pending
     }
+
 }
 
 final class ConversationTableViewDataSource: NSObject {
@@ -81,9 +81,12 @@ final class ConversationTableViewDataSource: NSObject {
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
 
+    var contentWidth: CGFloat = UIScreen.main.bounds.width
+
     var searchQueries: [String] = [] {
         didSet {
             currentSections = calculateSections()
+            adjustTopAndBottomMargins(of: currentSections)
             tableView.reloadData()
         }
     }
@@ -159,6 +162,7 @@ final class ConversationTableViewDataSource: NSObject {
             model: sectionIdentifier,
             elements: sectionController.tableViewCellDescriptions
         )
+        adjustTopAndBottomMargins(of: updatedSections)
 
         return updatedSections
     }
@@ -185,7 +189,10 @@ final class ConversationTableViewDataSource: NSObject {
         currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
     }
 
-    func actionController(for message: ZMConversationMessage) -> ConversationMessageActionController {
+    func actionController(
+        for message: ZMConversationMessage,
+        sectionController: ConversationMessageSectionController
+    ) -> ConversationMessageActionController {
         if let cachedEntry = actionControllers[message.objectIdentifier] {
             return cachedEntry
         }
@@ -194,7 +201,9 @@ final class ConversationTableViewDataSource: NSObject {
             responder: messageActionResponder,
             message: message,
             context: .content,
-            view: tableView
+            view: tableView,
+            isCollapsed: sectionController.isCollapsed,
+            selfUserId: userSession.selfUser.remoteIdentifier
         )
 
         actionControllers[message.objectIdentifier] = actionController
@@ -204,6 +213,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers[message.objectIdentifier] {
+            cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
 
@@ -218,11 +228,12 @@ final class ConversationTableViewDataSource: NSObject {
             context: context,
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
-            useInvertedIndices: true
+            useInvertedIndices: true,
+            contentWidth: contentWidth
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
-        sectionController.actionController = actionController(for: message)
+        sectionController.actionController = actionController(for: message, sectionController: sectionController)
 
         sectionControllers[message.objectIdentifier] = sectionController
 
@@ -297,6 +308,7 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
         currentSections = calculateSections(forceRecalculate: forceRecalculate)
+        adjustTopAndBottomMargins(of: currentSections)
         tableView.reloadData()
     }
 
@@ -456,6 +468,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         sectionController.highlight(in: tableView, sectionIndex: section)
     }
 
+    func collapse(message: ZMConversationMessage) {
+        guard let section = sectionControllers[message.objectIdentifier] else {
+            return
+        }
+        section.collapse()
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard currentSections.indices.contains(section) else { return 0 }
 
@@ -482,16 +501,24 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         }
 
         let section = currentSections[indexPath.section]
-
         guard section.elements.indices.contains(indexPath.row) else {
             fatal("section.elements has \(section.elements.count) elements, but try to access #\(indexPath)")
         }
 
         let cellDescription = section.elements[indexPath.row]
+        if let model = cellDescription.conversationCellModel {
 
-        registerCellIfNeeded(with: cellDescription, in: tableView)
+            model.registerIfNeeded(in: tableView)
+            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
+            model.configureCell(cell)
+            return cell
 
-        return cellDescription.makeCell(for: tableView, at: indexPath)
+        } else {
+
+            registerCellIfNeeded(with: cellDescription, in: tableView)
+            return cellDescription.makeCell(for: tableView, at: indexPath)
+
+        }
     }
 }
 
@@ -534,9 +561,6 @@ extension ConversationTableViewDataSource {
         firstUnreadMessage: ZMConversationMessage?,
         searchQueries: [String]
     ) -> ConversationMessageContext {
-        // 45 minutes
-        let significantTimeInterval: TimeInterval = 60 * 45
-        let isTimeIntervalSinceLastMessageSignificant: Bool
 
         let isTimestampInSameMinuteAsPreviousMessage: Bool
 
@@ -548,42 +572,67 @@ extension ConversationTableViewDataSource {
             isTimestampInSameMinuteAsPreviousMessage = false
         }
 
-        if let timeIntervalToPreviousMessage = timeIntervalToPreviousMessage(from: message, at: index) {
-            isTimeIntervalSinceLastMessageSignificant = timeIntervalToPreviousMessage > significantTimeInterval
-        } else {
-            isTimeIntervalSinceLastMessageSignificant = false
-        }
-
         let isLastMessage = (index == 0) && !hasNewerMessagesToLoad
         return ConversationMessageContext(
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index),
-            isTimeIntervalSinceLastMessageSignificant: isTimeIntervalSinceLastMessageSignificant,
             isTimestampInSameMinuteAsPreviousMessage: isTimestampInSameMinuteAsPreviousMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index),
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
-            previousMessageIsKnock: previousMessage?.isKnock == true,
-            spacing: message.isSystem || previousMessage?
-                .isSystem == true || isTimeIntervalSinceLastMessageSignificant ? 16 : 12
+            previousMessageIsKnock: previousMessage?.isKnock == true
         )
-    }
-
-    private func timeIntervalToPreviousMessage(from message: ZMConversationMessage, at index: Int) -> TimeInterval? {
-        guard let currentMessageTimestamp = message.serverTimestamp, let previousMessageTimestamp = messagePrevious(
-            to: message,
-            at: index
-        )?.serverTimestamp else {
-            return nil
-        }
-
-        return currentMessageTimestamp.timeIntervalSince(previousMessageTimestamp)
     }
 
     private func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp,
               let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
+    }
+
+    private func adjustTopAndBottomMargins(of sections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
+
+        // find subsequent messages and collapse space if needed
+        for currentIndex in sections.indices.reversed() {
+            guard let current = sections[currentIndex].elements.last?.instance else { continue }
+
+            let previousIndex = currentIndex + 1
+            guard
+                sections.indices.contains(previousIndex),
+                let previous = sections[previousIndex].elements.first?.instance
+            else {
+                current.topMargin = 0
+                current.bottomMargin = 0
+                continue
+            }
+
+            let collapse = if current is ConversationTextMessageCellDescription ||
+                current is ConversationFileMessageCellDescription ||
+                current is ConversationImageMessageCellDescription ||
+                current is ConversationVideoMessageCellDescription ||
+                current is ConversationReplyCellDescription ||
+                current is ConversationCollapsedMessageCellDescription {
+                // no stack cell description and no sender is shown, so collapse the space if needed
+                true
+            } else if let firstStacked = (current as? StackViewCellDescription)?.cellDescriptions.first?.instance {
+                firstStacked is ConversationTextMessageCellDescription ||
+                    firstStacked is ConversationFileMessageCellDescription ||
+                    firstStacked is ConversationImageMessageCellDescription ||
+                    firstStacked is ConversationVideoMessageCellDescription ||
+                    firstStacked is ConversationReplyCellDescription
+            } else {
+                false
+            }
+
+            if collapse {
+                previous.bottomMargin = -6
+                current.topMargin = -6
+            } else {
+                previous.bottomMargin = 0
+                current.topMargin = 0
+            }
+        }
+
     }
 
 }
