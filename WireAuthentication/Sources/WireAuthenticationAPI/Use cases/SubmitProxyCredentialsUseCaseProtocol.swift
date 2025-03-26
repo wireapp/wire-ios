@@ -17,16 +17,16 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-struct MockMockLoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
+// sourcery: AutoMockable
+public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
 
-    func invoke(
-        email: String,
-        password: String,
-        verificationCode: String?
-    ) async throws -> ([HTTPCookie], AccessToken) {
-        ([], AccessToken(userID: UUID(), token: "token", type: "Bearer", expirationDate: .distantFuture))
-    }
+    func invoke(proxyCredentials: ProxyCredentials) throws
+
+}
+
+public protocol SubmitProxyCredentialsUseCaseFactory {
+
+    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol
 
 }

@@ -326,10 +326,10 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     cookies: result.cookies
                 )
 
-                if let proxyCredentials = result.proxyCredentials {
+                if case let .authenticated(_, _, username, password) = result.backendEnvironment.proxySettings {
                     sessionManager.saveProxyCredentials(
-                        username: proxyCredentials.email,
-                        password: proxyCredentials.password
+                        username: username,
+                        password: password
                     )
                 }
 

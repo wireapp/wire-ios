@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireAuthenticationAPI
 
-struct MockDetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
+package struct ValidateEmailUseCase: ValidateEmailUseCaseProtocol {
 
-    func invoke(
-        emailOrSSOCode: String
-    ) async -> AuthenticationMethod {
-        try! await Task.sleep(for: .seconds(3))
+    package init() {}
 
-        return .loginViaEmail(email: emailOrSSOCode, didDetectDomainConflict: false)
+    package func invoke(email: String) -> EmailValidationResult {
+        EmailValidator.isValid(email: email) ? .isValid : .isInvalid
     }
 
 }

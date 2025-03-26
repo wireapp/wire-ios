@@ -19,12 +19,12 @@
 import Foundation
 import WireAuthenticationAPI
 
-struct MockSSOLinkGenerator: SSOLinkGeneratorProtocol {
+enum VerificationCodeDestination: Identifiable, Hashable {
 
-    func generateSSOLink(ssoCode: UUID) async throws -> URL {
-        URL(string: "https://example.com/login/\(ssoCode)")!
+    var id: Self {
+        self
     }
 
-    func flushToken() {}
+    case noHistory(authenticationResult: AuthenticationResult)
 
 }

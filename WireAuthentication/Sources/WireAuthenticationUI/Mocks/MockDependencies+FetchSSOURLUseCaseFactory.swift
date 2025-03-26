@@ -19,8 +19,21 @@
 import Foundation
 import WireAuthenticationAPI
 
-struct MockOpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
+extension MockDependencies: FetchSSOURLUseCaseFactory {
 
-    func invoke() {}
+    nonisolated
+    func fetchSSOURLUseCase(
+        backendInfo: BackendInfo
+    ) async throws -> any FetchSSOURLUseCaseProtocol {
+        MockFetchSSOURLUseCase()
+    }
+
+}
+
+struct MockFetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
+
+    func invoke() async throws -> URL? {
+        URL(string: "https://example.com/login/\(UUID().uuidString)")!
+    }
 
 }

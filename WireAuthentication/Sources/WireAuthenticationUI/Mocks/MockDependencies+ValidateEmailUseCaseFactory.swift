@@ -19,23 +19,19 @@
 import Foundation
 import WireAuthenticationAPI
 
-struct MockFetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
+extension MockDependencies: ValidateEmailUseCaseFactory {
 
-    func invoke(at configURL: URL) async throws -> BackendConfig {
-        BackendConfig(
-            title: "backend name",
-            endpoints: Endpoints(
-                backendURL: URL(string: "example")!,
-                backendWSURL: URL(string: "example")!,
-                blackListURL: URL(string: "example")!,
-                teamsURL: URL(string: "example")!,
-                accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!,
-                countlyURL: URL(string: "example")!
-            ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        )
+    nonisolated
+    func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
+        MockValidateEmailUseCase()
+    }
+
+}
+
+struct MockValidateEmailUseCase: ValidateEmailUseCaseProtocol {
+
+    func invoke(email: String) -> EmailValidationResult {
+        email.isEmpty ? .isInvalid : .isValid
     }
 
 }

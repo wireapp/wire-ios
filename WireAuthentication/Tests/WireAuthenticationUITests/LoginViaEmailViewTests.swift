@@ -26,11 +26,6 @@ import XCTest
 class LoginViaEmailViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private let backendMetadata = BackendMetadata(
-        apiVersion: .v8,
-        domain: "wire.com",
-        isFederationEnabled: true
-    )
 
     override func setUp() {
         snapshotHelper = .init()
@@ -49,9 +44,7 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: true,
             didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            backendInfo: MockDependencies().backendInfo
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -71,9 +64,7 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: true,
             didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            backendInfo: MockDependencies().backendInfo
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -94,9 +85,10 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            environmentType: .anta,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            backendInfo: BackendInfo(
+                environmentType: .anta,
+                backendConfig: MockDependencies()._backendConfig
+            )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -116,9 +108,10 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            environmentType: .anta,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            backendInfo: BackendInfo(
+                environmentType: .anta,
+                backendConfig: MockDependencies()._backendConfig
+            )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -146,7 +139,7 @@ class LoginViaEmailViewTests: XCTestCase {
                 websiteURL: URL(string: "https://example.com")!,
                 countlyURL: URL(string: "https://example.com")!
             ),
-            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
+            proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
 
@@ -154,9 +147,10 @@ class LoginViaEmailViewTests: XCTestCase {
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: backendConfig
+            )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -183,16 +177,17 @@ class LoginViaEmailViewTests: XCTestCase {
                 websiteURL: URL(string: "https://example.com")!,
                 countlyURL: URL(string: "https://example.com")!
             ),
-            proxySettings: ProxySettings(host: "host", port: 111, needsAuthentication: true),
+            proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
         let view = MockDependencies().loginViaEmailView(
             email: "foo@bar.com",
             canCreateAccount: false,
             didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: backendConfig
+            )
         )
         .frame(width: screenBounds.width, height: screenBounds.height)
 

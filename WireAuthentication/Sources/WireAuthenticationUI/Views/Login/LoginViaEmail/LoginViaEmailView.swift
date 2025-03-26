@@ -28,34 +28,32 @@ package protocol LoginViaEmailBuilder {
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendInfo: BackendInfo
     ) -> LoginViaEmailView
 
 }
 
 package struct LoginViaEmailView: View {
 
-    package typealias Factory = VerificationCodeBuilder
+    package typealias Factory =
+        NoHistoryViewBuilder &
+        VerificationCodeBuilder
 
     @StateObject var viewModel: LoginViaEmailViewModel
-
-    @State private var password: String = ""
-    @State private var proxyPassword: String = ""
-
-    private var proxyEmail: String = ""
+    private let factory: any Factory
 
     package init(
-        viewModel: LoginViaEmailViewModel
+        viewModel: LoginViaEmailViewModel,
+        factory: any Factory
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.factory = factory
     }
 
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-                if viewModel.hasProxySupport {
+                if viewModel.areProxyCredentialsRequired {
                     if viewModel.isOnPremiseBackend {
                         welcomeMessage
                     }
@@ -91,71 +89,61 @@ package struct LoginViaEmailView: View {
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
-            actions: { alert in
-                switch alert {
-                case .obsoleteClient:
-                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
-                default:
-                    Button(L10n.Authentication.Error.confirm, action: {})
-                }
+            actions: { _ in
+                Button(L10n.Authentication.Error.confirm, action: {})
             }
         )
-//        .navigationDestination(for: Destination.self) { destination in
-//            switch destination {
-//            case let .verifyLogin(email, password):
-//                factory.verificationCodeView(
-//                    email: email,
-//                    password: password,
-//                    didDetectDomainConflict: viewModel.didDetectDomainConflict
-//                )
-//            }
-//        }
-        .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
+        .navigationDestination(for: Destination.self) { destination in
+            switch destination {
+            case let .verifyLogin(
+                email,
+                password,
+                proxyCredentials
+            ):
+                factory.verificationCodeView(
+                    email: email,
+                    password: password,
+                    proxyCredentials: proxyCredentials
+                )
+            case let .noHistory(authenticationResult):
+                factory.noHistoryView(authenticationResult: authenticationResult)
+            }
+        }
+        .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
 
     @ViewBuilder private var welcomeMessage: some View {
-        VStack(spacing: 14) {
-            OnPremHeaderView(backendConfig: viewModel.backendConfig)
-            Text(L10n.OnPremUserLogin.message)
-                .multilineTextAlignment(.center)
-                .wireTextStyle(.body1)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-        }
+        OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
     }
 
     @ViewBuilder private var emailField: some View {
         LabeledTextField(
-            placeholder: nil,
+            placeholder: L10n.CloudUserLogin.InputEmail.placeholder,
             title: L10n.CloudUserLogin.InputEmail.title,
-            string: .constant(viewModel.email ?? "")
+            string: $viewModel.email
         )
         .autocorrectionDisabled()
         .textContentType(.username)
         .keyboardType(.emailAddress)
-        .disabled(viewModel.isValidEmail)
+        .disabled(viewModel.isEmailPrefilled)
     }
 
     @ViewBuilder private var passwordField: some View {
         PasswordField(
-            password: $password,
+            password: $viewModel.password,
             placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
             title: L10n.CloudUserLogin.InputPassword.title,
-            passwordRules: "viewModel.localizedPasswordRules",
-            isValidPassword: viewModel.isValidPassword
+            passwordRules: "",
+            isValidPassword: viewModel.isPasswordValid
         )
     }
 
-    // TODO: [WPB-16256] Implement proxy support
     @ViewBuilder private var submitButton: some View {
         Button(action: {
             Task {
-                await viewModel.submit(
-                    password: password,
-                    proxy: viewModel.hasProxySupport ? (proxyEmail, proxyPassword) : nil
-                )
+                await viewModel.submitCredentials()
             }
         }, label: {
             Text(L10n.CloudUserLogin.submit)
@@ -163,10 +151,7 @@ package struct LoginViaEmailView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.canSubmitPassword(
-            password: password,
-            proxy: (proxyEmail, proxyPassword)
-        ))
+        .disabled(!viewModel.canSubmitCredentials)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
@@ -234,15 +219,15 @@ package struct LoginViaEmailView: View {
             LabeledTextField(
                 placeholder: "jane@example.com",
                 title: L10n.ProxyCredentials.InputEmail.title,
-                string: .constant(proxyEmail)
+                string: $viewModel.proxyUsername
             )
 
             PasswordField(
-                password: $proxyPassword,
+                password: $viewModel.proxyPassword,
                 placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
                 title: L10n.CloudUserLogin.InputPassword.title,
                 passwordRules: "viewModel.localizedPasswordRules",
-                isValidPassword: viewModel.isValidPassword
+                isValidPassword: viewModel.isPasswordValid
             )
             Spacer()
         }
@@ -250,7 +235,14 @@ package struct LoginViaEmailView: View {
 
     enum Destination: Hashable {
 
-        case verifyLogin(email: String, password: String)
+        case verifyLogin(
+            email: String,
+            password: String,
+            proxyCredentials: ProxyCredentials?
+        )
+        case noHistory(
+            authenticationResult: AuthenticationResult
+        )
 
     }
 
@@ -263,9 +255,7 @@ package struct LoginViaEmailView: View {
                 email: "foo@bar.com",
                 canCreateAccount: false,
                 didDetectDomainConflict: false,
-                environmentType: MockDependencies().environmentType,
-                backendConfig: MockDependencies()._backendConfig,
-                backendMetadata: MockDependencies().backendMetadata
+                backendInfo: MockDependencies().backendInfo
             )
         }
 }

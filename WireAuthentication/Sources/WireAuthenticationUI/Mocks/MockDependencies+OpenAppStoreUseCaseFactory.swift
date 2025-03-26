@@ -16,19 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import WireAuthenticationAPI
 
-public struct SwitchBackendConfirmationPreview: View {
-    public init() {}
+extension MockDependencies: OpenAppStoreUseCaseFactory {
 
-    public var body: some View {
-        VStack {
-            MockDependencies().switchBackendView(
-                email: "email.com",
-                environmentType: MockDependencies().environmentType,
-                backendConfig: MockDependencies()._backendConfig
-            )
-        }
+    nonisolated
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        MockOpenAppStoreUseCase()
     }
+
+}
+
+struct MockOpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
+
+    func invoke() {}
 
 }

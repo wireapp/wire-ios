@@ -25,13 +25,8 @@ package protocol DetermineAuthMethodBuilder {
 
     @MainActor
     func determineAuthMethodView(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
+        backendInfo: BackendInfo
     ) -> DetermineAuthMethodView
-
-    @MainActor
-    func determineAuthMethodView() -> DetermineAuthMethodView
 
 }
 
@@ -40,7 +35,7 @@ package struct DetermineAuthMethodView: View {
     package typealias Factory =
         LoginViaEmailBuilder &
         LoginViaSSOBuilder &
-        SwitchBackendConfirmationBuilder
+        NoHistoryViewBuilder
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
@@ -61,7 +56,7 @@ package struct DetermineAuthMethodView: View {
                     Spacer()
                         .frame(maxWidth: .infinity)
                     if viewModel.isOnPremiseBackend {
-                        OnPremHeaderView(backendConfig: viewModel.backendConfig)
+                        OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
                             .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
                             .frame(width: 164, height: 95)
                     } else {
@@ -129,13 +124,8 @@ package struct DetermineAuthMethodView: View {
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
-            actions: { alert in
-                switch alert {
-                case .obsoleteClient:
-                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
-                default:
-                    Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
-                }
+            actions: { _ in
+                Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
             }
         )
         .navigationDestination(for: Destination.self) {
@@ -143,33 +133,27 @@ package struct DetermineAuthMethodView: View {
             case let .login(
                 email,
                 didDetectDomainConflict,
-                environmentType,
-                backendConfig,
-                backendMetadata
+                backendInfo
             ):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: false,
                     didDetectDomainConflict: didDetectDomainConflict,
-                    environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
+                    backendInfo: backendInfo
                 )
             case let .loginOrRegister(
                 email,
                 didDetectDomainConflict,
-                environmentType,
-                backendConfig,
-                backendMetadata
+                backendInfo
             ):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: true,
                     didDetectDomainConflict: didDetectDomainConflict,
-                    environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
+                    backendInfo: backendInfo
                 )
+            case let .noHistory(authenticationResult):
+                factory.noHistoryView(authenticationResult: authenticationResult)
             }
         }
         .sheet(
@@ -178,29 +162,38 @@ package struct DetermineAuthMethodView: View {
                 switch $0 {
                 case let .ssoLogin(
                     ssoURL,
-                    backendEnvironment
+                    backendInfo
                 ):
                     factory.loginViaSSOView(
                         ssoURL: ssoURL,
-                        backendEnvironment: backendEnvironment
-                    )
-                case let .switchBackend(
+                        backendInfo: backendInfo
+                    ) { result in
+                        viewModel.onSSOAuthenticationResult(result)
+                    }
+                case let .switchBackendConfirmation(
                     email,
-                    environmentType,
-                    backendConfig
+                    backendInfo
                 ):
                     if #available(iOS 16.4, *) {
-                        factory.switchBackendView(
-                            email: email,
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        ).presentationBackground(Color.black.opacity(0.7))
+                        SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
+                            guard didConfirm else { return }
+                            Task {
+                                await viewModel.switchBackend(
+                                    email: email,
+                                    backendInfo: backendInfo
+                                )
+                            }
+                        }.presentationBackground(Color.black.opacity(0.7))
                     } else {
-                        factory.switchBackendView(
-                            email: email,
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        ).background(TransparentBackgroundView())
+                        SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
+                            guard didConfirm else { return }
+                            Task {
+                                await viewModel.switchBackend(
+                                    email: email,
+                                    backendInfo: backendInfo
+                                )
+                            }
+                        }.background(TransparentBackgroundView())
                     }
                 }
             }
@@ -213,20 +206,16 @@ package struct DetermineAuthMethodView: View {
     package enum Destination: Hashable {
 
         case login(
-            email: String,
+            email: String?,
             didDetectDomainConflict: Bool,
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
+            backendInfo: BackendInfo
         )
         case loginOrRegister(
             email: String,
             didDetectDomainConflict: Bool,
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
+            backendInfo: BackendInfo
         )
-
+        case noHistory(AuthenticationResult)
     }
 
 }

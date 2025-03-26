@@ -29,127 +29,141 @@ protocol LoginViaEmailComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
-    var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
+    var backendInfo: BackendInfo { get }
     var minTLSVersion: TLSVersion { get }
-    var appStoreURL: URL { get }
 
 }
 
 class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
-    private let email: String?
-    private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
-    private let backendMetadata: BackendMetadata
+    public let email: String?
+    private let canCreateAccount: Bool
+    public let didDetectDomainConflict: Bool
+    public let networkStack: NetworkStack
 
     init(
         parent: any Scope,
         email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        networkStack: NetworkStack
     ) {
         self.email = email
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
-        self.backendMetadata = backendMetadata
+        self.canCreateAccount = canCreateAccount
+        self.didDetectDomainConflict = didDetectDomainConflict
+        self.networkStack = networkStack
         super.init(parent: parent)
     }
 
     // MARK: - View
 
-    @MainActor
-    func view(
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
-    ) -> LoginViaEmailView {
+    @MainActor var view: LoginViaEmailView {
         LoginViaEmailView(
-            viewModel: viewModel(
-                email: email,
-                canCreateAccount: canCreateAccount,
-                didDetectDomainConflict: didDetectDomainConflict
-            )
+            viewModel: viewModel,
+            factory: self
         )
     }
 
-    @MainActor
-    private func viewModel(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool
-    ) -> LoginViaEmailViewModel {
+    @MainActor private var viewModel: LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: dependency.router,
             factory: self,
             email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata,
+            backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency, backendEnvironment] in
+            onCreateAccount: { [dependency, networkStack, email] in
                 guard let dependency else { return }
-                dependency.router.dismissSheet()
-                dependency.bridge.sendOutboundEvent(
-                    .accountRegistrationRequested(
-                        email: email ?? "",
-                        backendEnvironment
-                    )
-                )
+                Task.detached {
+                    do {
+                        let backendEnvironment = try await networkStack.makeBackendEnvironment()
+                        await MainActor.run {
+                            dependency.router.dismissSheet()
+                            dependency.bridge.sendOutboundEvent(
+                                .accountRegistrationRequested(
+                                    email: email,
+                                    backendEnvironment
+                                )
+                            )
+                        }
+                    } catch {
+                        await MainActor.run {
+                            dependency.router.presentAlert(for: error)
+                        }
+                    }
+
+                }
+
             }
         )
     }
 
-    private var backendEnvironment: WireAuthenticationBackendEnvironment {
-        shared {
-            WireAuthenticationBackendEnvironment(
-                environmentType: environmentType,
-                config: backendConfig,
-                metadata: backendMetadata
-            )
-        }
-    }
-
-    // MARK: - Private dependencies
-
-    private var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: BackendEnvironment(backendConfig),
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
-    }
-
     // MARK: - Children
 
-//    var verificationCodeComponent: VerificationCodeComponent {
-//        VerificationCodeComponent(parent: self)
-//    }
+    func verificationCodeComponent(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> VerificationCodeComponent {
+        VerificationCodeComponent(
+            parent: self,
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials
+        )
+    }
+
+    func noHistoryComponent(
+        authenticationResult: AuthenticationResult
+    ) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
+    }
 
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
-    func loginViaEmailUseCase(apiVersion: BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol {
-        let api = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
-        return LoginViaEmailUseCase(authenticationAPI: api)
+    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
+        SubmitProxyCredentialsUseCase(networkStack: networkStack)
     }
 
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        OpenAppStoreUseCase(url: dependency.appStoreURL)
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
-        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
-        return ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        CreateAuthenticationResultUseCase(networkStack: networkStack)
+    }
+
+    func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
+        ValidateEmailUseCase()
+    }
+
+}
+
+extension LoginViaEmailComponent: LoginViaEmailView.Factory {
+
+    @MainActor
+    func verificationCodeView(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> VerificationCodeView {
+        verificationCodeComponent(
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials
+        ).view
+    }
+
+    @MainActor
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
+        noHistoryComponent(authenticationResult: authenticationResult).view
     }
 
 }

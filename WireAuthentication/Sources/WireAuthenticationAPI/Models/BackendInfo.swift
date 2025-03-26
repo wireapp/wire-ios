@@ -17,18 +17,18 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-struct MockValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
+public struct BackendInfo: Equatable, Hashable, Sendable {
 
-    func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
-        if input.contains("@") {
-            return .email(email: input, domain: input.components(separatedBy: "@").last!)
-        } else if input.hasSuffix("wire") {
-            return .ssoCode(UUID())
-        } else {
-            throw ValidatedEmailOrSSOCodeFailure.invalidInput
-        }
+    public let environmentType: BackendEnvironmentType
+    public let backendConfig: BackendConfig
+
+    public init(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig
+    ) {
+        self.environmentType = environmentType
+        self.backendConfig = backendConfig
     }
 
 }

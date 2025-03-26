@@ -26,23 +26,28 @@ import WireReusableUIComponents
 package final class LoginViaEmailViewModel: ObservableObject {
 
     package typealias Factory =
+        CreateAuthenticationResultUseCaseFactory &
         LoginViaEmailUseCaseFactory &
-        OpenAppStoreUseCaseFactory &
-        ResolveBackendMetadataUseCaseFactory
+        SubmitProxyCredentialsUseCaseFactory &
+        ValidateEmailUseCaseFactory
+
+    @Published var email: String
+    @Published var password: String = ""
+
+    @Published var proxyUsername: String = ""
+    @Published var proxyPassword: String = ""
+
+    let backendInfo: BackendInfo
+    let isEmailPrefilled: Bool
+    let canCreateAccount: Bool
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
 
     private let router: any Router
     private let factory: any Factory
-    private let environmentType: BackendEnvironmentType
-    package let backendConfig: BackendConfig
-    private let backendMetadata: BackendMetadata
     private let onCreateAccount: () -> Void
-
-    let email: String?
-    let canCreateAccount: Bool
-    let didDetectDomainConflict: Bool
+    private let didDetectDomainConflict: Bool
 
     // MARK: - Life cycle
 
@@ -50,105 +55,82 @@ package final class LoginViaEmailViewModel: ObservableObject {
         router: any Router,
         factory: any Factory,
         email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata,
+        backendInfo: BackendInfo,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
         onCreateAccount: @escaping () -> Void
     ) {
         self.router = router
         self.factory = factory
-        self.email = email
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
-        self.backendMetadata = backendMetadata
+        self.email = email ?? ""
+        self.backendInfo = backendInfo
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
+        self.isEmailPrefilled = email != nil
         self.onCreateAccount = onCreateAccount
     }
 
     private var forgotPasswordURL: URL {
-        backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
+        backendInfo.backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
     }
 
-    var hasProxySupport: Bool {
-        backendConfig.proxySettings != nil
+    var areProxyCredentialsRequired: Bool {
+        backendInfo.backendConfig.proxySettings?.needsAuthentication == true
     }
 
     var proxyServer: String {
-        backendConfig.endpoints.backendURL.absoluteString
+        backendInfo.backendConfig.endpoints.backendURL.absoluteString
     }
 
-    func isValidPassword(_ password: String) -> Bool {
-        !password.isEmpty
-    }
-
-    var isValidEmail: Bool {
-        guard let email else { return false }
-        return !email.isEmpty
+    func isPasswordValid(_ password: String) -> Bool {
+        !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var isOnPremiseBackend: Bool {
-        environmentType != .production
+        backendInfo.environmentType != .production
     }
 
-    func submit(password: String, proxy: (email: String, password: String)?) async {
-        guard let email else { return }
-
-        isLoading = true
-        let backendMetadata: WireAuthenticationAPI.BackendMetadata
-        do {
-            backendMetadata = try await resolveBackendMetadataIfNeeded()
-        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
-            alert = .obsoleteClient
-            return
-        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
-            alert = .obsoleteBackend
-            return
-        } catch {
-            alert = .general(for: error)
-            return
+    var canSubmitCredentials: Bool {
+        if areProxyCredentialsRequired {
+            areAccountCredentialsValid && areProxyCredentialsValid
+        } else {
+            areAccountCredentialsValid
         }
+    }
 
-        let (cookies, accessToken): ([HTTPCookie], AccessToken)
+    func submitCredentials() async {
+        isLoading = true
+
+        let sanitizedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sanitizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
+
         do {
-            (cookies, accessToken) = try await login(
-                email: email,
-                password: password,
-                backendMetadata: backendMetadata
+            if let proxyCredentials {
+                try submitProxyCredentials(proxyCredentials)
+            }
+
+            let (cookies, accessToken) = try await logIn(
+                email: sanitizedEmail,
+                password: sanitizedPassword
             )
+
             WireLogger.authentication.info("Login via email succeeded")
 
             let emailCredentials = EmailCredentials(
-                email: email,
-                password: password,
+                email: sanitizedEmail,
+                password: sanitizedPassword,
                 verificationCode: nil
             )
 
-            let proxyCredentials = proxy.flatMap { email, password in
-                EmailCredentials(email: email, password: password, verificationCode: nil)
-            }
-
-            let backendEnvironment = WireAuthenticationBackendEnvironment(
-                environmentType: environmentType,
-                config: backendConfig,
-                metadata: backendMetadata
-            )
-
-            let authenticationResult = AuthenticationResult(
-                userID: accessToken.userID,
+            let authenticationResult = try await createAuthenticationResult(
                 cookies: cookies,
                 accessToken: accessToken,
-                emailCredentials: emailCredentials,
-                proxyCredentials: proxyCredentials,
-                backendEnvironment: backendEnvironment
+                emailCredentials: emailCredentials
             )
 
-            router.presentSheet(RootView.ModalDestination.noHistory(
-                authenticationResult: authenticationResult,
-                didDetectDomainConflict: didDetectDomainConflict
-            ))
+            router.navigate(
+                to: LoginViaEmailView.Destination.noHistory(authenticationResult: authenticationResult)
+            )
 
         } catch {
             WireLogger.authentication.error("Login via email failed: \(error)")
@@ -158,14 +140,19 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .invalidCredentials
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
-                    to: LoginViaEmailView.Destination.verifyLogin(email: email, password: password)
+                    to: LoginViaEmailView.Destination
+                        .verifyLogin(
+                            email: sanitizedEmail,
+                            password: sanitizedPassword,
+                            proxyCredentials: proxyCredentials
+                        )
                 )
             case LoginViaEmailUseCaseFailure.accountPendingActivation:
                 alert = .accountPendingActivation
             case LoginViaEmailUseCaseFailure.accountSuspended:
                 alert = .accountSuspended
             default:
-                alert = .general(for: error)
+                router.presentAlert(for: error)
             }
         }
 
@@ -176,48 +163,66 @@ package final class LoginViaEmailViewModel: ObservableObject {
         UIApplication.shared.open(forgotPasswordURL)
     }
 
-    func goToAppStore() {
-        factory.openAppStoreUseCase().invoke()
-        alert = nil
-    }
-
     func createAccount() {
         onCreateAccount()
     }
 
-    func canSubmitPassword(password: String, proxy: (email: String, password: String)) -> Bool {
-        let validCredentials = isValidEmail && isValidPassword(password)
-
-        guard hasProxySupport else {
-            return validCredentials
-        }
-
-        let validProxyCredentials = !proxy.email.isEmpty && !proxy.password.isEmpty
-        return validCredentials && validProxyCredentials
-    }
-
     // MARK: - Private
 
-    private func resolveBackendMetadataIfNeeded() async throws -> BackendMetadata {
-        let useCase = factory.resolveBackendMetadataUseCase()
+    private var proxyCredentials: ProxyCredentials? {
+        guard areProxyCredentialsRequired else {
+            return nil
+        }
 
-        return try await Task.detached {
-            try await useCase.invoke()
-        }.value
+        return ProxyCredentials(
+            username: proxyUsername.trimmingCharacters(in: .whitespacesAndNewlines),
+            password: proxyPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        )
     }
 
-    private func login(
-        email: String,
-        password: String,
-        backendMetadata: BackendMetadata
-    ) async throws -> ([HTTPCookie], AccessToken) {
-        let useCase = factory.loginViaEmailUseCase(apiVersion: backendMetadata.apiVersion)
+    private var areAccountCredentialsValid: Bool {
+        let isEmailValid = factory.validateEmailUseCase().invoke(email: email) == .isValid
+        let isPasswordValid = isPasswordValid(password)
+        return isEmailValid && isPasswordValid
+    }
 
-        return try await Task.detached { [email] in
+    private var areProxyCredentialsValid: Bool {
+        let isUsernameValid = !proxyUsername.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let isPasswordValid = isPasswordValid(proxyPassword)
+        return isUsernameValid && isPasswordValid
+    }
+
+    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
+        let useCase = factory.submitProxyCredentialsUseCase()
+        try useCase.invoke(proxyCredentials: proxyCredentials)
+    }
+
+    private func logIn(
+        email: String,
+        password: String
+    ) async throws -> ([HTTPCookie], AccessToken) {
+        let useCase = try await factory.loginViaEmailUseCase()
+        return try await Task.detached {
             try await useCase.invoke(
                 email: email,
                 password: password,
-                verificationCode: ""
+                verificationCode: nil
+            )
+        }.value
+    }
+
+    private func createAuthenticationResult(
+        cookies: [HTTPCookie],
+        accessToken: AccessToken,
+        emailCredentials: EmailCredentials
+    ) async throws -> AuthenticationResult {
+        let useCase = factory.createAuthenticationResultUseCase()
+        return try await Task.detached {
+            try await useCase.invoke(
+                userID: accessToken.userID,
+                cookies: cookies,
+                accessToken: accessToken,
+                emailCredentials: emailCredentials
             )
         }.value
     }

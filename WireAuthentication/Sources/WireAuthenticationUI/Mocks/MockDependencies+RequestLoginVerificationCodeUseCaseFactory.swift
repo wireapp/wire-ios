@@ -16,16 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireAuthenticationAPI
 
-struct MockResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
+extension MockDependencies: RequestLoginVerificationCodeUseCaseFactory {
 
-    func invoke() async throws -> BackendMetadata {
-        BackendMetadata(
-            apiVersion: .v8,
-            domain: "wire.com",
-            isFederationEnabled: true
-        )
+    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
+        MockRequestLoginVerificationCodeUseCase()
+    }
+
+}
+
+struct MockRequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
+
+    func invoke(email: String) async throws {
+        try! await Task.sleep(for: .seconds(3))
     }
 
 }

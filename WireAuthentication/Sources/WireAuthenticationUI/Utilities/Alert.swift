@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
 /// Identifies an alert and provides it's title and message.
 
@@ -96,6 +97,10 @@ extension Alert {
         switch error {
         case URLError.notConnectedToInternet, URLError.networkConnectionLost:
             .noInternet
+        case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
+            .obsoleteClient
+        case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
+            .obsoleteBackend
         default:
             .unknownError
         }

@@ -17,12 +17,23 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-struct MockFetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
+// sourcery: AutoMockable
+public protocol ValidateEmailUseCaseProtocol: Sendable {
 
-    func invoke() async throws -> URL? {
-        URL(string: "https://example.com/login/\(UUID().uuidString)")!
-    }
+    func invoke(email: String) -> EmailValidationResult
+
+}
+
+public enum EmailValidationResult: Sendable {
+
+    case isValid
+    case isInvalid
+
+}
+
+public protocol ValidateEmailUseCaseFactory {
+
+    func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol
 
 }

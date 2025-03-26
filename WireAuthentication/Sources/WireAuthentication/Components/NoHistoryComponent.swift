@@ -46,6 +46,10 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
         super.init(parent: parent)
     }
 
+    @MainActor var view: NoHistoryView {
+        NoHistoryView(viewModel: viewModel)
+    }
+
     @MainActor private var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
             didDetectDomainConflict: didDetectDomainConflict,
@@ -55,10 +59,6 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
             }
         )
-    }
-
-    @MainActor var view: NoHistoryView {
-        NoHistoryView(viewModel: viewModel)
     }
 
 }
