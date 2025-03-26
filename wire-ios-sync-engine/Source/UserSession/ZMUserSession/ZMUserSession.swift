@@ -46,7 +46,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
-    var apiService: APIServiceProtocol? {
+    public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {
             return nil
         }

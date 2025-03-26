@@ -18,6 +18,7 @@
 
 import WireFoundation
 import XCTest
+
 @testable import Wire
 
 final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSnapshotTestCase {
