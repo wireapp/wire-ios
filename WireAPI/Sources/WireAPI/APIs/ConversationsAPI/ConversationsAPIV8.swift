@@ -184,7 +184,8 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: nil,
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime?.date
+            lastEventTime: lastEventTime?.date,
+            groupType: groupType
         )
     }
 }
