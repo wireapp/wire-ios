@@ -47,6 +47,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             searchQueries: [],
             previousMessageIsKnock: false
         )
+        collapseOwnMessagesStorage.set(false, forKey: .collapseOwnMessages)
     }
 
     // MARK: - tearDown
@@ -54,7 +55,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     override func tearDown() {
         context = nil
         mockSelfUser = nil
-
+        collapseOwnMessagesStorage.set(false, forKey: .collapseOwnMessages)
         super.tearDown()
     }
 

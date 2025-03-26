@@ -46,7 +46,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         message = nil
         mockSelfUser = nil
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
-
+        collapseOwnMessagesStorage.set(false, forKey: .collapseOwnMessages)
         super.tearDown()
     }
 
