@@ -94,7 +94,6 @@ package struct NoHistoryView: View {
         ) { _ in
             viewModel.onAppear()
         }
-        .padding(.vertical, 32)
         .padding()
         .presentationDetents([.medium])
         .interactiveDismissDisabled()
