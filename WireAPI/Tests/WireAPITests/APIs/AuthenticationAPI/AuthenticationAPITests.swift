@@ -236,9 +236,10 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testLoginViaEmail_Response_Handling_Custom_Backend_Not_Found() async throws {
         // Given
-        let networkService = MockNetworkServiceProtocol.withResponses([
-            (.notFound, "LoginViaEmailErrorResponse_CodeAuthenticationRequired_V0")
-        ])
+        let networkService = MockNetworkServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "code-authentication-required"
+        )
 
         let sut = AuthenticationAPIV8(networkService: networkService)
 
@@ -284,9 +285,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testUpgradeToTeam_Response_Handling_V8_BadRequest() async throws {
         // Given
-        let networkService = MockNetworkServiceProtocol.withResponses([
-            (.notFound, "RequestVerificationCodeResponse_BadRequest")
-        ])
+        let networkService = MockNetworkServiceProtocol.withError(statusCode: .badRequest, label: "bad-request")
 
         let sut = AuthenticationAPIV8(networkService: networkService)
 
