@@ -28,7 +28,6 @@ struct ConversationMessageContext: Equatable {
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
-    var spacing: CGFloat = 0
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -176,6 +175,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private func addContent(
         context: ConversationMessageContext,
+        isBurstTimestampVisible: Bool,
         isSenderVisible: Bool,
         to cellDescriptions: inout [AnyConversationMessageCellDescription]
     ) {
@@ -201,13 +201,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             addSystemMessageCell(showEphemeralTimer)
         } else {
             addUnknownMessageCell(showEphemeralTimer)
-        }
-
-        if let topContentCellDescription = contentCellDescriptions.first {
-            if isSenderVisible, topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
-                // We only do this for text content since the text label already contains the spacing
-                topContentCellDescription.topMargin = 0
-            }
         }
 
         cellDescriptions.append(contentsOf: contentCellDescriptions)
@@ -382,9 +375,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         var cellDescriptions = [AnyConversationMessageCellDescription]()
 
+        let isBurstTimestampVisible = isBurstTimestampVisible(in: context)
         let isSenderVisible = shouldShowSenderDetails(in: context)
 
-        if isBurstTimestampVisible(in: context) {
+        if isBurstTimestampVisible {
             let description = BurstTimestampSenderMessageCellDescription(
                 message: message,
                 context: context,
@@ -404,6 +398,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         addContent(
             context: context,
+            isBurstTimestampVisible: isBurstTimestampVisible,
             isSenderVisible: isSenderVisible,
             to: &cellDescriptions
         )
@@ -425,10 +420,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 buttonAction: { self.buttonAction() }
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
-        }
-
-        if let topCellDescription = cellDescriptions.first {
-            topCellDescription.topMargin = context.spacing
         }
 
         self.cellDescriptions = Self.combineByStacking(cellDescriptions)
@@ -466,10 +457,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func updateDelegates() {
-        cellDescriptions.forEach {
-            $0.message = message
-            $0.actionController = actionController
-            $0.delegate = cellDelegate
+        cellDescriptions.forEach { cellDescription in
+            cellDescription.message = message
+            cellDescription.actionController = actionController
+            cellDescription.delegate = cellDelegate
         }
     }
 
