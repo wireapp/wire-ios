@@ -93,7 +93,7 @@ final class ConversationTableViewDataSource: NSObject {
     var searchQueries: [String] = [] {
         didSet {
             currentSections = calculateSections()
-            adjustTopAndBottomMargins(of: currentSections)
+            adjustTopAndBottomMargins(of: &currentSections)
             tableView.reloadData()
         }
     }
@@ -169,7 +169,7 @@ final class ConversationTableViewDataSource: NSObject {
             model: sectionIdentifier,
             elements: sectionController.tableViewCellDescriptions
         )
-        adjustTopAndBottomMargins(of: updatedSections)
+        adjustTopAndBottomMargins(of: &updatedSections)
 
         return updatedSections
     }
@@ -316,7 +316,7 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
         currentSections = calculateSections(forceRecalculate: forceRecalculate)
-        adjustTopAndBottomMargins(of: currentSections)
+        adjustTopAndBottomMargins(of: &currentSections)
         tableView.reloadData()
     }
 
@@ -549,13 +549,6 @@ extension ConversationTableViewDataSource {
         return messages[previousIndex]
     }
 
-    // TODO: delete if not needed
-//    private func messageAfterMessage(at index: Int) -> ZMConversationMessage? {
-//        let followingIndex = index - 1
-//        guard messages.indices.contains(followingIndex) else { return nil }
-//        return messages[followingIndex]
-//    }
-
     func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int) -> Bool {
         guard let message,
               Message.isNormal(message),
@@ -603,7 +596,7 @@ extension ConversationTableViewDataSource {
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 
-    private func adjustTopAndBottomMargins(of sections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
+    private func adjustTopAndBottomMargins(of sections: inout [ArraySection<String, AnyConversationMessageCellDescription>]) {
 
         // find subsequent messages and collapse space if needed
         for currentIndex in sections.indices.reversed() {
@@ -612,13 +605,23 @@ extension ConversationTableViewDataSource {
             let previousIndex = currentIndex + 1
             guard
                 sections.indices.contains(previousIndex),
-                let previous = sections[previousIndex].elements.first?.instance
+                var previous = sections[previousIndex].elements.first?.instance
             else {
                 current.topMargin = 0
                 current.bottomMargin = 0
                 continue
             }
 
+            // filter redudnant status cells
+            // TODO: implement
+            if sections[previousIndex].elements.count > 1 { // TODO: also check the stack
+                print("elements0:", sections[previousIndex].elements.map { $0.instance })
+                sections[previousIndex].elements.removeFirst()
+                print("elements1:", sections[previousIndex].elements.map { $0.instance })
+                previous = sections[previousIndex].elements.first!.instance
+            }
+
+            // collapse space between subsequent messages
             let collapse = if current is ConversationTextMessageCellDescription ||
                 current is ConversationFileMessageCellDescription ||
                 current is ConversationImageMessageCellDescription ||
@@ -644,6 +647,7 @@ extension ConversationTableViewDataSource {
                 previous.bottomMargin = 0
                 current.topMargin = 0
             }
+
         }
 
     }
