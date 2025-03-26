@@ -100,7 +100,9 @@ final class MessageToolboxView: UIView {
         return label
     }()
 
+    private let timestampSeparatorContainer = UIView()
     private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
+    private let statusSeparatorContainer = UIView()
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
     private let messageFailureView = MessageSendFailureView()
 
@@ -182,6 +184,12 @@ final class MessageToolboxView: UIView {
 
     private func setupViews() {
 
+        timestampSeparatorLabel.translatesAutoresizingMaskIntoConstraints = false
+        timestampSeparatorContainer.addSubview(timestampSeparatorLabel)
+
+        statusSeparatorLabel.translatesAutoresizingMaskIntoConstraints = false
+        statusSeparatorContainer.addSubview(statusSeparatorLabel)
+
         countdownContainer = UIView()
         countdownView.translatesAutoresizingMaskIntoConstraints = false
         countdownContainer.addSubview(countdownView)
@@ -192,16 +200,13 @@ final class MessageToolboxView: UIView {
 
         [
             detailsLabel,
-            timestampSeparatorLabel,
+            timestampSeparatorContainer,
             editedLabel,
             statusContainerView,
-            statusSeparatorLabel,
+            statusSeparatorContainer,
             countdownContainer,
             countdownLabel
         ].forEach(contentStack.addArrangedSubview)
-
-//        contentStack.setCustomSpacing(6, after: statusSeparatorLabel)
-//        contentStack.setCustomSpacing(6, after: countdownView)
 
         [separatorView, contentStack, messageFailureView].forEach(addSubview)
         
@@ -219,6 +224,14 @@ final class MessageToolboxView: UIView {
             separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
             separatorView.topAnchor.constraint(equalTo: topAnchor),
             separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            timestampSeparatorLabel.leadingAnchor.constraint(equalTo: timestampSeparatorContainer.leadingAnchor),
+            timestampSeparatorLabel.centerYAnchor.constraint(equalTo: timestampSeparatorContainer.centerYAnchor),
+            timestampSeparatorContainer.trailingAnchor.constraint(equalTo: timestampSeparatorLabel.trailingAnchor),
+
+            statusSeparatorLabel.leadingAnchor.constraint(equalTo: statusSeparatorContainer.leadingAnchor),
+            statusSeparatorLabel.centerYAnchor.constraint(equalTo: statusSeparatorContainer.centerYAnchor),
+            statusSeparatorContainer.trailingAnchor.constraint(equalTo: statusSeparatorLabel.trailingAnchor),
 
             // statusTextView align vertically center
             contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
@@ -309,8 +322,8 @@ final class MessageToolboxView: UIView {
             detailsLabel.isHidden = false
             detailsLabel.numberOfLines = 0
             hideAndCleanStatusLabel()
-            timestampSeparatorLabel.isHidden = true
-            statusSeparatorLabel.isHidden = true
+            timestampSeparatorContainer.isHidden = true
+            statusSeparatorContainer.isHidden = true
             countdownView.isHidden = true
             countdownLabel.isHidden = true
             messageFailureView.isHidden = true
@@ -318,10 +331,10 @@ final class MessageToolboxView: UIView {
 
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
-            statusSeparatorLabel.isHidden = true
+            statusSeparatorContainer.isHidden = true
             countdownView.isHidden = true
             countdownLabel.isHidden = true
-            timestampSeparatorLabel.isHidden = false
+            timestampSeparatorContainer.isHidden = false
             messageFailureView.isHidden = false
             messageFailureView.setTitle(detailsString)
             editedLabel.isHidden = true
@@ -333,8 +346,8 @@ final class MessageToolboxView: UIView {
             
             updateState(state)
             
-            timestampSeparatorLabel.isHidden = timestamp == nil || state == nil
-            statusSeparatorLabel.isHidden = (timestamp == nil && state == nil) || countdown == nil
+            timestampSeparatorContainer.isHidden = timestamp == nil || state == nil
+            statusSeparatorContainer.isHidden = (timestamp == nil && state == nil) || countdown == nil
             countdownView.setProgress(dataSource.message.countdownProgress ?? 0)
             countdownView.isHidden = countdown == nil
             countdownLabel.text = countdown
