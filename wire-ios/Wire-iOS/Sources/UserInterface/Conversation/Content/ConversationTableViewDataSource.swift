@@ -630,9 +630,12 @@ extension ConversationTableViewDataSource {
 
             // filter redundant status cells
             let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
-            let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)
-            if isStatus(previousStatus, redundantTo: currentStatus) {
-                previousStatus?.configuration.isRedundant = true
+            let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
+            if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus) {
+                previousStatus?.removeFrom(&sections)
+                if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
+                    previousSectionFirstElement = newPreviousSectionFirstElement
+                }
             }
 
             // collapse space between subsequent messages
@@ -653,7 +656,10 @@ extension ConversationTableViewDataSource {
     private func statusCellDescription(
         for sectionIndex: Int,
         in sections: [Section]
-    ) -> ConversationMessageToolboxCellDescription? {
+    ) -> (
+        cellDescription: ConversationMessageToolboxCellDescription,
+        removeFrom: (_ sections: inout [Section]) -> Void
+    )? {
 
         for elementIndex in sections[sectionIndex].elements.indices {
             let cellDescription = sections[sectionIndex].elements[elementIndex].instance
@@ -662,16 +668,39 @@ extension ConversationTableViewDataSource {
                 for cellDescriptionIndex in stack.cellDescriptions.indices {
                     let cellDescription = stack.cellDescriptions[cellDescriptionIndex].instance
                     if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
-                        return cellDescription
+
+                        func remove(_ sections: inout [Section]) {
+                            (
+                                stack.cellDescriptions[cellDescriptionIndex].instance as? ConversationMessageToolboxCellDescription
+                            )?.configuration.isRedundant = true
+//                            var cellDescriptions = stack.cellDescriptions
+//                            cellDescriptions.remove(at: cellDescriptionIndex)
+//                            sections[sectionIndex]
+//                                .elements[elementIndex] = AnyConversationMessageCellDescription(
+//                                    StackViewCellDescription(cellDescriptions: cellDescriptions)
+//                                )
+                        }
+
+                        return (cellDescription, remove)
                     }
                 }
 
             } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
-                return cellDescription
+
+                func remove(_ sections: inout [Section]) {
+                    // sections[sectionIndex].elements.remove(at: elementIndex)
+                    (
+                        sections[sectionIndex]
+                            .elements[elementIndex].instance as? ConversationMessageToolboxCellDescription
+                    )?.configuration.isRedundant = true
+                }
+
+                return (cellDescription, remove)
             }
 
         }
 
+        print("abcxsdf", "message \(messages[sectionIndex].text) has no status")
         return nil
     }
 
@@ -679,13 +708,23 @@ extension ConversationTableViewDataSource {
         _ previousCellDescription: ConversationMessageToolboxCellDescription?,
         redundantTo currentCellDescription: ConversationMessageToolboxCellDescription?
     ) -> Bool {
-        guard let previousCellDescription, let currentCellDescription else { return false }
+        print(
+            "abcxsdfs isStatusRedundant \(previousCellDescription?.message?.text ?? "?") vs \(currentCellDescription?.message?.text ?? "?")",
+            terminator: ""
+        )
 
-        // always show the countdown
-        if previousCellDescription.message?.isEphemeral == true {
+        guard let previousCellDescription, let currentCellDescription else {
+            print(" guard false")
             return false
         }
 
+        // always show the countdown
+        if previousCellDescription.message?.isEphemeral == true {
+            print(" if false")
+            return false
+        }
+
+        print(" \(previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState)")
         return previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState
     }
 
