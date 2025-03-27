@@ -170,7 +170,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             (.ok, "GetFeatureConfigsSuccessResponseV6")
         ])
 
-        let supportedVersions = APIVersion.v6.andNextVersions
+        let supportedVersions = [APIVersion.v6, APIVersion.v7]
 
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
@@ -180,6 +180,28 @@ final class FeatureConfigsAPITests: XCTestCase {
             XCTAssertEqual(
                 result,
                 Scaffolding.featureConfigsV6
+            )
+        }
+    }
+
+    // MARK: - V8 and next versions
+
+    func testGetFeatureConfigs_SuccessResponse_200_V8_And_Next_Versions_Then_Verify_Requests() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetFeatureConfigsSuccessResponseV8")
+        ])
+
+        let supportedVersions = APIVersion.v8.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
+            // When
+            let result = try await sut.getFeatureConfigs()
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.featureConfigsV8
             )
         }
     }
@@ -421,6 +443,77 @@ extension FeatureConfigsAPITests {
                 )
             )
         ]
+
+        static let featureConfigsV8: [FeatureConfig] = [
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
+            ),
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
+            ),
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: true
+                )
+            ),
+            .conversationGuestLinks(
+                .init(status: .enabled)
+            ),
+            .digitalSignature(.init(status: .enabled)),
+            .fileSharing(.init(status: .enabled)),
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
+            ),
+            .mls(
+                .init(
+                    status: .enabled,
+                    protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
+                    defaultProtocol: .proteus,
+                    allowedCipherSuites: [
+                        .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
+                        .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                        .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                    ],
+                    defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                    supportedProtocols: [.proteus]
+                )
+            ),
+            .mlsMigration(
+                .init(
+                    status: .enabled,
+                    startTime: dateV6(from: "2021-05-12T10:52:02Z"),
+                    finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z")
+                )
+            ),
+            .endToEndIdentity(
+                .init(
+                    status: .enabled,
+                    acmeDiscoveryURL: "https://example.com",
+                    verificationExpiration: 9_223_372_036_854_776_000,
+                    crlProxy: "https://example.com",
+                    useProxyOnMobile: true
+                )
+            ),
+            .channels(
+                .init(
+                    status: .enabled,
+                    allowedToCreateChannels: .everyone,
+                    allowedToOpenChannels: .admins
+                )
+            )
+        ]
+
     }
 
 }
