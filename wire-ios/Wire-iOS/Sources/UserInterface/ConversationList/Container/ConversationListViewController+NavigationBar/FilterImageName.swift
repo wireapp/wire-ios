@@ -79,6 +79,8 @@ enum FilterImageName: String {
             return isSelected ? .personFill : .person
         case .folder:
             return isSelected ? .folderFill : .folder
+        case .channels:
+            return isSelected ? .personFill : .person // FIXME: Channels
         }
     }
 }

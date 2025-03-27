@@ -358,6 +358,8 @@ final class ConversationListViewModel: NSObject {
         let kinds: [Section.Kind] = switch selectedFilter {
         case .groups:
             [.groups]
+        case .channels:
+            [.groups] // FIXME: Channels
         case .favorites:
             [.favorites]
         case .oneOnOne:

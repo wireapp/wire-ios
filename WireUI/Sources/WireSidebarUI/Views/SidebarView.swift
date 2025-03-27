@@ -209,6 +209,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon = "person.3"
             accessibilityLabel = Text(Strings.ConversationFilter.Groups.title)
 
+        case .channels:
+            text = Text(Strings.ConversationFilter.Groups.title) // FIXME: Channels
+            icon = "person.3" // FIXME: Channels
+            accessibilityLabel = Text(Strings.ConversationFilter.Groups.title) // FIXME: Channels
+
         case .oneOnOne:
             text = Text(Strings.ConversationFilter.OneOnOneConversations.title)
             icon = "person"

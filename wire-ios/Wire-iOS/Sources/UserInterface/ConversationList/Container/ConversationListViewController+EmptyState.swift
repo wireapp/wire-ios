@@ -50,6 +50,8 @@ extension ConversationListViewController {
             )
         case .groups:
             return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString)
+        case .channels:
+            return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString) // FIXME: Channels
         case .oneOnOne:
             let domain = listContentController.listViewModel.userSession?.selfUser.domain ?? ""
             return EmptyPlaceholder(
