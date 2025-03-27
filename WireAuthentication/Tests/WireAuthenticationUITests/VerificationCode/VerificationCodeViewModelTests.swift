@@ -27,6 +27,7 @@ import WireAuthenticationAPISupport
 final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
 
     private let loginViaEmailUseCase: MockLoginViaEmailUseCaseProtocol
+    private var mockSubmitProxyCredentialsUseCase: MockSubmitProxyCredentialsUseCaseProtocol!
     private let requestLoginVerificationCodeUseCase: MockRequestLoginVerificationCodeUseCaseProtocol
     private let mockCreateAuthenticationResultUseCase: MockCreateAuthenticationResultUseCaseProtocol!
     private let router: MockRouter
@@ -38,6 +39,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
     @MainActor
     init() {
         self.loginViaEmailUseCase = MockLoginViaEmailUseCaseProtocol()
+        self.mockSubmitProxyCredentialsUseCase = MockSubmitProxyCredentialsUseCaseProtocol()
         self.requestLoginVerificationCodeUseCase = MockRequestLoginVerificationCodeUseCaseProtocol()
         self.mockCreateAuthenticationResultUseCase = MockCreateAuthenticationResultUseCaseProtocol()
         self.router = MockRouter()
@@ -45,6 +47,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
             factory: self,
             email: "abc@example.com",
             password: "aaaaaa",
+            proxyCredentials: nil,
             router: router,
             numberOfDigits: 3 // Lets use a 3 digit code for simplicity
         )
@@ -54,6 +57,10 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
     }
 
     // MARK: - Factory
+
+    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
+        mockSubmitProxyCredentialsUseCase
+    }
 
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
         loginViaEmailUseCase

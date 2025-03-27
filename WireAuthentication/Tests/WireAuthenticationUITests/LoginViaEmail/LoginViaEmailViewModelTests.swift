@@ -205,7 +205,12 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailView.Destination)
         XCTAssertEqual(
             actualDestination,
-            LoginViaEmailView.Destination.verifyLogin(email: "mika@example.com", password: "password")
+            LoginViaEmailView.Destination
+                .verifyLogin(
+                    email: "mika@example.com",
+                    password: "password",
+                    proxyCredentials: nil
+                )
         )
     }
 
