@@ -39,6 +39,7 @@ package struct RootView: View {
         BackgroundView()
             .universalSheet(item: $viewModel.modalDestination) { item in
                 sheetContent(for: item)
+                    .id(item.hashValue)
             }
     }
 
@@ -49,6 +50,7 @@ package struct RootView: View {
             NavigationStack(path: $viewModel.path) {
                 factory.determineAuthMethodView(backendInfo: backedInfo)
             }
+            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
             // The alert should be shown on the navigation stack, otherwise
             // it will dismiss the sheet.
             .alert(
