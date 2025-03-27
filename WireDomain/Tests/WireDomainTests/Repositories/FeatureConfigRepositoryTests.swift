@@ -26,7 +26,7 @@ import XCTest
 @testable import WireDomain
 
 final class FeatureConfigRepositoryTests: XCTestCase {
-    
+
     private var sut: FeatureConfigRepository!
     private var featureConfigsAPI: MockFeatureConfigsAPI!
     private var featureConfigLocalStore: MockFeatureConfigLocalStoreProtocol!
@@ -34,24 +34,24 @@ final class FeatureConfigRepositoryTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
     private var subscription: AnyCancellable?
-    
+
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
-    
+
     override func setUp() async throws {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         featureConfigsAPI = MockFeatureConfigsAPI()
         featureConfigLocalStore = MockFeatureConfigLocalStoreProtocol()
-        
+
         sut = FeatureConfigRepository(
             featureConfigsAPI: featureConfigsAPI,
             featureConfigLocalStore: featureConfigLocalStore
         )
     }
-    
+
     override func tearDown() async throws {
         stack = nil
         featureConfigsAPI = nil
@@ -60,35 +60,35 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         coreDataStackHelper = nil
         modelHelper = nil
     }
-    
+
     // MARK: - Tests
-    
+
     func testPullFeatureConfigs_It_Invokes_Local_Store_Methods() async throws {
         // Mock
-        
+
         let feature = await context.perform { [context] in
             Feature.updateOrCreate(
                 havingName: .conversationGuestLinks,
                 in: context
             ) { $0.status = .enabled }
-            
+
             return Feature.fetch(
                 name: .conversationGuestLinks,
                 context: context
             )
         }
-        
+
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
         featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
-        
+
         // When
-        
+
         try await sut.pullFeatureConfigs()
-        
+
         // Then
-        
+
         XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
         XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(
@@ -96,44 +96,44 @@ final class FeatureConfigRepositoryTests: XCTestCase {
             Scaffolding.featureConfigs.count
         )
     }
-    
+
     func testStoreNeedsToNotifyUser_It_Invokes_Local_Store_Methods() async throws {
         // Mock
-        
+
         let feature = await context.perform { [context] in
             Feature.updateOrCreate(
                 havingName: .conversationGuestLinks,
                 in: context
             ) { $0.status = .enabled }
-            
+
             return Feature.fetch(
                 name: .conversationGuestLinks,
                 context: context
             )
         }
-        
+
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
         featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_MockMethod = { _, _ in }
-        
+
         // When
-        
+
         try await sut.storeFeatureNeedsToNotifyUser(
             true,
             name: .conversationGuestLinks
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 1)
         XCTAssertEqual(featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_Invocations.count, 1)
     }
-    
+
     func testFetchFeatureConfig_It_Invokes_Local_Store_Methods_And_Retrieves_Correct_Config() async throws {
         // Mock
-        
+
         let (feature, config) = try await context.perform { [context] in
             let config = try JSONEncoder().encode(Scaffolding.featureConfig)
-            
+
             Feature.updateOrCreate(
                 havingName: .appLock,
                 in: context
@@ -141,39 +141,39 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 $0.status = .enabled
                 $0.config = config
             }
-            
+
             let feature = Feature.fetch(
                 name: .appLock,
                 context: context
             )
-            
+
             return (feature, config)
         }
-        
+
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
         featureConfigLocalStore.featureConfigFeature_MockMethod = { _ in (.enabled, config) }
-        
+
         // When
-        
+
         let localFeature = try await sut.fetchFeatureConfig(
             name: .appLock,
             type: Feature.AppLock.Config.self
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(featureConfigLocalStore.featureConfigFeature_Invocations.count, 1)
         XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 1)
         XCTAssertEqual(localFeature.status, .enabled)
         XCTAssertEqual(localFeature.config, Scaffolding.featureConfig)
     }
-    
+
     func testObserveFeatureChanges_It_Invokes_Local_Store_Methods_And_Values_Are_Correctly_Emitted() async throws {
         // Given
-        
+
         let feature = try await context.perform { [context] in
             let config = try JSONEncoder().encode(Scaffolding.featureConfig)
-            
+
             Feature.updateOrCreate(
                 havingName: .appLock,
                 in: context
@@ -181,41 +181,41 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 $0.status = .enabled
                 $0.config = config
             }
-            
+
             return Feature.fetch(
                 name: .appLock,
                 context: context
             )
         }
-        
+
         let expectation = XCTestExpectation()
         var featureStates: [FeatureState] = []
-        
+
         /// Start subscription
         subscription = sut.observeFeatureStates()
             .sink { featureState in
                 featureStates.append(featureState)
-                
+
                 if featureStates.count == Scaffolding.featureConfigs.count {
                     expectation.fulfill()
                 }
             }
-        
+
         // Mock
-        
+
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
         featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
-        
+
         // When
-        
+
         _ = try await sut.pullFeatureConfigs()
-        
+
         await fulfillment(of: [expectation], timeout: 5.0)
-        
+
         // Then
-        
+
         XCTAssertEqual(featureConfigsAPI.getFeatureConfigs_Invocations.count, 1)
         XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
         XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
@@ -224,14 +224,14 @@ final class FeatureConfigRepositoryTests: XCTestCase {
             Scaffolding.featureConfigs.count
         )
     }
-    
+
     private enum Scaffolding {
-        
+
         nonisolated(unsafe) static let featureConfig = Feature.AppLock.Config(
             enforceAppLock: true,
             inactivityTimeoutSecs: .min
         )
-        
+
         static let featureConfigs: [FeatureConfig] = [
             .appLock(
                 .init(
@@ -303,7 +303,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 allowedToOpenChannels: .everyone
             ))
         ]
-        
+
     }
-    
+
 }
