@@ -48,11 +48,6 @@ package struct VerificationCodeView: View {
 
     package var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.VerificationCode.title)
-                .font(.textStyle(.h2))
-                .foregroundStyle(Color.primaryText)
-                .multilineTextAlignment(.center)
-
             Text(L10n.VerificationCode.message(viewModel.email))
                 .wireTextStyle(.body1)
                 .multilineTextAlignment(.center)
@@ -82,7 +77,6 @@ package struct VerificationCodeView: View {
             })
             .wireButtonStyle(.link)
             .disabled(viewModel.isResending)
-            Spacer()
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
@@ -91,6 +85,10 @@ package struct VerificationCodeView: View {
             RoundedRectangle(cornerRadius: Constants.backgroundCornerRadius)
                 .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
         )
+        .navigationTitle(L10n.VerificationCode.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .setPreferredSize(navigationBarHidden: false)
+        .customBackButton()
         .alert(
             item: $viewModel.alert,
             title: { Text($0.title) },
