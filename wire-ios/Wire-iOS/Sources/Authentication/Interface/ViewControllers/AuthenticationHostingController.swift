@@ -30,7 +30,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
     var authenticationCoordinator: AuthenticationCoordinator?
     private let bridge: WireAuthenticationBridge
-    private var cancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
 
     init(
         rootView: Content,
@@ -41,7 +41,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         self.bridge = bridge
         super.init(rootView: rootView)
 
-        self.cancellable = bridge.outboundEvents.sink { event in
+        bridge.outboundEvents.sink { event in
             switch event {
             case let .userAuthenticated(authenticationResult):
                 authenticationCoordinator?.eventResponderChain.handleEvent(
@@ -67,6 +67,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 sessionManager.select(account)
             }
         }
+        .store(in: &cancellables)
 
         authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(
             handleSSOLoginSuccess: { userID, cookies in
@@ -80,6 +81,16 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         authenticationCoordinator?.unauthenticatedSession.setErrorHandler {
             bridge.sendInboundEvent(.ssoAutheticationFailure)
         }
+
+        NotificationCenter.default
+            .publisher(for: AccountManagerDidUpdateAccountsNotificationName)
+            .compactMap { $0.object as? AccountManager }
+            .sink { accountManager in
+                let numberOfAccounts = accountManager.accounts.count
+                bridge.sendInboundEvent(.updateAnotherAccountExistence(newValue: numberOfAccounts > 0))
+
+            }
+            .store(in: &cancellables)
     }
 
     @available(*, unavailable)

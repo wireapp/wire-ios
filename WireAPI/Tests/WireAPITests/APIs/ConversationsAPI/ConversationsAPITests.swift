@@ -758,6 +758,468 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    // MARK: - createGroupConversation
+
+    func testCreateGroupConversation_givenV0_To_V2_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v0, .v1, .v2]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV0AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV3_To_V4_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v3, .v4]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV3AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV5_To_V7_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v5, .v7]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV5AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV8_And_Next_Versions_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testCreateGroupConversation_givenV8AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_To_V2_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v0, .v1, .v2]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV0AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV3_To_V4_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v3, .v4]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV3AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV5_To_V7_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = [APIVersion.v5, .v7]
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV5AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV8_And_Next_Versions_AndSuccessResponse201_thenVerifyResponse() async throws {
+        // given
+
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV8AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_And_Next_Versions_AndFailureResponse_Non_Empty_Member_List() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest, label: "non-empty-member-list")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.nonEmptyMemberList) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_And_Next_Versions_AndFailureResponse_Invalid_Body() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest, label: "")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.invalidBody) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_And_Next_Versions_AndFailureResponse_Missing_Legalhold_Consent(
+    ) async throws {
+
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "missing-legalhold-consent")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.missingLegalHoldConsent) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_And_Next_Versions_AndFailureResponse_Operation_Denied() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "operation-denied")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.operationDenied) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_And_Next_Versions_AndFailureResponse_No_Team_Member() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "no-team-member")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.noTeamMember) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_And_Next_Versions_AndFailureResponse_Not_Connected() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "not-connected")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.notConnected) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_And_Next_Versions_AndFailureResponse_Access_Denied() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "access-denied")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.accessDenied) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV3_And_Next_Versions_AndFailureResponse_MLS_Not_Enabled() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v3.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest, label: "mls-not-enabled")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.mlsNotEnabled) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV4_And_Next_Versions_AndFailureResponse_Non_Federating_Backend() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v4.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.conflict, "testCreateGroupConversation_givenV4AndFailureResponse409"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.nonFederatingBackends(["string"])) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV4_And_Next_Versions_AndFailureResponse_Unreachable_Backends() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v4.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.unreachableBackends) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createGroupConversationParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV0_To_V7_Unsupported_Channel_Creation() async throws {
+
+        // given
+        let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createChannelParameters
+                )
+            }
+        }
+    }
+
+    func testCreateGroupConversation_givenV8_And_Channel_Creation_AndSuccessResponse201_thenVerifyRespons(
+    ) async throws {
+
+        // given
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.created, "testCreateGroupConversation_givenV8AndSuccessResponse201"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        for sut in suts {
+            let conversation = try await sut.createGroupConversation(
+                parameters: Scaffolding.createChannelParameters
+            )
+
+            XCTAssertEqual(conversation.access, [.private])
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertEqual(conversation.accessRoles, [.teamMember])
+        }
+    }
+
     private enum Scaffolding {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
@@ -765,6 +1227,80 @@ final class ConversationsAPITests: XCTestCase {
         static let conversationID = UUID.mockID1
         static let guestLinkV0 = "https://exampleV0.com"
         static let guestLinkV4 = "https://exampleV4.com"
+        static let createGroupConversationParameters = CreateGroupConversationParameters(
+            groupType: .group,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.code, .invite],
+            accessRoles: [.teamMember],
+            legacyAccessRole: .teamMember,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true
+        )
+
+        static let createChannelParameters = CreateGroupConversationParameters(
+            groupType: .channel,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.code, .invite],
+            accessRoles: [.teamMember],
+            legacyAccessRole: .teamMember,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true
+        )
+    }
+
+}
+
+extension ConversationsAPIError: Equatable {
+    public static func == (lhs: ConversationsAPIError, rhs: ConversationsAPIError) -> Bool {
+        switch (lhs, rhs) {
+        case (.notImplemented, .notImplemented):
+            true
+        case (.invalidBody, .invalidBody):
+            true
+        case (.unsupportedEndpointForAPIVersion, .unsupportedEndpointForAPIVersion):
+            true
+        case (.mlsNotEnabled, .mlsNotEnabled):
+            true
+        case (.usersNotConnected, .usersNotConnected):
+            true
+        case (.userAndDomainShouldNotBeEmpty, .userAndDomainShouldNotBeEmpty):
+            true
+        case (.accessDenied, .accessDenied):
+            true
+        case (.conversationNotFound, .conversationNotFound):
+            true
+        case (.conversationCodeNotFound, .conversationCodeNotFound):
+            true
+        case (.guestLinksDisabled, .guestLinksDisabled):
+            true
+        case (.invalidConversationID, .invalidConversationID):
+            true
+        case (.nonEmptyMemberList, .nonEmptyMemberList):
+            true
+        case (.missingLegalHoldConsent, .missingLegalHoldConsent):
+            true
+        case (.operationDenied, .operationDenied):
+            true
+        case (.noTeamMember, .noTeamMember):
+            true
+        case (.notConnected, .notConnected):
+            true
+        case (.unsupportedChannelCreationForAPIEndpoint, .unsupportedChannelCreationForAPIEndpoint):
+            true
+        case (.nonFederatingBackends, .nonFederatingBackends):
+            true
+        case (.unreachableBackends, .unreachableBackends):
+            true
+        default: false
+        }
     }
 
 }
