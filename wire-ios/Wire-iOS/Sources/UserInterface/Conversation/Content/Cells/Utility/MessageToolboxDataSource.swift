@@ -200,10 +200,6 @@ final class MessageToolboxDataSource {
             return .seenByMultiple(message.readReceipts.count)
 
         case .oneOnOne:
-//            guard let timestamp = message.readReceipts.first?.serverTimestamp else {
-//                return nil
-//            }
-//            let timestampString = message.formattedDate(timestamp) // TODO: need time seen?
             return .seen
 
         default:

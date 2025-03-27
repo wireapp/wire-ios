@@ -162,13 +162,13 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         let avatarContainerView = UIView()
         avatarContainerView.clipsToBounds = false
+        avatar.translatesAutoresizingMaskIntoConstraints = false
         avatarContainerView.addSubview(avatar)
-        avatar.pinOptionally(
-            to: avatarContainerView,
-            topInset: 0,
-            leadingInset: 0,
-            trailingInset: 0
-        )
+        NSLayoutConstraint.activate([
+            avatar.leadingAnchor.constraint(equalTo: avatarContainerView.leadingAnchor),
+            avatarContainerView.trailingAnchor.constraint(equalTo: avatar.trailingAnchor),
+            avatar.topAnchor.constraint(equalTo: avatarContainerView.topAnchor)
+        ])
 
         let spacing: CGFloat = 7
         let leadingMargin = conversationHorizontalMargins.left - CGFloat(integerLiteral: avatar.size.rawValue) - spacing
