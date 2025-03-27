@@ -643,7 +643,6 @@ extension ConversationTableViewDataSource {
                         }
                     }
                 } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
-                    print(String(describing: cellDescription))
                     previousStatus = (
                         cellDescription: cellDescription,
                         remove: { sections[previousSectionIndex].elements.remove(at: elementIndex) }
@@ -670,25 +669,7 @@ extension ConversationTableViewDataSource {
 //            }
 
             // collapse space between subsequent messages
-            let collapse = if currentSectionLastElement is ConversationTextMessageCellDescription ||
-                currentSectionLastElement is ConversationFileMessageCellDescription ||
-                currentSectionLastElement is ConversationImageMessageCellDescription ||
-                currentSectionLastElement is ConversationVideoMessageCellDescription ||
-                currentSectionLastElement is ConversationReplyCellDescription ||
-                currentSectionLastElement is ConversationCollapsedMessageCellDescription {
-                // no stack cell description and no sender is shown, so collapse the space if needed
-                true
-            } else if let firstStacked = (currentSectionLastElement as? StackViewCellDescription)?.cellDescriptions.first?.instance {
-                firstStacked is ConversationTextMessageCellDescription ||
-                    firstStacked is ConversationFileMessageCellDescription ||
-                    firstStacked is ConversationImageMessageCellDescription ||
-                    firstStacked is ConversationVideoMessageCellDescription ||
-                    firstStacked is ConversationReplyCellDescription
-            } else {
-                false
-            }
-
-            if collapse {
+            if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) {
                 previousSectionFirstElement.bottomMargin = -6
                 currentSectionLastElement.topMargin = -6
             } else {
@@ -700,6 +681,28 @@ extension ConversationTableViewDataSource {
 
         return sections
 
+    }
+
+    private func collapseSpaceBefore(
+        currentSectionLastElement cellDescription: any ConversationMessageCellDescription
+    ) -> Bool {
+        if cellDescription is ConversationTextMessageCellDescription ||
+            cellDescription is ConversationFileMessageCellDescription ||
+            cellDescription is ConversationImageMessageCellDescription ||
+            cellDescription is ConversationVideoMessageCellDescription ||
+            cellDescription is ConversationReplyCellDescription ||
+            cellDescription is ConversationCollapsedMessageCellDescription {
+            // no stack cell description and no sender is shown, so collapse the space if needed
+            true
+        } else if let firstStacked = (cellDescription as? StackViewCellDescription)?.cellDescriptions.first?.instance {
+            firstStacked is ConversationTextMessageCellDescription ||
+                firstStacked is ConversationFileMessageCellDescription ||
+                firstStacked is ConversationImageMessageCellDescription ||
+                firstStacked is ConversationVideoMessageCellDescription ||
+                firstStacked is ConversationReplyCellDescription
+        } else {
+            false
+        }
     }
 
 }
