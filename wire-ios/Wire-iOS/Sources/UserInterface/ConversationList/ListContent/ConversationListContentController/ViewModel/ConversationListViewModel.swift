@@ -70,25 +70,6 @@ final class ConversationListViewModel: NSObject {
 
             var identifier: SectionIdentifier {
                 switch self {
-                case let .folder(label: label):
-                    label.remoteIdentifier?.transportString() ?? "folder"
-                default:
-                    canonicalName
-                }
-            }
-
-            var obfuscatedName: String {
-                switch self {
-                case .folder:
-                    "user-defined-folder"
-
-                default:
-                    canonicalName
-                }
-            }
-
-            var canonicalName: String {
-                switch self {
                 case .contactRequests:
                     "contactRequests"
                 case .conversations:
@@ -102,7 +83,7 @@ final class ConversationListViewModel: NSObject {
                 case .favorites:
                     "favorites"
                 case let .folder(label: label):
-                    label.name ?? "folder"
+                    label.remoteIdentifier?.transportString() ?? "folder"
                 }
             }
 
@@ -242,18 +223,6 @@ final class ConversationListViewModel: NSObject {
         guard sections.indices.contains(sectionIndex) else { return nil }
 
         return sections[sectionIndex].kind
-    }
-
-    /// Section's canonical name
-    ///
-    /// - Parameter sectionIndex: section index of the collection view
-    /// - Returns: canonical name
-    func sectionCanonicalName(of sectionIndex: Int) -> String? {
-        kind(of: sectionIndex)?.canonicalName
-    }
-
-    func obfuscatedSectionName(of sectionIndex: Int) -> String? {
-        kind(of: sectionIndex)?.obfuscatedName
     }
 
     var sectionCount: Int {
