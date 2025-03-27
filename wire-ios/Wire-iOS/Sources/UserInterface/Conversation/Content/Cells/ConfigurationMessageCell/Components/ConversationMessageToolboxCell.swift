@@ -25,13 +25,15 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     struct Configuration: Equatable {
         let message: ZMConversationMessage
         let deliveryState: ZMDeliveryState
+        var isRedundant: Bool
 
         static func == (
             lhs: ConversationMessageToolboxCell.Configuration,
             rhs: ConversationMessageToolboxCell.Configuration
         ) -> Bool {
             lhs.deliveryState == rhs.deliveryState &&
-                lhs.message == rhs.message
+                lhs.message == rhs.message &&
+                lhs.isRedundant == rhs.isRedundant
         }
     }
 
@@ -74,6 +76,10 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
     func configure(with object: Configuration, animated: Bool) {
         toolboxView.configureForMessage(object.message, animated: animated)
+        if object.isRedundant {
+            toolboxView.setAllContentHidden()
+        }
+
     }
 
     func messageToolboxDidRequestOpeningDetails(
@@ -106,7 +112,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationMessageToolboxCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -124,7 +130,11 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
 
     init(message: ZMConversationMessage) {
         self.message = message
-        self.configuration = View.Configuration(message: message, deliveryState: message.deliveryState)
+        self.configuration = View.Configuration(
+            message: message,
+            deliveryState: message.deliveryState,
+            isRedundant: false
+        )
     }
 
 }

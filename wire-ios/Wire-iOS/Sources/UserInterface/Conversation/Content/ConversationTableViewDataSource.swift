@@ -670,12 +670,15 @@ extension ConversationTableViewDataSource {
                     if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
                         func remove(_ sections: inout [Section]) {
-                            var cellDescriptions = stack.cellDescriptions
-                            cellDescriptions.remove(at: cellDescriptionIndex)
-                            sections[sectionIndex]
-                                .elements[elementIndex] = AnyConversationMessageCellDescription(
-                                    StackViewCellDescription(cellDescriptions: cellDescriptions)
-                                )
+                            (
+                                stack.cellDescriptions[cellDescriptionIndex].instance as? ConversationMessageToolboxCellDescription
+                            )?.configuration.isRedundant = true
+//                            var cellDescriptions = stack.cellDescriptions
+//                            cellDescriptions.remove(at: cellDescriptionIndex)
+//                            sections[sectionIndex]
+//                                .elements[elementIndex] = AnyConversationMessageCellDescription(
+//                                    StackViewCellDescription(cellDescriptions: cellDescriptions)
+//                                )
                         }
 
                         return (cellDescription, remove)
@@ -685,7 +688,11 @@ extension ConversationTableViewDataSource {
             } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
                 func remove(_ sections: inout [Section]) {
-                    sections[sectionIndex].elements.remove(at: elementIndex)
+                    // sections[sectionIndex].elements.remove(at: elementIndex)
+                    (
+                        sections[sectionIndex]
+                            .elements[elementIndex].instance as? ConversationMessageToolboxCellDescription
+                    )?.configuration.isRedundant = true
                 }
 
                 return (cellDescription, remove)
@@ -693,6 +700,7 @@ extension ConversationTableViewDataSource {
 
         }
 
+        print("abcxsdf", "message \(messages[sectionIndex].text) has no status")
         return nil
     }
 
@@ -700,13 +708,23 @@ extension ConversationTableViewDataSource {
         _ previousCellDescription: ConversationMessageToolboxCellDescription?,
         redundantTo currentCellDescription: ConversationMessageToolboxCellDescription?
     ) -> Bool {
-        guard let previousCellDescription, let currentCellDescription else { return false }
+        print(
+            "abcxsdfs isStatusRedundant \(previousCellDescription?.message?.text ?? "?") vs \(currentCellDescription?.message?.text ?? "?")",
+            terminator: ""
+        )
 
-        // always show the countdown
-        if previousCellDescription.message?.isEphemeral == true {
+        guard let previousCellDescription, let currentCellDescription else {
+            print(" guard false")
             return false
         }
 
+        // always show the countdown
+        if previousCellDescription.message?.isEphemeral == true {
+            print(" if false")
+            return false
+        }
+
+        print(" \(previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState)")
         return previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState
     }
 
@@ -743,4 +761,11 @@ extension Date {
         return components == otherComponents
     }
 
+}
+
+extension ZMConversationMessage {
+
+    var text: String? {
+        textMessageData?.messageText
+    }
 }
