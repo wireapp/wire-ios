@@ -41,9 +41,3 @@ public enum ResolveBackendMetadataUseCaseFailure: Error, Sendable {
     case clientVersionObsolete
 
 }
-
-public protocol ResolveBackendMetadataUseCaseFactory {
-
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol
-
-}

@@ -22,10 +22,7 @@ import WireAuthenticationAPI
 package protocol NoHistoryViewBuilder {
 
     @MainActor
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView
 
 }
 
@@ -98,6 +95,7 @@ package struct NoHistoryView: View {
         .presentationDetents([.medium])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+        .navigationBarBackButtonHidden()
     }
 
     private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {

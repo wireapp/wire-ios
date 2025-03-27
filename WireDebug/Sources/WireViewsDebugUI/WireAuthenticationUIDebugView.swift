@@ -18,6 +18,7 @@
 
 public import SwiftUI
 
+import WireAuthenticationAPI
 import WireAuthenticationUI
 
 public struct WireAuthenticationUIDebugView: View {
@@ -50,34 +51,41 @@ public struct WireAuthenticationUIDebugView: View {
                 label: { Text("Verification code") }
             )
         }
-        .fullScreenCover(item: $presentedItem, content: { item in
-            switch item {
-            case .background:
-                fullscreenCover(content: { BackgroundView() })
-            case .switchBackend:
-                fullscreenCover(content: {
-                    BackgroundView()
-                        .overlay(
-                            ZStack {
-                                SwitchBackendConfirmationPreview()
-                                    .padding()
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        )
-                })
-            case .verificationCode:
-                fullscreenCover(content: {
-                    BackgroundView()
-                        .overlay {
-                            VStack(spacing: 0) {
-                                Spacer()
-                                    .frame(maxHeight: .infinity)
-                                VerificationCodeView_Previews(code: [])
-                            }
+        .fullScreenCover(
+            item: $presentedItem,
+            content: { item in
+                switch item {
+                case .background:
+                    fullscreenCover(content: { BackgroundView() })
+                case .switchBackend:
+                    fullscreenCover(
+                        content: {
+                            BackgroundView()
+                                .overlay(
+                                    ZStack {
+                                        SwitchBackendConfirmation(
+                                            backendConfig: .preview,
+                                            onConfirm: { _ in }
+                                        ).padding()
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                )
                         }
-                })
+                    )
+                case .verificationCode:
+                    fullscreenCover(content: {
+                        BackgroundView()
+                            .overlay {
+                                VStack(spacing: 0) {
+                                    Spacer()
+                                        .frame(maxHeight: .infinity)
+                                    VerificationCodeView_Previews(code: [])
+                                }
+                            }
+                    })
+                }
             }
-        })
+        )
     }
 
     @ViewBuilder
@@ -109,4 +117,23 @@ public struct WireAuthenticationUIDebugView: View {
     NavigationView {
         WireAuthenticationUIDebugView()
     }
+}
+
+private extension BackendConfig {
+
+    static let preview = BackendConfig(
+        title: "Example backend",
+        endpoints: Endpoints(
+            backendURL: URL(string: "example.com")!,
+            backendWSURL: URL(string: "example.com")!,
+            blackListURL: URL(string: "example.com")!,
+            teamsURL: URL(string: "example.com")!,
+            accountsURL: URL(string: "example.com")!,
+            websiteURL: URL(string: "example.com")!,
+            countlyURL: nil
+        ),
+        proxySettings: nil,
+        pinnedKeys: nil
+    )
+
 }

@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 
 package protocol VerificationCodeBuilder {
@@ -25,12 +26,14 @@ package protocol VerificationCodeBuilder {
     func verificationCodeView(
         email: String,
         password: String,
-        didDetectDomainConflict: Bool
+        proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView
 
 }
 
 package struct VerificationCodeView: View {
+
+    package typealias Factory = NoHistoryViewBuilder
 
     // MARK: - Constants
 
@@ -39,11 +42,16 @@ package struct VerificationCodeView: View {
     }
 
     @StateObject private var viewModel: VerificationCodeViewModel
+    private let factory: any Factory
 
     @FocusState private var focusedIndex: Int?
 
-    package init(viewModel: VerificationCodeViewModel) {
+    package init(
+        viewModel: VerificationCodeViewModel,
+        factory: any Factory
+    ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.factory = factory
     }
 
     package var body: some View {
@@ -76,7 +84,7 @@ package struct VerificationCodeView: View {
             .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
-                Task.detached { await viewModel.resend() }
+                Task.detached { await viewModel.requestVerificationCode() }
             }, label: {
                 Text(L10n.VerificationCode.resendCode)
             })
@@ -99,6 +107,17 @@ package struct VerificationCodeView: View {
                 Button(L10n.Authentication.Error.confirm, action: {})
             }
         )
+        .navigationDestination(for: VerificationCodeDestination.self) {
+            switch $0 {
+            case let .noHistory(authenticationResult):
+                factory.noHistoryView(authenticationResult: authenticationResult)
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.requestVerificationCode()
+            }
+        }
     }
 
     private var verificationCodeView: some View {

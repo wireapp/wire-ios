@@ -51,7 +51,7 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
     }
 
     func wireAuthenticationDidRequestAccountRegistration(
-        email: String,
+        email: String?,
         backendEnvironment: WireAuthenticationBackendEnvironment
     ) {
         typealias Alert = L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported
@@ -77,7 +77,9 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
         BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
 
         let unregisteredUser = makeUnregisteredUser()
-        unregisteredUser.unverifiedEmail = email
+        if let email {
+            unregisteredUser.unverifiedEmail = email
+        }
         stateController.transition(to: .createCredentials(unregisteredUser))
     }
 

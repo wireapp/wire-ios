@@ -59,11 +59,21 @@ public struct PasswordField: View {
             HStack {
                 if isPasswordVisible {
                     TextField(placeholder, text: $password)
+<<<<<<< HEAD
+=======
+                        .autocorrectionDisabled()
+                        .textContentType(.password)
+>>>>>>> 30dc738c17 (refactor: support proxy mode - WPB-16256 (#2764))
                         .wireTextStyle(.body1)
                         .frame(height: fieldHeight)
                         .focused($isFocused)
                 } else {
                     SecureField(placeholder, text: $password)
+<<<<<<< HEAD
+=======
+                        .autocorrectionDisabled()
+                        .textContentType(.password)
+>>>>>>> 30dc738c17 (refactor: support proxy mode - WPB-16256 (#2764))
                         .frame(height: fieldHeight)
                         .focused($isFocused)
                 }
