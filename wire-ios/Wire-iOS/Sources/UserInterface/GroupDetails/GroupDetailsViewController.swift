@@ -17,10 +17,13 @@
 //
 
 import UIKit
+import SwiftUI
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
+import WireConversationsUI
+import WireConversationsUIBindings
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
@@ -542,6 +545,21 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let userSession = ZMUserSession.shared() else { return }
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
+    }
+    
+    func presentAccessOptions(animated: Bool) {
+        guard let conversation = conversation as? ZMConversation else { return }
+        let settings = ChannelAccessSettings(
+            isInitiallyPrivate: false,
+            accessLevel: .public,
+            participantPermission: .admins
+        )
+
+        let accessView = ChannelViewFactory.makeChannelAccessView(settings: settings)
+        let hostingController = UIHostingController(rootView: accessView)
+        
+        hostingController.modalPresentationStyle = .formSheet
+        present(hostingController, animated: true, completion: nil)
     }
 }
 
