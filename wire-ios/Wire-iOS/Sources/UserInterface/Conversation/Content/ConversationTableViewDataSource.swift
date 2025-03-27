@@ -132,7 +132,7 @@ final class ConversationTableViewDataSource: NSObject {
             let sectionController = sectionController(for: element, at: offset)
 
             // Re-create cell description if the context has changed (message has been moved around or received new
-            // neighbours).
+            // neighbors).
             if sectionController.context != context || forceRecalculate {
                 sectionController.recreateCellDescriptions(in: context)
             }
@@ -150,6 +150,16 @@ final class ConversationTableViewDataSource: NSObject {
         else { return currentSections }
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
+            if description.instance is ConversationMessageToolboxCellDescription {
+                // workaround for flickering
+                continue
+            }
+            if
+                let stack = description.instance as? StackViewCellDescription,
+                stack.cellDescriptions.contains(where: { $0.instance is ConversationMessageToolboxCellDescription }) {
+                // workaround for flickering
+                continue
+            }
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
                 cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
                 description.configureCell(cell, animated: true)

@@ -55,11 +55,7 @@ extension ZMConversationMessage {
 final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// The view descriptor of the section.
-    private var cellDescriptions = [AnyConversationMessageCellDescription]() {
-        didSet {
-            print("foijfoidl", "cellDescriptions")
-        }
-    }
+    private var cellDescriptions = [AnyConversationMessageCellDescription]()
 
     #if DEBUG
         var cellDescriptionsForTesting: [AnyConversationMessageCellDescription] {
@@ -352,16 +348,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     ) {
         if let index = cellDescriptions.firstIndex(of: cellDescription) {
             cellDescriptions[index] = replacement
-        } else {
-            // assertionFailure()
         }
     }
 
     func removeCellDescription(_ cellDescription: AnyConversationMessageCellDescription) {
         if let index = cellDescriptions.firstIndex(of: cellDescription) {
             cellDescriptions.remove(at: index)
-        } else {
-            // assertionFailure()
         }
     }
 
