@@ -119,7 +119,7 @@ package struct LoginViaEmailOnPremView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: .constant(viewModel.email ?? "")
         )
-        .disabled(!viewModel.email.isEmpty)
+        .disabled(!(viewModel.email ?? "").isEmpty)
         .autocorrectionDisabled()
     }
 
