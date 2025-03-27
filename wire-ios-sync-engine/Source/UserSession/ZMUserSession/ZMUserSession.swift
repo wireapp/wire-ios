@@ -152,6 +152,11 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchMLS()
     }
 
+    public var channelsFeature: Feature.Channels {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchChannels()
+    }
+
     public var gracePeriodEndDate: Date? {
         guard
             e2eiFeature.isEnabled,
