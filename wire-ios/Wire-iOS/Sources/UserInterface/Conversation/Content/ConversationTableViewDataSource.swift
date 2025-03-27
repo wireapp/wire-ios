@@ -700,7 +700,6 @@ extension ConversationTableViewDataSource {
 
         }
 
-        print("abcxsdf", "message \(messages[sectionIndex].text) has no status")
         return nil
     }
 
@@ -708,23 +707,13 @@ extension ConversationTableViewDataSource {
         _ previousCellDescription: ConversationMessageToolboxCellDescription?,
         redundantTo currentCellDescription: ConversationMessageToolboxCellDescription?
     ) -> Bool {
-        print(
-            "abcxsdfs isStatusRedundant \(previousCellDescription?.message?.text ?? "?") vs \(currentCellDescription?.message?.text ?? "?")",
-            terminator: ""
-        )
-
-        guard let previousCellDescription, let currentCellDescription else {
-            print(" guard false")
-            return false
-        }
+        guard let previousCellDescription, let currentCellDescription else { return false }
 
         // always show the countdown
         if previousCellDescription.message?.isEphemeral == true {
-            print(" if false")
             return false
         }
 
-        print(" \(previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState)")
         return previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState
     }
 
