@@ -7,8 +7,8 @@ output_dir: ${GENERATED}/
 
 strings:
   inputs:
-    - Localization/en.lproj/Localizable.strings
-    - Localization/en.lproj/Accessibility.strings
+    - Resources/Localization/en.lproj/Localizable.strings
+    - Resources/Localization/en.lproj/Accessibility.strings
   filter:
   outputs:
     - templateName: structured-swift5

@@ -4509,6 +4509,10 @@ internal enum L10n {
         /// Top people
         internal static let topPeople = L10n.tr("Localizable", "peoplepicker.header.top_people", fallback: "Top people")
       }
+      internal enum NavigationHeader {
+        /// New conversation
+        internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
+      }
       internal enum NoMatchingResults {
         internal enum Action {
           /// Learn more
