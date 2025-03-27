@@ -534,7 +534,7 @@ extension ConversationTests {
         conversation.conversationType = .group
         conversation.groupType = nil
         try uiMOC.save()
-        
+
         // when
         let groupType = conversation.groupType
 

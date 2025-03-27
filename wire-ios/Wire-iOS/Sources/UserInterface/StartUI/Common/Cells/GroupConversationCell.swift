@@ -22,7 +22,7 @@ import WireDataModel
 import WireDesign
 
 typealias GroupConversationCellConversation
-    = Conversation & HasQualifiedID & HasConversationGroupType & StableRandomParticipantsProvider
+    = Conversation & HasConversationGroupType & HasQualifiedID & StableRandomParticipantsProvider
 
 final class GroupConversationCell: UICollectionViewCell {
 

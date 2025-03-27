@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension Payload {
-    public enum ConversationGroupType: String, Codable {
+public extension Payload {
+    enum ConversationGroupType: String, Codable {
         case group = "group_conversation"
         case channel
     }

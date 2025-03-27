@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public enum ConversationGroupType: Int {
+@objc
+public enum ConversationGroupType: Int {
 
     /// A group conversation
 

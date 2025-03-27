@@ -21,7 +21,7 @@ import WireConversationsUIBindings
 import WireSyncEngine
 
 typealias ConversationGroupAvatarViewConversation
-    = ConversationLike & HasQualifiedID & StableRandomParticipantsProvider & HasConversationGroupType
+    = ConversationLike & HasConversationGroupType & HasQualifiedID & StableRandomParticipantsProvider
 
 final class ConversationGroupAvatarView: UIView {
     struct Context {
