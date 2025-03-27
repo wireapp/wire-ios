@@ -85,15 +85,15 @@ final class ConversationTableViewDataSource: NSObject {
         didSet {
             guard UIDevice.current.userInterfaceIdiom == .pad else { return }
             resetSectionControllers()
-            reloadSections(newSections: calculateSections())
+            reloadSections(newSections: postProcessedSections(calculateSections()))
             tableView.reloadData()
         }
     }
 
     var searchQueries: [String] = [] {
         didSet {
-            currentSections = calculateSections()
-            currentSections = postProcessedSections(currentSections)
+            let currentSections = calculateSections()
+            self.currentSections = postProcessedSections(currentSections)
             tableView.reloadData()
         }
     }
@@ -315,8 +315,8 @@ final class ConversationTableViewDataSource: NSObject {
         hasOlderMessagesToLoad = messages.count == fetchRequest.fetchLimit
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
-        currentSections = calculateSections(forceRecalculate: forceRecalculate)
-        currentSections = postProcessedSections(currentSections)
+        let currentSections = calculateSections(forceRecalculate: forceRecalculate)
+        self.currentSections = postProcessedSections(currentSections)
         tableView.reloadData()
     }
 
@@ -439,7 +439,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        reloadSections(newSections: calculateSections())
+        reloadSections(newSections: postProcessedSections(calculateSections()))
     }
 
     func reloadSections(newSections: [Section]) {
@@ -458,13 +458,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     func select(indexPath: IndexPath) {
         let sectionController = sectionController(at: indexPath.section, in: tableView)
         sectionController.didSelect()
-        reloadSections(newSections: calculateSections(updating: sectionController))
+        reloadSections(newSections: postProcessedSections(calculateSections(updating: sectionController)))
     }
 
     func deselect(indexPath: IndexPath) {
         let sectionController = sectionController(at: indexPath.section, in: tableView)
         sectionController.didDeselect()
-        reloadSections(newSections: calculateSections(updating: sectionController))
+        reloadSections(newSections: postProcessedSections(calculateSections(updating: sectionController)))
     }
 
     func highlight(message: ZMConversationMessage) {
@@ -536,7 +536,7 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
-        reloadSections(newSections: calculateSections(updating: controller))
+        reloadSections(newSections: postProcessedSections(calculateSections(updating: controller)))
     }
 
 }
@@ -624,6 +624,9 @@ extension ConversationTableViewDataSource {
             let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
             if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus) {
                 previousStatus?.removeFrom(&sections)
+                if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
+                    previousSectionFirstElement = newPreviousSectionFirstElement
+                }
             }
 
             // collapse space between subsequent messages
