@@ -128,12 +128,12 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage) {
+    init(message: ZMConversationMessage, isRedundant: Bool) {
         self.message = message
         self.configuration = View.Configuration(
             message: message,
             deliveryState: message.deliveryState,
-            isRedundant: false
+            isRedundant: isRedundant
         )
     }
 

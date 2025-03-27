@@ -631,8 +631,9 @@ extension ConversationTableViewDataSource {
             // filter redundant status cells
             let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
             let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
-            if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus) {
-                previousStatus?.removeFrom(&sections)
+            if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus), let message = previousStatus?.cellDescription.message {
+                let new = ConversationMessageToolboxCellDescription(message: message, isRedundant: true)
+                previousStatus?.replace(new, &sections)
                 if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
                     previousSectionFirstElement = newPreviousSectionFirstElement
                 }
@@ -658,7 +659,7 @@ extension ConversationTableViewDataSource {
         in sections: [Section]
     ) -> (
         cellDescription: ConversationMessageToolboxCellDescription,
-        removeFrom: (_ sections: inout [Section]) -> Void
+        replace: (_ cellDescription: ConversationMessageToolboxCellDescription, _ sections: inout [Section]) -> Void
     )? {
 
         for elementIndex in sections[sectionIndex].elements.indices {
@@ -669,33 +670,32 @@ extension ConversationTableViewDataSource {
                     let cellDescription = stack.cellDescriptions[cellDescriptionIndex].instance
                     if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
-                        func remove(_ sections: inout [Section]) {
-                            (
-                                stack.cellDescriptions[cellDescriptionIndex].instance as? ConversationMessageToolboxCellDescription
-                            )?.configuration.isRedundant = true
-//                            var cellDescriptions = stack.cellDescriptions
-//                            cellDescriptions.remove(at: cellDescriptionIndex)
-//                            sections[sectionIndex]
-//                                .elements[elementIndex] = AnyConversationMessageCellDescription(
-//                                    StackViewCellDescription(cellDescriptions: cellDescriptions)
-//                                )
+                        func replace(
+                            by newCellDescription: ConversationMessageToolboxCellDescription,
+                            in sections: inout [Section]
+                        ) {
+                            var cellDescriptions = stack.cellDescriptions
+                            cellDescriptions[cellDescriptionIndex] = AnyConversationMessageCellDescription(newCellDescription)
+                            sections[sectionIndex]
+                                .elements[elementIndex] = AnyConversationMessageCellDescription(
+                                    StackViewCellDescription(cellDescriptions: cellDescriptions)
+                                )
                         }
 
-                        return (cellDescription, remove)
+                        return (cellDescription, replace)
                     }
                 }
 
             } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
-                func remove(_ sections: inout [Section]) {
-                    // sections[sectionIndex].elements.remove(at: elementIndex)
-                    (
-                        sections[sectionIndex]
-                            .elements[elementIndex].instance as? ConversationMessageToolboxCellDescription
-                    )?.configuration.isRedundant = true
+                func replace(
+                    by newCellDescription: ConversationMessageToolboxCellDescription,
+                    in sections: inout [Section]
+                ) {
+                    sections[sectionIndex].elements[elementIndex] = AnyConversationMessageCellDescription(newCellDescription)
                 }
 
-                return (cellDescription, remove)
+                return (cellDescription, replace)
             }
 
         }

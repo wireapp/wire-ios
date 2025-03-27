@@ -393,7 +393,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         )
 
         if isToolboxVisible(in: context) {
-            let description = ConversationMessageToolboxCellDescription(message: message)
+            let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
