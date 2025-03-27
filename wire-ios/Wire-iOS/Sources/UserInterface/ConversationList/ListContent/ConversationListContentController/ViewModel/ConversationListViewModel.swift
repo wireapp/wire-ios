@@ -106,25 +106,6 @@ final class ConversationListViewModel: NSObject {
                 }
             }
 
-            var localizedName: String? {
-                switch self {
-                case .conversations:
-                    nil
-                case .contactRequests:
-                    L10n.Localizable.List.Section.requests
-                case .contacts:
-                    L10n.Localizable.List.Section.contacts
-                case .groups:
-                    L10n.Localizable.List.Section.groups
-                case .channels:
-                    L10n.Localizable.List.Section.groups // FIXME: Channels
-                case .favorites:
-                    L10n.Localizable.List.Section.favorites
-                case let .folder(label: label):
-                    label.name
-                }
-            }
-
             static func == (
                 lhs: ConversationListViewModel.Section.Kind,
                 rhs: ConversationListViewModel.Section.Kind
@@ -255,10 +236,6 @@ final class ConversationListViewModel: NSObject {
 
                 userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
             }.store(in: &tokens)
-    }
-
-    func sectionHeaderTitle(sectionIndex: Int) -> String? {
-        kind(of: sectionIndex)?.localizedName
     }
 
     private func kind(of sectionIndex: Int) -> Section.Kind? {
