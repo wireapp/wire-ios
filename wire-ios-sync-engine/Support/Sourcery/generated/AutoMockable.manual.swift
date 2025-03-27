@@ -488,6 +488,15 @@ public class MockUserSession: UserSession {
         set(value) { underlyingMlsFeature = value }
     }
 
+    public var underlyingChannelsFeature: Feature.Channels!
+    
+    // MARK: - channelsFeature
+
+    public var channelsFeature: Feature.Channels {
+        get { return underlyingChannelsFeature }
+        set(value) { underlyingChannelsFeature = value }
+    }
+    
     public var underlyingMlsFeature: Feature.MLS!
 
     // MARK: - mlsGroupVerification
