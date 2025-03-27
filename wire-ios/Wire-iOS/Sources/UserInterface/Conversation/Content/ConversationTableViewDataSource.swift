@@ -623,10 +623,15 @@ extension ConversationTableViewDataSource {
             let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
             let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
             if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus) {
+                if let previousStatus {
+                    print("foijfoidl removing status for message", previousStatus.cellDescription.message!.fffff ?? "<<nil>>")
+                }
                 previousStatus?.removeFrom(&sections)
                 if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
                     previousSectionFirstElement = newPreviousSectionFirstElement
                 }
+            } else if let previousStatus {
+                print("foijfoidl NOT removing status for message", previousStatus.cellDescription.message!.fffff ?? "<<nil>>")
             }
 
             // collapse space between subsequent messages
@@ -639,6 +644,8 @@ extension ConversationTableViewDataSource {
             }
 
         }
+
+        print("foijfoidl ")
 
         return sections
 
@@ -661,6 +668,9 @@ extension ConversationTableViewDataSource {
                     if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
                         func remove(_ sections: inout [Section]) {
+
+                            //sectionController(for: <#T##any ConversationMessage#>, at: <#T##Int#>)
+
                             var cellDescriptions = stack.cellDescriptions
                             cellDescriptions.remove(at: cellDescriptionIndex)
                             sections[sectionIndex]
@@ -729,4 +739,15 @@ extension Date {
         return components == otherComponents
     }
 
+}
+
+extension ZMConversationMessage {
+
+    fileprivate var fffff: String {
+        if let textMessageData {
+            return textMessageData.messageText ?? "<nil>"
+        }
+
+        return "kA"
+    }
 }

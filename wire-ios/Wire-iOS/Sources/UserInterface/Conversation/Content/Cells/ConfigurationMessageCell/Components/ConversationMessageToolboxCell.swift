@@ -123,8 +123,13 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage) {
+        print("foijfoidl ConversationMessageToolboxCellDescription.init")
         self.message = message
         self.configuration = View.Configuration(message: message, deliveryState: message.deliveryState)
+    }
+
+    deinit {
+        print("foijfoidl ConversationMessageToolboxCellDescription.deinit")
     }
 
 }
