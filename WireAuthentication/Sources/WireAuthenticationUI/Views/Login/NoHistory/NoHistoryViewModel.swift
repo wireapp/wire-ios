@@ -33,11 +33,13 @@ package final class NoHistoryViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var alert: Alert?
 
+    private let didDetectDomainConflict: Bool
     private let howToChangeEmailURL: URL
     private let howToDeleteAccountURL: URL
     private let onFlowCompletion: () -> Void
 
-    let didDetectDomainConflict: Bool
+    /// Tracks if the user has already acknowledged the alert.
+    private var didConfirmAlert = false
 
     package init(
         didDetectDomainConflict: Bool,
@@ -61,17 +63,24 @@ package final class NoHistoryViewModel: ObservableObject {
     }
 
     func onAppear() {
-        if didDetectDomainConflict {
+        if didDetectDomainConflict, !didConfirmAlert {
             alert = .cloudAccountAlreadyRegistered
         }
     }
 
     func howToChangeEmail() {
+        didConfirmAlert = false
         UIApplication.shared.open(howToChangeEmailURL)
     }
 
     func howToDeleteAccount() {
+        didConfirmAlert = false
         UIApplication.shared.open(howToDeleteAccountURL)
+    }
+
+    func confirmAlert() {
+        didConfirmAlert = true
+        alert = nil
     }
 
 }
