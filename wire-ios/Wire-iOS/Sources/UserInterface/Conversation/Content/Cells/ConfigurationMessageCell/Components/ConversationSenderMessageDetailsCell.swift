@@ -106,8 +106,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         return label
     }()
 
-    lazy var stackView = UIStackView()
-        .setClipsToBounds(false)
+    private(set) lazy var stackView = {
+        let stackView = UIStackView()
+        stackView.clipsToBounds = false
+        return stackView
+    }()
 
     private var userObservation: NSObjectProtocol?
 
@@ -158,7 +161,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         availabilityIndicatorView.topAnchor.constraint(equalTo: avatar.topAnchor, constant: 23).isActive = true
 
         let avatarContainerView = UIView()
-            .setClipsToBounds(false)
+        avatarContainerView.clipsToBounds = false
         avatarContainerView.addSubview(avatar)
         avatar.pinOptionally(
             to: avatarContainerView,
@@ -172,8 +175,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         [
             avatarContainerView
-                .wrapInView(leadingInset: leadingMargin)
-                .setClipsToBounds(false),
+                .wrapInView(leadingInset: leadingMargin),
             authorLabel
         ]
         .forEach { stackView.addArrangedSubview($0) }
