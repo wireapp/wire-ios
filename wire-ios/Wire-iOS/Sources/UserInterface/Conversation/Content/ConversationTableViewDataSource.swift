@@ -677,22 +677,6 @@ extension ConversationTableViewDataSource {
                     if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
                         func remove(_ sections: inout [Section]) {
-
-                            if
-                                let message = cellDescription.message,
-                                let sectionController = sectionControllers[message.objectIdentifier]
-                            {
-
-                                var cellDescriptions = stack.cellDescriptions
-                                cellDescriptions.remove(at: cellDescriptionIndex)
-                                let newStack = StackViewCellDescription(cellDescriptions: cellDescriptions)
-
-                                sectionController.replaceCellDescription(
-                                    stack.cellDescriptions[cellDescriptionIndex],
-                                    by: AnyConversationMessageCellDescription(newStack)
-                                )
-                            }
-
                             var cellDescriptions = stack.cellDescriptions
                             cellDescriptions.remove(at: cellDescriptionIndex)
                             sections[sectionIndex]
@@ -709,13 +693,6 @@ extension ConversationTableViewDataSource {
 
                 func remove(_ sections: inout [Section]) {
                     sections[sectionIndex].elements.remove(at: elementIndex)
-
-                    if
-                        let message = cellDescription.message,
-                        let sectionController = sectionControllers[message.objectIdentifier]
-                    {
-                        sectionController.removeCellDescription(sections[sectionIndex].elements[elementIndex])
-                    }
                 }
 
                 return (cellDescription, remove)

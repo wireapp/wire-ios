@@ -342,21 +342,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         return cells
     }
 
-    func replaceCellDescription(
-        _ cellDescription: AnyConversationMessageCellDescription,
-        by replacement: AnyConversationMessageCellDescription
-    ) {
-        if let index = cellDescriptions.firstIndex(of: cellDescription) {
-            cellDescriptions[index] = replacement
-        }
-    }
-
-    func removeCellDescription(_ cellDescription: AnyConversationMessageCellDescription) {
-        if let index = cellDescriptions.firstIndex(of: cellDescription) {
-            cellDescriptions.remove(at: index)
-        }
-    }
-
     // MARK: - Composition
 
     #if DEBUG
