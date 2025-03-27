@@ -48,7 +48,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     private let reactionsView = GridLayoutView()
 
     private lazy var insets = UIEdgeInsets(
-        top: 8,
+        top: 2,
         left: conversationHorizontalMargins.left,
         bottom: 0,
         right: conversationHorizontalMargins.right
