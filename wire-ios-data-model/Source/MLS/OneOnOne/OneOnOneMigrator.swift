@@ -158,10 +158,11 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             var proteusConversations: [ZMConversation] = []
             // NOTE: querying for all types at once triggers a table scan which is very expensive
             for type in [OneOnOneType.fake, OneOnOneType.proteus, OneOnOneType.proteusPending] {
-                proteusConversations.append(contentsOf: try source.fetchOneOnOnes(
+                let conversations = try source.fetchOneOnOnes(
                     user: otherUser,
                     types: [type]
-                ))
+                )
+                proteusConversations.append(contentsOf: conversations)
             }
 
             // Move local messages from all proteus conversations
