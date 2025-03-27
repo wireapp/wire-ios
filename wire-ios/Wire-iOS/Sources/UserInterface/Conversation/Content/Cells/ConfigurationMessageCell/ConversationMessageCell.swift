@@ -158,10 +158,11 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// If `false` the resulting view will always end up in a single table view cell.
     var canBeCombinedWithOtherCells: Bool { get }
 
-    /// The top margin is used to configure the spacing between cells. This property will
-    /// get updated by the ConversationMessageSectionController if necessary so any
-    /// default value is just a recommendation.
+    /// The top margin is used to configure the spacing between the current and the previous cell.
     var topMargin: CGFloat { get set }
+
+    /// The bottom margin is used to configure the spacing between the current and the following cell.
+    var bottomMargin: CGFloat { get set }
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
@@ -296,7 +297,6 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
     private let _canBeCombinedWithOtherCells: () -> Bool
-    private let _topMargin: AnyMutableProperty<CGFloat>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
     private let _showEphemeralTimer: AnyConstantProperty<Bool>
@@ -342,7 +342,6 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
         self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
-        self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
         self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
@@ -380,11 +379,6 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     var canBeCombinedWithOtherCells: Bool {
         _canBeCombinedWithOtherCells()
-    }
-
-    var topMargin: CGFloat {
-        get { _topMargin.getter() }
-        set { _topMargin.setter(newValue) }
     }
 
     var containsHighlightableContent: Bool {

@@ -46,7 +46,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
-    var apiService: APIServiceProtocol? {
+    public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {
             return nil
         }
@@ -150,6 +150,11 @@ public final class ZMUserSession: NSObject {
     public var mlsFeature: Feature.MLS {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchMLS()
+    }
+
+    public var channelsFeature: Feature.Channels {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchChannels()
     }
 
     public var gracePeriodEndDate: Date? {

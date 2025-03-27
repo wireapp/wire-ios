@@ -4515,6 +4515,10 @@ internal enum L10n {
         /// Top people
         internal static let topPeople = L10n.tr("Localizable", "peoplepicker.header.top_people", fallback: "Top people")
       }
+      internal enum NavigationHeader {
+        /// New conversation
+        internal static let title = L10n.tr("Localizable", "peoplepicker.navigation_header.title", fallback: "New conversation")
+      }
       internal enum NoMatchingResults {
         internal enum Action {
           /// Learn more
@@ -5660,10 +5664,10 @@ internal enum L10n {
           /// Lock With Passcode
           internal static let lockApp = L10n.tr("Localizable", "self.settings.privacy_security.lock_app", fallback: "Lock With Passcode")
           internal enum CollapseOwnMessages {
-            /// If this is enabled, all your messages are collapsed to a single line.
-            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "If this is enabled, all your messages are collapsed to a single line.")
-            /// Collapse own messages
-            internal static let title = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.title", fallback: "Collapse own messages")
+            /// When this is on, all your messages collapse to a single line.
+            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "When this is on, all your messages collapse to a single line.")
+            /// Collapse my messages
+            internal static let title = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.title", fallback: "Collapse my messages")
           }
           internal enum DisableLinkPreviews {
             /// Previews may still be shown for links from other people.

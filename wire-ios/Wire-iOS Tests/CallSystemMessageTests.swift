@@ -98,10 +98,7 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
             reuseIdentifier: nil
         )
         cell.cellDescription = description
-        cell.configure(
-            with: description.configuration,
-            topMargin: description.topMargin
-        )
+        cell.configure(with: description.configuration)
 
         cell.frame = CGRect(origin: .zero, size: CGSize(width: CGSize.iPhoneSize.iPhone4.width, height: 32.5))
 

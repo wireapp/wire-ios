@@ -21,6 +21,7 @@ import UIKit
 extension StartUIViewController {
 
     func setupNavigationBarButtonItems() {
+        navigationItem.leftBarButtonItem = nil
 
         let cancelButton = UIBarButtonItem.createNavigationLeftBarButtonItem(
             title: L10n.Localizable.General.cancel,
@@ -31,25 +32,9 @@ extension StartUIViewController {
         )
         cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
         cancelButton.accessibilityIdentifier = "cancel"
-        navigationItem.leftBarButtonItem = cancelButton
+        navigationItem.rightBarButtonItem = cancelButton
 
-        let createGroupButton = UIBarButtonItem.createNavigationRightBarButtonItem(
-            title: L10n.Localizable.Peoplepicker.Button.createConversation,
-            action: UIAction { [weak self] _ in
-                guard let self else { return }
-                let conversationCreationController = createGroupConversationUIBuilder.build()
-                navigationController?.pushViewController(conversationCreationController, animated: true)
-            }
-        )
+        cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
 
-        // We explicitly set the font here because the font provided inside createNavigationRightBarButtonItem
-        // might not reflect the required design specifications in this particular context.
-        // This ensures that the button uses a custom font as needed for consistency across the app.
-        // The only change between the two is the weight. In this case it's semibold.
-        let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        createGroupButton.setTitleTextAttributes([.font: font], for: .normal)
-        createGroupButton.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
-        createGroupButton.accessibilityIdentifier = "create_group"
-        navigationItem.rightBarButtonItem = createGroupButton
     }
 }
