@@ -248,9 +248,8 @@ final class ConversationTableViewDataSource: NSObject {
         return sectionController
     }
 
-    func sectionController(at sectionIndex: Int, in tableView: UITableView) -> ConversationMessageSectionController {
+    func sectionController(at sectionIndex: Int) -> ConversationMessageSectionController {
         let message = messages[sectionIndex]
-
         return sectionController(for: message, at: sectionIndex)
     }
 
@@ -456,13 +455,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func select(indexPath: IndexPath) {
-        let sectionController = sectionController(at: indexPath.section, in: tableView)
+        let sectionController = sectionController(at: indexPath.section)
         sectionController.didSelect()
         reloadSections(newSections: postProcessedSections(calculateSections(updating: sectionController)))
     }
 
     func deselect(indexPath: IndexPath) {
-        let sectionController = sectionController(at: indexPath.section, in: tableView)
+        let sectionController = sectionController(at: indexPath.section)
         sectionController.didDeselect()
         reloadSections(newSections: postProcessedSections(calculateSections(updating: sectionController)))
     }
@@ -472,7 +471,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
             return
         }
 
-        let sectionController = sectionController(at: section, in: tableView)
+        let sectionController = sectionController(at: section)
         sectionController.highlight(in: tableView, sectionIndex: section)
     }
 
@@ -669,7 +668,20 @@ extension ConversationTableViewDataSource {
 
                         func remove(_ sections: inout [Section]) {
 
-                            //sectionController(for: <#T##any ConversationMessage#>, at: <#T##Int#>)
+                            if
+                                let message = cellDescription.message,
+                                let sectionController = sectionControllers[message.objectIdentifier]
+                            {
+
+                                var cellDescriptions = stack.cellDescriptions
+                                cellDescriptions.remove(at: cellDescriptionIndex)
+                                let newStack = StackViewCellDescription(cellDescriptions: cellDescriptions)
+
+                                sectionController.replaceCellDescription(
+                                    stack.cellDescriptions[cellDescriptionIndex],
+                                    by: AnyConversationMessageCellDescription(newStack)
+                                )
+                            }
 
                             var cellDescriptions = stack.cellDescriptions
                             cellDescriptions.remove(at: cellDescriptionIndex)
@@ -687,6 +699,13 @@ extension ConversationTableViewDataSource {
 
                 func remove(_ sections: inout [Section]) {
                     sections[sectionIndex].elements.remove(at: elementIndex)
+
+                    if
+                        let message = cellDescription.message,
+                        let sectionController = sectionControllers[message.objectIdentifier]
+                    {
+                        sectionController.removeCellDescription(sections[sectionIndex].elements[elementIndex])
+                    }
                 }
 
                 return (cellDescription, remove)
