@@ -3561,6 +3561,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(mlsMigration)
     }
 
+    // MARK: - fetchChannels
+
+    public var fetchChannels_Invocations: [Void] = []
+    public var fetchChannels_MockMethod: (() -> Feature.Channels)?
+    public var fetchChannels_MockValue: Feature.Channels?
+
+    public func fetchChannels() -> Feature.Channels {
+        fetchChannels_Invocations.append(())
+
+        if let mock = fetchChannels_MockMethod {
+            return mock()
+        } else if let mock = fetchChannels_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchChannels`")
+        }
+    }
+
+    // MARK: - storeChannels
+
+    public var storeChannels_Invocations: [Feature.Channels] = []
+    public var storeChannels_MockMethod: ((Feature.Channels) -> Void)?
+
+    public func storeChannels(_ channels: Feature.Channels) {
+        storeChannels_Invocations.append(channels)
+
+        guard let mock = storeChannels_MockMethod else {
+            fatalError("no mock for `storeChannels`")
+        }
+
+        mock(channels)
+    }
+
 }
 
 class MockFileManagerInterface: FileManagerInterface {

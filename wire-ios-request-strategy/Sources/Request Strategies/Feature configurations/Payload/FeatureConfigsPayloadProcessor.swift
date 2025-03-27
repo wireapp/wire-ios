@@ -203,6 +203,15 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
+
+        if let channels = payload.channels {
+            repository.storeChannels(
+                Feature.Channels(
+                    status: channels.status,
+                    config: channels.config
+                )
+            )
+        }
     }
 
     func processEventPayload(
@@ -275,6 +284,10 @@ struct FeatureConfigsPayloadProcessor {
         case .e2ei:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EI.Config>.self, from: data)
             repository.storeE2EI(.init(status: response.status, config: response.config))
+
+        case .channels:
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.Channels.Config>.self, from: data)
+            repository.storeChannels(.init(status: response.status, config: response.config))
         }
     }
 
