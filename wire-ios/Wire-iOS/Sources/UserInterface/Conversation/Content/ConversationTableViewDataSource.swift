@@ -93,7 +93,7 @@ final class ConversationTableViewDataSource: NSObject {
     var searchQueries: [String] = [] {
         didSet {
             currentSections = calculateSections()
-            currentSections = adjustedTopAndBottomMargins(currentSections)
+            currentSections = postProcessedSections(currentSections)
             tableView.reloadData()
         }
     }
@@ -111,16 +111,16 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    private(set) var currentSections: [ArraySection<String, AnyConversationMessageCellDescription>] = []
+    private(set) var currentSections: [Section] = []
 
     /// calculate cell sections
     ///
     /// - Parameter forceRecalculate: true if force recreate cell with context check
-    /// - Returns: arraySection of cell desctiptions
+    /// - Returns: arraySection of cell descriptions
     @discardableResult
     func calculateSections(
         forceRecalculate: Bool = false
-    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+    ) -> [Section] {
         messages.enumerated().map { offset, element in
             let sectionIdentifier = element.objectIdentifier
             let context = context(
@@ -143,7 +143,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
-    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+    ) -> [Section] {
         let sectionIdentifier = sectionController.message.objectIdentifier
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
@@ -169,7 +169,7 @@ final class ConversationTableViewDataSource: NSObject {
             model: sectionIdentifier,
             elements: sectionController.tableViewCellDescriptions
         )
-        updatedSections = adjustedTopAndBottomMargins(updatedSections)
+        updatedSections = postProcessedSections(updatedSections)
 
         return updatedSections
     }
@@ -316,7 +316,7 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
         currentSections = calculateSections(forceRecalculate: forceRecalculate)
-        currentSections = adjustedTopAndBottomMargins(currentSections)
+        currentSections = postProcessedSections(currentSections)
         tableView.reloadData()
     }
 
@@ -442,7 +442,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         reloadSections(newSections: calculateSections())
     }
 
-    func reloadSections(newSections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
+    func reloadSections(newSections: [Section]) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
         tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
     }
@@ -596,10 +596,9 @@ extension ConversationTableViewDataSource {
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 
-    // TODO: rename
-    private func adjustedTopAndBottomMargins( // TODO: split into several funcs
-        _ sections: [ArraySection<String, AnyConversationMessageCellDescription>]
-    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+    typealias Section = ArraySection<String, AnyConversationMessageCellDescription>
+
+    private func postProcessedSections(_ sections: [Section]) -> [Section] {
 
         var sections = sections
 
@@ -620,53 +619,12 @@ extension ConversationTableViewDataSource {
                 continue
             }
 
-            // filter redudnant status cells
-            var previousStatus: (cellDescription: ConversationMessageToolboxCellDescription, remove: () -> Void)?
-            for elementIndex in sections[previousSectionIndex].elements.indices {
-                let cellDescription = sections[previousSectionIndex].elements[elementIndex].instance
-                if let stackCellDescription = cellDescription as? StackViewCellDescription {
-                    for cellDescriptionIndex in stackCellDescription.cellDescriptions.indices {
-                        let cellDescription = stackCellDescription.cellDescriptions[cellDescriptionIndex].instance
-                        if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
-                            previousStatus = (
-                                cellDescription: cellDescription,
-                                remove: {
-                                    var cellDescriptions = stackCellDescription.cellDescriptions
-                                    cellDescriptions.remove(at: cellDescriptionIndex)
-                                    sections[previousSectionIndex]
-                                        .elements[elementIndex] = AnyConversationMessageCellDescription(
-                                            StackViewCellDescription(cellDescriptions: cellDescriptions)
-                                        )
-                                }
-                            )
-                            break
-                        }
-                    }
-                } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
-                    previousStatus = (
-                        cellDescription: cellDescription,
-                        remove: { sections[previousSectionIndex].elements.remove(at: elementIndex) }
-                    )
-                    break
-                }
+            // filter redundant status cells
+            let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
+            let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
+            if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus) {
+                previousStatus?.removeFrom(&sections)
             }
-
-            let currentStatus: ConversationMessageToolboxCellDescription?
-
-            var removeStatus = false
-
-            if let previousStatus {
-                previousStatus.remove()
-            }
-
-            //for cellDescription in section[currentIndex]
-            // TODO: implement
-//            if sections[previousIndex].elements.count > 1 { // TODO: also check the stack
-//                print("elements0:", sections[previousIndex].elements.map { $0.instance })
-//                sections[previousIndex].elements.removeFirst()
-//                print("elements1:", sections[previousIndex].elements.map { $0.instance })
-//                previous = sections[previousIndex].elements.first!.instance
-//            }
 
             // collapse space between subsequent messages
             if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) {
@@ -681,6 +639,58 @@ extension ConversationTableViewDataSource {
 
         return sections
 
+    }
+
+    private func statusCellDescription(
+        for sectionIndex: Int,
+        in sections: [Section]
+    ) -> (
+        cellDescription: ConversationMessageToolboxCellDescription,
+        removeFrom: (_ sections: inout [Section]) -> Void
+    )? {
+
+        for elementIndex in sections[sectionIndex].elements.indices {
+            let cellDescription = sections[sectionIndex].elements[elementIndex].instance
+
+            if let stack = cellDescription as? StackViewCellDescription {
+                for cellDescriptionIndex in stack.cellDescriptions.indices {
+                    let cellDescription = stack.cellDescriptions[cellDescriptionIndex].instance
+                    if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
+
+                        func remove(_ sections: inout [Section]) {
+                            var cellDescriptions = stack.cellDescriptions
+                            cellDescriptions.remove(at: cellDescriptionIndex)
+                            sections[sectionIndex]
+                                .elements[elementIndex] = AnyConversationMessageCellDescription(
+                                    StackViewCellDescription(cellDescriptions: cellDescriptions)
+                                )
+                        }
+
+                        return (cellDescription, remove)
+                    }
+                }
+
+            } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
+
+                func remove(_ sections: inout [Section]) {
+                    sections[sectionIndex].elements.remove(at: elementIndex)
+                }
+
+                return (cellDescription, remove)
+            }
+
+        }
+
+        return nil
+    }
+
+    private func isStatus(
+        _ previousCellDescription: ConversationMessageToolboxCellDescription?,
+        redundantTo currentCellDescription: ConversationMessageToolboxCellDescription?
+    ) -> Bool {
+        guard let previousCellDescription, let currentCellDescription else { return false }
+
+        return true // TODO: fix
     }
 
     private func collapseSpaceBefore(
