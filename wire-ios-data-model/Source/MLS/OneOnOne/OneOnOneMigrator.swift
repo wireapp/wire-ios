@@ -159,9 +159,9 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             // NOTE: querying for all types at once triggers a table scan which is very expensive
             for type in [OneOnOneType.fake, OneOnOneType.proteus, OneOnOneType.proteusPending] {
                 proteusConversations.append(contentsOf: try source.fetchOneOnOnes(
-                                user: otherUser,
-                                types: [type]
-                            ))
+                    user: otherUser,
+                    types: [type]
+                ))
             }
 
             // Move local messages from all proteus conversations
