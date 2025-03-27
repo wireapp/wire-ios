@@ -642,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "删除...";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "赞";
 "content.message.unlike" = "取消赞";
 "content.message.go_to_conversation" = "显示";
@@ -652,6 +658,7 @@
 "content.message.download" = "下载";
 "content.message.details" = "详细信息";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "回复";
@@ -1312,6 +1319,9 @@
 
 "self.settings.privacy_security.disable_link_previews.title" = "创建链接预览";
 "self.settings.privacy_security.disable_link_previews.footer" = "仍会为其他人的链接显示预览";
+
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "设备";
 

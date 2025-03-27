@@ -61,7 +61,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             factory: self,
             bridge: dependency.bridge,
             backendInfo: networkStack.backendInfo,
-            canExitFlow: dependency.existsAnotherAccount
+            existsAnotherAccount: dependency.existsAnotherAccount
         )
     }
 

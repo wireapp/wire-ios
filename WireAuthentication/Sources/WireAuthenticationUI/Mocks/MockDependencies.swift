@@ -88,7 +88,7 @@ final class MockDependencies {
 
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
-        canExitFlow: Bool,
+        existsAnotherAccount: Bool,
         isLoading: Bool,
         alert: Alert?
     ) -> DetermineAuthMethodView {
@@ -98,7 +98,7 @@ final class MockDependencies {
             bridge: WireAuthenticationBridge(),
             backendInfo: backendInfo,
             emailOrSSOCode: emailOrSSOCode,
-            canExitFlow: canExitFlow,
+            existsAnotherAccount: existsAnotherAccount,
             isLoading: isLoading
         )
         viewModel.alert = alert
@@ -119,7 +119,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             factory: self,
             bridge: WireAuthenticationBridge(),
             backendInfo: backendInfo,
-            canExitFlow: false
+            existsAnotherAccount: false
         )
     }
 

@@ -186,6 +186,8 @@ extension ConversationContentViewController {
                UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
+        case .collapse:
+            dataSource.collapse(message: message)
         }
     }
 

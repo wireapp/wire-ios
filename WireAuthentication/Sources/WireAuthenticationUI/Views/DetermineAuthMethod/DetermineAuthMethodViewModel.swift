@@ -56,7 +56,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
     @Published var modalDestination: ModalDestination?
-    @Published var canExitFlow: Bool
+    @Published var existsAnotherAccount: Bool
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
@@ -72,7 +72,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         bridge: WireAuthenticationBridge,
         backendInfo: BackendInfo,
         emailOrSSOCode: String = "",
-        canExitFlow: Bool,
+        existsAnotherAccount: Bool,
         isLoading: Bool = false
     ) {
         self.router = router
@@ -80,7 +80,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.bridge = bridge
         self.backendInfo = backendInfo
         self.emailOrSSOCode = emailOrSSOCode
-        self.canExitFlow = canExitFlow
+        self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
 
         self.cancellable = bridge.inboundEvents.sink { event in
@@ -89,6 +89,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 Task { [weak self] in
                     await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
+            case let .updateAnotherAccountExistence(newValue):
+                self.existsAnotherAccount = newValue
             default:
                 break
             }
@@ -199,6 +201,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         email: String?,
         backendConfigURL: URL
     ) async {
+        guard !existsAnotherAccount else {
+            alert = .switchBackendFailed
+            return
+        }
+
         do {
             let useCase = factory.fetchBackendConfigUseCase()
             let backendConfig = try await Task.detached {

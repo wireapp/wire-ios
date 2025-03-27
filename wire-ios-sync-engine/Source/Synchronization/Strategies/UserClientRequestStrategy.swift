@@ -523,6 +523,17 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         } else if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             didRetryUpdatingCapabilities = false
         } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey), response.result == .success {
+            guard let context = managedObjectContext else { return false }
+            let selfUserClientID = context.performAndWait {
+                ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
+            }
+
+            let isSelfClient = selfUserClientID == userClient.remoteIdentifier
+
+            guard isSelfClient else {
+                return false
+            }
+
             userClient.needsToUploadMLSPublicKeys = false
             clientRegistrationStatus?.didRegisterMLSClient(userClient)
         }

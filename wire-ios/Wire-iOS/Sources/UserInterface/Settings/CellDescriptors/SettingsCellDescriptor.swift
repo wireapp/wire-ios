@@ -311,6 +311,8 @@ extension SettingsPropertyName {
             return Settings.Vbr.title
         case .disableLinkPreviews:
             return Settings.PrivacySecurity.DisableLinkPreviews.title
+        case .collapseOwnMessages:
+            return Settings.PrivacySecurity.CollapseOwnMessages.title
         // personal information - Analytics
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title

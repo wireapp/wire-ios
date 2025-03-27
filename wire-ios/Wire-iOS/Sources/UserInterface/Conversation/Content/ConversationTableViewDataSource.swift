@@ -81,6 +81,15 @@ final class ConversationTableViewDataSource: NSObject {
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
 
+    var contentWidth: CGFloat = UIScreen.main.bounds.width {
+        didSet {
+            guard UIDevice.current.userInterfaceIdiom == .pad else { return }
+            resetSectionControllers()
+            reloadSections(newSections: calculateSections())
+            tableView.reloadData()
+        }
+    }
+
     var searchQueries: [String] = [] {
         didSet {
             currentSections = calculateSections()
@@ -185,7 +194,10 @@ final class ConversationTableViewDataSource: NSObject {
         currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
     }
 
-    func actionController(for message: ZMConversationMessage) -> ConversationMessageActionController {
+    func actionController(
+        for message: ZMConversationMessage,
+        sectionController: ConversationMessageSectionController
+    ) -> ConversationMessageActionController {
         if let cachedEntry = actionControllers[message.objectIdentifier] {
             return cachedEntry
         }
@@ -194,7 +206,9 @@ final class ConversationTableViewDataSource: NSObject {
             responder: messageActionResponder,
             message: message,
             context: .content,
-            view: tableView
+            view: tableView,
+            isCollapsed: sectionController.isCollapsed,
+            selfUserId: userSession.selfUser.remoteIdentifier
         )
 
         actionControllers[message.objectIdentifier] = actionController
@@ -204,6 +218,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers[message.objectIdentifier] {
+            cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
 
@@ -218,11 +233,12 @@ final class ConversationTableViewDataSource: NSObject {
             context: context,
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
-            useInvertedIndices: true
+            useInvertedIndices: true,
+            contentWidth: contentWidth
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
-        sectionController.actionController = actionController(for: message)
+        sectionController.actionController = actionController(for: message, sectionController: sectionController)
 
         sectionControllers[message.objectIdentifier] = sectionController
 
@@ -454,6 +470,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let sectionController = sectionController(at: section, in: tableView)
         sectionController.highlight(in: tableView, sectionIndex: section)
+    }
+
+    func collapse(message: ZMConversationMessage) {
+        guard let section = sectionControllers[message.objectIdentifier] else {
+            return
+        }
+        section.collapse()
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

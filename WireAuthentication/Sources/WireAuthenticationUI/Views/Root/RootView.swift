@@ -25,6 +25,7 @@ package struct RootView: View {
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
+    private let cornerRadius: CGFloat = 10
 
     package init(
         viewModel: RootViewModel,
@@ -36,29 +37,34 @@ package struct RootView: View {
 
     package var body: some View {
         BackgroundView()
-            .sheet(item: $viewModel.modalDestination) { sheet in
-                switch sheet {
-                case let .authFlow(backedInfo):
-                    NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView(backendInfo: backedInfo)
-                    }
-                    // The alert should be shown on the navigation stack, otherwise
-                    // it will dismiss the sheet.
-                    .alert(
-                        item: $viewModel.alert,
-                        title: { Text($0.title) },
-                        message: { Text($0.message) },
-                        actions: { alert in
-                            switch alert {
-                            case .obsoleteClient:
-                                Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
-                            default:
-                                Button(L10n.Authentication.Error.confirm, action: {})
-                            }
-                        }
-                    )
-                }
+            .universalSheet(item: $viewModel.modalDestination) { item in
+                sheetContent(for: item)
             }
+    }
+
+    @ViewBuilder
+    private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
+        switch sheet {
+        case let .authFlow(backedInfo):
+            NavigationStack(path: $viewModel.path) {
+                factory.determineAuthMethodView(backendInfo: backedInfo)
+            }
+            // The alert should be shown on the navigation stack, otherwise
+            // it will dismiss the sheet.
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { alert in
+                    switch alert {
+                    case .obsoleteClient:
+                        Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                    default:
+                        Button(L10n.Authentication.Error.confirm, action: {})
+                    }
+                }
+            )
+        }
     }
 
     package enum ModalDestination: Identifiable, Hashable {
@@ -66,7 +72,6 @@ package struct RootView: View {
 
         case authFlow(backendInfo: BackendInfo)
     }
-
 }
 
 #Preview {
