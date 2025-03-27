@@ -55,6 +55,9 @@ final class ConversationListViewModel: NSObject {
             /// group conversations
             case groups
 
+            /// channel conversations
+            case channels
+
             /// favorites
             case favorites
 
@@ -94,6 +97,8 @@ final class ConversationListViewModel: NSObject {
                     "contacts"
                 case .groups:
                     "groups"
+                case .channels:
+                    "channels"
                 case .favorites:
                     "favorites"
                 case let .folder(label: label):
@@ -111,6 +116,8 @@ final class ConversationListViewModel: NSObject {
                     L10n.Localizable.List.Section.contacts
                 case .groups:
                     L10n.Localizable.List.Section.groups
+                case .channels:
+                    L10n.Localizable.List.Section.groups // FIXME: Channels
                 case .favorites:
                     L10n.Localizable.List.Section.favorites
                 case let .folder(label: label):
@@ -130,6 +137,8 @@ final class ConversationListViewModel: NSObject {
                 case (.contacts, .contacts):
                     true
                 case (.groups, .groups):
+                    true
+                case (.channels, .channels):
                     true
                 case (.favorites, .favorites):
                     true
@@ -327,6 +336,8 @@ final class ConversationListViewModel: NSObject {
             conversationListType = .contacts
         case .groups:
             conversationListType = .groups
+        case .channels:
+            conversationListType = .channels
         case .favorites:
             conversationListType = .favorites
         case let .folder(label: label):
@@ -359,7 +370,7 @@ final class ConversationListViewModel: NSObject {
         case .groups:
             [.groups]
         case .channels:
-            [.groups] // FIXME: Channels
+            [.channels]
         case .favorites:
             [.favorites]
         case .oneOnOne:
@@ -501,6 +512,8 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             .contactRequests
         case .groups:
             .groups
+        case .channels:
+            .channels
         case .favorites:
             .favorites
         case let .folder(label):
