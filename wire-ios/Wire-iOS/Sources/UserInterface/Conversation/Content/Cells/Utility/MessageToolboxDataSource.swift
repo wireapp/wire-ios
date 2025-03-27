@@ -30,7 +30,7 @@ enum MessageToolboxContent: Equatable {
     case callList(String)
 
     /// Display the message details (timestamp and/or status and/or countdown).
-    case details(timestamp: String?, status: MessageToolboxState?, countdown: String?)
+    case details(timestamp: String, status: MessageToolboxState?, countdown: String)
 }
 
 extension MessageToolboxContent: Comparable {
@@ -90,7 +90,7 @@ final class MessageToolboxDataSource {
     /// Creates a toolbox data source for the given message.
     init(message: ConversationMessage) {
         self.message = message
-        self.content = .details(timestamp: nil, status: nil, countdown: nil)
+        self.content = .details(timestamp: "", status: nil, countdown: "")
     }
 
     // MARK: - Content
@@ -135,23 +135,23 @@ final class MessageToolboxDataSource {
 
     /// Creates a label that display the status of the message.
     private func makeDetailsString() -> (
-        String?,
+        String,
         MessageToolboxState?,
-        String?
+        String
     ) {
         let countdownStatus = makeEphemeralCountdown()
-        let deliveryStateString = message.shouldShowDeliveryState ? selfMessageState(for: message) : nil
-        let timestampString = message.isSent ? message.formattedReceivedDate() : nil
-        return (timestampString, deliveryStateString, countdownStatus)
+        let deliveryState = message.shouldShowDeliveryState ? selfMessageState(for: message) : nil
+        let timestampString = message.isSent ? message.formattedReceivedDate() ?? "" : ""
+        return (timestampString, deliveryState, countdownStatus)
     }
 
-    private func makeEphemeralCountdown() -> String? {
+    private func makeEphemeralCountdown() -> String {
         let showDestructionTimer = message.isEphemeral &&
             !message.isObfuscated &&
             message.destructionDate != nil &&
             message.deliveryState != .pending
 
-        guard let destructionDate = message.destructionDate, showDestructionTimer else { return nil }
+        guard let destructionDate = message.destructionDate, showDestructionTimer else { return "" }
 
         // We need to add one second to start with the correct value
         let remaining = destructionDate.timeIntervalSinceNow + 1
@@ -164,7 +164,7 @@ final class MessageToolboxDataSource {
             // do nothing, audio messages are allowed to extend the timer
             // past the destruction date.
         }
-        return nil
+        return ""
     }
 
     // MARK: - message delivery state

@@ -341,17 +341,17 @@ final class MessageToolboxView: UIView {
 
         case let .details(timestamp, state, countdown):
             detailsLabel.text = timestamp
-            detailsLabel.isHidden = timestamp == nil
+            detailsLabel.isHidden = timestamp.isEmpty
             detailsLabel.numberOfLines = 1
 
             updateState(state)
 
-            timestampSeparatorContainer.isHidden = timestamp == nil || state == nil
-            statusSeparatorContainer.isHidden = (timestamp == nil && state == nil) || countdown == nil
+            timestampSeparatorContainer.isHidden = timestamp.isEmpty || state == nil
+            statusSeparatorContainer.isHidden = (timestamp.isEmpty && state == nil) || countdown.isEmpty
             countdownView.setProgress(dataSource.message.countdownProgress ?? 0)
-            countdownView.isHidden = countdown == nil
+            countdownView.isHidden = countdown.isEmpty
             countdownLabel.text = countdown
-            countdownLabel.isHidden = countdown == nil
+            countdownLabel.isHidden = countdown.isEmpty
 
             let editedString = dataSource.editedString
             editedLabel.isHidden = editedString == nil

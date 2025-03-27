@@ -150,14 +150,14 @@ final class ConversationTableViewDataSource: NSObject {
         else { return currentSections }
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
+            // workaround: this loop might add a status view to a message, which is removed again later, so skip
             if description.instance is ConversationMessageToolboxCellDescription {
-                // workaround for flickering
                 continue
             }
+            // same workaround for stacked cells
             if
                 let stack = description.instance as? StackViewCellDescription,
                 stack.cellDescriptions.contains(where: { $0.instance is ConversationMessageToolboxCellDescription }) {
-                // workaround for flickering
                 continue
             }
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
@@ -632,15 +632,10 @@ extension ConversationTableViewDataSource {
             let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
             let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
             if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus) {
-                if let previousStatus {
-                    print("foijfoidl removing status for message", previousStatus.cellDescription.message!.fffff ?? "<<nil>>")
-                }
                 previousStatus?.removeFrom(&sections)
                 if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
                     previousSectionFirstElement = newPreviousSectionFirstElement
                 }
-            } else if let previousStatus {
-                print("foijfoidl NOT removing status for message", previousStatus.cellDescription.message!.fffff ?? "<<nil>>")
             }
 
             // collapse space between subsequent messages
@@ -653,8 +648,6 @@ extension ConversationTableViewDataSource {
             }
 
         }
-
-        print("foijfoidl ")
 
         return sections
 
@@ -709,7 +702,12 @@ extension ConversationTableViewDataSource {
     ) -> Bool {
         guard let previousCellDescription, let currentCellDescription else { return false }
 
-        return true // TODO: fix
+        // always show the countdown
+        if previousCellDescription.message?.isEphemeral == true {
+            return false
+        }
+
+        return previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState
     }
 
     private func collapseSpaceBefore(
@@ -745,15 +743,4 @@ extension Date {
         return components == otherComponents
     }
 
-}
-
-extension ZMConversationMessage {
-
-    fileprivate var fffff: String {
-        if let textMessageData {
-            return textMessageData.messageText ?? "<nil>"
-        }
-
-        return "kA"
-    }
 }
