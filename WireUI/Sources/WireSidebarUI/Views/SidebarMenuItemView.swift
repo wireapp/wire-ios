@@ -39,6 +39,8 @@ struct SidebarMenuItemView<TitleView: View>: View {
 
     /// The `systemName` which is passed into `SwiftUI.Image`.
     private(set) var icon: String
+    /// The `systemName` of the highlighted icon if set, otherwise `icon` will be appended with ".fill".
+    private(set) var iconHighlighted: String?
     private(set) var iconSize: CGSize?
 
     /// If `true` an icon will be shown at the trailing side of the title.
@@ -61,8 +63,7 @@ struct SidebarMenuItemView<TitleView: View>: View {
                     title()
                         .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : titleForegroundColor)
                 } icon: {
-                    let iconSystemNameSuffix = isHighlighted ? ".fill" : "" // FIXME: Channels
-                    let icon = Image(systemName: icon + iconSystemNameSuffix)
+                    let icon = Image(systemName: iconSystemName())
                         .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : Color(accentColor))
                         .background(GeometryReader { geometryProxy in
                             Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
@@ -89,6 +90,16 @@ struct SidebarMenuItemView<TitleView: View>: View {
             .accessibilityLabel(accessibilityLabel())
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+    }
+
+    private func iconSystemName() -> String {
+        if !isHighlighted {
+            return icon
+        } else if let iconHighlighted = iconHighlighted {
+            return iconHighlighted
+        } else {
+            return icon + ".fill"
+        }
     }
 }
 
