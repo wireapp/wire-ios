@@ -155,10 +155,15 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
             // 1-1 conversations here.
             let source = OneOnOneSource(context: context)
-            let proteusConversations = try source.fetchOneOnOnes(
-                user: otherUser,
-                types: [.fake, .proteus, .proteusPending]
-            )
+            var proteusConversations: [ZMConversation] = []
+            // NOTE: querying for all types at once triggers a table scan which is very expensive
+            for type in [OneOnOneType.fake, OneOnOneType.proteus, OneOnOneType.proteusPending] {
+                let conversations = try source.fetchOneOnOnes(
+                    user: otherUser,
+                    types: [type]
+                )
+                proteusConversations.append(contentsOf: conversations)
+            }
 
             // Move local messages from all proteus conversations
             for proteusConversation in proteusConversations {

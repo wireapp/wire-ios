@@ -22,10 +22,7 @@ import WireAuthenticationAPI
 package protocol NoHistoryViewBuilder {
 
     @MainActor
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView
 
 }
 
@@ -80,10 +77,19 @@ package struct NoHistoryView: View {
                 Button(L10n.Authentication.Error.howToDeleteAccount, action: {
                     viewModel.howToDeleteAccount()
                 })
-                Button(L10n.Authentication.Error.confirm, action: {})
+                Button(L10n.Authentication.Error.confirm, action: {
+                    viewModel.confirmAlert()
+                })
             }
         )
         .onAppear {
+            viewModel.onAppear()
+        }
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: UIApplication.willEnterForegroundNotification
+            )
+        ) { _ in
             viewModel.onAppear()
         }
         .padding(.vertical, 32)
@@ -91,6 +97,7 @@ package struct NoHistoryView: View {
         .setPreferredSize()
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+        .navigationBarBackButtonHidden()
     }
 
     private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {

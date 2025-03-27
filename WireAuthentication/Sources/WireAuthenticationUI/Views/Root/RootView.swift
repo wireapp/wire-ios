@@ -21,11 +21,7 @@ import WireAuthenticationAPI
 
 package struct RootView: View {
 
-    package typealias Factory =
-        DetermineAuthMethodBuilder &
-        LoginViaEmailOnPremBuilder &
-        LoginViaSSOBuilder &
-        NoHistoryViewBuilder
+    package typealias Factory = DetermineAuthMethodBuilder
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
@@ -49,81 +45,32 @@ package struct RootView: View {
     @ViewBuilder
     private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
         switch sheet {
-        case .authFlow:
+        case let .authFlow(backedInfo):
             NavigationStack(path: $viewModel.path) {
-                factory.determineAuthMethodView()
+                factory.determineAuthMethodView(backendInfo: backedInfo)
             }
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-
-        case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
-            NavigationStack(path: $viewModel.path) {
-                factory.determineAuthMethodView(
-                    environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
-                )
-            }
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-
-        case let .noHistory(
-            authenticationResult,
-            didDetectDomainConflict
-        ):
-            factory.noHistoryView(
-                authenticationResult: authenticationResult,
-                didDetectDomainConflict: didDetectDomainConflict
+            // The alert should be shown on the navigation stack, otherwise
+            // it will dismiss the sheet.
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { alert in
+                    switch alert {
+                    case .obsoleteClient:
+                        Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                    default:
+                        Button(L10n.Authentication.Error.confirm, action: {})
+                    }
+                }
             )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
-
-        case let .onPremiseLogin(
-            email,
-            environmentType,
-            backendConfig,
-            backendMetadata
-        ):
-            factory.loginViaEmailOnPremView(
-                email: email,
-                environmentType: environmentType,
-                backendConfig: backendConfig,
-                backendMetadata: backendMetadata
-            )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
-
-        case let .ssoLogin(
-            ssoURL,
-            backendEnvironment
-        ):
-            factory.loginViaSSOView(
-                ssoURL: ssoURL,
-                backendEnvironment: backendEnvironment
-            )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
         }
     }
 
     package enum ModalDestination: Identifiable, Hashable {
         public var id: Self { self }
 
-        case authFlow
-        case onPremiseAuthFlow(
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
-        )
-        case noHistory(
-            authenticationResult: AuthenticationResult,
-            didDetectDomainConflict: Bool
-        )
-        case onPremiseLogin(
-            email: String?,
-            environmentType: BackendEnvironmentType,
-            environment: BackendConfig,
-            backendMetadata: BackendMetadata?
-        )
-        case ssoLogin(
-            url: URL,
-            backendEnvironment: WireAuthenticationBackendEnvironment
-        )
+        case authFlow(backendInfo: BackendInfo)
     }
 }
 
