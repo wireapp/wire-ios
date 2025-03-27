@@ -152,7 +152,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         case (.expanded, .groups):
             L10n.Localizable.ConversationList.Filter.Groups.title
         case (.expanded, .channels):
-            L10n.Localizable.ConversationList.Filter.Groups.title // FIXME: Channels
+            L10n.Localizable.ConversationList.Filter.Channels.title
         case (.expanded, .oneOnOne):
             L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
         case (.expanded, .folder):
@@ -213,7 +213,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             isSelected: listContentController.listViewModel.selectedFilter == .groups
         )
         let channelsAction = createFilterAction(
-            title: FilterMenuLocale.Groups.title, // FIXME: Channels
+            title: FilterMenuLocale.Channels.title,
             filter: .channels,
             isSelected: listContentController.listViewModel.selectedFilter == .channels
         )
@@ -324,12 +324,13 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         case .favorites:
             return isSelected ? accessibilityLocale.Favorites.Selected.description : accessibilityLocale.Favorites
                 .description
+            
 
         case .groups:
             return isSelected ? accessibilityLocale.Groups.Selected.description : accessibilityLocale.Groups.description
 
         case .channels:
-            return isSelected ? accessibilityLocale.Groups.Selected.description : accessibilityLocale.Groups.description // FIXME: Channels
+            return isSelected ? accessibilityLocale.Channels.Selected.description : accessibilityLocale.Channels.description
 
         case .oneOnOne:
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne

@@ -669,6 +669,14 @@ internal enum L10n {
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.selected.description", fallback: "All conversations, selected")
           }
         }
+        internal enum Channels {
+          /// Show all channel conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.channels.description", fallback: "Show all channel conversations")
+          internal enum Selected {
+            /// Channels, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.channels.selected.description", fallback: "Channels, selected")
+          }
+        }
         internal enum Favorites {
           /// Show all favorite conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.description", fallback: "Show all favorite conversations")
@@ -2837,6 +2845,10 @@ internal enum L10n {
           /// All Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.all_conversations.title", fallback: "All Conversations")
         }
+        internal enum Channels {
+          /// Channels
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.channels.title", fallback: "Channels")
+        }
         internal enum Favorites {
           /// Favorites
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.favorites.title", fallback: "Favorites")
@@ -2887,6 +2899,8 @@ internal enum L10n {
         }
       }
       internal enum SearchBar {
+        /// Search channels
+        internal static let channelsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.channelsPlaceholder", fallback: "Search channels")
         /// Search favourites
         internal static let favoritesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.favoritesPlaceholder", fallback: "Search favourites")
         /// Search %@

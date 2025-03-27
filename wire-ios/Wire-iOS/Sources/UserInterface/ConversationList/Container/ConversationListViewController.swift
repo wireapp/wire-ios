@@ -76,7 +76,7 @@ final class ConversationListViewController: UIViewController {
         case .groups:
             return FilterMenuLocale.Groups.title
         case .channels:
-            return FilterMenuLocale.Groups.title // FIXME: Channels
+            return FilterMenuLocale.Channels.title
         case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
         case let .folder(_, name):
@@ -444,7 +444,7 @@ final class ConversationListViewController: UIViewController {
         case .groups:
             L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
         case .channels:
-            L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder // FIXME: Channels
+            L10n.Localizable.ConversationList.SearchBar.channelsPlaceholder
         case .oneOnOne:
             L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
         case let .folder(_, name):
