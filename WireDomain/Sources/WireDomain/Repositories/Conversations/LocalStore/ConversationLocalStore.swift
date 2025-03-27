@@ -29,7 +29,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let mlsService: any MLSServiceInterface
+    let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -40,7 +40,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface,
+        mlsService: (any MLSServiceInterface)?,
         userLocalStore: any UserLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
     ) {
@@ -498,9 +498,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func commitPendingProposals(
-        conversation: ZMConversation,
+    public func updateCommitPendingProposal(
         date: Date,
+        for conversation: ZMConversation,
         commitDelay: UInt64
     ) async {
         let scheduledDate = date + TimeInterval(commitDelay)
@@ -508,8 +508,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.commitPendingProposalDate = scheduledDate
         }
-
-        await mlsService.commitPendingProposalsIfNeeded()
     }
 
     public func updateSecurityLevelAfterReceivingMessage(
@@ -706,7 +704,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func wipeMLSGroup(groupID: MLSGroupID) async throws {
-        try await mlsService.wipeGroup(groupID)
+        try await mlsService?.wipeGroup(groupID)
     }
 
     public func storeConversation(

@@ -102,3 +102,14 @@ extension WireAPI.SelfDeletingMessagesFeatureConfig {
     }
 
 }
+
+extension WireAPI.ChannelsFeatureConfig {
+
+    func toDomainModel() -> Feature.Channels.Config {
+        .init(
+            allowedToCreateChannels: .init(rawValue: allowedToCreateChannels.rawValue)!,
+            allowedToOpenChannels: .init(rawValue: allowedToOpenChannels.rawValue)!
+        )
+    }
+
+}

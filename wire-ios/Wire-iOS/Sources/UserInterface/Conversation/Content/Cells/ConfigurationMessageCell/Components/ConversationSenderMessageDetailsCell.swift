@@ -52,6 +52,10 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var actionController: ConversationMessageActionController?
 
     private var trailingDateLabelConstraint: NSLayoutConstraint?
+    private(set) var avatarBottomAnchorConstraint: NSLayoutConstraint?
+    private(set) var avatarGreaterThanBottomAnchorConstraint: NSLayoutConstraint?
+    private var authorLabelNoTopPaddingConstraint: NSLayoutConstraint?
+    private var authorLabelCenterVerticalConstraint: NSLayoutConstraint?
 
     var isSelected: Bool = false
 
@@ -143,8 +147,24 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             equalTo: trailingAnchor,
             constant: -conversationHorizontalMargins.right
         )
-
         self.trailingDateLabelConstraint = trailingDateLabelConstraint
+
+        let avatarTopAnchorConstraint = avatar.topAnchor.constraint(equalTo: topAnchor)
+        avatarTopAnchorConstraint.priority = .defaultLow
+        let avatarBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
+        avatarBottomAnchorConstraint.priority = .defaultLow
+        self.avatarBottomAnchorConstraint = avatarBottomAnchorConstraint
+        let avatarGreaterThanBottomAnchorConstraint = bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor)
+        self.avatarGreaterThanBottomAnchorConstraint = avatarGreaterThanBottomAnchorConstraint
+
+        let authorLabelNoTopPaddingConstraint = authorLabel.topAnchor.constraint(equalTo: topAnchor)
+        authorLabelNoTopPaddingConstraint.isActive = true // only for not deleted messages
+        self.authorLabelNoTopPaddingConstraint = authorLabelNoTopPaddingConstraint
+
+        let authorLabelCenterVerticalConstraint = authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+        authorLabelCenterVerticalConstraint.isActive = false // only for deleted messages
+        self.authorLabelCenterVerticalConstraint = authorLabelCenterVerticalConstraint
+
         NSLayoutConstraint.activate([
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
@@ -152,15 +172,18 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             dateLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
             trailingDateLabelConstraint,
 
-            dateLabel.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            authorLabelNoTopPaddingConstraint,
+            authorLabelCenterVerticalConstraint,
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
-            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
 
+            avatarTopAnchorConstraint,
+            avatarBottomAnchorConstraint,
             avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            avatarGreaterThanBottomAnchorConstraint,
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
         ])
     }
@@ -178,6 +201,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         switch object.indicator {
 
         case .deleted:
+            authorLabelNoTopPaddingConstraint?.isActive = false
+            authorLabelCenterVerticalConstraint?.isActive = true
             if let attachment = attachment(from: .trash, size: 8) {
                 attributedString.append(attachment)
             }
@@ -186,9 +211,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             if let attachment = attachment(from: .pencil, size: 8) {
                 attributedString.append(attachment)
             }
+            fallthrough
 
         default:
-            break
+            authorLabelNoTopPaddingConstraint?.isActive = true
+            authorLabelCenterVerticalConstraint?.isActive = false
         }
 
         switch object.teamRoleIndicator {
@@ -288,7 +315,9 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     var canBeCombinedWithOtherCells: Bool { true }
 
     var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 16
+
+    var topMargin: CGFloat = -6
+    var bottomMargin: CGFloat = -6
 
     let containsHighlightableContent: Bool = false
 

@@ -39,7 +39,7 @@
 
 "proxy_credentials.title" = "Proxy Credentials";
 "proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
-"proxy_credentials.input_email.title" = "Proxy Email";
+"proxy_credentials.input_email.title" = "Proxy email or username";
 "proxy_credentials.input_password.title" = "密碼";
 "proxy_credentials.input_password.placeholder" = "Enter password";
 
@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "取消";
 "switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "無法切換伺服器";
+"switch_backend.error.message.logged_in" = "您已經登錄。要切換到該服務器，請登出所有帳戶，然後重試。";
 
 "verification_code.title" = "您收到了郵件";
 "verification_code.message" = "輸入我們發送到%@的驗證碼。";
@@ -92,7 +94,7 @@
 "authentication.error.how_to_delete_account" = "How to delete a private account";
 
 "obsolete_client.alert.title" = "必要更新";
-"obsolete_client.alert.message" = "您錯過了些新功能。\n快到App Store中下載最新版的Wire吧。";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "到App Store";
 
 "obsolete_backend.alert.title" = "Server version not supported";

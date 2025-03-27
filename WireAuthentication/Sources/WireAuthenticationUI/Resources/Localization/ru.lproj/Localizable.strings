@@ -39,7 +39,7 @@
 
 "proxy_credentials.title" = "Учетные данные прокси";
 "proxy_credentials.message" = "Этот бэкэнд настроен на использование следующего прокси: %@.";
-"proxy_credentials.input_email.title" = "Прокси email";
+"proxy_credentials.input_email.title" = "Email или имя пользователя прокси";
 "proxy_credentials.input_password.title" = "Пароль";
 "proxy_credentials.input_password.placeholder" = "Введите пароль";
 
@@ -56,6 +56,8 @@
 "switch_backend_confirmation.proceed" = "Продолжить";
 "switch_backend_confirmation.cancel" = "Отмена";
 "switch_backend_confirmation.show_details" = "Подробнее";
+"switch_backend.error.title.logged_in" = "Невозможно переключить серверы";
+"switch_backend.error.message.logged_in" = "Вы уже авторизованы. Чтобы переключиться на этот сервер, выйдите из всех учетных записей и повторите попытку.";
 
 "verification_code.title" = "Вам письмо";
 "verification_code.message" = "Введите код подтверждения, который мы отправили на %@.";
@@ -86,7 +88,7 @@
 
 "authentication.error.confirm" = "OK";
 
-"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
+"authentication.error.title.email_already_in_use" = "Email, заявленный в локальном бэкенде";
 "authentication.error.message.email_already_in_use" = "Домен этого email принадлежит локальному бэкенду. Пожалуйста, измените свой email в настройках аккаунта или удалите аккаунт. Если вы являетесь частью команды, обратитесь к администратору команды.";
 "authentication.error.how_to_change_email" = "Как изменить адрес email";
 "authentication.error.how_to_delete_account" = "Как удалить личный аккаунт";

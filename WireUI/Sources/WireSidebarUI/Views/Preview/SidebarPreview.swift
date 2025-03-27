@@ -50,7 +50,6 @@ struct SidebarPreview: View {
                     selectedMenuItem: $selectedMenuItem,
                     accountImageAction: {},
                     foldersAction: { _ in },
-                    connectAction: {},
                     supportAction: {},
                     accountImageView: { _, _, _ in MockAccountImageView() },
                     legalHoldIndicatorView: { MockLegalHoldIndicatorView() }

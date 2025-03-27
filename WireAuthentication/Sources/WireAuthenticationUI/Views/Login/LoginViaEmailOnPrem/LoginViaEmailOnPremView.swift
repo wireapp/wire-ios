@@ -25,7 +25,7 @@ package protocol LoginViaEmailOnPremBuilder {
 
     @MainActor
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
@@ -104,23 +104,7 @@ package struct LoginViaEmailOnPremView: View {
 
     @ViewBuilder private var welcomeMessage: some View {
         VStack(spacing: 14) {
-            Button(action: {
-                showCustomBackendAlert.toggle()
-            }, label: {
-                Text(L10n.OnPremUserLogin.title(viewModel.backendName) + " ")
-                    .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
-                    + Text(Image(systemName: "info.circle"))
-                    .foregroundColor(.gray)
-            })
-            .multilineTextAlignment(.center)
-            .font(.textStyle(.h2))
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
-            .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $showCustomBackendAlert) {
-                Button(L10n.OnPremUserLogin.Alert.button, role: .cancel) {}
-            } message: {
-                Text(viewModel.backendInfo)
-            }
+            OnPremHeaderView(backendConfig: viewModel.backendConfig)
             Text(L10n.OnPremUserLogin.message)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
@@ -133,14 +117,10 @@ package struct LoginViaEmailOnPremView: View {
         LabeledTextField(
             placeholder: nil,
             title: L10n.CloudUserLogin.InputEmail.title,
-            string: .constant(viewModel.email)
+            string: .constant(viewModel.email ?? "")
         )
-<<<<<<< HEAD
         .disabled(!viewModel.email.isEmpty)
-=======
         .autocorrectionDisabled()
-        .disabled(viewModel.isValidEmail)
->>>>>>> 402ef00560 (fix: disable autocorrect on WireAuthentication input fields - WPB-16585 (#2695))
     }
 
     @ViewBuilder private var passwordField: some View {
@@ -165,7 +145,7 @@ package struct LoginViaEmailOnPremView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password))
+        .disabled(!viewModel.isValidPassword(password) && viewModel.email != nil)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
