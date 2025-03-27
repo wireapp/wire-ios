@@ -45,21 +45,6 @@ struct FeatureConfigsPayloadAPIV6: Decodable {
     let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
     let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
-
-}
-
-struct FeatureConfigsPayloadAPIV8: Decodable {
-
-    let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
-    let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
-    let conferenceCalling: FeatureStatusWithConfig<Feature.ConferenceCalling.Config>?
-    let conversationGuestLinks: FeatureStatus?
-    let digitalSignatures: FeatureStatus?
-    let fileSharing: FeatureStatus?
-    let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
-    let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
-    let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
-    let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
     let channels: FeatureStatusWithConfig<Feature.Channels.Config>?
 }
 
