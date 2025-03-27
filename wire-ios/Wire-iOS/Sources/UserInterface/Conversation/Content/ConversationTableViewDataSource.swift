@@ -93,7 +93,7 @@ final class ConversationTableViewDataSource: NSObject {
     var searchQueries: [String] = [] {
         didSet {
             currentSections = calculateSections()
-            adjustTopAndBottomMargins(of: &currentSections)
+            currentSections = adjustedTopAndBottomMargins(currentSections)
             tableView.reloadData()
         }
     }
@@ -169,7 +169,7 @@ final class ConversationTableViewDataSource: NSObject {
             model: sectionIdentifier,
             elements: sectionController.tableViewCellDescriptions
         )
-        adjustTopAndBottomMargins(of: &updatedSections)
+        updatedSections = adjustedTopAndBottomMargins(updatedSections)
 
         return updatedSections
     }
@@ -316,7 +316,7 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
         currentSections = calculateSections(forceRecalculate: forceRecalculate)
-        adjustTopAndBottomMargins(of: &currentSections)
+        currentSections = adjustedTopAndBottomMargins(currentSections)
         tableView.reloadData()
     }
 
@@ -596,41 +596,89 @@ extension ConversationTableViewDataSource {
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 
-    private func adjustTopAndBottomMargins(of sections: inout [ArraySection<String, AnyConversationMessageCellDescription>]) {
+    // TODO: rename
+    private func adjustedTopAndBottomMargins( // TODO: split into several funcs
+        _ sections: [ArraySection<String, AnyConversationMessageCellDescription>]
+    ) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+
+        var sections = sections
 
         // find subsequent messages and collapse space if needed
-        for currentIndex in sections.indices.reversed() {
-            guard let current = sections[currentIndex].elements.last?.instance else { continue }
+        for currentSectionIndex in sections.indices.reversed() {
+            guard let currentSectionLastElement = sections[currentSectionIndex].elements.last?.instance else {
+                continue
+            }
 
-            let previousIndex = currentIndex + 1
+            let previousSectionIndex = currentSectionIndex + 1
             guard
-                sections.indices.contains(previousIndex),
-                var previous = sections[previousIndex].elements.first?.instance
+                sections.indices.contains(previousSectionIndex),
+                var previousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance
             else {
-                current.topMargin = 0
-                current.bottomMargin = 0
+                // no previous message, reset margins
+                currentSectionLastElement.topMargin = 0
+                currentSectionLastElement.bottomMargin = 0
                 continue
             }
 
             // filter redudnant status cells
-            // TODO: implement
-            if sections[previousIndex].elements.count > 1 { // TODO: also check the stack
-                print("elements0:", sections[previousIndex].elements.map { $0.instance })
-                sections[previousIndex].elements.removeFirst()
-                print("elements1:", sections[previousIndex].elements.map { $0.instance })
-                previous = sections[previousIndex].elements.first!.instance
+            var previousStatus: (cellDescription: ConversationMessageToolboxCellDescription, remove: () -> Void)?
+            for elementIndex in sections[previousSectionIndex].elements.indices {
+                let cellDescription = sections[previousSectionIndex].elements[elementIndex].instance
+                if let stackCellDescription = cellDescription as? StackViewCellDescription {
+                    for cellDescriptionIndex in stackCellDescription.cellDescriptions.indices {
+                        let cellDescription = stackCellDescription.cellDescriptions[cellDescriptionIndex].instance
+                        if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
+                            previousStatus = (
+                                cellDescription: cellDescription,
+                                remove: {
+                                    var cellDescriptions = stackCellDescription.cellDescriptions
+                                    cellDescriptions.remove(at: cellDescriptionIndex)
+                                    sections[previousSectionIndex]
+                                        .elements[elementIndex] = AnyConversationMessageCellDescription(
+                                            StackViewCellDescription(cellDescriptions: cellDescriptions)
+                                        )
+                                }
+                            )
+                            break
+                        }
+                    }
+                } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
+                    print(String(describing: cellDescription))
+                    previousStatus = (
+                        cellDescription: cellDescription,
+                        remove: { sections[previousSectionIndex].elements.remove(at: elementIndex) }
+                    )
+                    break
+                }
             }
 
+            let currentStatus: ConversationMessageToolboxCellDescription?
+
+            var removeStatus = false
+
+            if let previousStatus {
+                previousStatus.remove()
+            }
+
+            //for cellDescription in section[currentIndex]
+            // TODO: implement
+//            if sections[previousIndex].elements.count > 1 { // TODO: also check the stack
+//                print("elements0:", sections[previousIndex].elements.map { $0.instance })
+//                sections[previousIndex].elements.removeFirst()
+//                print("elements1:", sections[previousIndex].elements.map { $0.instance })
+//                previous = sections[previousIndex].elements.first!.instance
+//            }
+
             // collapse space between subsequent messages
-            let collapse = if current is ConversationTextMessageCellDescription ||
-                current is ConversationFileMessageCellDescription ||
-                current is ConversationImageMessageCellDescription ||
-                current is ConversationVideoMessageCellDescription ||
-                current is ConversationReplyCellDescription ||
-                current is ConversationCollapsedMessageCellDescription {
+            let collapse = if currentSectionLastElement is ConversationTextMessageCellDescription ||
+                currentSectionLastElement is ConversationFileMessageCellDescription ||
+                currentSectionLastElement is ConversationImageMessageCellDescription ||
+                currentSectionLastElement is ConversationVideoMessageCellDescription ||
+                currentSectionLastElement is ConversationReplyCellDescription ||
+                currentSectionLastElement is ConversationCollapsedMessageCellDescription {
                 // no stack cell description and no sender is shown, so collapse the space if needed
                 true
-            } else if let firstStacked = (current as? StackViewCellDescription)?.cellDescriptions.first?.instance {
+            } else if let firstStacked = (currentSectionLastElement as? StackViewCellDescription)?.cellDescriptions.first?.instance {
                 firstStacked is ConversationTextMessageCellDescription ||
                     firstStacked is ConversationFileMessageCellDescription ||
                     firstStacked is ConversationImageMessageCellDescription ||
@@ -641,14 +689,16 @@ extension ConversationTableViewDataSource {
             }
 
             if collapse {
-                previous.bottomMargin = -6
-                current.topMargin = -6
+                previousSectionFirstElement.bottomMargin = -6
+                currentSectionLastElement.topMargin = -6
             } else {
-                previous.bottomMargin = 0
-                current.topMargin = 0
+                previousSectionFirstElement.bottomMargin = 0
+                currentSectionLastElement.topMargin = 0
             }
 
         }
+
+        return sections
 
     }
 
