@@ -1879,6 +1879,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		01C66E462D9352EB00B937B4 /* Channels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Channels; sourceTree = "<group>"; };
 		594C4E2D2CCAAB6900F13D03 /* AccountImageSource */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImageSource; sourceTree = "<group>"; };
 		594C4E382CCAAB9B00F13D03 /* AccountImageSource */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImageSource; sourceTree = "<group>"; };
 		594C4E462CCB199200F13D03 /* generated */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = generated; sourceTree = "<group>"; };
@@ -2159,6 +2160,7 @@
 				062C0D312B22809000848A48 /* E2EId */,
 				EECA830126EF34FB0087ECB0 /* SelfDeletingMessages */,
 				064F8E07255E04800040371D /* Feature.swift */,
+				01C66E462D9352EB00B937B4 /* Channels */,
 			);
 			path = FeatureConfig;
 			sourceTree = "<group>";
@@ -3873,6 +3875,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				01C66E462D9352EB00B937B4 /* Channels */,
 				594C4E2D2CCAAB6900F13D03 /* AccountImageSource */,
 				59D058412D1593CF00B687F2 /* Analytics */,
 			);
