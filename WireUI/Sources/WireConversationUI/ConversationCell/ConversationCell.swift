@@ -26,13 +26,45 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
 
     private func updateConfiguration() {
         contentConfiguration = UIHostingConfiguration {
-            model.buildView()
+            ZStack {
+                model.buildView()
+                DraggableView()
+            }
         }
         .margins(.all, 0)
         .minSize(width: 0, height: 0)
         .background(.clear)
     }
 
+}
+
+struct DraggableView: View {
+    @State private var dragOffset = CGPoint.zero
+
+    var body: some View {
+        Text("Drag me!")
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .offset(x: dragOffset.x, y: dragOffset.y)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        // Update offset as the drag gesture changes
+                        dragOffset.x = value.translation.width
+                    }
+                    .onEnded { value in
+                        // Optionally handle the end of the gesture
+                        // For example, snap back or update a final position.
+                        // dragOffset.x = value.translation.width
+                        withAnimation(.easeInOut(duration: 0.1)) {
+                            dragOffset = .zero
+                        }
+
+                    }
+            )
+    }
 }
 
 // MARK: - Previews
@@ -46,4 +78,8 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
             .timeDivider(text: "Today", isUnread: true)
         ]
     )
+}
+
+#Preview("dragable") {
+    DraggableView()
 }
