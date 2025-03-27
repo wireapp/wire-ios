@@ -123,6 +123,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 .all,
                 .favorites,
                 .groups,
+                .channels,
                 .oneOnOne,
                 .folders,
                 .archive
@@ -211,7 +212,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
         case .channels:
             text = Text(Strings.ConversationFilter.Channels.title)
-            icon = "person.3" // FIXME: Channels
+            icon = "number"
             accessibilityLabel = Text(Strings.ConversationFilter.Channels.title)
 
         case .oneOnOne:

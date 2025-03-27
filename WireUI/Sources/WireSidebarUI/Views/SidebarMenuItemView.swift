@@ -61,7 +61,7 @@ struct SidebarMenuItemView<TitleView: View>: View {
                     title()
                         .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : titleForegroundColor)
                 } icon: {
-                    let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
+                    let iconSystemNameSuffix = isHighlighted ? ".fill" : "" // FIXME: Channels
                     let icon = Image(systemName: icon + iconSystemNameSuffix)
                         .foregroundStyle(isHighlighted ? isSelectedTitleForegroundColor : Color(accentColor))
                         .background(GeometryReader { geometryProxy in

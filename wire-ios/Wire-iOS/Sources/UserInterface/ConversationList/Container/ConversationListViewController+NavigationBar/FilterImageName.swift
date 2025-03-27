@@ -51,6 +51,9 @@ enum FilterImageName: String {
     /// Represents a selected (filled) folder icon for a folder's conversations.
     case folderFill = "folder.fill"
 
+    /// Represents a selected or unselected channel icon for channel conversations.
+    case number = "number"
+
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///
     /// - Parameters:
@@ -80,7 +83,7 @@ enum FilterImageName: String {
         case .folder:
             return isSelected ? .folderFill : .folder
         case .channels:
-            return isSelected ? .personFill : .person // FIXME: Channels
+            return .number // Same icon is used for selected and unselected. Just the color changes.
         }
     }
 }
