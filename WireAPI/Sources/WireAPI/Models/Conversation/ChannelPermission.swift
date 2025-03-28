@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-public enum ChannelPermission: Codable, Sendable {
+public enum ChannelPermission: String, Codable, Sendable {
     case everyone
     case admins
 }

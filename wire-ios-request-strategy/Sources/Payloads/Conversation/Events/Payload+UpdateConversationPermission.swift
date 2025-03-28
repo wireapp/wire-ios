@@ -16,20 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+
+enum ChannelPermission: String, Codable {
+    case admins
+    case everyone
+}
 
 extension Payload {
     struct UpdateConversationPermission: CodableEventData {
         let addPermission: ChannelPermission
-        
+
         static var eventType: ZMUpdateEventType {
             .conversationAddPermissionUpdate
         }
-        
+
         enum CodingKeys: String, CodingKey {
             case addPermission = "add_permission"
         }
-        
+
     }
 }

@@ -19,13 +19,24 @@
 import WireAPI
 
 struct ConversationAddPermissionEventProcessor: ConversationAddPermissionEventProcessorProtocol {
-    
+
     let localStore: any ConversationLocalStoreProtocol
-    
+
     func processEvent(_ event: ConversationAddPermissionEvent) async {
-        
-        // TODO:
+
+        let conversationID = event.conversationID
+        let addPermission = event.addPermission
+
+        let localConversation = await localStore.fetchOrCreateConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        await localStore.storeConversation(
+            permission: addPermission.rawValue,
+            conversation: localConversation
+        )
+
     }
-    
-    
+
 }

@@ -304,6 +304,7 @@ public struct ModelHelper {
         with participants: Set<ZMUser> = [],
         team: Team? = nil,
         domain: String? = nil,
+        groupType: ConversationGroupType? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: context)
@@ -314,6 +315,7 @@ public struct ModelHelper {
             users: participants,
             role: nil
         )
+        conversation.groupType = groupType
         conversation.team = team
         conversation.teamRemoteIdentifier = team?.remoteIdentifier
 

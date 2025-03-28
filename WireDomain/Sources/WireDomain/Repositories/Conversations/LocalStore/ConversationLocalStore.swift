@@ -224,6 +224,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func storeConversation(
+        permission: String,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.channelPermission = permission
+        }
+    }
+
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),

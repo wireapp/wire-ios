@@ -19,7 +19,7 @@
 import Foundation
 
 struct ConversationAddPermissionEventDecoder {
-    
+
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationAddPermissionEvent {
@@ -27,7 +27,7 @@ struct ConversationAddPermissionEventDecoder {
             ConversationID.self,
             forKey: .conversationQualifiedID
         )
-        
+
         let payload = try container.decode(
             Payload.self,
             forKey: .payload
@@ -48,5 +48,5 @@ struct ConversationAddPermissionEventDecoder {
         }
 
     }
-    
+
 }

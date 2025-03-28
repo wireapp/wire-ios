@@ -1419,6 +1419,27 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    func testAddConversationPermission_Updates_Permission() async throws {
+        // Given
+        let qualifiedID = await syncMOC.perform { self.groupConversation.qualifiedID }
+        let conversationPayload = Payload.UpdateConversationPermission(addPermission: .admins)
+        let eventPayload = Payload.ConversationEvent.stub(
+            data: conversationPayload,
+            qualifiedID: qualifiedID,
+            timestamp: nil
+        )
+
+        // When
+        disableZMLogError(true)
+        await sut.processPayload(eventPayload, in: syncMOC)
+        disableZMLogError(false)
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.channelPermission, "admins")
+        }
+    }
+
     private func setupForProcessingConverationMemberLeaveTests(
         selfUserLeaves: Bool
     ) -> (
