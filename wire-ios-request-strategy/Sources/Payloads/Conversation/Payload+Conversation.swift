@@ -40,6 +40,7 @@ extension Payload {
             case mlsGroupID = "group_id"
             case epoch
             case epochTimestamp = "epoch_timestamp"
+            case groupType = "group_conv_type"
         }
 
         static var eventType: ZMUpdateEventType {
@@ -65,6 +66,7 @@ extension Payload {
         var mlsGroupID: String?
         var epoch: UInt?
         var epochTimestamp: Date?
+        var groupType: ConversationGroupType?
 
         init(
             qualifiedID: QualifiedID? = nil,
@@ -85,7 +87,8 @@ extension Payload {
             messageProtocol: String? = nil,
             mlsGroupID: String? = nil,
             epoch: UInt? = nil,
-            epochTimestamp: Date? = nil
+            epochTimestamp: Date? = nil,
+            groupType: ConversationGroupType? = nil
         ) {
             self.qualifiedID = qualifiedID
             self.id = id
@@ -106,6 +109,7 @@ extension Payload {
             self.mlsGroupID = mlsGroupID
             self.epoch = epoch
             self.epochTimestamp = epochTimestamp
+            self.groupType = groupType
         }
 
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
@@ -155,6 +159,13 @@ extension Payload {
                 self.cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
                 self.epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
             }
+
+            switch apiVersion {
+            case .v8:
+                self.groupType = try container.decodeIfPresent(ConversationGroupType.self, forKey: .groupType)
+            default:
+                break
+            }
         }
 
         func encode(to encoder: Encoder, apiVersion: APIVersion) throws {
@@ -187,6 +198,13 @@ extension Payload {
                     try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                     try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
                 }
+            }
+
+            switch apiVersion {
+            case .v8:
+                try container.encodeIfPresent(groupType, forKey: .groupType)
+            default:
+                break
             }
         }
     }

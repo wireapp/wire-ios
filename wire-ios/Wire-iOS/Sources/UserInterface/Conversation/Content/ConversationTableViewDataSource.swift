@@ -81,7 +81,14 @@ final class ConversationTableViewDataSource: NSObject {
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
 
-    var contentWidth: CGFloat = UIScreen.main.bounds.width
+    var contentWidth: CGFloat = UIScreen.main.bounds.width {
+        didSet {
+            guard UIDevice.current.userInterfaceIdiom == .pad else { return }
+            resetSectionControllers()
+            reloadSections(newSections: calculateSections())
+            tableView.reloadData()
+        }
+    }
 
     var searchQueries: [String] = [] {
         didSet {

@@ -90,6 +90,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 Task { [weak self] in
                     await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
+            case let .updateAnotherAccountExistence(newValue):
+                self.existsAnotherAccount = newValue
             default:
                 break
             }
