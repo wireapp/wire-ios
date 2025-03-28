@@ -23,6 +23,5 @@ public protocol SidebarViewControllerDelegate: AnyObject {
     func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController)
     func sidebarViewController(_ viewController: SidebarViewController, didTapFoldersMenuItem frame: CGRect)
     func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarSelectableMenuItem)
-    func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController)
     func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController)
 }

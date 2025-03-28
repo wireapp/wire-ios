@@ -1320,8 +1320,8 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Показывать предпросмотр отправляемых вами ссылок";
 "self.settings.privacy_security.disable_link_previews.footer" = "Эта опция не влияет на предварительный просмотр ссылок от других пользователей.";
 
-"self.settings.privacy_security.collapse_own_messages.title" = "Свернуть собственные сообщения";
-"self.settings.privacy_security.collapse_own_messages.footer" = "Если эта опция включена, все ваши сообщения сворачиваются в одну строку.";
+"self.settings.privacy_security.collapse_own_messages.title" = "Свернуть мои сообщения";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются в одну строку.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Устройства";
 

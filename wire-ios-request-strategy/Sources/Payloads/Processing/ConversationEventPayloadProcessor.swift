@@ -515,6 +515,15 @@ struct ConversationEventPayloadProcessor {
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
             conversation.isPendingInitialFetch = false
+            conversation.groupType = payload.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            }
+
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, shouldRemoveParticipants: false, context: context)
