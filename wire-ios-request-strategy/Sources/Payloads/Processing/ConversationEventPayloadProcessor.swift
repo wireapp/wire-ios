@@ -90,6 +90,32 @@ struct ConversationEventPayloadProcessor {
             in: context
         )
     }
+    
+    // MARK: - Conversation permission update
+    
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationPermission>,
+        in context: NSManagedObjectContext
+    ) async {
+        let conversation = await context.perform {
+            fetchOrCreateConversation(
+                from: payload,
+                in: context
+            )
+        }
+        
+        guard let conversation else {
+            WireLogger.eventProcessing.error("Conversation permission update missing conversation in event, aborting...")
+            return
+        }
+        
+        await context.perform {
+            // TODO: [WPB-16383] Uncomment code when related PR is merged https://github.com/wireapp/wire-ios/pull/2763
+//            conversation.privateChannelPermission = payload.data.addPermission.rawValue
+        }
+
+        
+    }
 
     // MARK: - Conversation deletion
 
