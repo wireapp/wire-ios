@@ -155,7 +155,7 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
+    var canBeCombinedWithOtherCells: Bool { false }
 
     var showEphemeralTimer: Bool = false
 

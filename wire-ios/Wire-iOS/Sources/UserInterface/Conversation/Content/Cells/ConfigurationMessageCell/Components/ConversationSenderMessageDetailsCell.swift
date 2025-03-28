@@ -54,8 +54,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     private var trailingDateLabelConstraint: NSLayoutConstraint?
     private(set) var avatarBottomAnchorConstraint: NSLayoutConstraint?
     private(set) var avatarGreaterThanBottomAnchorConstraint: NSLayoutConstraint?
+<<<<<<< HEAD
     private var authorLabelNoTopPaddingConstraint: NSLayoutConstraint?
     private var authorLabelCenterVerticalConstraint: NSLayoutConstraint?
+=======
+>>>>>>> 40558d96c1 (fix: disable swipe actions and conversation cell stacking - WPB-16785 (#2772))
 
     var isSelected: Bool = false
 
@@ -157,6 +160,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         let avatarGreaterThanBottomAnchorConstraint = bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor)
         self.avatarGreaterThanBottomAnchorConstraint = avatarGreaterThanBottomAnchorConstraint
 
+<<<<<<< HEAD
         let authorLabelNoTopPaddingConstraint = authorLabel.topAnchor.constraint(equalTo: topAnchor)
         authorLabelNoTopPaddingConstraint.isActive = true // only for not deleted messages
         self.authorLabelNoTopPaddingConstraint = authorLabelNoTopPaddingConstraint
@@ -165,6 +169,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         authorLabelCenterVerticalConstraint.isActive = false // only for deleted messages
         self.authorLabelCenterVerticalConstraint = authorLabelCenterVerticalConstraint
 
+=======
+>>>>>>> 40558d96c1 (fix: disable swipe actions and conversation cell stacking - WPB-16785 (#2772))
         NSLayoutConstraint.activate([
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
@@ -173,8 +179,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             trailingDateLabelConstraint,
 
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+<<<<<<< HEAD
             authorLabelNoTopPaddingConstraint,
             authorLabelCenterVerticalConstraint,
+=======
+            authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+>>>>>>> 40558d96c1 (fix: disable swipe actions and conversation cell stacking - WPB-16785 (#2772))
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
@@ -312,7 +322,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
+    var canBeCombinedWithOtherCells: Bool { false }
 
     var showEphemeralTimer: Bool = false
 
