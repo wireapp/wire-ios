@@ -126,6 +126,7 @@ package struct LoginViaEmailView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: $viewModel.email
         )
+        .autocapitalization(.none)
         .autocorrectionDisabled()
         .textContentType(.username)
         .keyboardType(.emailAddress)
@@ -223,6 +224,10 @@ package struct LoginViaEmailView: View {
                 title: L10n.ProxyCredentials.InputEmail.title,
                 string: $viewModel.proxyUsername
             )
+            .autocapitalization(.none)
+            .autocorrectionDisabled()
+            .textContentType(.username)
+            .keyboardType(.emailAddress)
 
             PasswordField(
                 password: $viewModel.proxyPassword,
