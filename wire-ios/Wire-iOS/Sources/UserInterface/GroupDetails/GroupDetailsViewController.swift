@@ -549,9 +549,15 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
     func presentAccessOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
+        let permission: ChannelAccessParticipantPermission? = switch conversation.accessLevelPermissions {
+        case .admins: .admins
+        case .everybody: .adminsAndMembers
+        case nil: nil
+        }
+                
         let settings = ChannelAccessSettings(
-            accessLevel: .public,
-            participantPermission: .adminsAndMembers
+            accessLevel: permission == nil ? .public : .private,
+            participantPermission: permission
         )
 
         let accentColor = (ZMUserSession.shared()?.selfUser.accentColor ?? UIColor.accent()).color

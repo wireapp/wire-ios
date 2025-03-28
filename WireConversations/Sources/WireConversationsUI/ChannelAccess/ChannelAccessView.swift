@@ -149,7 +149,7 @@ struct ChannelAccessView_Previews: PreviewProvider {
                     accentColor: .green,
                     useCase: ChannelAccessUseCase(settings: .init(
                         accessLevel: .public,
-                        participantPermission: .admins
+                        participantPermission: nil
                     ))
                 ))
             }

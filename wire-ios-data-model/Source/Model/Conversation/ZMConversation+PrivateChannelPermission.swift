@@ -18,10 +18,40 @@
 
 import Foundation
 
-extension ZMConversation {
+@objc
+public enum ChannelAccessLevelPermission: Int {
+    case everybody
+    case admins
+}
+
+extension ZMConversation: HasChannelAccessLevelPermission {
 
     /// The underlying string value of the private channel permission.
 
     @NSManaged private var privateChannelPermissionValue: String?
+    
+    public var accessLevelPermissions: ChannelAccessLevelPermission? {
+        get {
+            guard conversationType == .group else { return nil }
+
+            switch privateChannelPermissionValue {
+            case "admins": return .admins
+            case "everybody": return .everybody
+            default: return nil
+            }
+        }
+        set {
+            privateChannelPermissionValue = switch newValue {
+            case .admins: "admins"
+            case .everybody: "everybody"
+            case nil: nil
+            }
+        }
+    }
+}
+
+public protocol HasChannelAccessLevelPermission {
+
+    var accessLevelPermissions: ChannelAccessLevelPermission? { get }
 
 }

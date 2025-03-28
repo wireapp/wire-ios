@@ -42,7 +42,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             by user: UserType
         ) -> Bool {
             switch self {
-            case .channelAccess: true // TODO: use group type
+            case .channelAccess: conversation.groupType == .channel
             case .notifications: user.canModifyNotificationSettings(in: conversation)
             case .guests:        user.canModifyAccessControlSettings(in: conversation)
             case .services:      user.canModifyAccessControlSettings(in: conversation) && conversation.botCanBeAdded

@@ -31,11 +31,11 @@ public enum ChannelAccessParticipantPermission {
 public struct ChannelAccessSettings {
 
     public var accessLevel: ChannelAccessLevel
-    public var participantPermission: ChannelAccessParticipantPermission
+    public var participantPermission: ChannelAccessParticipantPermission?
 
     public init(
         accessLevel: ChannelAccessLevel,
-        participantPermission: ChannelAccessParticipantPermission
+        participantPermission: ChannelAccessParticipantPermission?
     ) {
         self.accessLevel = accessLevel
         self.participantPermission = participantPermission
