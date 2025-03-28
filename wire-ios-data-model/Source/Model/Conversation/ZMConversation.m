@@ -55,6 +55,7 @@ NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
 NSString *const ZMNormalizedUserDefinedNameKey = @"normalizedUserDefinedName";
 NSString *const ZMConversationListIndicatorKey = @"conversationListIndicator";
 NSString *const ZMConversationConversationTypeKey = @"conversationType";
+NSString *const ZMConversationGroupTypeValueKey = @"groupTypeValue";
 NSString *const ZMConversationLastServerTimeStampKey = @"lastServerTimeStamp";
 NSString *const ZMConversationLastReadServerTimeStampKey = @"lastReadServerTimeStamp";
 NSString *const ZMConversationClearedTimeStampKey = @"clearedTimeStamp";
@@ -72,6 +73,7 @@ NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataR
 NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
 NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
 NSString *const ZMConversationIsPendingInitialFetch = @"isPendingInitialFetch";
+NSString *const ZMConversationPrivateChannelPermissionValue = @"privateChannelPermissionValue";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -356,7 +358,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey,
             PrimaryKey,
-            ZMConversationIsPendingInitialFetch
+            ZMConversationIsPendingInitialFetch,
+            ZMConversationGroupTypeValueKey,
+            ZMConversationPrivateChannelPermissionValue
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
