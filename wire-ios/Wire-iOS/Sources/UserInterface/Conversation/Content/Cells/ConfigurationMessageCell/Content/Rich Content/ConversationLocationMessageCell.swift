@@ -195,7 +195,6 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

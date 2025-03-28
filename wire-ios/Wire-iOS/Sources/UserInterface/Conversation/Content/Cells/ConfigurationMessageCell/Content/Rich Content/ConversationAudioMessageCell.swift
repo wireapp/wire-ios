@@ -126,7 +126,6 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
 
     let configuration: View.Configuration
 
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

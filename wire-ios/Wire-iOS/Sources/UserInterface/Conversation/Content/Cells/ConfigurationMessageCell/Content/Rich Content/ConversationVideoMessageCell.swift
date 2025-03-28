@@ -141,7 +141,6 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     typealias View = ConversationVideoMessageCell
     let configuration: View.Configuration
 
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
