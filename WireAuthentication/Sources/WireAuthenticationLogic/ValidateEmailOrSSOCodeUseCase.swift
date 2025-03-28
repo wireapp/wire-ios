@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAuthenticationAPI
 
 package struct ValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
@@ -24,6 +23,8 @@ package struct ValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProto
     package init() {}
 
     package func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
+        let input = input.trimmingCharacters(in: .whitespacesAndNewlines)
+
         if EmailValidator.isValid(email: input), let domain = input.components(separatedBy: "@").last {
             return .email(email: input, domain: domain)
         }
