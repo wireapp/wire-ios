@@ -1288,13 +1288,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
         let domain = "example.domain.com"
-        let publicGroupState = Data()
         let conversation = await uiMOC.perform { [uiMOC] in
             let conversation = ZMConversation.insertNewObject(in: uiMOC)
             conversation.remoteIdentifier = conversationID
             conversation.domain = domain
             conversation.mlsGroupID = groupID
             conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = .`self`
             conversation.messageProtocol = .mls
             return conversation
         }
