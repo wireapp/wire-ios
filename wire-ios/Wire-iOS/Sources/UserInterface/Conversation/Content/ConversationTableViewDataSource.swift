@@ -621,12 +621,6 @@ extension ConversationTableViewDataSource {
                 current is ConversationCollapsedMessageCellDescription {
                 // no stack cell description and no sender is shown, so collapse the space if needed
                 true
-            } else if let firstStacked = (current as? StackViewCellDescription)?.cellDescriptions.first?.instance {
-                firstStacked is ConversationTextMessageCellDescription ||
-                    firstStacked is ConversationFileMessageCellDescription ||
-                    firstStacked is ConversationImageMessageCellDescription ||
-                    firstStacked is ConversationVideoMessageCellDescription ||
-                    firstStacked is ConversationReplyCellDescription
             } else {
                 false
             }
