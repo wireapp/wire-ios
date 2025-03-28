@@ -77,14 +77,10 @@ class URLActionRouter: URLActionRouterProtocol {
             return try sessionManager?.openURL(url) ?? false
         } catch let error as LocalizedError {
             if error is CompanyLoginError {
-                if DeveloperFlag.useWireAuthentication.isOn {
-                    sessionManager?.activeUnauthenticatedSession.wireAuthenticationErrorHandler?()
-                } else {
-                    delegate?.urlActionRouterWillShowCompanyLoginError()
+                delegate?.urlActionRouterWillShowCompanyLoginError()
 
-                    UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true) {
-                        UIApplication.shared.topmostViewController()?.showAlert(for: error)
-                    }
+                UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true) {
+                    UIApplication.shared.topmostViewController()?.showAlert(for: error)
                 }
             } else {
                 UIApplication.shared.topmostViewController()?.showAlert(for: error)

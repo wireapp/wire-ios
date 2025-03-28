@@ -87,29 +87,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    func loginViaSSOComponent(
-        ssoURL: URL,
-        backendInfo: BackendInfo?,
-        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
-    ) -> LoginViaSSOComponent {
-        let networkStack: NetworkStack = if let backendInfo {
-            NetworkStack(
-                backendInfo: backendInfo,
-                minTLSVersion: dependency.minTLSVersion,
-                preferredAPIVersion: dependency.preferredAPIVersion
-            )
-        } else {
-            self.networkStack
-        }
-
-        return LoginViaSSOComponent(
-            parent: self,
-            ssoURL: ssoURL,
-            networkStack: networkStack,
-            onAuthenticationResult: onAuthenticationResult
-        )
-    }
-
     func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
         NoHistoryComponent(
             parent: self,
@@ -211,19 +188,6 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
             backendInfo: backendInfo
-        ).view
-    }
-
-    @MainActor
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendInfo: BackendInfo?,
-        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
-    ) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendInfo: backendInfo,
-            onAuthenticationResult: onAuthenticationResult
         ).view
     }
 

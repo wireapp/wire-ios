@@ -63,10 +63,6 @@ public final class WireAuthenticationBridge {
     public enum InboundEvent {
 
         case didRewindToThisView
-        // TODO: delete
-        case ssoAuthenticationSuccess(userID: UUID, cookies: [HTTPCookie])
-        // TODO: delete
-        case ssoAutheticationFailure
         case backendSwitchRequested(configURL: URL)
         case updateAnotherAccountExistence(newValue: Bool)
 
