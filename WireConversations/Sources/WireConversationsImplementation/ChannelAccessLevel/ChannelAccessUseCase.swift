@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 public import WireConversationsAPI
 
 public protocol ChannelAccessUseCaseProtocol {
     var settings: ChannelAccessSettings { get }
     func updateAccessLevel(to level: ChannelAccessLevel)
-    func updateParticipantPermission(to permission: ParticipantPermission)
+    func updateParticipantPermission(to permission: ChannelAccessParticipantPermission)
 }
 
 public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
-    
+
     public var settings: ChannelAccessSettings
 
     public init(settings: ChannelAccessSettings) {
@@ -38,7 +37,7 @@ public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
         settings.accessLevel = level
     }
 
-    public func updateParticipantPermission(to permission: ParticipantPermission) {
+    public func updateParticipantPermission(to permission: ChannelAccessParticipantPermission) {
         settings.participantPermission = permission
     }
 }

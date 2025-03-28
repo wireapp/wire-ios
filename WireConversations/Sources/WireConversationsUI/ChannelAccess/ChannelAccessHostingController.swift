@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public import SwiftUI
 import UIKit
-import WireDesign
-import WireConversationsImplementation
 import WireConversationsAPI
+import WireConversationsImplementation
+import WireDesign
 
 public final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
-    
+
     private let viewModel: ChannelAccessViewModel
 
     public init(viewModel: ChannelAccessViewModel) {
@@ -32,7 +31,9 @@ public final class ChannelAccessHostingController: UIHostingController<ChannelAc
         super.init(rootView: ChannelAccessView(viewModel: viewModel))
     }
 
-    @MainActor @objc required dynamic init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    @MainActor @objc
+    dynamic required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -41,8 +42,7 @@ public final class ChannelAccessHostingController: UIHostingController<ChannelAc
 
         title = L10n.Localizable.ChannelAccessLevel.navigationTitle
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        
-        // Back button handled automatically by UINavigationController
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .close,
             target: self,
@@ -50,11 +50,11 @@ public final class ChannelAccessHostingController: UIHostingController<ChannelAc
         )
     }
 
-    @objc private func didTapClose() {
+    @objc
+    private func didTapClose() {
         dismiss(animated: true)
     }
 }
-
 
 struct ChannelAccessHostingController_Previews: PreviewProvider {
     static var previews: some View {
@@ -67,7 +67,6 @@ struct ChannelAccessHostingController_Previews: PreviewProvider {
 struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let state = ChannelAccessSettings(
-            isInitiallyPrivate: false,
             accessLevel: .public,
             participantPermission: .adminsAndMembers
         )
@@ -76,11 +75,8 @@ struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
         let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
 
         let channelAccessVC = ChannelAccessHostingController(viewModel: viewModel)
-        let navController = UINavigationController(rootViewController: channelAccessVC)
-        return navController
+        return UINavigationController(rootViewController: channelAccessVC)
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
-
-

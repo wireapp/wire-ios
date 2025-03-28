@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
+import WireConversationsAPI
+import WireConversationsUIBindings
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
-import WireConversationsUIBindings
-import WireConversationsAPI
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
@@ -546,22 +546,21 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
     }
-    
+
     func presentAccessOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
         let settings = ChannelAccessSettings(
-            isInitiallyPrivate: false,
             accessLevel: .public,
             participantPermission: .adminsAndMembers
         )
 
         let accentColor = (ZMUserSession.shared()?.selfUser.accentColor ?? UIColor.accent()).color
-        
+
         let accessView = ChannelViewFactory.makeChannelAccessView(
             settings: settings,
             accentColor: accentColor
         )
-        
+
         navigationController?.pushViewController(accessView, animated: animated)
     }
 }

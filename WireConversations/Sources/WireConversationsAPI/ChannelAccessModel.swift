@@ -23,22 +23,20 @@ public enum ChannelAccessLevel {
     case `private`
 }
 
-public enum ParticipantPermission {
+public enum ChannelAccessParticipantPermission {
     case admins
     case adminsAndMembers
 }
 
 public struct ChannelAccessSettings {
-    public let isInitiallyPrivate: Bool
+
     public var accessLevel: ChannelAccessLevel
-    public var participantPermission: ParticipantPermission
-    
+    public var participantPermission: ChannelAccessParticipantPermission
+
     public init(
-        isInitiallyPrivate: Bool,
         accessLevel: ChannelAccessLevel,
-        participantPermission: ParticipantPermission
+        participantPermission: ChannelAccessParticipantPermission
     ) {
-        self.isInitiallyPrivate = isInitiallyPrivate
         self.accessLevel = accessLevel
         self.participantPermission = participantPermission
     }

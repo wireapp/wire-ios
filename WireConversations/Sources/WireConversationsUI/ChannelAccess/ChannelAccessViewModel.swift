@@ -21,12 +21,12 @@ public import WireConversationsImplementation
 import WireConversationsAPI
 
 public class ChannelAccessViewModel: ObservableObject {
-    
+
     @Published var settings: ChannelAccessSettings
     @Published var showPrivateAccessConfirmation = false
 
     public var accentColor: Color
-    
+
     private let useCase: any ChannelAccessUseCaseProtocol
 
     public init(accentColor: Color, useCase: any ChannelAccessUseCaseProtocol) {
@@ -44,7 +44,7 @@ public class ChannelAccessViewModel: ObservableObject {
     }
 
     func selectAccessLevel(_ level: ChannelAccessLevel) {
-        if level == .private && settings.accessLevel != .private {
+        if level == .private, settings.accessLevel != .private {
             showPrivateAccessConfirmation = true
         } else {
             applyAccessLevel(level)
@@ -59,8 +59,8 @@ public class ChannelAccessViewModel: ObservableObject {
         useCase.updateAccessLevel(to: level)
         settings.accessLevel = level
     }
-    
-    func selectParticipantPermission(_ permission: ParticipantPermission) {
+
+    func selectParticipantPermission(_ permission: ChannelAccessParticipantPermission) {
         useCase.updateParticipantPermission(to: permission)
         settings.participantPermission = permission
     }

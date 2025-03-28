@@ -17,41 +17,39 @@
 //
 
 public import SwiftUI
-import WireDesign
-import WireConversationsImplementation
 import WireConversationsAPI
+import WireConversationsImplementation
+import WireDesign
 
 public struct ChannelAccessView: View {
-    
+
     @ObservedObject var viewModel: ChannelAccessViewModel
     @Environment(\.dismiss) private var dismiss
-    
+
     public init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
     }
-    
+
     public var body: some View {
         NavigationView {
             Form {
                 Section(
-                    footer: Text(
-                        L10n.Localizable.ChannelAccessLevel.accessFooter
-                    )
-                    .font(.footnote)
-                    .foregroundColor(ColorTheme.Base.secondaryText.color)
+                    footer: Text(L10n.Localizable.ChannelAccessLevel.accessFooter)
+                        .font(.footnote)
+                        .foregroundColor(ColorTheme.Base.secondaryText.color)
                 ) {
                     accessOption(
                         title: L10n.Localizable.ChannelAccessLevel.public,
                         level: .public,
                         disabled: viewModel.isPublicDisabled
                     )
-                    
+
                     accessOption(
                         title: L10n.Localizable.ChannelAccessLevel.private,
                         level: .private
                     )
                 }.background(.clear)
-                
+
                 if viewModel.showParticipantPermissions {
                     Section(
                         header: Text(L10n.Localizable.ChannelAccessLevel.participantsHeader),
@@ -75,25 +73,19 @@ public struct ChannelAccessView: View {
             .background(ColorTheme.Backgrounds.background.color)
             .alert(isPresented: $viewModel.showPrivateAccessConfirmation) {
                 Alert(
-                    title: Text(
-                        L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert
-                            .title),
-                    message: Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert
-                        .message),
-                    primaryButton: .default(Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert
-                        .Button.change)) {
+                    title: Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert.title),
+                    message: Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert.message),
+                    primaryButton: .default(Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert.Button.change)) {
                         viewModel.confirmPrivateAccessChange()
                     },
-                    secondaryButton:
-                            .cancel(Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert
-                        .Button.cancel))
+                    secondaryButton: .cancel(Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert.Button.cancel))
                 )
             }
         }
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
     }
-    
+
     private func accessOption(title: String, level: ChannelAccessLevel, disabled: Bool = false) -> some View {
         HStack {
             Text(title)
@@ -115,8 +107,8 @@ public struct ChannelAccessView: View {
         }
         .disabled(disabled)
     }
-    
-    private func permissionOption(title: String, permission: ParticipantPermission) -> some View {
+
+    private func permissionOption(title: String, permission: ChannelAccessParticipantPermission) -> some View {
         HStack {
             Text(title)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
@@ -134,11 +126,11 @@ public struct ChannelAccessView: View {
             viewModel.selectParticipantPermission(permission)
         }
     }
-    
+
     struct Checkmark: View {
-        
+
         let accentColor: Color
-        
+
         var body: some View {
             Image("Check", bundle: .resources)
                 .resizable()
@@ -149,7 +141,6 @@ public struct ChannelAccessView: View {
     }
 }
 
-
 struct ChannelAccessView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
@@ -157,7 +148,6 @@ struct ChannelAccessView_Previews: PreviewProvider {
                 ChannelAccessView(viewModel: ChannelAccessViewModel(
                     accentColor: .green,
                     useCase: ChannelAccessUseCase(settings: .init(
-                        isInitiallyPrivate: false,
                         accessLevel: .public,
                         participantPermission: .admins
                     ))
@@ -169,7 +159,6 @@ struct ChannelAccessView_Previews: PreviewProvider {
                 ChannelAccessView(viewModel: ChannelAccessViewModel(
                     accentColor: .blue,
                     useCase: ChannelAccessUseCase(settings: .init(
-                        isInitiallyPrivate: true,
                         accessLevel: .private,
                         participantPermission: .adminsAndMembers
                     ))
