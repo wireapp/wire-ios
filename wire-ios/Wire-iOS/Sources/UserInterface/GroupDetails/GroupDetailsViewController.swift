@@ -549,21 +549,18 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
     func presentAccessOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
-        let permission: ChannelAccessParticipantPermission? = switch conversation.accessLevelPermissions {
-        case .admins: .admins
-        case .everybody: .adminsAndMembers
-        case nil: nil
+
+        let permission: WireConversationsAPI.ChannelAccessLevelPermission? = conversation.accessLevelPermissions.map {
+            switch $0 {
+            case .admins: .admins
+            case .everybody: .adminsAndMembers
+            }
         }
-                
-        let settings = ChannelAccessSettings(
-            accessLevel: permission == nil ? .public : .private,
-            participantPermission: permission
-        )
 
         let accentColor = (ZMUserSession.shared()?.selfUser.accentColor ?? UIColor.accent()).color
 
         let accessView = ChannelViewFactory.makeChannelAccessView(
-            settings: settings,
+            permission: permission,
             accentColor: accentColor
         )
 

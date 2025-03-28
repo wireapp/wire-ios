@@ -60,7 +60,7 @@ public class ChannelAccessViewModel: ObservableObject {
         settings.accessLevel = level
     }
 
-    func selectParticipantPermission(_ permission: ChannelAccessParticipantPermission) {
+    func selectParticipantPermission(_ permission: ChannelAccessLevelPermission) {
         useCase.updateParticipantPermission(to: permission)
         settings.participantPermission = permission
     }

@@ -17,19 +17,24 @@
 //
 
 import Foundation
-public import WireConversationsAPI
+package import WireConversationsAPI
 
-public protocol ChannelAccessUseCaseProtocol {
+package protocol ChannelAccessUseCaseProtocol {
     var settings: ChannelAccessSettings { get }
     func updateAccessLevel(to level: ChannelAccessLevel)
-    func updateParticipantPermission(to permission: ChannelAccessParticipantPermission)
+    func updateParticipantPermission(to permission: ChannelAccessLevelPermission)
 }
 
-public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
+package class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
 
     public var settings: ChannelAccessSettings
 
-    public init(settings: ChannelAccessSettings) {
+    public init(permission: ChannelAccessLevelPermission?) {
+        let settings = ChannelAccessSettings(
+            accessLevel: permission == nil ? .public : .private,
+            participantPermission: permission
+        )
+
         self.settings = settings
     }
 
@@ -37,7 +42,7 @@ public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
         settings.accessLevel = level
     }
 
-    public func updateParticipantPermission(to permission: ChannelAccessParticipantPermission) {
+    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) {
         settings.participantPermission = permission
     }
 }

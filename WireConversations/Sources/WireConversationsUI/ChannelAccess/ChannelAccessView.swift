@@ -108,7 +108,7 @@ public struct ChannelAccessView: View {
         .disabled(disabled)
     }
 
-    private func permissionOption(title: String, permission: ChannelAccessParticipantPermission) -> some View {
+    private func permissionOption(title: String, permission: ChannelAccessLevelPermission) -> some View {
         HStack {
             Text(title)
                 .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)

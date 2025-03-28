@@ -21,19 +21,17 @@ import WireConversationsImplementation
 public import WireConversationsAPI
 import WireConversationsUI
 
-public final class WireConversationChannelIconFactory {
-
-    private let mapper = ConversationIDToChannelIconMapper()
-
-    public init() {}
-
+public class ChannelViewFactory {
     @MainActor
-    public func create(conversationID: String) -> some View {
-        WireConversationChannelIcon(asset: mapper.palette(for: conversationID))
-    }
+    public static func makeChannelAccessView(
+        permission: ChannelAccessLevelPermission?,
+        accentColor: Color
+    ) -> UIViewController {
+        let useCase = ChannelAccessUseCase(permission: permission)
+        let viewModel = ChannelAccessViewModel(
+            accentColor: accentColor, useCase: useCase
+        )
 
-    @MainActor
-    public func createUIKit(conversationID: String) -> UIImageView {
-        UIImageView(image: mapper.palette(for: conversationID).uiKitImage)
+        return ChannelAccessHostingController(viewModel: viewModel)
     }
 }

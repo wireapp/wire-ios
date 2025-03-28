@@ -24,26 +24,29 @@ public enum ChannelAccessLevelPermission: Int {
     case admins
 }
 
+private let adminsPermissionKey = "admins"
+private let everybodyPermissionKey = "everybody"
+
 extension ZMConversation: HasChannelAccessLevelPermission {
 
     /// The underlying string value of the private channel permission.
 
     @NSManaged private var privateChannelPermissionValue: String?
-    
+
     public var accessLevelPermissions: ChannelAccessLevelPermission? {
         get {
             guard conversationType == .group else { return nil }
 
             switch privateChannelPermissionValue {
-            case "admins": return .admins
-            case "everybody": return .everybody
+            case adminsPermissionKey: return .admins
+            case everybodyPermissionKey: return .everybody
             default: return nil
             }
         }
         set {
             privateChannelPermissionValue = switch newValue {
-            case .admins: "admins"
-            case .everybody: "everybody"
+            case .admins: adminsPermissionKey
+            case .everybody: everybodyPermissionKey
             case nil: nil
             }
         }

@@ -32,11 +32,8 @@ final class GroupDetailsAccessOptionsCell: GroupDetailsDisclosureOptionsCell {
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-//        guard let key = conversation.mutedMessageTypes.localizationKey else {
-//            return assertionFailure("Invalid muted message type.")
-//        }
-
-        status = L10n.Localizable.ChannelAccessLevel.public
+        status = conversation.accessLevelPermissions == nil ? L10n.Localizable.ChannelAccessLevel.public : L10n
+            .Localizable.ChannelAccessLevel.public
     }
 
     override var isHighlighted: Bool {

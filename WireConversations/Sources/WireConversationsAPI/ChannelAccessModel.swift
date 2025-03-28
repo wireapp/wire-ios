@@ -18,24 +18,24 @@
 
 import Foundation
 
-public enum ChannelAccessLevel {
+package enum ChannelAccessLevel {
     case `public`
     case `private`
 }
 
-public enum ChannelAccessParticipantPermission {
+public enum ChannelAccessLevelPermission {
     case admins
     case adminsAndMembers
 }
 
-public struct ChannelAccessSettings {
+package struct ChannelAccessSettings {
 
-    public var accessLevel: ChannelAccessLevel
-    public var participantPermission: ChannelAccessParticipantPermission?
+    package var accessLevel: ChannelAccessLevel
+    package var participantPermission: ChannelAccessLevelPermission?
 
-    public init(
+    package init(
         accessLevel: ChannelAccessLevel,
-        participantPermission: ChannelAccessParticipantPermission?
+        participantPermission: ChannelAccessLevelPermission?
     ) {
         self.accessLevel = accessLevel
         self.participantPermission = participantPermission
