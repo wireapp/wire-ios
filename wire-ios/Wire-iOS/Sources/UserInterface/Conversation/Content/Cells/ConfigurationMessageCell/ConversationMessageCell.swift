@@ -268,8 +268,8 @@ extension ConversationMessageCellDescription {
 
 }
 
-nonisolated(unsafe) private var topMarginKey = 0
-nonisolated(unsafe) private var bottomMarginKey = 0
+private nonisolated(unsafe) var topMarginKey = 0
+private nonisolated(unsafe) var bottomMarginKey = 0
 
 extension ConversationMessageCellDescription where View.Configuration: Equatable {
 
