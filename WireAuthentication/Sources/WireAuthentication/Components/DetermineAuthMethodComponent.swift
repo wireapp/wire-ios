@@ -31,7 +31,6 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
-    var userDefaults: UserDefaults { get }
     var existsAnotherAccount: Bool { get }
 
 }
@@ -116,39 +115,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol {
-        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
-        return SSOLinkGenerator(
-            authenticationAPI: authenticationAPI,
-            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
-        )
-    }
-
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
         FetchBackendConfigUseCase()
-    }
-
-    func fetchSSOURLUseCase(
-        backendInfo: BackendInfo
-    ) async throws -> any FetchSSOURLUseCaseProtocol {
-        let networkStack = NetworkStack(
-            backendInfo: backendInfo,
-            minTLSVersion: dependency.minTLSVersion,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
-        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
-        let linkGenerator = SSOLinkGenerator(
-            authenticationAPI: authenticationAPI,
-            baseURL: backendInfo.backendConfig.endpoints.backendURL,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
-        )
-        return FetchSSOURLUseCase(
-            authenticationAPI: authenticationAPI,
-            linkGenerator: linkGenerator
-        )
     }
 
     @MainActor

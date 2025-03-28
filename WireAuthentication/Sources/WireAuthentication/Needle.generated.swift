@@ -72,9 +72,6 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var ssoCallbackURLScheme: String {
         return rootComponent.ssoCallbackURLScheme
     }
-    var userDefaults: UserDefaults {
-        return rootComponent.userDefaults
-    }
     var existsAnotherAccount: Bool {
         return rootComponent.existsAnotherAccount
     }
@@ -156,7 +153,6 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
-        keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
     }
@@ -172,7 +168,6 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
-        localTable["userDefaults-UserDefaults"] = { [unowned self] in self.userDefaults as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }

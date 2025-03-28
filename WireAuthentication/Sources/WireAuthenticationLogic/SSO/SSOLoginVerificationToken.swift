@@ -60,34 +60,3 @@ package struct SSOLoginVerificationToken: Codable, Equatable {
     }
 
 }
-
-// TODO: delete
-package extension SSOLoginVerificationToken {
-
-    private static let defaultsKey = "CompanyLoginVerificationTokenDefaultsKey"
-
-    /// Stores the token in the provided defaults.
-    /// - parameter defaults: The defaults to store the token in.
-    /// - returns: Whether the write operation succeeded.
-    @discardableResult
-    func store(in defaults: UserDefaults) -> Bool {
-        do {
-            let data = try JSONEncoder().encode(self)
-            defaults.set(data, forKey: SSOLoginVerificationToken.defaultsKey)
-            return true
-        } catch {
-            return false
-        }
-    }
-
-    static func current(in defaults: UserDefaults) -> SSOLoginVerificationToken? {
-        defaults.data(forKey: SSOLoginVerificationToken.defaultsKey).flatMap {
-            try? JSONDecoder().decode(SSOLoginVerificationToken.self, from: $0)
-        }
-    }
-
-    static func flush(in defaults: UserDefaults) {
-        defaults.removeObject(forKey: defaultsKey)
-    }
-
-}
