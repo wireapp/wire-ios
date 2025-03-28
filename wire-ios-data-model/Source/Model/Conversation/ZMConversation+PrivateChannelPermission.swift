@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"sidebar.legalHold.title" = "合法保留";
+import Foundation
 
-"sidebar.conversation_filter.title" = "会话";
-"sidebar.conversation_filter.all.title" = "所有";
-"sidebar.conversation_filter.favorites.title" = "收藏夾";
-"sidebar.conversation_filter.groups.title" = "群组";
-"sidebar.conversation_filter.oneOnOneConversations.title" = "一对一对话";
-"sidebar.conversation_filter.folders.title" = "文件夹";
-"sidebar.conversation_filter.archived.title" = "归档";
+extension ZMConversation {
 
-"sidebar.contacts.title" = "联络人";
-"sidebar.contacts.connect.title" = "新增好友";
+    /// The underlying string value of the private channel permission.
 
-"sidebar.settings.title" = "设置";
+    @NSManaged private var privateChannelPermissionValue: String?
 
-"sidebar.support.title" = "帮助";
+}

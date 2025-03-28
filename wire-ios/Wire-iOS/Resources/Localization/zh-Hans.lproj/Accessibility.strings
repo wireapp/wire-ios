@@ -60,129 +60,129 @@
 "conversation.bulletListButton.description" = "使用项目符号列表";
 "conversation.codeButton.description" = "使用代码格式";
 "conversation.messageInfo.hint" = "双击隐藏或显示消息信息";
-"conversation.messageOptions.hint" = "Triple tap to open messaging options";
+"conversation.messageOptions.hint" = "轻点三下打开信息选项";
 
-"conversationSearch.closeButton.description" = "Close search";
-"conversationSearch.backButton.description" = "Go back to search";
-"conversationSearch.imagesSection.description" = "Pictures in this conversation";
-"conversationSearch.filesSection.description" = "Files in this conversation";
-"conversationSearch.videosSection.description" = "Videos in this conversation";
-"conversationSearch.linksSection.description" = "Links in this conversation";
-"conversationSearch.section.hint" = "Double tap to open all";
+"conversationSearch.closeButton.description" = "关闭搜索";
+"conversationSearch.backButton.description" = "回到搜索";
+"conversationSearch.imagesSection.description" = "此对话中的图片";
+"conversationSearch.filesSection.description" = "此对话中的文件";
+"conversationSearch.videosSection.description" = "此对话中的视频";
+"conversationSearch.linksSection.description" = "此对话中的链接";
+"conversationSearch.section.hint" = "双击打开全部";
 "conversationSearch.emptyResult.description" = "没有找到";
 "conversationSearch.noItems.description" = "在资源库中什么都没有";
 "conversationSearch.imageMessage.description" = "图像";
 "conversationSearch.videoMessage.description" = "视频消息";
 "conversationSearch.audioMessage.description" = "语音消息";
-"conversationSearch.linkMessage.description" = "Link";
-"conversationSearch.sentBy.description" = "Sent by %@";
-"conversationSearch.fileName.description" = "File name";
-"conversationSearch.fileSize.description" = "Size";
-"conversationSearch.fileType.description" = "Type";
+"conversationSearch.linkMessage.description" = "链接";
+"conversationSearch.sentBy.description" = "由 %@ 发送";
+"conversationSearch.fileName.description" = "文件名";
+"conversationSearch.fileSize.description" = "大小";
+"conversationSearch.fileType.description" = "类型";
 
-"conversationSearch.item.hint" = "Double tap to open";
-"conversationSearch.itemPlay.hint" = "Double tap to play";
+"conversationSearch.item.hint" = "双击打开";
+"conversationSearch.itemPlay.hint" = "双击播放";
 
-"conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
-"conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
+"conversation.scrollToBottomButton.description" = "滚动到对话底部";
+"conversation.scrollToBottomButton.hint" = "点按即可滚动到对话底部";
 
-"sendLocation.address.description" = "Selected address %@";
-"sendLocation.address.hint" = "It shows the currently selected address for sending.";
+"sendLocation.address.description" = "选定的地址 %@";
+"sendLocation.address.hint" = "它显示当前选定的发送地址。";
 
-"audioRecord.stopButton.description" = "Stop recording";
-"audioRecord.startButton.description" = "Start recording";
-"audioRecord.startButton.hint" = "Double tap to record";
+"audioRecord.stopButton.description" = "停止录音";
+"audioRecord.startButton.description" = "开始录音";
+"audioRecord.startButton.hint" = "双击录音";
 "audioRecord.sendButton.description" = "发送";
-"audioRecord.cancelButton.description" = "Delete audio recording";
-"audioRecord.redoButton.description" = "Redo audio recording";
-"audioRecord.normalEffectButton.description" = "Normal";
-"audioRecord.heliumEffectButton.description" = "Helium";
-"audioRecord.deepVoiceEffectButton.description" = "Deep voice";
-"audioRecord.quickEffectButton.description" = "Quick";
-"audioRecord.hallEffectButton.description" = "Hall effect";
-"audioRecord.alienEffectButton.description" = "Alien";
-"audioRecord.roboticEffectButton.description" = "Robotic";
-"audioRecord.highToDeepEffectButton.description" = "High to deep";
+"audioRecord.cancelButton.description" = "删除录音";
+"audioRecord.redoButton.description" = "重做录音";
+"audioRecord.normalEffectButton.description" = "正常";
+"audioRecord.heliumEffectButton.description" = "氦气";
+"audioRecord.deepVoiceEffectButton.description" = "深沉";
+"audioRecord.quickEffectButton.description" = "快速";
+"audioRecord.hallEffectButton.description" = "回响";
+"audioRecord.alienEffectButton.description" = "外星人";
+"audioRecord.roboticEffectButton.description" = "机器人";
+"audioRecord.highToDeepEffectButton.description" = "从高到深";
 
-"createConversation.backButton.description" = "Go back to contact list";
+"createConversation.backButton.description" = "返回到联系人列表";
 
-"pictureView.closeButton.description" = "Close picture view";
+"pictureView.closeButton.description" = "关闭图片视图";
 
-"messageAction.unlikeButton.description" = "Unlike the picture";
-"messageAction.likeButton.description" = "Like the picture";
-"messageAction.shareButton.description" = "Share picture";
-"messageAction.sketchButton.description" = "Sketch over picture";
-"messageAction.emojiButton.description" = "Sketch emoji over picture";
-"messageAction.copyButton.description" = "Copy picture";
+"messageAction.unlikeButton.description" = "取消喜欢图片";
+"messageAction.likeButton.description" = "喜欢图片";
+"messageAction.shareButton.description" = "分享图片";
+"messageAction.sketchButton.description" = "在图片上绘制草图";
+"messageAction.emojiButton.description" = "在图片上绘制表情符号";
+"messageAction.copyButton.description" = "复制图片";
 "messageAction.moreButton.description" = "打开更多消息选项";
-"messageAction.saveButton.description" = "Save picture";
-"messageAction.revealButton.description" = "Reveal in conversation";
-"messageAction.deleteButton.description" = "Delete picture";
-"messageAction.collapseButton.description" = "Collapse";
+"messageAction.saveButton.description" = "保存图片";
+"messageAction.revealButton.description" = "在对话中展示";
+"messageAction.deleteButton.description" = "删除图片";
+"messageAction.collapseButton.description" = "折叠";
 
-"audioMessage.pause.value" = "Pause";
-"audioMessage.play.value" = "Play";
+"audioMessage.pause.value" = "暂停";
+"audioMessage.play.value" = "播放";
 
-"sketch.selectPictureButton.description" = "Select picture";
-"sketch.drawButton.description" = "Draw or write";
-"sketch.drawButton.hint" = "Double tap to enable or disable";
-"sketch.selectEmojiButton.description" = "Select emoji";
+"sketch.selectPictureButton.description" = "选择图片";
+"sketch.drawButton.description" = "绘画或书写";
+"sketch.drawButton.hint" = "双击启用或禁用";
+"sketch.selectEmojiButton.description" = "选择表情符号";
 "sketch.sendButton.description" = "发送";
-"sketch.undoButton.description" = "Undo last step";
-"sketch.closeButton.description" = "Close sketch";
+"sketch.undoButton.description" = "撤销上一步";
+"sketch.closeButton.description" = "关闭草图";
 
-"conversationDetails.messageTimeoutState.description" = "Selected";
-"selfDeletingMessagesConversationSettings.closeButton.description" = "Close settings for self-deleting messages";
-"notificationConversationSettings.closeButton.description" = "Close notification settings";
-"serviceConversationSettings.closeButton.description" = "Close service settings";
-"guestConversationSettings.closeButton.description" = "Close guest settings";
-"addParticipantsConversationSettings.closeButton.description" = "Close add participants option";
+"conversationDetails.messageTimeoutState.description" = "选定";
+"selfDeletingMessagesConversationSettings.closeButton.description" = "关闭自动删除邮件的设置";
+"notificationConversationSettings.closeButton.description" = "关闭通知设置";
+"serviceConversationSettings.closeButton.description" = "关闭服务设置";
+"guestConversationSettings.closeButton.description" = "关闭访客设置";
+"addParticipantsConversationSettings.closeButton.description" = "关闭添加参与者选项";
 
-"conversationDetails.optionButton.hint" = "Double tap to open settings";
-"conversationDetails.closeButton.description" = "Close conversation details";
-"conversationDetails.moreButton.description" = "Open conversation options";
-"conversationDetails.showParticipantsButton.hint" = "Double tap to open participant list";
+"conversationDetails.optionButton.hint" = "双击打开设置";
+"conversationDetails.closeButton.description" = "关闭对话详情";
+"conversationDetails.moreButton.description" = "打开对话选项";
+"conversationDetails.showParticipantsButton.hint" = "双击打开参与者列表";
 "conversationDetails.participantCell.hint" = "双击打开个人资料";
 
-"createConversation.backButton.description" = "Go back to contact list";
-"createConversation.hideSettings.hint" = "Double tap to hide settings";
-"createConversation.openSettings.hint" = "Double tap to open settings";
-"createConversation.searchView.description" = "Type group name";
-"createConversation.selectedUser.hint" = "Double tap to deselect";
-"createConversation.unselectedUser.hint" = "Double tap to select";
+"createConversation.backButton.description" = "返回到联系人列表";
+"createConversation.hideSettings.hint" = "双击隐藏设置";
+"createConversation.openSettings.hint" = "双击打开设置";
+"createConversation.searchView.description" = "键入群组名称";
+"createConversation.selectedUser.hint" = "双击取消选择";
+"createConversation.unselectedUser.hint" = "双击选择";
 
-"settings.deviceCount.hint" = "%@ devices in use";
-"settings.closeButton.description" = "Close settings";
-"settings.backButton.description" = "Go back to Settings";
+"settings.deviceCount.hint" = "%@ 设备使用中";
+"settings.closeButton.description" = "关闭设置";
+"settings.backButton.description" = "返回设置";
 
-"accountSettings.backButton.description" = "Go back to Account";
+"accountSettings.backButton.description" = "返回账户";
 
-"optionsSettings.backButton.description" = "Go back to Options";
+"optionsSettings.backButton.description" = "返回选项";
 
-"advancedSettings.backButton.description" = "Go back to Advanced";
+"advancedSettings.backButton.description" = "返回高级";
 
-"supportSettings.backButton.description" = "Go back to Support";
+"supportSettings.backButton.description" = "返回支持";
 
-"aboutSettings.backButton.description" = "Go back to About";
+"aboutSettings.backButton.description" = "返回关于";
 
-"developerOptionsSettings.backButton.description" = "Go back to Developer options";
+"developerOptionsSettings.backButton.description" = "返回开发者选项";
 
-"clientsList.deviceDetails.hint" = "Double tap to open device details";
-"clientsList.deviceId.description" = "Device ID";
-"clientsList.deviceName.description" = "Device name";
-"clientsList.keyFingerprint.description" = "Key fingerprint";
+"clientsList.deviceDetails.hint" = "双击打开设备详情";
+"clientsList.deviceId.description" = "设备 ID";
+"clientsList.deviceName.description" = "设备名";
+"clientsList.keyFingerprint.description" = "指纹码";
 "clientsList.deviceVerified.description" = "已验证";
 "clientsList.deviceNotVerified.description" = "未验证";
-"clientsList.backButton.description" = "Go back to device list";
+"clientsList.backButton.description" = "返回设备列表";
 
-"deviceDetails.whyVerifyFingerprint.hint" = "Double tap to learn more about verifications";
-"deviceDetails.howToVerifyFingerprint.hint" = "Learn more about fingerprint verification";
-"deviceDetails.verified.description" = "Device verified";
-"deviceDetails.backButton.description" = "Go back to device overview";
+"deviceDetails.whyVerifyFingerprint.hint" = "双击即可了解有关验证的更多信息";
+"deviceDetails.howToVerifyFingerprint.hint" = "了解有关指纹验证的更多信息";
+"deviceDetails.verified.description" = "设备已验证";
+"deviceDetails.backButton.description" = "返回设备概览";
 
-"profile.backButton.description" = "Go back to conversation details";
-"profile.closeButton.description" = "Close profile";
-"profile.shareProfileButton.description" = "Share your profile via QR code or link";
+"profile.backButton.description" = "返回对话详情";
+"profile.closeButton.description" = "关闭个人资料";
+"profile.shareProfileButton.description" = "通过二维码或链接分享您的个人资料";
 
 "shareProfile.closeButton.description" = "Close share profile view";
 "shareProfile.backButton.description" = "Go back to your profile";
@@ -234,7 +234,7 @@
 "conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
 "conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
-"conversationsList.filter_menu_options.folders.description" = "Folders";
+"conversationsList.filter_menu_options.folders.description" = "文件夹";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "All conversations, selected";
 "conversationsList.filter_menu_options.favorites.selected.description" = "Favorites, selected";
@@ -282,7 +282,7 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.item.value" = "Selected";
+"tabBar.item.value" = "选定";
 
 "landing.loginEnterpriseButton.description" = "使用 SSO 登录";
 "tabBar.email.description" = "Log in via email";
