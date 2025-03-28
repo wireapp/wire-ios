@@ -21,14 +21,20 @@ import Foundation
 package struct SSOLoginVerificationToken: Codable, Equatable {
 
     /// The unique identifier of the token.
+
     let uuid: UUID
+
     /// The creation date of the token.
+
     let creationDate: Date
+
     /// The amount of seconds the token should be considered valid.
+
     let timeToLive: TimeInterval
 
     /// Creates a new validation token with an expiration time
     /// of 30 minutes if not specified otherwise.
+
     init(
         uuid: UUID = .init(),
         creationDate: Date = .init(),
@@ -55,6 +61,7 @@ package struct SSOLoginVerificationToken: Codable, Equatable {
 
 }
 
+// TODO: delete
 package extension SSOLoginVerificationToken {
 
     private static let defaultsKey = "CompanyLoginVerificationTokenDefaultsKey"

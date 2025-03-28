@@ -27,19 +27,16 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
     private let authenticationAPI: AuthenticationAPI
     private let baseURL: URL
     private let ssoCallbackURLScheme: String
-    private let userDefaults: UserDefaults
     private let context = WebAuthPresentationContext()
 
     package init(
         authenticationAPI: AuthenticationAPI,
         baseURL: URL,
-        ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults
+        ssoCallbackURLScheme: String
     ) {
         self.authenticationAPI = authenticationAPI
         self.baseURL = baseURL
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
-        self.userDefaults = userDefaults
     }
 
     package func invoke(code: UUID?) async throws -> (userID: UUID, cookies: [HTTPCookie]) {
@@ -51,22 +48,21 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             throw LoginViaSSOUseCaseError.noDefaultCodeAvailable
         }
 
-        let url = try await generateSSOLink(ssoCode: ssoCode)
-        return try await initiateWebAuth(url: url)
-    }
-
-    // MARK: Web auth URL
-
-    private func generateSSOLink(ssoCode: UUID) async throws -> URL {
         do {
             try await authenticationAPI.validateLoginToken(ssoCode: ssoCode)
         } catch AuthenticationAPIError.SSOLoginError.invalidSSOCode {
             throw LoginViaSSOUseCaseError.invalidCode
         }
 
-        return try await buildSSOLink(ssoCode: ssoCode)
+        let (url, verificationToken) = try await buildSSOLink(ssoCode: ssoCode)
+
+        return try await initiateWebAuth(
+            url: url,
+            verificationToken: verificationToken
+        )
     }
 
+    // MARK: Web auth URL
 
     /// Generates the URL for the SSO authentication screen
     ///
@@ -74,7 +70,7 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
     ///   - ssoCode: SSO code
     /// - Returns: URL to the SSO authentication screen
 
-    private func buildSSOLink(ssoCode: UUID) async throws -> URL {
+    private func buildSSOLink(ssoCode: UUID) async throws -> (URL, SSOLoginVerificationToken) {
         let validationToken = SSOLoginVerificationToken()
         var components = URLComponents()
         components.scheme = "https"
@@ -99,8 +95,8 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             throw LoginViaSSOUseCaseError.invalidURL
         }
 
-        validationToken.store(in: userDefaults)
-        return url
+        //validationToken.store(in: userDefaults)
+        return (url, validationToken)
     }
 
     private func makeSuccessCallbackString(using token: SSOLoginVerificationToken) throws -> String {
@@ -157,14 +153,21 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
     // MARK: Initiate web auth
 
-    private func initiateWebAuth(url: URL) async throws -> (UUID, [HTTPCookie]) {
+    private func initiateWebAuth(
+        url: URL,
+        verificationToken: SSOLoginVerificationToken
+    ) async throws -> (UUID, [HTTPCookie]) {
         try await withCheckedThrowingContinuation { continuation in
             let session = ASWebAuthenticationSession(
                 url: url,
                 callbackURLScheme: ssoCallbackURLScheme
             ) { callbackURL, error in
                 if let callbackURL {
-                    continuation.resume(with: parseCallbackURL(callbackURL))
+                    let result = parseCallbackURL(
+                        callbackURL,
+                        verificationToken: verificationToken
+                    )
+                    continuation.resume(with: result)
                 } else if let error = error as? ASWebAuthenticationSessionError {
                     switch error.code {
                     case .canceledLogin:
@@ -191,11 +194,10 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
         }
     }
 
-    private func parseCallbackURL(_ url: URL) -> Result<(UUID, [HTTPCookie]), any Error> {
-        defer {
-            flushToken()
-        }
-
+    private func parseCallbackURL(
+        _ url: URL,
+        verificationToken: SSOLoginVerificationToken
+    ) -> Result<(UUID, [HTTPCookie]), any Error> {
         guard
             let components = URLComponents(string: url.absoluteString),
             components.host == URL.Host.login,
@@ -212,7 +214,10 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
         switch pathComponents[1] {
         case URL.Path.success:
-            guard validateCallback(with: components) else {
+            guard validateCallback(
+                with: components,
+                verificationToken: verificationToken
+            ) else {
                 return .failure(LoginViaSSOUseCaseError.callbackURLValidationFailed)
             }
 
@@ -239,7 +244,10 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             return .success((userID, cookies))
 
         case URL.Path.failure:
-            guard validateCallback(with: components) else {
+            guard validateCallback(
+                with: components,
+                verificationToken: verificationToken
+            ) else {
                 return .failure(LoginViaSSOUseCaseError.callbackURLValidationFailed)
             }
 
@@ -256,21 +264,19 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
     // MARK: Verification
 
-    private func validateCallback(with components: URLComponents) -> Bool {
+    private func validateCallback(
+        with components: URLComponents,
+        verificationToken: SSOLoginVerificationToken
+    ) -> Bool {
         guard
-            let storedToken = SSOLoginVerificationToken.current(in: userDefaults),
             let rawToken = components.query(for: URLQueryItem.Key.validationToken),
             let token = UUID(uuidString: rawToken),
-            storedToken.matches(identifier: token)
+            verificationToken.matches(identifier: token)
         else {
             return false
         }
 
         return true
-    }
-
-    private func flushToken() {
-        SSOLoginVerificationToken.flush(in: userDefaults)
     }
 
 }

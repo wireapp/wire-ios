@@ -167,8 +167,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         return LoginViaSSOUseCase(
             authenticationAPI: authenticationAPI,
             baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
-            ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
-            userDefaults: dependency.userDefaults
+            ssoCallbackURLScheme: dependency.ssoCallbackURLScheme
         )
     }
 
