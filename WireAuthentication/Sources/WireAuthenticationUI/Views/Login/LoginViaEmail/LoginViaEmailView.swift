@@ -233,7 +233,7 @@ package struct LoginViaEmailView: View {
                 password: $viewModel.proxyPassword,
                 placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
                 title: L10n.CloudUserLogin.InputPassword.title,
-                passwordRules: "viewModel.localizedPasswordRules",
+                passwordRules: "",
                 isValidPassword: viewModel.isPasswordValid
             )
             Spacer()
