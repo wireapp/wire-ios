@@ -78,12 +78,6 @@ package struct LoginViaEmailView: View {
             .navigationTitle(L10n.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
             .padding(32)
-            .background(ColorTheme.Backgrounds.surface.color)
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
-            )
             .setPreferredSize(navigationBarHidden: false)
             .customBackButton()
         }
