@@ -607,6 +607,7 @@ extension ConversationTableViewDataSource {
 
         // find subsequent messages and collapse space if needed
         for currentSectionIndex in sections.indices.reversed() {
+            // TODO: refactoring needed
             guard let currentSectionLastElement = sections[currentSectionIndex].elements.last?.instance else {
                 continue
             }
@@ -641,8 +642,10 @@ extension ConversationTableViewDataSource {
             }
 
             // collapse space between subsequent messages
-            if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) { TODO: if toolbox is redundant, check the next cell description
-                previousSectionFirstElement.bottomMargin = 2
+            if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) {
+               if !(previousSectionFirstElement is ConversationMessageToolboxCellDescription) {
+                   previousSectionFirstElement.bottomMargin = 2
+                }
                 currentSectionLastElement.topMargin = 2
             } else {
                 previousSectionFirstElement.bottomMargin = 8
