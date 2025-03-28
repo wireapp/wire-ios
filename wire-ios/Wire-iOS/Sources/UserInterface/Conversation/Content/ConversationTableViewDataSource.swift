@@ -623,21 +623,25 @@ extension ConversationTableViewDataSource {
             }
 
             // filter redundant status cells
-            let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
-            let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
             if
                 isMessageStatus(of: previousSectionIndex, redundantTo: currentSectionIndex, in: sections),
                 messages.indices.contains(previousSectionIndex) {
                 let previousMessage = messages[previousSectionIndex]
-                let new = ConversationMessageToolboxCellDescription(message: previousMessage, isRedundant: true)
-                previousStatus?.replace(new, &sections)
+                let newCellDescription = ConversationMessageToolboxCellDescription(
+                    message: previousMessage,
+                    isRedundant: true
+                )
+                newCellDescription.topMargin = 0
+                newCellDescription.bottomMargin = 0
+                let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
+                previousStatus?.replace(newCellDescription, &sections)
                 if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
                     previousSectionFirstElement = newPreviousSectionFirstElement
                 }
             }
 
             // collapse space between subsequent messages
-            if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) {
+            if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) { TODO: if toolbox is redundant, check the next cell description
                 previousSectionFirstElement.bottomMargin = 2
                 currentSectionLastElement.topMargin = 2
             } else {

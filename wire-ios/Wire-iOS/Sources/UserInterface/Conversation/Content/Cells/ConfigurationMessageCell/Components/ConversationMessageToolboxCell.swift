@@ -25,7 +25,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     struct Configuration: Equatable {
         let message: ZMConversationMessage
         let deliveryState: ZMDeliveryState
-        var isRedundant: Bool
+        let isRedundant: Bool
 
         static func == (
             lhs: ConversationMessageToolboxCell.Configuration,
