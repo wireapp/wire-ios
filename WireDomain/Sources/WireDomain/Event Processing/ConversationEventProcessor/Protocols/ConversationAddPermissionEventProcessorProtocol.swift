@@ -18,7 +18,7 @@
 
 import WireAPI
 
-/// Process conversation access update events.
+/// Process conversation add permission update event.
 
 protocol ConversationAddPermissionEventProcessorProtocol {
 
