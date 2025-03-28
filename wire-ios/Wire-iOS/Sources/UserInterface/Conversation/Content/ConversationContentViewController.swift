@@ -505,6 +505,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         _ tableView: UITableView,
         leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
+        return nil // disabled for 3.120
 
         let sections = dataSource.currentSections
         guard
@@ -537,6 +538,8 @@ extension ConversationContentViewController: UITableViewDelegate {
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
+        return nil // disabled for 3.120
+
         let sections = dataSource.currentSections
         guard
             sections.indices.contains(indexPath.section),
