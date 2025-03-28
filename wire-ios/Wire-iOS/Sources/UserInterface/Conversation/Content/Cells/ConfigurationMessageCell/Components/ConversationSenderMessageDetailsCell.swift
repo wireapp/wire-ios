@@ -285,7 +285,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
+    var canBeCombinedWithOtherCells: Bool { false }
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 16
