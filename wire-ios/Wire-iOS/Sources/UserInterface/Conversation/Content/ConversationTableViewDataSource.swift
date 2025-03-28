@@ -638,11 +638,11 @@ extension ConversationTableViewDataSource {
 
             // collapse space between subsequent messages
             if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) {
-                previousSectionFirstElement.bottomMargin = -6
-                currentSectionLastElement.topMargin = -6
+                previousSectionFirstElement.bottomMargin = 2
+                currentSectionLastElement.topMargin = 2
             } else {
-                previousSectionFirstElement.bottomMargin = 0
-                currentSectionLastElement.topMargin = 0
+                previousSectionFirstElement.bottomMargin = 8
+                currentSectionLastElement.topMargin = 8
             }
 
         }
