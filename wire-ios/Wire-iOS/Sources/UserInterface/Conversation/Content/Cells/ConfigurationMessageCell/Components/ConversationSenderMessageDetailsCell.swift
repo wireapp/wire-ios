@@ -54,8 +54,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     private(set) var avatarBottomAnchorConstraint: NSLayoutConstraint?
     private(set) var avatarGreaterThanBottomAnchorConstraint: NSLayoutConstraint?
-    private var authorLabelNoTopPaddingConstraint: NSLayoutConstraint?
-    private var authorLabelCenterVerticalConstraint: NSLayoutConstraint?
 
     var isSelected: Bool = false
 
@@ -206,15 +204,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         switch object.indicator {
 
         case .deleted:
-            authorLabelNoTopPaddingConstraint?.isActive = false
-            authorLabelCenterVerticalConstraint?.isActive = true
             if let attachment = attachment(from: .trash, size: 8) {
                 attributedString.append(attachment)
             }
 
         default:
-            authorLabelNoTopPaddingConstraint?.isActive = true
-            authorLabelCenterVerticalConstraint?.isActive = false
+            break
         }
 
         switch object.teamRoleIndicator {
@@ -303,11 +298,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-
-    var canBeCombinedWithOtherCells: Bool { true }
-
-    var topMargin: CGFloat = -6
-    var bottomMargin: CGFloat = -6
 
     let containsHighlightableContent: Bool = false
 

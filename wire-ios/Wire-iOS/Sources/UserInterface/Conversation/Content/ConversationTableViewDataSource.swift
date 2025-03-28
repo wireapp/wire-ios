@@ -623,8 +623,8 @@ extension ConversationTableViewDataSource {
                 var previousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance
             else {
                 // no previous message, reset margins
-                currentSectionLastElement.topMargin = 0
-                currentSectionLastElement.bottomMargin = 0
+                currentSectionLastElement.topMargin = 8
+                currentSectionLastElement.bottomMargin = 8
                 continue
             }
 

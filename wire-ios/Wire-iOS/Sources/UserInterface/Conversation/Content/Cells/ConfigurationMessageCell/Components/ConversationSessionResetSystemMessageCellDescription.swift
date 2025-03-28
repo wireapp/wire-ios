@@ -29,9 +29,6 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var delegate: ConversationMessageCellDelegate?
     var actionController: ConversationMessageActionController?
 
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     var supportsActions: Bool = false
     var containsHighlightableContent: Bool = false
     var accessibilityIdentifier: String?
