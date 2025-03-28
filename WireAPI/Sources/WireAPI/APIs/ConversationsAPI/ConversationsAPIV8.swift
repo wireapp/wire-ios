@@ -72,9 +72,53 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
             }
         }
     }
+
+    override func addChannelPermission(
+        conversationID: String,
+        conversationDomain: String,
+        permission: ChannelPermission
+    ) async throws {
+        let input = ChannelPermissionParametersV8(from: permission)
+        let body = try JSONEncoder.defaultEncoder.encode(input)
+        let path = "\(pathPrefix)/conversation/\(conversationDomain)/\(conversationID)/add-permission"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        // TODO: [WPB-16708] When Swagger doc is updated by backend, ensure failure cases are correct.
+        // https://staging-nginz-https.zinfra.io/v8/api/swagger-ui/
+
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+            .failure(code: .notFound, label: "cnv", error: ConversationsAPIError.invalidConversationID)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.notATeamAdminOrOwner)
+            .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.notAChannel)
+            .parse(code: response.statusCode, data: data)
+    }
 }
 
 // MARK: - Encodables
+
+struct ChannelPermissionParametersV8: Encodable {
+    let addPermission: ChannelPermission
+
+    init(from channelPermission: ChannelPermission) {
+        self.addPermission = channelPermission
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case addPermission = "add_permission"
+    }
+}
 
 struct CreateGroupConversationParametersV8: Encodable {
     let users: [UUID]?
