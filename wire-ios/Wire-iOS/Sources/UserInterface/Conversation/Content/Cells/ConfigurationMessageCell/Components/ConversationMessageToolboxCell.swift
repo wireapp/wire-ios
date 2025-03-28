@@ -112,12 +112,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
-
     var showEphemeralTimer: Bool = false
-
-    var topMargin: CGFloat = -6
-    var bottomMargin: CGFloat = -6
 
     let containsHighlightableContent: Bool = false
 
