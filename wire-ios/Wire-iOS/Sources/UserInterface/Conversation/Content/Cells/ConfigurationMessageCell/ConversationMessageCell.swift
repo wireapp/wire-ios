@@ -212,6 +212,16 @@ extension ConversationMessageCellDescription {
         false
     }
 
+    var topMargin: CGFloat {
+        get { objc_getAssociatedObject(self, &topMarginKey) as? CGFloat ?? 2 }
+        set { objc_setAssociatedObject(self, &topMarginKey, newValue, .OBJC_ASSOCIATION_ASSIGN) }
+    }
+
+    var bottomMargin: CGFloat {
+        get { objc_getAssociatedObject(self, &bottomMarginKey) as? CGFloat ?? 2 }
+        set { objc_setAssociatedObject(self, &bottomMarginKey, newValue, .OBJC_ASSOCIATION_ASSIGN) }
+    }
+
     func willDisplayCell() {
         _ = message?.startSelfDestructionIfNeeded()
     }
@@ -257,6 +267,9 @@ extension ConversationMessageCellDescription {
     }
 
 }
+
+nonisolated(unsafe) private var topMarginKey = 0
+nonisolated(unsafe) private var bottomMarginKey = 0
 
 extension ConversationMessageCellDescription where View.Configuration: Equatable {
 

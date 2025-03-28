@@ -598,7 +598,6 @@ extension ConversationTableViewDataSource {
     }
 
     private func adjustTopAndBottomMargins(of sections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
-
         // find subsequent messages and collapse space if needed
         for currentIndex in sections.indices.reversed() {
             guard let current = sections[currentIndex].elements.last?.instance else { continue }
@@ -608,8 +607,8 @@ extension ConversationTableViewDataSource {
                 sections.indices.contains(previousIndex),
                 let previous = sections[previousIndex].elements.first?.instance
             else {
-                current.topMargin = 0
-                current.bottomMargin = 0
+                current.topMargin = 8
+                current.bottomMargin = 8
                 continue
             }
 
@@ -626,11 +625,11 @@ extension ConversationTableViewDataSource {
             }
 
             if collapse {
-                previous.bottomMargin = -6
-                current.topMargin = -6
+                previous.bottomMargin = 2
+                current.topMargin = 2
             } else {
-                previous.bottomMargin = 0
-                current.topMargin = 0
+                previous.bottomMargin = 8
+                current.topMargin = 8
             }
         }
 

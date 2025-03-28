@@ -46,9 +46,6 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
         self.configuration = reactions
     }
 
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     var supportsActions: Bool = false
 
     var showEphemeralTimer: Bool = false

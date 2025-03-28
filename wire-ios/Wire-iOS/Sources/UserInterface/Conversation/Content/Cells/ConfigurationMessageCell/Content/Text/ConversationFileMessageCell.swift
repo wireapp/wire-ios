@@ -130,9 +130,6 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
 
     var showEphemeralTimer: Bool = false
 
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

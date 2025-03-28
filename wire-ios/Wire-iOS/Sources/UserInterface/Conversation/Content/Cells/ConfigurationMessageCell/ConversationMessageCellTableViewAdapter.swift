@@ -122,10 +122,6 @@ final class ConversationMessageCellTableViewAdapter<
         cellView.accessibilityLabel = cellDescription?.accessibilityLabel
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
         top.constant = cellDescription?.topMargin ?? 0
-        if let cellDescription = cellDescription as? ConversationSenderMessageCellDescription {
-            print(top.constant)
-            print(cellDescription.topMargin)
-        }
         bottom.constant = cellDescription?.bottomMargin ?? 0
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
