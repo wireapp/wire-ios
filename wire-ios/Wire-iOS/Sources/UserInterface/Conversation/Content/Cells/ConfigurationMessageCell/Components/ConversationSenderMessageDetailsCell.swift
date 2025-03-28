@@ -190,8 +190,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         switch object.indicator {
 
         case .deleted:
-            authorLabelNoTopPaddingConstraint?.isActive = false
-            authorLabelCenterVerticalConstraint?.isActive = true
             if let attachment = attachment(from: .trash, size: 8) {
                 attributedString.append(attachment)
             }
@@ -200,11 +198,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             if let attachment = attachment(from: .pencil, size: 8) {
                 attributedString.append(attachment)
             }
-            fallthrough
 
         default:
-            authorLabelNoTopPaddingConstraint?.isActive = true
-            authorLabelCenterVerticalConstraint?.isActive = false
+            break
         }
 
         switch object.teamRoleIndicator {
