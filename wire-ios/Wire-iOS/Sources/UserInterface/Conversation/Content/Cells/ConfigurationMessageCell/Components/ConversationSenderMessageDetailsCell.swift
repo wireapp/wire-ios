@@ -52,6 +52,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var actionController: ConversationMessageActionController?
 
     private var trailingDateLabelConstraint: NSLayoutConstraint?
+    private(set) var avatarBottomAnchorConstraint: NSLayoutConstraint?
+    private(set) var avatarGreaterThanBottomAnchorConstraint: NSLayoutConstraint?
 
     var isSelected: Bool = false
 
@@ -143,8 +145,16 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             equalTo: trailingAnchor,
             constant: -conversationHorizontalMargins.right
         )
-
         self.trailingDateLabelConstraint = trailingDateLabelConstraint
+
+        let avatarTopAnchorConstraint = avatar.topAnchor.constraint(equalTo: topAnchor)
+        avatarTopAnchorConstraint.priority = .defaultLow
+        let avatarBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
+        avatarBottomAnchorConstraint.priority = .defaultLow
+        self.avatarBottomAnchorConstraint = avatarBottomAnchorConstraint
+        let avatarGreaterThanBottomAnchorConstraint = bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor)
+        self.avatarGreaterThanBottomAnchorConstraint = avatarGreaterThanBottomAnchorConstraint
+
         NSLayoutConstraint.activate([
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
@@ -152,15 +162,17 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             dateLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
             trailingDateLabelConstraint,
 
-            dateLabel.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
-            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
 
+            avatarTopAnchorConstraint,
+            avatarBottomAnchorConstraint,
             avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            avatarGreaterThanBottomAnchorConstraint,
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
         ])
     }
@@ -285,7 +297,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
+    var canBeCombinedWithOtherCells: Bool { false }
 
     var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 16
