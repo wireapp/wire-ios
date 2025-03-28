@@ -42,6 +42,7 @@ public class Feature: ZMManagedObject {
         case mls
         case e2ei = "mlsE2EId"
         case mlsMigration
+        case channels
 
     }
 
@@ -229,7 +230,8 @@ public class Feature: ZMManagedObject {
              .digitalSignature,
              .mls,
              .mlsMigration,
-             .e2ei:
+             .e2ei,
+             .channels:
             break
         }
     }

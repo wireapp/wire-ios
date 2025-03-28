@@ -29,7 +29,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let mlsService: any MLSServiceInterface
+    let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -40,7 +40,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface,
+        mlsService: (any MLSServiceInterface)?,
         userLocalStore: any UserLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
     ) {
@@ -704,7 +704,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func wipeMLSGroup(groupID: MLSGroupID) async throws {
-        try await mlsService.wipeGroup(groupID)
+        try await mlsService?.wipeGroup(groupID)
     }
 
     public func storeConversation(
@@ -910,6 +910,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.remoteIdentifier = id
             localConversation.isPendingMetadataRefresh = false
             localConversation.isPendingInitialFetch = false
+            localConversation.groupType = conversation.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            }
 
             commonUpdate(
                 from: conversation,

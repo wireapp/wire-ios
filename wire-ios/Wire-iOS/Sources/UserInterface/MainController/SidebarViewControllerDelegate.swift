@@ -106,14 +106,6 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
         }
     }
 
-    public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
-        Task {
-            let connectUI = UINavigationController(rootViewController: connectUIBuilder.build())
-            connectUI.modalPresentationStyle = .formSheet
-            await mainCoordinator.presentViewController(connectUI)
-        }
-    }
-
     @MainActor
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
         let url = WireURLs.shared.support

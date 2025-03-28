@@ -29,7 +29,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
     private(set) var accountImageAction: () -> Void
     private(set) var foldersAction: (CGRect) -> Void
-    private(set) var connectAction: () -> Void
     private(set) var supportAction: () -> Void
 
     private(set) var accountImageView: SidebarViewController.AccountImageViewBuilder<AccountImageView>
@@ -45,7 +44,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         accountImageAction: @escaping () -> Void,
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
-        connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
         accountImageView: @escaping SidebarViewController.AccountImageViewBuilder<AccountImageView>,
         legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
@@ -54,7 +52,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         _selectedMenuItem = selectedMenuItem
         self.accountImageAction = accountImageAction
         self.foldersAction = foldersAction
-        self.connectAction = connectAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
         self.legalHoldIndicatorView = legalHoldIndicatorView
@@ -133,9 +130,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             ForEach(conversationFilters, id: \.self) { conversationFilter in
                 selectableMenuItem(conversationFilter)
             }
-
-            menuItemHeader(Strings.Contacts.title)
-            nonselectableMenuItem(.connect)
         }
         .padding(.horizontal, 16)
     }
@@ -162,12 +156,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         let isLink: Bool
         let action: () -> Void
         switch menuItem {
-        case .connect:
-            text = Text(Strings.Contacts.Connect.title)
-            accessibilityLabel = Text("sidebar.contacts.connect.title", bundle: .module)
-            icon = "person.badge.plus"
-            isLink = false
-            action = connectAction
 
         case .support:
             text = Text(Strings.Support.title)

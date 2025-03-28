@@ -137,9 +137,108 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    func createGroupConversation(
+        parameters: CreateGroupConversationParameters
+    ) async throws -> Conversation {
+        guard parameters.groupType != .channel else {
+            throw ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint
+        }
+
+        let input = CreateGroupConversationParametersV0(from: parameters)
+        let body = try JSONEncoder.defaultEncoder.encode(input)
+        let path = "\(pathPrefix)\(basePath)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationV0.self)
+            .success(code: .created, type: ConversationV0.self)
+            .failure(code: .badRequest, label: "non-empty-member-list", error: ConversationsAPIError.nonEmptyMemberList)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+            .failure(
+                code: .forbidden,
+                label: "missing-legalhold-consent",
+                error: ConversationsAPIError.missingLegalHoldConsent
+            )
+            .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
+            .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
+            .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)
+            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    func addChannelPermission(
+        conversationID: String,
+        conversationDomain: String,
+        permission: ChannelPermission
+    ) async throws {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }
 
 // MARK: Encodables
+
+struct CreateGroupConversationParametersV0: Encodable {
+    let users: [UUID]?
+    let qualifiedUsers: [QualifiedID]?
+    let access: [String]?
+    let legacyAccessRole: String?
+    let accessRoles: [String]?
+    let name: String?
+    let team: CreateGroupConversationTeamInfoV0?
+    let messageTimer: TimeInterval?
+    let readReceiptMode: Int?
+    let conversationRole: String?
+    let messageProtocol: String
+
+    enum CodingKeys: String, CodingKey {
+        case users
+        case qualifiedUsers = "qualified_users"
+        case access
+        case legacyAccessRole = "access_role"
+        case accessRoles = "access_role_v2"
+        case name
+        case team
+        case messageTimer = "message_timer"
+        case readReceiptMode = "receipt_mode"
+        case conversationRole = "conversation_role"
+        case messageProtocol = "protocol"
+    }
+
+    init(from parameters: CreateGroupConversationParameters) {
+        self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs : nil
+        self.access = parameters.accessMode.map(\.rawValue)
+        self.legacyAccessRole = parameters.legacyAccessRole?.rawValue
+        self.accessRoles = parameters.accessRoles.map(\.rawValue)
+        self.name = parameters.name
+        self.team = parameters.teamID.map { .init(teamID: $0) }
+        self.messageTimer = nil
+        self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
+        self.conversationRole = "wire_member"
+        self.messageProtocol = parameters.messageProtocol.rawValue
+    }
+
+}
+
+struct CreateGroupConversationTeamInfoV0: Encodable {
+    let teamID: UUID
+    let managed: Bool = false
+
+    enum CodingKeys: String, CodingKey {
+        case teamID = "teamid"
+        case managed
+    }
+}
 
 struct GetConversationsParametersV0: Encodable {
     enum CodingKeys: String, CodingKey {

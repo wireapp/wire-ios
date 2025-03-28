@@ -81,11 +81,19 @@ final class ConversationTableViewDataSource: NSObject {
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
 
-    var contentWidth: CGFloat = UIScreen.main.bounds.width
+    var contentWidth: CGFloat = UIScreen.main.bounds.width {
+        didSet {
+            guard UIDevice.current.userInterfaceIdiom == .pad else { return }
+            resetSectionControllers()
+            reloadSections(newSections: calculateSections())
+            tableView.reloadData()
+        }
+    }
 
     var searchQueries: [String] = [] {
         didSet {
             currentSections = calculateSections()
+            adjustTopAndBottomMargins(of: currentSections)
             tableView.reloadData()
         }
     }
@@ -161,6 +169,7 @@ final class ConversationTableViewDataSource: NSObject {
             model: sectionIdentifier,
             elements: sectionController.tableViewCellDescriptions
         )
+        adjustTopAndBottomMargins(of: updatedSections)
 
         return updatedSections
     }
@@ -306,6 +315,7 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
         currentSections = calculateSections(forceRecalculate: forceRecalculate)
+        adjustTopAndBottomMargins(of: currentSections)
         tableView.reloadData()
     }
 
@@ -577,8 +587,7 @@ extension ConversationTableViewDataSource {
             isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
-            previousMessageIsKnock: previousMessage?.isKnock == true,
-            spacing: message.isSystem || previousMessage?.isSystem == true ? 16 : 12
+            previousMessageIsKnock: previousMessage?.isKnock == true
         )
     }
 
@@ -586,6 +595,51 @@ extension ConversationTableViewDataSource {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp,
               let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
+    }
+
+    private func adjustTopAndBottomMargins(of sections: [ArraySection<String, AnyConversationMessageCellDescription>]) {
+
+        // find subsequent messages and collapse space if needed
+        for currentIndex in sections.indices.reversed() {
+            guard let current = sections[currentIndex].elements.last?.instance else { continue }
+
+            let previousIndex = currentIndex + 1
+            guard
+                sections.indices.contains(previousIndex),
+                let previous = sections[previousIndex].elements.first?.instance
+            else {
+                current.topMargin = 0
+                current.bottomMargin = 0
+                continue
+            }
+
+            let collapse = if current is ConversationTextMessageCellDescription ||
+                current is ConversationFileMessageCellDescription ||
+                current is ConversationImageMessageCellDescription ||
+                current is ConversationVideoMessageCellDescription ||
+                current is ConversationReplyCellDescription ||
+                current is ConversationCollapsedMessageCellDescription {
+                // no stack cell description and no sender is shown, so collapse the space if needed
+                true
+            } else if let firstStacked = (current as? StackViewCellDescription)?.cellDescriptions.first?.instance {
+                firstStacked is ConversationTextMessageCellDescription ||
+                    firstStacked is ConversationFileMessageCellDescription ||
+                    firstStacked is ConversationImageMessageCellDescription ||
+                    firstStacked is ConversationVideoMessageCellDescription ||
+                    firstStacked is ConversationReplyCellDescription
+            } else {
+                false
+            }
+
+            if collapse {
+                previous.bottomMargin = -6
+                current.topMargin = -6
+            } else {
+                previous.bottomMargin = 0
+                current.topMargin = 0
+            }
+        }
+
     }
 
 }
