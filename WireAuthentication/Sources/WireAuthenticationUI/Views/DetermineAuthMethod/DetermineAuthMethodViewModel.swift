@@ -26,19 +26,15 @@ import WireLogging
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
+        CreateAuthenticationResultUseCaseFactory &
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
-        FetchSSOURLUseCaseFactory &
-        SSOLinkGeneratorFactory &
+        LoginViaSSOUseCaseFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
 
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
-        case ssoLogin(
-            url: URL,
-            backendInfo: BackendInfo?
-        )
         case switchBackendConfirmation(
             email: String?,
             backendInfo: BackendInfo
@@ -48,7 +44,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let router: any Router
     private let factory: any Factory
     private let bridge: WireAuthenticationBridge
-    private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     package let backendInfo: BackendInfo
     private var cancellable: AnyCancellable?
 
@@ -136,7 +131,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     func onAlertDismiss() {
-        ssoLinkGenerator?.flushToken()
         modalDestination = nil
     }
 
@@ -166,22 +160,20 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         case let .loginViaSSO(code):
             do {
-                let url = try await generateSSOLink(code: code)
-                WireLogger.authentication.error("Generating SSO link succeeded")
-                modalDestination = .ssoLogin(
-                    url: url,
-                    backendInfo: nil
-                )
+                let authResult = try await loginViaSSO(code: code, backendInfo: nil)
+                router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authResult))
+            } catch LoginViaSSOUseCaseError.invalidCode {
+                alert = .incorrectSSOCode
+            } catch LoginViaSSOUseCaseError.invalidURL {
+                alert = .invalidSSOLink
+            } catch LoginViaSSOUseCaseError.userCancelled {
+                // No op
+            } catch LoginViaSSOUseCaseError.noDefaultCodeAvailable {
+                // No op
             } catch {
-                WireLogger.authentication.error("Generating SSO link failed: \(error)")
-                switch error {
-                case SSOLinkGeneratorFailure.invalidSSOCode:
-                    alert = .incorrectSSOCode
-                case SSOLinkGeneratorFailure.invalidSSOURL:
-                    alert = .invalidSSOLink
-                default:
-                    router.presentAlert(for: error)
-                }
+                // TODO: handle all sso errors
+                // TODO: show alert .ssoLoginFailed for sso failures
+                router.presentAlert(for: error)
             }
 
         case let .onPremLogin(email, backendConfigURL):
@@ -189,11 +181,20 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
-    private func generateSSOLink(code: UUID) async throws -> URL {
-        let linkGenerator = try await factory.ssoLinkGenerator()
-        ssoLinkGenerator = linkGenerator
+    private func loginViaSSO(
+        code: UUID?,
+        backendInfo: BackendInfo?
+    ) async throws -> AuthenticationResult {
+        let loginViaSSO = try await factory.loginViaSSOUseCase(backendInfo: backendInfo)
+        let (userID, cookies) = try await loginViaSSO.invoke(code: code)
+        let createAuthResult = factory.createAuthenticationResultUseCase()
         return try await Task.detached {
-            try await linkGenerator.generateSSOLink(ssoCode: code)
+            try await createAuthResult.invoke(
+                userID: userID,
+                cookies: cookies,
+                accessToken: nil,
+                emailCredentials: nil
+            )
         }.value
     }
 
@@ -235,20 +236,21 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let useCase = try await factory.fetchSSOURLUseCase(
+            let authResult = try await loginViaSSO(
+                code: nil,
                 backendInfo: backendInfo
             )
-
-            if let ssoURL = try await useCase.invoke() {
-                modalDestination = .ssoLogin(
-                    url: ssoURL,
-                    backendInfo: backendInfo
-                )
-            } else {
-                router.presentSheet(
-                    RootView.ModalDestination.authFlow(backendInfo: backendInfo)
-                )
-            }
+            router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authResult))
+        } catch LoginViaSSOUseCaseError.invalidCode {
+            alert = .incorrectSSOCode
+        } catch LoginViaSSOUseCaseError.invalidURL {
+            alert = .invalidSSOLink
+        } catch LoginViaSSOUseCaseError.userCancelled {
+            // What to do here? Pop?
+        } catch LoginViaSSOUseCaseError.noDefaultCodeAvailable {
+            router.presentSheet(
+                RootView.ModalDestination.authFlow(backendInfo: backendInfo)
+            )
         } catch ProxyModeError.proxyCredentialsRequired {
             // Login via email is the only place we ask from proxy credentials.
             router.navigate(
@@ -259,17 +261,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 )
             )
         } catch {
+            // TODO: show alert .ssoLoginFailed for sso failures
             router.presentAlert(for: error)
-        }
-    }
-
-    func onSSOAuthenticationResult(_ result: Result<AuthenticationResult, any Error>) {
-        modalDestination = nil
-        switch result {
-        case let .success(authenticationResult):
-            router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authenticationResult))
-        case .failure:
-            router.presentAlert(Alert.ssoLoginFailed)
         }
     }
 

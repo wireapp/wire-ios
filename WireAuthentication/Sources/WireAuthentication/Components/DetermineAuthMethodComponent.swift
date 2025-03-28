@@ -122,6 +122,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        CreateAuthenticationResultUseCase(networkStack: networkStack)
+    }
+
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
         ValidateEmailOrSSOCodeUseCase()
     }
@@ -167,6 +171,27 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         return FetchSSOURLUseCase(
             authenticationAPI: authenticationAPI,
             linkGenerator: linkGenerator
+        )
+    }
+
+    @MainActor
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+        let networkStack: NetworkStack = if let backendInfo {
+            NetworkStack(
+                backendInfo: backendInfo,
+                minTLSVersion: dependency.minTLSVersion,
+                preferredAPIVersion: dependency.preferredAPIVersion
+            )
+        } else {
+            self.networkStack
+        }
+
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        return LoginViaSSOUseCase(
+            authenticationAPI: authenticationAPI,
+            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
+            ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
+            userDefaults: dependency.userDefaults
         )
     }
 

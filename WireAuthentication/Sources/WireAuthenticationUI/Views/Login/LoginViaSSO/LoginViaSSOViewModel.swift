@@ -21,6 +21,8 @@ import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 
+// TODO: delete
+
 @MainActor
 package final class LoginViaSSOViewModel: ObservableObject {
 

@@ -39,6 +39,20 @@ package struct SSOLoginVerificationToken: Codable, Equatable {
         self.timeToLive = timeToLive
     }
 
+    /// Whether the token is no langer valid (older than its time to live).
+
+    var isExpired: Bool {
+        abs(creationDate.timeIntervalSinceNow) >= timeToLive
+    }
+
+    /// Validates a passed in UUID against the token.
+    /// - parameter identifier: The uuid which should be validated against the token.
+    /// - returns: Whether the UUID matches the token and the token is still valid.
+
+    func matches(identifier: UUID) -> Bool {
+        uuid == identifier && !isExpired
+    }
+
 }
 
 package extension SSOLoginVerificationToken {

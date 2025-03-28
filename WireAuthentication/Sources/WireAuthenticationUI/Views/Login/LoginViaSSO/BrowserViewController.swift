@@ -20,6 +20,8 @@ import Foundation
 import SafariServices
 import WireDesign
 
+// TODO: delete
+
 // TODO: [WPB-16205] Investigate if we should use ASWebAuthenticationSession for SSO.
 package final class BrowserViewController: SFSafariViewController {
 

@@ -16,22 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-// TODO: delete
+public protocol LoginViaSSOUseCaseProtocol: Sendable {
 
-package struct SafariBrowser: UIViewControllerRepresentable {
+    func invoke(code: UUID?) async throws -> (userID: UUID, cookies: [HTTPCookie])
 
-    private let url: URL
+}
 
-    package init(url: URL) {
-        self.url = url
-    }
+public enum LoginViaSSOUseCaseError: Error {
 
-    package func makeUIViewController(context: Context) -> BrowserViewController {
-        BrowserViewController(url: url)
-    }
+    case noDefaultCodeAvailable
+    case invalidCode
+    case invalidURL
+    case userCancelled
+    case authenticationFailed(label: String)
 
-    package func updateUIViewController(_ viewController: BrowserViewController, context: Context) {}
+}
+
+public protocol LoginViaSSOUseCaseFactory {
+
+    @MainActor
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol
 
 }

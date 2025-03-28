@@ -16,22 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import WireAuthenticationAPI
 
-// TODO: delete
+extension MockDependencies: LoginViaSSOUseCaseFactory {
 
-package struct SafariBrowser: UIViewControllerRepresentable {
-
-    private let url: URL
-
-    package init(url: URL) {
-        self.url = url
+    nonisolated
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+        MockLoginViaSSOUseCase()
     }
 
-    package func makeUIViewController(context: Context) -> BrowserViewController {
-        BrowserViewController(url: url)
-    }
+}
 
-    package func updateUIViewController(_ viewController: BrowserViewController, context: Context) {}
+struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
+
+    func invoke(code: UUID?) async throws -> (userID: UUID, cookies: [HTTPCookie]) {
+        (UUID(), [])
+    }
 
 }
