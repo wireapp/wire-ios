@@ -153,11 +153,6 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// now.
     var conversationCellModel: ConversationCellModel? { get }
 
-    /// The views of neighbouring cell descriptions which return `true` might be
-    /// arranged in a vertical stack view inside a single table view cell.
-    /// If `false` the resulting view will always end up in a single table view cell.
-    var canBeCombinedWithOtherCells: Bool { get }
-
     /// The top margin is used to configure the spacing between the current and the previous cell.
     var topMargin: CGFloat { get set }
 
@@ -207,10 +202,6 @@ extension ConversationMessageCellDescription {
 
     var conversationCellModel: ConversationCellModel? {
         nil
-    }
-
-    var canBeCombinedWithOtherCells: Bool {
-        false
     }
 
     var supportsActions: Bool {
@@ -296,7 +287,6 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
-    private let _canBeCombinedWithOtherCells: () -> Bool
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
     private let _showEphemeralTimer: AnyConstantProperty<Bool>
@@ -341,7 +331,6 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
-        self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
         self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
@@ -375,10 +364,6 @@ final class AnyConversationMessageCellDescription: NSObject {
     var actionController: ConversationMessageActionController? {
         get { _actionController.getter() }
         set { _actionController.setter(newValue) }
-    }
-
-    var canBeCombinedWithOtherCells: Bool {
-        _canBeCombinedWithOtherCells()
     }
 
     var containsHighlightableContent: Bool {
