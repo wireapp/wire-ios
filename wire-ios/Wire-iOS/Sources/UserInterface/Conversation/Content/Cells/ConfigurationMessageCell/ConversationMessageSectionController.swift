@@ -464,9 +464,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
-return true
+        return true
 
-        // TODO: delete
+        // TODO: delete integrate into ConversationTableViewDataSource.isMessageStatus
         guard !message.isSystem || message.isMissedCall else {
             return false
         }

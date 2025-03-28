@@ -633,8 +633,7 @@ extension ConversationTableViewDataSource {
             let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
             if
                 isMessageStatus(of: previousSectionIndex, redundantTo: currentSectionIndex, in: sections),
-                messages.indices.contains(previousSectionIndex)
-            {
+                messages.indices.contains(previousSectionIndex) {
                 let previousMessage = messages[previousSectionIndex]
                 let new = ConversationMessageToolboxCellDescription(message: previousMessage, isRedundant: true)
                 previousStatus?.replace(new, &sections)
@@ -679,7 +678,8 @@ extension ConversationTableViewDataSource {
                             in sections: inout [Section]
                         ) {
                             var cellDescriptions = stack.cellDescriptions
-                            cellDescriptions[cellDescriptionIndex] = AnyConversationMessageCellDescription(newCellDescription)
+                            cellDescriptions[cellDescriptionIndex] =
+                                AnyConversationMessageCellDescription(newCellDescription)
                             sections[sectionIndex]
                                 .elements[elementIndex] = AnyConversationMessageCellDescription(
                                     StackViewCellDescription(cellDescriptions: cellDescriptions)
@@ -696,7 +696,8 @@ extension ConversationTableViewDataSource {
                     by newCellDescription: ConversationMessageToolboxCellDescription,
                     in sections: inout [Section]
                 ) {
-                    sections[sectionIndex].elements[elementIndex] = AnyConversationMessageCellDescription(newCellDescription)
+                    sections[sectionIndex]
+                        .elements[elementIndex] = AnyConversationMessageCellDescription(newCellDescription)
                 }
 
                 return (cellDescription, replace)
@@ -713,45 +714,38 @@ extension ConversationTableViewDataSource {
         in sections: [Section]
     ) -> Bool {
         guard messages.indices.contains(previousIndex), messages.indices.contains(currentIndex) else {
-            print("false 0"); return false
+            return false
         }
 
         let previousMessage = messages[previousIndex]
         let currentMessage = messages[currentIndex]
 
-        // TODO: clean up print
-        print(
-            "foijwe isStatus of prev \(previousMessage.text ?? "?") redundant to curr \(currentMessage.text ?? "?") ", terminator: ""
-        )
-
         // the message is from a different user
         if previousMessage.senderUser?.remoteIdentifier != currentMessage.senderUser?.remoteIdentifier {
-            print("false 1"); return false
+            return false
         }
 
         // always show the countdown
         if previousMessage.isEphemeral == true {
-            print("false 2"); return false
+            return false
         }
 
         // current message shows sender without stacking
         if sections[currentIndex].elements.last?.instance is ConversationSenderMessageCellDescription {
-            print("false 3")
-            return false
-        }
-        // time divider could be the first and sender the second
-        if sections[currentIndex].elements.dropLast().last?.instance is ConversationSenderMessageCellDescription {
-            print("false 4")
-            return false
-        }
-        // current message shows sender with stacking
-        if let stack = sections[currentIndex].elements.last?.instance as? StackViewCellDescription,
-           stack.cellDescriptions.first?.instance is ConversationSenderMessageCellDescription {
-            print("false 5")
             return false
         }
 
-        print("\(previousMessage.deliveryState == currentMessage.deliveryState) 5");
+        // time divider could be the first and sender the second
+        if sections[currentIndex].elements.dropLast().last?.instance is ConversationSenderMessageCellDescription {
+            return false
+        }
+
+        // current message shows sender with stacking
+        if let stack = sections[currentIndex].elements.last?.instance as? StackViewCellDescription,
+           stack.cellDescriptions.first?.instance is ConversationSenderMessageCellDescription {
+            return false
+        }
+
         return previousMessage.deliveryState == currentMessage.deliveryState
     }
 
