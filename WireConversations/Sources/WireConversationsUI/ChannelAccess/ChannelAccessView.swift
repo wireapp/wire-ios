@@ -16,85 +16,167 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
+import WireDesign
+import WireConversationsImplementation
+import WireConversationsAPI
 
-package struct ChannelAccessView: View {
+public struct ChannelAccessView: View {
     
     @ObservedObject var viewModel: ChannelAccessViewModel
+    @Environment(\.dismiss) private var dismiss
     
-    package init(viewModel: ChannelAccessViewModel) {
+    public init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
     }
-
-    var body: some View {
+    
+    public var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Access")) {
-                    accessOption(title: "Public", level: .public)
-                        .disabled(viewModel.isPublicDisabled)
-                        .opacity(viewModel.isPublicDisabled ? 0.4 : 1.0)
-
-                    accessOption(title: "Private", level: .private)
-                }
-
+                Section(
+                    footer: Text(
+                        L10n.Localizable.ChannelAccessLevel.accessFooter
+                    )
+                    .font(.footnote)
+                    .foregroundColor(ColorTheme.Base.secondaryText.color)
+                ) {
+                    accessOption(
+                        title: L10n.Localizable.ChannelAccessLevel.public,
+                        level: .public,
+                        disabled: viewModel.isPublicDisabled
+                    )
+                    
+                    accessOption(
+                        title: L10n.Localizable.ChannelAccessLevel.private,
+                        level: .private
+                    )
+                }.background(.clear)
+                
                 if viewModel.showParticipantPermissions {
-                    Section(header: Text("Add Participants")) {
-                        permissionOption(title: "Admins", permission: .admins)
-                        permissionOption(title: "Admins and members", permission: .adminsAndMembers)
-                    }
-
-                    Text("Select who can add participants to a private channel")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
+                    Section(
+                        header: Text(L10n.Localizable.ChannelAccessLevel.participantsHeader),
+                        footer: Text(L10n.Localizable.ChannelAccessLevel.participantsFooter)
+                            .font(.footnote)
+                            .foregroundColor(
+                                ColorTheme.Base.secondaryText.color
+                            )
+                    ) {
+                        permissionOption(
+                            title: L10n.Localizable.ChannelAccessLevel.admins,
+                            permission: .admins
+                        )
+                        permissionOption(
+                            title: L10n.Localizable.ChannelAccessLevel.adminsAndMembers,
+                            permission: .adminsAndMembers
+                        )
+                    }.background(.clear)
                 }
             }
-            .navigationTitle("Access")
+            .background(ColorTheme.Backgrounds.background.color)
             .alert(isPresented: $viewModel.showPrivateAccessConfirmation) {
                 Alert(
-                    title: Text("Channel access"),
-                    message: Text("""
-Changing the channel access to private will have the following implications:
-
-• Team members can not join the channel themselves anymore.
-• New members can only be added by channel admins or other members, depending on the “Add participants” setting.
-• The channel access can not be turned back to public anymore.
-
-Do you want to change channel access to private?
-"""),
-                    primaryButton: .default(Text("Change")) {
+                    title: Text(
+                        L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert
+                            .title),
+                    message: Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert
+                        .message),
+                    primaryButton: .default(Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert
+                        .Button.change)) {
                         viewModel.confirmPrivateAccessChange()
                     },
-                    secondaryButton: .cancel()
+                    secondaryButton:
+                            .cancel(Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert
+                        .Button.cancel))
                 )
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
     }
-
-    private func accessOption(title: String, level: ChannelAccessLevel) -> some View {
+    
+    private func accessOption(title: String, level: ChannelAccessLevel, disabled: Bool = false) -> some View {
         HStack {
             Text(title)
+                .foregroundStyle(
+                    disabled ? ColorTheme.Base.secondaryText.color : ColorTheme.Backgrounds.onSurface.color
+                )
+                .font(
+                    viewModel.settings.accessLevel == level ? .headline : .body
+                )
             Spacer()
             if viewModel.settings.accessLevel == level {
-                Image(systemName: "checkmark")
+                Checkmark(accentColor: viewModel.accentColor)
             }
         }
         .contentShape(Rectangle())
+        .frame(height: 40)
         .onTapGesture {
             viewModel.selectAccessLevel(level)
         }
+        .disabled(disabled)
     }
-
+    
     private func permissionOption(title: String, permission: ParticipantPermission) -> some View {
         HStack {
             Text(title)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .font(
+                    viewModel.settings.participantPermission == permission ? .headline : .body
+                )
             Spacer()
             if viewModel.settings.participantPermission == permission {
-                Image(systemName: "checkmark")
+                Checkmark(accentColor: viewModel.accentColor)
             }
         }
         .contentShape(Rectangle())
+        .frame(height: 40)
         .onTapGesture {
             viewModel.selectParticipantPermission(permission)
         }
+    }
+    
+    struct Checkmark: View {
+        
+        let accentColor: Color
+        
+        var body: some View {
+            Image("Check", bundle: .resources)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 22)
+                .foregroundColor(accentColor)
+        }
+    }
+}
+
+
+struct ChannelAccessView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            NavigationStack {
+                ChannelAccessView(viewModel: ChannelAccessViewModel(
+                    accentColor: .green,
+                    useCase: ChannelAccessUseCase(settings: .init(
+                        isInitiallyPrivate: false,
+                        accessLevel: .public,
+                        participantPermission: .admins
+                    ))
+                ))
+            }
+            .previewDisplayName("Initially Public")
+
+            NavigationStack {
+                ChannelAccessView(viewModel: ChannelAccessViewModel(
+                    accentColor: .blue,
+                    useCase: ChannelAccessUseCase(settings: .init(
+                        isInitiallyPrivate: true,
+                        accessLevel: .private,
+                        participantPermission: .adminsAndMembers
+                    ))
+                ))
+            }
+            .previewDisplayName("Initially Private")
+        }
+
     }
 }

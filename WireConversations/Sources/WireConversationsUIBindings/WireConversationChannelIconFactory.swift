@@ -18,7 +18,8 @@
 
 public import SwiftUI
 import WireConversationsImplementation
-public import WireConversationsUI
+public import WireConversationsAPI
+import WireConversationsUI
 
 public final class WireConversationChannelIconFactory {
 
@@ -34,10 +35,12 @@ public final class WireConversationChannelIconFactory {
 
 public class ChannelViewFactory {
     @MainActor
-    public static func makeChannelAccessView(settings: ChannelAccessSettings) -> some View {
-        let useCase = ChannelAccessUseCaseImpl(settings: settings)
-        let viewModel = ChannelAccessViewModel(useCase: useCase)
+    public static func makeChannelAccessView(settings: ChannelAccessSettings, accentColor: Color) -> UIViewController {
+        let useCase = ChannelAccessUseCase(settings: settings)
+        let viewModel = ChannelAccessViewModel(
+            accentColor: accentColor, useCase: useCase
+        )
 
-        return ChannelAccessView(viewModel: viewModel)
+        return ChannelAccessHostingController(viewModel: viewModel)
     }
 }

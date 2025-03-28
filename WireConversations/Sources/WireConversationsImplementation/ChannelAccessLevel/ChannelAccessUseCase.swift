@@ -16,15 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 
-public protocol ChannelAccessUseCase {
+import Foundation
+public import WireConversationsAPI
+
+public protocol ChannelAccessUseCaseProtocol {
     var settings: ChannelAccessSettings { get }
     func updateAccessLevel(to level: ChannelAccessLevel)
     func updateParticipantPermission(to permission: ParticipantPermission)
 }
 
-public class ChannelAccessUseCaseImpl: ChannelAccessUseCase {
+public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
     
     public var settings: ChannelAccessSettings
 

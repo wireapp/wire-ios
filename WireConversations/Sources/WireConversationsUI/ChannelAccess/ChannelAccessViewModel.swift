@@ -16,21 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import SwiftUI
+public import WireConversationsImplementation
+import WireConversationsAPI
 
 public class ChannelAccessViewModel: ObservableObject {
+    
     @Published var settings: ChannelAccessSettings
     @Published var showPrivateAccessConfirmation = false
 
-    private let useCase: any ChannelAccessUseCase
+    public var accentColor: Color
+    
+    private let useCase: any ChannelAccessUseCaseProtocol
 
-    public init(useCase: any ChannelAccessUseCase) {
+    public init(accentColor: Color, useCase: any ChannelAccessUseCaseProtocol) {
         self.useCase = useCase
         self.settings = useCase.settings
+        self.accentColor = accentColor
     }
 
     var isPublicDisabled: Bool {
-        settings.isInitiallyPrivate
+        settings.accessLevel == .private
     }
 
     var showParticipantPermissions: Bool {

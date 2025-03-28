@@ -57,6 +57,7 @@ let package = Package(
             dependencies: [
                 "WireConversationsAPI",
                 "WireConversationsResources",
+                "WireConversationsImplementation",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireFoundation", package: "WireFoundation")
             ],

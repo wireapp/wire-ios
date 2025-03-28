@@ -22,8 +22,8 @@ import WireDesign
 import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
-import WireConversationsUI
 import WireConversationsUIBindings
+import WireConversationsAPI
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
@@ -552,14 +552,17 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let settings = ChannelAccessSettings(
             isInitiallyPrivate: false,
             accessLevel: .public,
-            participantPermission: .admins
+            participantPermission: .adminsAndMembers
         )
 
-        let accessView = ChannelViewFactory.makeChannelAccessView(settings: settings)
-        let hostingController = UIHostingController(rootView: accessView)
+        let accentColor = (ZMUserSession.shared()?.selfUser.accentColor ?? UIColor.accent()).color
         
-        hostingController.modalPresentationStyle = .formSheet
-        present(hostingController, animated: true, completion: nil)
+        let accessView = ChannelViewFactory.makeChannelAccessView(
+            settings: settings,
+            accentColor: accentColor
+        )
+        
+        navigationController?.pushViewController(accessView, animated: animated)
     }
 }
 
