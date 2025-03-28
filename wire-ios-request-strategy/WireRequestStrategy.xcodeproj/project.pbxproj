@@ -256,6 +256,7 @@
 		BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */; };
 		C93B11482D95621A000F6573 /* Payload+UpdateConversationPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93B11472D95621A000F6573 /* Payload+UpdateConversationPermission.swift */; };
 		CB5120532C6FD69F000C8FEC /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */; };
+		CB5A461D2D940BB700D469F1 /* Payload+ConversationGroupType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5A461C2D940BA600D469F1 /* Payload+ConversationGroupType.swift */; };
 		CB7979052C73663B006FBA58 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEA58F192B71179D006DEE32 /* WireRequestStrategySupport.framework */; };
 		CBF2BD5F2C5BD468002BCBDD /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF2BD5E2C5BD468002BCBDD /* TestSetup.swift */; };
 		D33B57B12A56BDCA0078A4F9 /* FederationTerminationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33B57B02A56BDCA0078A4F9 /* FederationTerminationManager.swift */; };
@@ -764,6 +765,7 @@
 		BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageV2DownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		C93B11472D95621A000F6573 /* Payload+UpdateConversationPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationPermission.swift"; sourceTree = "<group>"; };
 		CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB5A461C2D940BA600D469F1 /* Payload+ConversationGroupType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationGroupType.swift"; sourceTree = "<group>"; };
 		CBF2BD5E2C5BD468002BCBDD /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		D33B57B02A56BDCA0078A4F9 /* FederationTerminationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationTerminationManager.swift; sourceTree = "<group>"; };
 		D3DA067B2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationTerminationManagerTest.swift; sourceTree = "<group>"; };
@@ -1654,6 +1656,7 @@
 		E629E3BA2B47049B00D526AD /* Events */ = {
 			isa = PBXGroup;
 			children = (
+				CB5A461C2D940BA600D469F1 /* Payload+ConversationGroupType.swift */,
 				E629E3BB2B4704B200D526AD /* Payload+ConversationEvent.swift */,
 				E629E3BF2B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift */,
 				E629E3BD2B4704E900D526AD /* Payload+UpdateConverationMemberLeave.swift */,
@@ -2479,6 +2482,7 @@
 				161E055026655E4500DADC3D /* UserProfileRequestStrategy.swift in Sources */,
 				0671976E2AE951F400D96598 /* AcmeAPI.swift in Sources */,
 				F18401D42073BE0800E9F4CC /* MessageExpirationTimer.swift in Sources */,
+				CB5A461D2D940BB700D469F1 /* Payload+ConversationGroupType.swift in Sources */,
 				1622946B221C18BE00A98679 /* AssetV3UploadRequestStrategy.swift in Sources */,
 				1662ADB322B0E8B300D84071 /* VerifyLegalHoldRequestStrategy.swift in Sources */,
 				166901EC1D7081C7000FE4AF /* ZMTimedSingleRequestSync.m in Sources */,

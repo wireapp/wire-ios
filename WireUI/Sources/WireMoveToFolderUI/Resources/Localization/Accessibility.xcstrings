@@ -113,8 +113,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder overview"
+            "state" : "translated",
+            "value" : "关闭文件夹概览"
           }
         },
         "zh-Hant" : {

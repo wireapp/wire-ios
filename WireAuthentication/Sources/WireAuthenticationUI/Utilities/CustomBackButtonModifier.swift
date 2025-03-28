@@ -16,23 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-import WireConversationsImplementation
-import WireConversationsUI
+import SwiftUI
 
-public final class WireConversationChannelIconFactory {
+struct CustomBackButtonModifier: ViewModifier {
+    @Environment(\.dismiss) private var dismiss
 
-    private let mapper = ConversationIDToChannelIconMapper()
-
-    public init() {}
-
-    @MainActor
-    public func create(conversationID: String) -> some View {
-        WireConversationChannelIcon(asset: mapper.palette(for: conversationID))
+    func body(content: Content) -> some View {
+        content
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }, label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 17, weight: .medium))
+                    })
+                }
+            }
     }
+}
 
-    @MainActor
-    public func createUIKit(conversationID: String) -> UIImageView {
-        UIImageView(image: mapper.palette(for: conversationID).uiKitImage)
+extension View {
+    func customBackButton() -> some View {
+        modifier(CustomBackButtonModifier())
     }
 }

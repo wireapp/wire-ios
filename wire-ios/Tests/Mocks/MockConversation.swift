@@ -42,6 +42,8 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var conversationType: ZMConversationType = .group
 
+    var groupType: ConversationGroupType?
+
     var teamRemoteIdentifier: UUID?
 
     var mockLocalParticipantsContain: Bool = false

@@ -155,8 +155,22 @@ extension WireAPI.Conversation {
             accessRoles: accessRoles?.map(\.rawValue),
             legacyAccessRole: legacyAccessRole?.toDomainModel(),
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime,
+            groupType: groupType?.toDomainModel()
         )
+    }
+
+}
+
+extension WireAPI.ConversationGroupType {
+
+    func toDomainModel() -> WireDomain.Conversation.GroupType {
+        switch self {
+        case .group:
+            .group
+        case .channel:
+            .channel
+        }
     }
 
 }
