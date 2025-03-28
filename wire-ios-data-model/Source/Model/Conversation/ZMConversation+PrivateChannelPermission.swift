@@ -16,23 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-import WireConversationsImplementation
-import WireConversationsUI
+import Foundation
 
-public final class WireConversationChannelIconFactory {
+extension ZMConversation {
 
-    private let mapper = ConversationIDToChannelIconMapper()
+    /// The underlying string value of the private channel permission.
 
-    public init() {}
+    @NSManaged private var privateChannelPermissionValue: String?
 
-    @MainActor
-    public func create(conversationID: String) -> some View {
-        WireConversationChannelIcon(asset: mapper.palette(for: conversationID))
-    }
-
-    @MainActor
-    public func createUIKit(conversationID: String) -> UIImageView {
-        UIImageView(image: mapper.palette(for: conversationID).uiKitImage)
-    }
 }
