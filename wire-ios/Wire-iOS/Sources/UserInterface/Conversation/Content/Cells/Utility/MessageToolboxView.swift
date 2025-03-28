@@ -60,7 +60,7 @@ final class MessageToolboxView: UIView {
     /// The timer for ephemeral messages.
     private var timestampTimer: Timer?
 
-    private let contentStack: UIStackView = {
+    private let contentStack = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = 3
@@ -297,6 +297,10 @@ final class MessageToolboxView: UIView {
         }
 
         reloadContent(animated: animated)
+    }
+
+    func setAllContentHidden() {
+        contentStack.arrangedSubviews.forEach { $0.isHidden = true }
     }
 
     private func hideAndCleanStatusLabel() {

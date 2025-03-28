@@ -623,16 +623,20 @@ extension ConversationTableViewDataSource {
                 var previousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance
             else {
                 // no previous message, reset margins
-                currentSectionLastElement.topMargin = 0
-                currentSectionLastElement.bottomMargin = 0
+                currentSectionLastElement.topMargin = 8
+                currentSectionLastElement.bottomMargin = 8
                 continue
             }
 
             // filter redundant status cells
             let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
             let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
-            if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus) {
-                previousStatus?.removeFrom(&sections)
+            if
+                isMessageStatus(of: previousSectionIndex, redundantTo: currentSectionIndex, in: sections),
+                messages.indices.contains(previousSectionIndex) {
+                let previousMessage = messages[previousSectionIndex]
+                let new = ConversationMessageToolboxCellDescription(message: previousMessage, isRedundant: true)
+                previousStatus?.replace(new, &sections)
                 if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
                     previousSectionFirstElement = newPreviousSectionFirstElement
                 }
@@ -658,7 +662,7 @@ extension ConversationTableViewDataSource {
         in sections: [Section]
     ) -> (
         cellDescription: ConversationMessageToolboxCellDescription,
-        removeFrom: (_ sections: inout [Section]) -> Void
+        replace: (_ cellDescription: ConversationMessageToolboxCellDescription, _ sections: inout [Section]) -> Void
     )? {
 
         for elementIndex in sections[sectionIndex].elements.indices {
@@ -669,26 +673,34 @@ extension ConversationTableViewDataSource {
                     let cellDescription = stack.cellDescriptions[cellDescriptionIndex].instance
                     if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
-                        func remove(_ sections: inout [Section]) {
+                        func replace(
+                            by newCellDescription: ConversationMessageToolboxCellDescription,
+                            in sections: inout [Section]
+                        ) {
                             var cellDescriptions = stack.cellDescriptions
-                            cellDescriptions.remove(at: cellDescriptionIndex)
+                            cellDescriptions[cellDescriptionIndex] =
+                                AnyConversationMessageCellDescription(newCellDescription)
                             sections[sectionIndex]
                                 .elements[elementIndex] = AnyConversationMessageCellDescription(
                                     StackViewCellDescription(cellDescriptions: cellDescriptions)
                                 )
                         }
 
-                        return (cellDescription, remove)
+                        return (cellDescription, replace)
                     }
                 }
 
             } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
-                func remove(_ sections: inout [Section]) {
-                    sections[sectionIndex].elements.remove(at: elementIndex)
+                func replace(
+                    by newCellDescription: ConversationMessageToolboxCellDescription,
+                    in sections: inout [Section]
+                ) {
+                    sections[sectionIndex]
+                        .elements[elementIndex] = AnyConversationMessageCellDescription(newCellDescription)
                 }
 
-                return (cellDescription, remove)
+                return (cellDescription, replace)
             }
 
         }
@@ -696,18 +708,45 @@ extension ConversationTableViewDataSource {
         return nil
     }
 
-    private func isStatus(
-        _ previousCellDescription: ConversationMessageToolboxCellDescription?,
-        redundantTo currentCellDescription: ConversationMessageToolboxCellDescription?
+    private func isMessageStatus(
+        of previousIndex: Int,
+        redundantTo currentIndex: Int,
+        in sections: [Section]
     ) -> Bool {
-        guard let previousCellDescription, let currentCellDescription else { return false }
-
-        // always show the countdown
-        if previousCellDescription.message?.isEphemeral == true {
+        guard messages.indices.contains(previousIndex), messages.indices.contains(currentIndex) else {
             return false
         }
 
-        return previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState
+        let previousMessage = messages[previousIndex]
+        let currentMessage = messages[currentIndex]
+
+        // the message is from a different user
+        if previousMessage.senderUser?.remoteIdentifier != currentMessage.senderUser?.remoteIdentifier {
+            return false
+        }
+
+        // always show the countdown
+        if previousMessage.isEphemeral == true {
+            return false
+        }
+
+        // current message shows sender without stacking
+        if sections[currentIndex].elements.last?.instance is ConversationSenderMessageCellDescription {
+            return false
+        }
+
+        // time divider could be the first and sender the second
+        if sections[currentIndex].elements.dropLast().last?.instance is ConversationSenderMessageCellDescription {
+            return false
+        }
+
+        // current message shows sender with stacking
+        if let stack = sections[currentIndex].elements.last?.instance as? StackViewCellDescription,
+           stack.cellDescriptions.first?.instance is ConversationSenderMessageCellDescription {
+            return false
+        }
+
+        return previousMessage.deliveryState == currentMessage.deliveryState
     }
 
     private func collapseSpaceBefore(
@@ -743,4 +782,11 @@ extension Date {
         return components == otherComponents
     }
 
+}
+
+extension ZMConversationMessage {
+
+    var text: String? {
+        textMessageData?.messageText
+    }
 }

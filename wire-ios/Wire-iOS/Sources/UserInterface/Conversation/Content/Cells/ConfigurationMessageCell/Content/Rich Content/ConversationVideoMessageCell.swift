@@ -141,11 +141,6 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     typealias View = ConversationVideoMessageCell
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { false }
-
-    var topMargin: CGFloat = -6
-    var bottomMargin: CGFloat = -6
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

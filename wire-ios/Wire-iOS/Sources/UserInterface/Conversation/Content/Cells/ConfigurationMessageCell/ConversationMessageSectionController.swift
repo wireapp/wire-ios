@@ -393,7 +393,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         )
 
         if isToolboxVisible(in: context) {
-            let description = ConversationMessageToolboxCellDescription(message: message)
+            let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
@@ -411,38 +411,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
-        self.cellDescriptions = Self.combineByStacking(cellDescriptions)
-    }
-
-    private static func combineByStacking(
-        _ cellDescriptions: [AnyConversationMessageCellDescription]
-    ) -> [AnyConversationMessageCellDescription] {
-        var result = [AnyConversationMessageCellDescription]()
-        var currentCombination = [AnyConversationMessageCellDescription]()
-
-        for cellDescription in cellDescriptions {
-            if cellDescription.canBeCombinedWithOtherCells {
-                currentCombination.append(cellDescription)
-            } else {
-                if currentCombination.count == 1 { // don't use the stack for single items
-                    result.append(currentCombination[0])
-                } else if !currentCombination.isEmpty {
-                    let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-                    result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
-                }
-                currentCombination.removeAll()
-                result.append(cellDescription)
-            }
-        }
-
-        if currentCombination.count == 1 { // don't use the stack for single items
-            result.append(currentCombination[0])
-        } else if !currentCombination.isEmpty {
-            let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-            result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
-        }
-
-        return result
+        self.cellDescriptions = cellDescriptions
     }
 
     private func updateDelegates() {
@@ -464,6 +433,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
+        return true
+
+        // TODO: delete integrate into ConversationTableViewDataSource.isMessageStatus
         guard !message.isSystem || message.isMissedCall else {
             return false
         }

@@ -63,9 +63,6 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

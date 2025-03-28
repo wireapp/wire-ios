@@ -136,9 +136,6 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 
