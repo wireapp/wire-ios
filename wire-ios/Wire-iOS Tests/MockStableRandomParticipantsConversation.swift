@@ -21,7 +21,7 @@ import XCTest
 @testable import Wire
 
 class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider,
-    HasQualifiedID {
+    HasQualifiedID, HasConversationGroupType {
 
     var stableRandomParticipants: [UserType] = []
 

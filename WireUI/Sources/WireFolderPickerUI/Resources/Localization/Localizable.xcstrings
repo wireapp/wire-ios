@@ -114,8 +114,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
+            "state" : "translated",
+            "value" : "将您的对话添加到文件夹以保持井然有序。"
           }
         },
         "zh-Hant" : {
@@ -364,8 +364,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
+            "state" : "translated",
+            "value" : "文件夹"
           }
         },
         "zh-Hant" : {
