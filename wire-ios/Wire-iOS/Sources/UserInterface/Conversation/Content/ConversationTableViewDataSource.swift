@@ -631,7 +631,7 @@ extension ConversationTableViewDataSource {
             // filter redundant status cells
             let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
             let currentStatus = statusCellDescription(for: currentSectionIndex, in: sections)?.cellDescription
-            if isStatus(previousStatus?.cellDescription, redundantTo: currentStatus), let message = previousStatus?.cellDescription.message {
+            if isStatus(of: previousStatus?.cellDescription, redundantTo: currentStatus), let message = previousStatus?.cellDescription.message {
                 let new = ConversationMessageToolboxCellDescription(message: message, isRedundant: true)
                 previousStatus?.replace(new, &sections)
                 if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
@@ -704,16 +704,30 @@ extension ConversationTableViewDataSource {
     }
 
     private func isStatus(
-        _ previousCellDescription: ConversationMessageToolboxCellDescription?,
+        of previousCellDescription: ConversationMessageToolboxCellDescription?,
         redundantTo currentCellDescription: ConversationMessageToolboxCellDescription?
     ) -> Bool {
-        guard let previousCellDescription, let currentCellDescription else { return false }
+        // TODO: clean up print
+        print(
+            "foijwe isStatus of prev \(previousCellDescription?.message?.text ?? "?") redundant to curr \(currentCellDescription?.message?.text ?? "?") ", terminator: ""
+        )
+        guard let previousCellDescription, let currentCellDescription else { print("false 0"); return false }
+        guard
+            let previousMessage = previousCellDescription.message,
+            let currentMessage = currentCellDescription.message
+        else { print("false 1"); return false }
+
+        if previousMessage.senderUser?.remoteIdentifier != currentMessage.senderUser?.remoteIdentifier {
+            print("false 2"); return false
+        }
 
         // always show the countdown
         if previousCellDescription.message?.isEphemeral == true {
-            return false
+            print("false 3"); return false
         }
 
+        print("\(previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState) 4");
+        return false
         return previousCellDescription.configuration.deliveryState == currentCellDescription.configuration.deliveryState
     }
 

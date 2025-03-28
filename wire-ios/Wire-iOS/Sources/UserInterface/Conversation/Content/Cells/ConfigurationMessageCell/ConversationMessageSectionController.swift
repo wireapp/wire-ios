@@ -464,6 +464,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
+return true
+
+        // TODO: delete
         guard !message.isSystem || message.isMissedCall else {
             return false
         }
