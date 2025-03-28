@@ -89,8 +89,8 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 4)
-        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 4)
+        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
+        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(
             featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
             Scaffolding.featureConfigs.count
@@ -217,8 +217,8 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(featureConfigsAPI.getFeatureConfigs_Invocations.count, 1)
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 4)
-        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 4)
+        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
+        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(
             featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
             Scaffolding.featureConfigs.count
@@ -296,6 +296,11 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 verificationExpiration: 9_223_372_036_854_776_000,
                 crlProxy: "https://example.com",
                 useProxyOnMobile: true
+            )),
+            .channels(.init(
+                status: .enabled,
+                allowedToCreateChannels: .admins,
+                allowedToOpenChannels: .everyone
             ))
         ]
 

@@ -185,7 +185,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
         case readReceiptMode = "receipt_mode"
         case teamID = "team"
         case type
-        case conversationGroupType = "group_conv_type"
+        case groupType = "group_conv_type"
     }
 
     var access: Set<ConversationAccessMode>?
@@ -206,7 +206,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var readReceiptMode: Int?
     var teamID: UUID?
     var type: ConversationType?
-    var conversationGroupType: ConversationGroupType // Introduced in v8
+    var groupType: ConversationGroupType? // Introduced in v8
 
     func toAPIModel() -> Conversation {
         Conversation(
@@ -228,7 +228,8 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: nil,
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime?.date
+            lastEventTime: lastEventTime?.date,
+            groupType: groupType
         )
     }
 }

@@ -1320,8 +1320,8 @@
 "self.settings.privacy_security.disable_link_previews.title" = "製作連結預覽";
 "self.settings.privacy_security.disable_link_previews.footer" = "其他人的連結預覽可能會顯示出來";
 
-"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "設備";
 

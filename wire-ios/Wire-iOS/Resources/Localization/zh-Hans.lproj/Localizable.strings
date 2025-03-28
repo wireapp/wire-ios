@@ -135,8 +135,8 @@
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "收藏夾";
 "conversation_list.filter.groups.title" = "群组";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter.folders.title" = "Folders";
+"conversation_list.filter.oneOnOneConversations.title" = "一对一对话";
+"conversation_list.filter.folders.title" = "文件夹";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "移除";
 
@@ -642,11 +642,11 @@
 
 "content.message.delete_ellipsis" = "删除...";
 
-"content.collapsed.file.title" = "You sent a file";
-"content.collapsed.image.title" = "You sent a picture";
-"content.collapsed.video.title" = "You sent a video";
-"content.collapsed.audio.title" = "You sent an audio message";
-"content.collapsed.location.title" = "You sent your location";
+"content.collapsed.file.title" = "您发送了一个文件";
+"content.collapsed.image.title" = "您发送了一张图片";
+"content.collapsed.video.title" = "您发送了一个视频";
+"content.collapsed.audio.title" = "您发送了一条语音消息";
+"content.collapsed.location.title" = "您发送了您的位置";
 
 "content.message.like" = "赞";
 "content.message.unlike" = "取消赞";
@@ -658,7 +658,7 @@
 "content.message.download" = "下载";
 "content.message.details" = "详细信息";
 "content.message.reactions" = "Reactions";
-"content.message.collapse" = "Collapse";
+"content.message.collapse" = "折叠";
 
 // Reply
 "content.message.reply" = "回复";
@@ -1320,8 +1320,8 @@
 "self.settings.privacy_security.disable_link_previews.title" = "创建链接预览";
 "self.settings.privacy_security.disable_link_previews.footer" = "仍会为其他人的链接显示预览";
 
-"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
+"self.settings.privacy_security.collapse_own_messages.title" = "折叠我的消息";
+"self.settings.privacy_security.collapse_own_messages.footer" = "如果开启此项，您所有的消息均被折叠到一行。";
 
 "self.settings.privacy_analytics_menu.devices.title" = "设备";
 

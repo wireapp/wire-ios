@@ -22,6 +22,7 @@ let package = Package(
         .package(name: "WireUI", path: "../WireUI"),
         .package(path: "../WirePlugins"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
+        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0")
     ],
     targets: [
         .target(
@@ -69,7 +70,8 @@ let package = Package(
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
-                "WireLogging"
+                "WireLogging",
+                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect")
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
