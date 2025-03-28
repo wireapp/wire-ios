@@ -103,7 +103,15 @@ package struct LoginViaEmailView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: .constant(viewModel.email)
         )
+<<<<<<< HEAD
         .disabled(true)
+=======
+        .autocapitalization(.none)
+        .autocorrectionDisabled()
+        .textContentType(.username)
+        .keyboardType(.emailAddress)
+        .disabled(viewModel.isEmailPrefilled)
+>>>>>>> 1252b523ad (fix: disable autocapitalization on email fields - WPB-16769 (#2769))
     }
 
     @ViewBuilder private var passwordField: some View {
@@ -182,6 +190,45 @@ package struct LoginViaEmailView: View {
         }
     }
 
+<<<<<<< HEAD
+=======
+    @ViewBuilder private var proxyCredentials: some View {
+        Spacer()
+        VStack(spacing: 14) {
+            Text(L10n.ProxyCredentials.title)
+                .multilineTextAlignment(.center)
+                .font(.textStyle(.h2))
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(L10n.ProxyCredentials.message(viewModel.proxyServer))
+                .multilineTextAlignment(.center)
+                .wireTextStyle(.body1)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+
+            LabeledTextField(
+                placeholder: "jane@example.com",
+                title: L10n.ProxyCredentials.InputEmail.title,
+                string: $viewModel.proxyUsername
+            )
+            .autocapitalization(.none)
+            .autocorrectionDisabled()
+            .textContentType(.username)
+            .keyboardType(.emailAddress)
+
+            PasswordField(
+                password: $viewModel.proxyPassword,
+                placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
+                title: L10n.CloudUserLogin.InputPassword.title,
+                passwordRules: "",
+                isValidPassword: viewModel.isPasswordValid
+            )
+            Spacer()
+        }
+    }
+
+>>>>>>> 1252b523ad (fix: disable autocapitalization on email fields - WPB-16769 (#2769))
     enum Destination: Hashable {
 
         case verifyLogin(email: String, password: String)
