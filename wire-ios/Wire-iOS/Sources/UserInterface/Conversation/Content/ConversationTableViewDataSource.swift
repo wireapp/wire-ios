@@ -154,12 +154,6 @@ final class ConversationTableViewDataSource: NSObject {
             if description.instance is ConversationMessageToolboxCellDescription {
                 continue
             }
-            // same workaround for stacked cells
-            if
-                let stack = description.instance as? StackViewCellDescription,
-                stack.cellDescriptions.contains(where: { $0.instance is ConversationMessageToolboxCellDescription }) {
-                continue
-            }
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
                 cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
                 description.configureCell(cell, animated: true)
@@ -668,29 +662,7 @@ extension ConversationTableViewDataSource {
         for elementIndex in sections[sectionIndex].elements.indices {
             let cellDescription = sections[sectionIndex].elements[elementIndex].instance
 
-            if let stack = cellDescription as? StackViewCellDescription {
-                for cellDescriptionIndex in stack.cellDescriptions.indices {
-                    let cellDescription = stack.cellDescriptions[cellDescriptionIndex].instance
-                    if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
-
-                        func replace(
-                            by newCellDescription: ConversationMessageToolboxCellDescription,
-                            in sections: inout [Section]
-                        ) {
-                            var cellDescriptions = stack.cellDescriptions
-                            cellDescriptions[cellDescriptionIndex] =
-                                AnyConversationMessageCellDescription(newCellDescription)
-                            sections[sectionIndex]
-                                .elements[elementIndex] = AnyConversationMessageCellDescription(
-                                    StackViewCellDescription(cellDescriptions: cellDescriptions)
-                                )
-                        }
-
-                        return (cellDescription, replace)
-                    }
-                }
-
-            } else if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
+            if let cellDescription = cellDescription as? ConversationMessageToolboxCellDescription {
 
                 func replace(
                     by newCellDescription: ConversationMessageToolboxCellDescription,
@@ -730,19 +702,13 @@ extension ConversationTableViewDataSource {
             return false
         }
 
-        // current message shows sender without stacking
+        // current message shows sender
         if sections[currentIndex].elements.last?.instance is ConversationSenderMessageCellDescription {
             return false
         }
 
         // time divider could be the first and sender the second
         if sections[currentIndex].elements.dropLast().last?.instance is ConversationSenderMessageCellDescription {
-            return false
-        }
-
-        // current message shows sender with stacking
-        if let stack = sections[currentIndex].elements.last?.instance as? StackViewCellDescription,
-           stack.cellDescriptions.first?.instance is ConversationSenderMessageCellDescription {
             return false
         }
 
@@ -760,12 +726,6 @@ extension ConversationTableViewDataSource {
             cellDescription is ConversationCollapsedMessageCellDescription {
             // no stack cell description and no sender is shown, so collapse the space if needed
             true
-        } else if let firstStacked = (cellDescription as? StackViewCellDescription)?.cellDescriptions.first?.instance {
-            firstStacked is ConversationTextMessageCellDescription ||
-                firstStacked is ConversationFileMessageCellDescription ||
-                firstStacked is ConversationImageMessageCellDescription ||
-                firstStacked is ConversationVideoMessageCellDescription ||
-                firstStacked is ConversationReplyCellDescription
         } else {
             false
         }
