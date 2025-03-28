@@ -16,23 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-import WireConversationsImplementation
-import WireConversationsUI
-
-public final class WireConversationChannelIconFactory {
-
-    private let mapper = ConversationIDToChannelIconMapper()
-
-    public init() {}
-
-    @MainActor
-    public func create(conversationID: String) -> some View {
-        WireConversationChannelIcon(asset: mapper.palette(for: conversationID))
-    }
-
-    @MainActor
-    public func createUIKit(conversationID: String) -> UIImageView {
-        UIImageView(image: mapper.palette(for: conversationID).uiKitImage)
+public extension Payload {
+    enum ConversationGroupType: String, Codable {
+        case group = "group_conversation"
+        case channel
     }
 }
