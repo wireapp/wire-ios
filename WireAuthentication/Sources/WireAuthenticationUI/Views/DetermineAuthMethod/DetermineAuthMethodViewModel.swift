@@ -162,17 +162,26 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             do {
                 let authResult = try await loginViaSSO(code: code, backendInfo: nil)
                 router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authResult))
-            } catch LoginViaSSOUseCaseError.invalidCode {
-                alert = .incorrectSSOCode
-            } catch LoginViaSSOUseCaseError.invalidURL {
-                alert = .invalidSSOLink
-            } catch LoginViaSSOUseCaseError.userCancelled {
-                // No op
-            } catch LoginViaSSOUseCaseError.noDefaultCodeAvailable {
-                // No op
+            } catch let error as LoginViaSSOUseCaseError {
+                switch error {
+                case .invalidCode:
+                    alert = .incorrectSSOCode
+                case .invalidURL:
+                    alert = .invalidSSOLink
+                case .userCancelled:
+                    // no op
+                    break
+                case .noDefaultCodeAvailable:
+                    // no op
+                    break
+                case let .authenticationFailed(samlError):
+                    // TODO: pass error code?
+                    alert = .ssoLoginFailed
+                default:
+                    // TODO: log
+                    router.presentAlert(for: error)
+                }
             } catch {
-                // TODO: handle all sso errors
-                // TODO: show alert .ssoLoginFailed for sso failures
                 router.presentAlert(for: error)
             }
 
@@ -241,16 +250,26 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 backendInfo: backendInfo
             )
             router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authResult))
-        } catch LoginViaSSOUseCaseError.invalidCode {
-            alert = .incorrectSSOCode
-        } catch LoginViaSSOUseCaseError.invalidURL {
-            alert = .invalidSSOLink
-        } catch LoginViaSSOUseCaseError.userCancelled {
-            // What to do here? Pop?
-        } catch LoginViaSSOUseCaseError.noDefaultCodeAvailable {
-            router.presentSheet(
-                RootView.ModalDestination.authFlow(backendInfo: backendInfo)
-            )
+        } catch let error as LoginViaSSOUseCaseError {
+            switch error {
+            case .invalidCode:
+                alert = .incorrectSSOCode
+            case .invalidURL:
+                alert = .invalidSSOLink
+            case .userCancelled:
+                // TODO: What to do here? Pop?
+                break
+            case .noDefaultCodeAvailable:
+                router.presentSheet(
+                    RootView.ModalDestination.authFlow(backendInfo: backendInfo)
+                )
+            case let .authenticationFailed(samlError):
+                // TODO: pass error code?
+                alert = .ssoLoginFailed
+            default:
+                // TODO: log
+                router.presentAlert(for: error)
+            }
         } catch ProxyModeError.proxyCredentialsRequired {
             // Login via email is the only place we ask from proxy credentials.
             router.navigate(
@@ -261,7 +280,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 )
             )
         } catch {
-            // TODO: show alert .ssoLoginFailed for sso failures
             router.presentAlert(for: error)
         }
     }

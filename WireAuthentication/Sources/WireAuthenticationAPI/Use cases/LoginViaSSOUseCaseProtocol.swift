@@ -30,9 +30,32 @@ public enum LoginViaSSOUseCaseError: Error {
     case invalidCode
     case invalidURL
     case userCancelled
-    case authenticationFailed(label: String)
+    case contextNotProvided
+    case invalidContext
+    case authenticationFailed(SAMLError)
+    case invalidCallbackURL
+    case callbackURLValidationFailed
+    case missingCookies
+    case unknown
 
 }
+
+public enum SAMLError: Error, Equatable {
+
+    case serverErrorUnsupportedSAML
+    case badSuccessRedirect
+    case badFailureRedirect
+    case badUsername
+    case badUpstream
+    case serverError
+    case notFound
+    case forbidden
+    case noMatchingAuthReq
+    case insufficientPermissions
+    case unknown
+
+}
+
 
 public protocol LoginViaSSOUseCaseFactory {
 

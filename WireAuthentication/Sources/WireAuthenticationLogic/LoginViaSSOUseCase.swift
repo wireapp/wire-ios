@@ -28,7 +28,6 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
     private let baseURL: URL
     private let ssoCallbackURLScheme: String
     private let userDefaults: UserDefaults
-
     private let context = WebAuthPresentationContext()
 
     package init(
@@ -90,7 +89,10 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
                 name: URLQueryItem.Key.successRedirect,
                 value: successCallback
             ),
-            URLQueryItem(name: URLQueryItem.Key.errorRedirect, value: errorCallback)
+            URLQueryItem(
+                name: URLQueryItem.Key.errorRedirect,
+                value: errorCallback
+            )
         ]
 
         guard let url = components.url else {
@@ -108,9 +110,18 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
         components.path = "/" + URL.Path.success
 
         components.queryItems = [
-            URLQueryItem(name: URLQueryItem.Key.cookie, value: URLQueryItem.Template.cookie),
-            URLQueryItem(name: URLQueryItem.Key.userIdentifier, value: URLQueryItem.Template.userIdentifier),
-            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.uuidString.lowercased())
+            URLQueryItem(
+                name: URLQueryItem.Key.cookie,
+                value: URLQueryItem.Template.cookie
+            ),
+            URLQueryItem(
+                name: URLQueryItem.Key.userIdentifier,
+                value: URLQueryItem.Template.userIdentifier
+            ),
+            URLQueryItem(
+                name: URLQueryItem.Key.validationToken,
+                value: token.uuid.uuidString.lowercased()
+            )
         ]
 
         guard let url = components.url else {
@@ -127,8 +138,14 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
         components.path = "/" + URL.Path.failure
 
         components.queryItems = [
-            URLQueryItem(name: URLQueryItem.Key.errorLabel, value: URLQueryItem.Template.errorLabel),
-            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.uuidString.lowercased())
+            URLQueryItem(
+                name: URLQueryItem.Key.errorLabel,
+                value: URLQueryItem.Template.errorLabel
+            ),
+            URLQueryItem(
+                name: URLQueryItem.Key.validationToken,
+                value: token.uuid.uuidString.lowercased()
+            )
         ]
 
         guard let url = components.url else {
@@ -148,11 +165,22 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             ) { callbackURL, error in
                 if let callbackURL {
                     continuation.resume(with: parseCallbackURL(callbackURL))
+                } else if let error = error as? ASWebAuthenticationSessionError {
+                    switch error.code {
+                    case .canceledLogin:
+                        continuation.resume(throwing: LoginViaSSOUseCaseError.userCancelled)
+                    case .presentationContextNotProvided:
+                        continuation.resume(throwing: LoginViaSSOUseCaseError.contextNotProvided)
+                    case .presentationContextInvalid:
+                        continuation.resume(throwing: LoginViaSSOUseCaseError.invalidContext)
+                    @unknown default:
+                        // TODO: log
+                        continuation.resume(throwing: LoginViaSSOUseCaseError.unknown)
+                    }
                 } else if let error {
                     continuation.resume(throwing: error)
                 } else {
-                    // TODO: check the error
-                    continuation.resume(throwing: LoginViaSSOUseCaseError.userCancelled)
+                    continuation.resume(throwing: LoginViaSSOUseCaseError.unknown)
                 }
             }
 
@@ -170,90 +198,75 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
         guard
             let components = URLComponents(string: url.absoluteString),
-            let host = components.host,
-            let scheme = components.scheme,
-            scheme == ssoCallbackURLScheme
+            components.host == URL.Host.login,
+            components.scheme == ssoCallbackURLScheme
         else {
-            // invalid callback
-            fatalError()
+            return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
         }
 
-        switch host {
-        case URL.Host.login:
-            let pathComponents = url.pathComponents
+        let pathComponents = url.pathComponents
 
-            guard url.pathComponents.count >= 2 else {
-                // invalid callback
-                fatalError()
+        guard url.pathComponents.count >= 2 else {
+            return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+        }
+
+        switch pathComponents[1] {
+        case URL.Path.success:
+            guard validateCallback(with: components) else {
+                return .failure(LoginViaSSOUseCaseError.callbackURLValidationFailed)
             }
 
-            switch pathComponents[1] {
-            case URL.Path.success:
-                // TODO: handle
-                try! validateCallback(with: components)
-
-                guard let cookieString = components.query(for: URLQueryItem.Key.cookie) else {
-                    // invalid callback
-                    fatalError()
-                }
-
-                guard
-                    let rawUserID = components.query(for: URLQueryItem.Key.userIdentifier),
-                    let userID = UUID(uuidString: rawUserID)
-                else {
-                    // invalid callback
-                    fatalError()
-                }
-
-                let cookies = HTTPCookie.cookies(
-                    withResponseHeaderFields: ["Set-Cookie": cookieString],
-                    for: url
-                )
-
-                guard !cookies.isEmpty else {
-                    // invalid cookie
-                    fatalError()
-                }
-
-                return .success((userID, cookies))
-
-            case URL.Path.failure:
-                // TODO: handle
-                try! validateCallback(with: components)
-
-                guard let label = components.query(for: URLQueryItem.Key.errorLabel) else {
-                    // invalid callback
-                    fatalError()
-                }
-
-                // TODO: fix this
-                //throw CompanyLoginError(label: label)
-                fatalError()
-
-            default:
-                // invalid callback
-                fatalError()
+            guard let cookieString = components.query(for: URLQueryItem.Key.cookie) else {
+                return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
             }
+
+            guard
+                let rawUserID = components.query(for: URLQueryItem.Key.userIdentifier),
+                let userID = UUID(uuidString: rawUserID)
+            else {
+                return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+            }
+
+            let cookies = HTTPCookie.cookies(
+                withResponseHeaderFields: ["Set-Cookie": cookieString],
+                for: url
+            )
+
+            guard !cookies.isEmpty else {
+                return .failure(LoginViaSSOUseCaseError.missingCookies)
+            }
+
+            return .success((userID, cookies))
+
+        case URL.Path.failure:
+            guard validateCallback(with: components) else {
+                return .failure(LoginViaSSOUseCaseError.callbackURLValidationFailed)
+            }
+
+            guard let label = components.query(for: URLQueryItem.Key.errorLabel) else {
+                return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+            }
+
+            return .failure(LoginViaSSOUseCaseError.authenticationFailed(SAMLError(label)))
 
         default:
-            // invalid callback
-            fatalError()
+            return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
         }
     }
 
-
     // MARK: Verification
 
-    private func validateCallback(with components: URLComponents) throws {
+    private func validateCallback(with components: URLComponents) -> Bool {
         guard
             let storedToken = SSOLoginVerificationToken.current(in: userDefaults),
             let rawToken = components.query(for: URLQueryItem.Key.validationToken),
             let token = UUID(uuidString: rawToken),
             storedToken.matches(identifier: token)
         else {
-            // validation failed
-            fatalError()
+            return false
         }
+
+        return true
     }
 
     private func flushToken() {
@@ -299,10 +312,62 @@ private final class WebAuthPresentationContext: NSObject, ASWebAuthenticationPre
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         ASPresentationAnchor()
     }
+
 }
 
 private extension URLComponents {
+
     func query(for key: String) -> String? {
         queryItems?.first(where: { $0.name == key })?.value
     }
+
+}
+
+private extension SAMLError {
+
+    init(_ label: String) {
+        switch label {
+        case "server-error-unsupported-saml":
+            self = .serverErrorUnsupportedSAML
+        case "bad-success-redirect":
+            self = .badSuccessRedirect
+        case "bad-failure-redirect":
+            self = .badFailureRedirect
+        case "bad-username":
+            self = .badUsername
+        case "bad-upstream":
+            self = .badUpstream
+        case "server-error":
+            self = .serverError
+        case "not-found":
+            self = .notFound
+        case "forbidden":
+            self = .forbidden
+        case "no-matching-auth-req":
+            self = .noMatchingAuthReq
+        case "insufficient-permissions":
+            self = .insufficientPermissions
+        default:
+            self = .unknown
+        }
+    }
+
+    /// The code to display to the user inside alerts.
+
+    var displayCode: String {
+        switch self {
+        case .unknown: "0"
+        case .serverErrorUnsupportedSAML: "1"
+        case .badSuccessRedirect: "2"
+        case .badFailureRedirect: "3"
+        case .badUsername: "4"
+        case .badUpstream: "5"
+        case .serverError: "6"
+        case .notFound: "7"
+        case .forbidden: "8"
+        case .noMatchingAuthReq: "9"
+        case .insufficientPermissions: "10"
+        }
+    }
+
 }
