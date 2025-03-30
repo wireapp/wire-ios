@@ -26,7 +26,7 @@ package struct RootView: View {
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
     private let cornerRadius: CGFloat = 10
-    
+
     package init(
         viewModel: RootViewModel,
         factory: any Factory

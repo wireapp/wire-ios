@@ -26,7 +26,7 @@ class VerificationCodeViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     let testContainerSize = CGSize(width: 390, height: 400)
-  
+
     override func setUp() {
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)

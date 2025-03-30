@@ -31,7 +31,7 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
     func body(content: Content) -> some View {
         if #available(iOS 18.0, *) {
             if UIDevice.current.userInterfaceIdiom == .pad {
-                
+
                 content
                     .overlay {
                         if let item {
@@ -39,7 +39,7 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
                                 .applyPreferredSize()
                         }
                     }
-                
+
             } else {
                 content.sheet(item: $item, onDismiss: onDismiss) { item in
                     self.content(item)
