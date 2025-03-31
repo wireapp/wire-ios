@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import WireLogging
 
 @MainActor
 package protocol Router {
@@ -38,6 +39,7 @@ package protocol Router {
 package extension Router {
 
     func presentAlert(for error: any Error) {
+        WireLogger.authentication.error("router received unhandled error: \(String(describing: samlError))")
         presentAlert(.general(for: error))
     }
 
