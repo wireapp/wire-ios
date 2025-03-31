@@ -2801,6 +2801,12 @@ internal enum L10n {
           /// Connect with others or create a new group to start collaborating!
           internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.subheadline", fallback: "Connect with others or create a new group to start collaborating!")
         }
+        internal enum Channels {
+          /// Learn more about channels
+          internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.channels.link", fallback: "Learn more about channels")
+          /// Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.channels.subheadline", fallback: "Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.")
+        }
         internal enum Favorite {
           /// How to label conversations as favorites
           internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.link", fallback: "How to label conversations as favorites")

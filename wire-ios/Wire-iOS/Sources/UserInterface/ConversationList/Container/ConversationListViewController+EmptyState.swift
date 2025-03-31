@@ -51,7 +51,18 @@ extension ConversationListViewController {
         case .groups:
             return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString)
         case .channels:
-            return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString) // FIXME: Channels
+            let subheadline = Strings.Channels.subheadline.attributedString
+            let link = NSAttributedString(
+                string: Strings.Channels.link,
+                attributes: [
+                    .link: WireURLs.shared.support // TODO: [WPB-16790] Link to learn more about channels webpage
+                ]
+            )
+
+            return EmptyPlaceholder(
+                subheadline: subheadline + "\n\n" + link,
+                showArrow: false
+            )
         case .oneOnOne:
             let domain = listContentController.listViewModel.userSession?.selfUser.domain ?? ""
             return EmptyPlaceholder(
