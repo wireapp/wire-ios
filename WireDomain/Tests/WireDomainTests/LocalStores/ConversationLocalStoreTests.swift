@@ -556,9 +556,10 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         let conversation = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
-                groupType: .channel,
                 in: context
             )
+
+            conversation.groupType = .channel
 
             XCTAssertEqual(conversation.channelPermission, nil)
 

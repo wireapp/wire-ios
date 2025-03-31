@@ -18,12 +18,13 @@
 
 import WireDataModel
 
-enum ChannelPermission: String, Codable {
-    case admins
-    case everyone
-}
-
 extension Payload {
+
+    enum ChannelPermission: String, Codable {
+        case admins
+        case everyone
+    }
+
     struct UpdateConversationPermission: CodableEventData {
         let addPermission: ChannelPermission
 
