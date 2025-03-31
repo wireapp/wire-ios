@@ -256,7 +256,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             case .invalidURL:
                 alert = .invalidSSOLink
             case .userCancelled:
-                // TODO: What to do here? Pop?
+                // No op
                 break
             case .noDefaultCodeAvailable:
                 router.presentSheet(
