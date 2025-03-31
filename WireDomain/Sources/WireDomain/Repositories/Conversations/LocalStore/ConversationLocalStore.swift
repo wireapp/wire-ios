@@ -258,6 +258,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             ZMConversation.unreadConversationCount(in: context)
         }
     }
+    
+    public func storeConversation(
+        permission: String,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.channelPermission = permission
+        }
+    }
 
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
@@ -1038,6 +1047,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     .channel
                 }
             }
+
+            localConversation.channelPermission = conversation.addPermission?.rawValue
 
             commonUpdate(
                 from: conversation,

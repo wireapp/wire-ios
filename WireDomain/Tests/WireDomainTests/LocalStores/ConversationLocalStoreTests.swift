@@ -543,6 +543,37 @@ final class ConversationLocalStoreTests: XCTestCase {
         XCTAssertEqual(qualifiedID?.domain, Scaffolding.domain)
     }
 
+    func testStoreConversationPermission_It_Updates_The_Permission_Locally() async {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(
+                in: context
+            )
+
+            conversation.groupType = .channel
+
+            XCTAssertEqual(conversation.channelPermission, nil)
+
+            return conversation
+        }
+
+        // When
+
+        let channelPermission = ChannelPermission.admins
+
+        await sut.storeConversation(
+            permission: channelPermission.rawValue,
+            conversation: conversation
+        )
+
+        // Then
+
+        await context.perform {
+            XCTAssertEqual(conversation.channelPermission, channelPermission.rawValue)
+        }
+    }
+
     private enum Scaffolding {
 
         static let selfUserId = UUID.mockID1

@@ -543,6 +543,10 @@ public final class ClientSessionComponent {
         repository: teamRepository
     )
 
+    private lazy var addPermissionEventProcessor = ConversationAddPermissionEventProcessor(
+        localStore: conversationLocalStore
+    )
+
     private lazy var updateEventProcessor: UpdateEventProcessor = {
         let conversationEventProcessor = ConversationEventProcessor(
             accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
@@ -558,7 +562,8 @@ public final class ClientSessionComponent {
             protocolUpdateEventProcessor: conversationProtocolUpdateEventProcessor,
             receiptModeUpdateEventProcessor: conversationReceiptModeUpdateEventProcessor,
             renameEventProcessor: conversationRenameEventProcessor,
-            typingEventProcessor: conversationTypingEventProcessor
+            typingEventProcessor: conversationTypingEventProcessor,
+            addPermissionEventProcessor: addPermissionEventProcessor
         )
 
         let featureConfigEventProcessor = FeatureConfigEventProcessor(
