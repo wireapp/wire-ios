@@ -17,23 +17,24 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-extension MockDependencies: FetchSSOURLUseCaseFactory {
+@testable import WireAuthenticationLogic
 
-    nonisolated
-    func fetchSSOURLUseCase(
-        backendInfo: BackendInfo
-    ) async throws -> any FetchSSOURLUseCaseProtocol {
-        MockFetchSSOURLUseCase()
-    }
+final class MockWebAuthenticator: WebAuthenticatorProtocol {
 
-}
+    var invocations = [URL]()
+    var mockError: (any Error)?
+    var mockResult: URL?
 
-struct MockFetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
+    init() {}
 
-    func invoke() async throws -> URL? {
-        URL(string: "https://example.com/login/\(UUID().uuidString)")!
+    func authenticate(url: URL) async throws -> URL? {
+        invocations.append(url)
+        if let mockError {
+            throw mockError
+        } else {
+            return mockResult
+        }
     }
 
 }

@@ -53,8 +53,6 @@ public class UnauthenticatedSession: NSObject {
 
     weak var delegate: UnauthenticatedSessionDelegate?
 
-    public var wireAuthenticationErrorHandler: (() -> Void)?
-
     init(
         transportSession: UnauthenticatedTransportSessionProtocol,
         reachability: ReachabilityProvider,
@@ -110,17 +108,11 @@ public class UnauthenticatedSession: NSObject {
         }
     }
 
-    public func setErrorHandler(_ errorHandler: @escaping () -> Void) {
-        wireAuthenticationErrorHandler = errorHandler
-    }
-
     public func appendURLActionProcessors(
-        handleSSOLoginSuccess: @escaping (UUID, [HTTPCookie]) -> Void,
         handleBackendSwitch: @escaping (URL) -> Void
     ) {
         urlActionProcessors.append(
             AuthenticationModuleURLActionProcessor(
-                handleSSOLoginSuccess: handleSSOLoginSuccess,
                 handleBackendSwitch: handleBackendSwitch
             )
         )
