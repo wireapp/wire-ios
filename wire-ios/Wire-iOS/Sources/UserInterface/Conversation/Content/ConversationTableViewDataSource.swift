@@ -611,19 +611,21 @@ extension ConversationTableViewDataSource {
 
         // find subsequent messages and collapse space if needed
         for currentSectionIndex in sections.indices.reversed() {
-            // TODO: refactoring needed
-            guard let currentSectionLastElement = sections[currentSectionIndex].elements.last?.instance else {
+            // The lowest index refers to the latest message.
+            let previousSectionIndex = currentSectionIndex + 1
+
+            // Calling `elements.last` because the indices are reversed.
+            guard let currentSectionFirstElement = sections[currentSectionIndex].elements.last?.instance else {
                 continue
             }
 
-            let previousSectionIndex = currentSectionIndex + 1
             guard
                 sections.indices.contains(previousSectionIndex),
-                var previousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance
+                var previousSectionLastElement = sections[previousSectionIndex].elements.first?.instance
             else {
-                // no previous message, reset margins
-                currentSectionLastElement.topMargin = 8
-                currentSectionLastElement.bottomMargin = 8
+                // no previous message, so reset the margins
+                currentSectionFirstElement.topMargin = 8
+                currentSectionFirstElement.bottomMargin = 8
                 continue
             }
 
@@ -631,6 +633,8 @@ extension ConversationTableViewDataSource {
             if
                 isMessageStatus(of: previousSectionIndex, redundantTo: currentSectionIndex, in: sections),
                 messages.indices.contains(previousSectionIndex) {
+
+                // collapse the status view's height
                 let previousMessage = messages[previousSectionIndex]
                 let newCellDescription = ConversationMessageToolboxCellDescription(
                     message: previousMessage,
@@ -638,22 +642,26 @@ extension ConversationTableViewDataSource {
                 )
                 newCellDescription.topMargin = 0
                 newCellDescription.bottomMargin = 0
+
+                // we notify the table view by creating a new cell description
                 let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
                 previousStatus?.replace(newCellDescription, &sections)
-                if let newPreviousSectionFirstElement = sections[previousSectionIndex].elements.first?.instance {
-                    previousSectionFirstElement = newPreviousSectionFirstElement
+
+                // for collapsing the space we will refer to the cell description before the previous message's status
+                if let newPreviousSectionLastElement = sections[previousSectionIndex].elements.first?.instance {
+                    previousSectionLastElement = newPreviousSectionLastElement
                 }
             }
 
             // collapse space between subsequent messages
-            if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) {
-                if !(previousSectionFirstElement is ConversationMessageToolboxCellDescription) {
-                    previousSectionFirstElement.bottomMargin = 2
+            if collapseSpaceBefore(currentSectionFirstElement: currentSectionFirstElement) {
+                if !(previousSectionLastElement is ConversationMessageToolboxCellDescription) {
+                    previousSectionLastElement.bottomMargin = 2
                 }
-                currentSectionLastElement.topMargin = 2
+                currentSectionFirstElement.topMargin = 2
             } else {
-                previousSectionFirstElement.bottomMargin = 8
-                currentSectionLastElement.topMargin = 8
+                previousSectionLastElement.bottomMargin = 8
+                currentSectionFirstElement.topMargin = 8
             }
 
         }
@@ -727,7 +735,7 @@ extension ConversationTableViewDataSource {
     }
 
     private func collapseSpaceBefore(
-        currentSectionLastElement cellDescription: any ConversationMessageCellDescription
+        currentSectionFirstElement cellDescription: any ConversationMessageCellDescription
     ) -> Bool {
         if cellDescription is ConversationTextMessageCellDescription ||
             cellDescription is ConversationFileMessageCellDescription ||
