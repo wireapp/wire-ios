@@ -76,7 +76,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         mockTokenGenerator.mockToken = verificationToken
 
         // When
-        let _ = try? await self.sut.invoke(code: nil)
+        _ = try? await sut.invoke(code: nil)
 
         // Then
         XCTAssertEqual(mockAuthenticationAPI.getSSOCode_Invocations.count, 1)
@@ -93,7 +93,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         mockTokenGenerator.mockToken = verificationToken
 
         // When
-        let _ = try? await self.sut.invoke(code: code)
+        _ = try? await sut.invoke(code: code)
 
         // Then
         XCTAssertEqual(mockAuthenticationAPI.getSSOCode_Invocations.count, 0)
@@ -111,7 +111,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         mockWebAuthenticator.mockResult = nil
 
         // When
-        let _ = try? await self.sut.invoke(code: code)
+        _ = try? await sut.invoke(code: code)
 
         // Then
         XCTAssertEqual(mockAuthenticationAPI.validateLoginTokenSsoCode_Invocations, [code])

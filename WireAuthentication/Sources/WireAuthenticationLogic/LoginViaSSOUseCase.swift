@@ -100,7 +100,6 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             throw LoginViaSSOUseCaseError.invalidURL
         }
 
-        //validationToken.store(in: userDefaults)
         return (url, validationToken)
     }
 
@@ -174,7 +173,6 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             case .presentationContextInvalid:
                 throw LoginViaSSOUseCaseError.invalidContext
             @unknown default:
-                // TODO: log
                 throw LoginViaSSOUseCaseError.unknown
             }
         }
@@ -364,4 +362,3 @@ private extension SAMLError {
     }
 
 }
-

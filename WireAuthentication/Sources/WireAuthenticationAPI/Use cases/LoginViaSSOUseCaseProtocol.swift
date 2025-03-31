@@ -56,7 +56,6 @@ public enum SAMLError: Error, Equatable {
 
 }
 
-
 public protocol LoginViaSSOUseCaseFactory {
 
     @MainActor
