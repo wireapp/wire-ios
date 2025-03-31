@@ -113,8 +113,6 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
     var currentDateProvider: CurrentDateProviding
 
-    var currentDateProvider: CurrentDateProviding
-
     init(
         configuration: View.Configuration,
         currentDateProvider: CurrentDateProviding = SystemDateProvider()
