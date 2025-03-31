@@ -6,7 +6,8 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ### 2.123.0
 
-* added `groupConversationTypeValue` attribute on the Conversation entity
+* added `groupTypeValue` attribute on the Conversation entity
+* added `privateChannelPermissionValue` attribute on the Conversation entity
 
 ### 2.122.0
 

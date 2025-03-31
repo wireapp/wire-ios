@@ -75,4 +75,10 @@ public enum ConversationsAPIError: Error {
 
     /// Unreachable backends
     case unreachableBackends
+
+    /// Conversation member is a wire member and not a team admin or owner
+    case notATeamAdminOrOwner
+
+    /// The conversation is not a channel
+    case notAChannel
 }
