@@ -643,8 +643,8 @@ extension ConversationTableViewDataSource {
 
             // collapse space between subsequent messages
             if collapseSpaceBefore(currentSectionLastElement: currentSectionLastElement) {
-               if !(previousSectionFirstElement is ConversationMessageToolboxCellDescription) {
-                   previousSectionFirstElement.bottomMargin = 2
+                if !(previousSectionFirstElement is ConversationMessageToolboxCellDescription) {
+                    previousSectionFirstElement.bottomMargin = 2
                 }
                 currentSectionLastElement.topMargin = 2
             } else {
