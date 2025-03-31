@@ -128,12 +128,7 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
 
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { false }
-
     var showEphemeralTimer: Bool = false
-
-    var topMargin: CGFloat = -6
-    var bottomMargin: CGFloat = -6
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
