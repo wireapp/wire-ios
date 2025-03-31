@@ -178,7 +178,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         )
 
         // Mock
-        mlsMessageDecryptor.decryptedEventDataFrom_MockMethod = { $0 }
+        mlsMessageDecryptor.decryptedMessageAddEventDataFrom_MockMethod = { $0 }
 
         // When
         let events = try await sut.decryptEvents(in: envelope)

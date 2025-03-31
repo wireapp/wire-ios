@@ -45,7 +45,8 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            mlsService: mlsService
         )
 
         self.messageLocalStore = messageLocalStore
