@@ -927,6 +927,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     .channel
                 }
             }
+            
+            localConversation.channelPermission = conversation.addPermission?.rawValue
 
             commonUpdate(
                 from: conversation,

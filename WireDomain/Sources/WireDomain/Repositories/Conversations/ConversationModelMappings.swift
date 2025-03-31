@@ -156,7 +156,8 @@ extension WireAPI.Conversation {
             legacyAccessRole: legacyAccessRole?.toDomainModel(),
             lastEvent: lastEvent,
             lastEventTime: lastEventTime,
-            groupType: groupType?.toDomainModel()
+            groupType: groupType?.toDomainModel(),
+            addPermission: addPermission?.toDomainModel()
         )
     }
 
@@ -173,4 +174,17 @@ extension WireAPI.ConversationGroupType {
         }
     }
 
+}
+
+extension WireAPI.ChannelPermission {
+    
+    func toDomainModel() -> WireDomain.Conversation.ChannelPermission {
+        switch self {
+        case .admins:
+                .admins
+        case .everyone:
+                .everyone
+        }
+    }
+    
 }

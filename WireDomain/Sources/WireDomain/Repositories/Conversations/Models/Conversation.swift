@@ -49,6 +49,11 @@ public struct Conversation: Equatable {
         case group
         case channel
     }
+    
+    enum ChannelPermission: String {
+        case admins
+        case everyone
+    }
 
     let id: UUID?
     let qualifiedID: QualifiedID?
@@ -70,5 +75,6 @@ public struct Conversation: Equatable {
     let lastEvent: String?
     let lastEventTime: Date?
     let groupType: GroupType?
+    let addPermission: ChannelPermission?
 
 }
