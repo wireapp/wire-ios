@@ -861,6 +861,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - storeConversation
+
+    public var storeConversationPermissionConversation_Invocations: [(permission: String, conversation: ZMConversation)] = []
+    public var storeConversationPermissionConversation_MockMethod: ((String, ZMConversation) async -> Void)?
+
+    public func storeConversation(permission: String, conversation: ZMConversation) async {
+        storeConversationPermissionConversation_Invocations.append((permission: permission, conversation: conversation))
+
+        guard let mock = storeConversationPermissionConversation_MockMethod else {
+            fatalError("no mock for `storeConversationPermissionConversation`")
+        }
+
+        await mock(permission, conversation)
+    }
+
 }
 
 public class MockConversationProtobufMessageProcessorProtocol: ConversationProtobufMessageProcessorProtocol {

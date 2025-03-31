@@ -24,4 +24,15 @@ extension ZMConversation {
 
     @NSManaged private var privateChannelPermissionValue: String?
 
+    /// The private conversation (aka channel) permission
+
+    public var channelPermission: String? {
+        get {
+            privateChannelPermissionValue
+        }
+        set {
+            privateChannelPermissionValue = newValue
+        }
+    }
+
 }
