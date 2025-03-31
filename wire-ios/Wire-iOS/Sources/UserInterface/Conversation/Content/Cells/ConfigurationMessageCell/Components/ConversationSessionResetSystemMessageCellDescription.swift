@@ -34,7 +34,7 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
 
-    var configuration: View.Configuration
+    let configuration: View.Configuration
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)

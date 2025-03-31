@@ -31,6 +31,10 @@ enum MessageToolboxContent: Equatable {
 
     /// Display the message details (timestamp and/or status and/or countdown).
     case details(timestamp: String, status: MessageToolboxState?, countdown: String)
+
+    static func details() -> Self {
+        .details(timestamp: "", status: nil, countdown: "")
+    }
 }
 
 extension MessageToolboxContent: Comparable {
@@ -120,7 +124,7 @@ final class MessageToolboxDataSource {
         // 3) Timestamp
         else {
             let (timestamp, status, countdown) = makeDetailsString()
-            content = .details(timestamp: timestamp, status: status, countdown: countdown)
+            content = .details()
         }
 
         // Only perform the changes if the content did change.

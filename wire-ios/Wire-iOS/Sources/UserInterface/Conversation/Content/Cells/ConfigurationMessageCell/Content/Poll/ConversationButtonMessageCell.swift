@@ -161,7 +161,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var actionController: ConversationMessageActionController?
 
-    var configuration: View.Configuration
+    let configuration: View.Configuration
 
     var accessibilityIdentifier: String? = "PollCell"
 

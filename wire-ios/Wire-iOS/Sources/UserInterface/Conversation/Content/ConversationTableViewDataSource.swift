@@ -600,7 +600,11 @@ extension ConversationTableViewDataSource {
     }
 
     typealias Section = ArraySection<String, AnyConversationMessageCellDescription>
-
+    
+    /// Iterates over the sections (messages) and compares two subsequent messages. Based on that some minor modifications are applied.
+    ///
+    /// - If a message doesn't show the sender (because it was sent just a moment after the previous one), the space between the messages is reduced.
+    /// - If a message's status does not provide relevant info over a subsequent message's status, it is hidden.
     private func postProcessedSections(_ sections: [Section]) -> [Section] {
 
         var sections = sections
