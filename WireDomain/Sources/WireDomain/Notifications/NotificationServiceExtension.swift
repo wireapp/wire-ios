@@ -47,7 +47,6 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
 
-        onGoingTask?.cancel()
         self.contentHandler = contentHandler
 
         onGoingTask = Task {
@@ -133,6 +132,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private func terminate() {
         // Content handler should only be consumed once.
         contentHandler = nil
+        onGoingTask?.cancel()
         onGoingTask = nil
     }
 }
