@@ -55,7 +55,7 @@ extension ConversationListViewController {
             let link = NSAttributedString(
                 string: Strings.Channels.link,
                 attributes: [
-                    .link: WireURLs.shared.support // TODO: [WPB-16790] Link to learn more about channels webpage
+                    .link: WireURLs.shared.learnMoreAboutChannels
                 ]
             )
 
