@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+package import SwiftUI
 import WireConversationsAPI
 import WireConversationsImplementation
 import WireDesign
 
-public struct ChannelAccessView: View {
-
+package struct ChannelAccessView: View {
+    
     @ObservedObject var viewModel: ChannelAccessViewModel
     @Environment(\.dismiss) private var dismiss
-
-    public init(viewModel: ChannelAccessViewModel) {
+    
+    package init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
     }
-
+    
     public var body: some View {
         NavigationView {
             Form {
@@ -43,13 +43,13 @@ public struct ChannelAccessView: View {
                         level: .public,
                         disabled: viewModel.isPublicDisabled
                     )
-
+                    
                     accessOption(
                         title: L10n.Localizable.ChannelAccessLevel.private,
                         level: .private
                     )
                 }.background(.clear)
-
+                
                 if viewModel.showParticipantPermissions {
                     Section(
                         header: Text(L10n.Localizable.ChannelAccessLevel.participantsHeader),
@@ -85,7 +85,7 @@ public struct ChannelAccessView: View {
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
     }
-
+    
     private func accessOption(title: String, level: ChannelAccessLevel, disabled: Bool = false) -> some View {
         HStack {
             Text(title)
@@ -107,7 +107,7 @@ public struct ChannelAccessView: View {
         }
         .disabled(disabled)
     }
-
+    
     private func permissionOption(title: String, permission: ChannelAccessLevelPermission) -> some View {
         HStack {
             Text(title)
@@ -126,11 +126,11 @@ public struct ChannelAccessView: View {
             viewModel.selectParticipantPermission(permission)
         }
     }
-
+    
     struct Checkmark: View {
-
+        
         let accentColor: Color
-
+        
         var body: some View {
             Image("Check", bundle: .resources)
                 .resizable()
@@ -147,25 +147,21 @@ struct ChannelAccessView_Previews: PreviewProvider {
             NavigationStack {
                 ChannelAccessView(viewModel: ChannelAccessViewModel(
                     accentColor: .green,
-                    useCase: ChannelAccessUseCase(settings: .init(
-                        accessLevel: .public,
-                        participantPermission: nil
-                    ))
+                    useCase: ChannelAccessUseCase(permission: nil)
                 ))
+                
             }
             .previewDisplayName("Initially Public")
-
+            
             NavigationStack {
                 ChannelAccessView(viewModel: ChannelAccessViewModel(
                     accentColor: .blue,
-                    useCase: ChannelAccessUseCase(settings: .init(
-                        accessLevel: .private,
-                        participantPermission: .adminsAndMembers
+                    useCase: ChannelAccessUseCase(permission: .adminsAndMembers
                     ))
-                ))
+                )
             }
             .previewDisplayName("Initially Private")
         }
-
+        
     }
 }

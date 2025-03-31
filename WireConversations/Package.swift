@@ -63,10 +63,19 @@ let package = Package(
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
+        .target(
+            name: "WireConversationsImplementationSupport",
+            dependencies: [
+                "WireConversationsImplementation",
+                "WireConversationsAPI"
+            ],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+        ),
         .testTarget(
             name: "WireConversationsUITests",
             dependencies: [
                 "WireConversationsUIBindings",
+                "WireConversationsImplementationSupport",
                 .product(name: "WireFoundation", package: "WireFoundation")
             ]
         ),

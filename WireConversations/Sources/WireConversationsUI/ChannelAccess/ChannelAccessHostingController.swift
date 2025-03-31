@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+package import SwiftUI
 import UIKit
 import WireConversationsAPI
 import WireConversationsImplementation
 import WireDesign
 
-public final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
+package  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
 
     private let viewModel: ChannelAccessViewModel
 
-    public init(viewModel: ChannelAccessViewModel) {
+    package init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
         super.init(rootView: ChannelAccessView(viewModel: viewModel))
     }
@@ -66,12 +66,8 @@ struct ChannelAccessHostingController_Previews: PreviewProvider {
 
 struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        let state = ChannelAccessSettings(
-            accessLevel: .public,
-            participantPermission: .adminsAndMembers
-        )
-
-        let useCase = ChannelAccessUseCase(settings: state)
+        
+        let useCase = ChannelAccessUseCase(permission: .adminsAndMembers)
         let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
 
         let channelAccessVC = ChannelAccessHostingController(viewModel: viewModel)

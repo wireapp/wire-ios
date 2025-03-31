@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-public import WireConversationsImplementation
+package import SwiftUI
+package import WireConversationsImplementation
 import WireConversationsAPI
 
-public class ChannelAccessViewModel: ObservableObject {
+package class ChannelAccessViewModel: ObservableObject {
 
     @Published var settings: ChannelAccessSettings
     @Published var showPrivateAccessConfirmation = false
@@ -29,7 +29,10 @@ public class ChannelAccessViewModel: ObservableObject {
 
     private let useCase: any ChannelAccessUseCaseProtocol
 
-    public init(accentColor: Color, useCase: any ChannelAccessUseCaseProtocol) {
+    package init(
+        accentColor: Color,
+        useCase: any ChannelAccessUseCaseProtocol
+    ) {
         self.useCase = useCase
         self.settings = useCase.settings
         self.accentColor = accentColor

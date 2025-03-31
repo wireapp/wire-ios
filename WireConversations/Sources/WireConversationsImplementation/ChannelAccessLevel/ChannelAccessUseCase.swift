@@ -19,6 +19,7 @@
 import Foundation
 package import WireConversationsAPI
 
+// sourcery: AutoMockable
 package protocol ChannelAccessUseCaseProtocol {
     var settings: ChannelAccessSettings { get }
     func updateAccessLevel(to level: ChannelAccessLevel)
@@ -27,9 +28,9 @@ package protocol ChannelAccessUseCaseProtocol {
 
 package class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
 
-    public var settings: ChannelAccessSettings
+    package var settings: ChannelAccessSettings
 
-    public init(permission: ChannelAccessLevelPermission?) {
+    package init(permission: ChannelAccessLevelPermission?) {
         let settings = ChannelAccessSettings(
             accessLevel: permission == nil ? .public : .private,
             participantPermission: permission
@@ -38,11 +39,14 @@ package class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
         self.settings = settings
     }
 
-    public func updateAccessLevel(to level: ChannelAccessLevel) {
+    package func updateAccessLevel(to level: ChannelAccessLevel) {
+        guard settings.accessLevel == .public else {
+            return
+        }
         settings.accessLevel = level
     }
 
-    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) {
+    package func updateParticipantPermission(to permission: ChannelAccessLevelPermission) {
         settings.participantPermission = permission
     }
 }
