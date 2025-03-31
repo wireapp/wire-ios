@@ -175,7 +175,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     // no op
                     break
                 case let .authenticationFailed(samlError):
-                    WireLogger.authentication.error("sso authentication failed with SAML error: \(String(describing: samlError))")
+                    WireLogger.authentication.error(
+                        "sso authentication failed with SAML error: \(String(describing: samlError))"
+                    )
                     alert = .ssoLoginFailed
                 default:
                     router.presentAlert(for: error)
@@ -263,7 +265,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     RootView.ModalDestination.authFlow(backendInfo: backendInfo)
                 )
             case let .authenticationFailed(samlError):
-                WireLogger.authentication.error("sso authentication failed with SAML error: \(String(describing: samlError))")
+                WireLogger.authentication.error(
+                    "sso authentication failed with SAML error: \(String(describing: samlError))"
+                )
                 alert = .ssoLoginFailed
             default:
                 router.presentAlert(for: error)
