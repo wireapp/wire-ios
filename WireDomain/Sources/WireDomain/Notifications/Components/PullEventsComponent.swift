@@ -283,7 +283,7 @@ extension PullEventsComponent {
             configurationBundle: backendBundle,
             environmentType: environmentType
         ) else {
-            fatalError("Malformed backend configuration data")
+            fatal("Malformed backend configuration data")
         }
 
         return backendEnvironment
@@ -398,7 +398,7 @@ extension PullEventsComponent {
         if runningInExtension {
             let extensionBundleURL = Bundle.main.bundleURL
             let mainAppBundleURL = extensionBundleURL.deletingLastPathComponent().deletingLastPathComponent()
-            guard let bundle = Bundle(url: mainAppBundleURL) else { fatalError("Failed to find main app bundle") }
+            guard let bundle = Bundle(url: mainAppBundleURL) else { fatal("Failed to find main app bundle") }
             mainBundle = bundle
         } else {
             mainBundle = .main
@@ -411,11 +411,11 @@ extension PullEventsComponent {
             forResource: "Backend",
             ofType: "bundle"
         ) else {
-            fatalError("Could not find backend.bundle")
+            fatal("Could not find backend.bundle")
         }
 
         guard let bundle = Bundle(path: backendBundlePath) else {
-            fatalError("Could not load backend.bundle")
+            fatal("Could not load backend.bundle")
         }
 
         return bundle

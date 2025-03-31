@@ -35,7 +35,7 @@ struct CallContent: Decodable {
 
     struct Properties: Decodable {
         private let videoSend: String
-        
+
         enum CodingKeys: String, CodingKey {
             case videoSend = "videosend"
         }

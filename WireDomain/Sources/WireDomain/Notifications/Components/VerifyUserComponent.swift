@@ -94,7 +94,7 @@ extension VerifyUserComponent {
                 sharedUserDefaults.set(newKey, forKey: cookieKey)
                 return newKey
             } catch {
-                fatalError()
+                fatal("Could not generate random encryption key: \(error.localizedDescription)")
             }
         }()
 

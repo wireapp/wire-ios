@@ -181,3 +181,25 @@ final class VerifyUserSessionTests: XCTestCase {
     }
 
 }
+
+extension VerifyUserSession.Failure: Equatable {
+    public static func == (
+        lhs: WireDomain.VerifyUserSession.Failure,
+        rhs: WireDomain.VerifyUserSession.Failure
+    ) -> Bool {
+        switch (lhs, rhs) {
+        case (.coreDataMissingSharedContainer, .coreDataMissingSharedContainer):
+            true
+        case (.coreDataMigrationRequired, .coreDataMigrationRequired):
+            true
+        case (.userUnauthenticated, .userUnauthenticated):
+            true
+        case (.missingUserClient, .missingUserClient):
+            true
+        case (.unableToLoadStores, .unableToLoadStores):
+            true
+        default:
+            false
+        }
+    }
+}
