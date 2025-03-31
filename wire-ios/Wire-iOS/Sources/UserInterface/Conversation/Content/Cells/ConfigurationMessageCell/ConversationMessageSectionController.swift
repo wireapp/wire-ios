@@ -396,8 +396,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             to: &cellDescriptions
         )
 
-        let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
-        cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        if isToolboxVisible(in: context) {
+            let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
+            cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        }
 
         if !message.isSystem, !message.isEphemeral, message.hasReactions() {
             let description = MessageReactionsCellDescription(message: message)
@@ -432,6 +434,24 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
         context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
+    }
+
+    func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
+        guard !message.isSystem || message.isMissedCall else {
+            return false
+        }
+
+        // for all messages that support collapsing and is collapsed
+        if !isMessageWithCollapsedByDefault() && isCollapsed {
+            // if message failed, always show footer with error message and retry button
+            if message.deliveryState == .failedToSend {
+                return true
+            }
+            // then do not show footer if sent but show when sending
+            return !message.isSent
+        }
+
+        return message.deliveryState == .failedToSend || message.isSentBySelfUser
     }
 
     private func isMessageWithCollapsedByDefault() -> Bool {
