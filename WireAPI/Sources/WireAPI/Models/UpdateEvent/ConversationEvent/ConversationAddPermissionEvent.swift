@@ -17,28 +17,17 @@
 //
 
 import Foundation
-import WireTransport
 
-extension Payload {
-    struct UpdateConverationMemberLeave: CodableEventData {
+/// An event where the conversation permission was updated.
+/// This event occurs for private conversations (aka channels) only.
 
-        static var eventType: ZMUpdateEventType { .conversationMemberLeave }
+public struct ConversationAddPermissionEvent: Equatable, Codable, Sendable {
 
-        let userIDs: [UUID]?
-        let qualifiedUserIDs: [QualifiedID]?
-        let reason: Reason?
+    /// The id of the conversation.
 
-        enum Reason: String, Codable {
-            /// The user has been removed from the team and therefore removed from all conversations.
-            case userDeleted = "user-deleted"
-            case left
-            case removed
-        }
+    public let conversationID: ConversationID
 
-        enum CodingKeys: String, CodingKey {
-            case userIDs = "user_ids"
-            case qualifiedUserIDs = "qualified_user_ids"
-            case reason
-        }
-    }
+    /// The new permission value (`everyone` or `admins`)
+
+    public let addPermission: ChannelPermission
 }

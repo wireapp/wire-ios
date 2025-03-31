@@ -550,7 +550,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     func presentAccessOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        let permission: WireConversationsAPI.ChannelAccessLevelPermission? = conversation.accessLevelPermissions.map {
+        let permission: WireConversationsAPI.ChannelAccessLevelPermission? = conversation.accessLevelPermission.map {
             switch $0 {
             case .admins: .admins
             case .everybody: .adminsAndMembers

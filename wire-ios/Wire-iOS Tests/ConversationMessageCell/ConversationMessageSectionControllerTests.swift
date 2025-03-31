@@ -18,6 +18,7 @@
 
 import WireCommonComponents
 import WireFoundation
+import WireFoundationSupport
 import XCTest
 
 @testable import Wire
@@ -29,8 +30,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     var context: ConversationMessageContext!
     var mockSelfUser: MockUserType!
     var userSession: UserSessionMock!
-
-    lazy var collapseOwnMessagesStorage = PrivateUserDefaults<CollapseKey>(userID: mockSelfUser.remoteIdentifier!)
+    var mockUserDefaults = MockUserDefaultsProtocol()
 
     // MARK: - setUp
 
@@ -47,6 +47,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             searchQueries: [],
             previousMessageIsKnock: false
         )
+        mockUserDefaults.boolForKey_MockValue = false
     }
 
     // MARK: - tearDown
@@ -123,16 +124,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
         // Then
         let cellDescriptions = section.cellDescriptionsForTesting
-        guard
-            cellDescriptions.count == 1,
-            let stackViewCellDescription = cellDescriptions.first?.instance as? StackViewCellDescription,
-            stackViewCellDescription.cellDescriptions.count == 3
-        else { return XCTFail("Expected a single stack view cell description with three combined cells") }
+        guard cellDescriptions.count == 3 else {
+            return XCTFail("Expected 3 cells")
+        }
 
-        let stackedCellDescriptions = stackViewCellDescription.cellDescriptions
-        XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationSenderMessageCellDescription)
-        XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationTextMessageCellDescription)
-        XCTAssertTrue(stackedCellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
 
     func testCellGrouping_SenderIsSameAsPreviousAndTimestampInSameMinuteAsPreviousMessage() throws {
@@ -154,15 +152,12 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
         // THEN
         let cellDescriptions = section.cellDescriptionsForTesting
-        guard
-            cellDescriptions.count == 1,
-            let stackViewCellDescription = cellDescriptions.first?.instance as? StackViewCellDescription,
-            stackViewCellDescription.cellDescriptions.count == 2
-        else { return XCTFail("Expected a single stack view cell description with two combined cells") }
+        guard cellDescriptions.count == 2 else {
+            return XCTFail("Expected 2 cells")
+        }
 
-        let stackedCellDescriptions = stackViewCellDescription.cellDescriptions
-        XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationTextMessageCellDescription)
-        XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationMessageToolboxCellDescription)
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationMessageToolboxCellDescription)
     }
 
     func testCellGrouping_PreviousMessageIsKnock() throws {
@@ -181,16 +176,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
         // Then
         let cellDescriptions = section.cellDescriptionsForTesting
-        guard
-            cellDescriptions.count == 1,
-            let stackViewCellDescription = cellDescriptions.first?.instance as? StackViewCellDescription,
-            stackViewCellDescription.cellDescriptions.count == 3
-        else { return XCTFail("Expected a single stack view cell description with three combined cells") }
+        guard cellDescriptions.count == 3 else {
+            return XCTFail("Expected 3 cells")
+        }
 
-        let stackedCellDescriptions = stackViewCellDescription.cellDescriptions
-        XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationSenderMessageCellDescription)
-        XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationTextMessageCellDescription)
-        XCTAssertTrue(stackedCellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
 
     func testCellGrouping_SenderIsSameAsPreviousAndTimeStampIsNotInTheSameMinuteAsPreviousMessage() throws {
@@ -209,17 +201,15 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             contentWidth: 0
         )
 
+        // THEN
         let cellDescriptions = section.cellDescriptionsForTesting
-        guard
-            cellDescriptions.count == 1,
-            let stackViewCellDescription = cellDescriptions.first?.instance as? StackViewCellDescription,
-            stackViewCellDescription.cellDescriptions.count == 3
-        else { return XCTFail("Expected a single stack view cell description with three combined cells") }
+        guard cellDescriptions.count == 3 else {
+            return XCTFail("Expected 3 cells")
+        }
 
-        let stackedCellDescriptions = stackViewCellDescription.cellDescriptions
-        XCTAssertTrue(stackedCellDescriptions[0].instance is ConversationSenderMessageCellDescription)
-        XCTAssertTrue(stackedCellDescriptions[1].instance is ConversationTextMessageCellDescription)
-        XCTAssertTrue(stackedCellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
 
     func testPassIsCollapsedToActionController() {
@@ -267,7 +257,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_systemMessage_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
         let sut = makeSUT(message: message)
         XCTAssertTrue(sut.isCollapsed)
@@ -283,7 +273,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_textMessageWithFailedToSendUsers_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
         message.failedToSendUsers = [MockUserType.createDefaultOtherUser()]
         let sut = makeSUT(message: message)
@@ -297,7 +287,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_textMessage_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.textMessage())
         let sut = makeSUT(message: message)
         XCTAssertFalse(sut.isCollapsed)
@@ -311,7 +301,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_fileMessage_sentBySelfUser_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
         let sut = makeSUT(message: message)
@@ -326,7 +316,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_fileMessage_sentByOtherUser_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = MockUserType.createDefaultOtherUser()
         let sut = makeSUT(message: message)
@@ -344,7 +334,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            userDefaults: mockUserDefaults
         )
 
         trackForMemoryLeaks(section)

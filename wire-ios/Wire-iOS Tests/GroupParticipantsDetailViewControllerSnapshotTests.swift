@@ -39,7 +39,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
     var mlsVerificationStatus: WireDataModel.MLSVerificationStatus?
 
-    var accessLevelPermissions: ChannelAccessLevelPermission?
+    var accessLevelPermission: ChannelAccessLevelPermission?
 
 }
 

@@ -98,6 +98,8 @@ public struct Conversation: Equatable, Codable, Sendable {
 
     public var groupType: ConversationGroupType?
 
+    public var addPermission: ChannelPermission?
+
     enum CodingKeys: String, CodingKey {
 
         case id
@@ -120,6 +122,7 @@ public struct Conversation: Equatable, Codable, Sendable {
         case lastEvent = "last_event"
         case lastEventTime = "last_event_time"
         case groupType = "group_conv_type"
+        case addPermission = "add_permission"
 
     }
 

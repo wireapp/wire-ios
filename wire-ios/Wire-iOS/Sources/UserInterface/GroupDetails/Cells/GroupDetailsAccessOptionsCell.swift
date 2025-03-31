@@ -32,7 +32,7 @@ final class GroupDetailsAccessOptionsCell: GroupDetailsDisclosureOptionsCell {
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        status = conversation.accessLevelPermissions == nil ? L10n.Localizable.ChannelAccessLevel.public : L10n
+        status = conversation.accessLevelPermission == nil ? L10n.Localizable.ChannelAccessLevel.public : L10n
             .Localizable.ChannelAccessLevel.public
     }
 

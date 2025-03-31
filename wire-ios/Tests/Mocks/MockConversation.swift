@@ -101,7 +101,7 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 
     var mlsVerificationStatus: MLSVerificationStatus?
 
-    var accessLevelPermissions: WireDataModel.ChannelAccessLevelPermission?
+    var accessLevelPermission: WireDataModel.ChannelAccessLevelPermission?
 }
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {

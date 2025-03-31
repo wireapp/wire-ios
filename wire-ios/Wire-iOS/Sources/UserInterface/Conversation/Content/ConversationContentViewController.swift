@@ -605,6 +605,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
+
         let sections = dataSource.currentSections
         guard
             sections.indices.contains(indexPath.section),
