@@ -53,14 +53,6 @@ package struct LoginViaEmailView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-<<<<<<< HEAD
-                emailField
-                passwordField
-                submitButton
-                forgotPasswordButton
-                if viewModel.canCreateAccount {
-                    createAccount
-=======
                 if viewModel.areProxyCredentialsRequired {
                     if viewModel.isOnPremiseBackend {
                         welcomeMessage
@@ -81,7 +73,6 @@ package struct LoginViaEmailView: View {
                     if viewModel.canCreateAccount {
                         createAccount
                     }
->>>>>>> 30dc738c17 (refactor: support proxy mode - WPB-16256 (#2764))
                 }
             }
             .navigationTitle(L10n.CloudUserLogin.title)
@@ -118,11 +109,7 @@ package struct LoginViaEmailView: View {
                 factory.noHistoryView(authenticationResult: authenticationResult)
             }
         }
-<<<<<<< HEAD
-        .presentationDetents([.medium, .large])
-=======
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
->>>>>>> 30dc738c17 (refactor: support proxy mode - WPB-16256 (#2764))
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
@@ -137,14 +124,10 @@ package struct LoginViaEmailView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: $viewModel.email
         )
-<<<<<<< HEAD
-        .disabled(true)
-=======
         .autocorrectionDisabled()
         .textContentType(.username)
         .keyboardType(.emailAddress)
         .disabled(viewModel.isEmailPrefilled)
->>>>>>> 30dc738c17 (refactor: support proxy mode - WPB-16256 (#2764))
     }
 
     @ViewBuilder private var passwordField: some View {

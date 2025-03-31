@@ -84,12 +84,9 @@ package struct DetermineAuthMethodView: View {
                         string: $viewModel.emailOrSSOCode
                     )
                     .autocapitalization(.none)
-<<<<<<< HEAD
-=======
                     .autocorrectionDisabled()
                     .textContentType(.username)
                     .keyboardType(.emailAddress)
->>>>>>> 30dc738c17 (refactor: support proxy mode - WPB-16256 (#2764))
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }

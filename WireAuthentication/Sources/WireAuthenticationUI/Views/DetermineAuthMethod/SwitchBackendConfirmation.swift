@@ -114,31 +114,6 @@ public struct SwitchBackendConfirmation: View {
         )
         .frame(width: 350)
         .fixedSize(horizontal: false, vertical: true)
-<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationUI/Views/SwitchBackend/SwitchBackendConfirmationView.swift
-        .alert(
-            item: $viewModel.alert,
-            title: { Text($0.title) },
-            message: { Text($0.message) },
-            actions: { alert in
-                switch alert {
-                case .obsoleteClient:
-                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
-                default:
-                    Button(L10n.Authentication.Error.confirm, action: {})
-                }
-            }
-        )
-        .sheet(item: $viewModel.modalDestination, content: {
-            switch $0 {
-            case let .ssoLogin(ssoURL, backendEnvironment):
-                factory.loginViaSSOView(
-                    ssoURL: ssoURL,
-                    backendEnvironment: backendEnvironment
-                )
-            }
-        })
-=======
->>>>>>> 30dc738c17 (refactor: support proxy mode - WPB-16256 (#2764)):WireAuthentication/Sources/WireAuthenticationUI/Views/DetermineAuthMethod/SwitchBackendConfirmation.swift
     }
 
     private var title: some View {

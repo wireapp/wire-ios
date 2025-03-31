@@ -37,53 +37,10 @@ package struct RootView: View {
     package var body: some View {
         BackgroundView()
             .sheet(item: $viewModel.modalDestination) { sheet in
-                switch sheet {
-                case .authFlow:
-                    NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView()
-                    }
-                case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
-                    NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView(
-                            environmentType: environmentType,
-                            backendConfig: backendConfig,
-                            backendMetadata: backendMetadata
-                        )
-                    }
-                case let .noHistory(
-                    authenticationResult,
-                    didDetectDomainConflict
-                ):
-                    factory.noHistoryView(
-                        authenticationResult: authenticationResult,
-                        didDetectDomainConflict: didDetectDomainConflict
-                    )
-                case let .onPremiseLogin(
-                    email,
-                    environmentType,
-                    backendConfig,
-                    backendMetadata
-                ):
-                    factory.loginViaEmailOnPremView(
-                        email: email,
-                        environmentType: environmentType,
-                        backendConfig: backendConfig,
-                        backendMetadata: backendMetadata
-                    )
-                case let .ssoLogin(
-                    ssoURL,
-                    backendEnvironment
-                ):
-                    factory.loginViaSSOView(
-                        ssoURL: ssoURL,
-                        backendEnvironment: backendEnvironment
-                    )
-                }
+                sheetContent(for: sheet)
             }
     }
 
-<<<<<<< HEAD
-=======
     @ViewBuilder
     private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
         switch sheet {
@@ -109,7 +66,6 @@ package struct RootView: View {
         }
     }
 
->>>>>>> 30dc738c17 (refactor: support proxy mode - WPB-16256 (#2764))
     package enum ModalDestination: Identifiable, Hashable {
         public var id: Self { self }
 
