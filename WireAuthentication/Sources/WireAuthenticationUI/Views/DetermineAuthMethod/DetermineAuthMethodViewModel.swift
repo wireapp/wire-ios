@@ -28,25 +28,40 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package typealias Factory =
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
+<<<<<<< HEAD
         OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory &
         SSOLinkGeneratorFactory &
+=======
+        LoginViaSSOUseCaseFactory &
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
         ValidateEmailOrSSOCodeUseCaseFactory
 
     package enum ModalDestination: Hashable, Identifiable, Sendable {
         package var id: Self { self }
 
+<<<<<<< HEAD
         case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
         case switchBackend(email: String?, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
+=======
+        case switchBackendConfirmation(
+            email: String?,
+            backendInfo: BackendInfo
+        )
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     }
 
     private let router: any Router
     private let factory: any Factory
     private let bridge: WireAuthenticationBridge
+<<<<<<< HEAD
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     private let environmentType: BackendEnvironmentType
     private let backendMetadata: BackendMetadata?
     package let backendConfig: BackendConfig
+=======
+    package let backendInfo: BackendInfo
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     private var cancellable: AnyCancellable?
 
     @Published var emailOrSSOCode: String = ""
@@ -146,7 +161,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     func onAlertDismiss() {
-        ssoLinkGenerator?.flushToken()
         modalDestination = nil
     }
 
@@ -188,6 +202,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             ssoLinkGenerator = generator
 
             do {
+<<<<<<< HEAD
                 let url = try await Task.detached { [generator] in
                     try await generator.generateSSOLink(ssoCode: code)
                 }.value
@@ -206,14 +221,32 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             } catch {
                 WireLogger.authentication.error("Generating SSO link failed: \(error)")
 
+=======
+                let authResult = try await loginViaSSO(code: code, backendInfo: nil)
+                router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authResult))
+            } catch let error as LoginViaSSOUseCaseError {
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
                 switch error {
-                case SSOLinkGeneratorFailure.invalidSSOCode:
+                case .invalidCode:
                     alert = .incorrectSSOCode
-                case SSOLinkGeneratorFailure.invalidSSOURL:
+                case .invalidURL:
                     alert = .invalidSSOLink
+                case .userCancelled:
+                    // no op
+                    break
+                case .noDefaultCodeAvailable:
+                    // This shouldn't happen because we should be providing an sso code.
+                    break
+                case let .authenticationFailed(samlError):
+                    WireLogger.authentication.error(
+                        "sso authentication failed with SAML error: \(String(describing: samlError))"
+                    )
+                    alert = .ssoLoginFailed
                 default:
                     alert = .general(for: error)
                 }
+            } catch {
+                router.presentAlert(for: error)
             }
 
         case let .onPremLogin(email, backendConfigURL):
@@ -221,7 +254,22 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
+<<<<<<< HEAD
     private func handleOnPremLogin(email: String?, backendConfigURL: URL) async {
+=======
+    private func loginViaSSO(
+        code: UUID?,
+        backendInfo: BackendInfo?
+    ) async throws -> AuthenticationResult {
+        let loginViaSSO = try await factory.loginViaSSOUseCase(backendInfo: backendInfo)
+        return try await loginViaSSO.invoke(code: code)
+    }
+
+    private func handleOnPremLogin(
+        email: String?,
+        backendConfigURL: URL
+    ) async {
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
         guard !existsAnotherAccount else {
             alert = .switchBackendFailed
             return
@@ -243,8 +291,56 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             } catch {
                 WireLogger.authentication.error("Fetching backend config failed: \(error)")
 
+<<<<<<< HEAD
                 alert = .general(for: error)
             }
+=======
+    func switchBackend(
+        email: String?,
+        backendInfo: BackendInfo
+    ) async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let authResult = try await loginViaSSO(
+                code: nil,
+                backendInfo: backendInfo
+            )
+            router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authResult))
+        } catch let error as LoginViaSSOUseCaseError {
+            switch error {
+            case .invalidCode:
+                alert = .incorrectSSOCode
+            case .invalidURL:
+                alert = .invalidSSOLink
+            case .userCancelled:
+                // No op
+                break
+            case .noDefaultCodeAvailable:
+                router.presentSheet(
+                    RootView.ModalDestination.authFlow(backendInfo: backendInfo)
+                )
+            case let .authenticationFailed(samlError):
+                WireLogger.authentication.error(
+                    "sso authentication failed with SAML error: \(String(describing: samlError))"
+                )
+                alert = .ssoLoginFailed
+            default:
+                router.presentAlert(for: error)
+            }
+        } catch ProxyModeError.proxyCredentialsRequired {
+            // Login via email is the only place we ask from proxy credentials.
+            router.navigate(
+                to: DetermineAuthMethodView.Destination.login(
+                    email: email,
+                    didDetectDomainConflict: false,
+                    backendInfo: backendInfo
+                )
+            )
+        } catch {
+            router.presentAlert(for: error)
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
         }
     }
 

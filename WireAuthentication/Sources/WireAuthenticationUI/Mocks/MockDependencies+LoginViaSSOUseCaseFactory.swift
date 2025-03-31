@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 import WireAuthenticationAPI
 
-package protocol LoginViaSSOBuilder {
+extension MockDependencies: LoginViaSSOUseCaseFactory {
 
     @MainActor
+<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationUI/Views/Login/LoginViaSSO/LoginViaSSOView.swift
     func loginViaSSOView(
         ssoURL: URL,
         backendEnvironment: WireAuthenticationBackendEnvironment
@@ -37,17 +38,35 @@ package struct LoginViaSSOView: View {
         viewModel: LoginViaSSOViewModel
     ) {
         self.viewModel = viewModel
+=======
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+        MockLoginViaSSOUseCase(backendEnvironment: backendEnvironment)
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778)):WireAuthentication/Sources/WireAuthenticationUI/Mocks/MockDependencies+LoginViaSSOUseCaseFactory.swift
     }
 
-    package var body: some View {
-        SafariBrowser(url: viewModel.ssoURL)
-    }
 }
 
+<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationUI/Views/Login/LoginViaSSO/LoginViaSSOView.swift
 #Preview {
     let url = URL(string: "https://www.wire.com")!
     MockDependencies().loginViaSSOView(
         ssoURL: url,
         backendEnvironment: MockDependencies().backendEnvironment
     )
+=======
+struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
+
+    let backendEnvironment: WireAuthenticationBackendEnvironment
+
+    func invoke(code: UUID?) async throws -> AuthenticationResult {
+        AuthenticationResult(
+            userID: UUID(),
+            cookies: [],
+            accessToken: nil,
+            emailCredentials: nil,
+            backendEnvironment: backendEnvironment
+        )
+    }
+
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778)):WireAuthentication/Sources/WireAuthenticationUI/Mocks/MockDependencies+LoginViaSSOUseCaseFactory.swift
 }

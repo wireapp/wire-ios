@@ -102,12 +102,15 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var ssoCallbackURLScheme: String {
         return rootComponent.ssoCallbackURLScheme
     }
+<<<<<<< HEAD
     var userDefaults: UserDefaults {
         return rootComponent.userDefaults
     }
     var appStoreURL: URL {
         return rootComponent.appStoreURL
     }
+=======
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     var existsAnotherAccount: Bool {
         return rootComponent.existsAnotherAccount
     }
@@ -120,6 +123,7 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
 private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
 }
+<<<<<<< HEAD
 private class SwitchBackendConfirmationComponentDependency7a1956d88810c08ef169Provider: SwitchBackendConfirmationComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -176,6 +180,9 @@ private func factory075263b25e612b6948d3b3a8f24c1d289f2c0f2e(_ component: Needle
     return LoginViaSSODependencycb22423a897409b8b5faProvider(rootComponent: parent1(component) as! RootComponent)
 }
 private class NoHistoryComponentDependency0df6cc26e7db3dd9d951Provider: NoHistoryComponentDependency {
+=======
+private class NoHistoryComponentDependencya1005f718577ea03ea08Provider: NoHistoryComponentDependency {
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     var howToChangeEmailURL: URL {
         return rootComponent.howToChangeEmailURL
     }
@@ -322,8 +329,11 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
+<<<<<<< HEAD
         keyPathToName[\DetermineAuthMethodComponentDependency.userDefaults] = "userDefaults-UserDefaults"
         keyPathToName[\DetermineAuthMethodComponentDependency.appStoreURL] = "appStoreURL-URL"
+=======
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
         keyPathToName[\DetermineAuthMethodComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkService-NetworkService"] = { [unowned self] in self.networkService as Any }
     }
@@ -340,12 +350,15 @@ extension SwitchBackendConfirmationComponent: NeedleFoundation.Registration {
         localTable["backendConfig-BackendConfig"] = { [unowned self] in self.backendConfig as Any }
     }
 }
+<<<<<<< HEAD
 extension LoginViaSSOComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\LoginViaSSODependency.router] = "router-any Router"
         keyPathToName[\LoginViaSSODependency.bridge] = "bridge-WireAuthenticationBridge"
     }
 }
+=======
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
@@ -358,7 +371,6 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
-        localTable["userDefaults-UserDefaults"] = { [unowned self] in self.userDefaults as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
@@ -419,6 +431,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
+<<<<<<< HEAD
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->SwitchBackendConfirmationComponent", factorye1144df20d596f07c3bea9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->SwitchBackendConfirmationComponent", factorye1144df20d596f07c3bea9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaSSOComponent", factory075263b25e612b6948d3a9403e3301bb54f80df0)
@@ -426,6 +439,8 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->SwitchBackendConfirmationComponent->LoginViaSSOComponent", factory075263b25e612b6948d342f5655bf2362a8495f6)
     registerProviderFactory("^->RootComponent->LoginViaSSOComponent", factory075263b25e612b6948d3b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent->LoginViaSSOComponent", factory075263b25e612b6948d3a9403e3301bb54f80df0)
+=======
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->NoHistoryComponent", factory3bfed346df783964230ab3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodOnPremComponent", factorydbdff85f3341dce5e925b3a8f24c1d289f2c0f2e)

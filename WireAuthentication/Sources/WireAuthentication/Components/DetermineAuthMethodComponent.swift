@@ -32,8 +32,11 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
+<<<<<<< HEAD
     var userDefaults: UserDefaults { get }
     var appStoreURL: URL { get }
+=======
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     var existsAnotherAccount: Bool { get }
 
 }
@@ -79,6 +82,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
+<<<<<<< HEAD
     func loginViaSSOComponent(
         ssoURL: URL,
         backendEnvironment: WireAuthenticationBackendEnvironment
@@ -96,6 +100,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationComponent {
         SwitchBackendConfirmationComponent(
+=======
+    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
             parent: self,
             email: email,
             environmentType: environmentType,
@@ -124,6 +132,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
+<<<<<<< HEAD
     func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
         let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
         return ResolveBackendMetadataUseCase(
@@ -147,12 +156,38 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
+=======
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
         FetchBackendConfigUseCase()
     }
 
+<<<<<<< HEAD
     func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
         OpenAppStoreUseCase(url: dependency.appStoreURL)
+=======
+    @MainActor
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+        let networkStack: NetworkStack = if let backendInfo {
+            NetworkStack(
+                backendInfo: backendInfo,
+                minTLSVersion: dependency.minTLSVersion,
+                preferredAPIVersion: dependency.preferredAPIVersion
+            )
+        } else {
+            self.networkStack
+        }
+
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        return LoginViaSSOUseCase(
+            authenticationAPI: authenticationAPI,
+            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
+            ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
+            verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
+            webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
+            createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
+        )
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     }
 
 }
@@ -175,6 +210,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
         )
     }
 
+<<<<<<< HEAD
     func loginViaSSOView(
         ssoURL: URL,
         backendEnvironment: WireAuthenticationBackendEnvironment
@@ -195,6 +231,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
             environmentType: environmentType,
             backendConfig: backendConfig
         ).view
+=======
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
+        noHistoryComponent(authenticationResult: authenticationResult).view
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     }
 
 }

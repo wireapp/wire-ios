@@ -343,6 +343,7 @@ extension MockDependencies: VerificationCodeBuilder {
     }
 
 }
+<<<<<<< HEAD
 
 extension MockDependencies: LoginViaEmailOnPremBuilder {
 
@@ -420,3 +421,5 @@ private struct MockPasswordValidator: PasswordValidator {
     }
 
 }
+=======
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))

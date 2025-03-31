@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import WireLogging
 
 @MainActor
 package protocol Router {
@@ -34,3 +35,15 @@ package protocol Router {
     func presentAlert(_ alert: Alert)
 
 }
+<<<<<<< HEAD
+=======
+
+package extension Router {
+
+    func presentAlert(for error: any Error) {
+        WireLogger.authentication.error("router received unhandled error: \(String(describing: error))")
+        presentAlert(.general(for: error))
+    }
+
+}
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))

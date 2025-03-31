@@ -37,7 +37,13 @@ package protocol DetermineAuthMethodBuilder {
 
 package struct DetermineAuthMethodView: View {
 
+<<<<<<< HEAD
     package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
+=======
+    package typealias Factory =
+        LoginViaEmailBuilder &
+        NoHistoryViewBuilder
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
@@ -172,6 +178,7 @@ package struct DetermineAuthMethodView: View {
             item: $viewModel.modalDestination,
             content: {
                 switch $0 {
+<<<<<<< HEAD
                 case let .ssoLogin(
                     ssoURL,
                     backendEnvironment
@@ -181,6 +188,9 @@ package struct DetermineAuthMethodView: View {
                         backendEnvironment: backendEnvironment
                     )
                 case let .switchBackend(
+=======
+                case let .switchBackendConfirmation(
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
                     email,
                     environmentType,
                     backendConfig

@@ -18,14 +18,22 @@
 
 import Foundation
 
-public protocol FetchSSOURLUseCaseProtocol: Sendable {
+package protocol SSOLoginVerificationTokenGeneratorProtocol: Sendable {
 
-    func invoke() async throws -> URL?
+    func generateToken() -> SSOLoginVerificationToken
 
 }
 
-public protocol FetchSSOURLUseCaseFactory {
+package struct SSOLoginVerificationTokenGenerator: SSOLoginVerificationTokenGeneratorProtocol {
 
+<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationAPI/Use cases/FetchSSOURLUseCaseProtocol.swift
     func fetchSSOURLUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol
+=======
+    package init() {}
+
+    package func generateToken() -> SSOLoginVerificationToken {
+        SSOLoginVerificationToken()
+    }
+>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778)):WireAuthentication/Sources/WireAuthenticationLogic/Utilities/SSOLoginVerificationTokenGenerator.swift
 
 }

@@ -89,7 +89,6 @@ final class AuthenticationInterfaceBuilder {
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
-                userDefaults: .shared(),
                 appStoreURL: WireURLs.shared.appOnItunes,
                 existsAnotherAccount: numberOfAccounts > 0
             )

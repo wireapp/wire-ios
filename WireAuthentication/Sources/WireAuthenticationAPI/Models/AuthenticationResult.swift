@@ -20,7 +20,7 @@ import Foundation
 
 /// The result of an authentication flow.
 
-public struct AuthenticationResult: Equatable, Hashable {
+public struct AuthenticationResult: Equatable, Hashable, Sendable {
 
     /// The user id of whom the token belongs.
 
