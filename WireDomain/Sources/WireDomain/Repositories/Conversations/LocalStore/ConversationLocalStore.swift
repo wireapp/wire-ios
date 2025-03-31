@@ -258,7 +258,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             ZMConversation.unreadConversationCount(in: context)
         }
     }
-    
+
     public func storeConversation(
         permission: String,
         conversation: ZMConversation
