@@ -16,9 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-public enum ChannelPermission: String, Codable, Sendable {
-    case everyone
-    case admins
+struct ConversationAddPermissionEventProcessor: ConversationAddPermissionEventProcessorProtocol {
+
+    let localStore: any ConversationLocalStoreProtocol
+
+    func processEvent(_ event: ConversationAddPermissionEvent) async {
+
+        let conversationID = event.conversationID
+        let addPermission = event.addPermission
+
+        let localConversation = await localStore.fetchOrCreateConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        await localStore.storeConversation(
+            permission: addPermission.rawValue,
+            conversation: localConversation
+        )
+
+    }
+
 }

@@ -24,7 +24,7 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-enum Indicator {
+enum Indicator: Equatable {
     case deleted
 }
 
@@ -52,8 +52,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
 
-    private(set) var avatarBottomAnchorConstraint: NSLayoutConstraint?
-    private(set) var avatarGreaterThanBottomAnchorConstraint: NSLayoutConstraint?
+    private(set) var avatarCenterYConstraint: NSLayoutConstraint?
+    private(set) var avatarEqualToTopConstraint: NSLayoutConstraint?
+    private(set) var avatarEqualToBottomConstraint: NSLayoutConstraint?
+    private(set) var avatarGreaterThanOrEqualToTopConstraint: NSLayoutConstraint?
+    private(set) var avatarGreaterThanOrEqualToBottomConstraint: NSLayoutConstraint?
 
     var isSelected: Bool = false
 
@@ -162,18 +165,39 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         avatarContainerView.clipsToBounds = false
         avatar.translatesAutoresizingMaskIntoConstraints = false
         avatarContainerView.addSubview(avatar)
+
+        avatarCenterYConstraint = avatar.centerYAnchor.constraint(equalTo: avatarContainerView.centerYAnchor)
+        avatarCenterYConstraint?.priority = .defaultHigh
+
+        avatarEqualToTopConstraint = avatar.topAnchor.constraint(equalTo: avatarContainerView.topAnchor)
+        avatarEqualToTopConstraint?.priority = .defaultHigh
+
+        avatarEqualToBottomConstraint = avatarContainerView.bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
+        avatarEqualToBottomConstraint?.priority = .defaultHigh
+
+        avatarGreaterThanOrEqualToTopConstraint = avatar.topAnchor.constraint(
+            greaterThanOrEqualTo: avatarContainerView.topAnchor
+        )
+
+        avatarGreaterThanOrEqualToBottomConstraint = avatarContainerView.bottomAnchor.constraint(
+            greaterThanOrEqualTo: avatar.bottomAnchor
+        )
+
         NSLayoutConstraint.activate([
             avatar.leadingAnchor.constraint(equalTo: avatarContainerView.leadingAnchor),
+            avatarCenterYConstraint!,
             avatarContainerView.trailingAnchor.constraint(equalTo: avatar.trailingAnchor),
-            avatar.topAnchor.constraint(equalTo: avatarContainerView.topAnchor)
+            avatarEqualToTopConstraint!,
+            avatarEqualToBottomConstraint!,
+            avatarGreaterThanOrEqualToTopConstraint!,
+            avatarGreaterThanOrEqualToBottomConstraint!
         ])
 
         let spacing: CGFloat = 7
         let leadingMargin = conversationHorizontalMargins.left - CGFloat(integerLiteral: avatar.size.rawValue) - spacing
 
         [
-            avatarContainerView
-                .wrapInView(leadingInset: leadingMargin),
+            avatarContainerView.wrapInView(leadingInset: leadingMargin),
             authorLabel
         ]
         .forEach { stackView.addArrangedSubview($0) }
@@ -241,6 +265,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         default:
             accessibilityIdentifier = "img.member"
         }
+
+        avatarCenterYConstraint?.isActive = object.indicator == .deleted
+        avatarEqualToTopConstraint?.isActive = object.indicator == .deleted
+        avatarEqualToBottomConstraint?.isActive = object.indicator == .deleted
+        avatarGreaterThanOrEqualToTopConstraint?.isActive = object.indicator == .deleted
+        avatarGreaterThanOrEqualToBottomConstraint?.isActive = object.indicator == .deleted
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.maximumLineHeight = UIFont.mediumSemiboldFont.lineHeight

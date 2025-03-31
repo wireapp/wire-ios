@@ -86,6 +86,10 @@ extension UpdateEventDecodingProxy {
         case .typing:
             let event = try ConversationTypingEventDecoder().decode(from: container)
             updateEvent = .conversation(.typing(event))
+
+        case .addPermissionUpdate:
+            let event = try ConversationAddPermissionEventDecoder().decode(from: container)
+            updateEvent = .conversation(.permissionUpdate(event))
         }
     }
 
