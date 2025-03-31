@@ -40,6 +40,8 @@ package struct RootView: View {
             .universalSheet(item: $viewModel.modalDestination) { item in
                 sheetContent(for: item)
                     .id(item.hashValue)
+                // fix issue switching to specific backend via
+                // deeplink (all iOS versions) - this forces refresh
             }
     }
 
