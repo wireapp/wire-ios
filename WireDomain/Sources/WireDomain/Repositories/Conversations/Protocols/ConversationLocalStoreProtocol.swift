@@ -398,7 +398,7 @@ public protocol ConversationLocalStoreProtocol {
     /// Stores the private conversation (aka channel) permission locally.
     /// - Parameters
     ///     - permission: The new permission value (`admins` or `everyone`)
-    
+
     func storeConversation(
         permission: String,
         conversation: ZMConversation

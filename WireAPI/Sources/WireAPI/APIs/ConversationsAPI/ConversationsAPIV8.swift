@@ -20,7 +20,7 @@ import Foundation
 
 final class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
-    
+
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
@@ -249,7 +249,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var type: ConversationType?
     var groupType: ConversationGroupType? // Introduced in v8
     var addPermission: ChannelPermission? // Introduced in v8
- 
+
     func toAPIModel() -> Conversation {
         Conversation(
             id: id,

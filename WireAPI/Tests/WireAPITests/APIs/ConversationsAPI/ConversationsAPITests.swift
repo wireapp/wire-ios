@@ -488,7 +488,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTFail("expected error 'FailureResponse'")
         }
     }
-    
+
     func testGetConversations_givenV8AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
 

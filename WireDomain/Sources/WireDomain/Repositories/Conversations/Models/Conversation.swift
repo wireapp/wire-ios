@@ -49,7 +49,7 @@ public struct Conversation: Equatable {
         case group
         case channel
     }
-    
+
     enum ChannelPermission: String {
         case admins
         case everyone

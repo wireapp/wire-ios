@@ -177,14 +177,14 @@ extension WireAPI.ConversationGroupType {
 }
 
 extension WireAPI.ChannelPermission {
-    
+
     func toDomainModel() -> WireDomain.Conversation.ChannelPermission {
         switch self {
         case .admins:
-                .admins
+            .admins
         case .everyone:
-                .everyone
+            .everyone
         }
     }
-    
+
 }

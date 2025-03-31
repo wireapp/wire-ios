@@ -97,7 +97,7 @@ public struct Conversation: Equatable, Codable, Sendable {
     public var lastEventTime: Date?
 
     public var groupType: ConversationGroupType?
-    
+
     public var addPermission: ChannelPermission?
 
     enum CodingKeys: String, CodingKey {
