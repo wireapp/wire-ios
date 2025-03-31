@@ -52,7 +52,7 @@ enum FilterImageName: String {
     case folderFill = "folder.fill"
 
     /// Represents a selected or unselected channel icon for channel conversations.
-    case number = "number"
+    case number
 
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///

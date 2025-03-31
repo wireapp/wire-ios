@@ -324,13 +324,13 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         case .favorites:
             return isSelected ? accessibilityLocale.Favorites.Selected.description : accessibilityLocale.Favorites
                 .description
-            
 
         case .groups:
             return isSelected ? accessibilityLocale.Groups.Selected.description : accessibilityLocale.Groups.description
 
         case .channels:
-            return isSelected ? accessibilityLocale.Channels.Selected.description : accessibilityLocale.Channels.description
+            return isSelected ? accessibilityLocale.Channels.Selected.description : accessibilityLocale.Channels
+                .description
 
         case .oneOnOne:
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne

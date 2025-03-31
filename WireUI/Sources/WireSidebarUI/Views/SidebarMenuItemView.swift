@@ -94,11 +94,11 @@ struct SidebarMenuItemView<TitleView: View>: View {
 
     private func iconSystemName() -> String {
         if !isHighlighted {
-            return icon
-        } else if let iconHighlighted = iconHighlighted {
-            return iconHighlighted
+            icon
+        } else if let iconHighlighted {
+            iconHighlighted
         } else {
-            return icon + ".fill"
+            icon + ".fill"
         }
     }
 }
