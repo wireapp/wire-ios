@@ -20,6 +20,26 @@ import Foundation
 
 final class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
+    
+    override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)\(basePath)/list"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: QualifiedConversationListV8.self)
+            .parse(code: response.statusCode, data: data)
+    }
 
     override func createGroupConversation(
         parameters: CreateGroupConversationParameters
@@ -108,6 +128,26 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
 
 // MARK: - Encodables
 
+private struct QualifiedConversationListV8: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case found
+        case notFound = "not_found"
+        case failed
+    }
+
+    let found: [ConversationV8] // in v8, decode (if present) the add_permission value
+    let notFound: [QualifiedID]
+    let failed: [QualifiedID]
+
+    func toAPIModel() -> ConversationList {
+        ConversationList(
+            found: found.map { $0.toAPIModel() },
+            notFound: notFound,
+            failed: failed
+        )
+    }
+}
+
 struct ChannelPermissionParametersV8: Encodable {
     let addPermission: ChannelPermission
 
@@ -186,6 +226,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
         case teamID = "team"
         case type
         case groupType = "group_conv_type"
+        case addPermission = "add_permission"
     }
 
     var access: Set<ConversationAccessMode>?
@@ -207,7 +248,8 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var teamID: UUID?
     var type: ConversationType?
     var groupType: ConversationGroupType? // Introduced in v8
-
+    var addPermission: ChannelPermission? // Introduced in v8
+ 
     func toAPIModel() -> Conversation {
         Conversation(
             id: id,
@@ -229,7 +271,8 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
             legacyAccessRole: nil,
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date,
-            groupType: groupType
+            groupType: groupType,
+            addPermission: addPermission
         )
     }
 }

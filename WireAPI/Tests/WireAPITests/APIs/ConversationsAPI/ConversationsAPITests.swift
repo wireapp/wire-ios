@@ -488,6 +488,28 @@ final class ConversationsAPITests: XCTestCase {
             XCTFail("expected error 'FailureResponse'")
         }
     }
+    
+    func testGetConversations_givenV8AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "testGetConversations_givenV8AndSuccessResponse200")
+        ])
+
+        let api = ConversationsAPIV8(apiService: apiService)
+
+        // when
+        // then
+        let list = try await api.getConversations(for: [])
+        XCTAssertEqual(list.found.count, 1)
+        XCTAssertEqual(list.notFound.count, 1)
+        XCTAssertEqual(list.failed.count, 1)
+
+        let conversation = try XCTUnwrap(list.found.first)
+        XCTAssertEqual(conversation.epochTimestamp, Date(timeIntervalSince1970: 1_620_816_722))
+        XCTAssertEqual(conversation.cipherSuite, .MLS_128_DHKEMP256_AES128GCM_SHA256_P256)
+        XCTAssertEqual(conversation.addPermission, .everyone) // Can be decoded in API >= v8
+    }
 
     func testGetMLSOneToOneConversation_Success_Response_V5_And_Next_Versions() async throws {
         // Given
