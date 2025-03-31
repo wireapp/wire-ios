@@ -812,13 +812,13 @@
 			package = C91D188C2D7212F000B63B66 /* XCRemoteSwiftPackageReference "needle" */;
 			productName = NeedleFoundation;
 		};
-		C9B4C1F62D4915F10072A0EE /* WireCrypto */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireCrypto;
-        };
 		C93BFF312D93DB82000F6573 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
+		};
+		C9B4C1F62D4915F10072A0EE /* WireCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCrypto;
 		};
 		C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;

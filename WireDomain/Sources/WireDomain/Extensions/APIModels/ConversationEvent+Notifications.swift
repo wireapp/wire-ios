@@ -52,6 +52,8 @@ extension ConversationEvent {
             event.senderID
         case let .typing(event):
             event.senderID
+        case let .permissionUpdate(event):
+            event.senderID
         }
     }
 
@@ -86,6 +88,8 @@ extension ConversationEvent {
         case let .rename(event):
             event.conversationID
         case let .typing(event):
+            event.conversationID
+        case let .permissionUpdate(event):
             event.conversationID
         }
     }

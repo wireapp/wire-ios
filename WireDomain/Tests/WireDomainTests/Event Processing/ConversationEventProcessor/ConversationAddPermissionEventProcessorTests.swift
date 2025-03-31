@@ -87,9 +87,11 @@ final class ConversationAddPermissionEventProcessorTests: XCTestCase {
         static let id = UUID()
         static let domain = "domain.com"
         static let conversationID = ConversationID(uuid: id, domain: domain)
+        static let senderID = UserID(uuid: id, domain: domain)
 
         static let event = ConversationAddPermissionEvent(
             conversationID: conversationID,
+            senderID: senderID,
             addPermission: .admins
         )
     }
