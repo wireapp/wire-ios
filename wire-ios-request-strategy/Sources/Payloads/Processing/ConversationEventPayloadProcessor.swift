@@ -548,6 +548,8 @@ struct ConversationEventPayloadProcessor {
                     .channel
                 }
             }
+            
+            conversation.channelPermission = payload.addPermission?.rawValue
 
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
