@@ -26,7 +26,6 @@ import WireLogging
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
-        CreateAuthenticationResultUseCaseFactory &
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
         LoginViaSSOUseCaseFactory &
@@ -196,16 +195,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         backendInfo: BackendInfo?
     ) async throws -> AuthenticationResult {
         let loginViaSSO = try await factory.loginViaSSOUseCase(backendInfo: backendInfo)
-        let (userID, cookies) = try await loginViaSSO.invoke(code: code)
-        let createAuthResult = factory.createAuthenticationResultUseCase()
-        return try await Task.detached {
-            try await createAuthResult.invoke(
-                userID: userID,
-                cookies: cookies,
-                accessToken: nil,
-                emailCredentials: nil
-            )
-        }.value
+        return try await loginViaSSO.invoke(code: code)
     }
 
     private func handleOnPremLogin(

@@ -22,6 +22,7 @@ import WireAuthenticationAPI
 import WireTestingPackage
 import XCTest
 
+@testable import WireAuthenticationAPISupport
 @testable import WireAuthenticationLogic
 
 final class LoginViaSSOUseCaseTests: XCTestCase {
@@ -32,19 +33,31 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
     private let ssoCallbackURLScheme = "sso-callback"
     private var mockTokenGenerator: MockSSOLoginVerificationTokenGenerator!
     private var mockWebAuthenticator: MockWebAuthenticator!
+    private var mockCreateAuthResultUseCase: MockCreateAuthenticationResultUseCaseProtocol!
 
     @MainActor
     override func setUp() async throws {
         mockAuthenticationAPI = MockAuthenticationAPI()
         mockTokenGenerator = MockSSOLoginVerificationTokenGenerator()
         mockWebAuthenticator = MockWebAuthenticator()
+        mockCreateAuthResultUseCase = MockCreateAuthenticationResultUseCaseProtocol()
         sut = LoginViaSSOUseCase(
             authenticationAPI: mockAuthenticationAPI,
             baseURL: baseURL,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             verificationTokenGenerator: mockTokenGenerator,
-            webAuthenticator: mockWebAuthenticator
+            webAuthenticator: mockWebAuthenticator,
+            createAuthResultUseCase: mockCreateAuthResultUseCase
         )
+
+        mockCreateAuthResultUseCase.invokeUserIDCookiesAccessTokenEmailCredentials_MockValue =
+            AuthenticationResult(
+                userID: UUID(),
+                cookies: [],
+                accessToken: nil,
+                emailCredentials: nil,
+                backendEnvironment: Fixture.backendEnvironment
+            )
     }
 
     override func tearDown() {

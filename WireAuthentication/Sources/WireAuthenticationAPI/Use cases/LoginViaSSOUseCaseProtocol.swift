@@ -20,7 +20,7 @@ import Foundation
 
 public protocol LoginViaSSOUseCaseProtocol: Sendable {
 
-    func invoke(code: UUID?) async throws -> (userID: UUID, cookies: [HTTPCookie])
+    func invoke(code: UUID?) async throws -> AuthenticationResult
 
 }
 

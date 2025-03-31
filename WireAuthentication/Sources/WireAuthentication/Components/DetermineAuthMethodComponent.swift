@@ -98,10 +98,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
-    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
-        CreateAuthenticationResultUseCase(networkStack: networkStack)
-    }
-
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
         ValidateEmailOrSSOCodeUseCase()
     }
@@ -137,7 +133,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
             ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
             verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
-            webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme)
+            webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
+            createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
         )
     }
 

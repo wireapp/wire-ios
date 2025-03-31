@@ -29,22 +29,25 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
     private let ssoCallbackURLScheme: String
     private let verificationTokenGenerator: any SSOLoginVerificationTokenGeneratorProtocol
     private let webAuthenticator: any WebAuthenticatorProtocol
+    private let createAuthResultUseCase: any CreateAuthenticationResultUseCaseProtocol
 
     package init(
         authenticationAPI: AuthenticationAPI,
         baseURL: URL,
         ssoCallbackURLScheme: String,
         verificationTokenGenerator: any SSOLoginVerificationTokenGeneratorProtocol,
-        webAuthenticator: any WebAuthenticatorProtocol
+        webAuthenticator: any WebAuthenticatorProtocol,
+        createAuthResultUseCase: any CreateAuthenticationResultUseCaseProtocol
     ) {
         self.authenticationAPI = authenticationAPI
         self.baseURL = baseURL
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.verificationTokenGenerator = verificationTokenGenerator
         self.webAuthenticator = webAuthenticator
+        self.createAuthResultUseCase = createAuthResultUseCase
     }
 
-    package func invoke(code: UUID?) async throws -> (userID: UUID, cookies: [HTTPCookie]) {
+    package func invoke(code: UUID?) async throws -> AuthenticationResult {
         let ssoCode = if let code {
             code
         } else if let defaultCode = try await authenticationAPI.getSSOCode() {
@@ -61,9 +64,16 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
         let (url, verificationToken) = try await buildSSOLink(ssoCode: ssoCode)
 
-        return try await initiateWebAuth(
+        let (userID, cookies) = try await initiateWebAuth(
             url: url,
             verificationToken: verificationToken
+        )
+
+        return try await createAuthResultUseCase.invoke(
+            userID: userID,
+            cookies: cookies,
+            accessToken: nil,
+            emailCredentials: nil
         )
     }
 
