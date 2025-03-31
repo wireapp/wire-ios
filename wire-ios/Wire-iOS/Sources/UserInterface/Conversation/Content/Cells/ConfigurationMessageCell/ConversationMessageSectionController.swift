@@ -105,6 +105,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var changeObservers: [Any] = []
 
     private let userSession: UserSession
+    private let userDefaults: UserDefaultsProtocol
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -119,7 +120,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         selected: Bool = false,
         userSession: UserSession,
         useInvertedIndices: Bool,
-        contentWidth: CGFloat
+        contentWidth: CGFloat,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.message = message
         self.context = context
@@ -127,6 +129,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
         self.contentWidth = contentWidth
+        self.userDefaults = userDefaults
 
         super.init()
 
@@ -143,7 +146,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private var collapseOwnMessagesEnabled: Bool {
         guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
-        return PrivateUserDefaults<CollapseKey>(userID: selfUserId).bool(forKey: .collapseOwnMessages)
+        return PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
+            .bool(forKey: .collapseOwnMessages)
     }
 
     private func isCollapsedInitialValue() -> Bool {
@@ -422,38 +426,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
-        self.cellDescriptions = Self.combineByStacking(cellDescriptions)
-    }
-
-    private static func combineByStacking(
-        _ cellDescriptions: [AnyConversationMessageCellDescription]
-    ) -> [AnyConversationMessageCellDescription] {
-        var result = [AnyConversationMessageCellDescription]()
-        var currentCombination = [AnyConversationMessageCellDescription]()
-
-        for cellDescription in cellDescriptions {
-            if cellDescription.canBeCombinedWithOtherCells {
-                currentCombination.append(cellDescription)
-            } else {
-                if currentCombination.count == 1 { // don't use the stack for single items
-                    result.append(currentCombination[0])
-                } else if !currentCombination.isEmpty {
-                    let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-                    result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
-                }
-                currentCombination.removeAll()
-                result.append(cellDescription)
-            }
-        }
-
-        if currentCombination.count == 1 { // don't use the stack for single items
-            result.append(currentCombination[0])
-        } else if !currentCombination.isEmpty {
-            let stackViewCellDescription = StackViewCellDescription(cellDescriptions: currentCombination)
-            result.append(AnyConversationMessageCellDescription(stackViewCellDescription))
-        }
-
-        return result
+        self.cellDescriptions = cellDescriptions
     }
 
     private func updateDelegates() {

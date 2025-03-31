@@ -218,6 +218,8 @@ public protocol UserSession: AnyObject {
 
     var mlsFeature: Feature.MLS { get }
 
+    var channelsFeature: Feature.Channels { get }
+
     func fetchAllClients()
 
     func createTeamOneOnOne(

@@ -1320,8 +1320,8 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Bağlantı Önizlemeleri Oluştur";
 "self.settings.privacy_security.disable_link_previews.footer" = "Ön izlemeler hala başkalarından gelen bağlantılar için görüntülenebilir olabilir.";
 
-"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Cihazlar";
 

@@ -25,6 +25,7 @@ package struct RootView: View {
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
+    private let cornerRadius: CGFloat = 10
 
     package init(
         viewModel: RootViewModel,
@@ -36,8 +37,8 @@ package struct RootView: View {
 
     package var body: some View {
         BackgroundView()
-            .sheet(item: $viewModel.modalDestination) { sheet in
-                sheetContent(for: sheet)
+            .universalSheet(item: $viewModel.modalDestination) { item in
+                sheetContent(for: item)
             }
     }
 
@@ -48,6 +49,7 @@ package struct RootView: View {
             NavigationStack(path: $viewModel.path) {
                 factory.determineAuthMethodView(backendInfo: backedInfo)
             }
+            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
             // The alert should be shown on the navigation stack, otherwise
             // it will dismiss the sheet.
             .alert(
@@ -71,7 +73,6 @@ package struct RootView: View {
 
         case authFlow(backendInfo: BackendInfo)
     }
-
 }
 
 #Preview {
