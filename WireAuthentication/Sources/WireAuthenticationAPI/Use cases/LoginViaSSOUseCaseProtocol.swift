@@ -24,7 +24,7 @@ public protocol LoginViaSSOUseCaseProtocol: Sendable {
 
 }
 
-public enum LoginViaSSOUseCaseError: Error {
+public enum LoginViaSSOUseCaseError: Error, Equatable {
 
     case noDefaultCodeAvailable
     case invalidCode

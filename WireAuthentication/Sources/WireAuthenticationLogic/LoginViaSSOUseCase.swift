@@ -27,16 +27,21 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
     private let authenticationAPI: AuthenticationAPI
     private let baseURL: URL
     private let ssoCallbackURLScheme: String
-    private let context = WebAuthPresentationContext()
+    private let verificationTokenGenerator: any SSOLoginVerificationTokenGeneratorProtocol
+    private let webAuthenticator: any WebAuthenticatorProtocol
 
     package init(
         authenticationAPI: AuthenticationAPI,
         baseURL: URL,
-        ssoCallbackURLScheme: String
+        ssoCallbackURLScheme: String,
+        verificationTokenGenerator: any SSOLoginVerificationTokenGeneratorProtocol,
+        webAuthenticator: any WebAuthenticatorProtocol
     ) {
         self.authenticationAPI = authenticationAPI
         self.baseURL = baseURL
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.verificationTokenGenerator = verificationTokenGenerator
+        self.webAuthenticator = webAuthenticator
     }
 
     package func invoke(code: UUID?) async throws -> (userID: UUID, cookies: [HTTPCookie]) {
@@ -71,7 +76,7 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
     /// - Returns: URL to the SSO authentication screen
 
     private func buildSSOLink(ssoCode: UUID) async throws -> (URL, SSOLoginVerificationToken) {
-        let validationToken = SSOLoginVerificationToken()
+        let validationToken = verificationTokenGenerator.generateToken()
         var components = URLComponents()
         components.scheme = "https"
         components.host = baseURL.host
@@ -157,59 +162,49 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
         url: URL,
         verificationToken: SSOLoginVerificationToken
     ) async throws -> (UUID, [HTTPCookie]) {
-        try await withCheckedThrowingContinuation { continuation in
-            let session = ASWebAuthenticationSession(
-                url: url,
-                callbackURLScheme: ssoCallbackURLScheme
-            ) { callbackURL, error in
-                if let callbackURL {
-                    let result = parseCallbackURL(
-                        callbackURL,
-                        verificationToken: verificationToken
-                    )
-                    continuation.resume(with: result)
-                } else if let error = error as? ASWebAuthenticationSessionError {
-                    switch error.code {
-                    case .canceledLogin:
-                        continuation.resume(throwing: LoginViaSSOUseCaseError.userCancelled)
-                    case .presentationContextNotProvided:
-                        continuation.resume(throwing: LoginViaSSOUseCaseError.contextNotProvided)
-                    case .presentationContextInvalid:
-                        continuation.resume(throwing: LoginViaSSOUseCaseError.invalidContext)
-                    @unknown default:
-                        // TODO: log
-                        continuation.resume(throwing: LoginViaSSOUseCaseError.unknown)
-                    }
-                } else if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(throwing: LoginViaSSOUseCaseError.unknown)
-                }
+        let callbackURL: URL?
+        do {
+            callbackURL = try await webAuthenticator.authenticate(url: url)
+        } catch let error as ASWebAuthenticationSessionError {
+            switch error.code {
+            case .canceledLogin:
+                throw LoginViaSSOUseCaseError.userCancelled
+            case .presentationContextNotProvided:
+                throw LoginViaSSOUseCaseError.contextNotProvided
+            case .presentationContextInvalid:
+                throw LoginViaSSOUseCaseError.invalidContext
+            @unknown default:
+                // TODO: log
+                throw LoginViaSSOUseCaseError.unknown
             }
-
-            // Prevents cookie persistence.
-            session.prefersEphemeralWebBrowserSession = true
-            session.presentationContextProvider = context
-            session.start()
         }
+
+        guard let callbackURL else {
+            throw LoginViaSSOUseCaseError.unknown
+        }
+
+        return try parseCallbackURL(
+            callbackURL,
+            verificationToken: verificationToken
+        )
     }
 
     private func parseCallbackURL(
         _ url: URL,
         verificationToken: SSOLoginVerificationToken
-    ) -> Result<(UUID, [HTTPCookie]), any Error> {
+    ) throws -> (UUID, [HTTPCookie]) {
         guard
             let components = URLComponents(string: url.absoluteString),
             components.host == URL.Host.login,
             components.scheme == ssoCallbackURLScheme
         else {
-            return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+            throw LoginViaSSOUseCaseError.invalidCallbackURL
         }
 
         let pathComponents = url.pathComponents
 
         guard url.pathComponents.count >= 2 else {
-            return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+            throw LoginViaSSOUseCaseError.invalidCallbackURL
         }
 
         switch pathComponents[1] {
@@ -218,18 +213,18 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
                 with: components,
                 verificationToken: verificationToken
             ) else {
-                return .failure(LoginViaSSOUseCaseError.callbackURLValidationFailed)
+                throw LoginViaSSOUseCaseError.callbackURLValidationFailed
             }
 
             guard let cookieString = components.query(for: URLQueryItem.Key.cookie) else {
-                return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+                throw LoginViaSSOUseCaseError.invalidCallbackURL
             }
 
             guard
                 let rawUserID = components.query(for: URLQueryItem.Key.userIdentifier),
                 let userID = UUID(uuidString: rawUserID)
             else {
-                return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+                throw LoginViaSSOUseCaseError.invalidCallbackURL
             }
 
             let cookies = HTTPCookie.cookies(
@@ -238,27 +233,27 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             )
 
             guard !cookies.isEmpty else {
-                return .failure(LoginViaSSOUseCaseError.missingCookies)
+                throw LoginViaSSOUseCaseError.missingCookies
             }
 
-            return .success((userID, cookies))
+            return (userID, cookies)
 
         case URL.Path.failure:
             guard validateCallback(
                 with: components,
                 verificationToken: verificationToken
             ) else {
-                return .failure(LoginViaSSOUseCaseError.callbackURLValidationFailed)
+                throw LoginViaSSOUseCaseError.callbackURLValidationFailed
             }
 
             guard let label = components.query(for: URLQueryItem.Key.errorLabel) else {
-                return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+                throw LoginViaSSOUseCaseError.invalidCallbackURL
             }
 
-            return .failure(LoginViaSSOUseCaseError.authenticationFailed(SAMLError(label)))
+            throw LoginViaSSOUseCaseError.authenticationFailed(SAMLError(label))
 
         default:
-            return .failure(LoginViaSSOUseCaseError.invalidCallbackURL)
+            throw LoginViaSSOUseCaseError.invalidCallbackURL
         }
     }
 
@@ -309,14 +304,6 @@ private extension URLQueryItem {
         static let cookie = "$cookie"
         static let userIdentifier = "$userid"
         static let errorLabel = "$label"
-    }
-
-}
-
-private final class WebAuthPresentationContext: NSObject, ASWebAuthenticationPresentationContextProviding {
-
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        ASPresentationAnchor()
     }
 
 }
@@ -377,3 +364,4 @@ private extension SAMLError {
     }
 
 }
+
