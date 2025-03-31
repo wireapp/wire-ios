@@ -48,12 +48,6 @@ final class ConversationMessageCellTableViewAdapter<
         }
     }
 
-    var topMargin: CGFloat = 0 {
-        didSet {
-            top.constant = CGFloat(topMargin)
-        }
-    }
-
     private var leading: NSLayoutConstraint!
     private var top: NSLayoutConstraint!
     private var trailing: NSLayoutConstraint!
@@ -83,7 +77,7 @@ final class ConversationMessageCellTableViewAdapter<
         self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
         self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        self.bottom = contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
         self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(
             equalTo: cellView.topAnchor,
@@ -123,12 +117,13 @@ final class ConversationMessageCellTableViewAdapter<
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with object: C.View.Configuration, topMargin: CGFloat) {
+    func configure(with object: C.View.Configuration) {
         cellView.configure(with: object, animated: false)
         cellView.accessibilityLabel = cellDescription?.accessibilityLabel
         cellView.accessibilityIdentifier = cellDescription?.accessibilityIdentifier
+        top.constant = cellDescription?.topMargin ?? 0
+        bottom.constant = cellDescription?.bottomMargin ?? 0
         ephemeralTop.constant = cellView.ephemeralTimerTopInset
-        self.topMargin = topMargin
         ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
         ephemeralCountdownView.message = cellDescription?.message
     }
@@ -162,11 +157,7 @@ final class ConversationMessageCellTableViewAdapter<
     private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
 
-        if let cellDescription = nestedCellDescription(
-            using: gestureRecognizer.location(in:)
-        ), cellDescription.supportsActions {
-            cellDescription.actionController?.performSingleTapAction()
-        } else if cellDescription?.supportsActions == true {
+        if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
     }
@@ -177,33 +168,9 @@ final class ConversationMessageCellTableViewAdapter<
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
 
-        if let cellDescription = nestedCellDescription(
-            using: gestureRecognizer.location(in:)
-        ), cellDescription.supportsActions {
-            cellDescription.actionController?.performDoubleTapAction()
-        } else if cellDescription?.supportsActions == true {
+        if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }
-    }
-
-    /// For stack cells get the cell description of the arranged subview.
-    /// If no view matches, the top level cell description is returned.
-    private func nestedCellDescription(
-        using locationInCell: (UIView?) -> CGPoint
-    ) -> AnyConversationMessageCellDescription? {
-        guard
-            let cellView = cellView as? ConversationStackMessageContentView,
-            let cellDescription = cellDescription as? StackViewCellDescription
-        else { return nil }
-
-        for (index, cell) in cellView.conversationMessageCells.enumerated() {
-            let location = locationInCell(cell)
-            if cell.bounds.contains(location) {
-                return cellDescription.cellDescriptions[index]
-            }
-        }
-
-        return nil
     }
 
     // MARK: - SelectableView
@@ -242,11 +209,7 @@ final class ConversationMessageCellTableViewAdapter<
 
         // We fail the single tap gesture recognizer if there's no single tap action to perform, which gives
         // other gesture recognizers the opportunity to fire.
-        if let cellDescription = nestedCellDescription(using: gestureRecognizer.location(in:)) {
-            return cellDescription.supportsActions && cellDescription.actionController?.singleTapAction != nil
-        } else {
-            return cellDescription?.actionController?.singleTapAction != nil
-        }
+        return cellDescription?.actionController?.singleTapAction != nil
     }
 
     override func prepareForReuse() {
@@ -291,10 +254,7 @@ extension UITableView {
         ) as Any as! ConversationMessageCellTableViewAdapter<C>
 
         cell.cellDescription = description
-        cell.configure(
-            with: description.configuration,
-            topMargin: description.topMargin
-        )
+        cell.configure(with: description.configuration)
 
         return cell
     }

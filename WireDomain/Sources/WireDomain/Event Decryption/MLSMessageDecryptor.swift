@@ -86,6 +86,10 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         return decryptedEvent
     }
 
+    func commitPendingProposalsIfNeeded() async {
+        await mlsService.commitPendingProposalsIfNeeded()
+    }
+
     private func decryptMLSMessage(
         message: String,
         mlsGroupID: MLSGroupID,
@@ -131,9 +135,9 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 )
 
             case let .proposal(commitDelay):
-                await conversationLocalStore.commitPendingProposals(
-                    conversation: mlsConversation,
+                await conversationLocalStore.updateCommitPendingProposal(
                     date: date ?? .now,
+                    for: mlsConversation,
                     commitDelay: commitDelay
                 )
             }

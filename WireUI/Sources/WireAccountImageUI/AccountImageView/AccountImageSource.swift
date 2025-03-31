@@ -18,7 +18,7 @@
 
 import UIKit
 
-public enum AccountImageSource: Equatable, Sendable {
+public enum AccountImageSource: Hashable, Sendable {
     case image(UIImage)
     case text(_ initials: String)
     public init() { self = .text("") }

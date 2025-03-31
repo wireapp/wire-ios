@@ -3648,6 +3648,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(mlsMigration)
     }
 
+    // MARK: - fetchChannels
+
+    public var fetchChannels_Invocations: [Void] = []
+    public var fetchChannels_MockMethod: (() -> Feature.Channels)?
+    public var fetchChannels_MockValue: Feature.Channels?
+
+    public func fetchChannels() -> Feature.Channels {
+        fetchChannels_Invocations.append(())
+
+        if let mock = fetchChannels_MockMethod {
+            return mock()
+        } else if let mock = fetchChannels_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchChannels`")
+        }
+    }
+
+    // MARK: - storeChannels
+
+    public var storeChannels_Invocations: [Feature.Channels] = []
+    public var storeChannels_MockMethod: ((Feature.Channels) -> Void)?
+
+    public func storeChannels(_ channels: Feature.Channels) {
+        storeChannels_Invocations.append(channels)
+
+        guard let mock = storeChannels_MockMethod else {
+            fatalError("no mock for `storeChannels`")
+        }
+
+        mock(channels)
+    }
+
 }
 
 class MockFileManagerInterface: FileManagerInterface {
@@ -3940,29 +3973,6 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
             return mock
         } else {
             fatalError("no mock for `claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn`")
-        }
-    }
-
-    // MARK: - sendMessage
-
-    var sendMessageIn_Invocations: [(message: Data, context: NotificationContext)] = []
-    var sendMessageIn_MockError: Error?
-    var sendMessageIn_MockMethod: ((Data, NotificationContext) async throws -> [ZMUpdateEvent])?
-    var sendMessageIn_MockValue: [ZMUpdateEvent]?
-
-    func sendMessage(_ message: Data, in context: NotificationContext) async throws -> [ZMUpdateEvent] {
-        sendMessageIn_Invocations.append((message: message, context: context))
-
-        if let error = sendMessageIn_MockError {
-            throw error
-        }
-
-        if let mock = sendMessageIn_MockMethod {
-            return try await mock(message, context)
-        } else if let mock = sendMessageIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `sendMessageIn`")
         }
     }
 

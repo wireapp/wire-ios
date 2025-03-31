@@ -24,7 +24,7 @@ import WireReusableUIComponents
 final class MockDependencies {
 
     private var rootViewModel: RootViewModel {
-        RootViewModel()
+        RootViewModel(bridge: WireAuthenticationBridge())
     }
 
     var environmentType: BackendEnvironmentType {
@@ -75,15 +75,19 @@ final class MockDependencies {
 
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
+        existsAnotherAccount: Bool,
         isLoading: Bool,
         alert: Alert?
     ) -> DetermineAuthMethodView {
         let viewModel = DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
             backendConfig: backendConfig,
+            backendMetadata: nil,
             emailOrSSOCode: emailOrSSOCode,
+            existsAnotherAccount: existsAnotherAccount,
             isLoading: isLoading
         )
         viewModel.alert = alert
@@ -123,6 +127,11 @@ extension MockDependencies: DetermineAuthMethodViewModel.Factory {
         MockFetchBackendConfigUseCase()
     }
 
+    nonisolated
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        MockOpenAppStoreUseCase()
+    }
+
 }
 
 extension MockDependencies: LoginViaEmailUseCaseProtocol {
@@ -151,12 +160,26 @@ extension MockDependencies: DetermineAuthMethodBuilder {
         DetermineAuthMethodViewModel(
             router: rootViewModel,
             factory: self,
+            bridge: WireAuthenticationBridge(),
             environmentType: environmentType,
-            backendConfig: backendConfig
+            backendConfig: backendConfig,
+            backendMetadata: nil,
+            existsAnotherAccount: false
         )
     }
 
-    var determineAuthMethodView: DetermineAuthMethodView {
+    func determineAuthMethodView(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?
+    ) -> DetermineAuthMethodView {
+        DetermineAuthMethodView(
+            viewModel: determineAuthMethodViewModel,
+            factory: self
+        )
+    }
+
+    func determineAuthMethodView() -> DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
             factory: self
@@ -168,7 +191,7 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 extension MockDependencies: SwitchBackendConfirmationBuilder {
 
     private func switchBackendConfirmationViewModel(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
@@ -194,7 +217,7 @@ extension MockDependencies: SwitchBackendConfirmationBuilder {
     }
 
     func switchBackendView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig
     ) -> SwitchBackendConfirmationView {
@@ -252,7 +275,6 @@ extension MockDependencies: LoginViaEmailBuilder {
             loginViaEmailUseCase: self,
             backendEnvironment: backendEnvironment,
             email: email,
-            accountsURL: URL(string: "https://example.com")!,
             passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: false,
@@ -264,6 +286,8 @@ extension MockDependencies: LoginViaEmailBuilder {
         email: String,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView {
         LoginViaEmailView(
@@ -323,7 +347,7 @@ extension MockDependencies: VerificationCodeBuilder {
 extension MockDependencies: LoginViaEmailOnPremBuilder {
 
     private func loginViaEmailOnPremViewModel(
-        email: String,
+        email: String?,
         backendConfig: BackendConfig
     ) -> LoginViaEmailOnPremViewModel {
         LoginViaEmailOnPremViewModel(
@@ -339,7 +363,7 @@ extension MockDependencies: LoginViaEmailOnPremBuilder {
     }
 
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: BackendMetadata?
@@ -362,7 +386,12 @@ extension MockDependencies: LoginViaEmailUseCaseFactory {
 extension MockDependencies: LoginViaSSOBuilder {
 
     private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoURL: ssoURL)
+        LoginViaSSOViewModel(
+            ssoURL: ssoURL,
+            bridge: WireAuthenticationBridge(),
+            router: rootViewModel,
+            backendEnvironment: backendEnvironment
+        )
     }
 
     func loginViaSSOView(

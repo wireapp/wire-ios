@@ -28,6 +28,8 @@ package protocol LoginViaEmailBuilder {
         email: String,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         backendMetadata: BackendMetadata
     ) -> LoginViaEmailView
 
@@ -52,6 +54,7 @@ package struct LoginViaEmailView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
+
                 emailField
                 passwordField
                 submitButton
@@ -69,6 +72,8 @@ package struct LoginViaEmailView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
+            .setPreferredSize(navigationBarHidden: false)
+            .customBackButton()
         }
         .alert(
             item: $viewModel.alert,
@@ -88,7 +93,6 @@ package struct LoginViaEmailView: View {
                 )
             }
         }
-        .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
@@ -193,6 +197,8 @@ package struct LoginViaEmailView: View {
                 email: "foo@bar.com",
                 canCreateAccount: false,
                 didDetectDomainConflict: false,
+                environmentType: MockDependencies().environmentType,
+                backendConfig: MockDependencies()._backendConfig,
                 backendMetadata: BackendMetadata(
                     apiVersion: .v8,
                     domain: "wire.com",

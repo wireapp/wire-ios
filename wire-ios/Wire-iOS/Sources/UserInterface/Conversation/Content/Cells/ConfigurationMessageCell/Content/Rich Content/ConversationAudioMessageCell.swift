@@ -126,9 +126,6 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
 
     let configuration: View.Configuration
 
-    var canBeCombinedWithOtherCells: Bool { true }
-
-    var topMargin: CGFloat = 8
     var showEphemeralTimer: Bool = false
 
     let supportsActions: Bool = true

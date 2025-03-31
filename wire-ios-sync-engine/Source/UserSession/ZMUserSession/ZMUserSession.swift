@@ -46,7 +46,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
-    var apiService: APIServiceProtocol? {
+    public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {
             return nil
         }
@@ -150,6 +150,11 @@ public final class ZMUserSession: NSObject {
     public var mlsFeature: Feature.MLS {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchMLS()
+    }
+
+    public var channelsFeature: Feature.Channels {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchChannels()
     }
 
     public var gracePeriodEndDate: Date? {
@@ -543,10 +548,7 @@ public final class ZMUserSession: NSObject {
         }
 
         if let selfUserClient {
-            WireLogger.authentication.addTag(
-                .selfClientId,
-                value: selfUserClient.safeRemoteIdentifier.safeForLoggingDescription
-            )
+            WireLogger.authentication.setClientID(selfUserClient.safeRemoteIdentifier.safeForLoggingDescription)
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
@@ -594,7 +596,7 @@ public final class ZMUserSession: NSObject {
         contextStorage.clear()
 
         NotificationCenter.default.removeObserver(self)
-        WireLogger.authentication.addTag(.selfClientId, value: nil)
+        WireLogger.authentication.clearClientID()
 
         isTornDown = true
     }
@@ -1085,7 +1087,10 @@ extension ZMUserSession: SyncAgentDelegate {
                 }
 
                 if !isRecovering, mlsFeature.isEnabled {
-                    await mlsService.commitPendingProposalsIfNeeded()
+                    Task.detached { [mlsService] in
+                        // we don't need to wait for this, as it can take a while to finish
+                        await mlsService.commitPendingProposalsIfNeeded()
+                    }
                 }
 
                 await calculateSelfSupportedProtocolsIfNeeded()
@@ -1284,8 +1289,8 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
 
-        let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
-        WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        let clientID = userClient.safeRemoteIdentifier.safeForLoggingDescription
+        WireLogger.authentication.setClientID(clientID)
 
         // The client was just registered and still needs to perform the
         // initial sync.

@@ -39,4 +39,5 @@ protocol MLSMessageDecryptorProtocol {
         from eventData: ConversationMLSWelcomeEvent
     ) async throws
 
+    func commitPendingProposalsIfNeeded() async
 }

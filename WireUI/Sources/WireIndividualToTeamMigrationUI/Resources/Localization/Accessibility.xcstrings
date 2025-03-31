@@ -114,8 +114,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "关闭团队创建的视图"
           }
         },
         "zh-Hant" : {
@@ -239,8 +239,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "关闭确认视图"
           }
         },
         "zh-Hant" : {
@@ -340,8 +340,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Закрыть информацию об аккаунте команды"
           }
         },
         "sl" : {
@@ -465,8 +465,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Закрыть просмотр информации о названии команды"
           }
         },
         "sl" : {

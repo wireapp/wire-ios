@@ -113,8 +113,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Explore extra features for free with the same level of security."
+            "state" : "translated",
+            "value" : "在同等安全级别下免费探索额外功能。"
           }
         },
         "zh-Hant" : {
@@ -237,8 +237,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create Wire Team"
+            "state" : "translated",
+            "value" : "创建Wire团队"
           }
         },
         "zh-Hant" : {
@@ -361,8 +361,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enjoy benefits of a team"
+            "state" : "translated",
+            "value" : "享受团队裨益"
           }
         },
         "zh-Hant" : {
@@ -736,8 +736,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "When you leave now, you lose your progress and need to restart the team creation."
+            "state" : "translated",
+            "value" : "您若现在离开，将会失去进度并需要重新开始创建团队。"
           }
         },
         "zh-Hant" : {
@@ -861,8 +861,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Continue Team Creation"
+            "state" : "translated",
+            "value" : "继续创建团队"
           }
         },
         "zh-Hant" : {
@@ -986,8 +986,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave Without Saving"
+            "state" : "translated",
+            "value" : "离开而不保存"
           }
         },
         "zh-Hant" : {
@@ -1111,8 +1111,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave without saving?"
+            "state" : "translated",
+            "value" : "不保存就离开？"
           }
         },
         "zh-Hant" : {
@@ -1212,8 +1212,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "Теперь вы являетесь владельцем команды %@.\n\nПерейдите в раздел Управление командой, чтобы: \n• Пригласить первых членов команды и начать совместную работу\n• Настроить параметры команды"
           }
         },
         "sl" : {
@@ -1236,8 +1236,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "您现在是团队 %@ 的所有者。\n\n转到团队管理以：\n• 邀请您的第一批团队成员，并开始协同工作\n• 自定义您的团队设置"
           }
         },
         "zh-Hant" : {
@@ -1361,8 +1361,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Back To Wire"
+            "state" : "translated",
+            "value" : "回到Wire"
           }
         },
         "zh-Hant" : {
@@ -1486,8 +1486,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Go To Team Management"
+            "state" : "translated",
+            "value" : "转到团队管理"
           }
         },
         "zh-Hant" : {
@@ -1610,8 +1610,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "关闭团队创建的视图"
           }
         },
         "zh-Hant" : {
@@ -1735,8 +1735,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@."
+            "state" : "translated",
+            "value" : "您现在是团队 %@ 的所有者。"
           }
         },
         "zh-Hant" : {
@@ -1860,8 +1860,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Congratulations %@!"
+            "state" : "translated",
+            "value" : "恭喜 %@！"
           }
         },
         "zh-Hant" : {
@@ -1984,8 +1984,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You create a team and transfer your personal account into a team account"
+            "state" : "translated",
+            "value" : "您创建一个团队并将您的个人账户转移到团队账户"
           }
         },
         "zh-Hant" : {
@@ -2108,8 +2108,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "This change is permanent and irrevocable"
+            "state" : "translated",
+            "value" : "此更改是永久的且不可撤销"
           }
         },
         "zh-Hant" : {
@@ -2232,8 +2232,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "As the team owner you can invite and remove team members and  manage team settings"
+            "state" : "translated",
+            "value" : "作为团队所有者，你可以邀请和移除团队成员并管理团队设置"
           }
         },
         "zh-Hant" : {
@@ -2356,8 +2356,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "关闭确认视图"
           }
         },
         "zh-Hant" : {
@@ -3332,8 +3332,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "Уже в команде"
           }
         },
         "sl" : {
@@ -3457,8 +3457,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Повторить попытку"
           }
         },
         "sl" : {
@@ -3582,8 +3582,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "Wire не удалось завершить создание вашей команды из-за неизвестной ошибки."
           }
         },
         "sl" : {
@@ -3707,8 +3707,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "Команда не создана"
           }
         },
         "sl" : {
@@ -3956,8 +3956,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "Трансформируйте свой персональный аккаунт в командный, чтобы получить больше пользы от совместной работы."
           }
         },
         "sl" : {
@@ -4080,8 +4080,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Закрыть информацию об аккаунте команды"
           }
         },
         "sl" : {
@@ -4205,8 +4205,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**Консоль администратора**: Приглашайте членов команды и управляйте настройками."
           }
         },
         "sl" : {
@@ -4330,8 +4330,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**Эффективное сотрудничество**: Общайтесь с гостями и внешними участниками."
           }
         },
         "sl" : {
@@ -4455,8 +4455,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**Обновление до Enterprise**: Получите дополнительные возможности и премиум-поддержку."
           }
         },
         "sl" : {
@@ -4580,8 +4580,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**Большие совещания**:Присоединяйтесь к видеоконференциям с участием до 150 человек."
           }
         },
         "sl" : {
@@ -4705,8 +4705,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**Статус доступности**: Сообщите своей команде, если вы свободны, заняты или отсутствуете."
           }
         },
         "sl" : {
@@ -4830,8 +4830,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "Аккаунт команды"
           }
         },
         "sl" : {
@@ -4955,8 +4955,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "Узнайте больше о тарифах Wire"
           }
         },
         "sl" : {
@@ -5080,8 +5080,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "Шаг %d из %d"
           }
         },
         "sl" : {
@@ -5205,8 +5205,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "Выберите название для своей команды. Вы можете изменить его в любое время."
           }
         },
         "sl" : {
@@ -5329,8 +5329,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Закрыть просмотр информации о названии команды"
           }
         },
         "sl" : {
@@ -5454,8 +5454,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Ваша команда"
           }
         },
         "sl" : {
@@ -5704,8 +5704,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Название команды"
           }
         },
         "sl" : {

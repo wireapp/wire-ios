@@ -52,6 +52,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             mlsMessageDecryptor: mlsMessageDecryptor,
             messageLocalStore: messageLocalStore
         )
+        mlsMessageDecryptor.commitPendingProposalsIfNeeded_MockMethod = {}
     }
 
     override func tearDown() async throws {
@@ -165,6 +166,37 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
     }
 
+    func testWhenDecryptionOfMLSMessagesIsSuccessfulThenEventsAreReturned() async throws {
+        // Given some events.
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [
+                .conversation(.mlsMessageAdd(Scaffolding.mlsMessage)),
+                .user(.pushRemove)
+            ],
+            isTransient: false
+        )
+
+        // Mock
+        mlsMessageDecryptor.decryptedEventDataFrom_MockMethod = { $0 }
+
+        // When
+        let events = try await sut.decryptEvents(in: envelope)
+
+        // Then the "decrypted" (the mock just passes them right back) are returned.
+        XCTAssertEqual(
+            events,
+            [
+                .conversation(.mlsMessageAdd(Scaffolding.mlsMessage)),
+                .user(.pushRemove)
+            ]
+        )
+
+        await Task.yield()
+
+        XCTAssertEqual(mlsMessageDecryptor.commitPendingProposalsIfNeeded_Invocations.count, 1)
+    }
+
 }
 
 private enum Scaffolding {
@@ -191,4 +223,17 @@ private enum Scaffolding {
         messageRecipientClientID: selfClientID
     )
 
+    static let mlsMessage = ConversationMLSMessageAddEvent(
+        conversationID: conversationID,
+        senderID: aliceID,
+        subconversation: "",
+        message: .init(messageContent),
+        timestamp: .now,
+        decryptedMessages: [.init(
+            message: Scaffolding.base64EncodedString,
+            senderClientID: UUID.mockID1.uuidString
+        )]
+    )
+
+    static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
 }

@@ -25,7 +25,7 @@ package protocol LoginViaEmailOnPremBuilder {
 
     @MainActor
     func loginViaEmailOnPremView(
-        email: String,
+        email: String?,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
         backendMetadata: WireAuthenticationAPI.BackendMetadata?
@@ -80,8 +80,22 @@ package struct LoginViaEmailOnPremView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
+            .setPreferredSize(navigationBarHidden: false)
+            .customBackButton()
         }
-        .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
+        .alert(
+            item: $viewModel.alert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { alert in
+                switch alert {
+                case .obsoleteClient:
+                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                default:
+                    Button(L10n.Authentication.Error.confirm, action: {})
+                }
+            }
+        )
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
         .onChange(of: password) { newPassword in
@@ -91,23 +105,7 @@ package struct LoginViaEmailOnPremView: View {
 
     @ViewBuilder private var welcomeMessage: some View {
         VStack(spacing: 14) {
-            Button(action: {
-                showCustomBackendAlert.toggle()
-            }, label: {
-                Text(L10n.OnPremUserLogin.title(viewModel.backendName) + " ")
-                    .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
-                    + Text(Image(systemName: "info.circle"))
-                    .foregroundColor(.gray)
-            })
-            .multilineTextAlignment(.center)
-            .font(.textStyle(.h2))
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
-            .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $showCustomBackendAlert) {
-                Button(L10n.OnPremUserLogin.Alert.button, role: .cancel) {}
-            } message: {
-                Text(viewModel.backendInfo)
-            }
+            OnPremHeaderView(backendConfig: viewModel.backendConfig)
             Text(L10n.OnPremUserLogin.message)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
@@ -120,9 +118,9 @@ package struct LoginViaEmailOnPremView: View {
         LabeledTextField(
             placeholder: nil,
             title: L10n.CloudUserLogin.InputEmail.title,
-            string: .constant(viewModel.email)
+            string: .constant(viewModel.email ?? "")
         )
-        .disabled(!viewModel.email.isEmpty)
+        .disabled(viewModel.isValidEmail)
     }
 
     @ViewBuilder private var passwordField: some View {
@@ -147,7 +145,7 @@ package struct LoginViaEmailOnPremView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.isValidPassword(password))
+        .disabled(!viewModel.isValidPassword(password) && viewModel.email != nil)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {

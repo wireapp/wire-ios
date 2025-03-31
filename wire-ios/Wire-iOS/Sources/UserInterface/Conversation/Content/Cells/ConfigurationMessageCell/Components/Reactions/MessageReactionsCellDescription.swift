@@ -46,10 +46,6 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
         self.configuration = reactions
     }
 
-    var canBeCombinedWithOtherCells: Bool { true }
-
-    var topMargin: CGFloat = 0
-
     var supportsActions: Bool = false
 
     var showEphemeralTimer: Bool = false

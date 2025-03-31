@@ -28,6 +28,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package typealias Factory =
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
+        OpenAppStoreUseCaseFactory &
         ResolveBackendMetadataUseCaseFactory &
         SSOLinkGeneratorFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
@@ -36,38 +37,65 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         package var id: Self { self }
 
         case ssoLogin(url: URL, backendEnvironment: WireAuthenticationBackendEnvironment)
-        case switchBackend(email: String, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
+        case switchBackend(email: String?, environmentType: BackendEnvironmentType, backendConfig: BackendConfig)
     }
 
     private let router: any Router
     private let factory: any Factory
+    private let bridge: WireAuthenticationBridge
     private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
     private let environmentType: BackendEnvironmentType
-    private let backendConfig: BackendConfig
+    private let backendMetadata: BackendMetadata?
+    package let backendConfig: BackendConfig
+    private var cancellable: AnyCancellable?
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
     @Published var modalDestination: ModalDestination?
+    @Published var existsAnotherAccount: Bool
 
     var isNextButtonEnabled: Bool {
         !isValidEmailOrSSOCode()
     }
 
+    var isOnPremiseBackend: Bool {
+        environmentType != .production
+    }
+
     package init(
         router: any Router,
         factory: any Factory,
+        bridge: WireAuthenticationBridge,
         environmentType: BackendEnvironmentType,
         backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?,
         emailOrSSOCode: String = "",
+        existsAnotherAccount: Bool,
         isLoading: Bool = false
     ) {
         self.router = router
         self.factory = factory
+        self.bridge = bridge
         self.environmentType = environmentType
+        self.backendMetadata = backendMetadata
         self.backendConfig = backendConfig
         self.emailOrSSOCode = emailOrSSOCode
+        self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
+
+        self.cancellable = bridge.inboundEvents.sink { event in
+            switch event {
+            case let .backendSwitchRequested(configURL):
+                Task { [weak self] in
+                    await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
+                }
+            case let .updateAnotherAccountExistence(newValue):
+                self.existsAnotherAccount = newValue
+            default:
+                break
+            }
+        }
     }
 
     func submitEmailOrSSOCode() async {
@@ -82,9 +110,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             backendMetadata = try await Task.detached { [useCase] in
                 try await useCase.invoke()
             }.value
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            alert = .obsoleteClient
+            return
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            alert = .obsoleteBackend
+            return
         } catch {
-            // TODO: [WPB-16415] report via bridge that API version can't be resolved.
-            fatalError()
+            alert = .general(for: error)
+            return
         }
 
         do {
@@ -116,6 +150,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         modalDestination = nil
     }
 
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+        alert = nil
+    }
+
+    func exitFlow() {
+        bridge.sendOutboundEvent(.exitFlowRequested)
+    }
+
     // MARK: - Private
 
     private func handleAuthenticationMethod(
@@ -127,12 +170,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodView.Destination.login(
                 email: email,
                 didDetectDomainConflict: didDetectDomainConflict,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
                 backendMetadata: backendMetadata
             ))
 
         case let .loginOrRegisterViaEmail(email):
             router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(
                 email: email,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
                 backendMetadata: backendMetadata
             ))
 
@@ -170,6 +217,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             }
 
         case let .onPremLogin(email, backendConfigURL):
+            await handleOnPremLogin(email: email, backendConfigURL: backendConfigURL)
+        }
+    }
+
+    private func handleOnPremLogin(email: String?, backendConfigURL: URL) async {
+        guard !existsAnotherAccount else {
+            alert = .switchBackendFailed
+            return
+        }
+        Task {
             do {
                 let useCase = factory.fetchBackendConfigUseCase()
                 let backendConfig = try await Task.detached {
@@ -200,4 +257,5 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             return false
         }
     }
+
 }

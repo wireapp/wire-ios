@@ -112,10 +112,8 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
-
     var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 2
+
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = "MessageToolbox"

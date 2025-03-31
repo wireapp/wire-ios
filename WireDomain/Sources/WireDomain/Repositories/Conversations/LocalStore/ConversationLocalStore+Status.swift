@@ -76,6 +76,8 @@ extension ConversationLocalStore {
         localConversation: ZMConversation,
         fallbackGroupID: MLSGroupID?
     ) async {
+        guard let mlsService else { return }
+
         let (messageProtocol, mlsGroupID) = await context.perform {
             (
                 localConversation.messageProtocol,

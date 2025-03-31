@@ -151,8 +151,6 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
-    var topMargin: CGFloat = .ConversationButtonMessageCell.verticalInset
-
     var supportsActions: Bool = false
 
     var showEphemeralTimer: Bool = false

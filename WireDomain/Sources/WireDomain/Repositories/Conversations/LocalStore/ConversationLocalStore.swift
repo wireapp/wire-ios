@@ -586,9 +586,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func commitPendingProposals(
-        conversation: ZMConversation,
+    public func updateCommitPendingProposal(
         date: Date,
+        for conversation: ZMConversation,
         commitDelay: UInt64
     ) async {
         let scheduledDate = date + TimeInterval(commitDelay)
@@ -596,8 +596,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.commitPendingProposalDate = scheduledDate
         }
-
-        await mlsService?.commitPendingProposalsIfNeeded()
     }
 
     public func updateSecurityLevelAfterReceivingMessage(
@@ -1032,6 +1030,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.remoteIdentifier = id
             localConversation.isPendingMetadataRefresh = false
             localConversation.isPendingInitialFetch = false
+            localConversation.groupType = conversation.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            }
 
             commonUpdate(
                 from: conversation,

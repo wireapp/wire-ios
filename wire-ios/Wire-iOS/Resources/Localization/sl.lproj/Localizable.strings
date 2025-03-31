@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "Iščite";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Delete…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Všeč mi je";
 "content.message.unlike" = "Ni mi všeč";
 "content.message.go_to_conversation" = "Razkrij";
@@ -651,6 +658,7 @@
 "content.message.download" = "Prenos";
 "content.message.details" = "Podrobnosti";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Odgovori";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Create Link Previews";
 "self.settings.privacy_security.disable_link_previews.footer" = "Predogledi se še vedno lahko prikazujejo za povezave drugih ljudi.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Naprave";
 
 "self.settings.privacy.clear_history.title" = "Počisti zgodovino";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "This account is no longer authorized to log in.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Ni bilo možno posodobiti vašega gesla.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Preveč oseb za klic";
 "error.group_call.too_many_members_in_conversation" = "Klici delujejo v pogovorih do %d oseb.";
 "error.group_call.too_many_participants_in_the_call.title" = "Skupinski klic je poln";
 "error.group_call.too_many_participants_in_the_call" = "There’s only room for %d participants in here.";
-"error.call.gsm_ongoing.title" = "Mobilni klic";
-"error.call.gsm_ongoing" = "Prosimo prekinite mobilni klic pred klicem na Wire.";
-"error.call.general.title" = "Napaka pri klicu";
-"error.call.general" = "Prosimo poizkusite poklicati znova čez nekaj minut.";
-"error.call.slow_connection.title" = "Počasna povezava";
-"error.call.slow_connection" = "Lahko pride do težav med klicem";
-"error.call.slow_connection.call_anyway" = "Vseeno pokliči";
 
 "error.invite.no_email_provider" = "Prosimo nastavite vaš e-poštni odjemalec za pošiljanje povabil preko e-pošte";
 "error.invite.no_messaging_provider" = "Prosimo nastavite vaš SMS za pošiljanje povabil preko SMS";

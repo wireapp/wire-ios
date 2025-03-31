@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "Zoeken";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Afbeelding";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Verwijder…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Vind ik leuk";
 "content.message.unlike" = "Vind ik niet leuk";
 "content.message.go_to_conversation" = "Tonen";
@@ -651,6 +658,7 @@
 "content.message.download" = "Download";
 "content.message.details" = "Beschrijving";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Reageer";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Maak link voorvertoningen aan";
 "self.settings.privacy_security.disable_link_previews.footer" = "Linkvoorbeelden kunnen nog steeds getoond worden voor links van andere mensen.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Apparaten";
 
 "self.settings.privacy.clear_history.title" = "Geschiedenis verwijderen";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "Dit account is niet langer geautoriseerd om in te loggen.";
 "error.user.account_limit_reached" = "Je kan niet meer dan 3 accounts toevoegen.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Je wachtwoord kon niet bijgewerkt worden.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Te veel mensen om te bellen";
 "error.group_call.too_many_members_in_conversation" = "Bellen kan in gesprekken tot %d mensen.";
 "error.group_call.too_many_participants_in_the_call.title" = "Het gesprek zit vol";
 "error.group_call.too_many_participants_in_the_call" = "There’s only room for %d participants in here.";
-"error.call.gsm_ongoing.title" = "Mobiel gesprek";
-"error.call.gsm_ongoing" = "Beëindig eerst je telefoongesprek voordat je belt met Wire.";
-"error.call.general.title" = "Fout bij bellen";
-"error.call.general" = "Probeer over een paar minuten nog eens te bellen.";
-"error.call.slow_connection.title" = "Langzame verbinding";
-"error.call.slow_connection" = "Er kunnen misschien problemen optreden tijdens je gesprek";
-"error.call.slow_connection.call_anyway" = "Toch bellen";
 
 "error.invite.no_email_provider" = "Configureer je e-mailapplicatie om uitnodigingen te versturen via e-mail";
 "error.invite.no_messaging_provider" = "Configureer je SMS-dienst om uitnodigingen te versturen via SMS";
