@@ -34,7 +34,6 @@ class RootComponent: BootstrapComponent {
     public let howToDeleteAccountURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
-    public let userDefaults: UserDefaults
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
 
@@ -46,7 +45,6 @@ class RootComponent: BootstrapComponent {
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults,
         appStoreURL: URL,
         existsAnotherAccount: Bool
     ) {
@@ -58,7 +56,6 @@ class RootComponent: BootstrapComponent {
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
-        self.userDefaults = userDefaults
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
     }
