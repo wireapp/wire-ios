@@ -1291,7 +1291,10 @@ public final class MLSService: MLSServiceInterface {
                             try await self.joinByExternalCommit(groupID: mlsGroupID)
                         }
                     } catch {
-                        WireLogger.mls.error("Failed to join pending group: \(error)", attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription])
+                        WireLogger.mls.error(
+                            "Failed to join pending group: \(error)",
+                            attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
+                        )
                     }
                 }
             }
