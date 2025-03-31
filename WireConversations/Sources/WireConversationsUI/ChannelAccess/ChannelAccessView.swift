@@ -22,14 +22,14 @@ import WireConversationsImplementation
 import WireDesign
 
 package struct ChannelAccessView: View {
-    
+
     @ObservedObject var viewModel: ChannelAccessViewModel
     @Environment(\.dismiss) private var dismiss
-    
+
     package init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
     }
-    
+
     public var body: some View {
         NavigationView {
             Form {
@@ -43,13 +43,13 @@ package struct ChannelAccessView: View {
                         level: .public,
                         disabled: viewModel.isPublicDisabled
                     )
-                    
+
                     accessOption(
                         title: L10n.Localizable.ChannelAccessLevel.private,
                         level: .private
                     )
                 }.background(.clear)
-                
+
                 if viewModel.showParticipantPermissions {
                     Section(
                         header: Text(L10n.Localizable.ChannelAccessLevel.participantsHeader),
@@ -85,7 +85,7 @@ package struct ChannelAccessView: View {
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
     }
-    
+
     private func accessOption(title: String, level: ChannelAccessLevel, disabled: Bool = false) -> some View {
         HStack {
             Text(title)
@@ -107,7 +107,7 @@ package struct ChannelAccessView: View {
         }
         .disabled(disabled)
     }
-    
+
     private func permissionOption(title: String, permission: ChannelAccessLevelPermission) -> some View {
         HStack {
             Text(title)
@@ -126,11 +126,11 @@ package struct ChannelAccessView: View {
             viewModel.selectParticipantPermission(permission)
         }
     }
-    
+
     struct Checkmark: View {
-        
+
         let accentColor: Color
-        
+
         var body: some View {
             Image("Check", bundle: .resources)
                 .resizable()
@@ -149,19 +149,22 @@ struct ChannelAccessView_Previews: PreviewProvider {
                     accentColor: .green,
                     useCase: ChannelAccessUseCase(permission: nil)
                 ))
-                
+
             }
             .previewDisplayName("Initially Public")
-            
+
             NavigationStack {
-                ChannelAccessView(viewModel: ChannelAccessViewModel(
-                    accentColor: .blue,
-                    useCase: ChannelAccessUseCase(permission: .adminsAndMembers
-                    ))
+                ChannelAccessView(
+                    viewModel: ChannelAccessViewModel(
+                        accentColor: .blue,
+                        useCase: ChannelAccessUseCase(
+                            permission: .adminsAndMembers
+                        )
+                    )
                 )
             }
             .previewDisplayName("Initially Private")
         }
-        
+
     }
 }

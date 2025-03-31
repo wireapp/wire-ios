@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireConversationsImplementation
+import XCTest
 
 final class ChannelAccessUseCaseTests: XCTestCase {
 
@@ -34,7 +34,7 @@ final class ChannelAccessUseCaseTests: XCTestCase {
         XCTAssertEqual(useCase.settings.accessLevel, .private)
         XCTAssertEqual(useCase.settings.participantPermission, .admins)
     }
-    
+
     func testInit_withPermission_setsPrivateAccessLevelAndPermissionAdminAndMemeber() {
         let useCase = ChannelAccessUseCase(permission: .adminsAndMembers)
 

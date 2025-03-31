@@ -66,7 +66,7 @@ struct ChannelAccessHostingController_Previews: PreviewProvider {
 
 struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        
+
         let useCase = ChannelAccessUseCase(permission: .adminsAndMembers)
         let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
 

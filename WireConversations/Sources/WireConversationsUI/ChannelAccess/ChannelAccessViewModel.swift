@@ -17,8 +17,8 @@
 //
 
 package import SwiftUI
-package import WireConversationsImplementation
 import WireConversationsAPI
+package import WireConversationsImplementation
 
 package class ChannelAccessViewModel: ObservableObject {
 
