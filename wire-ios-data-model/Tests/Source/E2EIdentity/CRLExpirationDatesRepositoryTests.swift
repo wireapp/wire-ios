@@ -36,7 +36,7 @@ class CRLExpirationDatesRepositoryTests: XCTestCase {
 
         storage = PrivateUserDefaults<CRLExpirationDatesRepository.Key>(
             userID: .create(),
-            storage: .temporary()
+            storage: UserDefaults.temporary()
         )
 
         sut = CRLExpirationDatesRepository(storage: storage)

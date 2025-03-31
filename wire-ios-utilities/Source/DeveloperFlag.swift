@@ -82,10 +82,15 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     private var defaultValue: Bool {
-        guard let bundleKey else {
-            return false
+        switch self {
+        case .useWireAuthentication:
+            return true
+        default:
+            guard let bundleKey else {
+                return false
+            }
+            return DeveloperFlagsDefault.isEnabled(for: bundleKey)
         }
-        return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 
     public static func clearAllFlags() {

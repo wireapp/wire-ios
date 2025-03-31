@@ -67,6 +67,7 @@ package struct NoHistoryView: View {
             .wireButtonStyle(.primary)
             .bold()
             .disabled(viewModel.isLoading)
+
         }
         .alert(
             item: $viewModel.alert,
@@ -87,6 +88,7 @@ package struct NoHistoryView: View {
         .onAppear {
             viewModel.onAppear()
         }
+        .padding(.vertical, 32)
         .onReceive(
             NotificationCenter.default.publisher(
                 for: UIApplication.willEnterForegroundNotification
@@ -95,7 +97,7 @@ package struct NoHistoryView: View {
             viewModel.onAppear()
         }
         .padding()
-        .presentationDetents([.medium])
+        .setPreferredSize()
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
