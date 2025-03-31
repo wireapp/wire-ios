@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundationSupport
 import XCTest
 @testable import Wire
 
@@ -47,10 +48,12 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     var userSession: UserSessionMock!
     var forceRecord: Bool = false
+    var mockUserDefaults = MockUserDefaultsProtocol()
 
     override func setUp() {
         super.setUp()
         userSession = UserSessionMock()
+        mockUserDefaults.boolForKey_MockValue = false
     }
 
     override func tearDown() {
@@ -180,7 +183,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             userSession: userSession,
             useInvertedIndices: false,
             contentWidth: width,
-            shouldShowAuthor: true
+            shouldShowAuthor: true,
+            userDefaults: mockUserDefaults
         )
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)
