@@ -18,7 +18,7 @@
 
 import Foundation
 
-@available(*, deprecated, message: "Use automatically generated Bundle.module instead")
+@available(*, deprecated, message: "Use generated Bundle.module instead (package currently doesn't automatically generate .module for the Localizable.strings)")
 extension Bundle {
     static let module = Bundle(for: GenerateNotificationComponent.self)
 }

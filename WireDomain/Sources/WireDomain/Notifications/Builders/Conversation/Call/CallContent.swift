@@ -23,21 +23,25 @@ struct CallContent: Decodable {
     let properties: Properties?
     let callerUserID: String?
     let callerClientID: String
-    let resp: Bool
+    let responded: Bool
 
     enum CodingKeys: String, CodingKey {
         case type
         case properties = "props"
         case callerUserID = "src_userid"
         case callerClientID = "src_clientid"
-        case resp
+        case responded = "resp"
     }
 
     struct Properties: Decodable {
-        private let videosend: String
+        private let videoSend: String
+        
+        enum CodingKeys: String, CodingKey {
+            case videoSend = "videosend"
+        }
 
         var isVideo: Bool {
-            videosend == "true"
+            videoSend == "true"
         }
     }
 }

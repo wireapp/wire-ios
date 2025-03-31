@@ -36,7 +36,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
                     CallType.confStart
                 ]
             )
-            let isIncomingCall = isStartCall && !callContent.resp
+            let isIncomingCall = isStartCall && !callContent.responded
             let isEndCall = callContent.type.isOne(
                 of: [
                     CallType.cancel,
@@ -44,7 +44,7 @@ struct CallKitNotificationBuilder: NotificationBuilder {
                     CallType.confEnd
                 ]
             )
-            let isAnsweredElsewhere = isStartCall && callContent.resp
+            let isAnsweredElsewhere = isStartCall && callContent.responded
             let isRejected = callContent.type == CallType.reject
 
             if isIncomingCall, !wasCallHandleReported {

@@ -242,7 +242,7 @@ extension PullEventsComponent {
         let sharedUserDefaults = dependency.sharedUserDefaults
 
         guard sharedUserDefaults.object(forKey: key) != nil else {
-            fatalError("API version not found")
+            fatal("API version not found")
         }
 
         let storedValue = sharedUserDefaults.integer(forKey: key)

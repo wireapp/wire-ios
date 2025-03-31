@@ -35,7 +35,7 @@ struct CallNotificationBuilder: NotificationBuilder {
                     CallType.confStart
                 ]
             )
-            let isIncomingCall = isStartCall && !callContent.resp
+            let isIncomingCall = isStartCall && !callContent.responded
             let isEndCall = callContent.type.isOne(
                 of: [
                     CallType.cancel,
