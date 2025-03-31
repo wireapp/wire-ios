@@ -26,7 +26,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     let mlsDecryptionService: any MLSDecryptionServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let mlsService: (any MLSServiceInterface)? // optional because only necessary for live events
-    
+
     init(
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
@@ -153,7 +153,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                     for: mlsConversation,
                     commitDelay: commitDelay
                 )
-                
+
                 await commitPendingProposalsIfNeeded()
             }
         }
