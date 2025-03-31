@@ -171,7 +171,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     // no op
                     break
                 case .noDefaultCodeAvailable:
-                    // no op
+                    // This shouldn't happen because we should be providing an sso code.
                     break
                 case let .authenticationFailed(samlError):
                     WireLogger.authentication.error(
