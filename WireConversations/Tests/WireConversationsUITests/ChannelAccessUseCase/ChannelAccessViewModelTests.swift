@@ -54,7 +54,7 @@ final class ChannelAccessViewModelTests: XCTestCase {
     }
 
     func test_selectAccessLevel_toSameLevel_doesNotTriggerConfirmation() {
-        useCase.updateAccessLevelTo_MockMethod = { _ in     }
+        useCase.updateAccessLevelTo_MockMethod = { _ in }
         XCTAssertEqual(useCase.updateAccessLevelTo_Invocations.count, 0)
         viewModel.selectAccessLevel(.public)
         XCTAssertEqual(useCase.updateAccessLevelTo_Invocations.count, 1)
@@ -63,7 +63,7 @@ final class ChannelAccessViewModelTests: XCTestCase {
     }
 
     func test_confirmPrivateAccessChange_setsAccessToPrivate() {
-        useCase.updateAccessLevelTo_MockMethod = { _ in     }
+        useCase.updateAccessLevelTo_MockMethod = { _ in }
         XCTAssertEqual(useCase.updateAccessLevelTo_Invocations.count, 0)
 
         viewModel.selectAccessLevel(.private)
@@ -75,7 +75,7 @@ final class ChannelAccessViewModelTests: XCTestCase {
     }
 
     func test_selectParticipantPermission_updatesState() {
-        useCase.updateParticipantPermissionTo_MockMethod = { _ in     }
+        useCase.updateParticipantPermissionTo_MockMethod = { _ in }
         viewModel.selectParticipantPermission(.adminsAndMembers)
         XCTAssertEqual(viewModel.settings.participantPermission, .adminsAndMembers)
         XCTAssertEqual(useCase.updateParticipantPermissionTo_Invocations.count, 1)
