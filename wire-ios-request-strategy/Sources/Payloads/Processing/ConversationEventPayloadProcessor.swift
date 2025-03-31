@@ -111,7 +111,8 @@ struct ConversationEventPayloadProcessor {
         }
 
         await context.perform {
-            conversation.accessLevelPermission = ChannelAccessLevelPermission.fromRawValue(payload.data.addPermission.rawValue)
+            conversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(payload.data.addPermission.rawValue)
         }
 
     }
@@ -549,7 +550,8 @@ struct ConversationEventPayloadProcessor {
                 }
             }
 
-            conversation.accessLevelPermission = ChannelAccessLevelPermission.fromRawValue(payload.addPermission?.rawValue)
+            conversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(payload.addPermission?.rawValue)
 
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)

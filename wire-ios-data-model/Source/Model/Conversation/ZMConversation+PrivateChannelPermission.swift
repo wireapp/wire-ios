@@ -22,15 +22,15 @@ import Foundation
 public enum ChannelAccessLevelPermission: Int {
     case everybody
     case admins
-    
+
     public static func fromRawValue(_ rawValue: String?) -> Self? {
         switch rawValue {
         case adminsPermissionKey:
-            return .admins
+            .admins
         case everybodyPermissionKey:
-            return .everybody
+            .everybody
         default:
-            return nil
+            nil
         }
     }
 }
@@ -69,4 +69,3 @@ public protocol HasChannelAccessLevelPermission {
     var accessLevelPermission: ChannelAccessLevelPermission? { get }
 
 }
-
