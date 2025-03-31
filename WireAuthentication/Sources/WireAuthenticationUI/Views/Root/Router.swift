@@ -39,7 +39,7 @@ package protocol Router {
 package extension Router {
 
     func presentAlert(for error: any Error) {
-        WireLogger.authentication.error("router received unhandled error: \(String(describing: samlError))")
+        WireLogger.authentication.error("router received unhandled error: \(String(describing: error))")
         presentAlert(.general(for: error))
     }
 
