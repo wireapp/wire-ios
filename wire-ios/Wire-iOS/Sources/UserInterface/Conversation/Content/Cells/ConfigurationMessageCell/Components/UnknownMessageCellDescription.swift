@@ -42,9 +42,6 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
 
     var showEphemeralTimer: Bool = false
 
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 

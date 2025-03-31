@@ -45,9 +45,6 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
 
     var showEphemeralTimer: Bool = false
 
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     var supportsActions: Bool = true
     var containsHighlightableContent: Bool = true
 
