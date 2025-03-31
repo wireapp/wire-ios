@@ -16,9 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-public enum ChannelPermission: String, Codable, Sendable {
-    case everyone
-    case admins
+extension Payload {
+
+    enum ChannelPermission: String, Codable {
+        case admins
+        case everyone
+    }
+
+    struct UpdateConversationPermission: CodableEventData {
+        let addPermission: ChannelPermission
+
+        static var eventType: ZMUpdateEventType {
+            .conversationAddPermissionUpdate
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case addPermission = "add_permission"
+        }
+
+    }
 }

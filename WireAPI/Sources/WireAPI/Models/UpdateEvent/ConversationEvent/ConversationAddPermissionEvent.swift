@@ -18,7 +18,16 @@
 
 import Foundation
 
-public enum ChannelPermission: String, Codable, Sendable {
-    case everyone
-    case admins
+/// An event where the conversation permission was updated.
+/// This event occurs for private conversations (aka channels) only.
+
+public struct ConversationAddPermissionEvent: Equatable, Codable, Sendable {
+
+    /// The id of the conversation.
+
+    public let conversationID: ConversationID
+
+    /// The new permission value (`everyone` or `admins`)
+
+    public let addPermission: ChannelPermission
 }
