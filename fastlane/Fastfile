@@ -656,8 +656,6 @@ platform :ios do
         sha256 = `shasum -a 256 #{ipa_path} | awk '{print $1}'`.strip
         UI.message("SHA-256 of IPA is: #{sha256}")
 
-        install_url = appcenter_build_info['install_url']
-
         # Export SHA-256 and INSTALL_LINK to .post_build/.env file
         export_env_path = "./.post_build/.env"
         FileUtils.mkdir_p("./.post_build")
