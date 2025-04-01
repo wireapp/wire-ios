@@ -18,14 +18,20 @@
 
 package import SwiftUI
 import UIKit
+import Combine
 import WireConversationsAPI
 import WireConversationsImplementation
 import WireDesign
+import WireReusableUIComponents
 
 package  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
 
     private let viewModel: ChannelAccessViewModel
-
+    
+    private var activityIndicator: BlockingActivityIndicator!
+    
+    private var cancellables = Set<AnyCancellable>()
+    
     package init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
         super.init(rootView: ChannelAccessView(viewModel: viewModel))
@@ -48,6 +54,19 @@ package  final class ChannelAccessHostingController: UIHostingController<Channel
             target: self,
             action: #selector(didTapClose)
         )
+        
+        activityIndicator = .init(
+            view: navigationController?.view ?? view,
+            accessibilityAnnouncement: L10n.Localizable.General.loading
+        )
+        
+        viewModel.$isLoading
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                self?.activityIndicator.setIsActive(isLoading)
+            }
+            .store(in: &cancellables)
+
     }
 
     @objc

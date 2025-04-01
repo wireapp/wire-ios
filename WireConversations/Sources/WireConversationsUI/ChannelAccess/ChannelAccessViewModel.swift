@@ -20,10 +20,12 @@ package import SwiftUI
 import WireConversationsAPI
 package import WireConversationsImplementation
 
+@MainActor
 package class ChannelAccessViewModel: ObservableObject {
 
     @Published var settings: ChannelAccessSettings
     @Published var showPrivateAccessConfirmation = false
+    @Published var isLoading: Bool = false
 
     public var accentColor: Color
 
@@ -59,12 +61,24 @@ package class ChannelAccessViewModel: ObservableObject {
     }
 
     private func applyAccessLevel(_ level: ChannelAccessLevel) {
+        isLoading = true
         useCase.updateAccessLevel(to: level)
-        settings = useCase.settings
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
+            guard let self else { return }
+            self.isLoading = false
+            self.settings = self.useCase.settings
+        }
     }
 
     func selectParticipantPermission(_ permission: ChannelAccessLevelPermission) {
+        isLoading = true
         useCase.updateParticipantPermission(to: permission)
-        settings.participantPermission = permission
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
+            guard let self else { return }
+            self.isLoading = false
+            self.settings.participantPermission = permission
+        }
     }
 }

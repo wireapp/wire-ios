@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"general.loading" = "Loading…";
 
 "conversation.create.channel.title" = "New channel";
 "conversation.create.channel.subtitle" = "Conversation history and more";
