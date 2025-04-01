@@ -16,37 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireCoreCrypto
+import WireAPI
 
-enum ExternalCommitError: Error, Equatable {
-
-    case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)
-    case failedToMergePendingGroup
-    case failedToClearPendingGroup
-
-    enum RecoveryStrategy {
-
-        /// Retry the action from the beginning
-        case retry
-
-        /// Abort the action and log the error
-        case giveUp
-
+extension WireCoreCryptoUniffi.CommitBundle {
+    
+    func toAPIModel() -> WireAPI.CommitBundle {
+        WireAPI.CommitBundle(
+            welcome: self.welcome,
+            commit: self.commit,
+            groupInfo: self.groupInfo.payload
+        )
     }
-}
-
-extension ExternalCommitError.RecoveryStrategy {
-
-    /// Whether the pending group should be cleared
-
-    var shouldClearPendingGroup: Bool {
-        switch self {
-        case .retry:
-            false
-
-        case .giveUp:
-            true
-        }
-    }
-
 }

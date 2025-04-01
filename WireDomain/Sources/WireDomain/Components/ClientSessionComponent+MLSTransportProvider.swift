@@ -16,20 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import Foundation
+import WireCoreCrypto
 
-/// Process conversation update events.
+extension ClientSessionComponent: MLSTransportProvider {
 
-// sourcery: AutoMockable
-protocol ConversationEventProcessorProtocol {
-
-    /// Process a conversation update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A conversation update event.
-
-    func processEvent(_ event: ConversationEvent) async throws
+    public func provideMLSTransport() throws -> any WireCoreCryptoUniffi.MlsTransport {
+        mlsTransport
+    }
 
 }

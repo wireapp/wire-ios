@@ -212,6 +212,33 @@ public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
 
 }
 
+class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - processEvent
+
+    var processEvent_Invocations: [ConversationEvent] = []
+    var processEvent_MockError: Error?
+    var processEvent_MockMethod: ((ConversationEvent) async throws -> Void)?
+
+    func processEvent(_ event: ConversationEvent) async throws {
+        processEvent_Invocations.append(event)
+
+        if let error = processEvent_MockError {
+            throw error
+        }
+
+        guard let mock = processEvent_MockMethod else {
+            fatalError("no mock for `processEvent`")
+        }
+
+        try await mock(event)
+    }
+}
+
 class MockConversationAudioMessageNotificationBuilderProtocol: ConversationAudioMessageNotificationBuilderProtocol {
 
     // MARK: - Life cycle

@@ -54,7 +54,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
     private let initialSyncProvider: any InitialSyncProvider
     private let incrementalSyncProvider: any IncrementalSyncProvider
+    private let mlsTransportProvider: any MLSTransportProvider
     private let legacySyncStatus: any SyncStatusProtocol
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
@@ -76,15 +78,19 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     init(
         journal: Journal,
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
+        mlsTransportProvider: any MLSTransportProvider,
         legacySyncStatus: any SyncStatusProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
+        self.coreCryptoProvider = coreCryptoProvider
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider
+        self.mlsTransportProvider = mlsTransportProvider
         self.legacySyncStatus = legacySyncStatus
         self.syncStateSubject = syncStateSubject
         super.init()
@@ -101,6 +107,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func resume() {
         Task {
+            do {
+                try await coreCryptoProvider.registerMlsTransport(mlsTransportProvider.provideMLSTransport())
+            } catch {
+                WireLogger.sync.error("failed to register mls transport: \(String(describing: error))")
+            }
+
             do {
                 try await performSync()
             } catch {

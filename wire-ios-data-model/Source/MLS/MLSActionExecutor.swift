@@ -138,7 +138,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let commitSender: CommitSending
     private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
     private let featureRepository: FeatureRepositoryInterface
@@ -153,11 +152,9 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        commitSender: CommitSending,
         featureRepository: FeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
-        self.commitSender = commitSender
         self.featureRepository = featureRepository
     }
 
@@ -304,8 +301,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 })
                 WireLogger.mls
                     .info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
-            } catch CommitError.noPendingProposals {
-                throw CommitError.noPendingProposals
             } catch {
                 WireLogger.mls
                     .info(
@@ -377,7 +372,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     public nonisolated
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        commitSender.onEpochChanged()
+        // TODO: jacob use epoch observer from CC
+        return PassthroughSubject<MLSGroupID, Never>().eraseToAnyPublisher()
     }
 
     // MARK: - CRLs distribution points publisher

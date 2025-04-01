@@ -21,6 +21,7 @@ import Foundation
 import WireCoreCrypto
 import WireFoundation
 import WireLogging
+import WireAPI
 
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
@@ -116,9 +117,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If the group is joined successfully, the conversation's ``ZMConversation/mlsStatus``
     /// will be set to ``MLSGroupStatus/ready``
     ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
-    /// to process the events returned by the backend.
-    ///
     /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
     ///
@@ -187,9 +185,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If there are no key packages, it will call ``MLSActionExecutor/updateKeyMaterial(for:)`` to send a commit
     /// to the backend to inform we are in the group.
     ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
-    /// to process the events returned by the backend.
-    ///
     /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
     ///
@@ -211,9 +206,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Then calls ``MLSActionExecutor/removeClients(_:from:)`` to send a commit bundle to the backend
     /// to remove the clients from the group.
-    ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
-    /// to process the events returned by the backend.
     ///
     /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
@@ -339,8 +331,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Commiting proposals entails sending a commit to the backend
     /// with ``MLSActionExecutor/commitPendingProposals(in:)``
-    /// and processing the events that are returned
-    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``.
     ///
     /// If the commit is successful, or if there are no proposals to commit,
     /// we clear the ``ZMConversation/commitPendingProposalDate``
@@ -361,9 +351,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// by calling ``MLSActionExecutor/updateKeyMaterial(for:)``
     ///
     /// If successful it notifies that the key material has been updated
-    /// via ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``,
-    /// then it processes the conversation events returned by the backend
-    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
+    /// via ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``
     ///
     /// Updating the key material is covered by a retry mechanism that will perform a recovery strategy
     /// based on errors thrown while sending commits.
@@ -432,9 +420,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// which sends a commit to the backend.
     ///
     /// Then the ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``
-    /// method is called to note when the key material was updated for the group,
-    /// and any events returned by the backend are processed
-    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``.
+    /// method is called to note when the key material was updated for the group
     ///
     /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
@@ -537,7 +523,6 @@ public final class MLSService: MLSServiceInterface {
     private let decryptionService: MLSDecryptionServiceInterface
 
     private let mlsActionExecutor: MLSActionExecutorProtocol
-    private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
     private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
@@ -579,7 +564,6 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext,
         notificationContext: any NotificationContext,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        conversationEventProcessor: ConversationEventProcessorProtocol,
         featureRepository: FeatureRepositoryInterface,
         userDefaults: UserDefaults,
         userID: UUID
@@ -588,7 +572,6 @@ public final class MLSService: MLSServiceInterface {
             context: context,
             notificationContext: notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: conversationEventProcessor,
             staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
@@ -604,8 +587,6 @@ public final class MLSService: MLSServiceInterface {
         encryptionService: MLSEncryptionServiceInterface? = nil,
         decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
-        // TODO: jacob remove since it's no longer used
-        conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
@@ -614,21 +595,14 @@ public final class MLSService: MLSServiceInterface {
         featureRepository: FeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
-        let commitSender = CommitSender(
-            coreCryptoProvider: coreCryptoProvider,
-            notificationContext: context.notificationContext
-        )
-
         self.context = context
         self.notificationContext = notificationContext
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender,
             featureRepository: featureRepository
         )
-        self.conversationEventProcessor = conversationEventProcessor
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
         self.actionsProvider = actionsProvider
         self.userDefaults = PrivateUserDefaults(userID: userID, storage: userDefaults)
@@ -814,8 +788,6 @@ public final class MLSService: MLSServiceInterface {
             WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
             try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
-            // TODO: jacob events will returned by the MlsTransportsAPI
-            // await conversationEventProcessor.processConversationEvents(events)
         } catch {
             WireLogger.mls
                 .warn(
@@ -949,9 +921,6 @@ public final class MLSService: MLSServiceInterface {
             } else {
                 try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             }
-            // TODO: jacob events will returned by the MlsTransportsAPI
-            // await conversationEventProcessor.processConversationEvents(events)
-
         } catch {
             logger
                 .warn(
@@ -1022,8 +991,6 @@ public final class MLSService: MLSServiceInterface {
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
             let clientIds = clientIds.compactMap(\.rawValue.utf8Data)
             try await mlsActionExecutor.removeClients(clientIds, from: groupID)
-            // TODO: jacob events will returned by the MlsTransportsAPI
-            // await conversationEventProcessor.processConversationEvents(events)
         } catch {
             logger
                 .warn(
@@ -1615,7 +1582,7 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             logger.info("sending external commit to join group (\(logInfo))")
-
+            
             guard let context else { return }
 
             guard let parentConversationInfo = fetchConversationInfo(
@@ -1632,8 +1599,6 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            let updateEvents: [ZMUpdateEvent]
-
             if let subgroupID {
                 try await mlsActionExecutor.joinGroup(
                     subgroupID,
@@ -1649,9 +1614,7 @@ public final class MLSService: MLSServiceInterface {
                     parentConversationInfo.conversation.mlsStatus = .ready
                 }
             }
-
-            // TODO: jacob events will returned by the MlsTransportsAPI
-            //await conversationEventProcessor.processConversationEvents(updateEvents)
+            
             logger.info("success: joined group with external commit (\(logInfo))")
 
         } catch {
@@ -1871,13 +1834,8 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("committing pending proposals in: \(groupID.safeForLoggingDescription)")
             try await mlsActionExecutor.commitPendingProposals(in: groupID)
-            // TODO: jacob events will returned by the MlsTransportsAPI
-            // await conversationEventProcessor.processConversationEvents(events)
             clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
-        } catch CommitError.noPendingProposals {
-            logger.info("no proposals to commit in group (\(groupID.safeForLoggingDescription))...")
-            clearPendingProposalCommitDate(for: groupID)
         } catch {
             logger
                 .info(
@@ -1899,6 +1857,50 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Error recovery
+    
+    enum MLSRetryError: Error, Equatable {
+        case retryLimitReached
+        case nonRecoverableError(_ reason: String)
+    }
+    
+    enum RecoveryStrategy: Equatable {
+
+        /// Perform a quick sync, then retry the action in its entirety.
+        ///
+        /// Core Crypto can not automatically recover by itself. It needs
+        /// to process incoming handshake messages then generate a new commit.
+
+        case retryAfterQuickSync
+
+        /// Repair (re-join) the group and retry the action
+        ///
+        /// We may have missed a few commits so we will rejoin the group
+        /// and try again.
+
+        case retryAfterRepairingGroup
+
+        /// Abort the action and inform the user.
+        ///
+        /// There is no way to automatically recover from the error.
+
+        case giveUp
+        
+        init(from reason: String) {
+            if let error = try? MLSAPIError(from: reason) {
+                switch error {
+                case .mlsClientMismatch, .mlsCommitMissingReferences:
+                    self = .retryAfterQuickSync
+                case .mlsStaleMessage:
+                    self = .retryAfterRepairingGroup
+                default:
+                    self = .giveUp
+                }
+            } else {   
+                self = .giveUp
+            }
+        }
+
+    }
 
     private func retryOnCommitFailure(
         for groupID: MLSGroupID,
@@ -1908,55 +1910,31 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             try await operation()
+        } catch CoreCryptoError.Mls(.MessageRejected(reason: let reason)) {
+            switch RecoveryStrategy(from: reason) {
+            case .retryAfterQuickSync:
+                logger.warn("failed to send commit, syncing then retrying operation...")
+            	try await mlsSyncDelegate?.recoverWithIncrementalSync()
+                logger.info("sync finished, retying operation...")
 
-        } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, _) {
-            logger.warn("failed to send commit, syncing then committing pending proposals...")
-            try await mlsSyncDelegate?.recoverWithIncrementalSync()
+                guard retryCount <= maxRetryAttempts else {
+                    throw MLSRetryError.retryLimitReached
+                }
 
-            logger.info("sync finished, committing pending proposals...")
-            try await commitPendingProposals(in: groupID)
+                var currentRetryCount = retryCount
+                currentRetryCount += 1
 
-        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: let error) {
-            logger.warn("failed to send commit, syncing then retrying operation...")
-            try await mlsSyncDelegate?.recoverWithIncrementalSync()
-
-            logger.info("sync finished, retying operation...")
-
-            guard retryCount <= maxRetryAttempts else {
-                throw error
+                try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
+                
+            case .retryAfterRepairingGroup:
+                logger.warn("failed to send commit, repairing group then retrying operation...")
+                await fetchAndRepairGroup(with: groupID)
+                logger.info("repair finished, retrying operation...")
+                try await operation()
+            case .giveUp:
+                logger.warn("failed to send commit, giving up...")
+                throw MLSRetryError.nonRecoverableError(reason)
             }
-
-            var currentRetryCount = retryCount
-            currentRetryCount += 1
-
-            try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-
-        } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup, _) {
-            logger.warn("failed to send commit, repairing group then retrying operation...")
-            await fetchAndRepairGroup(with: groupID)
-            logger.info("repair finished, retrying operation...")
-            try await operation()
-
-        } catch CommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
-            logger.warn("failed to send commit, giving up...")
-            throw error
-
-        } catch ExternalCommitError.failedToSendCommit(recovery: .retry, cause: let error) {
-            logger.warn("failed to send external commit, retrying operation...")
-
-            guard retryCount <= maxRetryAttempts else {
-                throw error
-            }
-
-            var currentRetryCount = retryCount
-            currentRetryCount += 1
-
-            try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-
-        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
-            logger.warn("failed to send external commit, giving up...")
-            throw error
-
         }
     }
 

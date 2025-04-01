@@ -25,11 +25,11 @@ public enum MLSAPIError: Error, Codable, Equatable {
     public init(from string: String) throws {
         self = try JSONDecoder().decode(MLSAPIError.self, from: Data(string.utf8))
     }
-    
-    public var encodedAsString: String {
+
+    public func encodeAsString() throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
-        return String(decoding: try! encoder.encode(self), as: UTF8.self)
+        return String(decoding: try encoder.encode(self), as: UTF8.self)
     }
     
     /// Unsupported endpoint for API version

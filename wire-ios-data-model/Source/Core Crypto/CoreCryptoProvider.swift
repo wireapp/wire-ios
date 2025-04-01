@@ -41,6 +41,8 @@ public protocol CoreCryptoProviderProtocol {
     ///   - certificateChain: the resulting certificate chain from the end to end identity enrollment
     func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws
         -> CRLsDistributionPoints?
+    
+    func registerMlsTransport(_ transport: any MlsTransport) async throws
 
 }
 
@@ -105,6 +107,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             )
             try await self.generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
             return CRLsDistributionPoints(from: crlsDistributionPoints)
+        }
+    }
+    
+    public func registerMlsTransport(_ transport: any MlsTransport) async throws {
+        try await coreCrypto().configure { coreCrypto in
+            try await coreCrypto.provideTransport(transport: transport)
         }
     }
 

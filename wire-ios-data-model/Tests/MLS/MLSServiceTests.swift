@@ -1465,10 +1465,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             joinGroupCount += 1
 
             if joinGroupCount == 1 {
-                throw ExternalCommitError.failedToSendCommit(
-                    recovery: recovery,
-                    cause: cause
-                )
+                throw CoreCryptoError.Mls(.MessageRejected(reason: try error.encodeAsString()))
             }
 
             return []
@@ -2074,7 +2071,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+                throw CoreCryptoError.Mls(.MessageRejected(
+                    reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
+                ))
             default:
                 return []
             }
@@ -2111,7 +2110,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0 ..< 3:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+                throw CoreCryptoError.Mls(.MessageRejected(
+                    reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
+                ))
             default:
                 return []
             }
@@ -2141,11 +2142,15 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // `CommitError.failedToSendCommit(recovery: .retryAfterQuickSync`, we'll try to create an infinite loop by keep throwing the same error over and over again.
 
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+            throw CoreCryptoError.Mls(.MessageRejected(
+                reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
+            ))
         }
 
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+            throw CoreCryptoError.Mls(.MessageRejected(
+                reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
+            ))
         }
 
         // Mock incremental sync.
@@ -2168,11 +2173,15 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // `ExternalCommitError.failedToSendCommit(recovery: .retry)`, we'll try to create an infinite loop by keep throwing the same error over and over again.
 
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
+            throw CoreCryptoError.Mls(.MessageRejected(
+                reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
+            ))
         }
 
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
+            throw CoreCryptoError.Mls(.MessageRejected(
+                reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
+            ))
         }
 
         // Mock incremental sync.
@@ -2197,7 +2206,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockCommitPendingProposalsCount += 1 }
             switch mockCommitPendingProposalsCount {
             case 0 ..< 2:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+                throw CoreCryptoError.Mls(.MessageRejected(
+                    reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
+                ))
             default:
                 return []
             }
@@ -2209,7 +2220,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0 ..< 3:
-                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
+                throw CoreCryptoError.Mls(.MessageRejected(
+                    reason: try MLSAPIError.mlsClientMismatch.encodeAsString()
+                ))
             default:
                 return []
             }
@@ -2295,14 +2308,16 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsProtocolError(message: "message"))
+            throw CoreCryptoError.Mls(.MessageRejected(
+                reason: try unrecoverableError.encodeAsString()
+            ))
         }
 
         // Mock incremental sync.
         mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         // Then
-        await assertItThrows(error: SendCommitBundleAction.Failure.mlsProtocolError(message: "message")) {
+        await assertItThrows(error: try MLSService.MLSRetryError.nonRecoverableError(unrecoverableError.encodeAsString())) {
             // When
             try await sut.updateKeyMaterial(for: groupID)
         }

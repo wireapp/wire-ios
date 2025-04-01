@@ -583,26 +583,27 @@ public final class ClientSessionComponent {
     private lazy var addPermissionEventProcessor = ConversationAddPermissionEventProcessor(
         localStore: conversationLocalStore
     )
+    
+    private lazy var conversationEventProcessor = ConversationEventProcessor(
+        accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
+        createEventProcessor: conversationCreateEventProcessor,
+        deleteEventProcessor: conversationDeleteEventProcessor,
+        memberJoinEventProcessor: conversationMemberJoinEventProcessor,
+        memberLeaveEventProcessor: conversationMemberLeaveEventProcessor,
+        memberUpdateEventProcessor: conversationMemberUpdateEventProcessor,
+        messageTimerUpdateEventProcessor: conversationMessageTimerUpdateEventProcessor,
+        mlsMessageAddEventProcessor: conversationMLSMessageAddEventProcessor,
+        mlsWelcomeEventProcessor: conversationMLSWelcomeEventProcessor,
+        proteusMessageAddEventProcessor: conversationProteusMessageAddEventProcessor,
+        protocolUpdateEventProcessor: conversationProtocolUpdateEventProcessor,
+        receiptModeUpdateEventProcessor: conversationReceiptModeUpdateEventProcessor,
+        renameEventProcessor: conversationRenameEventProcessor,
+        typingEventProcessor: conversationTypingEventProcessor,
+        addPermissionEventProcessor: addPermissionEventProcessor
+    )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {
-        let conversationEventProcessor = ConversationEventProcessor(
-            accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
-            createEventProcessor: conversationCreateEventProcessor,
-            deleteEventProcessor: conversationDeleteEventProcessor,
-            memberJoinEventProcessor: conversationMemberJoinEventProcessor,
-            memberLeaveEventProcessor: conversationMemberLeaveEventProcessor,
-            memberUpdateEventProcessor: conversationMemberUpdateEventProcessor,
-            messageTimerUpdateEventProcessor: conversationMessageTimerUpdateEventProcessor,
-            mlsMessageAddEventProcessor: conversationMLSMessageAddEventProcessor,
-            mlsWelcomeEventProcessor: conversationMLSWelcomeEventProcessor,
-            proteusMessageAddEventProcessor: conversationProteusMessageAddEventProcessor,
-            protocolUpdateEventProcessor: conversationProtocolUpdateEventProcessor,
-            receiptModeUpdateEventProcessor: conversationReceiptModeUpdateEventProcessor,
-            renameEventProcessor: conversationRenameEventProcessor,
-            typingEventProcessor: conversationTypingEventProcessor,
-            addPermissionEventProcessor: addPermissionEventProcessor
-        )
-
+    
         let featureConfigEventProcessor = FeatureConfigEventProcessor(
             updateEventProcessor: featureConfigUpdateEventProcessor
         )
@@ -674,6 +675,11 @@ public final class ClientSessionComponent {
     private lazy var mlsProvider = MLSProvider(
         service: mlsService,
         isMLSEnabled: isMLSEnabled
+    )
+
+    lazy var mlsTransport = MLSTransportImpl(
+        mlsAPI: mlsAPI,
+        conversationEventProcessor: conversationEventProcessor
     )
 
 }

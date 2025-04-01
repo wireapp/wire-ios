@@ -578,8 +578,10 @@ public final class ZMUserSession: NSObject {
         let syncAgent = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: incrementalSyncProvider,
+            mlsTransportProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus,
             syncStateSubject: clientSessionComponent.syncStateSubject
         )

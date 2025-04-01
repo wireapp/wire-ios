@@ -25,6 +25,7 @@ import WireLogging
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T
     func unsafePerform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T
+    func configure(block: (CoreCryptoProtocol) async throws -> Void) async throws -> Void
     func tearDown() throws
 }
 
@@ -73,6 +74,10 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     public func unsafePerform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T {
         try await coreCrypto.transaction(block)
+    }
+    
+    public func configure(block: (any CoreCryptoProtocol) async throws -> Void) async throws {
+        try await block(coreCrypto)
     }
 
     private func restoreFromDisk() async {
