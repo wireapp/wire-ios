@@ -16,13 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import backup // TODO: consider renaming it, like KaliumBackup
+public import WireAPI
 
-/*
-let be = MPBackupExporter(
-    selfUserId: <#T##BackupQualifiedId#>,
-    workDirectory: <#T##String#>,
-    outputDirectory: <#T##String#>,
-    fileZipper: <#T##any FileZipper#>
-)
-*/
+import backup // TODO: is it possible to rename it? like KaliumBackup or WireBackup
+
+public struct BackupExporter: BackupExporterProtocol {
+
+    let mp: MPBackupExporter
+
+    public init(
+        selfUserID: QualifiedID
+    ) {
+        fatalError()
+//        mp = MPBackupExporter(
+//            selfUserId: BackupQualifiedId(id: <#T##String#>, domain: <#T##String#>),
+//            workDirectory: <#T##String#>,
+//            outputDirectory: <#T##String#>,
+//            fileZipper: <#T##any FileZipper#>
+//        )
+    }
+}

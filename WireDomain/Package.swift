@@ -10,12 +10,14 @@ let package = Package(
         .library(name: "WireDomainPackage", targets: ["WireDomainPkg"])
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0")
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
+        .package(path: "../WireAPI")
     ],
     targets: [
         .target(
             name: "WireDomainPkg",
             dependencies: [
+                "WireAPI",
                 "KaliumBackup"
             ]
         ),
