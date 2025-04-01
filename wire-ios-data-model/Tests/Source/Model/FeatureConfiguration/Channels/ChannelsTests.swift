@@ -22,21 +22,13 @@ import XCTest
 
 final class ChannelsTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func testIsEnabled() {
         // given, when, then
         XCTAssertTrue(Feature.Channels(status: .enabled).isEnabled)
         XCTAssertFalse(Feature.Channels(status: .disabled).isEnabled)
     }
 
-    func testCanCreateChannels_whenTrue() {
+    func testPermissions_whenStatusEnabledAndReturningTrue() {
         typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermision)
 
         // given
@@ -56,67 +48,19 @@ final class ChannelsTests: XCTestCase {
         for testCase in testCases {
             let feature = Feature.Channels(
                 status: .enabled,
-                config: .init(allowedToCreateChannels: testCase.permission)
+                config: .init(
+                    allowedToCreateChannels: testCase.permission,
+                    allowedToOpenChannels: testCase.permission
+                )
             )
 
             // then
             XCTAssertTrue(feature.canCreateChannels(role: testCase.teamRole))
-        }
-    }
-
-    func testCanCreateChannels_whenFalse() {
-        typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermision)
-
-        // given
-        let testCases: [TestCase] = [
-            (.member, .admins),
-            (.partner, .teamMembers),
-            (.partner, .admins),
-            (.none, .everyone),
-            (.none, .teamMembers),
-            (.none, .admins)
-        ]
-
-        for testCase in testCases {
-            let feature = Feature.Channels(
-                status: .enabled,
-                config: .init(allowedToCreateChannels: testCase.permission)
-            )
-
-            // then
-            XCTAssertFalse(feature.canCreateChannels(role: testCase.teamRole))
-        }
-    }
-
-    func testCanOpenChannels_whenTrue() {
-        typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermision)
-
-        // given
-        let testCases: [TestCase] = [
-            (.owner, .everyone),
-            (.owner, .teamMembers),
-            (.owner, .admins),
-            (.admin, .everyone),
-            (.admin, .teamMembers),
-            (.admin, .admins),
-            (.member, .everyone),
-            (.member, .teamMembers),
-            (.partner, .everyone)
-        ]
-
-        // when
-        for testCase in testCases {
-            let feature = Feature.Channels(
-                status: .enabled,
-                config: .init(allowedToOpenChannels: testCase.permission)
-            )
-
-            // then
             XCTAssertTrue(feature.canOpenChannels(role: testCase.teamRole))
         }
     }
 
-    func testCanOpenChannels_whenFalse() {
+    func testPermissions_whenStatusEnabledAndReturningFalse() {
         typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermision)
 
         // given
@@ -133,9 +77,14 @@ final class ChannelsTests: XCTestCase {
         for testCase in testCases {
             let feature = Feature.Channels(
                 status: .enabled,
-                config: .init(allowedToOpenChannels: testCase.permission)
+                config: .init(
+                    allowedToCreateChannels: testCase.permission,
+                    allowedToOpenChannels: testCase.permission
+                )
             )
 
+            // then
+            XCTAssertFalse(feature.canCreateChannels(role: testCase.teamRole))
             XCTAssertFalse(feature.canOpenChannels(role: testCase.teamRole))
         }
     }
