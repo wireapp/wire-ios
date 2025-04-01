@@ -21,23 +21,19 @@ import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
-//
-//protocol VerificationCodeViewModelProtocol: ObservableObject {
-//    var code: any Publisher<[String], Never> { get }
-//}
 
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
 
     package typealias Factory =
+        VerificationCodeFactory &
         CreateAuthenticationResultUseCaseFactory &
         LoginViaEmailUseCaseFactory &
         RequestLoginVerificationCodeUseCaseFactory &
         SubmitProxyCredentialsUseCaseFactory
 
-    private static let numberOfDigits = 6
-    package var componentFactory: (any VerificationCodeFactory)!
-    
+    // MARK: - View state
+
     @Published var code: [String]
     @Published private(set) var isLoading = false
     @Published private(set) var isResending = false
@@ -47,10 +43,20 @@ public final class VerificationCodeViewModel: ObservableObject {
     let password: String
     let numberOfDigits: Int
 
+    var isConfirmButtonDisabled: Bool {
+        code.contains { $0.isEmpty }
+    }
+
+    // MARK: - Dependencies
+
+    package let factory: any Factory
+    private let router: any Router
+
+    private static let numberOfDigits = 6
+
     private let proxyCredentials: ProxyCredentials?
 
-    private let factory: any Factory
-    private let router: any Router
+    // MARK: - Life cycle
 
     package init(
         factory: any Factory,
@@ -71,11 +77,12 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.numberOfDigits = numberOfDigits
     }
 
-    var isConfirmButtonDisabled: Bool {
-        code.contains { $0.isEmpty }
-    }
+    // MARK: - Actions
 
-    func handleInputReturningFocus(_ newValue: String, at index: Int) -> Int? {
+    func handleInputReturningFocus(
+        _ newValue: String,
+        at index: Int
+    ) -> Int? {
         if let intValue = Int(newValue.prefix(1)), (0 ... 9).contains(intValue) {
             code[index] = String(intValue)
         } else {
@@ -172,9 +179,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         try useCase.invoke(proxyCredentials: proxyCredentials)
     }
 
-    private func logIn(
-        verificationCode: String
-    ) async throws -> ([HTTPCookie], AccessToken) {
+    private func logIn(verificationCode: String) async throws -> ([HTTPCookie], AccessToken) {
         let useCase = try await factory.loginViaEmailUseCase()
         return try await Task.detached { [email, password] in
             try await useCase.invoke(

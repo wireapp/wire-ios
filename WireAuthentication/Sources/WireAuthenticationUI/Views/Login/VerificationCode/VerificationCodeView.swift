@@ -154,7 +154,11 @@ package struct VerificationCodeView: View {
         .navigationDestination(for: VerificationCodeDestination.self) {
             switch $0 {
             case let .noHistory(authenticationResult):
-                NoHistoryView(factory: viewModel.componentFactory.noHistoryFactory(authenticationResult: authenticationResult))
+                NoHistoryView(
+                    factory: viewModel.factory.noHistoryFactory(
+                        authenticationResult: authenticationResult
+                    )
+                )
             }
         }
         .onAppear {

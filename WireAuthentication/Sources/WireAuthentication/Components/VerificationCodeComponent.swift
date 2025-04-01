@@ -32,7 +32,7 @@ protocol VerificationCodeComponentDependency: Dependency {
 
 }
 
-class VerificationCodeComponent: Component<VerificationCodeComponentDependency>, VerificationCodeFactory {
+class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
        
 
     private let email: String
@@ -51,25 +51,6 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency>,
         super.init(parent: parent)
     }
 
-//    @MainActor var view: VerificationCodeView {
-//        VerificationCodeView(
-//            viewModel: viewModel,
-//            factory: self
-//        )
-//    }
-
-    @MainActor var viewModel: VerificationCodeViewModel {
-        let viewModel = VerificationCodeViewModel(
-            factory: self,
-            email: email,
-            password: password,
-            proxyCredentials: proxyCredentials,
-            router: dependency.router
-        )
-        viewModel.componentFactory = self
-        return viewModel
-    }
-
     // MARK: - Children
 
     func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
@@ -79,14 +60,28 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency>,
             didDetectDomainConflict: dependency.didDetectDomainConflict
         )
     }
-    
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI.NoHistoryFactory {
-        noHistoryComponent(authenticationResult: authenticationResult)
-    }
 
 }
 
 extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: VerificationCodeViewModel {
+        VerificationCodeViewModel(
+            factory: self,
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials,
+            router: dependency.router
+        )
+    }
+
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
+        noHistoryComponent(authenticationResult: authenticationResult)
+    }
+
+    // MARK: - Use cases
 
     func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
         SubmitProxyCredentialsUseCase(networkStack: dependency.networkStack)
@@ -107,13 +102,3 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
     }
 
 }
-
-//extension VerificationCodeComponent: VerificationCodeView.Factory {
-//
-//    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
-//        noHistoryComponent(
-//            authenticationResult: authenticationResult
-//        ).view
-//    }
-//
-//}
