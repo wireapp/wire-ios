@@ -46,10 +46,12 @@ package protocol DetermineAuthMethodFactory {
     var viewModel: DetermineAuthMethodViewModel { get }
     
     @MainActor
-    func loginViaEmailFactory(email: String?,
-                       canCreateAccount: Bool,
-                               didDetectDomainConflict: Bool,
-                       backendInfo: BackendInfo) -> any LoginViaEmailFactory
+    func loginViaEmailFactory(
+        email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> any LoginViaEmailFactory
     
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
@@ -60,15 +62,17 @@ package protocol LoginViaEmailFactory {
     
     @MainActor
     var viewModel: LoginViaEmailViewModel { get }
-    
+
     @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
-    
     func verificationCodeFactory(
         email: String,
         password: String,
         proxyCredentials: ProxyCredentials?
     ) -> any VerificationCodeFactory
+
+    @MainActor
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+
 }
 
 
@@ -83,8 +87,10 @@ package protocol VerificationCodeFactory {
 
 
 package protocol NoHistoryFactory {
+
     @MainActor
     var viewModel: NoHistoryViewModel { get }
+
 }
 
 package struct VerificationCodeView: View {

@@ -98,6 +98,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Actions
+
     func submitEmailOrSSOCode() async {
         isLoading = true
         defer {
