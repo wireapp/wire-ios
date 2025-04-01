@@ -46,9 +46,20 @@ final class ChannelAccessUseCaseTests: XCTestCase {
     }
 
     func testUpdateParticipantPermission_changesPermission() {
-        var useCase = ChannelAccessUseCase(permission: .admins)
+        let useCase = ChannelAccessUseCase(permission: .admins)
         useCase.updateParticipantPermission(to: .adminsAndMembers)
 
         XCTAssertEqual(useCase.settings.participantPermission, .adminsAndMembers)
     }
+
+    func testUpdateParticipantPermission_changesFromPublicToPrivate() {
+        let useCase = ChannelAccessUseCase(permission: nil) // means public
+        XCTAssertEqual(useCase.settings.accessLevel, .public)
+
+        useCase.updateAccessLevel(to: .private)
+
+        XCTAssertEqual(useCase.settings.participantPermission, .adminsAndMembers)
+        XCTAssertEqual(useCase.settings.accessLevel, .private)
+    }
+
 }

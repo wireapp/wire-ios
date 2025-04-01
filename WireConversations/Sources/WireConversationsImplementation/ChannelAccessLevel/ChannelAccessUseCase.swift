@@ -44,6 +44,7 @@ package class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
             return
         }
         settings.accessLevel = level
+        settings.participantPermission = .adminsAndMembers
     }
 
     package func updateParticipantPermission(to permission: ChannelAccessLevelPermission) {

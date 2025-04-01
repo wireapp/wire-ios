@@ -67,11 +67,21 @@ final class ChannelAccessViewModelTests: XCTestCase {
         XCTAssertEqual(useCase.updateAccessLevelTo_Invocations.count, 0)
 
         viewModel.selectAccessLevel(.private)
+
+        useCase.underlyingSettings = .init(
+            accessLevel: .private,
+            participantPermission: .adminsAndMembers
+        )
+
         viewModel.confirmPrivateAccessChange()
 
         XCTAssertEqual(useCase.updateAccessLevelTo_Invocations.count, 1)
         XCTAssertEqual(useCase.updateAccessLevelTo_Invocations.first, .private)
         XCTAssertEqual(viewModel.settings.accessLevel, .private)
+        XCTAssertEqual(
+            viewModel.settings.participantPermission,
+            .adminsAndMembers
+        )
     }
 
     func test_selectParticipantPermission_updatesState() {
