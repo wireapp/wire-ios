@@ -65,7 +65,7 @@ public protocol UserClientsRepositoryProtocol {
     /// - parameter id: The client id.
 
     func deleteClient(id: String) async
-    
+
     /// Invalides the self client locally
 
     func invalidateSelfClient() async

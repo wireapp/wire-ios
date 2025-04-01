@@ -352,7 +352,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         await context.perform {
             let selfUserProtocols = selfUser.supportedProtocols
             let otherUserProtocols = otherUser.supportedProtocols.isEmpty ?
-            [.proteus] : otherUser.supportedProtocols /// default to Proteus if empty.
+                [.proteus] : otherUser.supportedProtocols /// default to Proteus if empty.
 
             let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)
 

@@ -150,7 +150,7 @@ final class UserClientsRepositoryTests: XCTestCase {
 
         XCTAssertEqual(userClientsLocalStore.deleteClientId_Invocations.count, 1)
     }
-    
+
     func testInvalidSelfClient_It_Invokes_Local_Store_Method() async throws {
         // Mock
 

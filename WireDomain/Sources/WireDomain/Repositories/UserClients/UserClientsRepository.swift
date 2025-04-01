@@ -71,7 +71,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
     ) async {
         await userClientsLocalStore.deleteClient(id: id)
     }
-    
+
     public func invalidateSelfClient() async {
         await userClientsLocalStore.invalidateSelfClient()
     }

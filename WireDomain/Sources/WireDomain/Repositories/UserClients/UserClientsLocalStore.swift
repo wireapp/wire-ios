@@ -236,7 +236,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             selfClient.updateSecurityLevelAfterDiscovering([newClient])
         }
     }
-    
+
     public func invalidateSelfClient() async {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)

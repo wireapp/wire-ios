@@ -50,7 +50,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     }
 
     // MARK: - Tests
-    
+
     func test_PushSupportedProtocols_It_Invokes_Sync_Method() async throws {
         // Given
         let supportedProtocols = Set([WireAPI.MessageProtocol.mls, .proteus])

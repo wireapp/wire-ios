@@ -60,7 +60,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
             userClientsLocalStore: userClientsLocalStore,
             userLocalStore: userLocalStore
         )
-        
+
         selfUser = await context.perform { [context] in
             self.modelHelper.createSelfUser(in: context)
         }
@@ -90,7 +90,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
         userClientsLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
 
         let supportedProtocols = await sut.invoke()
-        
+
         // Then
         XCTAssertEqual([WireAPI.MessageProtocol.mls, WireAPI.MessageProtocol.proteus], supportedProtocols)
     }

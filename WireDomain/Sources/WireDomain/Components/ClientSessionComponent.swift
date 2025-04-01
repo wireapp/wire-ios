@@ -41,7 +41,7 @@ public final class ClientSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
-    
+
     private let onSelfClientInvalidated: () async -> Void
 
     public init(
@@ -605,9 +605,9 @@ public final class ClientSessionComponent {
             teamEventProcessor: teamEventProcessor
         )
     }()
-    
+
     // MARK: - Use cases
-    
+
     private lazy var calculateSupportedProtocolsUseCase = CalculateSupportedProtocolsUseCase(
         featureConfigRepository: featureConfigRepository,
         userClientsLocalStore: userClientsLocalStore,

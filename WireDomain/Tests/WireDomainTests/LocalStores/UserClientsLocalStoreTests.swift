@@ -147,10 +147,10 @@ final class UserClientsLocalStoreTests: XCTestCase {
 
         XCTAssertEqual(deletedClient, nil)
     }
-    
+
     func testInvalidateSelfClient_It_Resets_Self_Client_Locally() async throws {
         // Given
-        
+
         let selfClient = await context.perform { [self] in
             let selfClient = modelHelper.createSelfClient(in: context)
             selfClient.remoteIdentifier = UUID.mockID1.uuidString
@@ -160,7 +160,7 @@ final class UserClientsLocalStoreTests: XCTestCase {
                 selfClient.remoteIdentifier!,
                 key: ZMPersistedClientIdKey
             )
-            
+
             XCTAssertEqual(selfClient.remoteIdentifier, UUID.mockID1.uuidString)
             XCTAssertTrue(selfClient.hasLocalModifications(forKey: "missingClients"))
             XCTAssertEqual(
@@ -168,8 +168,8 @@ final class UserClientsLocalStoreTests: XCTestCase {
                 ["PersistedClientId": selfClient.remoteIdentifier!]
             )
             XCTAssertEqual(selfClient.mlsPublicKeys, .init(ed25519: "key"))
-            
-            
+
+
             return selfClient
         }
 
@@ -178,7 +178,7 @@ final class UserClientsLocalStoreTests: XCTestCase {
         await sut.invalidateSelfClient()
 
         // Then
-        
+
         await context.perform { [context] in
             XCTAssertEqual(selfClient.remoteIdentifier, nil)
             XCTAssertFalse(selfClient.hasLocalModifications(forKey: "missingClients"))

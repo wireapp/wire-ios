@@ -32,7 +32,7 @@ final class UserClientRemoveEventProcessorTests: XCTestCase {
     private var pushSupportedProtocolsUseCase: MockPushSupportedProtocolsUseCaseProtocol!
     private var oneOnOneResolver: MockOneOnOneResolverProtocol!
     private var didInvalidateSelfClient = false
-    
+
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -50,7 +50,7 @@ final class UserClientRemoveEventProcessorTests: XCTestCase {
         calculateSupportedProtocolsUseCase = MockCalculateSupportedProtocolsUseCaseProtocol()
         pushSupportedProtocolsUseCase = MockPushSupportedProtocolsUseCaseProtocol()
         oneOnOneResolver = MockOneOnOneResolverProtocol()
-        
+
         sut = UserClientRemoveEventProcessor(
             userClientsRepository: userClientsRepository,
             calculateSupportedProtocolsUseCase: calculateSupportedProtocolsUseCase,
@@ -98,7 +98,7 @@ final class UserClientRemoveEventProcessorTests: XCTestCase {
         XCTAssertEqual(userClientsRepository.invalidateSelfClient_Invocations.count, 1)
         XCTAssertEqual(didInvalidateSelfClient, true)
     }
-    
+
     func testProcessEvent_When_Client_Is_Not_Self_It_Invokes_User_Repo_Methods() async throws {
         // Mock
 
@@ -131,11 +131,11 @@ final class UserClientRemoveEventProcessorTests: XCTestCase {
     private enum Scaffolding {
         static let selfClientID = UUID.mockID1.uuidString
         static let otherClientID = UUID.mockID2.uuidString
-        
+
         static let removeSelfClientEvent = UserClientRemoveEvent(
             clientID: selfClientID
         )
-        
+
         static let removeOtherClientEvent = UserClientRemoveEvent(
             clientID: otherClientID
         )

@@ -30,12 +30,12 @@ struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
 
     func processEvent(_ event: UserClientRemoveEvent) async throws {
         let clientID = event.clientID
-        
+
         let isSelfClient = await context.perform { [context] in
             let selfClient = ZMUser.selfUser(in: context).selfClient()
             return selfClient?.remoteIdentifier == clientID
         }
-        
+
         if isSelfClient == true {
             await userClientsRepository.invalidateSelfClient()
             await onSelfClientInvalidated()
@@ -43,31 +43,31 @@ struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
             await userClientsRepository.deleteClient(id: clientID)
             try await resolveOneOnOneConversations()
         }
-        
+
     }
-    
+
     private func resolveOneOnOneConversations() async throws {
         let oldProtocols = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             return selfUser.supportedProtocols
         }
-        
+
         let newProtocols = await calculateSupportedProtocols().toDomainModel()
-        
+
         if oldProtocols != newProtocols {
             try await pushSupportedProtocolsUseCase.invoke()
-            
+
             await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 selfUser.supportedProtocols = newProtocols
             }
         }
-        
+
         if newProtocols.contains(.mls) {
             try await oneOnOneResolver.resolveAllOneOnOneConversations()
         }
     }
-    
+
     private func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
         do {
             // we need the self clients to be up to date before calculating supported protocols.
@@ -77,7 +77,7 @@ struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
                 "error syncing selfclients: \(error.localizedDescription)"
             )
         }
-        
+
         return await calculateSupportedProtocolsUseCase.invoke()
     }
 
