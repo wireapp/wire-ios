@@ -31,7 +31,7 @@ protocol NoHistoryComponentDependency: Dependency {
 
 }
 
-class NoHistoryComponent: Component<NoHistoryComponentDependency>, NoHistoryFactory {
+class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     private let authenticationResult: AuthenticationResult
     private let didDetectDomainConflict: Bool
@@ -46,12 +46,14 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency>, NoHistoryFact
         super.init(parent: parent)
     }
 
-//    @MainActor var view: NoHistoryView {
-//        NoHistoryView(viewModel: viewModel)
-//    }
+}
+
+extension NoHistoryComponent: NoHistoryFactory {
+
+    // MARK: - Factory
 
     @MainActor var viewModel: NoHistoryViewModel {
-        let viewModel = NoHistoryViewModel(
+        NoHistoryViewModel(
             didDetectDomainConflict: didDetectDomainConflict,
             howToChangeEmailURL: dependency.howToChangeEmailURL,
             howToDeleteAccountURL: dependency.howToDeleteAccountURL,
@@ -59,8 +61,6 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency>, NoHistoryFact
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
             }
         )
-        viewModel.componentFactory = self
-        return viewModel
     }
 
 }

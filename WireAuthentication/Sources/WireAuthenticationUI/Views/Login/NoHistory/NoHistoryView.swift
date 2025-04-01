@@ -19,13 +19,6 @@
 import SwiftUI
 import WireAuthenticationAPI
 
-package protocol NoHistoryViewBuilder {
-
-    @MainActor
-    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView
-
-}
-
 package struct NoHistoryView: View {
 
     @StateObject var viewModel: NoHistoryViewModel
