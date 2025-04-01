@@ -23,7 +23,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "WireBackup",
-            path: "../../wire-android/kalium/backup/build/XCFrameworks/debug/WireBackup.xcframework"
+            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/cff4f8227ece376dd78a4f30af8ff781bfb8d16a/WireDomain/Frameworks/WireBackup.xcframework.zip?download=true",
+            checksum: "d840221eada972dac752f3e652495ea7e23159dde538bfe7a39e8e7c5b149810"
         )
     ]
 )
