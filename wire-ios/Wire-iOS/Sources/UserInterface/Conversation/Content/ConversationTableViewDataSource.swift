@@ -240,8 +240,7 @@ final class ConversationTableViewDataSource: NSObject {
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
             useInvertedIndices: true,
-            contentWidth: contentWidth,
-            shouldShowAuthor: conversation.conversationType != .oneOnOne
+            contentWidth: contentWidth
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self

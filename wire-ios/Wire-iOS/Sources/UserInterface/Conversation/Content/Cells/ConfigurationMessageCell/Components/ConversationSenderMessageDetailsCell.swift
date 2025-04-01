@@ -43,7 +43,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         let user: UserType
         let indicator: Indicator?
         let teamRoleIndicator: TeamRoleIndicator?
-        let shouldShowAuthor: Bool
     }
 
     // MARK: - Properties
@@ -52,19 +51,13 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
 
-    private(set) var avatarCenterYConstraint: NSLayoutConstraint?
-    private(set) var avatarEqualToTopConstraint: NSLayoutConstraint?
-    private(set) var avatarEqualToBottomConstraint: NSLayoutConstraint?
-    private(set) var avatarGreaterThanOrEqualToTopConstraint: NSLayoutConstraint?
-    private(set) var avatarGreaterThanOrEqualToBottomConstraint: NSLayoutConstraint?
-
     var isSelected: Bool = false
 
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
         view.userSession = ZMUserSession.shared()
         view.initialsFont = .avatarInitial
-        view.size = .small
+        view.size = .badge
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnAvatar)))
         view.accessibilityElementsHidden = false
@@ -72,8 +65,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         view.accessibilityTraits = .button
         view.accessibilityLabel = L10n.Accessibility.Conversation.ProfileImage.description
         view.accessibilityHint = L10n.Accessibility.Conversation.ProfileImage.hint
-        view.heightAnchor.constraint(equalToConstant: 32).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 24).isActive = true
         return view
     }()
 
@@ -100,17 +93,9 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
-        label.setContentHuggingPriority(.required, for: .vertical)
-
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.setContentHuggingPriority(.defaultLow, for: .vertical)
 
         return label
-    }()
-
-    private(set) lazy var stackView = {
-        let stackView = UIStackView()
-        stackView.clipsToBounds = false
-        return stackView
     }()
 
     private var userObservation: NSObjectProtocol?
@@ -120,14 +105,13 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubviews()
+        configureConstraints()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
-
-    var heightConstraint: NSLayoutConstraint?
 
     // MARK: - configure
 
@@ -142,77 +126,48 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         configureAuthorLabel(object: object)
 
-        if let heightConstraint {
-            stackView.removeConstraint(heightConstraint)
-        }
-        if object.shouldShowAuthor {
-            heightConstraint = stackView.heightAnchor.constraint(equalTo: authorLabel.heightAnchor)
-        } else {
-            heightConstraint = stackView.heightAnchor.constraint(equalToConstant: 0)
-        }
-        heightConstraint?.isActive = true
     }
 
     // MARK: - Configure subviews and setup constraints
 
     private func configureSubviews() {
-
-        avatar.addSubview(availabilityIndicatorView)
-        availabilityIndicatorView.leadingAnchor.constraint(equalTo: avatar.leadingAnchor, constant: 23).isActive = true
-        availabilityIndicatorView.topAnchor.constraint(equalTo: avatar.topAnchor, constant: 23).isActive = true
-
-        let avatarContainerView = UIView()
-        avatarContainerView.clipsToBounds = false
         avatar.translatesAutoresizingMaskIntoConstraints = false
-        avatarContainerView.addSubview(avatar)
+        addSubview(avatar)
+        authorLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(authorLabel)
+    }
 
-        avatarCenterYConstraint = avatar.centerYAnchor.constraint(equalTo: avatarContainerView.centerYAnchor)
-        avatarCenterYConstraint?.priority = .defaultHigh
+    private func configureConstraints() {
 
-        avatarEqualToTopConstraint = avatar.topAnchor.constraint(equalTo: avatarContainerView.topAnchor)
-        avatarEqualToTopConstraint?.priority = .defaultHigh
-
-        avatarEqualToBottomConstraint = avatarContainerView.bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
-        avatarEqualToBottomConstraint?.priority = .defaultHigh
-
-        avatarGreaterThanOrEqualToTopConstraint = avatar.topAnchor.constraint(
-            greaterThanOrEqualTo: avatarContainerView.topAnchor
+        let avatarEqualToTopAnchorConstraint = avatar.topAnchor.constraint(equalTo: topAnchor)
+        avatarEqualToTopAnchorConstraint.priority = .defaultLow
+        let avatarGreaterThanOrEqualToTopAnchorConstraint = avatar.topAnchor.constraint(
+            greaterThanOrEqualTo: topAnchor
         )
 
-        avatarGreaterThanOrEqualToBottomConstraint = avatarContainerView.bottomAnchor.constraint(
+        let avatarEqualToBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
+        avatarEqualToBottomAnchorConstraint.priority = .defaultLow
+        let avatarGreaterThanOrEqualToBottomAnchorConstraint = bottomAnchor.constraint(
             greaterThanOrEqualTo: avatar.bottomAnchor
         )
 
         NSLayoutConstraint.activate([
-            avatar.leadingAnchor.constraint(equalTo: avatarContainerView.leadingAnchor),
-            avatarCenterYConstraint!,
-            avatarContainerView.trailingAnchor.constraint(equalTo: avatar.trailingAnchor),
-            avatarEqualToTopConstraint!,
-            avatarEqualToBottomConstraint!,
-            avatarGreaterThanOrEqualToTopConstraint!,
-            avatarGreaterThanOrEqualToBottomConstraint!
+            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
+            authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
+
+            authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
+
+            avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
+            avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
+            avatar.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            avatarEqualToTopAnchorConstraint,
+            avatarGreaterThanOrEqualToTopAnchorConstraint,
+            avatarEqualToBottomAnchorConstraint,
+            avatarGreaterThanOrEqualToBottomAnchorConstraint
         ])
-
-        let spacing: CGFloat = 7
-        let leadingMargin = conversationHorizontalMargins.left - CGFloat(integerLiteral: avatar.size.rawValue) - spacing
-
-        [
-            avatarContainerView.wrapInView(leadingInset: leadingMargin),
-            authorLabel
-        ]
-        .forEach { stackView.addArrangedSubview($0) }
-
-        stackView.axis = .horizontal
-        stackView.spacing = spacing
-        stackView.alignment = .leading
-        stackView.distribution = .fill
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-
-        addSubview(stackView)
-
-        avatar.constraintToSquare(sideLength: CGFloat(integerLiteral: avatar.size.rawValue))
-
-        stackView.fitIn(view: self)
     }
 
     private func configureAuthorLabel(object: Configuration) {
@@ -265,12 +220,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         default:
             accessibilityIdentifier = "img.member"
         }
-
-        avatarCenterYConstraint?.isActive = object.indicator == .deleted
-        avatarEqualToTopConstraint?.isActive = object.indicator == .deleted
-        avatarEqualToBottomConstraint?.isActive = object.indicator == .deleted
-        avatarGreaterThanOrEqualToTopConstraint?.isActive = object.indicator == .deleted
-        avatarGreaterThanOrEqualToBottomConstraint?.isActive = object.indicator == .deleted
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.maximumLineHeight = UIFont.mediumSemiboldFont.lineHeight
@@ -342,7 +291,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     init(
         sender: UserType,
         message: ZMConversationMessage,
-        shouldShowAuthor: Bool
     ) {
         self.message = message
 
@@ -356,7 +304,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
             user: sender,
             indicator: indicator,
             teamRoleIndicator: teamRoleIndicator,
-            shouldShowAuthor: shouldShowAuthor
         )
 
         setupAccessibility(sender)
@@ -409,19 +356,6 @@ private extension UserType {
         }
     }
 
-}
-
-extension ConversationSenderMessageDetailsCell: UIGestureRecognizerDelegate {
-
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let avatarPoint = avatar.convert(point, from: self)
-
-        if avatar.point(inside: avatarPoint, with: event) {
-            return avatar
-        }
-
-        return super.hitTest(point, with: event)
-    }
 }
 
 extension ConversationSenderMessageDetailsCell: UserObserving {
