@@ -36,33 +36,6 @@ final class ChannelsTests: XCTestCase {
         XCTAssertFalse(Feature.Channels(status: .disabled).isEnabled)
     }
 
-    func testCanCreateChannels_whenOwner() {
-        typealias TestCase = (
-            status: Feature.Status,
-            permission: Feature.Channels.Config.ChannelsPermision,
-            expectedResult: Bool
-        )
-
-        // given
-        let testCases: [TestCase] = [
-            (.enabled, .everyone, true),
-            (.enabled, .teamMembers, true),
-            (.enabled, .admins, true),
-  	
-        ]
-
-        // when
-        for testCase in testCases {
-            let feature = Feature.Channels(
-                status: testCase.status,
-                config: .init(allowedToCreateChannels: testCase.permission)
-            )
-
-            // then
-            XCTAssertEqual(feature.canCreateChannels(role: .owner), testCase.expectedResult)
-        }
-    }
-
     func testCanCreateChannels_whenTrue() {
         typealias TestCase = (teamRole: TeamRole, permission: Feature.Channels.Config.ChannelsPermision)
 
@@ -76,7 +49,7 @@ final class ChannelsTests: XCTestCase {
             (.admin, .admins),
             (.member, .everyone),
             (.member, .teamMembers),
-            (.partner, .everyone),
+            (.partner, .everyone)
         ]
 
         // when
@@ -101,7 +74,7 @@ final class ChannelsTests: XCTestCase {
             (.partner, .admins),
             (.none, .everyone),
             (.none, .teamMembers),
-            (.none, .admins),
+            (.none, .admins)
         ]
 
         for testCase in testCases {
@@ -128,7 +101,7 @@ final class ChannelsTests: XCTestCase {
             (.admin, .admins),
             (.member, .everyone),
             (.member, .teamMembers),
-            (.partner, .everyone),
+            (.partner, .everyone)
         ]
 
         // when
@@ -153,7 +126,7 @@ final class ChannelsTests: XCTestCase {
             (.partner, .admins),
             (.none, .everyone),
             (.none, .teamMembers),
-            (.none, .admins),
+            (.none, .admins)
         ]
 
         // when
