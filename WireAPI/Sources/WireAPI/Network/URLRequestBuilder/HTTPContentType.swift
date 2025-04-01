@@ -19,5 +19,7 @@
 enum HTTPContentType: String {
 
     case json = "application/json"
+    
+    case mls = "message/mls"
 
 }

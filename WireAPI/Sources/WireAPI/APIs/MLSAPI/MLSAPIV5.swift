@@ -40,6 +40,36 @@ class MLSAPIV5: MLSAPIV4 {
             .failure(code: .badRequest, label: "mls-not-enabled", error: MLSAPIError.mlsNotEnabled)
             .parse(code: response.statusCode, data: data)
     }
+    
+    override func postCommitBundle(_ bundle: CommitBundle) async throws -> [UpdateEvent] {
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/mls/commit-bundles")
+            .withMethod(.post)
+            .withAcceptType(.json)
+            .withBody(bundle.transportData(), contentType: .mls)
+            .build()
+        
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+        
+        do {
+            return try ResponseParser()
+            .success(code: .created, type: CommitBundleResponseV5.self)
+            .failure(code: .conflict, label: "mls-stale-message", error: MLSAPIError.mlsStaleMessage)
+            .failure(code: .conflict, label: "mls-client-mismatch", error: MLSAPIError.mlsClientMismatch)
+            .failure(code: .badRequest, label: "mls-commit-missing-references", error: MLSAPIError.mlsCommitMissingReferences)
+            .failure(code: .conflict, decodableError: FailureResponse.self)
+            .parse(code: response.statusCode, data: data)
+        } catch {
+            if let failureResponse = error as? FailureResponse {
+                throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
+            } else {
+                throw error
+            }
+        }
+                
+    }
 
 }
 
@@ -51,4 +81,15 @@ private struct BackendMLSPublicKeysResponseV5: Decodable, ToAPIModelConvertible 
         .init(removal: removal)
     }
 
+}
+
+private struct CommitBundleResponseV5: Decodable, ToAPIModelConvertible {
+
+    let time: UTCTime?
+    let events: [UpdateEventDecodingProxy]
+    
+    func toAPIModel() -> [UpdateEvent] {
+        events.map({ $0.updateEvent })
+    }
+    
 }

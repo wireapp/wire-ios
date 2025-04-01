@@ -103,6 +103,83 @@ final class MLSAPITests: XCTestCase {
             try await api.getBackendMLSPublicKeys()
         }
     }
+    
+    // MARK: - Send commit bundle
+    
+    func testPostCommitBundleRequest() async throws {
+        // Given
+        let apiVersions = APIVersion.v5.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.postCommitBundle(Scaffolding.commitBundle)
+        }
+    }
+    
+    func testPostCommitBundle_SuccessResponse_201_V5_And_Next_Versions() async throws {
+        // Given
+        try await withThrowingTaskGroup(of: Array<UpdateEvent>.self) { taskGroup in
+            let testedVersions = APIVersion.v5.andNextVersions
+
+            for version in testedVersions {
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.created, "PostCommitBundleSuccessResponse1")
+                ])
+                let sut = version.buildAPI(apiService: apiService)
+
+                taskGroup.addTask {
+                    // When
+                    return try await sut.postCommitBundle(Scaffolding.commitBundle)
+                }
+
+                for try await value in taskGroup {
+                    // Then
+                    XCTAssertEqual(value, [], "should get 201 for APIVersion  \(version)")
+                }
+            }
+        }
+    }
+    
+    func testPostCommitBundle_SuccessResponseWithEvents_201_V5_And_Next_Versions() async throws {
+        // Given
+        try await withThrowingTaskGroup(of: Array<UpdateEvent>.self) { taskGroup in
+            let testedVersions = APIVersion.v5.andNextVersions
+
+            for version in testedVersions {
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.created, "PostCommitBundleSuccessResponse2")
+                ])
+                let sut = version.buildAPI(apiService: apiService)
+
+                taskGroup.addTask {
+                    // When
+                    return try await sut.postCommitBundle(Scaffolding.commitBundle)
+                }
+
+                for try await value in taskGroup {
+                    // Then
+                    XCTAssertEqual(value, Scaffolding.updateEvents, "should get 201 for APIVersion  \(version)")
+                }
+            }
+        }
+    }
+    
+    func testPostCommitBundle_givenV5AndErrorResponse() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .conflict,
+            label: "mls-stale-message"
+        )
+
+        let api = MLSAPIV5(apiService: apiService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(MLSAPIError.mlsStaleMessage) {
+            // When
+            try await api.postCommitBundle(Scaffolding.commitBundle)
+        }
+    }
 }
 
 private extension APIVersion {
@@ -112,4 +189,20 @@ private extension APIVersion {
         return builder.makeAPI(for: self)
     }
 
+}
+
+// MARK: Helpers
+
+private enum Scaffolding {
+    
+    static let commitBundle = CommitBundle(
+        welcome: nil,
+        commit: "commit".data(using: .utf8)!,
+        groupInfo: "groupinfo".data(using: .utf8)!
+    )
+    
+    static let updateEvents = [
+        UpdateEvent.unknown(eventType: "some event"),
+    ]
+    
 }
