@@ -15,28 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
-import WireAuthenticationAPI
-import WireReusableUIComponents
 
-struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
-    var mockDependencies = MockDependencies()
-    
-    var viewModel: RootViewModel {
-        RootViewModel(
-            factory: self,
-            bridge: WireAuthenticationBridge(),
-            backendInfo: mockDependencies.backendInfo
-
+class FakeNoHistoryFactory: NoHistoryFactory {
+    var viewModel: NoHistoryViewModel {
+        NoHistoryViewModel(
+            didDetectDomainConflict: false,
+            howToChangeEmailURL: URL(string: "https://wire.com")!,
+            howToDeleteAccountURL: URL(string: "https://wire.com")!,
+            onFlowCompletion: {}
         )
     }
-
-    func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any DetermineAuthMethodFactory {
-        FakeDetermineAuthMethodFactory()
-    }
     
-    func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
-        mockDependencies.openAppStoreUseCase()
-    }
+    
 }
