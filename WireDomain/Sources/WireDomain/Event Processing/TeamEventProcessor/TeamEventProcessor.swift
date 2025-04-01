@@ -24,6 +24,7 @@ struct TeamEventProcessor: TeamEventProcessorProtocol {
     let deleteEventProcessor: any TeamDeleteEventProcessorProtocol
     let memberLeaveEventProcessor: any TeamMemberLeaveEventProcessorProtocol
     let memberUpdateEventProcessor: any TeamMemberUpdateEventProcessorProtocol
+    let createEventProcessor: any TeamCreateEventProcessorProtocol
 
     func processEvent(_ event: TeamEvent) async throws {
         switch event {
@@ -35,6 +36,9 @@ struct TeamEventProcessor: TeamEventProcessorProtocol {
 
         case let .memberUpdate(event):
             try await memberUpdateEventProcessor.processEvent(event)
+
+        case let .create(event):
+            try await createEventProcessor.processEvent(event)
         }
     }
 

@@ -44,6 +44,23 @@ public protocol TeamRepositoryProtocol {
 
     func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo
 
+    /// Creates or updates a team locally.
+    /// - Parameters
+    ///     - identifier: The team ID.
+    ///     - name: The team name.
+    ///     - creator: The team creator.
+    ///     - icon: The team icon.
+    ///     - iconKey: The team iconKey.
+    ///     - splashScreen: The team splash screen.
+
+    func createOrUpdateTeam(
+        identifier: UUID,
+        name: String,
+        creator: UUID,
+        icon: String,
+        iconKey: String?
+    ) async
+
     /// Deletes the member of a team.
     /// - Parameter userID: The ID of the team member.
     /// - Parameter domain: The domain of the team member.
