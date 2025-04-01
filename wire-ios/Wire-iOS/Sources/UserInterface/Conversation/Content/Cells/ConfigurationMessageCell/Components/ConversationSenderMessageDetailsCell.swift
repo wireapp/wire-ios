@@ -73,8 +73,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     private lazy var availabilityIndicatorView = {
         let view = AvailabilityIndicatorView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(equalToConstant: 11).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 11).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 9).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 9).isActive = true
 
         let design = AccountImageViewDesign().availabilityIndicator
         view.availableColor = design.availableColor
@@ -133,6 +133,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     private func configureSubviews() {
         avatar.translatesAutoresizingMaskIntoConstraints = false
         addSubview(avatar)
+        availabilityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        avatar.addSubview(availabilityIndicatorView)
         authorLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(authorLabel)
     }
@@ -145,10 +147,11 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             greaterThanOrEqualTo: topAnchor
         )
 
-        let avatarEqualToBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor)
+        let avatarEqualToBottomAnchorConstraint = bottomAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 3)
         avatarEqualToBottomAnchorConstraint.priority = .defaultLow
         let avatarGreaterThanOrEqualToBottomAnchorConstraint = bottomAnchor.constraint(
-            greaterThanOrEqualTo: avatar.bottomAnchor
+            greaterThanOrEqualTo: avatar.bottomAnchor,
+            constant: 3
         )
 
         NSLayoutConstraint.activate([
@@ -161,12 +164,15 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
-            avatar.centerYAnchor.constraint(equalTo: centerYAnchor),
+            avatar.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
 
             avatarEqualToTopAnchorConstraint,
             avatarGreaterThanOrEqualToTopAnchorConstraint,
             avatarEqualToBottomAnchorConstraint,
-            avatarGreaterThanOrEqualToBottomAnchorConstraint
+            avatarGreaterThanOrEqualToBottomAnchorConstraint,
+
+            availabilityIndicatorView.trailingAnchor.constraint(equalTo: avatar.trailingAnchor, constant: 3),
+            availabilityIndicatorView.bottomAnchor.constraint(equalTo: avatar.bottomAnchor, constant: 3)
         ])
     }
 
