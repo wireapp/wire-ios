@@ -32,7 +32,8 @@ protocol VerificationCodeComponentDependency: Dependency {
 
 }
 
-class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
+class VerificationCodeComponent: Component<VerificationCodeComponentDependency>, VerificationCodeFactory {
+       
 
     private let email: String
     private let password: String
@@ -50,21 +51,23 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         super.init(parent: parent)
     }
 
-    @MainActor var view: VerificationCodeView {
-        VerificationCodeView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
+//    @MainActor var view: VerificationCodeView {
+//        VerificationCodeView(
+//            viewModel: viewModel,
+//            factory: self
+//        )
+//    }
 
-    @MainActor private var viewModel: VerificationCodeViewModel {
-        VerificationCodeViewModel(
+    @MainActor var viewModel: VerificationCodeViewModel {
+        let viewModel = VerificationCodeViewModel(
             factory: self,
             email: email,
             password: password,
             proxyCredentials: proxyCredentials,
             router: dependency.router
         )
+        viewModel.componentFactory = self
+        return viewModel
     }
 
     // MARK: - Children
@@ -75,6 +78,10 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
             authenticationResult: authenticationResult,
             didDetectDomainConflict: dependency.didDetectDomainConflict
         )
+    }
+    
+    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI.NoHistoryFactory {
+        noHistoryComponent(authenticationResult: authenticationResult)
     }
 
 }
@@ -101,12 +108,12 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
 
 }
 
-extension VerificationCodeComponent: VerificationCodeView.Factory {
-
-    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
-        noHistoryComponent(
-            authenticationResult: authenticationResult
-        ).view
-    }
-
-}
+//extension VerificationCodeComponent: VerificationCodeView.Factory {
+//
+//    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
+//        noHistoryComponent(
+//            authenticationResult: authenticationResult
+//        ).view
+//    }
+//
+//}

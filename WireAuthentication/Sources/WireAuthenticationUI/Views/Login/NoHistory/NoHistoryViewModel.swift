@@ -32,7 +32,7 @@ package final class NoHistoryViewModel: ObservableObject {
 
     @Published var isLoading = false
     @Published var alert: Alert?
-
+    package var componentFactory: (any NoHistoryFactory)!
     private let didDetectDomainConflict: Bool
     private let howToChangeEmailURL: URL
     private let howToDeleteAccountURL: URL

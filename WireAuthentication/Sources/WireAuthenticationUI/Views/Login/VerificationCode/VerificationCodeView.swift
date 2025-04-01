@@ -31,21 +31,72 @@ package protocol VerificationCodeBuilder {
 
 }
 
+package protocol RootFactory {
+    
+    @MainActor
+    var viewModel: RootViewModel { get }
+    
+    @MainActor
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+}
+
+package protocol DetermineAuthMethodFactory {
+    
+    @MainActor
+    var viewModel: DetermineAuthMethodViewModel { get }
+    
+    @MainActor
+    func loginViaEmailFactory(email: String?,
+                       canCreateAccount: Bool,
+                               didDetectDomainConflict: Bool,
+                       backendInfo: BackendInfo) -> any LoginViaEmailFactory
+    
+    @MainActor
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+}
+
+
+package protocol LoginViaEmailFactory {
+    
+    @MainActor
+    var viewModel: LoginViaEmailViewModel { get }
+    
+    @MainActor
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    
+    func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> any VerificationCodeFactory
+}
+
+
+package protocol VerificationCodeFactory {
+    
+    @MainActor
+    var viewModel: VerificationCodeViewModel { get }
+    
+    @MainActor
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+}
+
+
+package protocol NoHistoryFactory {
+    @MainActor
+    var viewModel: NoHistoryViewModel { get }
+}
+
 package struct VerificationCodeView: View {
 
-    package typealias Factory = NoHistoryViewBuilder
-
     @StateObject private var viewModel: VerificationCodeViewModel
-    private let factory: any Factory
 
     @FocusState private var focusedIndex: Int?
 
     package init(
-        viewModel: VerificationCodeViewModel,
-        factory: any Factory
+        factory: @autoclosure @escaping () -> VerificationCodeFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -97,7 +148,7 @@ package struct VerificationCodeView: View {
         .navigationDestination(for: VerificationCodeDestination.self) {
             switch $0 {
             case let .noHistory(authenticationResult):
-                factory.noHistoryView(authenticationResult: authenticationResult)
+                NoHistoryView(factory: viewModel.componentFactory.noHistoryFactory(authenticationResult: authenticationResult))
             }
         }
         .onAppear {

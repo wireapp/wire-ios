@@ -34,7 +34,8 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 }
 
-class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
+class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency>, LoginViaEmailFactory {
+
 
     public let email: String?
     private let canCreateAccount: Bool
@@ -56,16 +57,16 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
     }
 
     // MARK: - View
+//
+//    @MainActor var view: LoginViaEmailView {
+//        LoginViaEmailView(
+//            viewModel: viewModel,
+//            factory: self
+//        )
+//    }
 
-    @MainActor var view: LoginViaEmailView {
-        LoginViaEmailView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
-
-    @MainActor private var viewModel: LoginViaEmailViewModel {
-        LoginViaEmailViewModel(
+    @MainActor var viewModel: LoginViaEmailViewModel {
+        let viewModel = LoginViaEmailViewModel(
             router: dependency.router,
             factory: self,
             email: email,
@@ -96,6 +97,8 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
             }
         )
+        viewModel.componentFactory = self
+        return viewModel
     }
 
     // MARK: - Children
@@ -123,6 +126,15 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         )
     }
 
+    
+    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI.NoHistoryFactory {
+        noHistoryComponent(authenticationResult: authenticationResult)
+    }
+    
+    func verificationCodeFactory(email: String, password: String, proxyCredentials: WireAuthenticationAPI.ProxyCredentials?) -> any WireAuthenticationUI.VerificationCodeFactory {
+        verificationCodeComponent(email: email, password: password, proxyCredentials: proxyCredentials)
+    }
+    
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
@@ -146,24 +158,24 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
 }
 
-extension LoginViaEmailComponent: LoginViaEmailView.Factory {
-
-    @MainActor
-    func verificationCodeView(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> VerificationCodeView {
-        verificationCodeComponent(
-            email: email,
-            password: password,
-            proxyCredentials: proxyCredentials
-        ).view
-    }
-
-    @MainActor
-    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
-        noHistoryComponent(authenticationResult: authenticationResult).view
-    }
-
-}
+//extension LoginViaEmailComponent: LoginViaEmailView.Factory {
+//
+//    @MainActor
+//    func verificationCodeView(
+//        email: String,
+//        password: String,
+//        proxyCredentials: ProxyCredentials?
+//    ) -> VerificationCodeView {
+//        verificationCodeComponent(
+//            email: email,
+//            password: password,
+//            proxyCredentials: proxyCredentials
+//        ).view
+//    }
+//
+//    @MainActor
+//    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
+//        noHistoryComponent(authenticationResult: authenticationResult).view
+//    }
+//
+//}

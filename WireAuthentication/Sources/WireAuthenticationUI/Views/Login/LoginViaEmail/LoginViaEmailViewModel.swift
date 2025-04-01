@@ -43,7 +43,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
-
+    package var componentFactory: (any LoginViaEmailFactory)!
     private let router: any Router
     private let factory: any Factory
     private let onCreateAccount: () -> Void

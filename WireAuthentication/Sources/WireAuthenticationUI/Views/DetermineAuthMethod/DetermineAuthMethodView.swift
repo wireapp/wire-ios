@@ -32,20 +32,14 @@ package protocol DetermineAuthMethodBuilder {
 
 package struct DetermineAuthMethodView: View {
 
-    package typealias Factory =
+    package typealias Factory = DetermineAuthMethodBuilder &
         LoginViaEmailBuilder &
         NoHistoryViewBuilder
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
-    let factory: any Factory
-
-    package init(
-        viewModel: DetermineAuthMethodViewModel,
-        factory: any Factory
-    ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+    package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -136,25 +130,25 @@ package struct DetermineAuthMethodView: View {
                 didDetectDomainConflict,
                 backendInfo
             ):
-                factory.loginViaEmailView(
+                LoginViaEmailView(factory: viewModel.componentFactory.loginViaEmailFactory(
                     email: email,
                     canCreateAccount: false,
                     didDetectDomainConflict: didDetectDomainConflict,
                     backendInfo: backendInfo
-                )
+                ))
             case let .loginOrRegister(
                 email,
                 didDetectDomainConflict,
                 backendInfo
             ):
-                factory.loginViaEmailView(
+                LoginViaEmailView(factory: viewModel.componentFactory.loginViaEmailFactory(
                     email: email,
                     canCreateAccount: true,
                     didDetectDomainConflict: didDetectDomainConflict,
                     backendInfo: backendInfo
-                )
+                ))
             case let .noHistory(authenticationResult):
-                factory.noHistoryView(authenticationResult: authenticationResult)
+                NoHistoryView(factory: viewModel.componentFactory.noHistoryFactory(authenticationResult: authenticationResult))
             }
         }
         .sheet(

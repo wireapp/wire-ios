@@ -31,9 +31,9 @@ package struct NoHistoryView: View {
     @StateObject var viewModel: NoHistoryViewModel
 
     package init(
-        viewModel: NoHistoryViewModel
+        factory: @autoclosure @escaping () -> NoHistoryFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -115,26 +115,26 @@ package struct NoHistoryView: View {
     }
 
 }
-
-#Preview {
-    let viewModel = NoHistoryViewModel(
-        didDetectDomainConflict: false,
-        howToChangeEmailURL: URL(string: "https://wire.com")!,
-        howToDeleteAccountURL: URL(string: "https://wire.com")!,
-        onFlowCompletion: {}
-    )
-    NoHistoryView(viewModel: viewModel)
-}
-
-#Preview("With background") {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            let viewModel = NoHistoryViewModel(
-                didDetectDomainConflict: false,
-                howToChangeEmailURL: URL(string: "https://wire.com")!,
-                howToDeleteAccountURL: URL(string: "https://wire.com")!,
-                onFlowCompletion: {}
-            )
-            NoHistoryView(viewModel: viewModel)
-        }
-}
+//
+//#Preview {
+//    let viewModel = NoHistoryViewModel(
+//        didDetectDomainConflict: false,
+//        howToChangeEmailURL: URL(string: "https://wire.com")!,
+//        howToDeleteAccountURL: URL(string: "https://wire.com")!,
+//        onFlowCompletion: {}
+//    )
+//    NoHistoryView(viewModel: viewModel)
+//}
+//
+//#Preview("With background") {
+//    BackgroundView()
+//        .sheet(isPresented: .constant(true)) {
+//            let viewModel = NoHistoryViewModel(
+//                didDetectDomainConflict: false,
+//                howToChangeEmailURL: URL(string: "https://wire.com")!,
+//                howToDeleteAccountURL: URL(string: "https://wire.com")!,
+//                onFlowCompletion: {}
+//            )
+//            NoHistoryView(viewModel: viewModel)
+//        }
+//}

@@ -30,6 +30,7 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var modalDestination: RootView.ModalDestination?
     @Published var alert: Alert?
 
+    package var componentFactory: (any RootFactory)!
     private let factory: any Factory
     private var cancellable: AnyCancellable?
     private var lastModalDestination: RootView.ModalDestination?

@@ -40,6 +40,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         )
     }
 
+    package var componentFactory: (any DetermineAuthMethodFactory)!
     private let router: any Router
     private let factory: any Factory
     private let bridge: WireAuthenticationBridge
@@ -77,14 +78,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
 
-        self.cancellable = bridge.inboundEvents.sink { event in
+        self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case let .backendSwitchRequested(configURL):
                 Task { [weak self] in
                     await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
             case let .updateAnotherAccountExistence(newValue):
-                self.existsAnotherAccount = newValue
+                self?.existsAnotherAccount = newValue
             default:
                 break
             }

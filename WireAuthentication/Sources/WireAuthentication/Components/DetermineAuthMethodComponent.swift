@@ -35,7 +35,8 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 }
 
-class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
+class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency>, DetermineAuthMethodFactory {
+
 
     public let networkStack: NetworkStack
 
@@ -47,21 +48,23 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         super.init(parent: parent)
     }
 
-    @MainActor var view: DetermineAuthMethodView {
-        DetermineAuthMethodView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
+//    @MainActor var view: DetermineAuthMethodView {
+//        DetermineAuthMethodView(
+//            viewModel: viewModel,
+//            factory: self
+//        )
+//    }
 
-    @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
+    @MainActor var viewModel: DetermineAuthMethodViewModel {
+        var viewModel = DetermineAuthMethodViewModel(
             router: dependency.router,
             factory: self,
             bridge: dependency.bridge,
             backendInfo: networkStack.backendInfo,
             existsAnotherAccount: dependency.existsAnotherAccount
         )
+        viewModel.componentFactory = self
+        return viewModel
     }
 
     // MARK: - Children
@@ -93,6 +96,16 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             didDetectDomainConflict: false
         )
     }
+    
+    
+    func loginViaEmailFactory(email: String?, canCreateAccount: Bool, didDetectDomainConflict: Bool, backendInfo: WireAuthenticationAPI.BackendInfo) -> any WireAuthenticationUI.LoginViaEmailFactory {
+        loginViaEmailComponent(email: email, canCreateAccount: canCreateAccount, didDetectDomainConflict: didDetectDomainConflict, backendInfo: backendInfo)
+    }
+    
+    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI.NoHistoryFactory {
+        noHistoryComponent(authenticationResult: authenticationResult)
+    }
+    
 
 }
 
@@ -140,28 +153,28 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
 }
 
-extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
-
-    @MainActor
-    func loginViaEmailView(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    ) -> LoginViaEmailView {
-        loginViaEmailComponent(
-            email: email,
-            canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            backendInfo: backendInfo
-        ).view
-    }
-
-    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
-        noHistoryComponent(authenticationResult: authenticationResult).view
-    }
-
-}
+//extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
+//
+//    @MainActor
+//    func loginViaEmailView(
+//        email: String?,
+//        canCreateAccount: Bool,
+//        didDetectDomainConflict: Bool,
+//        backendInfo: BackendInfo
+//    ) -> LoginViaEmailView {
+//        loginViaEmailComponent(
+//            email: email,
+//            canCreateAccount: canCreateAccount,
+//            didDetectDomainConflict: didDetectDomainConflict,
+//            backendInfo: backendInfo
+//        ).view
+//    }
+//
+//    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
+//        noHistoryComponent(authenticationResult: authenticationResult).view
+//    }
+//
+//}
 
 // TODO: [WPB-16272] remove when API version is deduplicated.
 extension WireAPI.APIVersion {

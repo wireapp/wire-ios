@@ -79,12 +79,12 @@ final class MockDependencies {
         pinnedKeys: nil
     )
 
-    var rootView: RootView {
-        RootView(
-            viewModel: rootViewModel,
-            factory: self
-        )
-    }
+//    var rootView: RootView {
+//        RootView(
+//            viewModel: rootViewModel,
+//            factory: self
+//        )
+//    }
 
     func makeDetermineAuthMethodView(
         emailOrSSOCode: String,
@@ -102,11 +102,11 @@ final class MockDependencies {
             isLoading: isLoading
         )
         viewModel.alert = alert
-
-        return DetermineAuthMethodView(
-            viewModel: viewModel,
-            factory: self
-        )
+        fatalError()
+//        return DetermineAuthMethodView(
+//            viewModel: viewModel,
+//            factory: self
+//        )
     }
 
 }
@@ -126,17 +126,19 @@ extension MockDependencies: DetermineAuthMethodBuilder {
     func determineAuthMethodView(
         backendInfo: BackendInfo
     ) -> DetermineAuthMethodView {
-        DetermineAuthMethodView(
-            viewModel: determineAuthMethodViewModel,
-            factory: self
-        )
+        fatalError()
+//        DetermineAuthMethodView(
+//            viewModel: determineAuthMethodViewModel,
+//            factory: self
+//        )
     }
 
     func determineAuthMethodView() -> DetermineAuthMethodView {
-        DetermineAuthMethodView(
-            viewModel: determineAuthMethodViewModel,
-            factory: self
-        )
+        fatalError()
+//        DetermineAuthMethodView(
+//            viewModel: determineAuthMethodViewModel,
+//            factory: self
+//        )
     }
 
 }
@@ -153,7 +155,8 @@ extension MockDependencies: NoHistoryViewBuilder {
     }
 
     func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
-        NoHistoryView(viewModel: noHistoryViewModel)
+        fatalError()
+//        NoHistoryView(viewModel: noHistoryViewModel)
     }
 
 }
@@ -182,15 +185,16 @@ extension MockDependencies: LoginViaEmailBuilder {
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> LoginViaEmailView {
-        LoginViaEmailView(
-            viewModel: loginViewModel(
-                email: email,
-                canCreateAccount: canCreateAccount,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ),
-            factory: self
-        )
+        fatalError()
+//        LoginViaEmailView(
+//            viewModel: loginViewModel(
+//                email: email,
+//                canCreateAccount: canCreateAccount,
+//                didDetectDomainConflict: didDetectDomainConflict,
+//                backendInfo: backendInfo
+//            ),
+//            factory: self
+//        )
     }
 
 }
@@ -212,10 +216,11 @@ extension MockDependencies: VerificationCodeBuilder {
         )
         viewModel.code = code
 
-        return VerificationCodeView(
-            viewModel: viewModel,
-            factory: self
-        )
+        fatalError()
+//        return VerificationCodeView(
+//            viewModel: viewModel,
+//            factory: self
+//        )
     }
 
     @MainActor
@@ -224,16 +229,17 @@ extension MockDependencies: VerificationCodeBuilder {
         password: String,
         proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView {
-        VerificationCodeView(
-            viewModel: VerificationCodeViewModel(
-                factory: self,
-                email: "jane@doe.com",
-                password: password,
-                proxyCredentials: proxyCredentials,
-                router: rootViewModel
-            ),
-            factory: self
-        )
+        fatalError()
+//        VerificationCodeView(
+//            viewModel: VerificationCodeViewModel(
+//                factory: self,
+//                email: "jane@doe.com",
+//                password: password,
+//                proxyCredentials: proxyCredentials,
+//                router: rootViewModel
+//            ),
+//            factory: self
+//        )
     }
 
 }

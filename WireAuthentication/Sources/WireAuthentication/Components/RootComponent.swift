@@ -24,7 +24,8 @@ internal import WireAuthenticationUI
 import WireAuthenticationAPI
 internal import WireAuthenticationLogic
 
-class RootComponent: BootstrapComponent {
+class RootComponent: BootstrapComponent, RootFactory {
+
 
     public let backendInfo: BackendInfo
     public let preferredAPIVersion: APIVersion?
@@ -62,21 +63,22 @@ class RootComponent: BootstrapComponent {
 
     // MARK: - View
 
-    @MainActor var view: some View {
-        RootView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
+//    @MainActor var view: some View {
+//        RootView(
+//            viewModel: viewModel,
+//            factory: self
+//        )
+//    }
 
-    @MainActor private var viewModel: RootViewModel {
-        shared {
-            RootViewModel(
-                factory: self,
-                bridge: bridge,
-                backendInfo: backendInfo
-            )
-        }
+    @MainActor var viewModel: RootViewModel {
+        let viewModel = RootViewModel(
+            factory: self,
+            bridge: bridge,
+            backendInfo: backendInfo
+        )
+        viewModel.componentFactory = self
+        
+        return viewModel
     }
 
     // MARK: - Public dependencies
@@ -105,6 +107,11 @@ class RootComponent: BootstrapComponent {
             networkStack: networkStack
         )
     }
+    
+    func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any WireAuthenticationUI.DetermineAuthMethodFactory {
+        determineAuthMethodComponent(backendInfo: backendInfo)
+    }
+    
 
 }
 
@@ -115,12 +122,12 @@ extension RootComponent: RootViewModel.Factory {
     }
 
 }
-
-extension RootComponent: RootView.Factory {
-
-    @MainActor
-    func determineAuthMethodView(backendInfo: BackendInfo) -> DetermineAuthMethodView {
-        determineAuthMethodComponent(backendInfo: backendInfo).view
-    }
-
-}
+//
+//extension RootComponent: RootView.Factory {
+//
+//    @MainActor
+//    func determineAuthMethodView(backendInfo: BackendInfo) -> DetermineAuthMethodView {
+//        determineAuthMethodComponent(backendInfo: backendInfo).view
+//    }
+//
+//}

@@ -28,7 +28,7 @@ import WireSyncEngine
 final class AuthenticationHostingController<Content: View>: UIHostingController<Content>,
     AuthenticationCoordinatedViewController {
 
-    var authenticationCoordinator: AuthenticationCoordinator?
+    weak var authenticationCoordinator: AuthenticationCoordinator?
     private let bridge: WireAuthenticationBridge
     private var cancellables = Set<AnyCancellable>()
 
@@ -41,7 +41,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         self.bridge = bridge
         super.init(rootView: rootView)
 
-        bridge.outboundEvents.sink { event in
+        bridge.outboundEvents.sink { [weak authenticationCoordinator] event in
             switch event {
             case let .userAuthenticated(authenticationResult):
                 authenticationCoordinator?.eventResponderChain.handleEvent(

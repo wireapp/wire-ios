@@ -21,6 +21,10 @@ import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
+//
+//protocol VerificationCodeViewModelProtocol: ObservableObject {
+//    var code: any Publisher<[String], Never> { get }
+//}
 
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
@@ -32,7 +36,8 @@ public final class VerificationCodeViewModel: ObservableObject {
         SubmitProxyCredentialsUseCaseFactory
 
     private static let numberOfDigits = 6
-
+    package var componentFactory: (any VerificationCodeFactory)!
+    
     @Published var code: [String]
     @Published private(set) var isLoading = false
     @Published private(set) var isResending = false

@@ -35,19 +35,12 @@ package protocol LoginViaEmailBuilder {
 
 package struct LoginViaEmailView: View {
 
-    package typealias Factory =
-        NoHistoryViewBuilder &
-        VerificationCodeBuilder
-
     @StateObject var viewModel: LoginViaEmailViewModel
-    private let factory: any Factory
-
+ 
     package init(
-        viewModel: LoginViaEmailViewModel,
-        factory: any Factory
+        factory: @autoclosure @escaping () -> any LoginViaEmailFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -96,13 +89,15 @@ package struct LoginViaEmailView: View {
                 password,
                 proxyCredentials
             ):
-                factory.verificationCodeView(
+                VerificationCodeView(factory:
+                                        viewModel.componentFactory.verificationCodeFactory(
                     email: email,
                     password: password,
                     proxyCredentials: proxyCredentials
                 )
-            case let .noHistory(authenticationResult):
-                factory.noHistoryView(authenticationResult: authenticationResult)
+)
+             case let .noHistory(authenticationResult):
+                NoHistoryView(factory: viewModel.componentFactory.noHistoryFactory(authenticationResult: authenticationResult))
             }
         }
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
