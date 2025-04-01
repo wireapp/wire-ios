@@ -43,7 +43,6 @@ class RootComponent: BootstrapComponent {
         }
     }
 
-    // TODO: check if this needs to be shared.
     @MainActor public var router: any Router {
         viewModel
     }
@@ -93,11 +92,13 @@ extension RootComponent: RootViewModel.Factory {
     // MARK: - Factory
 
     @MainActor var viewModel: RootViewModel {
-        RootViewModel(
-            factory: self,
-            bridge: bridge,
-            backendInfo: backendInfo
-        )
+        shared {
+            RootViewModel(
+                factory: self,
+                bridge: bridge,
+                backendInfo: backendInfo
+            )
+        }
     }
 
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
