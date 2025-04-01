@@ -40,7 +40,7 @@ struct FakeVerificationCodeFactory: VerificationCodeFactory,
             proxyCredentials: nil,
             router: FakeRootFactory().viewModel
         )
-        viewModel.code = code
+        // TODO: [WPB-16840] - use code for previews
         return viewModel
     }
 
