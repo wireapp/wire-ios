@@ -41,11 +41,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         )
     }
 
-    package let factory: any Factory
-    private let router: any Router
-    private let bridge: WireAuthenticationBridge
-    package let backendInfo: BackendInfo
-    private var cancellable: AnyCancellable?
+    // MARK: - View state
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
@@ -60,6 +56,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     var isOnPremiseBackend: Bool {
         backendInfo.environmentType != .production
     }
+
+    // MARK: - Dependencies
+
+    package let factory: any Factory
+    private let router: any Router
+    private let bridge: WireAuthenticationBridge
+    package let backendInfo: BackendInfo
+    private var cancellable: AnyCancellable?
+
+    // MARK: - Life cycle
 
     package init(
         factory: any Factory,
