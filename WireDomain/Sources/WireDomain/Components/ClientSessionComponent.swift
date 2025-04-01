@@ -41,6 +41,8 @@ public final class ClientSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
+    
+    private let onSelfClientInvalidated: () async -> Void
 
     public init(
         selfUserID: UUID,
@@ -57,7 +59,8 @@ public final class ClientSessionComponent {
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
-        proteusService: any ProteusServiceInterface
+        proteusService: any ProteusServiceInterface,
+        onSelfClientInvalidated: @escaping () async -> Void
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -74,6 +77,7 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
+        self.onSelfClientInvalidated = onSelfClientInvalidated
     }
 
     private lazy var authenticationManager = AuthenticationManager(
@@ -299,18 +303,6 @@ public final class ClientSessionComponent {
             pullMLSStatusSync: pullMLSStatusSync
         )
 
-        let featureConfigRepository = FeatureConfigRepository(
-            featureConfigsAPI: featureConfigsAPI,
-            featureConfigLocalStore: featureConfigsLocalStore
-        )
-
-        let pushSupportedProtocolsUseCase = PushSupportedProtocolsUseCase(
-            featureConfigRepository: featureConfigRepository,
-            pushSupportedProtocolsSync: pushSupportedProtocolsSync,
-            userClientsLocalStore: userClientsLocalStore,
-            userLocalStore: userLocalStore
-        )
-
         return InitialSync(
             pullLastUpdateEventIDSync: pullLastUpdateEventIDSync,
             pullResourcesSync: pullResourcesSync,
@@ -493,7 +485,14 @@ public final class ClientSessionComponent {
         repository: userClientsRepository
     )
 
-    private lazy var userClientRemoveEventProcessor = UserClientRemoveEventProcessor()
+    private lazy var userClientRemoveEventProcessor = UserClientRemoveEventProcessor(
+        userClientsRepository: userClientsRepository,
+        calculateSupportedProtocolsUseCase: calculateSupportedProtocolsUseCase,
+        pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
+        oneOnOneResolver: oneOnOneResolver,
+        context: syncContext,
+        onSelfClientInvalidated: onSelfClientInvalidated
+    )
 
     private lazy var userConnectionEventProcessor = UserConnectionEventProcessor(
         connectionsRepository: userConnectionsRepository,
@@ -606,6 +605,19 @@ public final class ClientSessionComponent {
             teamEventProcessor: teamEventProcessor
         )
     }()
+    
+    // MARK: - Use cases
+    
+    private lazy var calculateSupportedProtocolsUseCase = CalculateSupportedProtocolsUseCase(
+        featureConfigRepository: featureConfigRepository,
+        userClientsLocalStore: userClientsLocalStore,
+        userLocalStore: userLocalStore
+    )
+
+    private lazy var pushSupportedProtocolsUseCase = PushSupportedProtocolsUseCase(
+        pushSupportedProtocolsSync: pushSupportedProtocolsSync,
+        calculateSupportedProtocolsUseCase: calculateSupportedProtocolsUseCase
+    )
 
     // MARK: - Other
 

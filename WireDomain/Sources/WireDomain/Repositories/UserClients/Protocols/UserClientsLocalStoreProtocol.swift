@@ -45,6 +45,10 @@ public protocol UserClientsLocalStoreProtocol {
     func deleteClient(
         id: String
     ) async
+    
+    /// Invalides the self client locally
+
+    func invalidateSelfClient() async
 
     /// Updates the user client informations locally.
     ///

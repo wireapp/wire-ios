@@ -25,5 +25,11 @@ public struct UserClientRemoveEvent: Equatable, Codable, Sendable {
     /// The id of the removed client.
 
     public let clientID: SelfUserClient.ID
+    
+    public init(
+        clientID: SelfUserClient.ID
+    ) {
+        self.clientID = clientID
+    }
 
 }
