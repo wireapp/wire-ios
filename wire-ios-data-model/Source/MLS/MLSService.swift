@@ -1250,7 +1250,7 @@ public final class MLSService: MLSServiceInterface {
             try ZMConversation.fetchConversationsWithMLSGroupStatus(
                 mlsGroupStatus: .pendingJoin,
                 in: context
-            ).compactMap(\.mlsGroupID)
+            )
         }
 
         logger.info("joining \(pendingGroups.count) group(s)")
@@ -1258,10 +1258,43 @@ public final class MLSService: MLSServiceInterface {
         await withTaskGroup(of: Void.self) { group in
             for pendingGroup in pendingGroups {
                 group.addTask {
+                    guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }) else {
+                        return
+                    }
+
                     do {
-                        try await self.joinByExternalCommit(groupID: pendingGroup)
+                        let (epoch, isSelfConversation) = await context.perform {
+                            (pendingGroup.epoch, pendingGroup.isSelfConversation)
+                        }
+                        let conversationExists = try await self.conversationExists(
+                            groupID: mlsGroupID
+                        )
+                        let shouldEstablishGroup = epoch == 0 && isSelfConversation && !conversationExists
+
+                        if shouldEstablishGroup {
+
+                            let mlsUsers = await context.perform {
+                                pendingGroup.localParticipants.map(MLSUser.init)
+                            }
+
+                            let ciphersuite = try await self.establishGroup(
+                                for: mlsGroupID,
+                                with: mlsUsers
+                            )
+
+                            await context.perform {
+                                pendingGroup.ciphersuite = ciphersuite
+                                pendingGroup.mlsStatus = .ready
+                            }
+
+                        } else {
+                            try await self.joinByExternalCommit(groupID: mlsGroupID)
+                        }
                     } catch {
-                        WireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
+                        WireLogger.mls.error(
+                            "Failed to join pending group: \(error)",
+                            attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
+                        )
                     }
                 }
             }

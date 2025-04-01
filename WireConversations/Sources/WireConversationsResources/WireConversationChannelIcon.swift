@@ -46,4 +46,8 @@ package enum WireConversationChannelIconAsset: String {
     package var image: Image {
         Image(imageName, bundle: .module)
     }
+
+    package var uiKitImage: UIImage {
+        UIImage(resource: .init(name: imageName, bundle: .module))
+    }
 }

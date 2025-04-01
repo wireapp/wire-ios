@@ -21,6 +21,26 @@ import Foundation
 final class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
 
+    override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
+        let body = try JSONEncoder.defaultEncoder.encode(parameters)
+        let path = "\(pathPrefix)\(basePath)/list"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: QualifiedConversationListV8.self)
+            .parse(code: response.statusCode, data: data)
+    }
+
     override func createGroupConversation(
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation {
@@ -72,9 +92,73 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
             }
         }
     }
+
+    override func addChannelPermission(
+        conversationID: String,
+        conversationDomain: String,
+        permission: ChannelPermission
+    ) async throws {
+        let input = ChannelPermissionParametersV8(from: permission)
+        let body = try JSONEncoder.defaultEncoder.encode(input)
+        let path = "\(pathPrefix)/conversation/\(conversationDomain)/\(conversationID)/add-permission"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        // TODO: [WPB-16708] When Swagger doc is updated by backend, ensure failure cases are correct.
+        // https://staging-nginz-https.zinfra.io/v8/api/swagger-ui/
+
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+            .failure(code: .notFound, label: "cnv", error: ConversationsAPIError.invalidConversationID)
+            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+            .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.notATeamAdminOrOwner)
+            .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.notAChannel)
+            .parse(code: response.statusCode, data: data)
+    }
 }
 
 // MARK: - Encodables
+
+private struct QualifiedConversationListV8: Decodable, ToAPIModelConvertible {
+    enum CodingKeys: String, CodingKey {
+        case found
+        case notFound = "not_found"
+        case failed
+    }
+
+    let found: [ConversationV8] // in v8, decode (if present) the add_permission value
+    let notFound: [QualifiedID]
+    let failed: [QualifiedID]
+
+    func toAPIModel() -> ConversationList {
+        ConversationList(
+            found: found.map { $0.toAPIModel() },
+            notFound: notFound,
+            failed: failed
+        )
+    }
+}
+
+struct ChannelPermissionParametersV8: Encodable {
+    let addPermission: ChannelPermission
+
+    init(from channelPermission: ChannelPermission) {
+        self.addPermission = channelPermission
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case addPermission = "add_permission"
+    }
+}
 
 struct CreateGroupConversationParametersV8: Encodable {
     let users: [UUID]?
@@ -141,7 +225,8 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
         case readReceiptMode = "receipt_mode"
         case teamID = "team"
         case type
-        case conversationGroupType = "group_conv_type"
+        case groupType = "group_conv_type"
+        case addPermission = "add_permission"
     }
 
     var access: Set<ConversationAccessMode>?
@@ -162,7 +247,8 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var readReceiptMode: Int?
     var teamID: UUID?
     var type: ConversationType?
-    var conversationGroupType: ConversationGroupType // Introduced in v8
+    var groupType: ConversationGroupType? // Introduced in v8
+    var addPermission: ChannelPermission? // Introduced in v8
 
     func toAPIModel() -> Conversation {
         Conversation(
@@ -184,7 +270,9 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
             accessRoles: accessRoles,
             legacyAccessRole: nil,
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime?.date
+            lastEventTime: lastEventTime?.date,
+            groupType: groupType,
+            addPermission: addPermission
         )
     }
 }

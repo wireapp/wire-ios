@@ -86,6 +86,7 @@ package struct DetermineAuthMethodView: View {
                         string: $viewModel.emailOrSSOCode
                     )
                     .autocapitalization(.none)
+                    .autocorrectionDisabled()
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -106,7 +107,9 @@ package struct DetermineAuthMethodView: View {
                 })
                 .wireButtonStyle(.primary)
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
-            }.padding()
+            }
+            .padding()
+            .setPreferredSize(navigationBarHidden: !viewModel.existsAnotherAccount)
         }
         .toolbar {
             if viewModel.existsAnotherAccount {
@@ -198,7 +201,6 @@ package struct DetermineAuthMethodView: View {
                 }
             }
         )
-        .presentationDetents([.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }

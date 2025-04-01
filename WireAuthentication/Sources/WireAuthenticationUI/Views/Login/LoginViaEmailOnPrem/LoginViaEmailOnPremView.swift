@@ -80,6 +80,8 @@ package struct LoginViaEmailOnPremView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
             )
+            .setPreferredSize(navigationBarHidden: false)
+            .customBackButton()
         }
         .alert(
             item: $viewModel.alert,
@@ -94,7 +96,6 @@ package struct LoginViaEmailOnPremView: View {
                 }
             }
         )
-        .presentationDetents(viewModel.hasProxySupport ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
         .onChange(of: password) { newPassword in
@@ -119,7 +120,8 @@ package struct LoginViaEmailOnPremView: View {
             title: L10n.CloudUserLogin.InputEmail.title,
             string: .constant(viewModel.email ?? "")
         )
-        .disabled(viewModel.isValidEmail)
+        .disabled(!(viewModel.email ?? "").isEmpty)
+        .autocorrectionDisabled()
     }
 
     @ViewBuilder private var passwordField: some View {

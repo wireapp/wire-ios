@@ -224,6 +224,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func storeConversation(
+        permission: String,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.channelPermission = permission
+        }
+    }
+
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),
@@ -910,6 +919,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.remoteIdentifier = id
             localConversation.isPendingMetadataRefresh = false
             localConversation.isPendingInitialFetch = false
+            localConversation.groupType = conversation.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            }
+
+            localConversation.channelPermission = conversation.addPermission?.rawValue
 
             commonUpdate(
                 from: conversation,

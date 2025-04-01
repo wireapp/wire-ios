@@ -91,6 +91,31 @@ struct ConversationEventPayloadProcessor {
         )
     }
 
+    // MARK: - Conversation permission update
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationPermission>,
+        in context: NSManagedObjectContext
+    ) async {
+        let conversation = await context.perform {
+            fetchOrCreateConversation(
+                from: payload,
+                in: context
+            )
+        }
+
+        guard let conversation else {
+            WireLogger.eventProcessing
+                .error("Conversation permission update missing conversation in event, aborting...")
+            return
+        }
+
+        await context.perform {
+            conversation.channelPermission = payload.data.addPermission.rawValue
+        }
+
+    }
+
     // MARK: - Conversation deletion
 
     func processPayload(
@@ -515,6 +540,17 @@ struct ConversationEventPayloadProcessor {
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
             conversation.isPendingInitialFetch = false
+            conversation.groupType = payload.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            }
+
+            conversation.channelPermission = payload.addPermission?.rawValue
+
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, shouldRemoveParticipants: false, context: context)
