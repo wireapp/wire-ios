@@ -26,11 +26,11 @@ import WireLogging
 public final class VerificationCodeViewModel: ObservableObject {
 
     package typealias Factory =
-        VerificationCodeFactory &
         CreateAuthenticationResultUseCaseFactory &
         LoginViaEmailUseCaseFactory &
         RequestLoginVerificationCodeUseCaseFactory &
-        SubmitProxyCredentialsUseCaseFactory
+        SubmitProxyCredentialsUseCaseFactory &
+        VerificationCodeFactory
 
     // MARK: - View state
 

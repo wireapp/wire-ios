@@ -21,8 +21,7 @@ import WireAuthenticationAPI
 
 package protocol NoHistoryFactory {
 
-    @MainActor
-    var viewModel: NoHistoryViewModel { get }
+    @MainActor var viewModel: NoHistoryViewModel { get }
 
 }
 
@@ -115,8 +114,9 @@ package struct NoHistoryView: View {
     }
 
 }
+
 //
-//#Preview {
+// #Preview {
 //    let viewModel = NoHistoryViewModel(
 //        didDetectDomainConflict: false,
 //        howToChangeEmailURL: URL(string: "https://wire.com")!,
@@ -124,9 +124,9 @@ package struct NoHistoryView: View {
 //        onFlowCompletion: {}
 //    )
 //    NoHistoryView(viewModel: viewModel)
-//}
+// }
 //
-//#Preview("With background") {
+// #Preview("With background") {
 //    BackgroundView()
 //        .sheet(isPresented: .constant(true)) {
 //            let viewModel = NoHistoryViewModel(
@@ -137,4 +137,4 @@ package struct NoHistoryView: View {
 //            )
 //            NoHistoryView(viewModel: viewModel)
 //        }
-//}
+// }

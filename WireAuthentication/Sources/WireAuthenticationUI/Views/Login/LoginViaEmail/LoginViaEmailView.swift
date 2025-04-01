@@ -23,8 +23,7 @@ import WireReusableUIComponents
 
 package protocol LoginViaEmailFactory {
 
-    @MainActor
-    var viewModel: LoginViaEmailViewModel { get }
+    @MainActor var viewModel: LoginViaEmailViewModel { get }
 
     @MainActor
     func verificationCodeFactory(
@@ -41,7 +40,7 @@ package protocol LoginViaEmailFactory {
 package struct LoginViaEmailView: View {
 
     @StateObject var viewModel: LoginViaEmailViewModel
- 
+
     package init(
         factory: @autoclosure @escaping () -> any LoginViaEmailFactory
     ) {
@@ -100,8 +99,8 @@ package struct LoginViaEmailView: View {
                         password: password,
                         proxyCredentials: proxyCredentials
                     )
-)
-             case let .noHistory(authenticationResult):
+                )
+            case let .noHistory(authenticationResult):
                 NoHistoryView(
                     factory: viewModel.factory.noHistoryFactory(
                         authenticationResult: authenticationResult
@@ -253,7 +252,7 @@ package struct LoginViaEmailView: View {
 
 }
 
-//#Preview() {
+// #Preview() {
 //    BackgroundView()
 //        .sheet(isPresented: .constant(true)) {
 //            MockDependencies().loginViaEmailView(
@@ -263,4 +262,4 @@ package struct LoginViaEmailView: View {
 //                backendInfo: MockDependencies().backendInfo
 //            )
 //        }
-//}
+// }

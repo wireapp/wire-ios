@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//import SwiftUI
-//import WireFoundation
-//import WireTestingPackage
-//import XCTest
+// import SwiftUI
+// import WireFoundation
+// import WireTestingPackage
+// import XCTest
 //
-//@testable import WireAuthenticationUI
+// @testable import WireAuthenticationUI
 //
-//class DetermineAuthMethodViewTests: XCTestCase {
+// class DetermineAuthMethodViewTests: XCTestCase {
 //    private var snapshotHelper: SnapshotHelper!
 //
 //    override func setUp() {
@@ -89,4 +89,4 @@
 //
 //        snapshotHelper.verify(matching: view)
 //    }
-//}
+// }

@@ -21,8 +21,7 @@ import WireAuthenticationAPI
 
 package protocol RootFactory {
 
-    @MainActor
-    var viewModel: RootViewModel { get }
+    @MainActor var viewModel: RootViewModel { get }
 
     @MainActor
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
@@ -84,6 +83,6 @@ package struct RootView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    MockDependencies().rootView
-//}
+// }

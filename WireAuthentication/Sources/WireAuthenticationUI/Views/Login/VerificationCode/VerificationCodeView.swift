@@ -21,10 +21,9 @@ import WireAuthenticationAPI
 import WireDesign
 
 package protocol VerificationCodeFactory {
-    
-    @MainActor
-    var viewModel: VerificationCodeViewModel { get }
-    
+
+    @MainActor var viewModel: VerificationCodeViewModel { get }
+
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 }
@@ -133,23 +132,23 @@ package struct VerificationCodeView: View {
 
 }
 
-//#Preview("Empty code") {
+// #Preview("Empty code") {
 //    VerificationCodeView_Previews.
 //    MockDependencies().previewVerificationCodeView(
 //        email: "name.name@mail.com",
 //        password: "pasword"
 //    )
-//}
+// }
 //
-//#Preview("Not empty code") {
+// #Preview("Not empty code") {
 //    MockDependencies().previewVerificationCodeView(
 //        email: "name.name@mail.com",
 //        password: "pasword",
 //        code: ["1", "2", "3", "4", "5", ""]
 //    )
-//}
+// }
 //
-//#Preview {
+// #Preview {
 //    BackgroundView()
 //        .overlay {
 //            VStack(spacing: 0) {
@@ -161,4 +160,4 @@ package struct VerificationCodeView: View {
 //                )
 //            }
 //        }
-//}
+// }

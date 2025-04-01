@@ -20,53 +20,57 @@ import Foundation
 import WireAuthenticationAPI
 import WireReusableUIComponents
 
-struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory, LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
-    
+struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory,
+    LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
+
     var mockDependencies = MockDependencies()
-    
-    func verificationCodeFactory(email: String, password: String, proxyCredentials: WireAuthenticationAPI.ProxyCredentials?) -> any VerificationCodeFactory {
+
+    func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
+    ) -> any VerificationCodeFactory {
         fatalError()
     }
-    
+
     func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
         fatalError()
     }
-    
+
     var email: String?
     var backendInfo: BackendInfo
     var canCreateAccount: Bool
     var didDetectDomainConflict: Bool
-    
-    
-    
+
     var viewModel: LoginViaEmailViewModel {
-        .init(factory: self,
-              router: FakeRootFactory().viewModel,
-              email: email,
-              backendInfo: backendInfo,
-              canCreateAccount: canCreateAccount,
-              didDetectDomainConflict: didDetectDomainConflict,
-              onCreateAccount: {})
+        .init(
+            factory: self,
+            router: FakeRootFactory().viewModel,
+            email: email,
+            backendInfo: backendInfo,
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
+            onCreateAccount: {}
+        )
     }
-    
-    
-    @MainActor func createAuthenticationResultUseCase() -> any WireAuthenticationAPI.CreateAuthenticationResultUseCaseProtocol {
+
+    @MainActor
+    func createAuthenticationResultUseCase() -> any WireAuthenticationAPI
+        .CreateAuthenticationResultUseCaseProtocol {
         mockDependencies.createAuthenticationResultUseCase()
     }
-    
+
     func loginViaEmailUseCase() async throws -> any WireAuthenticationAPI.LoginViaEmailUseCaseProtocol {
         try await mockDependencies.loginViaEmailUseCase()
     }
-    
-    @MainActor func submitProxyCredentialsUseCase() -> any WireAuthenticationAPI.SubmitProxyCredentialsUseCaseProtocol {
+
+    @MainActor
+    func submitProxyCredentialsUseCase() -> any WireAuthenticationAPI.SubmitProxyCredentialsUseCaseProtocol {
         mockDependencies.submitProxyCredentialsUseCase()
     }
 
     func validateEmailUseCase() -> any WireAuthenticationAPI.ValidateEmailUseCaseProtocol {
         mockDependencies.validateEmailUseCase()
     }
-    
- 
-    
 
 }

@@ -20,55 +20,61 @@ import WireAuthenticationAPI
 import WireReusableUIComponents
 
 struct FakeVerificationCodeFactory: VerificationCodeFactory,
-                                   CreateAuthenticationResultUseCaseFactory,
-                                   LoginViaEmailUseCaseFactory,
-                                   RequestLoginVerificationCodeUseCaseFactory,
-                                   SubmitProxyCredentialsUseCaseFactory,
-                                    OpenAppStoreUseCaseFactory {
+    CreateAuthenticationResultUseCaseFactory,
+    LoginViaEmailUseCaseFactory,
+    RequestLoginVerificationCodeUseCaseFactory,
+    SubmitProxyCredentialsUseCaseFactory,
+    OpenAppStoreUseCaseFactory {
 
     var mockDependencies: MockDependencies = .init()
-    
+
     var email: String
     var password: String
     var code: [String] = []
-    
+
     var viewModel: VerificationCodeViewModel {
-       let viewModel = VerificationCodeViewModel(
-                        factory: self,
-                        email: email,
-                        password: password,
-                        proxyCredentials: nil,
-                        router: FakeRootFactory().viewModel
-                    )
+        let viewModel = VerificationCodeViewModel(
+            factory: self,
+            email: email,
+            password: password,
+            proxyCredentials: nil,
+            router: FakeRootFactory().viewModel
+        )
         viewModel.code = code
         return viewModel
     }
-    
+
     func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
         fatalError()
     }
 
     // Use cases
-    
-    @MainActor func createAuthenticationResultUseCase() -> any WireAuthenticationAPI.CreateAuthenticationResultUseCaseProtocol {
+
+    @MainActor
+    func createAuthenticationResultUseCase() -> any WireAuthenticationAPI
+        .CreateAuthenticationResultUseCaseProtocol {
         mockDependencies.createAuthenticationResultUseCase()
     }
 
-    @MainActor func submitProxyCredentialsUseCase() -> any WireAuthenticationAPI.SubmitProxyCredentialsUseCaseProtocol {
+    @MainActor
+    func submitProxyCredentialsUseCase() -> any WireAuthenticationAPI.SubmitProxyCredentialsUseCaseProtocol {
         mockDependencies.submitProxyCredentialsUseCase()
     }
-    
-    @MainActor func requestLoginVerificationCodeUseCase() async throws -> any WireAuthenticationAPI.RequestLoginVerificationCodeUseCaseProtocol {
+
+    @MainActor
+    func requestLoginVerificationCodeUseCase() async throws -> any WireAuthenticationAPI
+        .RequestLoginVerificationCodeUseCaseProtocol {
         try await mockDependencies.requestLoginVerificationCodeUseCase()
     }
-    
-    @MainActor func loginViaEmailUseCase() async throws -> any WireAuthenticationAPI.LoginViaEmailUseCaseProtocol {
+
+    @MainActor
+    func loginViaEmailUseCase() async throws -> any WireAuthenticationAPI.LoginViaEmailUseCaseProtocol {
         try await mockDependencies.loginViaEmailUseCase()
     }
-    
-    @MainActor func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
+
+    @MainActor
+    func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
         mockDependencies.openAppStoreUseCase()
     }
 
-    
 }

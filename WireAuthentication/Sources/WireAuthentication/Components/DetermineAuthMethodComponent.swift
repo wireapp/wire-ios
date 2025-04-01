@@ -130,7 +130,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         FetchBackendConfigUseCase()
     }
 
-    @MainActor func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+    @MainActor
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
         let networkStack: NetworkStack = if let backendInfo {
             NetworkStack(
                 backendInfo: backendInfo,
@@ -140,7 +141,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         } else {
             self.networkStack
         }
-        
+
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
 
         return LoginViaSSOUseCase(

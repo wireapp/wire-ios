@@ -26,6 +26,5 @@ class FakeNoHistoryFactory: NoHistoryFactory {
             onFlowCompletion: {}
         )
     }
-    
-    
+
 }

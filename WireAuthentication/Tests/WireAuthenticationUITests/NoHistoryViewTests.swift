@@ -56,7 +56,6 @@ class NoHistoryViewTests: XCTestCase {
     func testDynamicTypeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-
         let view = NoHistoryView(factory: FakeNoHistoryFactory())
             .frame(width: screenBounds.width, height: screenBounds.height)
 

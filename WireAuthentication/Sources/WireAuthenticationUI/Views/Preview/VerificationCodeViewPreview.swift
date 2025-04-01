@@ -23,7 +23,7 @@ public struct VerificationCodeView_Previews: View {
     var email: String = ""
     var password: String = ""
     var code: [String]
-    
+
     public init(code: [String], email: String = "", password: String = "") {
         self.code = code
     }

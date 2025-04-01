@@ -25,8 +25,8 @@ import WireAuthenticationAPI
 package final class RootViewModel: ObservableObject, Router {
 
     package typealias Factory =
-        RootFactory &
-        OpenAppStoreUseCaseFactory
+        OpenAppStoreUseCaseFactory &
+        RootFactory
 
     // MARK: - View state
 

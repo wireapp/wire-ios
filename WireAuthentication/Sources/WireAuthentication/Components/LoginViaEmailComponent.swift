@@ -161,7 +161,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
 }
 
-//extension LoginViaEmailComponent: LoginViaEmailView.Factory {
+// extension LoginViaEmailComponent: LoginViaEmailView.Factory {
 //
 //    @MainActor
 //    func verificationCodeView(
@@ -181,4 +181,4 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 //        noHistoryComponent(authenticationResult: authenticationResult).view
 //    }
 //
-//}
+// }

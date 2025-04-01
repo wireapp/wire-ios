@@ -22,7 +22,7 @@ import WireReusableUIComponents
 
 struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
     var mockDependencies = MockDependencies()
-    
+
     var viewModel: RootViewModel {
         RootViewModel(
             factory: self,
@@ -35,7 +35,7 @@ struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
     func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any DetermineAuthMethodFactory {
         FakeDetermineAuthMethodFactory()
     }
-    
+
     func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
         mockDependencies.openAppStoreUseCase()
     }

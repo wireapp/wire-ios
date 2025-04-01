@@ -23,8 +23,7 @@ import WireReusableUIComponents
 
 package protocol DetermineAuthMethodFactory {
 
-    @MainActor
-    var viewModel: DetermineAuthMethodViewModel { get }
+    @MainActor var viewModel: DetermineAuthMethodViewModel { get }
 
     @MainActor
     func loginViaEmailFactory(
@@ -218,22 +217,22 @@ extension Alert {
 
 }
 
-//@MainActor
-//func makeDetermineAuthMethodViewPreview(
+// @MainActor
+// func makeDetermineAuthMethodViewPreview(
 //    emailOrSSOCode: String = "",
 //    existsAnotherAccount: Bool = false,
 //    isLoading: Bool = false,
 //    alert: Alert? = nil
-//) -> some View {
+// ) -> some View {
 //    MockDependencies().makeDetermineAuthMethodView(
 //        emailOrSSOCode: emailOrSSOCode,
 //        existsAnotherAccount: existsAnotherAccount,
 //        isLoading: isLoading,
 //        alert: alert
 //    )
-//}
+// }
 //
-//#Preview("can't exit flow") {
+// #Preview("can't exit flow") {
 //    BackgroundView()
 //        .sheet(isPresented: .constant(true)) {
 //            NavigationStack {
@@ -245,9 +244,9 @@ extension Alert {
 //                )
 //            }
 //        }
-//}
+// }
 //
-//#Preview("can exit flow") {
+// #Preview("can exit flow") {
 //    BackgroundView()
 //        .sheet(isPresented: .constant(true)) {
 //            NavigationStack {
@@ -259,7 +258,7 @@ extension Alert {
 //                )
 //            }
 //        }
-//}
+// }
 //
 private struct TransparentBackgroundView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {

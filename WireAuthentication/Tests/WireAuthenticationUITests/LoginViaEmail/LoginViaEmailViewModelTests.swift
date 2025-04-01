@@ -95,12 +95,17 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
     var viewModel: WireAuthenticationUI.LoginViaEmailViewModel {
         fatalError("not needed here")
     }
-    
-    func verificationCodeFactory(email: String, password: String, proxyCredentials: WireAuthenticationAPI.ProxyCredentials?) -> any WireAuthenticationUI.VerificationCodeFactory {
+
+    func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
+    ) -> any WireAuthenticationUI.VerificationCodeFactory {
         fatalError("not needed here")
     }
-    
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI.NoHistoryFactory {
+
+    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI
+        .NoHistoryFactory {
         fatalError("not needed here")
     }
 

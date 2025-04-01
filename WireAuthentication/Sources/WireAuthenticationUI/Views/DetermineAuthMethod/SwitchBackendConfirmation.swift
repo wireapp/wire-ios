@@ -241,7 +241,7 @@ public struct SwitchBackendConfirmation: View {
 
 // MARK: - Previews
 
-//#Preview("Regular fonts") {
+// #Preview("Regular fonts") {
 //    BackgroundView()
 //        .overlay(
 //            ZStack {
@@ -255,4 +255,4 @@ public struct SwitchBackendConfirmation: View {
 //                maxHeight: .infinity
 //            )
 //        )
-//}
+// }

@@ -18,9 +18,9 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireAuthenticationAPISupport
 import WireTestingPackage
 import XCTest
-import WireAuthenticationAPISupport
 
 @testable import WireAuthenticationUI
 
@@ -41,10 +41,12 @@ class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(email: "foo@bar.com",
-                                                                        backendInfo: BackendInfo(
-                                                                            environmentType: .production,
-            backendConfig: MockDependencies()._backendConfig),
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+            email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: MockDependencies()._backendConfig
+            ),
             canCreateAccount: true,
             didDetectDomainConflict: false
         ))
@@ -62,15 +64,17 @@ class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(email: "foo@bar.com",
-                                                                        backendInfo: BackendInfo(
-                                                                            environmentType: .production,
-            backendConfig: MockDependencies()._backendConfig),
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+            email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: MockDependencies()._backendConfig
+            ),
             canCreateAccount: true,
             didDetectDomainConflict: false
         ))
 
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -85,11 +89,12 @@ class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(email: "foo@bar.com",
-                                                                        backendInfo: BackendInfo(
-            environmentType: .anta,
-            backendConfig: MockDependencies()._backendConfig),
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+            email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .anta,
+                backendConfig: MockDependencies()._backendConfig
+            ),
             canCreateAccount: false,
             didDetectDomainConflict: false
         ))
@@ -107,10 +112,12 @@ class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(email: "foo@bar.com",
-                                                                        backendInfo: BackendInfo(
-            environmentType: .anta,
-            backendConfig: MockDependencies()._backendConfig),
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+            email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .anta,
+                backendConfig: MockDependencies()._backendConfig
+            ),
             canCreateAccount: false,
             didDetectDomainConflict: false
         ))
@@ -144,10 +151,12 @@ class LoginViaEmailViewTests: XCTestCase {
             pinnedKeys: nil
         )
 
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(email: "foo@bar.com",
-                                                                       backendInfo: BackendInfo(
-            environmentType: .production,
-            backendConfig: backendConfig),
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+            email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: backendConfig
+            ),
             canCreateAccount: false,
             didDetectDomainConflict: false
         ))
@@ -179,13 +188,17 @@ class LoginViaEmailViewTests: XCTestCase {
             proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(email: "foo@bar.com",
-                                                                       backendInfo: BackendInfo(environmentType: .production, backendConfig: backendConfig),
-                                                                       canCreateAccount: false,
-                                                                       didDetectDomainConflict: false
-                                                                        
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+            email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: backendConfig
+            ),
+            canCreateAccount: false,
+            didDetectDomainConflict: false
+
         ))
-                  .frame(width: screenBounds.width, height: screenBounds.height)
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -195,6 +208,5 @@ class LoginViaEmailViewTests: XCTestCase {
                 )
         }
     }
-
 
 }
