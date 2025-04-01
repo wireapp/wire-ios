@@ -30,15 +30,18 @@ struct FakeVerificationCodeFactory: VerificationCodeFactory,
     
     var email: String
     var password: String
+    var code: [String] = []
     
     var viewModel: VerificationCodeViewModel {
-        VerificationCodeViewModel(
+       let viewModel = VerificationCodeViewModel(
                         factory: self,
                         email: email,
                         password: password,
                         proxyCredentials: nil,
                         router: FakeRootFactory().viewModel
                     )
+        viewModel.code = code
+        return viewModel
     }
     
     func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {

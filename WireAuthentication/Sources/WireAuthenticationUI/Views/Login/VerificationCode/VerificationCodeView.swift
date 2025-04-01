@@ -134,6 +134,7 @@ package struct VerificationCodeView: View {
 }
 
 //#Preview("Empty code") {
+//    VerificationCodeView_Previews.
 //    MockDependencies().previewVerificationCodeView(
 //        email: "name.name@mail.com",
 //        password: "pasword"
