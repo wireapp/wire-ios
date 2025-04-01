@@ -21,7 +21,7 @@ import WireAuthenticationAPI
 
 extension MockDependencies: CreateAuthenticationResultUseCaseFactory {
 
-    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+    nonisolated func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
         MockCreateAuthenticationResultUseCase(backendEnvironment: backendEnvironment)
     }
 

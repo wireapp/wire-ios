@@ -16,23 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import WireAuthenticationAPI
+import WireReusableUIComponents
 
-public struct VerificationCodeView_Previews: View {
+struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
+    var mockDependencies = MockDependencies()
+    
+    var viewModel: RootViewModel {
+        RootViewModel(
+            factory: self,
+            bridge: WireAuthenticationBridge(),
+            backendInfo: mockDependencies.backendInfo
 
-    var code: [String]
-
-    public init(code: [String]) {
-        self.code = code
+        )
     }
 
-    public var body: some View {
-        NavigationStack {
-            VerificationCodeView(factory: FakeVerificationCodeFactory(
-                email: "name.name@mail.com",
-                password: "password"
-            ))
-        }
+    func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any DetermineAuthMethodFactory {
+        FakeDetermineAuthMethodFactory()
     }
+    
+    func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
+        mockDependencies.openAppStoreUseCase()
+    }
+    
 
 }

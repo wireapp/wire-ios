@@ -16,51 +16,51 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//import SwiftUI
-//import WireTestingPackage
-//import XCTest
-//
-//@testable import WireAuthenticationUI
-//
-//class VerificationCodeViewTests: XCTestCase {
-//
-//    private var snapshotHelper: SnapshotHelper!
-//    let testContainerSize = CGSize(width: 390, height: 400)
-//
-//    override func setUp() {
-//        snapshotHelper = .init()
-//            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-//    }
-//
-//    override func tearDown() {
-//        snapshotHelper = nil
-//    }
-//
-//    @MainActor
-//    func testColorSchemeVariantsEmptyState() {
-//        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
-//            .frame(width: testContainerSize.width, height: testContainerSize.height)
-//
-//        snapshotHelper
-//            .withUserInterfaceStyle(.light)
-//            .verify(matching: view, named: "light")
-//        snapshotHelper
-//            .withUserInterfaceStyle(.dark)
-//            .verify(matching: view, named: "dark")
-//    }
-//
-//    @MainActor
-//    func testDynamicTypeVariantsEmptyState() {
-//        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
-//            .frame(width: testContainerSize.width, height: testContainerSize.height)
-//
-//        for dynamicTypeSize in DynamicTypeSize.allCases {
-//            snapshotHelper
-//                .verify(
-//                    matching: view.dynamicTypeSize(dynamicTypeSize),
-//                    named: "\(dynamicTypeSize)"
-//                )
-//        }
-//    }
-//
-//}
+import SwiftUI
+import WireTestingPackage
+import XCTest
+
+@testable import WireAuthenticationUI
+
+class VerificationCodeViewTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+    let testContainerSize = CGSize(width: 390, height: 400)
+
+    override func setUp() {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+    }
+
+    @MainActor
+    func testColorSchemeVariantsEmptyState() {
+        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
+            .frame(width: testContainerSize.width, height: testContainerSize.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariantsEmptyState() {
+        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
+            .frame(width: testContainerSize.width, height: testContainerSize.height)
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+}
