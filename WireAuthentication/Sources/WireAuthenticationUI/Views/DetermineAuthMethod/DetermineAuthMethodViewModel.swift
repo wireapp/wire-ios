@@ -26,6 +26,7 @@ import WireLogging
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
+        DetermineAuthMethodFactory &
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
         LoginViaSSOUseCaseFactory &
@@ -40,9 +41,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         )
     }
 
-    package var componentFactory: (any DetermineAuthMethodFactory)!
+    package let factory: any Factory
     private let router: any Router
-    private let factory: any Factory
     private let bridge: WireAuthenticationBridge
     package let backendInfo: BackendInfo
     private var cancellable: AnyCancellable?
@@ -62,16 +62,16 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     package init(
-        router: any Router,
         factory: any Factory,
+        router: any Router,
         bridge: WireAuthenticationBridge,
         backendInfo: BackendInfo,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
         isLoading: Bool = false
     ) {
-        self.router = router
         self.factory = factory
+        self.router = router
         self.bridge = bridge
         self.backendInfo = backendInfo
         self.emailOrSSOCode = emailOrSSOCode

@@ -241,18 +241,18 @@ public struct SwitchBackendConfirmation: View {
 
 // MARK: - Previews
 
-#Preview("Regular fonts") {
-    BackgroundView()
-        .overlay(
-            ZStack {
-                SwitchBackendConfirmation(
-                    backendConfig: MockDependencies()._backendConfig,
-                    onConfirm: { _ in }
-                )
-                .padding()
-            }.frame(
-                maxWidth: .infinity,
-                maxHeight: .infinity
-            )
-        )
-}
+//#Preview("Regular fonts") {
+//    BackgroundView()
+//        .overlay(
+//            ZStack {
+//                SwitchBackendConfirmation(
+//                    backendConfig: MockDependencies()._backendConfig,
+//                    onConfirm: { _ in }
+//                )
+//                .padding()
+//            }.frame(
+//                maxWidth: .infinity,
+//                maxHeight: .infinity
+//            )
+//        )
+//}

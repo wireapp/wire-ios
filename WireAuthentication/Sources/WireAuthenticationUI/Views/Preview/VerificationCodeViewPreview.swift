@@ -18,21 +18,21 @@
 
 import SwiftUI
 
-public struct VerificationCodeView_Previews: View {
-
-    var code: [String]
-
-    public init(code: [String]) {
-        self.code = code
-    }
-
-    public var body: some View {
-        NavigationStack {
-            MockDependencies().previewVerificationCodeView(
-                email: "name.name@mail.com",
-                password: "password"
-            )
-        }
-    }
-
-}
+//public struct VerificationCodeView_Previews: View {
+//
+//    var code: [String]
+//
+//    public init(code: [String]) {
+//        self.code = code
+//    }
+//
+//    public var body: some View {
+//        NavigationStack {
+//            MockDependencies().previewVerificationCodeView(
+//                email: "name.name@mail.com",
+//                password: "password"
+//            )
+//        }
+//    }
+//
+//}

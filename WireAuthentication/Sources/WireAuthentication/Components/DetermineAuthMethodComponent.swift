@@ -35,8 +35,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 }
 
-class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency>, DetermineAuthMethodFactory {
-
+class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency>, DetermineAuthMethodViewModel.Factory {
 
     public let networkStack: NetworkStack
 
@@ -48,23 +47,14 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         super.init(parent: parent)
     }
 
-//    @MainActor var view: DetermineAuthMethodView {
-//        DetermineAuthMethodView(
-//            viewModel: viewModel,
-//            factory: self
-//        )
-//    }
-
     @MainActor var viewModel: DetermineAuthMethodViewModel {
-        var viewModel = DetermineAuthMethodViewModel(
-            router: dependency.router,
+        DetermineAuthMethodViewModel(
             factory: self,
+            router: dependency.router,
             bridge: dependency.bridge,
             backendInfo: networkStack.backendInfo,
             existsAnotherAccount: dependency.existsAnotherAccount
         )
-        viewModel.componentFactory = self
-        return viewModel
     }
 
     // MARK: - Children
@@ -109,7 +99,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
 }
 
-extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
+extension DetermineAuthMethodComponent {
 
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
         ValidateEmailOrSSOCodeUseCase()
