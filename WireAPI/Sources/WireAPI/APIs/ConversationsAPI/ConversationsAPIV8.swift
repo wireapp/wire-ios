@@ -100,7 +100,7 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
     ) async throws {
         let input = ChannelPermissionParametersV8(from: permission)
         let body = try JSONEncoder.defaultEncoder.encode(input)
-        let path = "\(pathPrefix)/conversation/\(conversationDomain)/\(conversationID)/add-permission"
+        let path = "\(pathPrefix)/conversations/\(conversationDomain)/\(conversationID)/add-permission"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.put)
@@ -117,6 +117,7 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
 
         return try ResponseParser()
             .success(code: .ok)
+            .success(code: .noContent)
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
             .failure(code: .notFound, label: "cnv", error: ConversationsAPIError.invalidConversationID)
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)

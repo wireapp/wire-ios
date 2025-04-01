@@ -548,7 +548,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     }
 
     func presentAccessOptions(animated: Bool) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        guard let conversation = conversation as? ZMConversation,
+              let session = ZMUserSession.shared() else { return }
 
         let permission: WireConversationsAPI.ChannelAccessLevelPermission? = conversation.accessLevelPermission.map {
             switch $0 {
@@ -556,12 +557,15 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             case .everybody: .adminsAndMembers
             }
         }
-
-        let accentColor = (ZMUserSession.shared()?.selfUser.accentColor ?? UIColor.accent()).color
-
+    
         let accessView = ChannelViewFactory.makeChannelAccessView(
             permission: permission,
-            accentColor: accentColor
+            accentColor: session.selfUser.accentColor.color,
+            repository: ChannelAccessRepository(
+                conversationID: conversation.remoteIdentifier.uuidString,
+                conversationDomain: conversation.domain ?? "",
+                session: session
+            )
         )
 
         navigationController?.pushViewController(accessView, animated: animated)

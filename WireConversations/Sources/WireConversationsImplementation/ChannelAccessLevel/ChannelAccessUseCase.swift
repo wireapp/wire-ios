@@ -28,7 +28,6 @@ public protocol ChannelAccessUseCaseProtocol {
 
 @MainActor
 public protocol ChannelAccessRepositoryProtocol {
-    func updateAccessLevel(to level: ChannelAccessLevel) async throws
     func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws
 }
 
@@ -53,7 +52,7 @@ public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
         guard settings.accessLevel == .public else {
             return
         }
-        try await repository.updateAccessLevel(to: level)
+        try await repository.updateParticipantPermission(to: .adminsAndMembers) // default value
         settings.accessLevel = level
         settings.participantPermission = .adminsAndMembers
     }
