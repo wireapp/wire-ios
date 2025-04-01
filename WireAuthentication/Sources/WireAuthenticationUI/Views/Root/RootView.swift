@@ -49,14 +49,17 @@ package struct RootView: View {
     @ViewBuilder
     private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
         switch sheet {
-        case let .authFlow(backedInfo):
+        case let .authFlow(backendInfo):
             NavigationStack(path: $viewModel.path) {
                 DetermineAuthMethodView(
                     factory: viewModel.factory.determineAuthMethodFactory(
-                        backendInfo: backedInfo
+                        backendInfo: backendInfo
                     )
                 )
             }
+            // We must provide an explicit id so it knows to create a new
+            // view when the backend info changes.
+            .id(backendInfo)
             .sheetCornerRadius(cornerRadius, inNavigationStack: true)
             // The alert should be shown on the navigation stack, otherwise
             // it will dismiss the sheet.
