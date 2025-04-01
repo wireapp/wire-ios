@@ -21,20 +21,7 @@ import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
-package protocol DetermineAuthMethodBuilder {
-
-    @MainActor
-    func determineAuthMethodView(
-        backendInfo: BackendInfo
-    ) -> DetermineAuthMethodView
-
-}
-
 package struct DetermineAuthMethodView: View {
-
-    package typealias Factory = DetermineAuthMethodBuilder &
-        LoginViaEmailBuilder &
-        NoHistoryViewBuilder
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
