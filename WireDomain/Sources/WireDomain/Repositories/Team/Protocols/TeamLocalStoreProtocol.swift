@@ -117,7 +117,6 @@ public protocol TeamLocalStoreProtocol {
     ///     - creator: The team creator.
     ///     - icon: The team icon.
     ///     - iconKey: The team iconKey.
-    ///     - splashScreen: The team splash screen.
 
     func createOrUpdateTeam(
         identifier: UUID,
