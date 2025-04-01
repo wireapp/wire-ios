@@ -169,7 +169,6 @@ final class UserClientsLocalStoreTests: XCTestCase {
             )
             XCTAssertEqual(selfClient.mlsPublicKeys, .init(ed25519: "key"))
 
-
             return selfClient
         }
 
