@@ -19,6 +19,15 @@
 import SwiftUI
 import WireAuthenticationAPI
 
+package protocol RootFactory {
+
+    @MainActor
+    var viewModel: RootViewModel { get }
+
+    @MainActor
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+}
+
 package struct RootView: View {
 
     @StateObject var viewModel: RootViewModel

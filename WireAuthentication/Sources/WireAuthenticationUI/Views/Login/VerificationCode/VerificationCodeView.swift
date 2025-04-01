@@ -20,62 +20,6 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
 
-package protocol VerificationCodeBuilder {
-
-    @MainActor
-    func verificationCodeView(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> VerificationCodeView
-
-}
-
-package protocol RootFactory {
-    
-    @MainActor
-    var viewModel: RootViewModel { get }
-    
-    @MainActor
-    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
-}
-
-package protocol DetermineAuthMethodFactory {
-
-    @MainActor
-    var viewModel: DetermineAuthMethodViewModel { get }
-    
-    @MainActor
-    func loginViaEmailFactory(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    ) -> any LoginViaEmailFactory
-    
-    @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
-}
-
-
-package protocol LoginViaEmailFactory {
-    
-    @MainActor
-    var viewModel: LoginViaEmailViewModel { get }
-
-    @MainActor
-    func verificationCodeFactory(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> any VerificationCodeFactory
-
-    @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
-
-}
-
-
 package protocol VerificationCodeFactory {
     
     @MainActor
@@ -83,14 +27,6 @@ package protocol VerificationCodeFactory {
     
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
-}
-
-
-package protocol NoHistoryFactory {
-
-    @MainActor
-    var viewModel: NoHistoryViewModel { get }
-
 }
 
 package struct VerificationCodeView: View {

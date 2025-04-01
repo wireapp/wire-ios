@@ -21,6 +21,23 @@ import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
+package protocol DetermineAuthMethodFactory {
+
+    @MainActor
+    var viewModel: DetermineAuthMethodViewModel { get }
+
+    @MainActor
+    func loginViaEmailFactory(
+        email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> any LoginViaEmailFactory
+
+    @MainActor
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+}
+
 package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel

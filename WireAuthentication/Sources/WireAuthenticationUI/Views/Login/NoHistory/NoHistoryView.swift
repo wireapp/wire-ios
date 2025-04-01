@@ -19,6 +19,13 @@
 import SwiftUI
 import WireAuthenticationAPI
 
+package protocol NoHistoryFactory {
+
+    @MainActor
+    var viewModel: NoHistoryViewModel { get }
+
+}
+
 package struct NoHistoryView: View {
 
     @StateObject var viewModel: NoHistoryViewModel

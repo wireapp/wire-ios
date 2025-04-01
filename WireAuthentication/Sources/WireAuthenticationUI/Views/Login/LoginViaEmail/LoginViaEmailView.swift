@@ -21,6 +21,23 @@ import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
+package protocol LoginViaEmailFactory {
+
+    @MainActor
+    var viewModel: LoginViaEmailViewModel { get }
+
+    @MainActor
+    func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> any VerificationCodeFactory
+
+    @MainActor
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+
+}
+
 package struct LoginViaEmailView: View {
 
     @StateObject var viewModel: LoginViaEmailViewModel
