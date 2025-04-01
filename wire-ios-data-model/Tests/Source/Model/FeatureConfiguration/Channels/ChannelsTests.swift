@@ -167,4 +167,25 @@ final class ChannelsTests: XCTestCase {
         }
     }
 
+    func testPermissions_whenStatusDisabled() {
+        // given
+        let status: Feature.Status = .disabled
+        let teamRoles: [TeamRole] = [.owner, .admin, .member, .partner, .none]
+        let permissions: [Feature.Channels.Config.ChannelsPermision] = [.everyone, .teamMembers, .admins]
+
+        for teamRole in teamRoles {
+            for permission in permissions {
+                // when
+                let feature = Feature.Channels(
+                    status: status,
+                    config: .init(allowedToCreateChannels: permission, allowedToOpenChannels: permission)
+                )
+
+                // then
+                XCTAssertFalse(feature.canCreateChannels(role: teamRole))
+                XCTAssertFalse(feature.canOpenChannels(role: teamRole))
+            }
+        }
+    }
+
 }
