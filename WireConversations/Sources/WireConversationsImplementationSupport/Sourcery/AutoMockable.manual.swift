@@ -36,12 +36,11 @@ public class MockChannelAccessUseCaseProtocol: ChannelAccessUseCaseProtocol {
 
     public var underlyingSettings: ChannelAccessSettings!
 
-
     // MARK: - updateAccessLevel
 
     public var updateAccessLevelTo_Invocations: [ChannelAccessLevel] = []
     public var updateAccessLevelTo_MockError: (any Error)?
-    
+
     public func updateAccessLevel(to level: ChannelAccessLevel) async throws {
         updateAccessLevelTo_Invocations.append(level)
 
@@ -71,7 +70,6 @@ public class MockChannelAccessRepositoryProtocol: ChannelAccessRepositoryProtoco
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - updateAccessLevel
 

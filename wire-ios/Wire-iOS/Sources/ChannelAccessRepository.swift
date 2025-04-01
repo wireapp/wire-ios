@@ -17,18 +17,18 @@
 //
 
 import WireAPI
-import WireSyncEngine
-import WireTransport
 import WireConversationsAPI
 import WireConversationsImplementation
 import WireDomain
+import WireSyncEngine
+import WireTransport
 
 class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
-    
+
     private let conversationID: String
     private let conversationDomain: String
     private let session: ZMUserSession
-    
+
     init(
         conversationID: String,
         conversationDomain: String,
@@ -38,17 +38,15 @@ class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
         self.conversationDomain = conversationDomain
         self.session = session
     }
-    
+
     func updateParticipantPermission(to permission: WireConversationsAPI.ChannelAccessLevelPermission) async throws {
-        
+
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-        let apiService = session.apiService else { return }
-        
-        
+              let apiService = session.apiService else { return }
+
         let context = session.syncContext
-        
-        
+
         let conversationsAPI = ConversationsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
@@ -66,9 +64,9 @@ extension WireConversationsAPI.ChannelAccessLevelPermission {
     func toNetworkPermission() -> WireAPI.ChannelPermission {
         switch self {
         case .admins:
-            return .admins
+            .admins
         case .adminsAndMembers:
-            return .everyone
+            .everyone
         }
     }
 }

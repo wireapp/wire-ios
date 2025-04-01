@@ -25,7 +25,7 @@ import XCTest
 final class ChannelAccessViewModelTests: XCTestCase {
 
     lazy var viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
-    
+
     lazy var useCase = {
         let initialSettings = ChannelAccessSettings(
             accessLevel: .public,

@@ -68,7 +68,7 @@ package class ChannelAccessViewModel: ObservableObject {
     }
 
     func selectParticipantPermission(_ permission: ChannelAccessLevelPermission) async {
-        await self.applyParticipantPermission(permission)
+        await applyParticipantPermission(permission)
     }
 
     func applyParticipantPermission(_ permission: ChannelAccessLevelPermission) async {

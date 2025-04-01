@@ -150,7 +150,8 @@ struct ChannelAccessView_Previews: PreviewProvider {
                     accentColor: .green,
                     useCase: ChannelAccessUseCase(
                         permission: nil,
-                        repository: MockChannelAccessRepositoryProtocol())
+                        repository: MockChannelAccessRepositoryProtocol()
+                    )
                 ))
 
             }

@@ -557,7 +557,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             case .everybody: .adminsAndMembers
             }
         }
-    
+
         let accessView = ChannelViewFactory.makeChannelAccessView(
             permission: permission,
             accentColor: session.selfUser.accentColor.color,

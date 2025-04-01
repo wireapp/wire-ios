@@ -22,14 +22,14 @@ import XCTest
 
 @MainActor
 final class ChannelAccessUseCaseTests: XCTestCase {
-    
+
     lazy var repo = MockChannelAccessRepositoryProtocol()
 
     func testInit_withNilPermission_setsPublicAccessLevel() {
         let useCase = ChannelAccessUseCase(
             permission: nil,
             repository: repo
-    )
+        )
 
         XCTAssertEqual(useCase.settings.accessLevel, .public)
         XCTAssertNil(useCase.settings.participantPermission)

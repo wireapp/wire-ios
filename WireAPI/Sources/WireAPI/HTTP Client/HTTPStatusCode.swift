@@ -31,7 +31,7 @@ enum HTTPStatusCode: Int {
     /// created - 201
 
     case created = 201
-    
+
     /// No Content
 
     case noContent = 204
