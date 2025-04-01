@@ -18,12 +18,12 @@ let package = Package(
             name: "WireDomainPkg",
             dependencies: [
                 "WireAPI",
-                "KaliumBackup"
+                "WireBackup"
             ]
         ),
         .binaryTarget(
-            name: "KaliumBackup",
-            path: "../../wire-android/kalium/backup/build/XCFrameworks/debug/backup.xcframework"
+            name: "WireBackup",
+            path: "../../wire-android/kalium/backup/build/XCFrameworks/debug/WireBackup.xcframework"
         )
     ]
 )

@@ -18,7 +18,7 @@
 
 public import WireAPI
 
-import backup // TODO: is it possible to rename it? like KaliumBackup or WireBackup
+import WireBackup
 
 public struct BackupExporter: BackupExporterProtocol {
 
