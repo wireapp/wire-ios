@@ -82,7 +82,3 @@ package struct RootView: View {
         case authFlow(backendInfo: BackendInfo)
     }
 }
-
-// #Preview {
-//    MockDependencies().rootView
-// }

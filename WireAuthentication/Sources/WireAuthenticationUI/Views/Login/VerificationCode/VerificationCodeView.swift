@@ -131,33 +131,3 @@ package struct VerificationCodeView: View {
     }
 
 }
-
-// #Preview("Empty code") {
-//    VerificationCodeView_Previews.
-//    MockDependencies().previewVerificationCodeView(
-//        email: "name.name@mail.com",
-//        password: "pasword"
-//    )
-// }
-//
-// #Preview("Not empty code") {
-//    MockDependencies().previewVerificationCodeView(
-//        email: "name.name@mail.com",
-//        password: "pasword",
-//        code: ["1", "2", "3", "4", "5", ""]
-//    )
-// }
-//
-// #Preview {
-//    BackgroundView()
-//        .overlay {
-//            VStack(spacing: 0) {
-//                Spacer()
-//                    .frame(maxHeight: .infinity)
-//                MockDependencies().previewVerificationCodeView(
-//                    email: "name.name@mail.com",
-//                    password: "pasword"
-//                )
-//            }
-//        }
-// }

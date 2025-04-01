@@ -114,27 +114,3 @@ package struct NoHistoryView: View {
     }
 
 }
-
-//
-// #Preview {
-//    let viewModel = NoHistoryViewModel(
-//        didDetectDomainConflict: false,
-//        howToChangeEmailURL: URL(string: "https://wire.com")!,
-//        howToDeleteAccountURL: URL(string: "https://wire.com")!,
-//        onFlowCompletion: {}
-//    )
-//    NoHistoryView(viewModel: viewModel)
-// }
-//
-// #Preview("With background") {
-//    BackgroundView()
-//        .sheet(isPresented: .constant(true)) {
-//            let viewModel = NoHistoryViewModel(
-//                didDetectDomainConflict: false,
-//                howToChangeEmailURL: URL(string: "https://wire.com")!,
-//                howToDeleteAccountURL: URL(string: "https://wire.com")!,
-//                onFlowCompletion: {}
-//            )
-//            NoHistoryView(viewModel: viewModel)
-//        }
-// }
