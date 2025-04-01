@@ -194,9 +194,13 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             constant: 3
         ).isActive = true
 
+        let spacingView = UIView()
+        spacingView.widthAnchor.constraint(equalToConstant: 13).isActive = true
+
         let stack = UIStackView.horizontal(
             views: [
-                avatar.wrapInView(leadingInset: margins.left - 39, bottomInset: -7),
+                spacingView,
+                avatar,
                 messageTextView,
                 [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
                     .horizontalStack(spacing: 8)
@@ -205,6 +209,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             spacing: 7,
             alignment: .center
         )
+        stack.setCustomSpacing(12, after: avatar)
         stack.setCustomSpacing(10, after: messageTextView)
 
         addSubview(stack)

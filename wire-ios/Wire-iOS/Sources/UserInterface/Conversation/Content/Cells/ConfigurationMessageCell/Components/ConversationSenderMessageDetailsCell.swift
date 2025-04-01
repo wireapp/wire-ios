@@ -159,7 +159,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             authorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
 
             authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
-            authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            authorLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -1.5),
             bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
