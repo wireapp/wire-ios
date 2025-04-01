@@ -15,13 +15,18 @@ let package = Package(
     targets: [
         .target(
             name: "WireDomainPkg",
-            path: "./Sources/WireDomain",
-            sources: ["./UseCases/Protocols"]
+            dependencies: [
+                "KaliumBackup"
+            ]
+        ),
+        .binaryTarget(
+            name: "KaliumBackup",
+            path: "../../wire-android/kalium/backup/build/XCFrameworks/debug/backup.xcframework"
         )
     ]
 )
 
-for target in package.targets {
+for target in package.targets where target.type != .binary {
     target.swiftSettings = [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
