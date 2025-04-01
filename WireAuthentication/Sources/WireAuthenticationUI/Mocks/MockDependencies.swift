@@ -21,15 +21,19 @@ import WireAuthenticationAPI
 import WireReusableUIComponents
 
 @MainActor
-final class MockDependencies {
+final class MockDependencies: RootFactory {
 
-    private var rootViewModel: RootViewModel {
+    var viewModel: RootViewModel {
         RootViewModel(
             factory: self,
             bridge: WireAuthenticationBridge(),
             backendInfo: backendInfo
 
         )
+    }
+
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
+        fatalError()
     }
 
     var backendInfo: BackendInfo {

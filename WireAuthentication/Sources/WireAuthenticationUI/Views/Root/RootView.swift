@@ -19,7 +19,6 @@
 import SwiftUI
 import WireAuthenticationAPI
 
-
 package struct RootView: View {
 
     @StateObject var viewModel: RootViewModel
@@ -36,9 +35,6 @@ package struct RootView: View {
         BackgroundView()
             .universalSheet(item: $viewModel.modalDestination) { item in
                 sheetContent(for: item)
-//                    .id(item.hashValue)
-                // fix issue switching to specific backend via
-                // deeplink (all iOS versions) - this forces refresh
             }
     }
 
@@ -47,7 +43,11 @@ package struct RootView: View {
         switch sheet {
         case let .authFlow(backedInfo):
             NavigationStack(path: $viewModel.path) {
-                DetermineAuthMethodView(factory: viewModel.componentFactory.determineAuthMethodFactory(backendInfo: backedInfo))
+                DetermineAuthMethodView(
+                    factory: viewModel.factory.determineAuthMethodFactory(
+                        backendInfo: backedInfo
+                    )
+                )
             }
             .sheetCornerRadius(cornerRadius, inNavigationStack: true)
             // The alert should be shown on the navigation stack, otherwise

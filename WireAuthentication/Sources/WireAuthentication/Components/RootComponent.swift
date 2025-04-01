@@ -24,8 +24,7 @@ internal import WireAuthenticationUI
 import WireAuthenticationAPI
 internal import WireAuthenticationLogic
 
-class RootComponent: BootstrapComponent, RootFactory {
-
+class RootComponent: BootstrapComponent {
 
     public let backendInfo: BackendInfo
     public let preferredAPIVersion: APIVersion?
@@ -37,6 +36,17 @@ class RootComponent: BootstrapComponent, RootFactory {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
+
+    @MainActor public var bridge: WireAuthenticationBridge {
+        shared {
+            WireAuthenticationBridge()
+        }
+    }
+
+    // TODO: check if this needs to be shared.
+    @MainActor public var router: any Router {
+        viewModel
+    }
 
     init(
         backendInfo: BackendInfo,
@@ -61,38 +71,6 @@ class RootComponent: BootstrapComponent, RootFactory {
         self.existsAnotherAccount = existsAnotherAccount
     }
 
-    // MARK: - View
-
-//    @MainActor var view: some View {
-//        RootView(
-//            viewModel: viewModel,
-//            factory: self
-//        )
-//    }
-
-    @MainActor var viewModel: RootViewModel {
-        let viewModel = RootViewModel(
-            factory: self,
-            bridge: bridge,
-            backendInfo: backendInfo
-        )
-        viewModel.componentFactory = self
-        
-        return viewModel
-    }
-
-    // MARK: - Public dependencies
-
-    @MainActor public var bridge: WireAuthenticationBridge {
-        shared {
-            WireAuthenticationBridge()
-        }
-    }
-
-    @MainActor public var router: any Router {
-        viewModel
-    }
-
     // MARK: - Children
 
     func determineAuthMethodComponent(backendInfo: BackendInfo) -> DetermineAuthMethodComponent {
@@ -107,27 +85,29 @@ class RootComponent: BootstrapComponent, RootFactory {
             networkStack: networkStack
         )
     }
-    
-    func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any WireAuthenticationUI.DetermineAuthMethodFactory {
-        determineAuthMethodComponent(backendInfo: backendInfo)
-    }
-    
 
 }
 
 extension RootComponent: RootViewModel.Factory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: RootViewModel {
+        RootViewModel(
+            factory: self,
+            bridge: bridge,
+            backendInfo: backendInfo
+        )
+    }
+
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
+        determineAuthMethodComponent(backendInfo: backendInfo)
+    }
+
+    // MARK: - Use cases
 
     func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
         OpenAppStoreUseCase(url: appStoreURL)
     }
 
 }
-//
-//extension RootComponent: RootView.Factory {
-//
-//    @MainActor
-//    func determineAuthMethodView(backendInfo: BackendInfo) -> DetermineAuthMethodView {
-//        determineAuthMethodComponent(backendInfo: backendInfo).view
-//    }
-//
-//}
