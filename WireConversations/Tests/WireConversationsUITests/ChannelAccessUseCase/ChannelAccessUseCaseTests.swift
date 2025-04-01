@@ -17,26 +17,33 @@
 //
 
 import WireConversationsImplementation
+import WireConversationsImplementationSupport
 import XCTest
 
+@MainActor
 final class ChannelAccessUseCaseTests: XCTestCase {
+    
+    lazy var repo = MockChannelAccessRepositoryProtocol()
 
     func testInit_withNilPermission_setsPublicAccessLevel() {
-        let useCase = ChannelAccessUseCase(permission: nil)
+        let useCase = ChannelAccessUseCase(
+            permission: nil,
+            repository: repo
+    )
 
         XCTAssertEqual(useCase.settings.accessLevel, .public)
         XCTAssertNil(useCase.settings.participantPermission)
     }
 
     func testInit_withPermission_setsPrivateAccessLevelAndPermissionAdmins() {
-        let useCase = ChannelAccessUseCase(permission: .admins)
+        let useCase = ChannelAccessUseCase(permission: .admins, repository: repo)
 
         XCTAssertEqual(useCase.settings.accessLevel, .private)
         XCTAssertEqual(useCase.settings.participantPermission, .admins)
     }
 
     func testInit_withPermission_setsPrivateAccessLevelAndPermissionAdminAndMemeber() {
-        let useCase = ChannelAccessUseCase(permission: .adminsAndMembers)
+        let useCase = ChannelAccessUseCase(permission: .adminsAndMembers, repository: repo)
 
         XCTAssertEqual(useCase.settings.accessLevel, .private)
         XCTAssertEqual(
@@ -45,18 +52,18 @@ final class ChannelAccessUseCaseTests: XCTestCase {
         )
     }
 
-    func testUpdateParticipantPermission_changesPermission() {
-        let useCase = ChannelAccessUseCase(permission: .admins)
-        useCase.updateParticipantPermission(to: .adminsAndMembers)
+    func testUpdateParticipantPermission_changesPermission() async throws {
+        let useCase = ChannelAccessUseCase(permission: .admins, repository: repo)
+        try await useCase.updateParticipantPermission(to: .adminsAndMembers)
 
         XCTAssertEqual(useCase.settings.participantPermission, .adminsAndMembers)
     }
 
-    func testUpdateParticipantPermission_changesFromPublicToPrivate() {
-        let useCase = ChannelAccessUseCase(permission: nil) // means public
+    func testUpdateParticipantPermission_changesFromPublicToPrivate() async throws {
+        let useCase = ChannelAccessUseCase(permission: nil, repository: repo) // means public
         XCTAssertEqual(useCase.settings.accessLevel, .public)
 
-        useCase.updateAccessLevel(to: .private)
+        try await useCase.updateAccessLevel(to: .private)
 
         XCTAssertEqual(useCase.settings.participantPermission, .adminsAndMembers)
         XCTAssertEqual(useCase.settings.accessLevel, .private)

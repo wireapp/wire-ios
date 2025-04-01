@@ -21,6 +21,7 @@ import UIKit
 import Combine
 import WireConversationsAPI
 import WireConversationsImplementation
+import WireConversationsImplementationSupport
 import WireDesign
 import WireReusableUIComponents
 
@@ -86,7 +87,10 @@ struct ChannelAccessHostingController_Previews: PreviewProvider {
 struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
 
-        let useCase = ChannelAccessUseCase(permission: .adminsAndMembers)
+        let useCase = ChannelAccessUseCase(
+            permission: .adminsAndMembers,
+            repository: MockChannelAccessRepositoryProtocol()
+        )
         let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
 
         let channelAccessVC = ChannelAccessHostingController(viewModel: viewModel)

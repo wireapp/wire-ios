@@ -48,37 +48,41 @@ package class ChannelAccessViewModel: ObservableObject {
         settings.accessLevel == .private
     }
 
-    func selectAccessLevel(_ level: ChannelAccessLevel) {
+    func selectAccessLevel(_ level: ChannelAccessLevel) async {
         if level == .private, settings.accessLevel != .private {
             showPrivateAccessConfirmation = true
         } else {
-            applyAccessLevel(level)
+            await applyAccessLevel(level)
         }
     }
 
-    func confirmPrivateAccessChange() {
-        applyAccessLevel(.private)
+    func confirmPrivateAccessChange() async {
+        await applyAccessLevel(.private)
     }
 
-    private func applyAccessLevel(_ level: ChannelAccessLevel) {
+    func applyAccessLevel(_ level: ChannelAccessLevel) async {
         isLoading = true
-        useCase.updateAccessLevel(to: level)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
-            guard let self else { return }
-            self.isLoading = false
-            self.settings = self.useCase.settings
+        do {
+            try await useCase.updateAccessLevel(to: level)
+            settings = useCase.settings
+        } catch {
+            // TODO: error handling
         }
+        isLoading = false
     }
 
-    func selectParticipantPermission(_ permission: ChannelAccessLevelPermission) {
+    func selectParticipantPermission(_ permission: ChannelAccessLevelPermission) async {
+        await self.applyParticipantPermission(permission)
+    }
+
+    func applyParticipantPermission(_ permission: ChannelAccessLevelPermission) async {
         isLoading = true
-        useCase.updateParticipantPermission(to: permission)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
-            guard let self else { return }
-            self.isLoading = false
-            self.settings.participantPermission = permission
+        do {
+            try await useCase.updateParticipantPermission(to: permission)
+            settings.participantPermission = permission
+        } catch {
+            // TODO: error handling
         }
+        isLoading = false
     }
 }

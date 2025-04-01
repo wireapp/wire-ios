@@ -19,6 +19,7 @@
 package import SwiftUI
 import WireConversationsAPI
 import WireConversationsImplementation
+import WireConversationsImplementationSupport
 import WireDesign
 
 package struct ChannelAccessView: View {
@@ -76,7 +77,7 @@ package struct ChannelAccessView: View {
                     title: Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert.title),
                     message: Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert.message),
                     primaryButton: .default(Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert.Button.change)) {
-                        viewModel.confirmPrivateAccessChange()
+                        Task { await viewModel.confirmPrivateAccessChange() }
                     },
                     secondaryButton: .cancel(Text(L10n.Localizable.ChannelAccessLevel.ChangeLevelAlert.Button.cancel))
                 )
@@ -103,7 +104,7 @@ package struct ChannelAccessView: View {
         .contentShape(Rectangle())
         .frame(height: 40)
         .onTapGesture {
-            viewModel.selectAccessLevel(level)
+            Task { await viewModel.selectAccessLevel(level) }
         }
         .disabled(disabled)
     }
@@ -123,7 +124,7 @@ package struct ChannelAccessView: View {
         .contentShape(Rectangle())
         .frame(height: 40)
         .onTapGesture {
-            viewModel.selectParticipantPermission(permission)
+            Task { await viewModel.selectParticipantPermission(permission) }
         }
     }
 
@@ -147,7 +148,9 @@ struct ChannelAccessView_Previews: PreviewProvider {
             NavigationStack {
                 ChannelAccessView(viewModel: ChannelAccessViewModel(
                     accentColor: .green,
-                    useCase: ChannelAccessUseCase(permission: nil)
+                    useCase: ChannelAccessUseCase(
+                        permission: nil,
+                        repository: MockChannelAccessRepositoryProtocol())
                 ))
 
             }
@@ -158,7 +161,8 @@ struct ChannelAccessView_Previews: PreviewProvider {
                     viewModel: ChannelAccessViewModel(
                         accentColor: .blue,
                         useCase: ChannelAccessUseCase(
-                            permission: .adminsAndMembers
+                            permission: .adminsAndMembers,
+                            repository: MockChannelAccessRepositoryProtocol()
                         )
                     )
                 )

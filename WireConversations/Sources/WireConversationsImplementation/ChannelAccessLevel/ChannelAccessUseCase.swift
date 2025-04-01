@@ -17,37 +17,48 @@
 //
 
 import Foundation
-package import WireConversationsAPI
+public import WireConversationsAPI
 
-// sourcery: AutoMockable
-package protocol ChannelAccessUseCaseProtocol {
+@MainActor
+public protocol ChannelAccessUseCaseProtocol {
     var settings: ChannelAccessSettings { get }
-    func updateAccessLevel(to level: ChannelAccessLevel)
-    func updateParticipantPermission(to permission: ChannelAccessLevelPermission)
+    func updateAccessLevel(to level: ChannelAccessLevel) async throws
+    func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws
 }
 
-package class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
+@MainActor
+public protocol ChannelAccessRepositoryProtocol {
+    func updateAccessLevel(to level: ChannelAccessLevel) async throws
+    func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws
+}
 
-    package var settings: ChannelAccessSettings
+public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
 
-    package init(permission: ChannelAccessLevelPermission?) {
+    public var settings: ChannelAccessSettings
+    public let repository: any ChannelAccessRepositoryProtocol
+
+    public init(
+        permission: ChannelAccessLevelPermission?,
+        repository: any ChannelAccessRepositoryProtocol
+    ) {
         let settings = ChannelAccessSettings(
             accessLevel: permission == nil ? .public : .private,
             participantPermission: permission
         )
-
         self.settings = settings
+        self.repository = repository
     }
 
-    package func updateAccessLevel(to level: ChannelAccessLevel) {
+    public func updateAccessLevel(to level: ChannelAccessLevel) async throws {
         guard settings.accessLevel == .public else {
             return
         }
+        try await repository.updateAccessLevel(to: level)
         settings.accessLevel = level
         settings.participantPermission = .adminsAndMembers
     }
 
-    package func updateParticipantPermission(to permission: ChannelAccessLevelPermission) {
+    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws {
         settings.participantPermission = permission
     }
 }

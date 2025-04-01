@@ -58,7 +58,9 @@ let package = Package(
                 "WireConversationsAPI",
                 "WireConversationsResources",
                 "WireConversationsImplementation",
+                "WireConversationsImplementationSupport",
                 .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireReusableUIComponents", package: "WireUI"),
                 .product(name: "WireFoundation", package: "WireFoundation")
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]

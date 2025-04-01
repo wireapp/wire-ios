@@ -5,5 +5,4 @@ templates:
 output:
   ${DERIVED_SOURCES_DIR}
 args:
-  autoMockableImports: ["UIKit", "WireConversationsImplementation", "WireConversationsAPI"]
-  autoMockablePackageImports: ["WireConversationsAPI"]
+  autoMockablePublicImports: ["UIKit", "WireConversationsImplementation", "WireConversationsAPI"]
