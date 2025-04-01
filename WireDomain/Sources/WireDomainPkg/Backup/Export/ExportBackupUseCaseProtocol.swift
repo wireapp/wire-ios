@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol BackupExporterProtocol {
-    //
+//import Foundation
+
+// sourcery: AutoMockable
+public protocol ExportBackupUseCaseProtocol: Sendable {
+    //func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
 }

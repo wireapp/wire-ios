@@ -20,13 +20,15 @@ public import WireAPI
 
 import WireBackup
 
-public struct BackupExporter: BackupExporterProtocol {
+public struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
 
-    let mp: MPBackupExporter
+    // let mpBackupExporter: MPBackupExporter
+    let zip: FileZipper
 
     public init(
         selfUserID: QualifiedID
     ) {
+        zip.zip(entries: <#T##[String]#>)
         fatalError()
 //        mp = MPBackupExporter(
 //            selfUserId: BackupQualifiedId(id: <#T##String#>, domain: <#T##String#>),
