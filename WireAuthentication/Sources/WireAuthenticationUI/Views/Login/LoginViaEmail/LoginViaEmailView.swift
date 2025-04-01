@@ -21,18 +21,6 @@ import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
-package protocol LoginViaEmailBuilder {
-
-    @MainActor
-    func loginViaEmailView(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    ) -> LoginViaEmailView
-
-}
-
 package struct LoginViaEmailView: View {
 
     @StateObject var viewModel: LoginViaEmailViewModel
@@ -89,15 +77,19 @@ package struct LoginViaEmailView: View {
                 password,
                 proxyCredentials
             ):
-                VerificationCodeView(factory:
-                                        viewModel.componentFactory.verificationCodeFactory(
-                    email: email,
-                    password: password,
-                    proxyCredentials: proxyCredentials
-                )
+                VerificationCodeView(
+                    factory: viewModel.factory.verificationCodeFactory(
+                        email: email,
+                        password: password,
+                        proxyCredentials: proxyCredentials
+                    )
 )
              case let .noHistory(authenticationResult):
-                NoHistoryView(factory: viewModel.componentFactory.noHistoryFactory(authenticationResult: authenticationResult))
+                NoHistoryView(
+                    factory: viewModel.factory.noHistoryFactory(
+                        authenticationResult: authenticationResult
+                    )
+                )
             }
         }
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
