@@ -16,77 +16,75 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// import SwiftUI
-// import WireFoundation
-// import WireTestingPackage
-// import XCTest
-//
-// @testable import WireAuthenticationUI
-//
-// class DetermineAuthMethodViewTests: XCTestCase {
-//    private var snapshotHelper: SnapshotHelper!
-//
-//    override func setUp() {
-//        snapshotHelper = .init()
-//            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-//    }
-//
-//    override func tearDown() {
-//        snapshotHelper = nil
-//    }
-//
-//    @MainActor
-//    func testColorSchemeVariants() {
-//        let variants: [String] = [
-//            "",
-//            "sam@example.com"
-//        ]
-//
-//        let screenBounds = UIScreen.main.bounds
-//        for (index, emailOrSSOCode) in variants.enumerated() {
-//            let view = makeDetermineAuthMethodViewPreview(
-//                emailOrSSOCode: emailOrSSOCode
-//            )
-//            .frame(width: screenBounds.width, height: screenBounds.height)
-//            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-//
-//            snapshotHelper
-//                .withUserInterfaceStyle(.light)
-//                .verify(matching: view, named: "variant\(index)-light")
-//            snapshotHelper
-//                .withUserInterfaceStyle(.dark)
-//                .verify(matching: view, named: "variant\(index)-dark")
-//        }
-//    }
-//
-//    @MainActor
-//    func testDynamicTypeVariants() {
-//        let screenBounds = UIScreen.main.bounds
-//
-//        let view = makeDetermineAuthMethodViewPreview()
-//            .frame(width: screenBounds.width, height: screenBounds.height)
-//            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-//
-//        for dynamicTypeSize in DynamicTypeSize.allCases {
-//            snapshotHelper
-//                .verify(
-//                    matching: view.dynamicTypeSize(dynamicTypeSize),
-//                    named: "\(dynamicTypeSize)"
-//                )
-//        }
-//    }
-//
-//    @MainActor
-//    func testCanExitFlow() {
-//        let screenBounds = UIScreen.main.bounds
-//
-//        let view = NavigationStack {
-//            makeDetermineAuthMethodViewPreview(existsAnotherAccount: true)
-//        }
-//        .frame(width: screenBounds.width, height: screenBounds.height)
-//        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-//        .tint(.primary)
-//
-//        snapshotHelper.verify(matching: view)
-//    }
-// }
+import SwiftUI
+import WireFoundation
+import WireTestingPackage
+import XCTest
+
+@testable import WireAuthenticationUI
+
+class DetermineAuthMethodViewTests: XCTestCase {
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+    }
+
+    @MainActor
+    func testColorSchemeVariants() {
+        let variants: [String] = [
+            "",
+            "sam@example.com"
+        ]
+
+        let screenBounds = UIScreen.main.bounds
+        for (index, emailOrSSOCode) in variants.enumerated() {
+            let view = DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory(emailOrSSOCode: emailOrSSOCode))
+                .frame(width: screenBounds.width, height: screenBounds.height)
+                .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: view, named: "variant\(index)-light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: view, named: "variant\(index)-dark")
+        }
+    }
+
+    @MainActor
+    func testDynamicTypeVariants() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory())
+            .frame(width: screenBounds.width, height: screenBounds.height)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+    @MainActor
+    func testCanExitFlow() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = NavigationStack {
+            DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory(existsAnotherAccount: true))
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        .tint(.primary)
+
+        snapshotHelper.verify(matching: view)
+    }
+}

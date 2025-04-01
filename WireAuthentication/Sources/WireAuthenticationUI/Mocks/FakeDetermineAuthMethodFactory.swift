@@ -26,16 +26,21 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
     LoginViaSSOUseCaseFactory,
     ValidateEmailOrSSOCodeUseCaseFactory {
 
+    var existsAnotherAccount: Bool = false
+    var emailOrSSOCode: String = ""
+
     var mockDependencies = MockDependencies()
 
     var viewModel: DetermineAuthMethodViewModel {
-        .init(
+        let viewModel = DetermineAuthMethodViewModel(
             factory: self,
             router: FakeRootFactory().viewModel,
             bridge: WireAuthenticationBridge(),
             backendInfo: mockDependencies.backendInfo,
-            existsAnotherAccount: true
+            existsAnotherAccount: existsAnotherAccount
         )
+        viewModel.emailOrSSOCode = emailOrSSOCode
+        return viewModel
     }
 
     func loginViaEmailFactory(

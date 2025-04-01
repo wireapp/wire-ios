@@ -160,25 +160,3 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     }
 
 }
-
-// extension LoginViaEmailComponent: LoginViaEmailView.Factory {
-//
-//    @MainActor
-//    func verificationCodeView(
-//        email: String,
-//        password: String,
-//        proxyCredentials: ProxyCredentials?
-//    ) -> VerificationCodeView {
-//        verificationCodeComponent(
-//            email: email,
-//            password: password,
-//            proxyCredentials: proxyCredentials
-//        ).view
-//    }
-//
-//    @MainActor
-//    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
-//        noHistoryComponent(authenticationResult: authenticationResult).view
-//    }
-//
-// }

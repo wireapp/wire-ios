@@ -17,7 +17,7 @@
 //
 import Foundation
 
-class FakeNoHistoryFactory: NoHistoryFactory {
+struct FakeNoHistoryFactory: NoHistoryFactory {
     var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
             didDetectDomainConflict: false,
