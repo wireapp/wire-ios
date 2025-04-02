@@ -94,6 +94,10 @@ final class ParticipantsCellViewModel {
         isSelfIncludedInUsers ? 14 : 15
     }
 
+    private var isChannel: Bool {
+        message.conversationLike?.isChannel == true
+    }
+
     private var showServiceUserWarning: Bool {
         guard case .added = action,
               let messageData = message.systemMessageData,
@@ -226,7 +230,7 @@ final class ParticipantsCellViewModel {
             senderName: senderName,
             senderIsSelf: sender.isSelfUser,
             convName: conversationName,
-            isChannel: message.conversationLike?.isChannel == true
+            isChannel: isChannel
         )
     }
 
@@ -243,10 +247,11 @@ final class ParticipantsCellViewModel {
                 senderName: senderName,
                 senderIsSelf: sender.isSelfUser,
                 names: nameList,
-                isSelfIncludedInUsers: isSelfIncludedInUsers
+                isSelfIncludedInUsers: isSelfIncludedInUsers,
+                isChannel: isChannel
             )
         } else {
-            return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser)
+            return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser, isChannel: isChannel)
         }
     }
 

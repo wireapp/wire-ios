@@ -583,6 +583,9 @@
 "content.system.channel.invite.title" = "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:";
 "content.system.channel.invite.button" = "Copy Channel link";
 
+"content.system.channel.guest.joined" = "%@ joined the channel";
+"content.system.channel.guest.you_joined" = "You joined the channel";
+
 // read receipt
 
 "content.system.message_read_receipt_on" = "%@ turned read receipts on for everyone";

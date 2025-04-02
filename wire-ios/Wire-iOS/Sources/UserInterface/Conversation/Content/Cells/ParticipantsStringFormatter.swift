@@ -23,10 +23,11 @@ import WireDesign
 private typealias Attributes = [NSAttributedString.Key: AnyObject]
 
 private extension ConversationActionType {
-    func formatKey(senderIsSelfUser: Bool) -> String {
+    func formatKey(senderIsSelfUser: Bool, isChannel: Bool) -> String {
         switch self {
         case .left: localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
-        case .added(herself: true): "content.system.conversation.guest.joined"
+        case .added(herself: true):
+            isChannel ? "content.system.channel.guest.joined" : "content.system.conversation.guest.joined"
         case .added(herself: false): localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
         case .removed(reason: .legalHoldPolicyConflict): localizationKey(
                 with: "removed",
@@ -145,14 +146,16 @@ final class ParticipantsStringFormatter {
     }
 
     /// Title when the subject (sender) is performing the action alone.
-    func title(senderName: String, senderIsSelf: Bool) -> NSAttributedString? {
+    func title(senderName: String, senderIsSelf: Bool, isChannel: Bool) -> NSAttributedString? {
         switch message.actionType {
         case .added(herself: true) where senderIsSelf:
-            return L10n.Localizable.Content.System.Conversation.Guest.youJoined && font && textColor
+            typealias System = L10n.Localizable.Content.System
+            let text = isChannel ? System.Channel.Guest.youJoined : System.Conversation.Guest.youJoined
+            return text && font && textColor
 
         case .left, .teamMemberLeave, .added(herself: true):
             let formatKey = message.actionType.formatKey
-            return formatKey(senderIsSelf).localized(args: senderName) && font && textColor
+            return formatKey(senderIsSelf, isChannel).localized(args: senderName) && font && textColor
 
         default:
             return nil
@@ -164,7 +167,8 @@ final class ParticipantsStringFormatter {
         senderName: String,
         senderIsSelf: Bool,
         names: NameList,
-        isSelfIncludedInUsers: Bool = false
+        isSelfIncludedInUsers: Bool = false,
+        isChannel: Bool
     ) -> NSAttributedString? {
         guard !names.names.isEmpty else { return nil }
 
@@ -202,7 +206,7 @@ final class ParticipantsStringFormatter {
             return result
 
         case .removed, .added(herself: false), .started(name: .none):
-            result = formatKey(senderIsSelf).localized(args: senderName, nameSequence.string) && font && textColor
+            result = formatKey(senderIsSelf, isChannel).localized(args: senderName, nameSequence.string) && font && textColor
 
         case .started(name: .some):
             result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" &&
