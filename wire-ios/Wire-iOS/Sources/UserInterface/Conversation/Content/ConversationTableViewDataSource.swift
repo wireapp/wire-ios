@@ -655,7 +655,7 @@ extension ConversationTableViewDataSource {
             }
 
             // collapse space between subsequent messages
-            if collapseSpaceBefore(currentSectionFirstElement: currentSectionFirstElement) {
+            if isSpaceCollapsedBefore(currentSectionFirstElement: currentSectionFirstElement) {
                 if !(previousSectionLastElement is ConversationMessageToolboxCellDescription) {
                     previousSectionLastElement.bottomMargin = 2
                 }
@@ -745,7 +745,7 @@ extension ConversationTableViewDataSource {
         return previousMessage.deliveryState == currentMessage.deliveryState
     }
 
-    private func collapseSpaceBefore(
+    private func isSpaceCollapsedBefore(
         currentSectionFirstElement cellDescription: any ConversationMessageCellDescription
     ) -> Bool {
         if cellDescription is ConversationTextMessageCellDescription ||

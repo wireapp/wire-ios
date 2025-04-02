@@ -53,7 +53,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.widthAnchor.constraint(equalToConstant: 24).isActive = true
         return view
     }()
-// TODO: fix layout
+
     private lazy var availabilityIndicatorView = {
         let view = AvailabilityIndicatorView(availability: .away)
         view.translatesAutoresizingMaskIntoConstraints = false
