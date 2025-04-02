@@ -17,6 +17,7 @@
 //
 
 import WireBackup
+import WireDomainPkg
 import WireDomainPkgSupport
 import WireFoundationSupport
 import Testing
@@ -27,8 +28,8 @@ struct ExportBackupFileZipper2FileZipperAdapterTests {
 
     @Test func testFileArchiverInvocation() async throws {
         // Given
-        let mockFileArchiver = MockExportBackupFileArchiverProtocol()
-        mockFileArchiver.zipResourcesAtInto_MockMethod = { resources, destination in }
+        let mockFileArchiver = ExportBackupFileArchiverProtocolMock()
+        mockFileArchiver.zipResourcesAtResourceURLsURLIntoDestinationURLURLVoidClosure = { _, _ in }
 
         let mockDateProvider = MockCurrentDateProviding()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-02T14:42:12+02:00")
@@ -50,8 +51,8 @@ struct ExportBackupFileZipper2FileZipperAdapterTests {
         let destinationURL = URL(filePath: destination, directoryHint: .notDirectory)
 
         // Then
-        #expect(mockFileArchiver.zipResourcesAtInto_Invocations.count == 1)
-        let invocation = try #require(mockFileArchiver.zipResourcesAtInto_Invocations.first)
+        #expect(mockFileArchiver.zipResourcesAtResourceURLsURLIntoDestinationURLURLVoidReceivedInvocations.count == 1)
+        let invocation = try #require(mockFileArchiver.zipResourcesAtResourceURLsURLIntoDestinationURLURLVoidReceivedInvocations.first)
         #expect(invocation.resourceURLs.map { $0.path() } == ["/a/b/c", "/e/f/g", "/i/j/k"])
         #expect(destinationURL.lastPathComponent == "2025-04-02T12:42:12Z_backup.zip")
         #expect(destinationURL.deletingLastPathComponent().lastPathComponent == "destination")
