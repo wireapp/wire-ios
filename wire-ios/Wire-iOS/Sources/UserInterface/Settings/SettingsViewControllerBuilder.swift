@@ -64,8 +64,7 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let group = factory.settingsGroup(
             isPublicDomain: isPublicDomain,
             userSession: userSession,
-            useTypeIntrinsicSizeTableView: false,
-            mainCoordinator: mainCoordinator
+            useTypeIntrinsicSizeTableView: false
         )
         return .init(group: group, settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
     }
@@ -128,10 +127,7 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory =
             settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
-        let group = factory.advancedGroup(
-            userSession: userSession,
-            mainCoordinator: mainCoordinator
-        ) as! SettingsGroupCellDescriptor
+        let group = factory.advancedGroup(userSession: userSession) as! SettingsGroupCellDescriptor
         return SettingsTableViewController(
             group: group,
             settingsCoordinator: .init(settingsCoordinator: settingsCoordinator)

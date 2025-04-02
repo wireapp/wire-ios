@@ -19,7 +19,6 @@
 import UIKit
 import WireDataModel
 import WireDesign
-import WireMainNavigationUI
 
 protocol ShareDestination: Hashable {
     var displayNameWithFallback: String { get }
@@ -37,12 +36,8 @@ protocol Shareable {
 
 final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,
     UITableViewDelegate, UITableViewDataSource {
-
-    typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
-
     let destinations: [D]
     let shareable: S
-    private let mainCoordinator: any MainCoordinatorProtocol
     private(set) var selectedDestinations: Set<D> = Set() {
         didSet {
             sendButton.isEnabled = selectedDestinations.count > 0
@@ -77,19 +72,12 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     var onDismiss: ((ShareViewController, Bool) -> Void)?
     var bottomConstraint: NSLayoutConstraint?
 
-    init(
-        shareable: S,
-        destinations: [D],
-        showPreview: Bool = true,
-        allowsMultipleSelection: Bool = true,
-        mainCoordinator: any MainCoordinatorProtocol
-    ) {
+    init(shareable: S, destinations: [D], showPreview: Bool = true, allowsMultipleSelection: Bool = true) {
         self.destinations = destinations
         self.filteredDestinations = destinations
         self.shareable = shareable
         self.showPreview = showPreview
         self.allowsMultipleSelection = allowsMultipleSelection
-        self.mainCoordinator = mainCoordinator
         super.init(nibName: nil, bundle: nil)
 
         NotificationCenter.default.addObserver(
@@ -154,15 +142,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     func onSendButtonPressed(sender: AnyObject?) {
         if !selectedDestinations.isEmpty {
             shareable.share(to: Array(selectedDestinations))
-            if let conversation = selectedDestinations.first as? ZMConversation,
-               let mainCoordinator = mainCoordinator as? MainCoordinator {
-                Task {
-                    await mainCoordinator.showConversationList(conversationFilter: nil)
-                    mainCoordinator.showConversation(conversation: conversation, message: nil)
-                }
-            } else {
-                onDismiss?(self, true)
-            }
+            onDismiss?(self, true)
         }
     }
 

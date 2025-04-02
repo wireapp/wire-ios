@@ -95,8 +95,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         let group = settingsCellDescriptorFactory.settingsGroup(
             isPublicDomain: true,
             userSession: userSession,
-            useTypeIntrinsicSizeTableView: true,
-            mainCoordinator: MockMainCoordinator()
+            useTypeIntrinsicSizeTableView: true
         )
         try verify(group: group)
     }
@@ -234,10 +233,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - advanced
 
     func testForAdvancedGroup() throws {
-        let group = settingsCellDescriptorFactory.advancedGroup(
-            userSession: userSession,
-            mainCoordinator: MockMainCoordinator()
-        )
+        let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
         try verify(group: group)
     }
 

@@ -18,7 +18,6 @@
 
 import MessageUI
 import WireDataModel
-import WireMainNavigationUI
 import WireReusableUIComponents
 
 // sourcery: AutoMockable
@@ -52,11 +51,6 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
     weak var viewController: UIViewController?
 
     private let mailRecipient = WireEmail.shared.callingSupportEmail
-    private let mainCoordinator: any MainCoordinatorProtocol
-
-    init(mainCoordinator: any MainCoordinatorProtocol) {
-        self.mainCoordinator = mainCoordinator
-    }
 
     private lazy var activityIndicator = {
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
@@ -73,8 +67,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         let shareViewController = ShareViewController<ZMConversation, ShareableDebugReport>(
             shareable: debugReport,
             destinations: destinations,
-            showPreview: true,
-            mainCoordinator: mainCoordinator
+            showPreview: true
         )
 
         shareViewController.onDismiss = { shareController, _ in
