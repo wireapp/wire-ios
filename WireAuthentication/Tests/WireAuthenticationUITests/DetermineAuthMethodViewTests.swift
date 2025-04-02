@@ -44,10 +44,13 @@ class DetermineAuthMethodViewTests: XCTestCase {
 
         let screenBounds = UIScreen.main.bounds
         for (index, emailOrSSOCode) in variants.enumerated() {
-            let view = DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory(emailOrSSOCode: emailOrSSOCode))
-                .frame(width: screenBounds.width, height: screenBounds.height)
+           
+            let factory = FakeDetermineAuthMethodFactory(emailOrSSOCode: emailOrSSOCode)
+            
+            let view = DetermineAuthMethodView(factory: factory)
+                .inNavigationStack()
                 .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-
+                .frame(width: screenBounds.width, height: screenBounds.height)
             snapshotHelper
                 .withUserInterfaceStyle(.light)
                 .verify(matching: view, named: "variant\(index)-light")
@@ -62,6 +65,7 @@ class DetermineAuthMethodViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory())
+            .inNavigationStack()
             .frame(width: screenBounds.width, height: screenBounds.height)
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
@@ -86,5 +90,11 @@ class DetermineAuthMethodViewTests: XCTestCase {
         .tint(.primary)
 
         snapshotHelper.verify(matching: view)
+    }
+}
+
+extension View {
+    func inNavigationStack() -> some View {
+        NavigationStack(root: { self })
     }
 }
