@@ -29,7 +29,7 @@ package protocol RootFactory {
 
 package struct RootView: View {
 
-    @StateObject var viewModel: RootViewModel
+    @StateObject private var viewModel: RootViewModel
 
     private let cornerRadius: CGFloat = 10
 

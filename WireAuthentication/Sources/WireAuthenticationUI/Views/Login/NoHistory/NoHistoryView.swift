@@ -27,7 +27,7 @@ package protocol NoHistoryFactory {
 
 package struct NoHistoryView: View {
 
-    @StateObject var viewModel: NoHistoryViewModel
+    @StateObject private var viewModel: NoHistoryViewModel
 
     package init(
         factory: @autoclosure @escaping () -> NoHistoryFactory

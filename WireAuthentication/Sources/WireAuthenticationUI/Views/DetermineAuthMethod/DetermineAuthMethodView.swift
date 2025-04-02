@@ -39,7 +39,7 @@ package protocol DetermineAuthMethodFactory {
 
 package struct DetermineAuthMethodView: View {
 
-    @StateObject var viewModel: DetermineAuthMethodViewModel
+    @StateObject private var viewModel: DetermineAuthMethodViewModel
 
     package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)

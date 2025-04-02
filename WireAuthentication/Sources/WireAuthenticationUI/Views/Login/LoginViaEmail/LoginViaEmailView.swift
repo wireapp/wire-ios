@@ -39,7 +39,7 @@ package protocol LoginViaEmailFactory {
 
 package struct LoginViaEmailView: View {
 
-    @StateObject var viewModel: LoginViaEmailViewModel
+    @StateObject private var viewModel: LoginViaEmailViewModel
 
     package init(
         factory: @autoclosure @escaping () -> any LoginViaEmailFactory
