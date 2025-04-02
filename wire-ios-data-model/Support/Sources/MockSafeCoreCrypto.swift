@@ -23,25 +23,34 @@ import WireDataModel
 public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 
     var coreCrypto: MockCoreCryptoProtocol
+    var coreCryptoContext: MockCoreCryptoContextProtocol
 
-    public init(coreCrypto: MockCoreCryptoProtocol = .init()) {
+    public init(
+        coreCrypto: MockCoreCryptoProtocol = .init(),
+        coreCryptoContext: MockCoreCryptoContextProtocol = .init()
+    ) {
         self.coreCrypto = coreCrypto
+        self.coreCryptoContext = coreCryptoContext
     }
 
     var performCount = 0
-    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) async rethrows -> T {
+    func perform<T>(_ block: (CoreCryptoContextProtocol) throws -> T) async rethrows -> T {
         performCount += 1
-        return try block(coreCrypto)
+        return try block(coreCryptoContext)
     }
 
     var unsafePerformCount = 0
-    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
+    public func unsafePerform<T>(_ block: (CoreCryptoContextProtocol) async throws -> T) async rethrows -> T {
         unsafePerformCount += 1
-        return try await block(coreCrypto)
+        return try await block(coreCryptoContext)
     }
 
     var performAsyncCount = 0
-    public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
+    public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoContextProtocol) async throws -> T) async rethrows -> T {
+        try await block(coreCryptoContext)
+    }
+    
+    public func configure(block: (any WireCoreCrypto.CoreCryptoProtocol) async throws -> Void) async throws {
         try await block(coreCrypto)
     }
 
