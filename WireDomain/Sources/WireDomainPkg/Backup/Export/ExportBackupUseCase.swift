@@ -52,9 +52,12 @@ public struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
             )
         )
 
+        // TODO: fetch form CoreData and call these methods:
         // backupExporter.add(user: <#T##BackupUser#>)
         // backupExporter.add(message: <#T##BackupMessage#>)
         // backupExporter.add(conversation: <#T##BackupConversation#>)
+
+        // TODO: then finalize:
         // try await backupExporter.finalize(password: <#T##String?#>)
     }
 }
