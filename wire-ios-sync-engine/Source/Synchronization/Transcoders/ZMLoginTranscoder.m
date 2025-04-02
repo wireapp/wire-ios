@@ -215,7 +215,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
     return [label isEqualToString:@"code-authentication-required"];
 }
 
-- (BOOL)isResponseForInvalidEmailVerificationCode:(ZMTransportResponse *)response //here
+- (BOOL)isResponseForInvalidEmailVerificationCode:(ZMTransportResponse *)response
 {
     NSString *label = [response.payload asDictionary][@"label"];
     return response.HTTPStatus == 403 && [label isEqualToString:@"code-authentication-failed"];
