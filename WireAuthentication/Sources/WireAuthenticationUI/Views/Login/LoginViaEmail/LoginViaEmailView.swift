@@ -86,7 +86,7 @@ package struct LoginViaEmailView: View {
                 Button(L10n.Authentication.Error.confirm, action: {})
             }
         )
-        .navigationDestination(for: Destination.self) { destination in
+        .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             switch destination {
             case let .verifyLogin(
                 email,
@@ -235,19 +235,6 @@ package struct LoginViaEmailView: View {
             )
             Spacer()
         }
-    }
-
-    enum Destination: Hashable {
-
-        case verifyLogin(
-            email: String,
-            password: String,
-            proxyCredentials: ProxyCredentials?
-        )
-        case noHistory(
-            authenticationResult: AuthenticationResult
-        )
-
     }
 
 }

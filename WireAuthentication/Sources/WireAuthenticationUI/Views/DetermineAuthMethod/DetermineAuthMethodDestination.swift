@@ -19,8 +19,17 @@
 import Foundation
 import WireAuthenticationAPI
 
-enum VerificationCodeDestination: Hashable {
+package enum DetermineAuthMethodDestination: Hashable {
 
-    case noHistory(authenticationResult: AuthenticationResult)
-
+    case login(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    )
+    case loginOrRegister(
+        email: String,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    )
+    case noHistory(AuthenticationResult)
 }

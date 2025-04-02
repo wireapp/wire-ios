@@ -19,8 +19,10 @@
 import Foundation
 import WireAuthenticationAPI
 
-enum VerificationCodeDestination: Hashable {
+package enum RootViewSheet: Identifiable, Hashable {
 
-    case noHistory(authenticationResult: AuthenticationResult)
+    public var id: Self { self }
+
+    case authFlow(backendInfo: BackendInfo)
 
 }

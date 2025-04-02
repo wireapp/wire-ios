@@ -47,7 +47,7 @@ package struct RootView: View {
     }
 
     @ViewBuilder
-    private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
+    private func sheetContent(for sheet: RootViewSheet) -> some View {
         switch sheet {
         case let .authFlow(backendInfo):
             NavigationStack(path: $viewModel.path) {
@@ -79,9 +79,4 @@ package struct RootView: View {
         }
     }
 
-    package enum ModalDestination: Identifiable, Hashable {
-        public var id: Self { self }
-
-        case authFlow(backendInfo: BackendInfo)
-    }
 }

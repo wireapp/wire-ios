@@ -126,7 +126,7 @@ package struct DetermineAuthMethodView: View {
                 Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
             }
         )
-        .navigationDestination(for: Destination.self) {
+        .navigationDestination(for: DetermineAuthMethodDestination.self) {
             switch $0 {
             case let .login(
                 email,
@@ -188,21 +188,6 @@ package struct DetermineAuthMethodView: View {
         )
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
-    }
-
-    package enum Destination: Hashable {
-
-        case login(
-            email: String?,
-            didDetectDomainConflict: Bool,
-            backendInfo: BackendInfo
-        )
-        case loginOrRegister(
-            email: String,
-            didDetectDomainConflict: Bool,
-            backendInfo: BackendInfo
-        )
-        case noHistory(AuthenticationResult)
     }
 
 }

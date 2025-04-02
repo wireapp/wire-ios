@@ -132,7 +132,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
             )
 
             router.navigate(
-                to: LoginViaEmailView.Destination.noHistory(authenticationResult: authenticationResult)
+                to: LoginViaEmailDestination.noHistory(authenticationResult: authenticationResult)
             )
 
         } catch {
@@ -143,7 +143,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .invalidCredentials
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
-                    to: LoginViaEmailView.Destination
+                    to: LoginViaEmailDestination
                         .verifyLogin(
                             email: sanitizedEmail,
                             password: sanitizedPassword,

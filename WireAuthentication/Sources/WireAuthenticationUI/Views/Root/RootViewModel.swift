@@ -31,14 +31,14 @@ package final class RootViewModel: ObservableObject, Router {
     // MARK: - View state
 
     @Published var path = NavigationPath()
-    @Published var modalDestination: RootView.ModalDestination?
+    @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
 
     // MARK: - Dependencies
 
     package let factory: any Factory
     private var cancellable: AnyCancellable?
-    private var lastModalDestination: RootView.ModalDestination?
+    private var lastModalDestination: RootViewSheet?
 
     // MARK: - Life cycle
 
@@ -69,7 +69,7 @@ package final class RootViewModel: ObservableObject, Router {
         path.append(destination)
     }
 
-    package func presentSheet(_ modalDestination: RootView.ModalDestination) {
+    package func presentSheet(_ modalDestination: RootViewSheet) {
         self.modalDestination = modalDestination
     }
 

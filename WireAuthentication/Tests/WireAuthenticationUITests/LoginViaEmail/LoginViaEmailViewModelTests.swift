@@ -181,7 +181,7 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         XCTAssertEqual(isLoadingCalls, [true, false])
 
         try XCTAssertCount(router.navigate_Invocations, count: 1)
-        let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailView.Destination)
+        let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailDestination)
         XCTAssertEqual(actualDestination, .noHistory(authenticationResult: authenticationResult))
     }
 
@@ -219,10 +219,10 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         XCTAssertNil(sut.alert)
         XCTAssertEqual(isLoadingCalls, [true, false])
         try XCTAssertCount(router.navigate_Invocations, count: 1)
-        let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailView.Destination)
+        let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailDestination)
         XCTAssertEqual(
             actualDestination,
-            LoginViaEmailView.Destination
+            LoginViaEmailDestination
                 .verifyLogin(
                     email: "mika@example.com",
                     password: "password",
