@@ -2045,6 +2045,12 @@ internal enum L10n {
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt_resolved.self", fallback: "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.")
         }
         internal enum Channel {
+          internal enum Invite {
+            /// Copy Channel link
+            internal static let button = L10n.tr("Localizable", "content.system.channel.invite.button", fallback: "Copy Channel link")
+            /// This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:
+            internal static let title = L10n.tr("Localizable", "content.system.channel.invite.title", fallback: "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:")
+          }
           internal enum WithName {
             /// %@ started the channel
             internal static func title(_ p1: Any) -> String {
