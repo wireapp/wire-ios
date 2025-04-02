@@ -48,8 +48,6 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     var supportsActions: Bool = false
 
-    var showEphemeralTimer: Bool = false
-
     var containsHighlightableContent: Bool = false
 
     var message: ZMConversationMessage?

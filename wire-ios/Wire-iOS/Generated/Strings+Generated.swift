@@ -1735,6 +1735,8 @@ internal enum L10n {
         internal static let details = L10n.tr("Localizable", "content.message.details", fallback: "Details")
         /// Download
         internal static let download = L10n.tr("Localizable", "content.message.download", fallback: "Download")
+        /// Edited
+        internal static let edited = L10n.tr("Localizable", "content.message.edited", fallback: "Edited")
         /// Reveal
         internal static let goToConversation = L10n.tr("Localizable", "content.message.go_to_conversation", fallback: "Reveal")
         /// Like
@@ -1862,8 +1864,6 @@ internal enum L10n {
         internal static let isVerified = L10n.tr("Localizable", "content.system.is_verified", fallback: "All fingerprints are verified")
         /// Tap to like
         internal static let likeTooltip = L10n.tr("Localizable", "content.system.like_tooltip", fallback: "Tap to like")
-        /// Delivered
-        internal static let messageDeliveredTimestamp = L10n.tr("Localizable", "content.system.message_delivered_timestamp", fallback: "Delivered")
         /// %@ turned read receipts off for everyone
         internal static func messageReadReceiptOff(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_read_receipt_off", String(describing: p1), fallback: "%@ turned read receipts off for everyone")
@@ -1882,10 +1882,6 @@ internal enum L10n {
         }
         /// Read receipts are on
         internal static let messageReadReceiptOnAddToGroup = L10n.tr("Localizable", "content.system.message_read_receipt_on_add_to_group", fallback: "Read receipts are on")
-        /// Seen
-        internal static let messageReadTimestamp = L10n.tr("Localizable", "content.system.message_read_timestamp", fallback: "Seen")
-        /// Sent
-        internal static let messageSentTimestamp = L10n.tr("Localizable", "content.system.message_sent_timestamp", fallback: "Sent")
         /// %@ set the message timer to %@
         internal static func messageTimerChanges(_ p1: Any, _ p2: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_changes", String(describing: p1), String(describing: p2), fallback: "%@ set the message timer to %@")
@@ -1952,8 +1948,6 @@ internal enum L10n {
         }
         /// You
         internal static let participantsYou = L10n.tr("Localizable", "content.system.participants_you", fallback: "You")
-        /// Sending…
-        internal static let pendingMessageTimestamp = L10n.tr("Localizable", "content.system.pending_message_timestamp", fallback: "Sending…")
         /// Plural format key: "%@%#@d_number_of_others@ started using %#@d_new_devices@"
         internal static func peopleStartedUsing(_ p1: Any, _ p2: Int, _ p3: Int) -> String {
           return L10n.tr("Localizable", "content.system.people_started_using", String(describing: p1), p2, p3, fallback: "Plural format key: \"%@%#@d_number_of_others@ started using %#@d_new_devices@\"")
