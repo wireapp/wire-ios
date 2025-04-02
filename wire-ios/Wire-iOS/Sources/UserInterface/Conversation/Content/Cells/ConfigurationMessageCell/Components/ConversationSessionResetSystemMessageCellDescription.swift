@@ -30,12 +30,11 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var actionController: ConversationMessageActionController?
 
     var supportsActions: Bool = false
-    var showEphemeralTimer: Bool = false
     var containsHighlightableContent: Bool = false
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
 
-    var configuration: View.Configuration
+    let configuration: View.Configuration
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)

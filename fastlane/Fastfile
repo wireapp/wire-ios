@@ -660,7 +660,6 @@ platform :ios do
         export_env_path = "./.post_build/.env"
         FileUtils.mkdir_p("./.post_build")
 
-        sh "export TEMP='BUILD_INSTALL_LINK=#{install_url}' && echo $TEMP >> #{export_env_path}"
         sh "export TEMP='BUILD_SHA256=#{sha256}' && echo $TEMP >> #{export_env_path}"
     end
 

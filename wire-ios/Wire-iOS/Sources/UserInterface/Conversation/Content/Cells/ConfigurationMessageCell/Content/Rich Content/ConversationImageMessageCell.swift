@@ -175,8 +175,6 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
