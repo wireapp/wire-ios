@@ -41,8 +41,11 @@ public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
         repository: any ChannelAccessRepositoryProtocol
     ) {
         let settings = ChannelAccessSettings(
-            accessLevel: permission == nil ? .public : .private,
-            participantPermission: permission
+            // for MVP only private supported, uncomment for next phase
+            // TODO: [WPB-16860] https://wearezeta.atlassian.net/browse/WPB-16860
+            accessLevel: .private,
+//            accessLevel: permission == nil ? .public : .private,
+            participantPermission: permission ?? .adminsAndMembers
         )
         self.settings = settings
         self.repository = repository
@@ -58,6 +61,7 @@ public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
     }
 
     public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws {
+        try await repository.updateParticipantPermission(to: permission)
         settings.participantPermission = permission
     }
 }

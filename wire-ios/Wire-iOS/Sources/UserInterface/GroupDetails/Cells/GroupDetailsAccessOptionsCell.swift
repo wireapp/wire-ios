@@ -32,8 +32,11 @@ final class GroupDetailsAccessOptionsCell: GroupDetailsDisclosureOptionsCell {
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        status = conversation.accessLevelPermission == nil ? L10n.Localizable.ChannelAccessLevel.public : L10n
-            .Localizable.ChannelAccessLevel.public
+        // as for MVP only private channels are supported
+        // TODO: [WPB-16860] https://wearezeta.atlassian.net/browse/WPB-16860
+        status = L10n.Localizable.ChannelAccessLevel.private
+//        status = conversation.accessLevelPermission == nil ? L10n.Localizable.ChannelAccessLevel.public : L10n
+//            .Localizable.ChannelAccessLevel.public
     }
 
     override var isHighlighted: Bool {

@@ -25,15 +25,27 @@ final class ChannelAccessUseCaseTests: XCTestCase {
 
     lazy var repo = MockChannelAccessRepositoryProtocol()
 
-    func testInit_withNilPermission_setsPublicAccessLevel() {
-        let useCase = ChannelAccessUseCase(
-            permission: nil,
-            repository: repo
-        )
-
-        XCTAssertEqual(useCase.settings.accessLevel, .public)
-        XCTAssertNil(useCase.settings.participantPermission)
-    }
+// for channels MVP, only public is supported, comment out for next phase
+// TODO: [WPB-16860] https://wearezeta.atlassian.net/browse/WPB-16860
+//    func testInit_withNilPermission_setsPublicAccessLevel() {
+//        let useCase = ChannelAccessUseCase(
+//            permission: nil,
+//            repository: repo
+//        )
+//
+//        XCTAssertEqual(useCase.settings.accessLevel, .public)
+//        XCTAssertNil(useCase.settings.participantPermission)
+//    }
+//    
+//    func testUpdateParticipantPermission_changesFromPublicToPrivate() async throws {
+//        let useCase = ChannelAccessUseCase(permission: nil, repository: repo) // means public
+//        XCTAssertEqual(useCase.settings.accessLevel, .public)
+//
+//        try await useCase.updateAccessLevel(to: .private)
+//
+//        XCTAssertEqual(useCase.settings.participantPermission, .adminsAndMembers)
+//        XCTAssertEqual(useCase.settings.accessLevel, .private)
+//    }
 
     func testInit_withPermission_setsPrivateAccessLevelAndPermissionAdmins() {
         let useCase = ChannelAccessUseCase(permission: .admins, repository: repo)
@@ -58,15 +70,4 @@ final class ChannelAccessUseCaseTests: XCTestCase {
 
         XCTAssertEqual(useCase.settings.participantPermission, .adminsAndMembers)
     }
-
-    func testUpdateParticipantPermission_changesFromPublicToPrivate() async throws {
-        let useCase = ChannelAccessUseCase(permission: nil, repository: repo) // means public
-        XCTAssertEqual(useCase.settings.accessLevel, .public)
-
-        try await useCase.updateAccessLevel(to: .private)
-
-        XCTAssertEqual(useCase.settings.participantPermission, .adminsAndMembers)
-        XCTAssertEqual(useCase.settings.accessLevel, .private)
-    }
-
 }
