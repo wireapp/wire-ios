@@ -297,7 +297,7 @@ final class ProfileDetailsContentController: NSObject,
                 style: .default,
                 reuseIdentifier: messageProtocolCellID
             )
-            cell.propertyName = "Message protocol"
+            cell.propertyName = L10n.Localizable.GroupDetails.MessageProtocol.title
             cell.propertyValue = messageProtocol.rawValue
             return cell
         }
