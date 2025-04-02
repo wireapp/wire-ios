@@ -165,7 +165,9 @@ final class ShareViewControllerTests: XCTestCase {
         sut = ShareViewController<MockShareViewControllerConversation, MockShareableMessage>(
             shareable: message,
             destinations: [groupConversation, oneToOneConversation],
-            showPreview: true, allowsMultipleSelection: allowsMultipleSelection
+            showPreview: true,
+            allowsMultipleSelection: allowsMultipleSelection,
+            mainCoordinator: MockMainCoordinator()
         )
     }
 
