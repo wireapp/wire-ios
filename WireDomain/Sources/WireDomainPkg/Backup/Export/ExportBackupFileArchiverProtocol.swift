@@ -23,8 +23,8 @@ public protocol ExportBackupFileArchiverProtocol {
 
     /// Creates a ZIP file at `destinationURL` from the file or directory at `sourceURL`.
     func zipResources(
-        at resourceURLs: URL,
-        to destinationURL: URL
+        at resourceURLs: [URL],
+        into destinationURL: URL
     ) throws
 
 }

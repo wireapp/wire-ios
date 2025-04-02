@@ -18,43 +18,45 @@
 
 import Foundation
 import WireBackup
+import WireFoundation
 
 final class ExportBackupFileZipper2FileZipperAdapter: FileZipper {
 
     let fileManager: FileManager
     let fileArchiver: any ExportBackupFileArchiverProtocol
+    let currentDateProvider: any CurrentDateProviding
 
     init(
         fileManager: FileManager,
-        fileArchiver: any ExportBackupFileArchiverProtocol
+        fileArchiver: any ExportBackupFileArchiverProtocol,
+        currentDateProvider: any CurrentDateProviding
     ) {
         self.fileManager = fileManager
         self.fileArchiver = fileArchiver
+        self.currentDateProvider = currentDateProvider
     }
 
     func zip(entries: [String]) throws -> String {
-        // create temporary directories
-        // TODO: pass incoming reference to determine directory
-        let targetDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-            .appending(path: "target", directoryHint: .isDirectory)
-        try fileManager.createDirectory(at: targetDirectory, withIntermediateDirectories: true)
 
+        let targetURLs = entries.map { entry in
+            URL(filePath: entry, directoryHint: .notDirectory)
+        }
+
+        // create temporary directory for the destination file
         let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             .appending(path: "destination", directoryHint: .isDirectory)
         try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
 
         // generate a filename
-        let iso8601Date = Date.ISO8601FormatStyle().format(.now)
+        let iso8601Date = Date.ISO8601FormatStyle().format(currentDateProvider.now)
         let filename = iso8601Date + "_backup.zip"
         let destinationURL = destinationDirectory.appendingPathComponent(filename, isDirectory: false)
 
-        // copy the files
-        // TODO: implement
-
-        // xxx
-        try fileArchiver.zipResources(at: targetDirectory, to: destinationURL)
+        // call zip library
+        try fileArchiver.zipResources(at: targetURLs, into: destinationURL)
 
         return destinationURL.path()
+
     }
 
 }

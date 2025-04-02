@@ -18,19 +18,25 @@
 
 import WireBackup
 import WireDomainPkgSupport
+import WireFoundationSupport
 import Testing
 
 @testable import WireDomainPkg
 
 struct ExportBackupFileZipper2FileZipperAdapterTests {
 
-    @Test func todo() async throws {
+    @Test func testFileArchiverInvocation() async throws {
         // Given
         let mockFileArchiver = MockExportBackupFileArchiverProtocol()
-        mockFileArchiver.zipResourcesAtTo_MockMethod = { resources, destination in }
+        mockFileArchiver.zipResourcesAtInto_MockMethod = { resources, destination in }
+
+        let mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-02T14:42:12+02:00")
+
         let sut = ExportBackupFileZipper2FileZipperAdapter(
             fileManager: .default,
-            fileArchiver: mockFileArchiver
+            fileArchiver: mockFileArchiver,
+            currentDateProvider: mockDateProvider
         )
 
         // When
@@ -41,23 +47,14 @@ struct ExportBackupFileZipper2FileZipperAdapterTests {
                 URL(filePath: "/i/j/k", directoryHint: .notDirectory).path()
             ]
         )
+        let destinationURL = URL(filePath: destination, directoryHint: .notDirectory)
 
         // Then
-        print(destination)
+        #expect(mockFileArchiver.zipResourcesAtInto_Invocations.count == 1)
+        let invocation = try #require(mockFileArchiver.zipResourcesAtInto_Invocations.first)
+        #expect(invocation.resourceURLs.map { $0.path() } == ["/a/b/c", "/e/f/g", "/i/j/k"])
+        #expect(destinationURL.lastPathComponent == "2025-04-02T12:42:12Z_backup.zip")
+        #expect(destinationURL.deletingLastPathComponent().lastPathComponent == "destination")
     }
 
 }
-
-/*
-private final class MockExportBackupFileArchiver: ExportBackupFileArchiverProtocol {
-
-//    func zip(entries: [String]) throws -> String {
-//        entries.joined(separator: "\n")
-//    }
-
-    func zipResources(at resourceURLs: URL, to destinationURL: URL) throws {
-        fatalError()
-    }
-
-}
-*/
