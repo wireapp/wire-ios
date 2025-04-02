@@ -222,7 +222,12 @@ final class ParticipantsCellViewModel {
         else { return nil }
 
         let senderName = name(for: sender).capitalized
-        return formatter.heading(senderName: senderName, senderIsSelf: sender.isSelfUser, convName: conversationName)
+        return formatter.heading(
+            senderName: senderName,
+            senderIsSelf: sender.isSelfUser,
+            convName: conversationName,
+            isChannel: message.conversationLike?.isChannel == true
+        )
     }
 
     func attributedTitle() -> NSAttributedString? {

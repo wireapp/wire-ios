@@ -123,11 +123,20 @@ final class ParticipantsStringFormatter {
     func heading(
         senderName: String,
         senderIsSelf: Bool,
-        convName: String
+        convName: String,
+        isChannel: Bool
     ) -> NSAttributedString {
-        // "You/Bob started the conversation"
-        let key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n
-            .Localizable.Content.System.Conversation.WithName.title(senderName)
+        let key: String
+        if isChannel {
+            // "You/Bob started the channel"
+            key = senderIsSelf ? L10n.Localizable.Content.System.Channel.WithName.titleYou(senderName) : L10n
+                .Localizable.Content.System.Channel.WithName.title(senderName)
+        } else {
+            // "You/Bob started the conversation"
+            key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n
+                .Localizable.Content.System.Conversation.WithName.title(senderName)
+        }
+
         let text = key && font
 
         // "Italy Trip"

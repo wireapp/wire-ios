@@ -2044,6 +2044,18 @@ internal enum L10n {
           /// You can now decrypt messages from yourself. To recover lost messages, you need to resend them.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt_resolved.self", fallback: "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.")
         }
+        internal enum Channel {
+          internal enum WithName {
+            /// %@ started the channel
+            internal static func title(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.with_name.title", String(describing: p1), fallback: "%@ started the channel")
+            }
+            /// %@ started the channel
+            internal static func titleYou(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.with_name.title-you", String(describing: p1), fallback: "%@ started the channel")
+            }
+          }
+        }
         internal enum Conversation {
           internal enum Guest {
             /// %@ joined
