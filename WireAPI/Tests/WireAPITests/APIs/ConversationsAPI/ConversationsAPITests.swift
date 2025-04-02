@@ -1363,10 +1363,10 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Invalid_Conversation_ID() async throws {
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_No_Team_Found() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .notFound, label: "cnv")
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .notFound, label: "no-team")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1375,7 +1375,7 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(suts.count, supportedVersions.count)
 
         for sut in suts {
-            await XCTAssertThrowsErrorAsync(ConversationsAPIError.invalidConversationID) {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.teamNotFound) {
                 try await sut.addChannelPermission(
                     conversationID: Scaffolding.conversationID.uuidString,
                     conversationDomain: Scaffolding.domain,
@@ -1385,7 +1385,7 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Conversation_Not_Found() async throws {
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_No_Conversation_Found() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
         let apiService = MockAPIServiceProtocol.withError(statusCode: .notFound, label: "no-conversation")
@@ -1398,6 +1398,51 @@ final class ConversationsAPITests: XCTestCase {
 
         for sut in suts {
             await XCTAssertThrowsErrorAsync(ConversationsAPIError.conversationNotFound) {
+                try await sut.addChannelPermission(
+                    conversationID: Scaffolding.conversationID.uuidString,
+                    conversationDomain: Scaffolding.domain,
+                    permission: .admins
+                )
+            }
+        }
+    }
+
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Insufficient_Authorization(
+    ) async throws {
+        // given
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "action-denied")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficienAuthorization) {
+                try await sut.addChannelPermission(
+                    conversationID: Scaffolding.conversationID.uuidString,
+                    conversationDomain: Scaffolding.domain,
+                    permission: .admins
+                )
+            }
+        }
+    }
+
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Invalid_Operation() async throws {
+        // given
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "invalid-op")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.invalidOperation) {
                 try await sut.addChannelPermission(
                     conversationID: Scaffolding.conversationID.uuidString,
                     conversationDomain: Scaffolding.domain,
@@ -1429,10 +1474,11 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Not_A_Team_Admin_Or_Owner() async throws {
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Conversation_Access_Denied(
+    ) async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "action-denied")
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "access-denied")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1441,7 +1487,7 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(suts.count, supportedVersions.count)
 
         for sut in suts {
-            await XCTAssertThrowsErrorAsync(ConversationsAPIError.notATeamAdminOrOwner) {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.accessDenied) {
                 try await sut.addChannelPermission(
                     conversationID: Scaffolding.conversationID.uuidString,
                     conversationDomain: Scaffolding.domain,
@@ -1451,10 +1497,10 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Not_A_Channel() async throws {
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Access_Denied() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "invalid-op")
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "access-denied")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1463,7 +1509,124 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(suts.count, supportedVersions.count)
 
         for sut in suts {
-            await XCTAssertThrowsErrorAsync(ConversationsAPIError.notAChannel) {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.accessDenied) {
+                try await sut.addChannelPermission(
+                    conversationID: Scaffolding.conversationID.uuidString,
+                    conversationDomain: Scaffolding.domain,
+                    permission: .admins
+                )
+            }
+        }
+    }
+
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Not_A_Team_Member() async throws {
+        // given
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "no-team-member")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.noTeamMember) {
+                try await sut.addChannelPermission(
+                    conversationID: Scaffolding.conversationID.uuidString,
+                    conversationDomain: Scaffolding.domain,
+                    permission: .admins
+                )
+            }
+        }
+    }
+
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Not_Connected() async throws {
+        // given
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "not-connected")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.usersNotConnected) {
+                try await sut.addChannelPermission(
+                    conversationID: Scaffolding.conversationID.uuidString,
+                    conversationDomain: Scaffolding.domain,
+                    permission: .admins
+                )
+            }
+        }
+    }
+
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Operation_Denied() async throws {
+        // given
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "operation-denied")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.insufficientPermissions) {
+                try await sut.addChannelPermission(
+                    conversationID: Scaffolding.conversationID.uuidString,
+                    conversationDomain: Scaffolding.domain,
+                    permission: .admins
+                )
+            }
+        }
+    }
+
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Unreachable_Backends() async throws {
+        // given
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.unreachableBackends) {
+                try await sut.addChannelPermission(
+                    conversationID: Scaffolding.conversationID.uuidString,
+                    conversationDomain: Scaffolding.domain,
+                    permission: .admins
+                )
+            }
+        }
+    }
+
+    func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Non_Federating_Backends() async throws {
+
+        // given
+        let supportedVersions = APIVersion.v8.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.conflict, "testAddChannelPermission_givenV8AndFailureResponse409"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.nonFederatingBackends(["string"])) {
                 try await sut.addChannelPermission(
                     conversationID: Scaffolding.conversationID.uuidString,
                     conversationDomain: Scaffolding.domain,
@@ -1552,9 +1715,13 @@ extension ConversationsAPIError: Equatable {
             true
         case (.unreachableBackends, .unreachableBackends):
             true
-        case (.notATeamAdminOrOwner, .notATeamAdminOrOwner):
+        case (.insufficienAuthorization, .insufficienAuthorization):
             true
-        case (.notAChannel, .notAChannel):
+        case (.insufficientPermissions, .insufficientPermissions):
+            true
+        case (.invalidOperation, .invalidOperation):
+            true
+        case (.teamNotFound, .teamNotFound):
             true
         default: false
         }

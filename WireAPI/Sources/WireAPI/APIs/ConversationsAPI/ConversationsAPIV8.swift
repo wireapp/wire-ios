@@ -100,7 +100,7 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
     ) async throws {
         let input = ChannelPermissionParametersV8(from: permission)
         let body = try JSONEncoder.defaultEncoder.encode(input)
-        let path = "\(pathPrefix)/conversation/\(conversationDomain)/\(conversationID)/add-permission"
+        let path = "\(pathPrefix)/conversations/\(conversationDomain)/\(conversationID)/add-permission"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.put)
@@ -112,17 +112,40 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
             requiringAccessToken: true
         )
 
-        // TODO: [WPB-16708] When Swagger doc is updated by backend, ensure failure cases are correct.
-        // https://staging-nginz-https.zinfra.io/v8/api/swagger-ui/
+        do {
+            return try ResponseParser()
+                .success(code: .ok) // Add permissions updated
+                .success(code: .noContent) // Add permissions unchanged
+                .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+                .failure(code: .notFound, label: "no-team", error: ConversationsAPIError.teamNotFound)
+                .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
+                .failure(
+                    code: .forbidden,
+                    label: "action-denied",
+                    error: ConversationsAPIError.insufficienAuthorization
+                )
+                .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.invalidOperation)
+                .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+                .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
+                .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
+                .failure(
+                    code: .forbidden,
+                    label: "operation-denied",
+                    error: ConversationsAPIError.insufficientPermissions
+                )
+                .failure(code: .conflict, decodableError: NonFederatingBackendErrorResponseV4.self)
+                .failure(code: .unreachable, error: ConversationsAPIError.unreachableBackends)
+                .parse(code: response.statusCode, data: data)
+        } catch {
+            if let nonFederatingDomains = error as? NonFederatingBackendErrorResponseV4 {
+                throw ConversationsAPIError.nonFederatingBackends(
+                    nonFederatingDomains.nonFederatingBackends
+                )
+            } else {
+                throw error
+            }
+        }
 
-        return try ResponseParser()
-            .success(code: .ok)
-            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
-            .failure(code: .notFound, label: "cnv", error: ConversationsAPIError.invalidConversationID)
-            .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
-            .failure(code: .forbidden, label: "action-denied", error: ConversationsAPIError.notATeamAdminOrOwner)
-            .failure(code: .forbidden, label: "invalid-op", error: ConversationsAPIError.notAChannel)
-            .parse(code: response.statusCode, data: data)
     }
 }
 
