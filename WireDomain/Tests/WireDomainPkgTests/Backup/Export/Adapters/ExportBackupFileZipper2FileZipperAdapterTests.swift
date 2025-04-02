@@ -25,11 +25,24 @@ import Testing
 struct ExportBackupFileZipper2FileZipperAdapterTests {
 
     @Test func todo() async throws {
+        // Given
         let mockFileArchiver = MockExportBackupFileArchiverProtocol()
-        let sut = ExportBackupFileZipper2FileZipperAdapter(fileArchiver: mockFileArchiver)
+        mockFileArchiver.zipResourcesAtTo_MockMethod = { resources, destination in }
+        let sut = ExportBackupFileZipper2FileZipperAdapter(
+            fileManager: .default,
+            fileArchiver: mockFileArchiver
+        )
 
-        let destination = try sut.zip(entries: ["a", "b", "c"])
+        // When
+        let destination = try sut.zip(
+            entries: [
+                URL(filePath: "/a/b/c", directoryHint: .notDirectory).path(),
+                URL(filePath: "/e/f/g", directoryHint: .notDirectory).path(),
+                URL(filePath: "/i/j/k", directoryHint: .notDirectory).path()
+            ]
+        )
 
+        // Then
         print(destination)
     }
 

@@ -16,25 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireBackup
 
 final class ExportBackupFileZipper2FileZipperAdapter: FileZipper {
 
+    let fileManager: FileManager
     let fileArchiver: any ExportBackupFileArchiverProtocol
 
-    init(fileArchiver: any ExportBackupFileArchiverProtocol) {
+    init(
+        fileManager: FileManager,
+        fileArchiver: any ExportBackupFileArchiverProtocol
+    ) {
+        self.fileManager = fileManager
         self.fileArchiver = fileArchiver
     }
 
     func zip(entries: [String]) throws -> String {
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory() + "/target")
-        let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory() + "/destination")
+        // create temporary directories
+        // TODO: pass incoming reference to determine directory
+        let targetDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appending(path: "target", directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: targetDirectory, withIntermediateDirectories: true)
 
-        print(entries)
+        let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appending(path: "destination", directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
 
-        try fileArchiver.zipResources(at: targetURL, to: destinationURL)
+        // generate a filename
+        let iso8601Date = Date.ISO8601FormatStyle().format(.now)
+        let filename = iso8601Date + "_backup.zip"
+        let destinationURL = destinationDirectory.appendingPathComponent(filename, isDirectory: false)
 
+        // copy the files
         // TODO: implement
+
+        // xxx
+        try fileArchiver.zipResources(at: targetDirectory, to: destinationURL)
 
         return destinationURL.path()
     }
