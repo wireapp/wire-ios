@@ -32,8 +32,6 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
