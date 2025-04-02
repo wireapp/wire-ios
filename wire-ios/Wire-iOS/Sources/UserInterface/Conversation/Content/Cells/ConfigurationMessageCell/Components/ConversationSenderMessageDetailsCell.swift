@@ -296,7 +296,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     ///   - timestamp: The given timestamp of the message
     init(
         sender: UserType,
-        message: ZMConversationMessage,
+        message: ZMConversationMessage
     ) {
         self.message = message
 
@@ -309,7 +309,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         self.configuration = View.Configuration(
             user: sender,
             indicator: indicator,
-            teamRoleIndicator: teamRoleIndicator,
+            teamRoleIndicator: teamRoleIndicator
         )
 
         setupAccessibility(sender)
