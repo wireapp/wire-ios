@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class VerificationCodeViewTests: XCTestCase {
+final class VerificationCodeViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     let testContainerSize = CGSize(width: 390, height: 400)

@@ -24,7 +24,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class LoginViaEmailViewTests: XCTestCase {
+final class LoginViaEmailViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
