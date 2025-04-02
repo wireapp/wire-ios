@@ -722,6 +722,16 @@ extension ConversationTableViewDataSource {
             return false
         }
 
+        // always show if the message was edited {
+        if previousMessage.updatedAt != nil {
+            return false
+        }
+
+        // if the current message is collapsed, show status for the previous
+        if sectionController(at: currentIndex).isCollapsed {
+            return false
+        }
+
         // current message shows sender
         if sections[currentIndex].elements.last?.instance is ConversationSenderMessageCellDescription {
             return false

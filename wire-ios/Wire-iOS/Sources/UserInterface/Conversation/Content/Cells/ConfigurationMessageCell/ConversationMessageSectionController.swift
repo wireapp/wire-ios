@@ -444,7 +444,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return !message.isSent
         }
 
-        return message.deliveryState == .failedToSend || message.isSentBySelfUser
+        return true
     }
 
     private func isMessageWithCollapsedByDefault() -> Bool {
