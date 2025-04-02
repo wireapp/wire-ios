@@ -49,16 +49,16 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.isUserInteractionEnabled = true
         view.setContentHuggingPriority(.required, for: .horizontal)
         view.setContentCompressionResistancePriority(.required, for: .horizontal)
-        view.heightAnchor.constraint(equalToConstant: 32).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 24).isActive = true
         return view
     }()
 
     private lazy var availabilityIndicatorView = {
         let view = AvailabilityIndicatorView(availability: .away)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(equalToConstant: 11).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 11).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 9).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 9).isActive = true
 
         let design = AccountImageViewDesign().availabilityIndicator
         view.availableColor = design.availableColor
@@ -185,12 +185,22 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         wholeViewTapButton.pin(to: self)
 
         avatar.addSubview(availabilityIndicatorView)
-        availabilityIndicatorView.leadingAnchor.constraint(equalTo: avatar.leadingAnchor, constant: 23).isActive = true
-        availabilityIndicatorView.topAnchor.constraint(equalTo: avatar.topAnchor, constant: 23).isActive = true
+        availabilityIndicatorView.trailingAnchor.constraint(
+            equalTo: avatar.trailingAnchor,
+            constant: 3
+        ).isActive = true
+        availabilityIndicatorView.bottomAnchor.constraint(
+            equalTo: avatar.bottomAnchor,
+            constant: 3
+        ).isActive = true
+
+        let spacingView = UIView()
+        spacingView.widthAnchor.constraint(equalToConstant: 13).isActive = true
 
         let stack = UIStackView.horizontal(
             views: [
-                avatar.wrapInView(leadingInset: margins.left - 39, bottomInset: -7),
+                spacingView,
+                avatar,
                 messageTextView,
                 [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
                     .horizontalStack(spacing: 8)
@@ -199,6 +209,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             spacing: 7,
             alignment: .center
         )
+        stack.setCustomSpacing(12, after: avatar)
         stack.setCustomSpacing(10, after: messageTextView)
 
         addSubview(stack)

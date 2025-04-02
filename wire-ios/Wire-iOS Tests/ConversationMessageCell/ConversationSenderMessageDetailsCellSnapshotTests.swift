@@ -63,8 +63,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             user: mockUser,
             indicator: .none,
-            teamRoleIndicator: .externalPartner,
-            shouldShowAuthor: true
+            teamRoleIndicator: .externalPartner
         )
 
         // WHEN
@@ -80,8 +79,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             user: mockUser,
             indicator: .none,
-            teamRoleIndicator: .federated,
-            shouldShowAuthor: true
+            teamRoleIndicator: .federated
         )
 
         // WHEN
@@ -97,8 +95,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             user: mockUser,
             indicator: .none,
-            teamRoleIndicator: .guest,
-            shouldShowAuthor: true
+            teamRoleIndicator: .guest
         )
 
         // WHEN
@@ -114,8 +111,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             user: mockUser,
             indicator: .none,
-            teamRoleIndicator: .service,
-            shouldShowAuthor: true
+            teamRoleIndicator: .service
         )
 
         // WHEN
@@ -131,8 +127,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             user: mockUser,
             indicator: .none,
-            teamRoleIndicator: .none,
-            shouldShowAuthor: true
+            teamRoleIndicator: .none
         )
 
         // WHEN
@@ -147,8 +142,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             user: mockUser,
             indicator: .deleted,
-            teamRoleIndicator: .none,
-            shouldShowAuthor: true
+            teamRoleIndicator: .none
         )
 
         // WHEN
@@ -168,8 +162,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             user: mockUser,
             indicator: .deleted,
-            teamRoleIndicator: .guest,
-            shouldShowAuthor: true
+            teamRoleIndicator: .guest
         )
 
         // WHEN
@@ -186,8 +179,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
             user: mockUser,
             indicator: .none,
-            teamRoleIndicator: .none,
-            shouldShowAuthor: true
+            teamRoleIndicator: .none
         )
 
         // WHEN

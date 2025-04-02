@@ -183,7 +183,6 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             userSession: userSession,
             useInvertedIndices: false,
             contentWidth: width,
-            shouldShowAuthor: true,
             userDefaults: mockUserDefaults
         )
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }

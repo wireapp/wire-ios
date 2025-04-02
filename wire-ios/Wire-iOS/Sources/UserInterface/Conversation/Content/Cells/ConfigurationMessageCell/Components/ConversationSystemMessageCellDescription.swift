@@ -63,11 +63,7 @@ enum ConversationSystemMessageCellDescription {
             return []
 
         case .messageDeletedForEveryone:
-            let senderCell = ConversationSenderMessageCellDescription(
-                sender: sender,
-                message: message,
-                shouldShowAuthor: true
-            )
+            let senderCell = ConversationSenderMessageCellDescription(sender: sender, message: message)
             return [AnyConversationMessageCellDescription(senderCell)]
 
         case .messageTimerUpdate:

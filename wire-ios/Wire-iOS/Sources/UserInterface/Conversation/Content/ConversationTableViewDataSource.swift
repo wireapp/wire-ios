@@ -240,8 +240,7 @@ final class ConversationTableViewDataSource: NSObject {
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
             useInvertedIndices: true,
-            contentWidth: contentWidth,
-            shouldShowAuthor: conversation.conversationType != .oneOnOne
+            contentWidth: contentWidth
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self
@@ -656,7 +655,7 @@ extension ConversationTableViewDataSource {
             }
 
             // collapse space between subsequent messages
-            if collapseSpaceBefore(currentSectionFirstElement: currentSectionFirstElement) {
+            if isSpaceCollapsedBefore(currentSectionFirstElement: currentSectionFirstElement) {
                 if !(previousSectionLastElement is ConversationMessageToolboxCellDescription) {
                     previousSectionLastElement.bottomMargin = 2
                 }
@@ -723,6 +722,16 @@ extension ConversationTableViewDataSource {
             return false
         }
 
+        // always show if the message was edited {
+        if previousMessage.updatedAt != nil {
+            return false
+        }
+
+        // if the current message is collapsed, show status for the previous
+        if sectionController(at: currentIndex).isCollapsed {
+            return false
+        }
+
         // current message shows sender
         if sections[currentIndex].elements.last?.instance is ConversationSenderMessageCellDescription {
             return false
@@ -736,7 +745,7 @@ extension ConversationTableViewDataSource {
         return previousMessage.deliveryState == currentMessage.deliveryState
     }
 
-    private func collapseSpaceBefore(
+    private func isSpaceCollapsedBefore(
         currentSectionFirstElement cellDescription: any ConversationMessageCellDescription
     ) -> Bool {
         if cellDescription is ConversationTextMessageCellDescription ||
