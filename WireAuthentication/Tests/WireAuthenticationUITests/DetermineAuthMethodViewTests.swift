@@ -44,9 +44,9 @@ class DetermineAuthMethodViewTests: XCTestCase {
 
         let screenBounds = UIScreen.main.bounds
         for (index, emailOrSSOCode) in variants.enumerated() {
-           
+
             let factory = FakeDetermineAuthMethodFactory(emailOrSSOCode: emailOrSSOCode)
-            
+
             let view = DetermineAuthMethodView(factory: factory)
                 .inNavigationStack()
                 .environment(\.wireTextStyleMapping, WireTextStyleMapping())

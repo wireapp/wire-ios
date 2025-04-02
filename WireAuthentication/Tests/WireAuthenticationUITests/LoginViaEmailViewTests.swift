@@ -50,7 +50,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: true,
             didDetectDomainConflict: false
         ))
-            .inNavigationStack()
+        .inNavigationStack()
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -74,7 +74,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: true,
             didDetectDomainConflict: false
         ))
-            .inNavigationStack()
+        .inNavigationStack()
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
@@ -99,7 +99,7 @@ class LoginViaEmailViewTests: XCTestCase {
             canCreateAccount: false,
             didDetectDomainConflict: false
         ))
-            .inNavigationStack()
+        .inNavigationStack()
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -201,7 +201,7 @@ class LoginViaEmailViewTests: XCTestCase {
             didDetectDomainConflict: false
 
         ))
-            .inNavigationStack()
+        .inNavigationStack()
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
