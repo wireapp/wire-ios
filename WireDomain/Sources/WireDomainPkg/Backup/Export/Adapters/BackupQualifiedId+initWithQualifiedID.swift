@@ -16,10 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import WireAPI
+import WireBackup
 
-// sourcery: AutoMockable
-/// Abstracts accessing the current system date in order to be mockable in unit tests.
-public protocol CurrentDateProviding: Sendable {
-    var now: Date { get }
+extension BackupQualifiedId {
+
+    convenience init(_ qualifiedID: QualifiedID) {
+        self.init(
+            id: qualifiedID.uuid.uuidString,
+            domain: qualifiedID.domain
+        )
+    }
 }

@@ -17,24 +17,44 @@
 //
 
 public import WireAPI
+public import WireFoundation
 
 @preconcurrency import WireBackup
 
 public struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
 
-    // let mpBackupExporter: MPBackupExporter
-    //let fileZipper: any FileZipper
+//     let mpBackupExporter: MPBackupExporter
+    let fileArchiver: any ExportBackupFileArchiverProtocol
+    let currentDateProvider: any CurrentDateProviding
+    // TODO: peristence container or context
 
     public init(
-        selfUserID: QualifiedID
+        fileArchiver: any ExportBackupFileArchiverProtocol,
+        currentDateProvider: any CurrentDateProviding
     ) {
-        //zip.zip(entries: <#T##[String]#>)
-        fatalError()
-//        mp = MPBackupExporter(
-//            selfUserId: BackupQualifiedId(id: <#T##String#>, domain: <#T##String#>),
-//            workDirectory: <#T##String#>,
-//            outputDirectory: <#T##String#>,
-//            fileZipper: <#T##any FileZipper#>
-//        )
+        self.fileArchiver = fileArchiver
+        self.currentDateProvider = currentDateProvider
+    }
+
+    public func invoke(
+        selfUserID: QualifiedID
+    ) async throws {
+        fatalError("TODO")
+
+        let backupExporter = MPBackupExporter(
+            selfUserId: BackupQualifiedId(selfUserID),
+            workDirectory: "TODO0",
+            outputDirectory: "TODO1",
+            fileZipper: ExportBackupFileZipper2FileZipperAdapter(
+                fileManager: .default,
+                fileArchiver: fileArchiver,
+                currentDateProvider: currentDateProvider
+            )
+        )
+
+        // backupExporter.add(user: <#T##BackupUser#>)
+        // backupExporter.add(message: <#T##BackupMessage#>)
+        // backupExporter.add(conversation: <#T##BackupConversation#>)
+        // try await backupExporter.finalize(password: <#T##String?#>)
     }
 }
