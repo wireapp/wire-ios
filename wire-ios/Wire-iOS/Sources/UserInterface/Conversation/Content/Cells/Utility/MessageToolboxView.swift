@@ -332,7 +332,7 @@ final class MessageToolboxView: UIView {
             hideAndCleanStatusLabel()
             timestampSeparatorContainer.isHidden = true
             statusSeparatorContainer.isHidden = true
-            countdownView.isHidden = true
+            countdownContainer.isHidden = true
             countdownLabel.isHidden = true
             messageFailureView.isHidden = true
             editedLabel.isHidden = true
@@ -340,7 +340,7 @@ final class MessageToolboxView: UIView {
         case let .sendFailure(detailsString):
             hideAndCleanStatusLabel()
             statusSeparatorContainer.isHidden = true
-            countdownView.isHidden = true
+            countdownContainer.isHidden = true
             countdownLabel.isHidden = true
             timestampSeparatorContainer.isHidden = false
             messageFailureView.isHidden = false
@@ -357,7 +357,7 @@ final class MessageToolboxView: UIView {
             timestampSeparatorContainer.isHidden = timestamp.isEmpty || state == nil
             statusSeparatorContainer.isHidden = (timestamp.isEmpty && state == nil) || countdown.isEmpty
             countdownView.setProgress(dataSource.message.countdownProgress ?? 0)
-            countdownView.isHidden = countdown.isEmpty
+            countdownContainer.isHidden = countdown.isEmpty
             countdownLabel.text = countdown
             countdownLabel.isHidden = countdown.isEmpty
 
