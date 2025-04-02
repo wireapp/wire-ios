@@ -62,8 +62,9 @@ package class ChannelAccessViewModel: ObservableObject {
 
     func applyAccessLevel(_ level: ChannelAccessLevel) async {
         isLoading = true
-        try? await useCase.updateAccessLevel(to: level)
-        settings = useCase.settings
+        do {
+            settings = try await useCase.updateAccessLevel(to: level)
+        } catch {}
         isLoading = false
     }
 
@@ -71,10 +72,12 @@ package class ChannelAccessViewModel: ObservableObject {
         await applyParticipantPermission(permission)
     }
 
-    func applyParticipantPermission(_ permission: ChannelAccessLevelPermission) async {
+    private func applyParticipantPermission(_ permission: ChannelAccessLevelPermission) async {
         isLoading = true
-        try? await useCase.updateParticipantPermission(to: permission)
-        settings.participantPermission = permission
+        do {
+            let updatedSettings = try await useCase.updateParticipantPermission(to: permission)
+            self.settings = updatedSettings
+        } catch {}
         isLoading = false
     }
 }

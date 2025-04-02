@@ -22,8 +22,8 @@ public import WireConversationsAPI
 @MainActor
 public protocol ChannelAccessUseCaseProtocol {
     var settings: ChannelAccessSettings { get }
-    func updateAccessLevel(to level: ChannelAccessLevel) async throws
-    func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws
+    func updateAccessLevel(to level: ChannelAccessLevel) async throws -> ChannelAccessSettings
+    func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws -> ChannelAccessSettings
 }
 
 @MainActor
@@ -31,9 +31,13 @@ public protocol ChannelAccessRepositoryProtocol {
     func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws
 }
 
+public enum ChannelAccessError: Error {
+    case notAllowed
+}
+
 public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
 
-    public var settings: ChannelAccessSettings
+    public private(set) var settings: ChannelAccessSettings
     public let repository: any ChannelAccessRepositoryProtocol
 
     public init(
@@ -51,17 +55,20 @@ public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
         self.repository = repository
     }
 
-    public func updateAccessLevel(to level: ChannelAccessLevel) async throws {
+    public func updateAccessLevel(to level: ChannelAccessLevel) async throws -> ChannelAccessSettings {
         guard settings.accessLevel == .public else {
-            return
+            throw ChannelAccessError.notAllowed
         }
         try await repository.updateParticipantPermission(to: .adminsAndMembers) // default value
         settings.accessLevel = level
         settings.participantPermission = .adminsAndMembers
+        return settings
     }
 
-    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws {
+    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws
+        -> ChannelAccessSettings {
         try await repository.updateParticipantPermission(to: permission)
         settings.participantPermission = permission
+        return settings
     }
 }

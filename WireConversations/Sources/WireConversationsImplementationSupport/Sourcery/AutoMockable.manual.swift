@@ -41,12 +41,14 @@ public class MockChannelAccessUseCaseProtocol: ChannelAccessUseCaseProtocol {
     public var updateAccessLevelTo_Invocations: [ChannelAccessLevel] = []
     public var updateAccessLevelTo_MockError: (any Error)?
 
-    public func updateAccessLevel(to level: ChannelAccessLevel) async throws {
+    public func updateAccessLevel(to level: ChannelAccessLevel) async throws -> ChannelAccessSettings {
         updateAccessLevelTo_Invocations.append(level)
 
         if let error = updateAccessLevelTo_MockError {
             throw error
         }
+
+        return underlyingSettings
     }
 
     // MARK: - updateParticipantPermission
@@ -55,12 +57,14 @@ public class MockChannelAccessUseCaseProtocol: ChannelAccessUseCaseProtocol {
     public var updateParticipantPermissionTo_MockError: (any Error)?
 
     @Sendable
-    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws {
+    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws -> ChannelAccessSettings {
         updateParticipantPermissionTo_Invocations.append(permission)
 
         if let error = updateParticipantPermissionTo_MockError {
             throw error
         }
+
+        return underlyingSettings
     }
 
 }

@@ -25,7 +25,6 @@ import WireDesign
 package struct ChannelAccessView: View {
 
     @ObservedObject var viewModel: ChannelAccessViewModel
-    @Environment(\.dismiss) private var dismiss
 
     package init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
