@@ -435,7 +435,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // for all messages that support collapsing and is collapsed
-        if !isMessageWithCollapsedByDefault() && isCollapsed {
+        if !isMessageWithCollapsedByDefault(), isCollapsed {
             // if message failed, always show footer with error message and retry button
             if message.deliveryState == .failedToSend {
                 return true
