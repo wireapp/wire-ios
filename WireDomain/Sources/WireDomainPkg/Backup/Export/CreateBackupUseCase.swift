@@ -18,50 +18,74 @@
 
 public import WireAPI
 public import WireFoundation
+public import WireLogging
 
 @preconcurrency import WireBackup
 
 public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
-//     let mpBackupExporter: MPBackupExporter
     let fileArchiver: any ExportBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
-    // TODO: persistence container or context
+    let selfUserID: QualifiedID
+    // let logger: any LoggerProtocol // TODO: fix Sendable error
 
     public init(
         fileArchiver: any ExportBackupFileArchiverProtocol,
-        currentDateProvider: any CurrentDateProviding
+        currentDateProvider: any CurrentDateProviding,
+        // TODO: inject the persistent container or any CoreData context
+        // TODO: inject the self user id
+        selfUserID: QualifiedID,
+        logger: any LoggerProtocol
     ) {
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
+        self.selfUserID = selfUserID
+        // self.logger = logger
     }
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
-        fatalError()
-    }
+        AsyncThrowingStream { continuation in
+            let task = Task<Void, Never> {
+                do {
 
-    public func invoke(
-        selfUserID: QualifiedID
-    ) async throws {
-        fatalError("TODO")
+                    continuation.yield(.progress(0))
 
-        let backupExporter = MPBackupExporter(
-            selfUserId: BackupQualifiedId(selfUserID),
-            workDirectory: "TODO0",
-            outputDirectory: "TODO1",
-            fileZipper: ExportBackupFileZipper2FileZipperAdapter(
-                fileManager: .default,
-                fileArchiver: fileArchiver,
-                currentDateProvider: currentDateProvider
-            )
-        )
+                    // TODO: use logger
+                    // logger.debug("creating backup ...")
 
-        // TODO: fetch form CoreData and call these methods:
-        // backupExporter.add(user: <#T##BackupUser#>)
-        // backupExporter.add(message: <#T##BackupMessage#>)
-        // backupExporter.add(conversation: <#T##BackupConversation#>)
+                    let backupExporter = MPBackupExporter(
+                        selfUserId: BackupQualifiedId(selfUserID),
+                        workDirectory: "TODO-0", // TODO: pass temporary directory URL
+                        outputDirectory: "TODO-1", // TODO: pass temporary directory URL
+                        fileZipper: ExportBackupFileZipper2FileZipperAdapter(
+                            fileManager: .default,
+                            fileArchiver: fileArchiver,
+                            currentDateProvider: currentDateProvider
+                        )
+                    )
 
-        // TODO: then finalize:
-        // try await backupExporter.finalize(password: <#T##String?#>)
+                    // TODO: fetch form CoreData and call these methods:
+                    // backupExporter.add(user: <#T##BackupUser#>)
+                    // backupExporter.add(message: <#T##BackupMessage#>)
+                    // backupExporter.add(conversation: <#T##BackupConversation#>)
+
+                    // TODO: report accurate progress
+                    continuation.yield(.progress(0.25))
+
+                    // TODO: then finalize:
+                    // try await backupExporter.finalize(password: password)
+
+                    // TODO: send correct URL
+                    continuation.yield(.done(URL(fileURLWithPath: "", isDirectory: false)))
+                    continuation.finish()
+
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
     }
 }
