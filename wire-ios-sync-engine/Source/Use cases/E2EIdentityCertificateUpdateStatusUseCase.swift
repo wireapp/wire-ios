@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLogging
+import WireFoundation
 
 public enum E2EIdentityCertificateUpdateStatus {
 

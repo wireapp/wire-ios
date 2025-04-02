@@ -21,6 +21,8 @@ import WireDomainPkg
 import WireSettingsUI
 import WireSyncEngine
 
+// TODO: [WPB-14592] clean up everything around the legacy backup creation
+
 /// Use case for creating a backup file which can only used by iOS apps.
 struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
 

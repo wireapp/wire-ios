@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystemSupport
 import XCTest
+import WireFoundationSupport
 
 @testable import Wire
 @testable import WireConversationUI
