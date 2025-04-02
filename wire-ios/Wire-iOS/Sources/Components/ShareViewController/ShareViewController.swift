@@ -156,7 +156,10 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
             shareable.share(to: Array(selectedDestinations))
             if let conversation = selectedDestinations.first as? ZMConversation,
                let mainCoordinator = mainCoordinator as? MainCoordinator {
-                mainCoordinator.showConversation(conversation: conversation, message: nil)
+                Task {
+                    await mainCoordinator.showConversationList(conversationFilter: nil)
+                    mainCoordinator.showConversation(conversation: conversation, message: nil)
+                }
             } else {
                 onDismiss?(self, true)
             }
