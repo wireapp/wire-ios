@@ -87,32 +87,37 @@ package struct LoginViaEmailView: View {
             }
         )
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
-            switch destination {
-            case let .verifyLogin(
-                email,
-                password,
-                proxyCredentials
-            ):
-                VerificationCodeView(
-                    factory: viewModel.factory.verificationCodeFactory(
-                        email: email,
-                        password: password,
-                        proxyCredentials: proxyCredentials
-                    )
-                )
-            case let .noHistory(authenticationResult):
-                NoHistoryView(
-                    factory: viewModel.factory.noHistoryFactory(
-                        authenticationResult: authenticationResult
-                    )
-                )
-            }
+            destinationView(destination)
         }
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
 
+    @ViewBuilder
+    func destinationView(_ destination: LoginViaEmailDestination) -> some View {
+        switch destination {
+        case let .verifyLogin(
+            email,
+            password,
+            proxyCredentials
+        ):
+            VerificationCodeView(
+                factory: viewModel.factory.verificationCodeFactory(
+                    email: email,
+                    password: password,
+                    proxyCredentials: proxyCredentials
+                )
+            )
+        case let .noHistory(authenticationResult):
+            NoHistoryView(
+                factory: viewModel.factory.noHistoryFactory(
+                    authenticationResult: authenticationResult
+                )
+            )
+        }
+    }
+    
     @ViewBuilder private var welcomeMessage: some View {
         OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
     }
