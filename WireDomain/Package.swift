@@ -11,7 +11,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../WireAPI")
+        .package(path: "../WireAPI"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
@@ -21,11 +22,28 @@ let package = Package(
                 "WireBackup"
             ]
         ),
+        .target(
+            name: "WireDomainPkgSupport",
+            dependencies: ["WireDomainPkg"],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+        ),
+        .testTarget(
+            name: "WireDomainPkgTests",
+            dependencies: [
+                "WireDomainPkg",
+                "WireDomainPkgSupport"
+            ]
+        ),
+
         .binaryTarget(
             name: "WireBackup",
-            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/2228286f89e83c0dd2a93aab8240e7875fde58ff/WireDomain/Frameworks/WireBackup.xcframework.zip?download=true",
-            checksum: "3dce9e475278e9055ee00bfc5674c3a7231939b6b8e44dbfdbc4e7321841478b"
+            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/eaba540acd2fdb25ec07cc4254c69fb7cce8ffde/WireDomain/Frameworks/WireBackup.xcframework.zip?download=true",
+            checksum: "e482a3d22bbf1141ac67ce26a5f1640f3ff7a55873cf18dce7cb29281edb04e0"
         )
+        // .binaryTarget(
+        //     name: "WireBackup",
+        //     path: "../../wire-android/kalium/backup/build/XCFrameworks/release/WireBackup.xcframework"
+        // )
     ]
 )
 

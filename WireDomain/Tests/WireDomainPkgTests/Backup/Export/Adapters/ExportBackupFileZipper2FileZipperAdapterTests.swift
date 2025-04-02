@@ -16,25 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireAPI
+import WireBackup
+import WireDomainPkgSupport
+import Testing
 
-@preconcurrency import WireBackup
+@testable import WireDomainPkg
 
-public struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
+struct ExportBackupFileZipper2FileZipperAdapterTests {
 
-    // let mpBackupExporter: MPBackupExporter
-    //let fileZipper: any FileZipper
+    @Test func todo() async throws {
+        let mockFileArchiver = MockExportBackupFileArchiverProtocol()
+        let sut = ExportBackupFileZipper2FileZipperAdapter(fileArchiver: mockFileArchiver)
 
-    public init(
-        selfUserID: QualifiedID
-    ) {
-        //zip.zip(entries: <#T##[String]#>)
-        fatalError()
-//        mp = MPBackupExporter(
-//            selfUserId: BackupQualifiedId(id: <#T##String#>, domain: <#T##String#>),
-//            workDirectory: <#T##String#>,
-//            outputDirectory: <#T##String#>,
-//            fileZipper: <#T##any FileZipper#>
-//        )
+        let destination = try sut.zip(entries: ["a", "b", "c"])
+
+        print(destination)
     }
+
 }
+
+/*
+private final class MockExportBackupFileArchiver: ExportBackupFileArchiverProtocol {
+
+//    func zip(entries: [String]) throws -> String {
+//        entries.joined(separator: "\n")
+//    }
+
+    func zipResources(at resourceURLs: URL, to destinationURL: URL) throws {
+        fatalError()
+    }
+
+}
+*/

@@ -16,4 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: declare protocol, implement in Wire-iOS with SSZipArchive
+public import Foundation
+
+// sourcery: AutoMockable
+public protocol ExportBackupFileArchiverProtocol {
+
+    /// Creates a ZIP file at `destinationURL` from the file or directory at `sourceURL`.
+    func zipResources(
+        at resourceURLs: URL,
+        to destinationURL: URL
+    ) throws
+
+}

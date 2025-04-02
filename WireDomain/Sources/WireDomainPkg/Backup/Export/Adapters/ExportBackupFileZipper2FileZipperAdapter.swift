@@ -16,25 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireAPI
+import WireBackup
 
-@preconcurrency import WireBackup
+final class ExportBackupFileZipper2FileZipperAdapter: FileZipper {
 
-public struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
+    let fileArchiver: any ExportBackupFileArchiverProtocol
 
-    // let mpBackupExporter: MPBackupExporter
-    //let fileZipper: any FileZipper
-
-    public init(
-        selfUserID: QualifiedID
-    ) {
-        //zip.zip(entries: <#T##[String]#>)
-        fatalError()
-//        mp = MPBackupExporter(
-//            selfUserId: BackupQualifiedId(id: <#T##String#>, domain: <#T##String#>),
-//            workDirectory: <#T##String#>,
-//            outputDirectory: <#T##String#>,
-//            fileZipper: <#T##any FileZipper#>
-//        )
+    init(fileArchiver: any ExportBackupFileArchiverProtocol) {
+        self.fileArchiver = fileArchiver
     }
+
+    func zip(entries: [String]) throws -> String {
+        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory() + "/target")
+        let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory() + "/destination")
+
+        print(entries)
+
+        try fileArchiver.zipResources(at: targetURL, to: destinationURL)
+
+        // TODO: implement
+
+        return destinationURL.path()
+    }
+
 }
