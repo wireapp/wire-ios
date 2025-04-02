@@ -240,7 +240,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 code: nil,
                 backendInfo: backendInfo
             )
-            router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult)
+            router.navigate(
+                to: DetermineAuthMethodDestination.noHistory(authResult)
             )
         } catch let error as LoginViaSSOUseCaseError {
             switch error {

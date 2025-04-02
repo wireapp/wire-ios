@@ -78,13 +78,13 @@ package struct DetermineAuthMethodView: View {
             sheetView(for: $0)
         }
         .interactiveDismissDisabled()
+        .background(ColorTheme.Backgrounds.surface.color)
         .presentationDragIndicator(.hidden)
     }
 
     // MARK: - Views
 
-    @ViewBuilder
-    private var header: some View {
+    @ViewBuilder private var header: some View {
         HStack {
             Spacer()
                 .frame(maxWidth: .infinity)
@@ -103,8 +103,7 @@ package struct DetermineAuthMethodView: View {
         }
     }
 
-    @ViewBuilder
-    private var message: some View {
+    @ViewBuilder private var message: some View {
         Text(L10n.Authentication.Identity.Input.body)
             .multilineTextAlignment(.leading)
             .wireTextStyle(.body1)
@@ -130,8 +129,7 @@ package struct DetermineAuthMethodView: View {
         }
     }
 
-    @ViewBuilder
-    private var submitButton: some View {
+    @ViewBuilder private var submitButton: some View {
         Button(action: {
             Task {
                 await viewModel.submitEmailOrSSOCode()
@@ -150,8 +148,7 @@ package struct DetermineAuthMethodView: View {
         .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
     }
 
-    @ViewBuilder
-    private var dismissButton: some View {
+    @ViewBuilder private var dismissButton: some View {
         Button {
             viewModel.exitFlow()
         } label: {
@@ -198,46 +195,16 @@ package struct DetermineAuthMethodView: View {
             email,
             backendInfo
         ):
-            if #available(iOS 16.4, *) {
-                SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
-                    guard didConfirm else { return }
-                    Task {
-                        await viewModel.switchBackend(
-                            email: email,
-                            backendInfo: backendInfo
-                        )
-                    }
-                }.presentationBackground(Color.black.opacity(0.7))
-            } else {
-                SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
-                    guard didConfirm else { return }
-                    Task {
-                        await viewModel.switchBackend(
-                            email: email,
-                            backendInfo: backendInfo
-                        )
-                    }
-                }.background(TransparentBackgroundView())
+            SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
+                guard didConfirm else { return }
+                Task {
+                    await viewModel.switchBackend(
+                        email: email,
+                        backendInfo: backendInfo
+                    )
+                }
             }
+            .presentationBackground(Color.black.opacity(0.7))
         }
-    }
-
-}
-
-private struct TransparentBackgroundView: UIViewRepresentable {
-
-    func makeUIView(context: Context) -> UIView {
-        InnerView()
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {}
-
-    private class InnerView: UIView {
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-
-            superview?.superview?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        }
-
     }
 }
