@@ -443,6 +443,15 @@ public class MockConversationLike: ConversationLike {
 
     public var domain: String?
 
+    // MARK: - isChannel
+
+    public var isChannel: Bool {
+        get { return underlyingIsChannel }
+        set(value) { underlyingIsChannel = value }
+    }
+
+    public var underlyingIsChannel: Bool!
+
 
     // MARK: - localParticipantsContain
 
