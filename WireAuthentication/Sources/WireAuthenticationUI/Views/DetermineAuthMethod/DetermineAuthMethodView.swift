@@ -74,8 +74,9 @@ package struct DetermineAuthMethodView: View {
         .navigationDestination(for: DetermineAuthMethodDestination.self) {
             destinationView(for: $0)
         }
-        .sheet(item: $viewModel.modalDestination) {
+        .fullScreenCover(item: $viewModel.modalDestination) {
             sheetView(for: $0)
+                .presentationBackground(Color.black.opacity(0.7))
         }
         .interactiveDismissDisabled()
         .background(ColorTheme.Backgrounds.surface.color)
@@ -204,7 +205,6 @@ package struct DetermineAuthMethodView: View {
                     )
                 }
             }
-            .presentationBackground(Color.black.opacity(0.7))
         }
     }
 }
