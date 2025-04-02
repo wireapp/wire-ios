@@ -77,6 +77,7 @@ package struct LoginViaEmailView: View {
             .padding(32)
             .setPreferredSize(navigationBarHidden: false)
             .customBackButton()
+            .background(ColorTheme.Backgrounds.surface.color)
         }
         .alert(
             item: $viewModel.alert,
