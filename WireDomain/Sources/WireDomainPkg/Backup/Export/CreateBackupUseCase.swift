@@ -21,12 +21,12 @@ public import WireFoundation
 
 @preconcurrency import WireBackup
 
-public struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
+public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
 //     let mpBackupExporter: MPBackupExporter
     let fileArchiver: any ExportBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
-    // TODO: peristence container or context
+    // TODO: persistence container or context
 
     public init(
         fileArchiver: any ExportBackupFileArchiverProtocol,
@@ -34,6 +34,10 @@ public struct ExportBackupUseCase: ExportBackupUseCaseProtocol {
     ) {
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
+    }
+
+    public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
+        fatalError()
     }
 
     public func invoke(
