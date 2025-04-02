@@ -117,7 +117,7 @@ package struct LoginViaEmailView: View {
             )
         }
     }
-    
+
     @ViewBuilder private var welcomeMessage: some View {
         OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
     }

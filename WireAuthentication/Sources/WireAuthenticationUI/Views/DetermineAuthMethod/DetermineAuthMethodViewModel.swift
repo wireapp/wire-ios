@@ -253,6 +253,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 // No op
                 break
             case .noDefaultCodeAvailable:
+                router.popToRoot() // in case backend changed, we force SwiftUI to re-render the navigation
                 router.presentSheet(.authFlow(backendInfo: backendInfo))
             case let .authenticationFailed(samlError):
                 WireLogger.authentication.error(
