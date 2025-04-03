@@ -16,7 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"general.loading" = "Loading…";
 
 "conversation.create.channel.title" = "New channel";
 "conversation.create.channel.subtitle" = "Conversation history and more";
 "conversation.create.group.title" = "New group";
+
+// Channel Access level
+"channel_access_level.public" = "Public";
+"channel_access_level.private" = "Private";
+"channel_access_level.admins" = "Admins";
+"channel_access_level.everyone" = "Admins and members";
+"channel_access_level.navigation_title" = "Access";
+
+"channel_access_level.participants_header" = "Add participants";
+"channel_access_level.participants_header" = "Add participants";
+
+"channel_access_level.access_footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public.";
+"channel_access_level.participants_footer" = "Select who can add participants to a private channel";
+
+
+"channel_access_level.change_level_alert.title" = "Channel access";
+"channel_access_level.change_level_alert.message" = "Changing the channel access to private will have the following implications:
+
+Team members can not join the channel themselves anymore.
+New members can only be added by channel admins or other members, depending on the “Add participants” setting.
+The channel access can not be turned back to public anymore.
+
+Do you want to change channel access to private?";
+
+"channel_access_level.change_level_alert.button.change" = "Change";
+"channel_access_level.change_level_alert.button.cancel" = "Cancel";
+

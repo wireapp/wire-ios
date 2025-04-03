@@ -111,7 +111,8 @@ struct ConversationEventPayloadProcessor {
         }
 
         await context.perform {
-            conversation.channelPermission = payload.data.addPermission.rawValue
+            conversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(payload.data.addPermission.rawValue)
         }
 
     }
@@ -146,7 +147,7 @@ struct ConversationEventPayloadProcessor {
     // MARK: - Member leave
 
     func processPayload(
-        _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) async {
@@ -228,7 +229,7 @@ struct ConversationEventPayloadProcessor {
     // MARK: - Member join
 
     func processPayload(
-        _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>,
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
@@ -549,7 +550,8 @@ struct ConversationEventPayloadProcessor {
                 }
             }
 
-            conversation.channelPermission = payload.addPermission?.rawValue
+            conversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(payload.addPermission?.rawValue)
 
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
@@ -1017,7 +1019,7 @@ struct ConversationEventPayloadProcessor {
     }
 
     func fetchRemovedUsers(
-        from payload: Payload.UpdateConverationMemberLeave,
+        from payload: Payload.UpdateConversationMemberLeave,
         in context: NSManagedObjectContext
     ) -> [ZMUser]? {
         if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(

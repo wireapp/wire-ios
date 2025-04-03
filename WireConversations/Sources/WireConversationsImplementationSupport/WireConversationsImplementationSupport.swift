@@ -16,24 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
-import WireConversationsImplementation
-public import WireConversationsAPI
-import WireConversationsUI
-
-public final class WireConversationChannelIconFactory {
-
-    private let mapper = ConversationIDToChannelIconMapper()
-
-    public init() {}
-
-    @MainActor
-    public func create(conversationID: String) -> some View {
-        WireConversationChannelIcon(asset: mapper.palette(for: conversationID))
-    }
-
-    @MainActor
-    public func createUIKit(conversationID: String) -> UIImageView {
-        UIImageView(image: mapper.palette(for: conversationID).uiKitImage)
-    }
-}
+// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
+// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
