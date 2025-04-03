@@ -128,6 +128,7 @@ final class ParticipantsStringFormatter {
         isChannel: Bool
     ) -> NSAttributedString {
         let key: String
+        // swiftformat:disable:next conditionalAssignment
         if isChannel {
             // "You/Bob started the channel"
             key = senderIsSelf ? L10n.Localizable.Content.System.Channel.WithName.titleYou(senderName) : L10n
@@ -206,7 +207,8 @@ final class ParticipantsStringFormatter {
             return result
 
         case .removed, .added(herself: false), .started(name: .none):
-            result = formatKey(senderIsSelf, isChannel).localized(args: senderName, nameSequence.string) && font && textColor
+            result = formatKey(senderIsSelf, isChannel)
+                .localized(args: senderName, nameSequence.string) && font && textColor
 
         case .started(name: .some):
             result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" &&
