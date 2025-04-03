@@ -73,9 +73,6 @@ protocol ConversationMessageCell: UIView {
     /// The frame to highlight when the cell is selected.
     var selectionRect: CGRect { get }
 
-    /// Top inset for ephemeral timer relative to the cell content
-    var ephemeralTimerTopInset: CGFloat { get }
-
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
 
@@ -110,10 +107,6 @@ extension ConversationMessageCell {
 
     var selectionRect: CGRect {
         selectionView?.bounds ?? .zero
-    }
-
-    var ephemeralTimerTopInset: CGFloat {
-        8
     }
 
     var menuPresenter: ConversationMessageCellMenuPresenter? {
@@ -161,9 +154,6 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
-
-    /// Whether the cell should display an ephemeral timer in the margin given it's an ephemeral message
-    var showEphemeralTimer: Bool { get }
 
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
@@ -302,7 +292,6 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
-    private let _showEphemeralTimer: AnyConstantProperty<Bool>
     private let _isAccessibilityElement: AnyConstantProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
@@ -346,7 +335,6 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
-        self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
         self._isAccessibilityElement = AnyConstantProperty(description, keyPath: \.isAccessibilityElement)
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
@@ -385,10 +373,6 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     var supportsActions: Bool {
         _supportsActions()
-    }
-
-    var showEphemeralTimer: Bool {
-        _showEphemeralTimer.getter()
     }
 
     var cellIsAccessibilityElement: Bool {

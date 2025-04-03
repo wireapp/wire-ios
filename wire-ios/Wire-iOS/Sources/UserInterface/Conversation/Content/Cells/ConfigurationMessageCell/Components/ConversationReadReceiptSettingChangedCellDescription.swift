@@ -86,8 +86,6 @@ final class ConversationReadReceiptSettingChangedCellDescription: ConversationMe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
