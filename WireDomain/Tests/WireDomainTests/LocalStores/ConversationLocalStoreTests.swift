@@ -561,7 +561,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
             conversation.groupType = .channel
 
-            XCTAssertEqual(conversation.channelPermission, nil)
+            XCTAssertEqual(conversation.accessLevelPermission, nil)
 
             return conversation
         }
@@ -578,7 +578,7 @@ final class ConversationLocalStoreTests: XCTestCase {
         // Then
 
         await context.perform {
-            XCTAssertEqual(conversation.channelPermission, channelPermission.rawValue)
+            XCTAssertEqual(conversation.accessLevelPermission, .admins)
         }
     }
 

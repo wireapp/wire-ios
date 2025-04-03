@@ -176,7 +176,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     private func processConversationMemberLeave(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self,
+            Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>.self,
             from: event.payload
         ) else { return }
 
@@ -185,7 +185,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self,
+            Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>.self,
             from: event.payload
         ) else { return }
 
@@ -320,7 +320,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     // MARK: - Member Join
 
-    typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
+    typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>
 
     func fetchOrCreateConversation(
         id: UUID?,

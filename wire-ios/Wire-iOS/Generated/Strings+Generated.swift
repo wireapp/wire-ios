@@ -1543,6 +1543,12 @@ internal enum L10n {
       /// AE/AF Lock
       internal static let aeafLock = L10n.tr("Localizable", "camera_controls.aeaf_lock", fallback: "AE/AF Lock")
     }
+    internal enum ChannelAccessLevel {
+      /// Private
+      internal static let `private` = L10n.tr("Localizable", "channel_access_level.private", fallback: "Private")
+      /// Public
+      internal static let `public` = L10n.tr("Localizable", "channel_access_level.public", fallback: "Public")
+    }
     internal enum Collections {
       internal enum ImageViewer {
         internal enum Copied {
@@ -3565,6 +3571,10 @@ internal enum L10n {
       }
     }
     internal enum GroupDetails {
+      internal enum AccessOptionsCell {
+        /// Channel access
+        internal static let title = L10n.tr("Localizable", "group_details.access_options_cell.title", fallback: "Channel access")
+      }
       internal enum ConversationAdminsHeader {
         /// Group admins
         internal static let title = L10n.tr("Localizable", "group_details.conversation_admins_header.title", fallback: "Group admins")
