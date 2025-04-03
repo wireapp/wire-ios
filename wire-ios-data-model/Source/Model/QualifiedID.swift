@@ -45,6 +45,10 @@ extension QualifiedID: SafeForLoggingStringConvertible {
     }
 }
 
+public protocol HasQualifiedID {
+    var qualifiedID: WireDataModel.QualifiedID? { get }
+}
+
 public extension ZMUser {
 
     var qualifiedID: QualifiedID? {
@@ -61,9 +65,9 @@ public extension ZMUser {
 
 }
 
-public extension ZMConversation {
+extension ZMConversation: HasQualifiedID {
 
-    var qualifiedID: QualifiedID? {
+    public var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,
             let domain = domain ?? BackendInfo.domain

@@ -29,6 +29,7 @@ package struct RootView: View {
 
     @StateObject var viewModel: RootViewModel
     let factory: any Factory
+    private let cornerRadius: CGFloat = 10
 
     package init(
         viewModel: RootViewModel,
@@ -40,62 +41,63 @@ package struct RootView: View {
 
     package var body: some View {
         BackgroundView()
-            .sheet(item: $viewModel.modalDestination) { sheet in
-                switch sheet {
-                case .authFlow:
-                    NavigationStack(path: $viewModel.path) {
-                        factory.determineAuthMethodView
-                            .alert(
-                                item: $viewModel.alert,
-                                title: titleForAlert,
-                                message: messageForAlert,
-                                actions: { _ in
-                                    Button(L10n.Authentication.Error.confirm, action: {})
-                                }
-                            )
-                    }
-                case let .noHistory(
-                    userID,
-                    cookies,
-                    accessToken,
-                    didDetectDomainConflict
-                ):
-                    factory.noHistoryView(
-                        userID: userID,
-                        cookies: cookies,
-                        accessToken: accessToken,
-                        didDetectDomainConflict: didDetectDomainConflict
-                    )
-                case let .onPremiseLogin(
-                    email,
-                    backendConfig,
-                    backendMetadata
-                ):
-                    factory.loginViaEmailOnPremView(
-                        email: email,
-                        backendConfig: backendConfig,
-                        backendMetadata: backendMetadata
-                    )
-                case let .ssoLogin(
-                    ssoURL,
-                    backendMetadata
-                ):
-                    factory.loginViaSSOView(ssoURL: ssoURL)
-                }
+            .universalSheet(item: $viewModel.modalDestination) { item in
+                sheetContent(for: item)
             }
     }
 
-    private func titleForAlert(_ alert: RootViewModel.Alert) -> Text {
-        switch alert {
-        case .ssoLoginFailed:
-            Text(L10n.Authentication.Error.Title.ssoLoginFailed)
-        }
-    }
+    @ViewBuilder
+    private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
+        switch sheet {
+        case .authFlow:
+            NavigationStack(path: $viewModel.path) {
+                factory.determineAuthMethodView()
+            }
+            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
 
-    private func messageForAlert(_ alert: RootViewModel.Alert) -> Text {
-        switch alert {
-        case .ssoLoginFailed:
-            Text(L10n.Authentication.Error.Message.ssoLoginFailed)
+        case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
+            NavigationStack(path: $viewModel.path) {
+                factory.determineAuthMethodView(
+                    environmentType: environmentType,
+                    backendConfig: backendConfig,
+                    backendMetadata: backendMetadata
+                )
+            }
+            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
+
+        case let .noHistory(
+            authenticationResult,
+            didDetectDomainConflict
+        ):
+            factory.noHistoryView(
+                authenticationResult: authenticationResult,
+                didDetectDomainConflict: didDetectDomainConflict
+            )
+            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
+
+        case let .onPremiseLogin(
+            email,
+            environmentType,
+            backendConfig,
+            backendMetadata
+        ):
+            factory.loginViaEmailOnPremView(
+                email: email,
+                environmentType: environmentType,
+                backendConfig: backendConfig,
+                backendMetadata: backendMetadata
+            )
+            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
+
+        case let .ssoLogin(
+            ssoURL,
+            backendEnvironment
+        ):
+            factory.loginViaSSOView(
+                ssoURL: ssoURL,
+                backendEnvironment: backendEnvironment
+            )
+            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
         }
     }
 
@@ -103,23 +105,26 @@ package struct RootView: View {
         public var id: Self { self }
 
         case authFlow
+        case onPremiseAuthFlow(
+            environmentType: BackendEnvironmentType,
+            backendConfig: BackendConfig,
+            backendMetadata: BackendMetadata
+        )
         case noHistory(
-            userID: UUID,
-            cookies: [HTTPCookie],
-            accessToken: AccessToken?,
+            authenticationResult: AuthenticationResult,
             didDetectDomainConflict: Bool
         )
         case onPremiseLogin(
-            email: String,
+            email: String?,
+            environmentType: BackendEnvironmentType,
             environment: BackendConfig,
             backendMetadata: BackendMetadata?
         )
         case ssoLogin(
             url: URL,
-            BackendMetadata: BackendMetadata
+            backendEnvironment: WireAuthenticationBackendEnvironment
         )
     }
-
 }
 
 #Preview {

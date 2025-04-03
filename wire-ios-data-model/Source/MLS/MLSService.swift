@@ -1250,7 +1250,7 @@ public final class MLSService: MLSServiceInterface {
             try ZMConversation.fetchConversationsWithMLSGroupStatus(
                 mlsGroupStatus: .pendingJoin,
                 in: context
-            ).compactMap(\.mlsGroupID)
+            )
         }
 
         logger.info("joining \(pendingGroups.count) group(s)")
@@ -1258,10 +1258,43 @@ public final class MLSService: MLSServiceInterface {
         await withTaskGroup(of: Void.self) { group in
             for pendingGroup in pendingGroups {
                 group.addTask {
+                    guard let mlsGroupID = await context.perform({ pendingGroup.mlsGroupID }) else {
+                        return
+                    }
+
                     do {
-                        try await self.joinByExternalCommit(groupID: pendingGroup)
+                        let (epoch, isSelfConversation) = await context.perform {
+                            (pendingGroup.epoch, pendingGroup.isSelfConversation)
+                        }
+                        let conversationExists = try await self.conversationExists(
+                            groupID: mlsGroupID
+                        )
+                        let shouldEstablishGroup = epoch == 0 && isSelfConversation && !conversationExists
+
+                        if shouldEstablishGroup {
+
+                            let mlsUsers = await context.perform {
+                                pendingGroup.localParticipants.map(MLSUser.init)
+                            }
+
+                            let ciphersuite = try await self.establishGroup(
+                                for: mlsGroupID,
+                                with: mlsUsers
+                            )
+
+                            await context.perform {
+                                pendingGroup.ciphersuite = ciphersuite
+                                pendingGroup.mlsStatus = .ready
+                            }
+
+                        } else {
+                            try await self.joinByExternalCommit(groupID: mlsGroupID)
+                        }
                     } catch {
-                        WireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
+                        WireLogger.mls.error(
+                            "Failed to join pending group: \(error)",
+                            attributes: [.mlsGroupID: mlsGroupID.safeForLoggingDescription]
+                        )
                     }
                 }
             }
@@ -1524,57 +1557,6 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    // MARK: - External Proposals
-
-    private func sendExternalAddProposal(_ groupID: MLSGroupID, epoch: UInt64) async {
-        logger.info("requesting to join group (\(groupID.safeForLoggingDescription)")
-
-        do {
-            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
-            let proposal = try await coreCrypto.perform {
-                try await $0.newExternalAddProposal(
-                    conversationId: groupID.data,
-                    epoch: epoch,
-                    ciphersuite: ciphersuite,
-                    credentialType: .basic
-                )
-            }
-
-            try await sendProposal(proposal, groupID: groupID)
-            logger.info("success: requested to join group (\(groupID.safeForLoggingDescription)")
-        } catch {
-            logger.warn(
-                "failed to request join for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
-            )
-        }
-    }
-
-    enum MLSSendProposalError: Error {
-        case failedToSendProposal
-    }
-
-    private func sendProposal(_ data: Data, groupID: MLSGroupID) async throws {
-        do {
-            logger.info("sending proposal in group (\(groupID.safeForLoggingDescription))")
-
-            guard let context else { return }
-
-            let updateEvents = try await actionsProvider.sendMessage(
-                data,
-                in: context.notificationContext
-            )
-
-            await conversationEventProcessor.processConversationEvents(updateEvents)
-
-        } catch {
-            logger
-                .warn(
-                    "failed to send proposal in group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
-                )
-            throw MLSSendProposalError.failedToSendProposal
-        }
-    }
-
     // MARK: - External Commits
 
     private func joinByExternalCommit(groupID: MLSGroupID) async throws {
@@ -1763,25 +1745,38 @@ public final class MLSService: MLSServiceInterface {
                 taskGroup.addTask { [self] in
                     do {
                         if timestamp.isInThePast {
-                            logger.info("commit scheduled in the past, committing...")
+                            logger.info(
+                                "commit scheduled in the past, committing...",
+                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                            )
                             try await commitPendingProposals(in: groupID)
                         } else {
-                            logger.info("commit scheduled in the future, waiting...")
+                            logger.info(
+                                "commit scheduled in the future, waiting...",
+                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                            )
 
                             let timeIntervalSinceNow = timestamp.timeIntervalSinceNow
                             if timeIntervalSinceNow > 0 {
                                 try await Task.sleep(nanoseconds: timeIntervalSinceNow.nanoseconds)
                             }
-                            logger.info("scheduled commit is ready, committing...")
+                            logger.info(
+                                "scheduled commit is ready, committing...",
+                                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                            )
                             try await commitPendingProposals(in: groupID)
                         }
 
                     } catch {
-                        logger.error("failed to commit pending proposals: \(String(describing: error))")
+                        logger.error(
+                            "failed to commit pending proposals: \(String(describing: error))",
+                            attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                        )
                     }
                 }
             }
         }
+        logger.debug("end any scheduled pending proposals")
     }
 
     private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
@@ -2275,7 +2270,7 @@ public final class MLSService: MLSServiceInterface {
                     // add all participants (all clients) to the group
                     try await addMembersToConversation(with: members, for: mlsGroupID)
 
-                } catch SendMLSMessageAction.Failure.mlsStaleMessage {
+                } catch SendMLSMessageFailure.mlsStaleMessage {
 
                     logger.error("failed to migrate conversation \(qualifiedID): stale message")
 

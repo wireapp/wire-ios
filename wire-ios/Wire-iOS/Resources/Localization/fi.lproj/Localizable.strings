@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "Etsi";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Image";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Delete…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Tykkää";
 "content.message.unlike" = "Poista tykkäys";
 "content.message.go_to_conversation" = "Näytä";
@@ -651,6 +658,7 @@
 "content.message.download" = "Lataa";
 "content.message.details" = "Lisätietoja";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Vastaa";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Luo linkin esikatselukuvat";
 "self.settings.privacy_security.disable_link_previews.footer" = "Esikatselut saattavat silti näkyä muiden lähettämissä linkeissä.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Laitteet";
 
 "self.settings.privacy.clear_history.title" = "Tyhjennä historia";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "Tämä tili ei ole enää oikeutettu kirjautumaan sisään.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Salasanaasi ei voitu uusia.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Liian monta ihmistä puheluun";
 "error.group_call.too_many_members_in_conversation" = "Puhelut toimivat keskusteluissa joissa on korkeintaan %d käyttäjää.";
 "error.group_call.too_many_participants_in_the_call.title" = "Puhelu on täynnä";
 "error.group_call.too_many_participants_in_the_call" = "There’s only room for %d participants in here.";
-"error.call.gsm_ongoing.title" = "Puhelu mobiilidatalla";
-"error.call.gsm_ongoing" = "Lopeta kännykkäpuhelu ennen kuin soitat Wiressä.";
-"error.call.general.title" = "Puhelu virhe";
-"error.call.general" = "Yritä soittaa uudelleen muutaman minuutin kuluttua.";
-"error.call.slow_connection.title" = "Hidas yhteys";
-"error.call.slow_connection" = "Voit kohdata ongelmia puhelun aikana";
-"error.call.slow_connection.call_anyway" = "Soita kuitenkin";
 
 "error.invite.no_email_provider" = "Määritä sähköpostiohjelmasi pystyäksesi lähettämään kutsuja sähköpostitse";
 "error.invite.no_messaging_provider" = "Määritä tekstiviesti-asetuksesi pystyäksesi lähettämään kutsuja sähköpostitse";

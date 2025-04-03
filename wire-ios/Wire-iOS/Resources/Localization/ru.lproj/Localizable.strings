@@ -154,7 +154,7 @@
 "conversation_list.empty_placeholder.favorite.link" = "Как помечать беседы как избранные";
 "conversation_list.empty_placeholder.group.subheadline" = "Вы еще не участвуете ни в одной групповой беседе. Начните новую!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "У вас пока нет контактов. Ищите друзей в %@ и общайтесь.";
-"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+"conversation_list.empty_placeholder.oneonone.button" = "Связаться с пользователями";
 
 "conversation_list.empty_placeholder.search.subheadline.phone" = "Не удалось найти ни одной беседы.\n\nСвяжитесь с пользователями или начните новую групповую беседу:";
 "conversation_list.empty_placeholder.search.subheadline.ipad" = "Ничего не найдено.";
@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " и ";
 
 "conversation.action.search" = "Поиск";
+"conversation.action.conversationDetails" = "Информация о беседе";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Изображение";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Удаление…";
 
+"content.collapsed.file.title" = "Вы отправили файл";
+"content.collapsed.image.title" = "Вы отправили изображение";
+"content.collapsed.video.title" = "Вы отправили видео";
+"content.collapsed.audio.title" = "Вы отправили аудиосообщение";
+"content.collapsed.location.title" = "Вы отправили свое местоположение";
+
 "content.message.like" = "Нравится";
 "content.message.unlike" = "Не нравится";
 "content.message.go_to_conversation" = "Показать";
@@ -651,6 +658,7 @@
 "content.message.download" = "Загрузить";
 "content.message.details" = "Профиль";
 "content.message.reactions" = "Реакции";
+"content.message.collapse" = "Свернуть";
 
 // Reply
 "content.message.reply" = "Ответить";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Показывать предпросмотр отправляемых вами ссылок";
 "self.settings.privacy_security.disable_link_previews.footer" = "Эта опция не влияет на предварительный просмотр ссылок от других пользователей.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Свернуть мои сообщения";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются в одну строку.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Устройства";
 
 "self.settings.privacy.clear_history.title" = "Очистить историю";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
 "error.user.account_limit_reached" = "Нельзя добавить более трех учетных записей.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Не удалось обновить пароль.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Вы выбрали слишком много пользователей для звонка";
 "error.group_call.too_many_members_in_conversation" = "Звонки работают в беседах до %d человек.";
 "error.group_call.too_many_participants_in_the_call.title" = "Вызов переполнен";
 "error.group_call.too_many_participants_in_the_call" = "Здесь хватит места только для %d участников.";
-"error.call.gsm_ongoing.title" = "Звонок через мобильную сеть";
-"error.call.gsm_ongoing" = "Пожалуйста, отмените вызов через мобильную сеть, перед звонком в Wire.";
-"error.call.general.title" = "Ошибка вызова";
-"error.call.general" = "Пожалуйста, попробуйте позвонить снова через несколько минут.";
-"error.call.slow_connection.title" = "Медленное подключение";
-"error.call.slow_connection" = "Могут возникнуть проблемы во время звонка";
-"error.call.slow_connection.call_anyway" = "Все равно позвонить";
 
 "error.invite.no_email_provider" = "Пожалуйста, настройте свой почтовый клиент, чтобы иметь возможность отправлять приглашения по электронной почте";
 "error.invite.no_messaging_provider" = "Пожалуйста, настройте SMS, чтобы иметь возможность отправлять приглашения через SMS";

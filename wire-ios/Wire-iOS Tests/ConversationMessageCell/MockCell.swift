@@ -43,8 +43,6 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
     typealias View = MockCell
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 0
     var supportsActions: Bool = true
     var containsHighlightableContent: Bool = true
 

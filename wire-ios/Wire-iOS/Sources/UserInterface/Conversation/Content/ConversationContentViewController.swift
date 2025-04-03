@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireRequestStrategy
 import WireReusableUIComponents
@@ -91,6 +92,10 @@ final class ConversationContentViewController: UIViewController {
         userSession: userSession
     )
 
+    /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has
+    /// left).
+    private var refreshTimer: Timer?
+
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
@@ -110,6 +115,8 @@ final class ConversationContentViewController: UIViewController {
 
     private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
+    private let logger: WireLogger
+
     init(
         conversation: ZMConversation,
         message: ZMConversationMessage? = nil,
@@ -124,6 +131,7 @@ final class ConversationContentViewController: UIViewController {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
+        self.logger = .conversation
 
         super.init(nibName: nil, bundle: nil)
 
@@ -155,6 +163,7 @@ final class ConversationContentViewController: UIViewController {
                 break
             }
         }
+
     }
 
     deinit {
@@ -274,6 +283,8 @@ final class ConversationContentViewController: UIViewController {
 
         UIAccessibility.post(notification: .screenChanged, argument: nil)
         setNeedsStatusBarAppearanceUpdate()
+
+        startRefreshTimerIfNeeded()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -297,9 +308,14 @@ final class ConversationContentViewController: UIViewController {
         super.viewWillDisappear(animated)
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        stopRefreshTimer()
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        dataSource.contentWidth = tableView.bounds.width
         scrollToFirstUnreadMessageIfNeeded()
     }
 
@@ -467,6 +483,58 @@ final class ConversationContentViewController: UIViewController {
         tableView.reloadRows(at: visibleRows, with: .none)
         tableView.endUpdates()
     }
+
+    // MARK: - Update Timer
+
+    @objc
+    private func startRefreshTimerIfNeeded() {
+        stopRefreshTimer()
+
+        var timeInterval = TimeInterval()
+        for indexPath in tableView.indexPathsForVisibleRows ?? [] {
+            let section = dataSource.currentSections[indexPath.section]
+            for cellDescription in section.elements {
+                if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
+                    timeInterval = timeInterval == .zero
+                        ? refreshInterval
+                        : min(timeInterval, refreshInterval)
+                }
+            }
+        }
+
+        guard timeInterval > 0 else { return }
+        logger.info("starting refresh timer with interval: \(timeInterval)")
+        refreshTimer = .scheduledTimer(
+            timeInterval: timeInterval,
+            target: self,
+            selector: #selector(refreshTimerFire(_:)),
+            userInfo: .none,
+            repeats: true
+        )
+    }
+
+    private func stopRefreshTimer() {
+        refreshTimer?.invalidate()
+        refreshTimer = nil
+        logger.info("stopped refresh timer")
+    }
+
+    @objc
+    private func refreshTimerFire(_ timer: Timer) {
+        logger.info("refresh timer fire")
+
+        var indexPathsToReload = [IndexPath]()
+        for indexPath in tableView.indexPathsForVisibleRows ?? [] {
+            let section = dataSource.currentSections[indexPath.section]
+            let cellDescription = section.elements[indexPath.row]
+            if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
+                indexPathsToReload += [indexPath]
+                continue
+            }
+        }
+        tableView.reloadRows(at: indexPathsToReload, with: .fade)
+    }
+
 }
 
 // MARK: - TableView
@@ -537,6 +605,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
+
         let sections = dataSource.currentSections
         guard
             sections.indices.contains(indexPath.section),
@@ -570,6 +639,19 @@ extension ConversationContentViewController: UITableViewDelegate {
         reactAction.image = reactImage
         reactAction.backgroundColor = UIColor.accent()
         return UISwipeActionsConfiguration(actions: [reactAction])
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        startRefreshTimerIfNeeded()
+    }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        // use for example when tapping the arrow to scroll to the bottom
+        startRefreshTimerIfNeeded()
+    }
+
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+        startRefreshTimerIfNeeded()
     }
 }
 

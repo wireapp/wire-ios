@@ -34,6 +34,7 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
     let receiptModeUpdateEventProcessor: any ConversationReceiptModeUpdateEventProcessorProtocol
     let renameEventProcessor: any ConversationRenameEventProcessorProtocol
     let typingEventProcessor: any ConversationTypingEventProcessorProtocol
+    let addPermissionEventProcessor: any ConversationAddPermissionEventProcessorProtocol
 
     func processEvent(_ event: ConversationEvent) async throws {
         switch event {
@@ -83,6 +84,9 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
 
         case let .typing(event):
             await typingEventProcessor.processEvent(event)
+
+        case let .permissionUpdate(event):
+            await addPermissionEventProcessor.processEvent(event)
         }
     }
 

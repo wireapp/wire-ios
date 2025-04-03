@@ -40,9 +40,6 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 0
-
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 

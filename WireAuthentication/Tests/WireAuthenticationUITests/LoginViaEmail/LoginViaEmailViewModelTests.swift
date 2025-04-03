@@ -47,8 +47,8 @@ class LoginViaEmailViewModelTests: XCTestCase {
         sut = LoginViaEmailViewModel(
             router: router,
             loginViaEmailUseCase: loginViaEmailUseCase,
+            backendEnvironment: Fixture.backendEnvironment,
             email: "mika@example.com",
-            accountsURL: URL(string: "https://www.example.com")!,
             passwordValidator: passwordValidator,
             canCreateAccount: true,
             didDetectDomainConflict: false,
@@ -103,9 +103,17 @@ class LoginViaEmailViewModelTests: XCTestCase {
         XCTAssertEqual(
             router.modalPresent_Invocations.first as? RootView.ModalDestination,
             RootView.ModalDestination.noHistory(
-                userID: Fixture.someAccessToken.userID,
-                cookies: [Fixture.someCookie],
-                accessToken: Fixture.someAccessToken,
+                authenticationResult: AuthenticationResult(
+                    userID: Fixture.someAccessToken.userID,
+                    cookies: [Fixture.someCookie],
+                    accessToken: Fixture.someAccessToken,
+                    emailCredentials: EmailCredentials(
+                        email: "mika@example.com",
+                        password: "password",
+                        verificationCode: nil
+                    ),
+                    backendEnvironment: Fixture.backendEnvironment
+                ),
                 didDetectDomainConflict: false
             )
         )

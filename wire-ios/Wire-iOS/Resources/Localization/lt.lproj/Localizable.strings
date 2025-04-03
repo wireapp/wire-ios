@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "Ieškoti";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Paveikslėlis";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Ištrinti…";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Patinka";
 "content.message.unlike" = "Nebepatinka";
 "content.message.go_to_conversation" = "Parodyti";
@@ -651,6 +658,7 @@
 "content.message.download" = "Atsisiųsti";
 "content.message.details" = "Išsamiau";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Atsakyti";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Rodyti svetainių vaizdą";
 "self.settings.privacy_security.disable_link_previews.footer" = "Kitų žmonių siunčiamų nuorodų peržiūros vis dar gali būti rodomos.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Įrenginiai";
 
 "self.settings.privacy.clear_history.title" = "Valyti praeitį";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "Ši paskyra daugiau nebeturi įgaliojimų prisijungti.";
 "error.user.account_limit_reached" = "Negalite pridėti daugiau nei 3 paskyras.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "Nepavyko pakeisti jūsų slaptažodžio.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Per daug žmonių, norint skambinti";
 "error.group_call.too_many_members_in_conversation" = "Skambinti galima pokalbiuose tik iki %d žmonių.";
 "error.group_call.too_many_participants_in_the_call.title" = "Pasiektas didžiausias pašnekovų skaičius";
 "error.group_call.too_many_participants_in_the_call" = "Čia dar tilps %d pašnekovai.";
-"error.call.gsm_ongoing.title" = "Mobiliojo ryšio skambutis";
-"error.call.gsm_ongoing" = "Baikite skambutį mobiliuoju ryšiu ir tada skambinkite per „Wire“.";
-"error.call.general.title" = "Skambučio klaida";
-"error.call.general" = "Bandykite skambinti dar kartą po kelių minučių.";
-"error.call.slow_connection.title" = "Lėtas ryšys";
-"error.call.slow_connection" = "Skambučio metu gali kilti nesklandumų";
-"error.call.slow_connection.call_anyway" = "Vis tiek skambinti";
 
 "error.invite.no_email_provider" = "Sukonfigūruokite el. pašto klientą, kad galėtumėte siųsti kvietimus el. paštu";
 "error.invite.no_messaging_provider" = "Sukonfigūruokite SMS siuntimą, kad galėtumėte siųsti kvietimus SMS žinute";

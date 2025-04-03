@@ -29,7 +29,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let mlsService: any MLSServiceInterface
+    let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -40,7 +40,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface,
+        mlsService: (any MLSServiceInterface)?,
         userLocalStore: any UserLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
     ) {
@@ -221,6 +221,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 user: user,
                 role: role
             )
+        }
+    }
+
+    public func storeConversation(
+        permission: String,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(permission)
         }
     }
 
@@ -498,9 +508,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func commitPendingProposals(
-        conversation: ZMConversation,
+    public func updateCommitPendingProposal(
         date: Date,
+        for conversation: ZMConversation,
         commitDelay: UInt64
     ) async {
         let scheduledDate = date + TimeInterval(commitDelay)
@@ -508,8 +518,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.commitPendingProposalDate = scheduledDate
         }
-
-        await mlsService.commitPendingProposalsIfNeeded()
     }
 
     public func updateSecurityLevelAfterReceivingMessage(
@@ -706,7 +714,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func wipeMLSGroup(groupID: MLSGroupID) async throws {
-        try await mlsService.wipeGroup(groupID)
+        try await mlsService?.wipeGroup(groupID)
     }
 
     public func storeConversation(
@@ -912,6 +920,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.remoteIdentifier = id
             localConversation.isPendingMetadataRefresh = false
             localConversation.isPendingInitialFetch = false
+            localConversation.groupType = conversation.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            }
+
+            localConversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(conversation.addPermission?.rawValue)
 
             commonUpdate(
                 from: conversation,

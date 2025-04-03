@@ -32,9 +32,6 @@ final class ConversationDegradedSystemMessageSectionDescription: ConversationMes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 0
-
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

@@ -107,10 +107,8 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
-
-    var showEphemeralTimer: Bool = false
     var topMargin: CGFloat = 8
+    var bottomMargin: CGFloat = 0
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true

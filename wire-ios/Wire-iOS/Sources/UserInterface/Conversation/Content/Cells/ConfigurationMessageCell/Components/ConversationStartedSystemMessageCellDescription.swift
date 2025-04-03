@@ -32,8 +32,8 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 0
+    var topMargin: CGFloat = 16
+    var bottomMargin: CGFloat = -8
 
     let containsHighlightableContent: Bool = false
 

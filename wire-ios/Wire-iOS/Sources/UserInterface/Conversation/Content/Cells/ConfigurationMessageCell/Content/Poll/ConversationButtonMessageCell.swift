@@ -151,11 +151,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
-    var topMargin: CGFloat = .ConversationButtonMessageCell.verticalInset
-
     var supportsActions: Bool = false
-
-    var showEphemeralTimer: Bool = false
 
     var containsHighlightableContent: Bool = false
 
@@ -165,7 +161,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var actionController: ConversationMessageActionController?
 
-    var configuration: View.Configuration
+    let configuration: View.Configuration
 
     var accessibilityIdentifier: String? = "PollCell"
 

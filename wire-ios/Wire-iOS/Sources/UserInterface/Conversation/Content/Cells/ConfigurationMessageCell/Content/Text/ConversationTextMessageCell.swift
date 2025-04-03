@@ -55,10 +55,6 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var ephemeralTimerTopInset: CGFloat {
-        (messageTextView.font?.lineHeight ?? 0) / 2
-    }
-
     var selectionView: UIView? {
         messageTextView
     }
@@ -155,11 +151,6 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
-
-    var showEphemeralTimer: Bool = false
-    var topMargin: CGFloat = 8
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
@@ -177,8 +168,7 @@ extension ConversationTextMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
-        searchQueries: [String],
-        showEphemeralTimer: Bool
+        searchQueries: [String]
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
@@ -187,16 +177,14 @@ extension ConversationTextMessageCellDescription {
         return cells(
             textMessageData: textMessageData,
             message: message,
-            searchQueries: searchQueries,
-            showEphemeralTimer: showEphemeralTimer
+            searchQueries: searchQueries
         )
     }
 
     static func cells(
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
-        searchQueries: [String],
-        showEphemeralTimer: Bool
+        searchQueries: [String]
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
@@ -226,7 +214,6 @@ extension ConversationTextMessageCellDescription {
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
             let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
-            quoteCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
 
@@ -236,7 +223,6 @@ extension ConversationTextMessageCellDescription {
                 attributedString: messageText,
                 isObfuscated: message.isObfuscated
             )
-            textCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
 
@@ -249,12 +235,10 @@ extension ConversationTextMessageCellDescription {
                 attachment: attachment,
                 thumbnailResource: message.linkAttachmentImage
             )
-            attachmentCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview
             let linkPreviewCell = ConversationLinkPreviewArticleCellDescription(message: message, data: textMessageData)
-            linkPreviewCell.showEphemeralTimer = showEphemeralTimer
             cells.append(AnyConversationMessageCellDescription(linkPreviewCell))
         }
 

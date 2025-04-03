@@ -27,51 +27,38 @@ protocol NoHistoryComponentDependency: Dependency {
 
     var howToChangeEmailURL: URL { get }
     var howToDeleteAccountURL: URL { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
 class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
-    @MainActor
-    private func viewModel(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        didDetectDomainConflict: Bool,
-        howToChangeEmailURL: URL,
-        howToDeleteAccountURL: URL,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
-    ) -> NoHistoryViewModel {
+    private let authenticationResult: AuthenticationResult
+    private let didDetectDomainConflict: Bool
+
+    init(
+        parent: any Scope,
+        authenticationResult: AuthenticationResult,
+        didDetectDomainConflict: Bool
+    ) {
+        self.authenticationResult = authenticationResult
+        self.didDetectDomainConflict = didDetectDomainConflict
+        super.init(parent: parent)
+    }
+
+    @MainActor private var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
-            userID: userID,
-            cookies: cookies,
-            accessToken: accessToken,
             didDetectDomainConflict: didDetectDomainConflict,
-            howToChangeEmailURL: howToChangeEmailURL,
-            howToDeleteAccountURL: howToDeleteAccountURL,
-            onFlowCompletion: onFlowCompletion
+            howToChangeEmailURL: dependency.howToChangeEmailURL,
+            howToDeleteAccountURL: dependency.howToDeleteAccountURL,
+            onFlowCompletion: { [dependency, authenticationResult] in
+                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
+            }
         )
     }
 
-    @MainActor
-    func view(
-        userID: UUID,
-        cookies: [HTTPCookie],
-        accessToken: AccessToken?,
-        didDetectDomainConflict: Bool,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void
-    ) -> NoHistoryView {
-        NoHistoryView(
-            viewModel: viewModel(
-                userID: userID,
-                cookies: cookies,
-                accessToken: accessToken,
-                didDetectDomainConflict: didDetectDomainConflict,
-                howToChangeEmailURL: dependency.howToChangeEmailURL,
-                howToDeleteAccountURL: dependency.howToDeleteAccountURL,
-                onFlowCompletion: onFlowCompletion
-            )
-        )
+    @MainActor var view: NoHistoryView {
+        NoHistoryView(viewModel: viewModel)
     }
 
 }

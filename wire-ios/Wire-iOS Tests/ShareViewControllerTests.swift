@@ -25,6 +25,10 @@ import XCTest
 final class MockShareViewControllerConversation: SwiftMockConversation {}
 
 extension MockShareViewControllerConversation: ShareDestination {
+    var avatarView: UIView? {
+        nil
+    }
+
     var showsGuestIcon: Bool {
         false
     }
@@ -165,7 +169,9 @@ final class ShareViewControllerTests: XCTestCase {
         sut = ShareViewController<MockShareViewControllerConversation, MockShareableMessage>(
             shareable: message,
             destinations: [groupConversation, oneToOneConversation],
-            showPreview: true, allowsMultipleSelection: allowsMultipleSelection
+            showPreview: true,
+            allowsMultipleSelection: allowsMultipleSelection,
+            mainCoordinator: MockMainCoordinator()
         )
     }
 

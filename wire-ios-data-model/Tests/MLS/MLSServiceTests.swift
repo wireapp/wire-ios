@@ -1283,6 +1283,74 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Joining conversations
 
+    func test_PerformPendingJoins_It_Establishes_Group() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let conversationID = UUID.create()
+        let domain = "example.domain.com"
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = domain
+            conversation.mlsGroupID = groupID
+            conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = .`self`
+            conversation.messageProtocol = .mls
+            return conversation
+        }
+
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: Mock properly
+        let mockUpdateEvents = [ZMUpdateEvent]()
+
+        // expectation
+        let expectation = XCTestExpectation(description: "Send Message")
+
+        // mock MLS action executor
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            mockUpdateEvents
+        }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            mockUpdateEvents
+        }
+
+        // mock CC
+        mockCoreCrypto.conversationExistsConversationId_MockValue = false
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
+
+        // mock processing conversation events
+        var processConversationEventsArguments = [[ZMUpdateEvent]]()
+        mockConversationEventProcessor.processConversationEvents_MockMethod = {
+            processConversationEventsArguments.append($0)
+            expectation.fulfill()
+        }
+
+        // When
+        try await sut.performPendingJoins()
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 1)
+
+        // it creates CC conversation
+        let createCoreCryptoConversationInvocations = mockCoreCrypto
+            .createConversationConversationIdCreatorCredentialTypeConfig_Invocations
+        XCTAssertEqual(createCoreCryptoConversationInvocations.count, 1)
+
+        // it commits pending proposals
+        XCTAssertEqual(mockMLSActionExecutor.commitPendingProposalsCount, 1)
+
+        // it updates key material
+        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 1)
+
+        // it sets conversation state to ready
+        let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
+        XCTAssertEqual(conversationMLSStatus, .ready)
+
+        // it processes conversation events
+        XCTAssertEqual(processConversationEventsArguments.count, 2)
+        XCTAssertEqual(processConversationEventsArguments, [mockUpdateEvents, mockUpdateEvents])
+    }
+
     func test_PerformPendingJoins_IsSuccessful() async throws {
         // Given
         let groupID = MLSGroupID.random()
@@ -1316,6 +1384,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             joinGroupArguments.append(($0, $1))
             return mockUpdateEvents
         }
+
+        // mock CC conversation exists
+        mockCoreCrypto.conversationExistsConversationId_MockValue = true
 
         // mock processing conversation events
         var processConversationEventsArguments = [[ZMUpdateEvent]]()
@@ -1403,6 +1474,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
+        // mock CC conversation exists
+        mockCoreCrypto.conversationExistsConversationId_MockValue = true
+
         // mock processing conversation events
         var processConversationEventsCount = 0
         mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in
@@ -1471,29 +1545,25 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() async throws {
         // GIVEN
-        let conversationAndOutOfSyncTuples = await uiMOC.perform { [self] in
+        let outOfSyncGroupID1 = MLSGroupID.random()
+        let outOfSyncGroupID2 = MLSGroupID.random()
+        let inSyncGroupID3 = MLSGroupID.random()
+        let currentEpoch: UInt64 = 1
+
+        _ = await uiMOC.perform { [self] in
             [
-                createConversation(outOfSync: true),
-                createConversation(outOfSync: true),
-                createConversation(outOfSync: false)
+                createConversation(outOfSync: true, currentEpoch: currentEpoch, groupID: outOfSyncGroupID1),
+                createConversation(outOfSync: true, currentEpoch: currentEpoch, groupID: outOfSyncGroupID2),
+                createConversation(outOfSync: false, currentEpoch: currentEpoch, groupID: inSyncGroupID3)
             ]
         }
 
         await uiMOC.perform {
             // mock conversation epoch
             self.mockCoreCrypto.conversationEpochConversationId_MockMethod = { groupID in
-                guard let tuple = conversationAndOutOfSyncTuples.first(
-                    where: { element in
-                        self.uiMOC.performGroupedAndWait {
-                            element.conversation.mlsGroupID?.data
-                        } == groupID
-                    }
-                ) else {
-                    return 1
-                }
+                let isOutOfSync = (groupID == outOfSyncGroupID1.data) || (groupID == outOfSyncGroupID2.data)
 
-                let epoch = await self.uiMOC.perform { tuple.conversation.epoch }
-                return tuple.isOutOfSync ? epoch - 1 : epoch
+                return isOutOfSync ? currentEpoch - 1 : currentEpoch
             }
         }
 
@@ -1501,10 +1571,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
 
         // mock joining group
-        let expectations = await uiMOC.perform { self.expectations(from: conversationAndOutOfSyncTuples) }
         await uiMOC.perform { [self] in
             mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
-                expectations[groupID]?.fulfill()
+                XCTAssert(groupID.data.isOne(of: outOfSyncGroupID1.data, outOfSyncGroupID2.data))
+                XCTAssertNotEqual(groupID.data, inSyncGroupID3.data)
                 return []
             }
         }
@@ -1512,8 +1582,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // WHEN
         try await sut.repairOutOfSyncConversations()
 
-        // THEN
-        await fulfillment(of: Array(expectations.values), timeout: 1.5)
+        // THEN, 2 out-of-sync conversations were repaired
+        XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 2)
     }
 
     func test_FetchAndRepairConversation_RejoinsOutOfSyncConversation() async throws {
@@ -1697,27 +1767,19 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     private typealias ConversationAndOutOfSyncTuple = (conversation: ZMConversation, isOutOfSync: Bool)
 
-    private func createConversation(outOfSync: Bool) -> ConversationAndOutOfSyncTuple {
+    private func createConversation(
+        outOfSync: Bool,
+        currentEpoch: UInt64 = 1,
+        groupID: MLSGroupID = .random()
+    ) -> ConversationAndOutOfSyncTuple {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.mlsGroupID = .random()
+        conversation.mlsGroupID = groupID
         conversation.remoteIdentifier = UUID()
         conversation.domain = "domain.com"
         conversation.messageProtocol = .mls
-        conversation.epoch = 1
+        conversation.epoch = currentEpoch
 
         return (conversation, outOfSync)
-    }
-
-    private func expectations(from tuples: [ConversationAndOutOfSyncTuple]) -> [MLSGroupID: XCTestExpectation] {
-        tuples.reduce(into: [MLSGroupID: XCTestExpectation]()) { expectations, tuple in
-            guard let groupID = tuple.conversation.mlsGroupID else {
-                return
-            }
-
-            let expectation = XCTestExpectation(description: "joined group")
-            expectation.isInverted = !tuple.isOutOfSync
-            expectations[groupID] = expectation
-        }
     }
 
     // MARK: - Wipe Groups
@@ -2100,7 +2162,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         do {
             // When
             try await sut.updateKeyMaterial(for: groupID)
-        } catch let error as SendMLSMessageAction.Failure {
+        } catch let error as SendMLSMessageFailure {
             // Then, infinite loop is broken after a few attempts, it throws an error
             XCTAssertEqual(error, .mlsStaleMessage)
         }
@@ -2127,7 +2189,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         do {
             // When
             try await sut.updateKeyMaterial(for: groupID)
-        } catch let error as SendMLSMessageAction.Failure {
+        } catch let error as SendMLSMessageFailure {
             // Then, infinite loop is broken after a few attempts, it throws an error
             XCTAssertEqual(error, .mlsStaleMessage)
         }
@@ -3172,7 +3234,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            throw SendMLSMessageAction.Failure.mlsStaleMessage
+            throw SendMLSMessageFailure.mlsStaleMessage
         }
         let wipeConversationExpectation = XCTestExpectation(description: "wipeConversation must be called")
         mockCoreCrypto.wipeConversationConversationId_MockMethod = { conversationID in

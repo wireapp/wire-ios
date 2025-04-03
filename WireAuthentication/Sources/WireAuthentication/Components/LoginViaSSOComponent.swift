@@ -17,20 +17,45 @@
 //
 
 import Foundation
+import NeedleFoundation
+import WireAuthenticationAPI
 internal import WireAuthenticationUI
 
-class LoginViaSSOComponent {
+protocol LoginViaSSODependency: Dependency {
+
+    @MainActor var router: any Router { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
+
+}
+
+class LoginViaSSOComponent: Component<LoginViaSSODependency> {
+
+    private let ssoURL: URL
+    private let backendEnvironment: WireAuthenticationBackendEnvironment
+
+    init(
+        parent: any Scope,
+        ssoURL: URL,
+        backendEnvironment: WireAuthenticationBackendEnvironment
+    ) {
+        self.ssoURL = ssoURL
+        self.backendEnvironment = backendEnvironment
+        super.init(parent: parent)
+    }
 
     // MARK: - View
 
-    @MainActor
-    func view(ssoURL: URL) -> LoginViaSSOView {
-        LoginViaSSOView(viewModel: viewModel(ssoURL: ssoURL))
+    @MainActor var view: LoginViaSSOView {
+        LoginViaSSOView(viewModel: viewModel)
     }
 
-    @MainActor
-    private func viewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(ssoURL: ssoURL)
+    @MainActor private var viewModel: LoginViaSSOViewModel {
+        LoginViaSSOViewModel(
+            ssoURL: ssoURL,
+            bridge: dependency.bridge,
+            router: dependency.router,
+            backendEnvironment: backendEnvironment
+        )
     }
 
 }

@@ -21,6 +21,7 @@ import WireAPI
 import WireAuthentication
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -75,50 +76,28 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
+            let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
             let (rootView, bridge) = assembly.assemble(
-                defaultBackendEnvironment: BackendEnvironment(
-                    url: environment.backendURL,
-                    webSocketURL: environment.backendWSURL,
-                    pinnedKeys: environment.trustData.map { trustData in
-                        PinnedKey(
-                            key: trustData.certificateKey,
-                            hosts: trustData.hosts.map { host in
-                                switch host.rule {
-                                case .equals:
-                                    .equals(host.value)
-                                case .endsWith:
-                                    .endsWith(host.value)
-                                }
-                            }
-                        )
-                    },
-                    proxySettings: nil
-                ),
+                environmentType: BackendEnvironmentType(environment.environmentType.value),
+                backendConfig: BackendConfig(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
-                preferredAPIVersion: .v8,
+                preferredAPIVersion: BackendInfo.preferredAPIVersion.flatMap {
+                    WireAPI.APIVersion(rawValue: UInt($0.rawValue))
+                },
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 userDefaults: .shared(),
-                onFlowCompletion: { _ in
-                    // TODO: [WPB-16044] Pass the cookies and token
-                    authenticationCoordinator?.eventResponderChain.handleEvent(
-                        ofType: .wireAuthenticationModuleComplete
-                    )
-                },
-                onRegisterAccount: {
-                    // TODO: [WPB-16279] Navigate to the account registration flow
-                }
+                appStoreURL: WireURLs.shared.appOnItunes,
+                existsAnotherAccount: numberOfAccounts > 0
             )
-
-            authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(action: { userID, cookieData in
-                bridge.completeSSOSuccess(userID: userID, cookies: cookieData)
-            })
-            authenticationCoordinator?.unauthenticatedSession.setErrorHandler(bridge.completeSSOFailure)
-
-            return AuthenticationHostingController(rootView: rootView)
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
 
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
@@ -154,8 +133,16 @@ final class AuthenticationInterfaceBuilder {
         case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
-        case .createCredentials:
-            return makeCredentialsViewController(for: .registration)
+        case let .createCredentials(user):
+            let prefilledCredentials = AuthenticationPrefilledCredentials(
+                credentials: LoginCredentials(
+                    emailAddress: user.unverifiedEmail,
+                    hasPassword: false,
+                    usesCompanyLogin: false
+                ),
+                isExpired: false
+            )
+            return makeCredentialsViewController(for: .registration(prefilledCredentials))
 
         case .clientManagement:
             let manageClientsInvitation = ClientUnregisterInvitationStepDescription()

@@ -29,7 +29,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
     private(set) var accountImageAction: () -> Void
     private(set) var foldersAction: (CGRect) -> Void
-    private(set) var connectAction: () -> Void
     private(set) var supportAction: () -> Void
 
     private(set) var accountImageView: SidebarViewController.AccountImageViewBuilder<AccountImageView>
@@ -45,7 +44,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         accountImageAction: @escaping () -> Void,
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
-        connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
         accountImageView: @escaping SidebarViewController.AccountImageViewBuilder<AccountImageView>,
         legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
@@ -54,7 +52,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         _selectedMenuItem = selectedMenuItem
         self.accountImageAction = accountImageAction
         self.foldersAction = foldersAction
-        self.connectAction = connectAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
         self.legalHoldIndicatorView = legalHoldIndicatorView
@@ -126,6 +123,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 .all,
                 .favorites,
                 .groups,
+                .channels,
                 .oneOnOne,
                 .folders,
                 .archive
@@ -133,9 +131,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             ForEach(conversationFilters, id: \.self) { conversationFilter in
                 selectableMenuItem(conversationFilter)
             }
-
-            menuItemHeader(Strings.Contacts.title)
-            nonselectableMenuItem(.connect)
         }
         .padding(.horizontal, 16)
     }
@@ -162,12 +157,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         let isLink: Bool
         let action: () -> Void
         switch menuItem {
-        case .connect:
-            text = Text(Strings.Contacts.Connect.title)
-            accessibilityLabel = Text("sidebar.contacts.connect.title", bundle: .module)
-            icon = "person.badge.plus"
-            isLink = false
-            action = connectAction
 
         case .support:
             text = Text(Strings.Support.title)
@@ -204,6 +193,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     ) -> some View {
         let text: Text
         let icon: String
+        var iconHighlighted: String?
         let accessibilityLabel: Text
         switch menuItem {
         case .all:
@@ -220,6 +210,12 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.ConversationFilter.Groups.title)
             icon = "person.3"
             accessibilityLabel = Text(Strings.ConversationFilter.Groups.title)
+
+        case .channels:
+            text = Text(Strings.ConversationFilter.Channels.title)
+            icon = "number"
+            iconHighlighted = "number"
+            accessibilityLabel = Text(Strings.ConversationFilter.Channels.title)
 
         case .oneOnOne:
             text = Text(Strings.ConversationFilter.OneOnOneConversations.title)
@@ -244,6 +240,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
         return SidebarMenuItemView(
             icon: icon,
+            iconHighlighted: iconHighlighted,
             iconSize: iconSize,
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,

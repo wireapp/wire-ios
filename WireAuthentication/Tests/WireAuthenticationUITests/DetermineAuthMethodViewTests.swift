@@ -75,4 +75,18 @@ class DetermineAuthMethodViewTests: XCTestCase {
                 )
         }
     }
+
+    @MainActor
+    func testCanExitFlow() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = NavigationStack {
+            makeDetermineAuthMethodViewPreview(existsAnotherAccount: true)
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        .tint(.primary)
+
+        snapshotHelper.verify(matching: view)
+    }
 }

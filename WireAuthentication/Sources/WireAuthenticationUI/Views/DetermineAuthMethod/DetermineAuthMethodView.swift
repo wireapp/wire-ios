@@ -23,7 +23,15 @@ import WireReusableUIComponents
 
 package protocol DetermineAuthMethodBuilder {
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView { get }
+    @MainActor
+    func determineAuthMethodView(
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
+        backendMetadata: BackendMetadata?
+    ) -> DetermineAuthMethodView
+
+    @MainActor
+    func determineAuthMethodView() -> DetermineAuthMethodView
 
 }
 
@@ -31,7 +39,6 @@ package struct DetermineAuthMethodView: View {
 
     package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
 
-    @Environment(\.dismiss) var dismiss
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
     let factory: any Factory
@@ -50,9 +57,16 @@ package struct DetermineAuthMethodView: View {
                 HStack {
                     Spacer()
                         .frame(maxWidth: .infinity)
-                    Logo()
-                        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                        .frame(width: 164, height: 95)
+                    if viewModel.isOnPremiseBackend {
+                        OnPremHeaderView(backendConfig: viewModel.backendConfig)
+                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                            .frame(width: 164, height: 95)
+                    } else {
+                        Logo()
+                            .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                            .frame(width: 164, height: 95)
+                    }
+
                     Spacer()
                         .frame(maxWidth: .infinity)
                 }
@@ -72,6 +86,7 @@ package struct DetermineAuthMethodView: View {
                         string: $viewModel.emailOrSSOCode
                     )
                     .autocapitalization(.none)
+                    .autocorrectionDisabled()
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -92,55 +107,119 @@ package struct DetermineAuthMethodView: View {
                 })
                 .wireButtonStyle(.primary)
                 .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
-            }.padding()
+            }
+            .padding()
+            .setPreferredSize(navigationBarHidden: !viewModel.existsAnotherAccount)
+        }
+        .toolbar {
+            if viewModel.existsAnotherAccount {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.exitFlow()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+            }
         }
         .alert(
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
-            actions: { _ in
-                Button {
-                    dismiss()
-                } label: {
-                    Text(L10n.Authentication.Error.confirm)
+            actions: { alert in
+                switch alert {
+                case .obsoleteClient:
+                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                default:
+                    Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
                 }
             }
         )
         .navigationDestination(for: Destination.self) {
             switch $0 {
-            case let .login(email, didDetectDomainConflict, backendMetadata):
+            case let .login(
+                email,
+                didDetectDomainConflict,
+                environmentType,
+                backendConfig,
+                backendMetadata
+            ):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: false,
                     didDetectDomainConflict: didDetectDomainConflict,
+                    environmentType: environmentType,
+                    backendConfig: backendConfig,
                     backendMetadata: backendMetadata
                 )
-            case let .loginOrRegister(email, backendMetadata):
+            case let .loginOrRegister(
+                email,
+                environmentType,
+                backendConfig,
+                backendMetadata
+            ):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: true,
                     didDetectDomainConflict: false,
+                    environmentType: environmentType,
+                    backendConfig: backendConfig,
                     backendMetadata: backendMetadata
                 )
             }
         }
-        .sheet(item: $viewModel.modalDestination, content: {
-            switch $0 {
-            case let .ssoLogin(url: ssoURL):
-                factory.loginViaSSOView(ssoURL: ssoURL)
-            case let .switchBackend(email: email, backendConfig: backendConfig):
-                factory.switchBackendView(email: email, backendConfig: backendConfig)
+        .sheet(
+            item: $viewModel.modalDestination,
+            content: {
+                switch $0 {
+                case let .ssoLogin(
+                    ssoURL,
+                    backendEnvironment
+                ):
+                    factory.loginViaSSOView(
+                        ssoURL: ssoURL,
+                        backendEnvironment: backendEnvironment
+                    )
+                case let .switchBackend(
+                    email,
+                    environmentType,
+                    backendConfig
+                ):
+                    if #available(iOS 16.4, *) {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).presentationBackground(Color.black.opacity(0.7))
+                    } else {
+                        factory.switchBackendView(
+                            email: email,
+                            environmentType: environmentType,
+                            backendConfig: backendConfig
+                        ).background(TransparentBackgroundView())
+                    }
+                }
             }
-        })
-        .presentationDetents([.medium, .large])
+        )
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
 
     package enum Destination: Hashable {
 
-        case login(email: String, didDetectDomainConflict: Bool, backendMetadata: BackendMetadata)
-        case loginOrRegister(email: String, backendMetadata: BackendMetadata)
+        case login(
+            email: String,
+            didDetectDomainConflict: Bool,
+            environmentType: BackendEnvironmentType,
+            backendConfig: BackendConfig,
+            backendMetadata: BackendMetadata
+        )
+        case loginOrRegister(
+            email: String,
+            environmentType: BackendEnvironmentType,
+            backendConfig: BackendConfig,
+            backendMetadata: BackendMetadata
+        )
 
     }
 
@@ -151,31 +230,67 @@ extension Alert {
     private typealias Title = L10n.Authentication.Error.Title
     private typealias Message = L10n.Authentication.Error.Message
 
-    static let invalidSSOLink = Alert(title: Title.invalidSsoLink, message: Message.invalidSsoLink)
-    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Title.incorrectSsoCode)
+    static let invalidSSOLink = Alert(title: Title.ssoLoginFailed, message: Message.ssoLoginFailed)
+    static let incorrectSSOCode = Alert(title: Title.incorrectSsoCode, message: Message.incorrectSsoCode)
 
 }
 
 @MainActor
 func makeDetermineAuthMethodViewPreview(
     emailOrSSOCode: String = "",
+    existsAnotherAccount: Bool = false,
     isLoading: Bool = false,
     alert: Alert? = nil
 ) -> some View {
     MockDependencies().makeDetermineAuthMethodView(
         emailOrSSOCode: emailOrSSOCode,
+        existsAnotherAccount: existsAnotherAccount,
         isLoading: isLoading,
         alert: alert
     )
 }
 
-#Preview {
+#Preview("can't exit flow") {
     BackgroundView()
         .sheet(isPresented: .constant(true)) {
-            makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: "user@wire.com",
-                isLoading: false,
-                alert: .unknownError
-            )
+            NavigationStack {
+                makeDetermineAuthMethodViewPreview(
+                    emailOrSSOCode: "user@wire.com",
+                    existsAnotherAccount: false,
+                    isLoading: false,
+                    alert: nil
+                )
+            }
         }
+}
+
+#Preview("can exit flow") {
+    BackgroundView()
+        .sheet(isPresented: .constant(true)) {
+            NavigationStack {
+                makeDetermineAuthMethodViewPreview(
+                    emailOrSSOCode: "user@wire.com",
+                    existsAnotherAccount: true,
+                    isLoading: false,
+                    alert: nil
+                )
+            }
+        }
+}
+
+private struct TransparentBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        InnerView()
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+
+    private class InnerView: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+
+            superview?.superview?.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        }
+
+    }
 }

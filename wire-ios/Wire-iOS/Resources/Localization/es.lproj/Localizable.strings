@@ -369,6 +369,7 @@
 "conversation.banner.separator" = " and ";
 
 "conversation.action.search" = "Buscar";
+"conversation.action.conversationDetails" = "Conversation Details";
 
 // Reply message preview
 "conversation.input_bar.message_preview.image" = "Imágen";
@@ -641,6 +642,12 @@
 
 "content.message.delete_ellipsis" = "Eliminar...";
 
+"content.collapsed.file.title" = "You sent a file";
+"content.collapsed.image.title" = "You sent a picture";
+"content.collapsed.video.title" = "You sent a video";
+"content.collapsed.audio.title" = "You sent an audio message";
+"content.collapsed.location.title" = "You sent your location";
+
 "content.message.like" = "Me gusta";
 "content.message.unlike" = "Ya no me gusta";
 "content.message.go_to_conversation" = "Mostrar en chat";
@@ -651,6 +658,7 @@
 "content.message.download" = "Descargar";
 "content.message.details" = "Detalles";
 "content.message.reactions" = "Reactions";
+"content.message.collapse" = "Collapse";
 
 // Reply
 "content.message.reply" = "Responder";
@@ -1312,6 +1320,9 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Crear vista previa de los enlaces";
 "self.settings.privacy_security.disable_link_previews.footer" = "Las vistas previas todavía pueden mostrarse para enlaces de otras personas.";
 
+"self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+
 "self.settings.privacy_analytics_menu.devices.title" = "Dispositivos";
 
 "self.settings.privacy.clear_history.title" = "Eliminar historial";
@@ -1648,21 +1659,10 @@
 "error.user.account_suspended" = "Esta cuenta ya no está autorizada a iniciar sesión.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Those are caught by the UI without involving the SE validation. Basically very similar to ZMUserSessionErrorCode onces
-"error.updating_password" = "No se pudo actualizar tu contraseña.";
-
 "error.group_call.too_many_members_in_conversation.title" = "Demasiadas personas para llamar";
 "error.group_call.too_many_members_in_conversation" = "Las llamadas funcionan en chats con hasta %d personas.";
 "error.group_call.too_many_participants_in_the_call.title" = "La llamada no acepta más participantes";
 "error.group_call.too_many_participants_in_the_call" = "There’s only room for %d participants in here.";
-"error.call.gsm_ongoing.title" = "Llamada por red celular";
-"error.call.gsm_ongoing" = "Por favor, termina la llamada por red celular antes de llamar por Wire.";
-"error.call.general.title" = "Fallo en la llamada";
-"error.call.general" = "Por favor, intenta llamar de nuevo pasados unos minutos.";
-"error.call.slow_connection.title" = "Conexión lenta";
-"error.call.slow_connection" = "Es posible que experimentes problemas durante la llamada";
-"error.call.slow_connection.call_anyway" = "Llamar de todos modos";
 
 "error.invite.no_email_provider" = "Por favor, configura tu aplicación de email para poder enviar las invitaciones por email";
 "error.invite.no_messaging_provider" = "Por favor, configura la aplicación de Mensajes para poder enviar las invitaciones por SMS/iMessage";
