@@ -71,8 +71,8 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
 
 @available(iOS 17, *)
 #Preview {
-    ConversationCellPreviews(
-        models: [
+    ConversationCellsPreview(
+        itemIdentifiers: [
             .timeDivider(text: "Tuesday, Mar 18", isUnread: false),
             .simpleTextMessage(
                 text: "message",
