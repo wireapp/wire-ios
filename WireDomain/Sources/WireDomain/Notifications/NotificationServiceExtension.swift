@@ -27,6 +27,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
     enum Failure: Error {
         case noAccountFound
+        case missingAppGroupID
     }
 
     // MARK: - Properties
@@ -103,7 +104,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     ) throws -> RootComponent {
         let infoDictionary = Bundle.main.infoDictionary
         guard let appGroupID = infoDictionary?["WireGroupId"] as? String else {
-            fatalError()
+            throw Failure.missingAppGroupID
         }
 
         let applicationIdentifier = "group.\(appGroupID)"
@@ -178,6 +179,11 @@ extension NotificationServiceExtension {
             case .noAccountFound:
                 logger.error(
                     "failed to process notification: no selected account found",
+                    attributes: .newNSE
+                )
+            case .missingAppGroupID:
+                logger.error(
+                    "failed to process notification: missing app group id",
                     attributes: .newNSE
                 )
             }
