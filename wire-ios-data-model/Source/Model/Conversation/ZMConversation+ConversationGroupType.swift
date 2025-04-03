@@ -35,17 +35,17 @@ public enum ConversationGroupType: Int16 {
 
 }
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// The group conversation type.
 
-    @NSManaged public var groupType: ConversationGroupType
+    @NSManaged var groupType: ConversationGroupType
 
     /// Whether the conversation is a channel.
     ///
     /// Returns `true` if the conversation type is `group` **and** the group type is `channel`, otherwise false.
 
-    public var isChannel: Bool {
+    var isChannel: Bool {
         guard conversationType == .group else { return false }
 
         return groupType == .channel
