@@ -88,4 +88,7 @@ public enum ConversationsAPIError: Error {
     /// Invalid operation
     case invalidOperation
 
+    /// Permission unchanged
+    case permissionsUnchanged
+
 }

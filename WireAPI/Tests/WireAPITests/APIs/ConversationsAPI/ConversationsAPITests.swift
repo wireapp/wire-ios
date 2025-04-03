@@ -1318,7 +1318,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
         let mocks: [MockAPIServiceProtocol.Response] = Array(
-            repeating: (.ok, nil),
+            repeating: (.ok, "testAddChannelPermission_givenV8AndSuccessResponse200"),
             count: supportedVersions.count
         )
 
@@ -1332,11 +1332,13 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(suts.count, supportedVersions.count)
 
         for sut in suts {
-            try await sut.addChannelPermission(
+            let permission = try await sut.addChannelPermission(
                 conversationID: Scaffolding.conversationID.uuidString,
                 conversationDomain: Scaffolding.domain,
                 permission: .admins
             )
+
+            XCTAssertEqual(permission, .admins)
         }
     }
 
