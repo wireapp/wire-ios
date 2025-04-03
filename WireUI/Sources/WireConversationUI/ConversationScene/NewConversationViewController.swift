@@ -22,21 +22,31 @@ import CoreData
 
 public final class NewConversationViewController<ConversationModel: NSManagedObject>: UITableViewController, NSFetchedResultsControllerDelegate {
 
+    enum SectionIdentifier {
+        case single
+    }
+
+    typealias ItemIdentifier = ConversationCellModel
+
+    let itemIdentifiers = [ItemIdentifier]()
+
     /// don't use
-    public let conversation: ConversationModel!
+    public let conversationModel: ConversationModel!
+
 
     private let persistentContainer: NSPersistentContainer
     private let conversationObjectID: NSManagedObjectID
 
-    var fetchedResultsController: NSFetchedResultsController<ConversationModel>!
+    private var fetchedResultsController: NSFetchedResultsController<ConversationModel>!
+    private var dataSource: UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>!
 
     public init(
-        conversation: ConversationModel,
+        conversationModel: ConversationModel,
         persistentContainer: NSPersistentContainer
     ) {
-        self.conversation = conversation
+        self.conversationModel = conversationModel
         self.persistentContainer = persistentContainer
-        conversationObjectID = conversation.objectID
+        conversationObjectID = conversationModel.objectID
 
         super.init(style: .plain)
     }
@@ -48,11 +58,26 @@ public final class NewConversationViewController<ConversationModel: NSManagedObj
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setupTableView()
         initializeFetchedResultsController()
+        loadItems()
+    }
+
+    private func setupTableView() {
+        registerCellTypes()
+        setupDataSource()
+        tableView.separatorStyle = .none
+    }
+
+    private func registerCellTypes() {
+        for itemIdentifier in itemIdentifiers {
+            itemIdentifier.registerIfNeeded(in: tableView)
+        }
     }
 
     private func initializeFetchedResultsController() {
         let fetchRequest = NSFetchRequest<ConversationModel>()
+        fetchRequest.entity = ConversationModel.entity()
         let sortDescriptor = NSSortDescriptor(key: "serverTimestamp", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
         let context = persistentContainer.viewContext
@@ -72,66 +97,26 @@ public final class NewConversationViewController<ConversationModel: NSManagedObj
         }
     }
 
-    // MARK: - Table view data source
-
-    public override func numberOfSections(in tableView: UITableView) -> Int {
-        fetchedResultsController.sections?.count ?? 0
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let sections = fetchedResultsController.sections else { return 0 }
-        return sections[section].numberOfObjects
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        // Retrieve the object for the current indexPath
-        let entity = fetchedResultsController.object(at: indexPath)
-        // Configure your cell – adjust as needed based on your entity’s properties
-        cell.textLabel?.text = entity.attribute
-        return cell
-    }
-
-    // MARK: - NSFetchedResultsControllerDelegate
-
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        tableView.beginUpdates()
-    }
-
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                    didChange anObject: Any,
-                    at indexPath: IndexPath?,
-                    for type: NSFetchedResultsChangeType,
-                    newIndexPath: IndexPath?) {
-        switch type {
-        case .insert:
-            if let newIndexPath = newIndexPath {
-                tableView.insertRows(at: [newIndexPath], with: .fade)
-            }
-        case .delete:
-            if let indexPath = indexPath {
-                tableView.deleteRows(at: [indexPath], with: .fade)
-            }
-        case .update:
-            if let indexPath = indexPath,
-               let cell = tableView.cellForRow(at: indexPath) {
-                let entity = fetchedResultsController.object(at: indexPath)
-                cell.textLabel?.text = entity.attribute
-            }
-        case .move:
-            if let indexPath = indexPath {
-                tableView.deleteRows(at: [indexPath], with: .fade)
-            }
-            if let newIndexPath = newIndexPath {
-                tableView.insertRows(at: [newIndexPath], with: .fade)
-            }
-        @unknown default:
-            fatalError("Unknown change type encountered")
+    private func setupDataSource() {
+        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
+            let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for: indexPath)
+            itemIdentifier.configureCell(cell)
+            return cell
         }
     }
 
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        tableView.endUpdates()
+    private func loadItems() {
+        var snapshot = dataSource.snapshot()
+        snapshot.appendSections([.single])
+        snapshot.appendItems(itemIdentifiers)
+        dataSource.applySnapshotUsingReloadData(snapshot)
     }
+
+    nonisolated public func controller(
+        _ controller: NSFetchedResultsController<any NSFetchRequestResult>,
+        didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference
+    ) {
+        fatalError()
+    }
+
 }

@@ -28,4 +28,4 @@ extension ConversationRootViewController: MainConversationUIProtocol {
     }
 }
 
-extension NewConversationViewController: MainConversationUIProtocol {}
+extension NewConversationViewController: @retroactive MainConversationUIProtocol {}

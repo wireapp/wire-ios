@@ -20,6 +20,7 @@ import WireDataModel
 import WireMainNavigationUI
 import WireSettingsUI
 import WireSidebarUI
+import WireConversationUI
 
 enum MainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
 
@@ -33,7 +34,7 @@ enum MainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
     // MainCoordinatorDependenciesProtocol
 
     typealias SplitViewController = MainSplitViewController<SidebarViewController, TabBarController>
-    typealias TabBarController = MainTabBarController<ConversationListViewController, ConversationRootViewController>
+    typealias TabBarController = MainTabBarController<ConversationListViewController, NewConversationViewController<ZMConversation>>
     typealias ConversationUIBuilder = ConversationViewControllerBuilder
     typealias SettingsContentUIBuilder = SettingsViewControllerBuilder
 }

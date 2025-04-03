@@ -47,7 +47,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
         //     mediaPlaybackManager: mediaPlaybackManager
         // )
         let viewController = NewConversationViewController(
-            conversation: conversation,
+            conversationModel: conversation,
             persistentContainer: userSession.persistentContainer
         )
         viewController.hidesBottomBarWhenPushed = true
