@@ -57,3 +57,14 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
 }
 
 extension ZMConversation: NewConversationModel {}
+
+extension ZMMessage: NewConversationMessageModel {
+
+    public var conversationCellModel: ConversationCellModel {
+        if let textMessageData {
+            .timeDivider(TimeDividerModel(text: textMessageData.messageText ?? "<nil>", isUnreadIndicatorVisible: false))
+        } else {
+            .timeDivider(TimeDividerModel(text: "???", isUnreadIndicatorVisible: false))
+        }
+    }
+}

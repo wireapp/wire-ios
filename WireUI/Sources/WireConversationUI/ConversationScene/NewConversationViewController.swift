@@ -24,9 +24,13 @@ public protocol NewConversationModel: NSManagedObject {
     var visibleMessagesPredicate: NSPredicate? { get }
 }
 
+public protocol NewConversationMessageModel: NSManagedObject {
+    var conversationCellModel: ConversationCellModel { get }
+}
+
 public final class NewConversationViewController<
     ConversationModel: NewConversationModel,
-    ConversationMessageModel: NSManagedObject
+    ConversationMessageModel: NewConversationMessageModel
 >: UITableViewController, NSFetchedResultsControllerDelegate {
 
     enum SectionIdentifier {
@@ -110,8 +114,7 @@ public final class NewConversationViewController<
     private func setupDataSource() {
         dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
             let message = self.persistentContainer.viewContext.object(with: itemIdentifier) as! ConversationMessageModel
-            let model = TimeDividerModel(text: String(describing: message), isUnreadIndicatorVisible: false)
-            let m = ConversationCellModel.timeDivider(model)
+            let m = message.conversationCellModel
             let cell = tableView.dequeueReusableCell(withIdentifier: m.cellReuseIdentifier, for: indexPath)
             m.configureCell(cell)
             return cell
