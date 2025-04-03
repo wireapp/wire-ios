@@ -40,27 +40,43 @@ class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
         self.session = session
     }
 
-    func updateParticipantPermission(to permission: WireConversationsAPI.ChannelAccessLevelPermission) async throws {
+    func updateParticipantPermission(
+        to permission: WireConversationsAPI.ChannelAccessLevelPermission
+    ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission {
 
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else { return }
+              let apiService = session.apiService else {
+            throw ChannelAccessError.notEnoughData
+        }
 
         let conversationsAPI = ConversationsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
 
-        try await conversationsAPI
+        let permission = try await conversationsAPI
             .addChannelPermission(
                 conversationID: conversationID,
                 conversationDomain: conversationDomain,
                 permission: permission.toNetworkPermission()
             )
+        return permission.toDomain()
     }
 }
 
 extension WireConversationsAPI.ChannelAccessLevelPermission {
     func toNetworkPermission() -> WireAPI.ChannelPermission {
+        switch self {
+        case .admins:
+            .admins
+        case .everyone:
+            .everyone
+        }
+    }
+}
+
+extension WireAPI.ChannelPermission {
+    func toDomain() -> WireConversationsAPI.ChannelAccessLevelPermission {
         switch self {
         case .admins:
             .admins

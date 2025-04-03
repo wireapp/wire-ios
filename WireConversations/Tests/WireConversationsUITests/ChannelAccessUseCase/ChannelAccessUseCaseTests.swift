@@ -66,6 +66,7 @@ final class ChannelAccessUseCaseTests: XCTestCase {
 
     func testUpdateParticipantPermission_changesPermission() async throws {
         let useCase = ChannelAccessUseCase(permission: .admins, repository: repo)
+        repo.updateParticipantPermissionTo_MockValue = .everyone
         let settings = try await useCase.updateParticipantPermission(to: .everyone)
 
         XCTAssertEqual(settings.participantPermission, .everyone)

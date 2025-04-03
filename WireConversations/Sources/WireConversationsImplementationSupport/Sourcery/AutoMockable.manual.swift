@@ -75,30 +75,26 @@ public class MockChannelAccessRepositoryProtocol: ChannelAccessRepositoryProtoco
 
     public init() {}
 
-    // MARK: - updateAccessLevel
-
-    public var updateAccessLevelTo_Invocations: [ChannelAccessLevel] = []
-    public var updateAccessLevelTo_MockError: (any Error)?
-
-    public func updateAccessLevel(to level: ChannelAccessLevel) async throws {
-        updateAccessLevelTo_Invocations.append(level)
-
-        if let error = updateAccessLevelTo_MockError {
-            throw error
-        }
-    }
 
     // MARK: - updateParticipantPermission
 
     public var updateParticipantPermissionTo_Invocations: [ChannelAccessLevelPermission] = []
     public var updateParticipantPermissionTo_MockError: (any Error)?
+    public var updateParticipantPermissionTo_MockValue: WireConversationsAPI.ChannelAccessLevelPermission?
 
-    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws {
+    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws -> WireConversationsAPI.ChannelAccessLevelPermission {
         updateParticipantPermissionTo_Invocations.append(permission)
 
         if let error = updateParticipantPermissionTo_MockError {
             throw error
         }
+
+        if let mock = updateParticipantPermissionTo_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `updateParticipantPermissionTo`")
+        }
     }
 
 }
+
