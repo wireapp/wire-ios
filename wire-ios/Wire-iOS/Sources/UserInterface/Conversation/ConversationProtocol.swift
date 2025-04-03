@@ -114,7 +114,8 @@ protocol GroupDetailsConversation {
 
 }
 
-typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation
+typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation & HasChannelAccessLevelPermission &
+    HasConversationGroupType
 
 extension ZMConversation: ConversationStatusProvider {}
 

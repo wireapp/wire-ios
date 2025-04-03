@@ -323,12 +323,6 @@ final class ConversationListContentController: UICollectionViewController {
             fatal("Unknown cell type")
         }
 
-        if let cell = cell as? SectionListCellType {
-            cell.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
-            cell.obfuscatedSectionName = listViewModel.obfuscatedSectionName(of: indexPath.section)
-            cell.cellIdentifier = "conversation_list_cell"
-        }
-
         cell.autoresizingMask = .flexibleWidth
         return cell
     }
