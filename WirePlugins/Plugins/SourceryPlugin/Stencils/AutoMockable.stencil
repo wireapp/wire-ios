@@ -34,6 +34,10 @@ import {{ import }}
 @testable import {{ import }}
 {% endfor %}
 
+{% for import in argument.autoMockablePackageImports %}
+package import {{ import }}
+{% endfor %}
+
 {# A macro is like a function, it can be passed input and be reused #}
 
 {# Formats a name #}
