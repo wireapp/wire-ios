@@ -25,9 +25,6 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
 
     var message: MockMessage!
     var mockSelfUser: MockUserType!
-    lazy var collapseOwnMessagesStorage = PrivateUserDefaults<CollapseKey>(
-        userID: userSession.selfUser.remoteIdentifier
-    )
 
     override func setUp() {
         super.setUp()
@@ -39,14 +36,13 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
 
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
     }
 
     override func tearDown() {
         message = nil
         mockSelfUser = nil
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
-
         super.tearDown()
     }
 
@@ -68,7 +64,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
     func testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
-        collapseOwnMessagesStorage.set(false, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = false
 
         verify(message: message)
     }

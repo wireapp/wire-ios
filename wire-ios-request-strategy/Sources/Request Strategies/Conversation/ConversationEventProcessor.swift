@@ -138,9 +138,22 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         case .conversationProtocolUpdate:
             await processConversationProtocolChange(event)
 
+        case .conversationAddPermissionUpdate:
+
+            await processConversationAddPermissionUpdate(event: event)
+
         default:
             break
         }
+    }
+
+    private func processConversationAddPermissionUpdate(event: ZMUpdateEvent) async {
+        guard let payload = try? eventPayloadDecoder.decode(
+            Payload.ConversationEvent<Payload.UpdateConversationPermission>.self,
+            from: event.payload
+        ) else { return }
+
+        await processor.processPayload(payload, in: context)
     }
 
     private func processConversationCreate(_ event: ZMUpdateEvent) async {

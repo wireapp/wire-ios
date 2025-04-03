@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireMainNavigationUI
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
@@ -26,9 +27,12 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Advanced group
 
-    func advancedGroup(userSession: UserSession) -> any SettingsCellDescriptorType {
+    func advancedGroup(
+        userSession: UserSession,
+        mainCoordinator: any MainCoordinatorProtocol
+    ) -> any SettingsCellDescriptorType {
         let items = [
-            troubleshootingSection(userSession: userSession),
+            troubleshootingSection(userSession: userSession, mainCoordinator: mainCoordinator),
             debuggingToolsSection,
             pushSection
         ]
@@ -45,11 +49,14 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Sections
 
-    private func troubleshootingSection(userSession: UserSession) -> SettingsSectionDescriptor {
+    private func troubleshootingSection(
+        userSession: UserSession,
+        mainCoordinator: any MainCoordinatorProtocol
+    ) -> SettingsSectionDescriptor {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
             presentationAction: { () -> (UIViewController?) in
-                let router = SettingsDebugReportRouter()
+                let router = SettingsDebugReportRouter(mainCoordinator: mainCoordinator)
                 let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
                 let fetchShareableConversations = FetchShareableConversationsUseCase(
                     contextProvider: userSession
