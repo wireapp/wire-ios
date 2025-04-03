@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireConversationUI
 import WireDataModel
 import WireMainNavigationUI
 
@@ -26,3 +27,5 @@ extension ConversationRootViewController: MainConversationUIProtocol {
         conversationViewController!.conversation
     }
 }
+
+extension NewConversationViewController: MainConversationUIProtocol {}

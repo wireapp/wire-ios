@@ -20,12 +20,13 @@ import UIKit
 import WireDataModel
 import WireMainNavigationUI
 import WireSyncEngine
+import WireConversationUI
 
 @MainActor
 struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
 
     typealias Dependencies = MainCoordinatorDependencies
-    typealias ConversationUI = ConversationRootViewController
+    typealias ConversationUI = NewConversationViewController<ZMConversation>
 
     var userSession: UserSession
     var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
@@ -37,13 +38,17 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
         mainCoordinator: MainCoordinator
     ) -> ConversationUI where MainCoordinator.Dependencies == Dependencies {
 
-        let viewController = ConversationRootViewController(
+        // let viewController = ConversationRootViewController(
+        //     conversation: conversation,
+        //     message: message,
+        //     userSession: userSession,
+        //     mainCoordinator: .init(mainCoordinator: mainCoordinator),
+        //     selfProfileUIBuilder: selfProfileUIBuilder,
+        //     mediaPlaybackManager: mediaPlaybackManager
+        // )
+        let viewController = NewConversationViewController(
             conversation: conversation,
-            message: message,
-            userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
-            selfProfileUIBuilder: selfProfileUIBuilder,
-            mediaPlaybackManager: mediaPlaybackManager
+            persistentContainer: userSession.persistentContainer
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController

@@ -20,12 +20,15 @@ import Foundation
 import LocalAuthentication
 import WireAnalytics
 import WireDataModel
+import CoreData
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
 public protocol UserSession: AnyObject {
 
     // MARK: - Mixed properties and methods
+
+    var persistentContainer: NSPersistentContainer { get }
 
     var isTornDown: Bool { get }
 

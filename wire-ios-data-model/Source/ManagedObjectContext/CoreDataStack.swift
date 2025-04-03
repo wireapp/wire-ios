@@ -129,6 +129,10 @@ public class CoreDataStack: NSObject, ContextProvider {
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
 
+    public var persistentContainer: NSPersistentContainer {
+        messagesContainer
+    }
+
     // MARK: - Initialization
 
     public init(
