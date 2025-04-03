@@ -16,22 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireTransport
+import WireAPI
 
-extension Payload {
-    struct UpdateConverationMemberJoin: CodableEventData {
-        enum CodingKeys: String, CodingKey {
-            case userIDs = "user_ids"
-            case users
-        }
+/// Process conversation add permission update event.
 
-        static var eventType: ZMUpdateEventType {
-            .conversationMemberJoin
-        }
+protocol ConversationAddPermissionEventProcessorProtocol {
 
-        let userIDs: [UUID]?
-        let users: [ConversationMember]?
+    /// Process a conversation add permission event.
+    ///
+    /// - Parameter event: A conversation add permission event.
 
-    }
+    func processEvent(_ event: ConversationAddPermissionEvent) async
+
 }

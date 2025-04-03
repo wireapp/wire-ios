@@ -40,7 +40,6 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
         // WHEN && THEN
         XCTAssertFalse(cellDescription.supportsActions)
-        XCTAssertFalse(cellDescription.showEphemeralTimer)
         XCTAssertFalse(cellDescription.containsHighlightableContent)
         XCTAssertNil(cellDescription.message)
         XCTAssertNil(cellDescription.delegate)
