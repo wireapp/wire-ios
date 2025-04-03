@@ -72,8 +72,31 @@ public final class NewConversationViewController<
         super.viewDidLoad()
         setupTableView()
         initializeFetchedResultsController()
-        //loadItems()
     }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let sections = fetchedResultsController.sections, !sections.isEmpty {
+            let lastSection = sections.count - 1
+            let lastRow = sections[lastSection].numberOfObjects - 1
+            let indexPath = IndexPath(row: lastRow, section: lastSection)
+            DispatchQueue.main.async {
+                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+            }
+        }
+    }
+
+//    public override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//
+//        if let sections = fetchedResultsController.sections, !sections.isEmpty {
+//            let lastSection = sections.count - 1
+//            let lastRow = sections[lastSection].numberOfObjects - 1
+//            let indexPath = IndexPath(row: lastRow, section: lastSection)
+//            tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+//        }
+//    }
 
     private func setupTableView() {
         registerCellTypes()
@@ -92,6 +115,7 @@ public final class NewConversationViewController<
         let fetchRequest = NSFetchRequest<ConversationMessageModel>()
         fetchRequest.entity = ConversationMessageModel.entity()
         fetchRequest.predicate = conversationModel.visibleMessagesPredicate
+        fetchRequest.fetchBatchSize = 30
         let sortDescriptor = NSSortDescriptor(key: "serverTimestamp", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
         let context = persistentContainer.viewContext
