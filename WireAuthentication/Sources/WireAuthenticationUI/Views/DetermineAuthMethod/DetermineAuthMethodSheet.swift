@@ -19,8 +19,13 @@
 import Foundation
 import WireAuthenticationAPI
 
-enum VerificationCodeDestination: Hashable {
+package enum DetermineAuthMethodSheet: Identifiable, Hashable, Sendable {
 
-    case noHistory(authenticationResult: AuthenticationResult)
+    package var id: Self { self }
+
+    case switchBackendConfirmation(
+        email: String?,
+        backendInfo: BackendInfo
+    )
 
 }

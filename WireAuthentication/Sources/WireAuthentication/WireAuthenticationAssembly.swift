@@ -70,7 +70,7 @@ public struct WireAuthenticationAssembly {
             existsAnotherAccount: existsAnotherAccount
         )
 
-        return (view: rootComponent.view, bridge: rootComponent.bridge)
+        return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)
     }
 
 }

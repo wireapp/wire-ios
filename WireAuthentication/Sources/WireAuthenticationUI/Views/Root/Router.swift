@@ -28,7 +28,7 @@ package protocol Router {
 
     func navigate<Destination: Hashable>(to destination: Destination)
 
-    func presentSheet(_ modalDestination: RootView.ModalDestination)
+    func presentSheet(_ modalDestination: RootViewSheet)
 
     func dismissSheet()
 

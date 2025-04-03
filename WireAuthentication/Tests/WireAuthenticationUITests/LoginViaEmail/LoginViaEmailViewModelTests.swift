@@ -50,8 +50,8 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         mockValidateEmailUseCase = MockValidateEmailUseCaseProtocol()
 
         sut = LoginViaEmailViewModel(
-            router: router,
             factory: self,
+            router: router,
             email: "mika@example.com",
             backendInfo: MockDependencies().backendInfo,
             canCreateAccount: true,
@@ -90,6 +90,23 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
 
     func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
         mockValidateEmailUseCase
+    }
+
+    var viewModel: WireAuthenticationUI.LoginViaEmailViewModel {
+        fatalError("not needed here")
+    }
+
+    func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
+    ) -> any WireAuthenticationUI.VerificationCodeFactory {
+        fatalError("not needed here")
+    }
+
+    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI
+        .NoHistoryFactory {
+        fatalError("not needed here")
     }
 
     // MARK: - submitPassword tests
@@ -164,7 +181,7 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         XCTAssertEqual(isLoadingCalls, [true, false])
 
         try XCTAssertCount(router.navigate_Invocations, count: 1)
-        let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailView.Destination)
+        let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailDestination)
         XCTAssertEqual(actualDestination, .noHistory(authenticationResult: authenticationResult))
     }
 
@@ -202,10 +219,10 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         XCTAssertNil(sut.alert)
         XCTAssertEqual(isLoadingCalls, [true, false])
         try XCTAssertCount(router.navigate_Invocations, count: 1)
-        let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailView.Destination)
+        let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailDestination)
         XCTAssertEqual(
             actualDestination,
-            LoginViaEmailView.Destination
+            LoginViaEmailDestination
                 .verifyLogin(
                     email: "mika@example.com",
                     password: "password",

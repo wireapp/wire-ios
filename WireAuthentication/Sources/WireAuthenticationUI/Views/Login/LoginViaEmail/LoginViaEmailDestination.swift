@@ -19,8 +19,15 @@
 import Foundation
 import WireAuthenticationAPI
 
-enum VerificationCodeDestination: Hashable {
+enum LoginViaEmailDestination: Hashable {
 
-    case noHistory(authenticationResult: AuthenticationResult)
+    case verifyLogin(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    )
+    case noHistory(
+        authenticationResult: AuthenticationResult
+    )
 
 }
