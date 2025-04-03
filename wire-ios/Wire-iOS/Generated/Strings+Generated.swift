@@ -2058,6 +2058,32 @@ internal enum L10n {
           /// You can now decrypt messages from yourself. To recover lost messages, you need to resend them.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt_resolved.self", fallback: "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.")
         }
+        internal enum Channel {
+          internal enum Guest {
+            /// %@ joined the channel
+            internal static func joined(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.guest.joined", String(describing: p1), fallback: "%@ joined the channel")
+            }
+            /// You joined the channel
+            internal static let youJoined = L10n.tr("Localizable", "content.system.channel.guest.you_joined", fallback: "You joined the channel")
+          }
+          internal enum Invite {
+            /// Copy Channel link
+            internal static let button = L10n.tr("Localizable", "content.system.channel.invite.button", fallback: "Copy Channel link")
+            /// This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:
+            internal static let title = L10n.tr("Localizable", "content.system.channel.invite.title", fallback: "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:")
+          }
+          internal enum WithName {
+            /// %@ started the channel
+            internal static func title(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.with_name.title", String(describing: p1), fallback: "%@ started the channel")
+            }
+            /// %@ started the channel
+            internal static func titleYou(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.with_name.title-you", String(describing: p1), fallback: "%@ started the channel")
+            }
+          }
+        }
         internal enum Conversation {
           internal enum Guest {
             /// %@ joined
