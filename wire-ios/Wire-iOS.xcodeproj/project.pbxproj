@@ -134,8 +134,6 @@
 		EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4929719CDC0008B894 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */; };
 		EEE25B4E29719D0B0008B894 /* ZipArchive.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4F29719D2F0008B894 /* avs.xcframework */; };
-		EEE25B5129719D2F0008B894 /* avs.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4F29719D2F0008B894 /* avs.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */; };
 		EEE25B5429719D540008B894 /* libPhoneNumberiOS.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; };
@@ -218,7 +216,6 @@
 				591B6E182C8B095B009F8A7B /* WireNotificationEngine.framework in Embed Frameworks */,
 				EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */,
 				EE33C48E296485FA00C058D1 /* WireShareEngine.framework in Embed Frameworks */,
-				EEE25B5129719D2F0008B894 /* avs.xcframework in Embed Frameworks */,
 				EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */,
 				EEE25B4229719C750008B894 /* WireRequestStrategy.framework in Embed Frameworks */,
 				EEE25B5429719D540008B894 /* libPhoneNumberiOS.xcframework in Embed Frameworks */,
@@ -412,7 +409,6 @@
 		EEE25B4629719CB30008B894 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B4929719CDC0008B894 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
-		EEE25B4F29719D2F0008B894 /* avs.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = avs.xcframework; path = ../Carthage/Build/avs.xcframework; sourceTree = "<group>"; };
 		EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libPhoneNumberiOS.xcframework; path = ../Carthage/Build/libPhoneNumberiOS.xcframework; sourceTree = "<group>"; };
 		EEE25B5829719DA80008B894 /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCommonComponents.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -915,7 +911,6 @@
 				590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */,
 				594341D72D08611700A6C0B5 /* WireCountly in Frameworks */,
 				594906A52D0713C000238104 /* WireAnalytics in Frameworks */,
-				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
 				59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */,
 				59B99FAC2C89DF2100201827 /* WireAPI in Frameworks */,
 				EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */,
@@ -1141,7 +1136,6 @@
 				EEE25B4929719CDC0008B894 /* WireUtilities.framework */,
 				598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */,
 				EE67F73D296F0E7D001D7C88 /* Ziphy.framework */,
-				EEE25B4F29719D2F0008B894 /* avs.xcframework */,
 				EEE25B2629719A730008B894 /* Clibsodium.xcframework */,
 				EEE25B2729719A730008B894 /* cryptobox.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
