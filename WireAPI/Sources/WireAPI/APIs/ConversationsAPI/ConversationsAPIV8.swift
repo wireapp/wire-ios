@@ -97,7 +97,7 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
         conversationID: String,
         conversationDomain: String,
         permission: ChannelPermission
-    ) async throws {
+    ) async throws -> ChannelPermission {
         let input = ChannelPermissionParametersV8(from: permission)
         let body = try JSONEncoder.defaultEncoder.encode(input)
         let path = "\(pathPrefix)/conversations/\(conversationDomain)/\(conversationID)/add-permission"
@@ -114,8 +114,13 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
 
         do {
             return try ResponseParser()
-                .success(code: .ok) // Add permissions updated
-                .success(code: .noContent) // Add permissions unchanged
+                .success(code: .ok, type: ChannelPermissionResponseV8.self) // Add permissions updated
+                .failure(
+                    code: .noContent,
+                    error: ConversationsAPIError
+                        .permissionsUnchanged
+                ) // Add permissions unchanged, note: this is not ideal to treat this as a failure but we can't
+                // currently have multiple success cases.
                 .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
                 .failure(code: .notFound, label: "no-team", error: ConversationsAPIError.teamNotFound)
                 .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
@@ -169,6 +174,39 @@ private struct QualifiedConversationListV8: Decodable, ToAPIModelConvertible {
             failed: failed
         )
     }
+}
+
+private struct ChannelPermissionResponseV8: Decodable, ToAPIModelConvertible {
+    let conversationID: UUID
+    let senderID: UUID
+    let conversationQualifiedID: QualifiedID
+    let senderQualifiedID: QualifiedID
+    let payload: Payload
+
+    struct Payload: Decodable {
+
+        let addPermission: ChannelPermission
+
+        enum CodingKeys: String, CodingKey {
+            case addPermission = "add_permission"
+        }
+
+    }
+
+    enum CodingKeys: String, CodingKey {
+
+        case conversationID = "conversation"
+        case senderID = "from"
+        case conversationQualifiedID = "qualified_conversation"
+        case senderQualifiedID = "qualified_from"
+        case payload = "data"
+
+    }
+
+    func toAPIModel() -> ChannelPermission {
+        payload.addPermission
+    }
+
 }
 
 struct ChannelPermissionParametersV8: Encodable {

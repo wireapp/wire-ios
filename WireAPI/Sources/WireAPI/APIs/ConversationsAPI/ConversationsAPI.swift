@@ -61,11 +61,13 @@ public protocol ConversationsAPI {
     /// - parameter conversationID: The conversation ID.
     /// - parameter conversationDomain: The conversation domain.
     /// - parameter permission: Channel permission to add (`admins` or `everyone`)
+    /// - returns: The updated channel permission.
 
+    @discardableResult
     func addChannelPermission(
         conversationID: String,
         conversationDomain: String,
         permission: ChannelPermission
-    ) async throws
+    ) async throws -> ChannelPermission
 
 }
