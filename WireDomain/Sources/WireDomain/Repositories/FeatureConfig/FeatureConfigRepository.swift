@@ -226,7 +226,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
             let needsToNotifyUser = try await needsToNotifyUser(name: .channels)
             return FeatureState(
-                name: .selfDeletingMessages,
+                name: .channels,
                 isEnabled: channelsFeatureConfig.status == .enabled,
                 shouldNotifyUser: needsToNotifyUser
             )
