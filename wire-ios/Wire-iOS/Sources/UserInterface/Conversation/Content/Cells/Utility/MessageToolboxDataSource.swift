@@ -141,7 +141,8 @@ final class MessageToolboxDataSource {
     ) {
         let countdownStatus = makeEphemeralCountdown()
         let deliveryState = message.shouldShowDeliveryState ? selfMessageState(for: message) : nil
-        let timestampString = message.isSent ? message.formattedReceivedDate() ?? "" : ""
+        let isTimestampVisible = message.isSent && message.deliveryState != .failedToSend
+        let timestampString = isTimestampVisible ? message.formattedReceivedDate() ?? "" : ""
         return (timestampString, deliveryState, countdownStatus)
     }
 
