@@ -34,7 +34,10 @@ enum MainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
     // MainCoordinatorDependenciesProtocol
 
     typealias SplitViewController = MainSplitViewController<SidebarViewController, TabBarController>
-    typealias TabBarController = MainTabBarController<ConversationListViewController, NewConversationViewController<ZMConversation>>
+    typealias TabBarController = MainTabBarController<
+        ConversationListViewController,
+        NewConversationViewController<ZMConversation, ZMMessage>
+    >
     typealias ConversationUIBuilder = ConversationViewControllerBuilder
     typealias SettingsContentUIBuilder = SettingsViewControllerBuilder
 }

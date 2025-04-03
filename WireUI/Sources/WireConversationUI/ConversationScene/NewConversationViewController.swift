@@ -20,13 +20,20 @@ public import UIKit
 
 import CoreData
 
-public final class NewConversationViewController<ConversationModel: NSManagedObject>: UITableViewController, NSFetchedResultsControllerDelegate {
+public protocol NewConversationModel: NSManagedObject {
+    var visibleMessagesPredicate: NSPredicate? { get }
+}
+
+public final class NewConversationViewController<
+    ConversationModel: NewConversationModel,
+    ConversationMessageModel: NSManagedObject
+>: UITableViewController, NSFetchedResultsControllerDelegate {
 
     enum SectionIdentifier {
         case single
     }
 
-    typealias ItemIdentifier = ConversationCellModel
+    typealias ItemIdentifier = NSManagedObjectID // ConversationCellModel
 
     let itemIdentifiers = [ItemIdentifier]()
 
@@ -37,11 +44,12 @@ public final class NewConversationViewController<ConversationModel: NSManagedObj
     private let persistentContainer: NSPersistentContainer
     private let conversationObjectID: NSManagedObjectID
 
-    private var fetchedResultsController: NSFetchedResultsController<ConversationModel>!
+    private var fetchedResultsController: NSFetchedResultsController<ConversationMessageModel>!
     private var dataSource: UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>!
 
     public init(
         conversationModel: ConversationModel,
+        conversationMessageType _: ConversationMessageModel.Type,
         persistentContainer: NSPersistentContainer
     ) {
         self.conversationModel = conversationModel
@@ -60,7 +68,7 @@ public final class NewConversationViewController<ConversationModel: NSManagedObj
         super.viewDidLoad()
         setupTableView()
         initializeFetchedResultsController()
-        loadItems()
+        //loadItems()
     }
 
     private func setupTableView() {
@@ -70,14 +78,16 @@ public final class NewConversationViewController<ConversationModel: NSManagedObj
     }
 
     private func registerCellTypes() {
-        for itemIdentifier in itemIdentifiers {
-            itemIdentifier.registerIfNeeded(in: tableView)
-        }
+        ConversationCellModel.timeDivider(.init()).registerIfNeeded(in: tableView)
+//        for itemIdentifier in itemIdentifiers {
+//            itemIdentifier.registerIfNeeded(in: tableView)
+//        }
     }
 
     private func initializeFetchedResultsController() {
-        let fetchRequest = NSFetchRequest<ConversationModel>()
-        fetchRequest.entity = ConversationModel.entity()
+        let fetchRequest = NSFetchRequest<ConversationMessageModel>()
+        fetchRequest.entity = ConversationMessageModel.entity()
+        fetchRequest.predicate = conversationModel.visibleMessagesPredicate
         let sortDescriptor = NSSortDescriptor(key: "serverTimestamp", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
         let context = persistentContainer.viewContext
@@ -99,8 +109,11 @@ public final class NewConversationViewController<ConversationModel: NSManagedObj
 
     private func setupDataSource() {
         dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
-            let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for: indexPath)
-            itemIdentifier.configureCell(cell)
+            let message = self.persistentContainer.viewContext.object(with: itemIdentifier) as! ConversationMessageModel
+            let model = TimeDividerModel(text: String(describing: message), isUnreadIndicatorVisible: false)
+            let m = ConversationCellModel.timeDivider(model)
+            let cell = tableView.dequeueReusableCell(withIdentifier: m.cellReuseIdentifier, for: indexPath)
+            m.configureCell(cell)
             return cell
         }
     }
@@ -116,7 +129,8 @@ public final class NewConversationViewController<ConversationModel: NSManagedObj
         _ controller: NSFetchedResultsController<any NSFetchRequestResult>,
         didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference
     ) {
-        fatalError()
+        let snapshot = snapshot as NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 
 }

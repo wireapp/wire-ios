@@ -26,7 +26,7 @@ import WireConversationUI
 struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
 
     typealias Dependencies = MainCoordinatorDependencies
-    typealias ConversationUI = NewConversationViewController<ZMConversation>
+    typealias ConversationUI = NewConversationViewController<ZMConversation, ZMMessage>
 
     var userSession: UserSession
     var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
@@ -48,9 +48,12 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
         // )
         let viewController = NewConversationViewController(
             conversationModel: conversation,
+            conversationMessageType: ZMMessage.self,
             persistentContainer: userSession.persistentContainer
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController
     }
 }
+
+extension ZMConversation: NewConversationModel {}
