@@ -94,6 +94,8 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                 await mainCoordinator.showConversationList(conversationFilter: .favorites)
             case .groups:
                 await mainCoordinator.showConversationList(conversationFilter: .groups)
+            case .channels:
+                await mainCoordinator.showConversationList(conversationFilter: .channels)
             case .oneOnOne:
                 await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
             case .folders:

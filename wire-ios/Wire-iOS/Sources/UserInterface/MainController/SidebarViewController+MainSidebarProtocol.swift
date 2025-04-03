@@ -28,6 +28,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         case .all: self = .all
         case .favorites: self = .favorites
         case .groups: self = .groups
+        case .channels: self = .channels
         case .oneOnOne: self = .oneOnOne
         case .folders: self = .folders
         case .archive: self = .archive
@@ -40,6 +41,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         case .all: .all
         case .favorites: .favorites
         case .groups: .groups
+        case .channels: .channels
         case .oneOnOne: .oneOnOne
         case .folders: .folders
         case .archive: .archive
