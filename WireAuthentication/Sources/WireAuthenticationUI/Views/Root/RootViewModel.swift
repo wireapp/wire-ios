@@ -24,15 +24,23 @@ import WireAuthenticationAPI
 @MainActor
 package final class RootViewModel: ObservableObject, Router {
 
-    package typealias Factory = OpenAppStoreUseCaseFactory
+    package typealias Factory =
+        OpenAppStoreUseCaseFactory &
+        RootFactory
+
+    // MARK: - View state
 
     @Published var path = NavigationPath()
-    @Published var modalDestination: RootView.ModalDestination?
+    @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
 
-    private let factory: any Factory
+    // MARK: - Dependencies
+
+    package let factory: any Factory
     private var cancellable: AnyCancellable?
-    private var lastModalDestination: RootView.ModalDestination?
+    private var lastModalDestination: RootViewSheet?
+
+    // MARK: - Life cycle
 
     package init(
         factory: any Factory,
@@ -51,6 +59,8 @@ package final class RootViewModel: ObservableObject, Router {
         }
     }
 
+    // MARK: - Actions
+
     package func popToRoot() {
         path.removeLast(path.count)
     }
@@ -59,7 +69,7 @@ package final class RootViewModel: ObservableObject, Router {
         path.append(destination)
     }
 
-    package func presentSheet(_ modalDestination: RootView.ModalDestination) {
+    package func presentSheet(_ modalDestination: RootViewSheet) {
         self.modalDestination = modalDestination
     }
 
@@ -72,15 +82,17 @@ package final class RootViewModel: ObservableObject, Router {
         modalDestination = nil
     }
 
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+    }
+
+    // MARK: - Private
+
     private func restoreSheet() {
         if let lastModalDestination, modalDestination == nil {
             modalDestination = lastModalDestination
             self.lastModalDestination = nil
         }
-    }
-
-    func goToAppStore() {
-        factory.openAppStoreUseCase().invoke()
     }
 
 }

@@ -19,20 +19,24 @@
 import SwiftUI
 import WireAuthenticationAPI
 
+package protocol RootFactory {
+
+    @MainActor var viewModel: RootViewModel { get }
+
+    @MainActor
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+}
+
 package struct RootView: View {
 
-    package typealias Factory = DetermineAuthMethodBuilder
+    @StateObject private var viewModel: RootViewModel
 
-    @StateObject var viewModel: RootViewModel
-    let factory: any Factory
     private let cornerRadius: CGFloat = 10
 
     package init(
-        viewModel: RootViewModel,
-        factory: any Factory
+        factory: @autoclosure @escaping () -> any RootFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -43,12 +47,19 @@ package struct RootView: View {
     }
 
     @ViewBuilder
-    private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
+    private func sheetContent(for sheet: RootViewSheet) -> some View {
         switch sheet {
-        case let .authFlow(backedInfo):
+        case let .authFlow(backendInfo):
             NavigationStack(path: $viewModel.path) {
-                factory.determineAuthMethodView(backendInfo: backedInfo)
+                DetermineAuthMethodView(
+                    factory: viewModel.factory.determineAuthMethodFactory(
+                        backendInfo: backendInfo
+                    )
+                )
             }
+            // We must provide an explicit id so it knows to create a new
+            // view when the backend info changes.
+            .id(backendInfo)
             .sheetCornerRadius(cornerRadius, inNavigationStack: true)
             // The alert should be shown on the navigation stack, otherwise
             // it will dismiss the sheet.
@@ -68,13 +79,4 @@ package struct RootView: View {
         }
     }
 
-    package enum ModalDestination: Identifiable, Hashable {
-        public var id: Self { self }
-
-        case authFlow(backendInfo: BackendInfo)
-    }
-}
-
-#Preview {
-    MockDependencies().rootView
 }

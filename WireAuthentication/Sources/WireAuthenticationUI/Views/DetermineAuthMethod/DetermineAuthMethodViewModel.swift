@@ -26,31 +26,18 @@ import WireLogging
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
+        DetermineAuthMethodFactory &
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
         LoginViaSSOUseCaseFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
 
-    package enum ModalDestination: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        case switchBackendConfirmation(
-            email: String?,
-            backendInfo: BackendInfo
-        )
-
-    }
-
-    private let router: any Router
-    private let factory: any Factory
-    private let bridge: WireAuthenticationBridge
-    package let backendInfo: BackendInfo
-    private var cancellable: AnyCancellable?
+    // MARK: - View state
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
-    @Published var modalDestination: ModalDestination?
+    @Published var modalDestination: DetermineAuthMethodSheet?
     @Published var existsAnotherAccount: Bool
 
     var isNextButtonEnabled: Bool {
@@ -61,36 +48,48 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         backendInfo.environmentType != .production
     }
 
+    // MARK: - Dependencies
+
+    package let factory: any Factory
+    private let router: any Router
+    private let bridge: WireAuthenticationBridge
+    package let backendInfo: BackendInfo
+    private var cancellable: AnyCancellable?
+
+    // MARK: - Life cycle
+
     package init(
-        router: any Router,
         factory: any Factory,
+        router: any Router,
         bridge: WireAuthenticationBridge,
         backendInfo: BackendInfo,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
         isLoading: Bool = false
     ) {
-        self.router = router
         self.factory = factory
+        self.router = router
         self.bridge = bridge
         self.backendInfo = backendInfo
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
 
-        self.cancellable = bridge.inboundEvents.sink { event in
+        self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case let .backendSwitchRequested(configURL):
                 Task { [weak self] in
                     await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
             case let .updateAnotherAccountExistence(newValue):
-                self.existsAnotherAccount = newValue
+                self?.existsAnotherAccount = newValue
             default:
                 break
             }
         }
     }
+
+    // MARK: - Actions
 
     func submitEmailOrSSOCode() async {
         isLoading = true
@@ -117,7 +116,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             case ProxyModeError.proxyCredentialsRequired:
                 // Login via email is the only place we ask from proxy credentials.
                 router.navigate(
-                    to: DetermineAuthMethodView.Destination.login(
+                    to: DetermineAuthMethodDestination.login(
                         email: nil,
                         didDetectDomainConflict: false,
                         backendInfo: backendInfo
@@ -145,14 +144,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     ) async {
         switch method {
         case let .loginViaEmail(email, didDetectDomainConflict):
-            router.navigate(to: DetermineAuthMethodView.Destination.login(
+            router.navigate(to: DetermineAuthMethodDestination.login(
                 email: email,
                 didDetectDomainConflict: didDetectDomainConflict,
                 backendInfo: backendInfo
             ))
 
         case let .loginOrRegisterViaEmail(email):
-            router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(
+            router.navigate(to: DetermineAuthMethodDestination.loginOrRegister(
                 email: email,
                 didDetectDomainConflict: false,
                 backendInfo: backendInfo
@@ -161,7 +160,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         case let .loginViaSSO(code):
             do {
                 let authResult = try await loginViaSSO(code: code, backendInfo: nil)
-                router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authResult))
+                router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
             } catch let error as LoginViaSSOUseCaseError {
                 switch error {
                 case .invalidCode:
@@ -241,7 +240,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 code: nil,
                 backendInfo: backendInfo
             )
-            router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authResult))
+            router.navigate(
+                to: DetermineAuthMethodDestination.noHistory(authResult)
+            )
         } catch let error as LoginViaSSOUseCaseError {
             switch error {
             case .invalidCode:
@@ -252,9 +253,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 // No op
                 break
             case .noDefaultCodeAvailable:
-                router.presentSheet(
-                    RootView.ModalDestination.authFlow(backendInfo: backendInfo)
-                )
+                router.popToRoot() // clear the navigation stack before replacing root
+                router.presentSheet(.authFlow(backendInfo: backendInfo))
             case let .authenticationFailed(samlError):
                 WireLogger.authentication.error(
                     "sso authentication failed with SAML error: \(String(describing: samlError))"
@@ -266,7 +266,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         } catch ProxyModeError.proxyCredentialsRequired {
             // Login via email is the only place we ask from proxy credentials.
             router.navigate(
-                to: DetermineAuthMethodView.Destination.login(
+                to: DetermineAuthMethodDestination.login(
                     email: email,
                     didDetectDomainConflict: false,
                     backendInfo: backendInfo
