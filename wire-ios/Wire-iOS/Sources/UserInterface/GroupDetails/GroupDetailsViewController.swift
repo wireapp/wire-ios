@@ -554,7 +554,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let permission: WireConversationsAPI.ChannelAccessLevelPermission? = conversation.accessLevelPermission.map {
             switch $0 {
             case .admins: .admins
-            case .everybody: .adminsAndMembers
+            case .everyone: .everyone
             }
         }
 

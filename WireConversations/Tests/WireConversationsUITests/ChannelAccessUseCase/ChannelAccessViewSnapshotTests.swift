@@ -42,7 +42,7 @@ class ChannelAccessViewSnapshotTests: XCTestCase {
     func testPrivateAccessLevel() {
         let sut = makeSUT(settings: .init(
             accessLevel: .private,
-            participantPermission: .adminsAndMembers
+            participantPermission: .everyone
         ))
 
         snapshotHelper.verifyLightAndDark(matching: sut)

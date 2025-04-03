@@ -29,7 +29,7 @@ final class ChannelAccessViewModelTests: XCTestCase {
     lazy var useCase = {
         let initialSettings = ChannelAccessSettings(
             accessLevel: .public,
-            participantPermission: .adminsAndMembers
+            participantPermission: .everyone
         )
 
         let useCase = MockChannelAccessUseCaseProtocol()
@@ -43,7 +43,7 @@ final class ChannelAccessViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.showPrivateAccessConfirmation)
         XCTAssertEqual(
             viewModel.settings.participantPermission,
-            .adminsAndMembers
+            .everyone
         )
     }
 
@@ -62,7 +62,7 @@ final class ChannelAccessViewModelTests: XCTestCase {
 
         useCase.underlyingSettings = .init(
             accessLevel: .private,
-            participantPermission: .adminsAndMembers
+            participantPermission: .everyone
         )
 
         await viewModel.confirmPrivateAccessChange()
@@ -72,14 +72,14 @@ final class ChannelAccessViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.settings.accessLevel, .private)
         XCTAssertEqual(
             viewModel.settings.participantPermission,
-            .adminsAndMembers
+            .everyone
         )
     }
 
     func test_selectParticipantPermission_updatesState() async {
-        await viewModel.selectParticipantPermission(.adminsAndMembers)
-        XCTAssertEqual(viewModel.settings.participantPermission, .adminsAndMembers)
+        await viewModel.selectParticipantPermission(.everyone)
+        XCTAssertEqual(viewModel.settings.participantPermission, .everyone)
         XCTAssertEqual(useCase.updateParticipantPermissionTo_Invocations.count, 1)
-        XCTAssertEqual(useCase.updateParticipantPermissionTo_Invocations.first, .adminsAndMembers)
+        XCTAssertEqual(useCase.updateParticipantPermissionTo_Invocations.first, .everyone)
     }
 }

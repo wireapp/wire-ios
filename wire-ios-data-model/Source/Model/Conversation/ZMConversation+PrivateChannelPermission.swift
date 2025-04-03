@@ -20,15 +20,15 @@ import Foundation
 
 @objc
 public enum ChannelAccessLevelPermission: Int {
-    case everybody
+    case everyone
     case admins
 
     public static func fromRawValue(_ rawValue: String?) -> Self? {
         switch rawValue {
         case adminsPermissionKey:
             .admins
-        case everybodyPermissionKey:
-            .everybody
+        case everyonePermissionKey:
+            .everyone
         default:
             nil
         }
@@ -36,7 +36,7 @@ public enum ChannelAccessLevelPermission: Int {
 }
 
 private let adminsPermissionKey = "admins"
-private let everybodyPermissionKey = "everybody"
+private let everyonePermissionKey = "everyone"
 
 extension ZMConversation: HasChannelAccessLevelPermission {
 
@@ -50,14 +50,14 @@ extension ZMConversation: HasChannelAccessLevelPermission {
 
             switch privateChannelPermissionValue {
             case adminsPermissionKey: return .admins
-            case everybodyPermissionKey: return .everybody
+            case everyonePermissionKey: return .everyone
             default: return nil
             }
         }
         set {
             privateChannelPermissionValue = switch newValue {
             case .admins: adminsPermissionKey
-            case .everybody: everybodyPermissionKey
+            case .everyone: everyonePermissionKey
             case nil: nil
             }
         }

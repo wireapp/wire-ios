@@ -64,8 +64,8 @@ package struct ChannelAccessView: View {
                             permission: .admins
                         )
                         permissionOption(
-                            title: L10n.Localizable.ChannelAccessLevel.adminsAndMembers,
-                            permission: .adminsAndMembers
+                            title: L10n.Localizable.ChannelAccessLevel.everyone,
+                            permission: .everyone
                         )
                     }.background(.clear)
                 }
@@ -161,7 +161,7 @@ struct ChannelAccessView_Previews: PreviewProvider {
                     viewModel: ChannelAccessViewModel(
                         accentColor: .blue,
                         useCase: ChannelAccessUseCase(
-                            permission: .adminsAndMembers,
+                            permission: .everyone,
                             repository: MockChannelAccessRepositoryProtocol()
                         )
                     )

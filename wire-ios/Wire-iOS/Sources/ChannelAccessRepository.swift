@@ -19,6 +19,7 @@
 import WireAPI
 import WireConversationsAPI
 import WireConversationsImplementation
+import WireAPI
 import WireDomain
 import WireSyncEngine
 import WireTransport
@@ -45,8 +46,6 @@ class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
               let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else { return }
 
-        let context = session.syncContext
-
         let conversationsAPI = ConversationsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
@@ -65,7 +64,7 @@ extension WireConversationsAPI.ChannelAccessLevelPermission {
         switch self {
         case .admins:
             .admins
-        case .adminsAndMembers:
+        case .everyone:
             .everyone
         }
     }

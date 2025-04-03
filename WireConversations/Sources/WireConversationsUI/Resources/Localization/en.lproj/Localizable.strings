@@ -26,7 +26,7 @@
 "channel_access_level.public" = "Public";
 "channel_access_level.private" = "Private";
 "channel_access_level.admins" = "Admins";
-"channel_access_level.admins_and_members" = "Admins and members";
+"channel_access_level.everyone" = "Admins and members";
 "channel_access_level.navigation_title" = "Access";
 
 "channel_access_level.participants_header" = "Add participants";

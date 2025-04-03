@@ -25,7 +25,7 @@ public enum ChannelAccessLevel {
 
 public enum ChannelAccessLevelPermission {
     case admins
-    case adminsAndMembers
+    case everyone
 }
 
 public struct ChannelAccessSettings {

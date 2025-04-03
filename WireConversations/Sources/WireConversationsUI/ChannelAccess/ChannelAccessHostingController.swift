@@ -88,7 +88,7 @@ struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
 
         let useCase = ChannelAccessUseCase(
-            permission: .adminsAndMembers,
+            permission: .everyone,
             repository: MockChannelAccessRepositoryProtocol()
         )
         let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)

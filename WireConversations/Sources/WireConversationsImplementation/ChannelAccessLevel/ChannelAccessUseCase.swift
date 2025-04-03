@@ -49,7 +49,7 @@ public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
             // TODO: [WPB-16860] https://wearezeta.atlassian.net/browse/WPB-16860
             accessLevel: .private,
 //            accessLevel: permission == nil ? .public : .private,
-            participantPermission: permission ?? .adminsAndMembers
+            participantPermission: permission ?? .everyone
         )
         self.settings = settings
         self.repository = repository
@@ -59,9 +59,9 @@ public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
         guard settings.accessLevel == .public else {
             throw ChannelAccessError.notAllowed
         }
-        try await repository.updateParticipantPermission(to: .adminsAndMembers) // default value
+        try await repository.updateParticipantPermission(to: .everyone) // default value
         settings.accessLevel = level
-        settings.participantPermission = .adminsAndMembers
+        settings.participantPermission = .everyone
         return settings
     }
 
