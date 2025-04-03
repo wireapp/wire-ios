@@ -254,6 +254,7 @@
 		BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */; };
 		BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */; };
+		C93B11482D95621A000F6573 /* Payload+UpdateConversationPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93B11472D95621A000F6573 /* Payload+UpdateConversationPermission.swift */; };
 		CB5120532C6FD69F000C8FEC /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */; };
 		CB5A461D2D940BB700D469F1 /* Payload+ConversationGroupType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5A461C2D940BA600D469F1 /* Payload+ConversationGroupType.swift */; };
 		CB7979052C73663B006FBA58 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEA58F192B71179D006DEE32 /* WireRequestStrategySupport.framework */; };
@@ -280,8 +281,8 @@
 		E629E3B52B4703E100D526AD /* Payload+ConversationAddMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */; };
 		E629E3B72B47041700D526AD /* Payload+ConversationUpdateRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3B62B47041700D526AD /* Payload+ConversationUpdateRole.swift */; };
 		E629E3BC2B4704B200D526AD /* Payload+ConversationEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3BB2B4704B200D526AD /* Payload+ConversationEvent.swift */; };
-		E629E3BE2B4704E900D526AD /* Payload+UpdateConverationMemberLeave.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3BD2B4704E900D526AD /* Payload+UpdateConverationMemberLeave.swift */; };
-		E629E3C02B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3BF2B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift */; };
+		E629E3BE2B4704E900D526AD /* Payload+UpdateConversationMemberLeave.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3BD2B4704E900D526AD /* Payload+UpdateConversationMemberLeave.swift */; };
+		E629E3C02B47051D00D526AD /* Payload+UpdateConversationMemberJoin.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3BF2B47051D00D526AD /* Payload+UpdateConversationMemberJoin.swift */; };
 		E629E3C22B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C12B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift */; };
 		E629E3C42B47056B00D526AD /* Payload+UpdateConversationDeleted.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C32B47056B00D526AD /* Payload+UpdateConversationDeleted.swift */; };
 		E629E3C62B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */; };
@@ -762,6 +763,7 @@
 		A90C56EB2685C23400F1007B /* ZMImagePreprocessingTrackerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMImagePreprocessingTrackerTests.h; sourceTree = "<group>"; };
 		BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RequestGenerator.swift"; sourceTree = "<group>"; };
 		BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageV2DownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
+		C93B11472D95621A000F6573 /* Payload+UpdateConversationPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationPermission.swift"; sourceTree = "<group>"; };
 		CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB5A461C2D940BA600D469F1 /* Payload+ConversationGroupType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationGroupType.swift"; sourceTree = "<group>"; };
 		CBF2BD5E2C5BD468002BCBDD /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
@@ -786,8 +788,8 @@
 		E629E3B42B4703E100D526AD /* Payload+ConversationAddMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationAddMember.swift"; sourceTree = "<group>"; };
 		E629E3B62B47041700D526AD /* Payload+ConversationUpdateRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationUpdateRole.swift"; sourceTree = "<group>"; };
 		E629E3BB2B4704B200D526AD /* Payload+ConversationEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+ConversationEvent.swift"; sourceTree = "<group>"; };
-		E629E3BD2B4704E900D526AD /* Payload+UpdateConverationMemberLeave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConverationMemberLeave.swift"; sourceTree = "<group>"; };
-		E629E3BF2B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConverationMemberJoin.swift"; sourceTree = "<group>"; };
+		E629E3BD2B4704E900D526AD /* Payload+UpdateConversationMemberLeave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationMemberLeave.swift"; sourceTree = "<group>"; };
+		E629E3BF2B47051D00D526AD /* Payload+UpdateConversationMemberJoin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationMemberJoin.swift"; sourceTree = "<group>"; };
 		E629E3C12B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationConnectionRequest.swift"; sourceTree = "<group>"; };
 		E629E3C32B47056B00D526AD /* Payload+UpdateConversationDeleted.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationDeleted.swift"; sourceTree = "<group>"; };
 		E629E3C52B470A8200D526AD /* Payload+UpdateConversationReceiptMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+UpdateConversationReceiptMode.swift"; sourceTree = "<group>"; };
@@ -1656,8 +1658,9 @@
 			children = (
 				CB5A461C2D940BA600D469F1 /* Payload+ConversationGroupType.swift */,
 				E629E3BB2B4704B200D526AD /* Payload+ConversationEvent.swift */,
-				E629E3BF2B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift */,
-				E629E3BD2B4704E900D526AD /* Payload+UpdateConverationMemberLeave.swift */,
+				E629E3BF2B47051D00D526AD /* Payload+UpdateConversationMemberJoin.swift */,
+				E629E3BD2B4704E900D526AD /* Payload+UpdateConversationMemberLeave.swift */,
+				C93B11472D95621A000F6573 /* Payload+UpdateConversationPermission.swift */,
 				E629E3C92B470AE600D526AD /* Payload+UpdateConversationAccess.swift */,
 				E629E3C12B47054400D526AD /* Payload+UpdateConversationConnectionRequest.swift */,
 				E629E3C32B47056B00D526AD /* Payload+UpdateConversationDeleted.swift */,
@@ -2510,7 +2513,7 @@
 				060ED6D62499F41000412C4A /* PushNotificationStatus.swift in Sources */,
 				EEFB2DFE2ACD530F0094F877 /* PrekeyPayloadProcessor.swift in Sources */,
 				E6BBCF132C32C55700BD0259 /* HttpClientImpl.swift in Sources */,
-				E629E3C02B47051D00D526AD /* Payload+UpdateConverationMemberJoin.swift in Sources */,
+				E629E3C02B47051D00D526AD /* Payload+UpdateConversationMemberJoin.swift in Sources */,
 				1623F8D32AE66F28004F0319 /* MessageSender.swift in Sources */,
 				F18401D82073BE0800E9F4CC /* ZMConversation+Notifications.swift in Sources */,
 				E629E3B52B4703E100D526AD /* Payload+ConversationAddMember.swift in Sources */,
@@ -2522,6 +2525,7 @@
 				16367F1E26FDB0740028AF8B /* Payload+Connection.swift in Sources */,
 				1623F8D82AE7FB7E004F0319 /* PrekeyAPI.swift in Sources */,
 				E629E3D02B470BAE00D526AD /* Payload+UpdateConversationMLSWelcome.swift in Sources */,
+				C93B11482D95621A000F6573 /* Payload+UpdateConversationPermission.swift in Sources */,
 				63DA339F286DF6ED00818C3C /* MLSEventProcessor.swift in Sources */,
 				06A1966E2A7BEAE300B43BA5 /* TerminateFederationRequestStrategy.swift in Sources */,
 				1682462F257A1FB7002AF17B /* KeyPathObjectSync.swift in Sources */,
@@ -2647,7 +2651,7 @@
 				06FDC62F28354DAE008300DB /* PushTokenStorage.swift in Sources */,
 				06ADE9F72BCE825D008BA0B3 /* UserClientAPI.swift in Sources */,
 				166901DD1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m in Sources */,
-				E629E3BE2B4704E900D526AD /* Payload+UpdateConverationMemberLeave.swift in Sources */,
+				E629E3BE2B4704E900D526AD /* Payload+UpdateConversationMemberLeave.swift in Sources */,
 				F18401BB2073BE0800E9F4CC /* LinkPreviewAssetDownloadRequestStrategy.swift in Sources */,
 				63CC83B9285B4845008549AD /* String+Empty.swift in Sources */,
 				E6E0CE872B70D2C60004ED88 /* SyncPhase.swift in Sources */,

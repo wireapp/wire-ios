@@ -82,4 +82,8 @@ public enum ConversationEvent: Equatable, Codable, Sendable {
 
     case typing(ConversationTypingEvent)
 
+    /// A permission for a private conversation (aka channel) was updated.
+
+    case permissionUpdate(ConversationAddPermissionEvent)
+
 }

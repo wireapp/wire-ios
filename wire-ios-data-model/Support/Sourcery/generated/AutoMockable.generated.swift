@@ -51,6 +51,7 @@ import WireCoreCrypto
 
 
 
+
 public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
 
     // MARK: - Life cycle

@@ -224,6 +224,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func storeConversation(
+        permission: String,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(permission)
+        }
+    }
+
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),
@@ -918,6 +928,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     .channel
                 }
             } ?? .none
+
+            localConversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(conversation.addPermission?.rawValue)
 
             commonUpdate(
                 from: conversation,

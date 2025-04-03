@@ -18,6 +18,7 @@
 
 import WireCommonComponents
 import WireFoundation
+import WireFoundationSupport
 import XCTest
 
 @testable import Wire
@@ -29,8 +30,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     var context: ConversationMessageContext!
     var mockSelfUser: MockUserType!
     var userSession: UserSessionMock!
-
-    lazy var collapseOwnMessagesStorage = PrivateUserDefaults<CollapseKey>(userID: mockSelfUser.remoteIdentifier!)
+    var mockUserDefaults = MockUserDefaultsProtocol()
 
     // MARK: - setUp
 
@@ -47,6 +47,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             searchQueries: [],
             previousMessageIsKnock: false
         )
+        mockUserDefaults.boolForKey_MockValue = false
     }
 
     // MARK: - tearDown
@@ -256,7 +257,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_systemMessage_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
         let sut = makeSUT(message: message)
         XCTAssertTrue(sut.isCollapsed)
@@ -272,7 +273,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_textMessageWithFailedToSendUsers_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
         message.failedToSendUsers = [MockUserType.createDefaultOtherUser()]
         let sut = makeSUT(message: message)
@@ -286,7 +287,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_textMessage_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.textMessage())
         let sut = makeSUT(message: message)
         XCTAssertFalse(sut.isCollapsed)
@@ -300,7 +301,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_fileMessage_sentBySelfUser_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
         let sut = makeSUT(message: message)
@@ -315,7 +316,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_fileMessage_sentByOtherUser_collapseOwnMessagesEnabled() throws {
-        collapseOwnMessagesStorage.set(true, forKey: .collapseOwnMessages)
+        mockUserDefaults.boolForKey_MockValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = MockUserType.createDefaultOtherUser()
         let sut = makeSUT(message: message)
@@ -333,7 +334,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             context: context,
             userSession: userSession,
             useInvertedIndices: false,
-            contentWidth: 0
+            contentWidth: 0,
+            userDefaults: mockUserDefaults
         )
 
         trackForMemoryLeaks(section)
