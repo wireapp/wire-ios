@@ -126,8 +126,6 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
 
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
