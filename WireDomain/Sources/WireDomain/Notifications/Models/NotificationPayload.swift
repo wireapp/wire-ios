@@ -19,38 +19,23 @@
 import Foundation
 
 /// Push notification payload
-struct NotificationPayload {
-    let userID: UUID
-    let eventID: UUID
+struct NotificationPayload: Decodable {
+    private let data: Payload
 
-    enum Failure: Error {
-        case missingUserID
-        case missingEventID
+    private struct Payload: Decodable {
+        let user: UUID
+        let data: EventPayload
+
+        struct EventPayload: Decodable {
+            let id: UUID
+        }
     }
 
-    enum Key: String {
-        case data
-        case user
-        case id
+    var userID: UUID {
+        data.user
     }
 
-    init(userInfo: [AnyHashable: Any]) throws {
-        guard
-            let data = userInfo[Key.data.rawValue] as? [String: Any],
-            let userIDString = data[Key.user.rawValue] as? String,
-            let userID = UUID(uuidString: userIDString)
-        else {
-            throw Failure.missingUserID
-        }
-
-        guard let innerData = data[Key.data.rawValue] as? [AnyHashable: Any],
-              let eventIDString = innerData[Key.id.rawValue] as? String,
-              let eventID = UUID(uuidString: eventIDString)
-        else {
-            throw Failure.missingEventID
-        }
-
-        self.userID = userID
-        self.eventID = eventID
+    var eventID: UUID {
+        data.data.id
     }
 }

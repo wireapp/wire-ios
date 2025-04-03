@@ -32,7 +32,6 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     // MARK: - Properties
 
     private let logger = WireLogger.notifications
-    private var contentHandler: ((UNNotificationContent) -> Void)?
     private var onGoingTask: Task<Void, Never>?
 
     public init() {
@@ -47,13 +46,23 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
 
-        self.contentHandler = contentHandler
-
         onGoingTask = Task {
+            guard !Task.isCancelled else {
+                // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty
+                // content to
+                // the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
+                return contentHandler(.emptyNotification)
+            }
+
             do {
 
-                let notificationPayload = try NotificationPayload(
-                    userInfo: request.content.userInfo
+                let userInfo = request.content.userInfo
+                let data = try JSONSerialization.data(
+                    withJSONObject: userInfo
+                )
+                let notificationPayload = try JSONDecoder().decode(
+                    NotificationPayload.self,
+                    from: data
                 )
 
                 let userID = notificationPayload.userID
@@ -77,22 +86,15 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
             } catch {
                 logError(error)
-                finishWithEmptyNotification()
+                contentHandler(.emptyNotification)
             }
         }
     }
 
     public func serviceExtensionTimeWillExpire() {
         logger.warn("new notification service will expire", attributes: .newNSE)
-        finishWithEmptyNotification()
-    }
-
-    // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty content to
-    // the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
-    private func finishWithEmptyNotification() {
-        logger.info("finishing without showing notification", attributes: .newNSE)
-        contentHandler?(.emptyNotification)
-        terminate()
+        onGoingTask?.cancel()
+        onGoingTask = nil
     }
 
     private func setupRootComponent(
@@ -128,13 +130,6 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             contentHandler: notificationHandler
         )
     }
-
-    private func terminate() {
-        // Content handler should only be consumed once.
-        contentHandler = nil
-        onGoingTask?.cancel()
-        onGoingTask = nil
-    }
 }
 
 // MARK: - Error logger
@@ -142,19 +137,6 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 extension NotificationServiceExtension {
     private func logError(_ error: any Error) {
         switch error {
-        case let payloadError as NotificationPayload.Failure:
-            switch payloadError {
-            case .missingUserID:
-                logger.error(
-                    "failed to decode notification payload: missing user ID",
-                    attributes: .newNSE
-                )
-            case .missingEventID:
-                logger.error(
-                    "failed to decode notification payload: missing event ID",
-                    attributes: .newNSE
-                )
-            }
         case let verifyUserSessionError as VerifyUserSession.Failure:
             switch verifyUserSessionError {
             case .userUnauthenticated:
