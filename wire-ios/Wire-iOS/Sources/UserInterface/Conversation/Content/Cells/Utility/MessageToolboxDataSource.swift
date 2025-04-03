@@ -142,7 +142,7 @@ final class MessageToolboxDataSource {
         let countdownStatus = makeEphemeralCountdown()
         let deliveryState = message.shouldShowDeliveryState ? selfMessageState(for: message) : nil
         let isTimestampVisible = message.isSent && message.deliveryState != .failedToSend
-        let timestampString = isTimestampVisible ? message.formattedReceivedDate() ?? "" : ""
+        let timestampString = isTimestampVisible ? message.formattedReceivedTime() ?? "" : ""
         return (timestampString, deliveryState, countdownStatus)
     }
 
@@ -233,7 +233,7 @@ final class MessageToolboxDataSource {
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if let dateTimeString = message.formattedReceivedDate(),
+        } else if let dateTimeString = message.formattedReceivedDateTime(),
                   let systemMessage = message as? ZMSystemMessage,
                   systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
