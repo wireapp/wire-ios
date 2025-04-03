@@ -44,6 +44,8 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var groupType: ConversationGroupType?
 
+    var isChannel: Bool = false
+
     var teamRemoteIdentifier: UUID?
 
     var mockLocalParticipantsContain: Bool = false

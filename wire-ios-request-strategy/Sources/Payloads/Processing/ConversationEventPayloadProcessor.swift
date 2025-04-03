@@ -522,7 +522,7 @@ struct ConversationEventPayloadProcessor {
                 case .channel:
                     .channel
                 }
-            }
+            } ?? .none
 
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)

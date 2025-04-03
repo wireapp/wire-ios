@@ -529,8 +529,8 @@
 		CB181C7E2D3F8D8400A80AB4 /* OneOnOneSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */; };
 		CB1821A52D412FA100A80AB4 /* OneOnOneSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */; };
 		CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */; };
+		CB41E92D2D9E935E00F0701B /* store2-123-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = CB41E92C2D9E935E00F0701B /* store2-123-0.wiredatabase */; };
 		CB5212122D95A76800CF8099 /* ZMConversation+PrivateChannelPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5212112D95A76800CF8099 /* ZMConversation+PrivateChannelPermission.swift */; };
-		CB5212142D95A95100CF8099 /* store2-123-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = CB5212132D95A95100CF8099 /* store2-123-0.wiredatabase */; };
 		CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979172C747652006FBA58 /* WireTransportSupport.framework */; };
 		CB79791B2C7476AC006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791A2C7476AC006FBA58 /* TestSetup.swift */; };
 		CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F2B2D09EBB20080DA37 /* WireCrypto */; };
@@ -1454,8 +1454,8 @@
 		CB181C7D2D3F8D7F00A80AB4 /* OneOnOneSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSource.swift; sourceTree = "<group>"; };
 		CB1821A42D412FA100A80AB4 /* OneOnOneSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneSourceTests.swift; sourceTree = "<group>"; };
 		CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExpirationReason+Description.swift"; sourceTree = "<group>"; };
+		CB41E92C2D9E935E00F0701B /* store2-123-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-123-0.wiredatabase"; sourceTree = "<group>"; };
 		CB5212112D95A76800CF8099 /* ZMConversation+PrivateChannelPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+PrivateChannelPermission.swift"; sourceTree = "<group>"; };
-		CB5212132D95A95100CF8099 /* store2-123-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-123-0.wiredatabase"; sourceTree = "<group>"; };
 		CB7979172C747652006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79791A2C7476AC006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		CBED6B422D91A3FC00328BED /* zmessaging2.123.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.123.0.xcdatamodel; sourceTree = "<group>"; };
@@ -3734,7 +3734,7 @@
 		F9C9A83D1CAEDBC40039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CB5212132D95A95100CF8099 /* store2-123-0.wiredatabase */,
+				CB41E92C2D9E935E00F0701B /* store2-123-0.wiredatabase */,
 				0176BDD02D515764002C33DE /* store2-122-0.wiredatabase */,
 				5979E8472D478DD20051080F /* store2-121-0.wiredatabase */,
 				017B55A82CFFC310005FFBD4 /* store2-120-0.wiredatabase */,
@@ -4042,7 +4042,7 @@
 				F9A707031CAEE32E00C2F5FE /* tiny.jpg in Resources */,
 				E90AAE34279719D8003C7DB0 /* store2-98-0.wiredatabase in Resources */,
 				EE002F222878345C0027D63A /* store2-104-0.wiredatabase in Resources */,
-				CB5212142D95A95100CF8099 /* store2-123-0.wiredatabase in Resources */,
+				CB41E92D2D9E935E00F0701B /* store2-123-0.wiredatabase in Resources */,
 				63DA33AF28746CCF00818C3C /* store2-103-0.wiredatabase in Resources */,
 				F9A706FE1CAEE32A00C2F5FE /* not_animated.gif in Resources */,
 				06D33FCF2525D368004B9BC1 /* store2-86-0.wiredatabase in Resources */,

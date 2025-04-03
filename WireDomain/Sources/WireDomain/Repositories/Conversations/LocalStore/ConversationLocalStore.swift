@@ -917,7 +917,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 case .channel:
                     .channel
                 }
-            }
+            } ?? .none
 
             commonUpdate(
                 from: conversation,
