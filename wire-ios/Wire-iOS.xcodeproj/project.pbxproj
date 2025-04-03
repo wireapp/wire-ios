@@ -45,6 +45,7 @@
 		01B71BA62D6D2DAB002C5A38 /* ringing_from_them_long.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8E2D6D2DAB002C5A38 /* ringing_from_them_long.caf */; };
 		01B71BA72D6D2DAB002C5A38 /* emoticons.min.json in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B922D6D2DAB002C5A38 /* emoticons.min.json */; };
 		01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 01C1A7C62A54C45A0058D578 /* SnapshotTesting */; };
+		01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */ = {isa = PBXBuildFile; productRef = 01C774262D9EECE100A2FF07 /* WireAVS */; };
 		01D2B7A52D64A9190030D28D /* WireCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 01D2B7A42D64A9190030D28D /* WireCoreCrypto */; };
 		0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0619A95B2D3FE78700876BDE /* WireAuthenticationUI */; };
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
@@ -892,6 +893,7 @@
 				EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */,
 				EE543B4A2D564AC000CA96BA /* WireAuthentication in Frameworks */,
 				EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */,
+				01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
 				01D2B7A52D64A9190030D28D /* WireCoreCrypto in Frameworks */,
@@ -1294,6 +1296,7 @@
 				EE543B492D564AC000CA96BA /* WireAuthentication */,
 				01D2B7A42D64A9190030D28D /* WireCoreCrypto */,
 				E40050752D71A80100B7962B /* WireConversationUI */,
+				01C774262D9EECE100A2FF07 /* WireAVS */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -2520,6 +2523,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		01C774262D9EECE100A2FF07 /* WireAVS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAVS;
 		};
 		01D2B7A42D64A9190030D28D /* WireCoreCrypto */ = {
 			isa = XCSwiftPackageProductDependency;
