@@ -76,7 +76,7 @@ package class ChannelAccessViewModel: ObservableObject {
         isLoading = true
         do {
             let updatedSettings = try await useCase.updateParticipantPermission(to: permission)
-            self.settings = updatedSettings
+            settings = updatedSettings
         } catch {}
         isLoading = false
     }

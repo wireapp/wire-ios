@@ -75,7 +75,6 @@ public class MockChannelAccessRepositoryProtocol: ChannelAccessRepositoryProtoco
 
     public init() {}
 
-
     // MARK: - updateParticipantPermission
 
     public var updateParticipantPermissionTo_Invocations: [ChannelAccessLevelPermission] = []
@@ -97,4 +96,3 @@ public class MockChannelAccessRepositoryProtocol: ChannelAccessRepositoryProtoco
     }
 
 }
-

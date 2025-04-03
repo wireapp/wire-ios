@@ -19,7 +19,6 @@
 import WireAPI
 import WireConversationsAPI
 import WireConversationsImplementation
-import WireAPI
 import WireDomain
 import WireSyncEngine
 import WireTransport
