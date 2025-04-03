@@ -458,6 +458,8 @@ private extension MainSidebarMenuItem {
             self = .favorites
         case .groups:
             self = .groups
+        case .channels:
+            self = .channels
         case .oneOnOne:
             self = .oneOnOne
         case .folder:

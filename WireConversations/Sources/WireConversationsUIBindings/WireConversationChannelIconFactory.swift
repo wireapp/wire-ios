@@ -18,6 +18,7 @@
 
 public import SwiftUI
 import WireConversationsImplementation
+public import WireConversationsAPI
 import WireConversationsUI
 
 public final class WireConversationChannelIconFactory {
