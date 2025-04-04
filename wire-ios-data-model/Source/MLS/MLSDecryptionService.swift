@@ -25,10 +25,6 @@ import WireSystem
 // sourcery: AutoMockable
 public protocol MLSDecryptionServiceInterface {
 
-    /// Publishes an event when the epoch has changed.
-
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
-
     /// Publishes an event when new CRL distribution points are found.
 
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
@@ -102,12 +98,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
-    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
-
-    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        onEpochChangedSubject.eraseToAnyPublisher()
-    }
 
     public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
         onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
@@ -173,10 +164,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         do {
             let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)
-
-            if decryptedMessage.hasEpochChanged {
-                onEpochChangedSubject.send(groupID)
-            }
 
             if let newDistributionPoints = CRLsDistributionPoints(from: decryptedMessage.crlNewDistributionPoints) {
                 onNewCRLsDistributionPointsSubject.send(newDistributionPoints)

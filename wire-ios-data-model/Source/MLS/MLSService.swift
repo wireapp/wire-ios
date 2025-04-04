@@ -529,6 +529,7 @@ public final class MLSService: MLSServiceInterface {
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let featureRepository: FeatureRepositoryInterface
     private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
+    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -620,6 +621,7 @@ public final class MLSService: MLSServiceInterface {
         )
 
         schedulePeriodicKeyMaterialUpdateCheck()
+        startObservingEpochs()
     }
 
     deinit {
@@ -2195,11 +2197,25 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Epoch
+    
+    public func startObservingEpochs() {
+        Task {
+            do {
+                try await coreCrypto.configure { coreCrypto in
+                    try await coreCrypto.registerEpochObserver(self)
+                }
+            } catch {
+                logger.error("failed to start epoch observer: \(String(describing: error))")
+            }
+        }
+    }
 
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        decryptionService.onEpochChanged()
-            .merge(with: mlsActionExecutor.onEpochChanged())
-            .eraseToAnyPublisher()
+        onEpochChangedSubject.eraseToAnyPublisher()
+    }
+    
+    public func epochChanged(conversationId: Data, epoch: UInt64) async throws {
+        onEpochChangedSubject.send(MLSGroupID(conversationId))
     }
 
     // MARK: - Generate new epoch
@@ -2286,6 +2302,11 @@ public final class MLSService: MLSServiceInterface {
             }
         }
     }
+}
+
+
+extension MLSService: EpochObserver {
+    
 }
 
 // MARK: - Helper types

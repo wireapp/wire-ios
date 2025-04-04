@@ -30,6 +30,7 @@ import WireAPI
 final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     var sut: MLSService!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
@@ -52,8 +53,9 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         super.setUp()
 
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto, coreCryptoContext: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         mockEncryptionService = MockMLSEncryptionServiceInterface()
@@ -68,6 +70,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockFeatureRepository = MockFeatureRepositoryInterface()
 
         mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_MockMethod = { _ in }
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         mockCoreCryptoContext.e2eiIsEnabledCiphersuite_MockValue = false
         mockCoreCryptoContext.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             100
@@ -2626,38 +2629,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - On conference info changed
 
-    func test_OnEpochChanged_InterleavesSources() throws {
-        // Given
-        let groupID1 = MLSGroupID.random()
-        let groupID2 = MLSGroupID.random()
-        let groupID3 = MLSGroupID.random()
-
-        // Mock epoch changes
-        let epochChangedFromDecryptionSerivce = PassthroughSubject<MLSGroupID, Never>()
-        mockDecryptionService.onEpochChanged_MockValue = epochChangedFromDecryptionSerivce.eraseToAnyPublisher()
-
-        let epochChangedFromActionExecutor = PassthroughSubject<MLSGroupID, Never>()
-        mockMLSActionExecutor.mockOnEpochChanged = epochChangedFromActionExecutor.eraseToAnyPublisher
-
-        // Colect ids for groups with changed epochs
-        var receivedGroupIDs = [MLSGroupID]()
-        let didReceiveGroupIDs = customExpectation(description: "didReceiveGroupIDs")
-        let cancellable = sut.onEpochChanged().collect(3).sink {
-            receivedGroupIDs = $0
-            didReceiveGroupIDs.fulfill()
-        }
-
-        // When
-        epochChangedFromDecryptionSerivce.send(groupID1)
-        epochChangedFromActionExecutor.send(groupID2)
-        epochChangedFromDecryptionSerivce.send(groupID3)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        cancellable.cancel()
-        XCTAssertEqual(receivedGroupIDs, [groupID1, groupID2, groupID3])
-    }
-
     func test_OnConferenceInfoChanged_WhenEpochChangesForParentConversation() async throws {
         // Given
         let parentGroupID = MLSGroupID.random()
@@ -2689,13 +2660,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         subconversationGroupID: MLSGroupID,
         epochChangeSequence: MLSGroupID...
     ) async throws {
-        // Mock epoch changes
-        let epochChangedFromDecryptionSerivce = PassthroughSubject<MLSGroupID, Never>()
-        mockDecryptionService.onEpochChanged_MockValue = epochChangedFromDecryptionSerivce.eraseToAnyPublisher()
-
-        let epochChangedFromActionExecutor = PassthroughSubject<MLSGroupID, Never>()
-        mockMLSActionExecutor.mockOnEpochChanged = epochChangedFromActionExecutor.eraseToAnyPublisher
-
         // Mock conference info
         let epoch: UInt64 = 42
         let key = Data.random(byteCount: 32)
@@ -2725,7 +2689,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // When
         for groupID in epochChangeSequence {
-            epochChangedFromDecryptionSerivce.send(groupID)
+            try await sut.epochChanged(conversationId: groupID.data, epoch: epoch)
         }
 
         // Then

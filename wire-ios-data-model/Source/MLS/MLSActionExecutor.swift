@@ -102,10 +102,6 @@ public protocol MLSActionExecutorProtocol {
         in groupID: MLSGroupID
     ) async throws -> DecryptedMessage
 
-    /// Returns a publisher that emits the group ID of the group when the epoch changes.
-
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
-
     /// Returns a publisher that emits the new CRL distribution points when they are found
 
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
@@ -366,14 +362,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         } else {
             throw Failure.bufferedDecryptedMessage
         }
-    }
-
-    // MARK: - Epoch publisher
-
-    public nonisolated
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        // TODO: jacob use epoch observer from CC
-        return PassthroughSubject<MLSGroupID, Never>().eraseToAnyPublisher()
     }
 
     // MARK: - CRLs distribution points publisher
