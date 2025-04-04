@@ -16,17 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Testing
 import WireBackup
 import WireDomainPkg
 import WireDomainPkgSupport
 import WireFoundationSupport
-import Testing
-
-@testable import WireDomainPkg
 
 struct ExportBackupFileZipper2FileZipperAdapterTests {
 
-    @Test func testFileArchiverInvocation() async throws {
+    @Test
+    func testFileArchiverInvocation() async throws {
         // Given
         let mockFileArchiver = ExportBackupFileArchiverProtocolMock()
         mockFileArchiver.zipResourcesAtResourceURLsURLIntoDestinationURLURLVoidClosure = { _, _ in }
@@ -52,7 +51,10 @@ struct ExportBackupFileZipper2FileZipperAdapterTests {
 
         // Then
         #expect(mockFileArchiver.zipResourcesAtResourceURLsURLIntoDestinationURLURLVoidReceivedInvocations.count == 1)
-        let invocation = try #require(mockFileArchiver.zipResourcesAtResourceURLsURLIntoDestinationURLURLVoidReceivedInvocations.first)
+        let invocation = try #require(
+            mockFileArchiver
+                .zipResourcesAtResourceURLsURLIntoDestinationURLURLVoidReceivedInvocations.first
+        )
         #expect(invocation.resourceURLs.map { $0.path() } == ["/a/b/c", "/e/f/g", "/i/j/k"])
         #expect(destinationURL.lastPathComponent == "2025-04-02T12:42:12Z_backup.zip")
         #expect(destinationURL.deletingLastPathComponent().lastPathComponent == "destination")

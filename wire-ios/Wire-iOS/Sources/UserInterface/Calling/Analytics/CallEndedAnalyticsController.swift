@@ -17,9 +17,9 @@
 //
 
 import WireAnalytics
+import WireFoundation
 import WireLogging
 import WireSyncEngine
-import WireFoundation
 
 final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 

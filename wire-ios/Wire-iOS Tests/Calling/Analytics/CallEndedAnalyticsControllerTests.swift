@@ -18,10 +18,10 @@
 
 import WireAnalyticsSupport
 import WireDataModelSupport
+import WireFoundationSupport
 import WireLogging
 import WireSystemSupport
 import XCTest
-import WireFoundationSupport
 
 @testable import Wire
 @testable import WireAnalytics

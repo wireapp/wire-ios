@@ -17,9 +17,9 @@
 //
 
 import UIKit
+import WireFoundation
 import WireLogging
 import WireSyncEngine
-import WireFoundation
 
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
