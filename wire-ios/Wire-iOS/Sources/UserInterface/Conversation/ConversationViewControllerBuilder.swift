@@ -67,4 +67,9 @@ extension ZMMessage: NewConversationMessageModel {
             .timeDivider(TimeDividerModel(text: "???", isUnreadIndicatorVisible: false))
         }
     }
+
+    @objc
+    public var todo: SectionIdentifier {
+        "messages"
+    }
 }

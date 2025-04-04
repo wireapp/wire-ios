@@ -26,18 +26,22 @@ public protocol NewConversationModel: NSManagedObject {
 
 public protocol NewConversationMessageModel: NSManagedObject {
     var conversationCellModel: ConversationCellModel { get }
+    var todo: SectionIdentifier { get }
 }
+
+//@objc
+//public enum SectionIdentifier: Int, Sendable {
+//    case intro
+//    case messages
+//}
+public typealias SectionIdentifier = String
+
+typealias ItemIdentifier = NSManagedObjectID // ConversationCellModel
 
 public final class NewConversationViewController<
     ConversationModel: NewConversationModel,
     ConversationMessageModel: NewConversationMessageModel
 >: UITableViewController, NSFetchedResultsControllerDelegate {
-
-    enum SectionIdentifier {
-        case single
-    }
-
-    typealias ItemIdentifier = NSManagedObjectID // ConversationCellModel
 
     let itemIdentifiers = [ItemIdentifier]()
 
@@ -77,26 +81,15 @@ public final class NewConversationViewController<
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let sections = fetchedResultsController.sections, !sections.isEmpty {
-            let lastSection = sections.count - 1
-            let lastRow = sections[lastSection].numberOfObjects - 1
-            let indexPath = IndexPath(row: lastRow, section: lastSection)
-            DispatchQueue.main.async {
-                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
-            }
-        }
-    }
-
-//    public override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//
 //        if let sections = fetchedResultsController.sections, !sections.isEmpty {
 //            let lastSection = sections.count - 1
 //            let lastRow = sections[lastSection].numberOfObjects - 1
 //            let indexPath = IndexPath(row: lastRow, section: lastSection)
-//            tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+//            DispatchQueue.main.async {
+//                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+//            }
 //        }
-//    }
+    }
 
     private func setupTableView() {
         registerCellTypes()
@@ -123,7 +116,7 @@ public final class NewConversationViewController<
         fetchedResultsController = NSFetchedResultsController(
             fetchRequest: fetchRequest,
             managedObjectContext: context,
-            sectionNameKeyPath: nil,
+            sectionNameKeyPath: "todo",
             cacheName: nil
         )
         fetchedResultsController.delegate = self
@@ -145,19 +138,30 @@ public final class NewConversationViewController<
         }
     }
 
-    private func loadItems() {
-        var snapshot = dataSource.snapshot()
-        snapshot.appendSections([.single])
-        snapshot.appendItems(itemIdentifiers)
-        dataSource.applySnapshotUsingReloadData(snapshot)
-    }
+    private var isFirstApply = true
 
     nonisolated public func controller(
         _ controller: NSFetchedResultsController<any NSFetchRequestResult>,
         didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference
     ) {
-        let snapshot = snapshot as NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>
-        dataSource.apply(snapshot, animatingDifferences: true)
+        assert(Thread.isMainThread)
+        var snapshot = snapshot as NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>
+        if snapshot.numberOfSections == 0 {
+            snapshot.appendSections(["intro"])
+        } else if snapshot.indexOfSection("intro") == .none {
+            snapshot.insertSections(["intro"], beforeSection: snapshot.sectionIdentifiers[0])
+        }
+        dataSource.apply(snapshot, animatingDifferences: true) {
+            if self.isFirstApply {
+                self.isFirstApply = false
+                if let sections = self.fetchedResultsController.sections, !sections.isEmpty {
+                    let lastSection = sections.count - 1
+                    let lastRow = sections[lastSection].numberOfObjects - 1
+                    let indexPath = IndexPath(row: lastRow, section: lastSection)
+                    self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+                }
+            }
+        }
     }
 
 }
