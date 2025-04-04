@@ -51,6 +51,7 @@ public protocol ConversationLike: AnyObject {
 
     var areServicesPresent: Bool { get }
     var domain: String? { get }
+    var isChannel: Bool { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
@@ -99,5 +100,9 @@ extension ZMConversation: ConversationLike {
 
     public var isProteusConversationDegraded: Bool {
         securityLevel == .secureWithIgnored
+    }
+
+    public var isChannel: Bool {
+        groupType == .channel
     }
 }

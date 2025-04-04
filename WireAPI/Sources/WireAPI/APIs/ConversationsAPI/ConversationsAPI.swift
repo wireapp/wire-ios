@@ -50,11 +50,24 @@ public protocol ConversationsAPI {
     ) async throws -> String?
 
     /// Creates a group conversation given provided parameters.
-    /// - parameter parameters: API parameters required to create the group.
+    /// - parameter parameters: API body parameters required to create the group.
     /// - returns: The created group conversation.
 
     func createGroupConversation(
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation
+
+    /// Add channel permission.
+    /// - parameter conversationID: The conversation ID.
+    /// - parameter conversationDomain: The conversation domain.
+    /// - parameter permission: Channel permission to add (`admins` or `everyone`)
+    /// - returns: The updated channel permission.
+
+    @discardableResult
+    func addChannelPermission(
+        conversationID: String,
+        conversationDomain: String,
+        permission: ChannelPermission
+    ) async throws -> ChannelPermission
 
 }

@@ -23,4 +23,13 @@ struct LoginRequestBodyV0: Encodable {
     let verificationCode: String?
     let label: String?
 
+    enum CodingKeys: String, CodingKey {
+
+        case email
+        case password
+        case verificationCode = "verification_code"
+        case label
+
+    }
+
 }

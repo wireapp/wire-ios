@@ -43,6 +43,9 @@ public enum ConversationsAPIError: Error {
     /// Conversation not found
     case conversationNotFound
 
+    /// Team not found
+    case teamNotFound
+
     /// Conversation code not found
     case conversationCodeNotFound
 
@@ -61,7 +64,7 @@ public enum ConversationsAPIError: Error {
     /// Operation denied
     case operationDenied
 
-    /// No team member
+    /// Requesting user is not a team member
     case noTeamMember
 
     /// Not connected
@@ -75,4 +78,17 @@ public enum ConversationsAPIError: Error {
 
     /// Unreachable backends
     case unreachableBackends
+
+    /// Insufficient authorizations
+    case insufficienAuthorization
+
+    /// Insufficient permissions
+    case insufficientPermissions
+
+    /// Invalid operation
+    case invalidOperation
+
+    /// Permission unchanged
+    case permissionsUnchanged
+
 }

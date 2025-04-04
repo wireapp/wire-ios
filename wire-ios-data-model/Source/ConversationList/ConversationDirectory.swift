@@ -24,6 +24,7 @@ public enum ConversationListType {
     case pending
     case contacts
     case groups
+    case channels
     case favorites
     case folder(_ folder: LabelType)
 }
@@ -84,6 +85,8 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
             return oneToOneConversations.items
         case .groups:
             return groupConversations.items
+        case .channels:
+            return channelConversations.items
         case .favorites:
             return favoriteConversations.items
         case let .folder(label):

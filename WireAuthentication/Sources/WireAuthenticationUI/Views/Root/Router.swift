@@ -34,3 +34,11 @@ package protocol Router {
     func presentAlert(_ alert: Alert)
 
 }
+
+package extension Router {
+
+    func presentAlert(for error: any Error) {
+        presentAlert(.general(for: error))
+    }
+
+}

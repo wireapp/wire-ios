@@ -26,6 +26,8 @@ public protocol FetchSSOURLUseCaseProtocol: Sendable {
 
 public protocol FetchSSOURLUseCaseFactory {
 
-    func fetchSSOURLUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol
+    func fetchSSOURLUseCase(
+        backendInfo: BackendInfo
+    ) async throws -> any FetchSSOURLUseCaseProtocol
 
 }

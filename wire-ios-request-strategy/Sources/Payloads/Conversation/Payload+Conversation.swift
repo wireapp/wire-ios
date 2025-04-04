@@ -41,6 +41,7 @@ extension Payload {
             case epoch
             case epochTimestamp = "epoch_timestamp"
             case groupType = "group_conv_type"
+            case addPermission = "add_permission"
         }
 
         static var eventType: ZMUpdateEventType {
@@ -67,6 +68,7 @@ extension Payload {
         var epoch: UInt?
         var epochTimestamp: Date?
         var groupType: ConversationGroupType?
+        var addPermission: ChannelPermission?
 
         init(
             qualifiedID: QualifiedID? = nil,
@@ -88,7 +90,8 @@ extension Payload {
             mlsGroupID: String? = nil,
             epoch: UInt? = nil,
             epochTimestamp: Date? = nil,
-            groupType: ConversationGroupType? = nil
+            groupType: ConversationGroupType? = nil,
+            addPermission: ChannelPermission? = nil
         ) {
             self.qualifiedID = qualifiedID
             self.id = id
@@ -110,6 +113,7 @@ extension Payload {
             self.epoch = epoch
             self.epochTimestamp = epochTimestamp
             self.groupType = groupType
+            self.addPermission = addPermission
         }
 
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
@@ -163,6 +167,7 @@ extension Payload {
             switch apiVersion {
             case .v8:
                 self.groupType = try container.decodeIfPresent(ConversationGroupType.self, forKey: .groupType)
+                self.addPermission = try container.decodeIfPresent(ChannelPermission.self, forKey: .addPermission)
             default:
                 break
             }
@@ -203,6 +208,7 @@ extension Payload {
             switch apiVersion {
             case .v8:
                 try container.encodeIfPresent(groupType, forKey: .groupType)
+                try container.encodeIfPresent(addPermission, forKey: .addPermission)
             default:
                 break
             }
