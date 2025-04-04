@@ -70,11 +70,6 @@ final class StartUIViewController: UIViewController {
         return vc
     }()
 
-    private func canCreateChannel() -> Bool {
-        DeveloperFlag.wireChannels.isOn
-            && userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole)
-    }
-
     let searchResultsViewController: SearchResultsViewController
 
     let userSession: UserSession
@@ -306,7 +301,7 @@ final class StartUIViewController: UIViewController {
     }
 
     private func navigateToChannelCreation() {
-        let vc = channelConversationFormFactory.create(onNext: { _, _ in }, userSession: userSession)
+        let vc = channelConversationFormFactory.create(userSession: userSession)
         navigationController?.pushViewController(vc, animated: true)
     }
 
@@ -324,12 +319,16 @@ final class StartUIViewController: UIViewController {
         guard let backendInfoApiVersion = BackendInfo.apiVersion else {
             return false
         }
-
-        let isMLSEnabled = BackendInfo.isMLSEnabled
-        let isAPIVersionValid = backendInfoApiVersion >= .v8
-        let isTeam = userSession.selfUser.hasTeam
-
-        return isMLSEnabled && isAPIVersionValid && isTeam
+        guard userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) else {
+            return false
+        }
+        guard BackendInfo.isMLSEnabled else {
+            return false
+        }
+        guard backendInfoApiVersion >= .v8 else {
+            return false
+        }
+        return true
     }
 }
 
