@@ -99,7 +99,7 @@ package struct WireConversationChannelCreationForm: View {
         Form {
             channelNameSection
             channelAccessSection
-// TODO: [WPB-16814] This will be used when implementing the channels history settings.
+            // TODO: [WPB-16814] This will be used when implementing the channels history settings.
 //            channelHistorySection
             servicesSection
             readReceiptsSection
@@ -150,7 +150,7 @@ package struct WireConversationChannelCreationForm: View {
         })
     }
 
-// TODO: [WPB-16814] This will be used when implementing the channels history settings.
+    // TODO: [WPB-16814] This will be used when implementing the channels history settings.
 //    var channelHistorySection: some View {
 //            Section(content: {
 //                Picker("Channel history", selection: $channelHistory) {
