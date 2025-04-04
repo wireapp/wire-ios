@@ -225,12 +225,11 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func storeConversation(
-        permission: String,
+        permission: Conversation.ChannelPermission,
         conversation: ZMConversation
     ) async {
         await context.perform {
-            conversation.accessLevelPermission = ChannelAccessLevelPermission
-                .fromRawValue(permission)
+            conversation.accessLevelPermission = ChannelAccessLevelPermission(permission)
         }
     }
 
@@ -929,8 +928,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 }
             } ?? .none
 
-            localConversation.accessLevelPermission = ChannelAccessLevelPermission
-                .fromRawValue(conversation.addPermission?.rawValue)
+            localConversation.accessLevelPermission = conversation
+                .addPermission.map { ChannelAccessLevelPermission($0) }
 
             commonUpdate(
                 from: conversation,
@@ -1141,4 +1140,18 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+}
+
+// MARK: - Private helpers
+
+private extension ChannelAccessLevelPermission {
+
+    init(_ value: Conversation.ChannelPermission) {
+        switch value {
+        case .admins:
+            self = .admins
+        case .everyone:
+            self = .everyone
+        }
+    }
 }
