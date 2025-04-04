@@ -95,31 +95,26 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     }
 
     private func setupNavigationBarButtonItems() {
-        let backButton = UIBarButtonItem.createNavigationLeftBarButtonItem(
-            title: "Back" /* L10n.Localizable.Conversation.Create.Channel.back */,
-            action: UIAction { [weak self] _ in
-                self?.navigationController?.popViewController(animated: true)
-            }
-        )
-        backButton.accessibilityLabel = "Back" /// L10n.Accessibility.Conversation.Create.Channel.back
-        backButton.accessibilityIdentifier = "back"
-        navigationItem.leftBarButtonItem = backButton
+        if navigationController?.viewControllers.count ?? 0 <= 1 {
+            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Localizable.General.close)
+        }
 
         let nextButton = UIBarButtonItem.createNavigationRightBarButtonItem(
-            title: "Next" /* L10n.Localizable.Conversation.Create.Channel.next */,
+            title: L10n.Localizable.Conversation.Create.Channel.next,
             action: UIAction { @MainActor [weak self] _ in
                 guard let self else { return }
                 attemptToProceedToParticipants()
             }
         )
-        nextButton.accessibilityIdentifier = "next"
+        nextButton.accessibilityIdentifier = "button.newchannel.next"
         navigationItem.rightBarButtonItem = nextButton
         nextButton.isEnabled = viewModel.isFormValid
     }
 
     private var navigationBarTitle: String? {
-        "Title"
-//        L10n.Localizable.Conversation.Create.Channel.title
+        L10n.Localizable.Conversation.Create.Channel.title
     }
 
     private func onFormValidityUpdate(formIsValid: Bool) {
