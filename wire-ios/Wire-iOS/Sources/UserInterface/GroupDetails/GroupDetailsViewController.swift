@@ -552,9 +552,9 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
               let session = ZMUserSession.shared() else { return }
 
         let permission: ChannelAccessLevelPermission? = switch conversation.privateChannelPermission {
-            case .unset: .none
-            case .admins: .admins
-            case .everyone: .everyone
+        case .unset: .none
+        case .admins: .admins
+        case .everyone: .everyone
         }
 
         let accessView = ChannelViewFactory.makeChannelAccessView(

@@ -35,10 +35,10 @@ public enum PrivateChannelPermission: Int16 {
 
 }
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// The underlying string value of the private channel permission.
 
-    @NSManaged public var privateChannelPermission: PrivateChannelPermission
+    @NSManaged var privateChannelPermission: PrivateChannelPermission
 
 }
