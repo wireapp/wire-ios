@@ -49,6 +49,7 @@ import WireAnalytics
 
 
 
+
 public class MockCertificateRevocationListsChecking: CertificateRevocationListsChecking {
 
     // MARK: - Life cycle

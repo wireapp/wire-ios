@@ -87,7 +87,7 @@ class SwiftMockConversation: NSObject, Conversation {
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation,
-    HasChannelAccessLevelPermission, HasConversationGroupType {
+    HasChannelAccessLevelPermission {
 
     var userDefinedName: String?
 
