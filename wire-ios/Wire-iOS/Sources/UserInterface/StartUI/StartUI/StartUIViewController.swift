@@ -42,7 +42,7 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if DeveloperFlag.wireChannels.isOn {
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel() {
             [.channel, .group]
         } else {
             [.group]
@@ -67,6 +67,11 @@ final class StartUIViewController: UIViewController {
         vc.view.backgroundColor = .clear
         return vc
     }()
+
+    private func canCreateChannel() -> Bool {
+        DeveloperFlag.wireChannels.isOn
+            && userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole)
+    }
 
     let searchResultsViewController: SearchResultsViewController
 
