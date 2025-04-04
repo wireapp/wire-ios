@@ -42,7 +42,7 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel() {
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel {
             [.channel, .group]
         } else {
             [.group]
@@ -58,7 +58,9 @@ final class StartUIViewController: UIViewController {
                         self?.navigateToConversationCreation()
                     }
                 case .channel:
-                    break
+                    Task { @MainActor [weak self] in
+                        self?.navigateToChannelCreation()
+                    }
                 }
             }
         )
@@ -304,10 +306,33 @@ final class StartUIViewController: UIViewController {
     }
 
     private func navigateToChannelCreation() {
-        let vc = channelConversationFormFactory.create(onNext: { _ in
-            // TODO: [WPB-16762] - Display participants selection screen
-        })
+        let vc = channelConversationFormFactory.create(onNext: { _, _ in
+            // TODO: Close flow / funnel? Create channel? ???
+        }, userSession: userSession)
         navigationController?.pushViewController(vc, animated: true)
+    }
+
+
+    /// Checks whether a channel can be created, conditions are:
+    /// - conversation message protocol is MLS
+    /// - conversation belongs to a team
+    /// - MLS is enabled
+    /// - API >= v8
+    /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
+
+    private var canCreateChannel: Bool {
+        guard DeveloperFlag.wireChannels.isOn else {
+            return false
+        }
+        guard let backendInfoApiVersion = BackendInfo.apiVersion else {
+            return false
+        }
+
+        let isMLSEnabled = BackendInfo.isMLSEnabled
+        let isAPIVersionValid = backendInfoApiVersion >= .v8
+        let isTeam = userSession.selfUser.hasTeam
+
+        return isMLSEnabled && isAPIVersionValid && isTeam
     }
 }
 
