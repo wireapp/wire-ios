@@ -229,7 +229,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async {
         await context.perform {
-            conversation.channelPermission = permission
+            conversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(permission)
         }
     }
 
@@ -928,7 +929,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 }
             }
 
-            localConversation.channelPermission = conversation.addPermission?.rawValue
+            localConversation.accessLevelPermission = ChannelAccessLevelPermission
+                .fromRawValue(conversation.addPermission?.rawValue)
 
             commonUpdate(
                 from: conversation,

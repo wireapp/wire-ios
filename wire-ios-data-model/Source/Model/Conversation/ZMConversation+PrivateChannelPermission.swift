@@ -18,21 +18,54 @@
 
 import Foundation
 
-extension ZMConversation {
+@objc
+public enum ChannelAccessLevelPermission: Int {
+    case everyone
+    case admins
+
+    public static func fromRawValue(_ rawValue: String?) -> Self? {
+        switch rawValue {
+        case adminsPermissionKey:
+            .admins
+        case everyonePermissionKey:
+            .everyone
+        default:
+            nil
+        }
+    }
+}
+
+private let adminsPermissionKey = "admins"
+private let everyonePermissionKey = "everyone"
+
+extension ZMConversation: HasChannelAccessLevelPermission {
 
     /// The underlying string value of the private channel permission.
 
     @NSManaged private var privateChannelPermissionValue: String?
 
-    /// The private conversation (aka channel) permission
-
-    public var channelPermission: String? {
+    public var accessLevelPermission: ChannelAccessLevelPermission? {
         get {
-            privateChannelPermissionValue
+            guard conversationType == .group else { return nil }
+
+            switch privateChannelPermissionValue {
+            case adminsPermissionKey: return .admins
+            case everyonePermissionKey: return .everyone
+            default: return nil
+            }
         }
         set {
-            privateChannelPermissionValue = newValue
+            privateChannelPermissionValue = switch newValue {
+            case .admins: adminsPermissionKey
+            case .everyone: everyonePermissionKey
+            case nil: nil
+            }
         }
     }
+}
+
+public protocol HasChannelAccessLevelPermission {
+
+    var accessLevelPermission: ChannelAccessLevelPermission? { get }
 
 }

@@ -53,6 +53,7 @@ import WireAccountImageUI
 
 
 
+
 public class MockAccountSelector: AccountSelector {
 
     // MARK: - Life cycle

@@ -17,21 +17,27 @@
 //
 
 import Foundation
-import WireTransport
 
-extension Payload {
-    struct UpdateConverationMemberJoin: CodableEventData {
-        enum CodingKeys: String, CodingKey {
-            case userIDs = "user_ids"
-            case users
-        }
+public enum ChannelAccessLevel {
+    case `public`
+    case `private`
+}
 
-        static var eventType: ZMUpdateEventType {
-            .conversationMemberJoin
-        }
+public enum ChannelAccessLevelPermission {
+    case admins
+    case everyone
+}
 
-        let userIDs: [UUID]?
-        let users: [ConversationMember]?
+public struct ChannelAccessSettings {
 
+    public var accessLevel: ChannelAccessLevel
+    public var participantPermission: ChannelAccessLevelPermission?
+
+    public init(
+        accessLevel: ChannelAccessLevel,
+        participantPermission: ChannelAccessLevelPermission?
+    ) {
+        self.accessLevel = accessLevel
+        self.participantPermission = participantPermission
     }
 }
