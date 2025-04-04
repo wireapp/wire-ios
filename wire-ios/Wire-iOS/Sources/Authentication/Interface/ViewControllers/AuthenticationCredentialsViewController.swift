@@ -439,6 +439,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         guard
+            DeveloperFlag.useWireAuthentication.isOn,
             textField == emailInputField,
             isRegistering,
             let prefilledCredentials,

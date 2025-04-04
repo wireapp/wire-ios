@@ -38,7 +38,11 @@ extension ZMConversationMessage {
         }
     }
 
-    func formattedReceivedDate() -> String? {
+    func formattedReceivedTime() -> String? {
+        serverTimestamp.map(Message.shortTimeFormatter.string(from:))
+    }
+
+    func formattedReceivedDateTime() -> String? {
         serverTimestamp.map(formattedDate)
     }
 
