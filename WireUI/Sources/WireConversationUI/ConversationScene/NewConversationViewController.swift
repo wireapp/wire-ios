@@ -51,6 +51,7 @@ public final class NewConversationViewController<
 
     private let persistentContainer: NSPersistentContainer
     private let conversationObjectID: NSManagedObjectID
+    private let backButtonAction: () -> Void
 
     private var fetchedResultsController: NSFetchedResultsController<ConversationMessageModel>!
     private var dataSource: UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>!
@@ -58,13 +59,22 @@ public final class NewConversationViewController<
     public init(
         conversationModel: ConversationModel,
         conversationMessageType _: ConversationMessageModel.Type,
-        persistentContainer: NSPersistentContainer
+        persistentContainer: NSPersistentContainer,
+        backButtonAction: @escaping () -> Void
     ) {
         self.conversationModel = conversationModel
         self.persistentContainer = persistentContainer
+        self.backButtonAction = backButtonAction
         conversationObjectID = conversationModel.objectID
 
         super.init(style: .plain)
+
+        navigationItem.backBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "arrow.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped(_:))
+        )
     }
 
     @available(*, unavailable)
@@ -89,6 +99,17 @@ public final class NewConversationViewController<
 //                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
 //            }
 //        }
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "arrow.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(backButtonTapped(_:))
+        )
+    }
+
+    @objc private func backButtonTapped(_ barButtonItem: UIBarButtonItem) {
+        backButtonAction()
     }
 
     private func setupTableView() {
@@ -152,13 +173,13 @@ public final class NewConversationViewController<
             snapshot.insertSections(["intro"], beforeSection: snapshot.sectionIdentifiers[0])
         }
         dataSource.apply(snapshot, animatingDifferences: true) {
-            if self.isFirstApply {
-                self.isFirstApply = false
-                if let sections = self.fetchedResultsController.sections, !sections.isEmpty {
+            if self.isFirstApply, snapshot.numberOfSections > 1 {
+                if let sections = self.fetchedResultsController.sections {
                     let lastSection = sections.count - 1
                     let lastRow = sections[lastSection].numberOfObjects - 1
                     let indexPath = IndexPath(row: lastRow, section: lastSection)
                     self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+                    self.isFirstApply = false
                 }
             }
         }

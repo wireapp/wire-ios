@@ -49,7 +49,8 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
         let viewController = NewConversationViewController(
             conversationModel: conversation,
             conversationMessageType: ZMMessage.self,
-            persistentContainer: userSession.persistentContainer
+            persistentContainer: userSession.persistentContainer,
+            backButtonAction: { mainCoordinator.hideConversation()}
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController
