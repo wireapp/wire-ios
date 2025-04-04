@@ -3283,6 +3283,8 @@ internal enum L10n {
         internal static let networkError = L10n.tr("Localizable", "error.user.network_error", fallback: "There seems to be a problem with your network. Please try again later.")
         /// Something went wrong. Please try again.
         internal static let registrationUnknownError = L10n.tr("Localizable", "error.user.registration_unknown_error", fallback: "Something went wrong. Please try again.")
+        /// Too many requests, please try again later.
+        internal static let tooManyRequests = L10n.tr("Localizable", "error.user.too_many_requests", fallback: "Too many requests, please try again later.")
         /// Something went wrong, please try again
         internal static let unkownError = L10n.tr("Localizable", "error.user.unkown_error", fallback: "Something went wrong, please try again")
         /// Please enter a valid verification code.
