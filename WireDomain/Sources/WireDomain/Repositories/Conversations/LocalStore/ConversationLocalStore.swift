@@ -229,7 +229,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async {
         await context.perform {
-            conversation.accessLevelPermission = ChannelAccessLevelPermission(permission)
+            conversation.privateChannelPermission = PrivateChannelPermission(permission)
         }
     }
 
@@ -928,8 +928,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 }
             } ?? .none
 
-            localConversation.accessLevelPermission = conversation
-                .addPermission.map { ChannelAccessLevelPermission($0) }
+            localConversation.privateChannelPermission = conversation
+                .addPermission.map { PrivateChannelPermission($0) } ?? .unset
 
             commonUpdate(
                 from: conversation,
@@ -1144,7 +1144,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
 // MARK: - Private helpers
 
-private extension ChannelAccessLevelPermission {
+private extension PrivateChannelPermission {
 
     init(_ value: Conversation.ChannelPermission) {
         switch value {

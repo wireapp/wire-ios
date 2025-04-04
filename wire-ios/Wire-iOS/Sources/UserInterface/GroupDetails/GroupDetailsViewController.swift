@@ -551,11 +551,10 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let conversation = conversation as? ZMConversation,
               let session = ZMUserSession.shared() else { return }
 
-        let permission: WireConversationsAPI.ChannelAccessLevelPermission? = conversation.accessLevelPermission.map {
-            switch $0 {
+        let permission: ChannelAccessLevelPermission? = switch conversation.privateChannelPermission {
+            case .unset: .none
             case .admins: .admins
             case .everyone: .everyone
-            }
         }
 
         let accessView = ChannelViewFactory.makeChannelAccessView(

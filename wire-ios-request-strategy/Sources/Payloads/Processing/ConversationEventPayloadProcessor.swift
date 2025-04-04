@@ -111,7 +111,7 @@ struct ConversationEventPayloadProcessor {
         }
 
         await context.perform {
-            conversation.accessLevelPermission = ChannelAccessLevelPermission(payload.data.addPermission)
+            conversation.privateChannelPermission = PrivateChannelPermission(payload.data.addPermission)
         }
 
     }
@@ -549,7 +549,7 @@ struct ConversationEventPayloadProcessor {
                 }
             } ?? .none
 
-            conversation.accessLevelPermission = payload.addPermission.map { ChannelAccessLevelPermission($0) }
+            conversation.privateChannelPermission = payload.addPermission.map { PrivateChannelPermission($0) } ?? .unset
 
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
@@ -1132,7 +1132,7 @@ private extension ZMConversation {
 
 }
 
-private extension ChannelAccessLevelPermission {
+private extension PrivateChannelPermission {
 
     init(_ value: Payload.ChannelPermission) {
         switch value {

@@ -19,12 +19,6 @@
 import Foundation
 
 @objc
-public enum ChannelAccessLevelPermission: Int {
-    case everyone
-    case admins
-}
-
-@objc
 public enum PrivateChannelPermission: Int16 {
 
     /// No group type set
@@ -41,34 +35,10 @@ public enum PrivateChannelPermission: Int16 {
 
 }
 
-extension ZMConversation: HasChannelAccessLevelPermission {
+extension ZMConversation {
 
     /// The underlying string value of the private channel permission.
 
-    @NSManaged private var privateChannelPermission: PrivateChannelPermission
-
-    public var accessLevelPermission: ChannelAccessLevelPermission? {
-        get {
-            guard conversationType == .group else { return nil }
-
-            switch privateChannelPermission {
-            case .admins: return .admins
-            case .everyone: return .everyone
-            case .unset: return nil
-            }
-        }
-        set {
-            privateChannelPermission = switch newValue {
-            case .admins: .admins
-            case .everyone: .everyone
-            case nil: .unset
-            }
-        }
-    }
-}
-
-public protocol HasChannelAccessLevelPermission {
-
-    var accessLevelPermission: ChannelAccessLevelPermission? { get }
+    @NSManaged public var privateChannelPermission: PrivateChannelPermission
 
 }
