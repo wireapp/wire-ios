@@ -36,15 +36,21 @@ public struct WireAuthenticationBackendEnvironment: Sendable, Equatable, Hashabl
 
     public let metadata: BackendMetadata
 
+    /// Settings for proxied communication with the backend.
+
+    public let proxySettings: ResolvedProxySettings?
+
     public init(
         environmentType: BackendEnvironmentType,
         config: BackendConfig,
-        metadata: BackendMetadata
+        metadata: BackendMetadata,
+        proxySettings: ResolvedProxySettings?
     ) {
         self.title = config.title
         self.environmentType = environmentType
         self.config = config
         self.metadata = metadata
+        self.proxySettings = proxySettings
     }
 
 }
