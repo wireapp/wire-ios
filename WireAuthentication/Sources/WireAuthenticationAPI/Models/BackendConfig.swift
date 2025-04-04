@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct BackendConfig: Decodable, Sendable, Hashable {
+public struct BackendConfig: Decodable, Sendable, Hashable, Equatable {
 
     /// The  name of the backend.
 
@@ -30,16 +30,25 @@ public struct BackendConfig: Decodable, Sendable, Hashable {
 
     /// The proxy settings for the backend if any.
 
-    public let proxySettings: ProxySettings?
+    public let proxySettings: UnresolvedProxySettings?
 
     /// The pinned keys for the backend for use with certificate pinning.
 
     public let pinnedKeys: [TrustData]?
 
+    public enum CodingKeys: String, CodingKey {
+
+        case title
+        case endpoints
+        case proxySettings = "apiProxy"
+        case pinnedKeys
+
+    }
+
     public init(
         title: String,
         endpoints: Endpoints,
-        proxySettings: ProxySettings?,
+        proxySettings: UnresolvedProxySettings?,
         pinnedKeys: [TrustData]?
     ) {
         self.title = title
@@ -113,25 +122,6 @@ public struct TrustData: Decodable, Sendable, Hashable {
     enum CodingKeys: String, CodingKey {
         case certificateKey
         case hosts
-    }
-
-}
-
-public struct ProxySettings: Decodable, Sendable, Hashable {
-
-    public let host: String
-    public let port: Int
-    public let needsAuthentication: Bool
-
-    public init(
-        host: String,
-        port: Int,
-        needsAuthentication: Bool = false
-    ) {
-        self.host = host
-        self.port = port
-        self.needsAuthentication = needsAuthentication
-
     }
 
 }

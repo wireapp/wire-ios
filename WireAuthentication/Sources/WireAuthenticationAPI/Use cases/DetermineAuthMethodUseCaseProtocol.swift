@@ -55,6 +55,6 @@ public enum DetermineAuthMethodUseCaseFailure: Error, Equatable {
 
 public protocol DetermineAuthMethodUseCaseFactory {
 
-    func determineAuthMethodUseCase(apiVersion: BackendMetadata.APIVersion) -> any DetermineAuthMethodUseCaseProtocol
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol
 
 }
