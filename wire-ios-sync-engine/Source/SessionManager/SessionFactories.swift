@@ -117,6 +117,16 @@ open class AuthenticatedSessionFactory {
             selfClientID: selfClientID,
             isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
+        
+        let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        
+        let coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: account.userIdentifier,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: coreDataStack.accountContainer,
+            syncContext: coreDataStack.syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager
+        )
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
@@ -127,6 +137,7 @@ open class AuthenticatedSessionFactory {
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
+            coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
             contextStorage: LAContextStorage(),
             earService: nil,

@@ -19,7 +19,8 @@
 import WireCoreCrypto
 
 /// An object that provides an instance of `MlsTransport`.
-/// 
+
+// sourcery: AutoMockable
 public protocol MLSTransportProvider {
-    func provideMLSTransport() throws -> any MlsTransport
+    func provideMLSTransport() throws -> MlsTransport
 }

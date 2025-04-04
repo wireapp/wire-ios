@@ -27,7 +27,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
     private var coreDataHelper: CoreDataStackHelper!
 
     private var sut: CertificateRevocationListsChecker!
-    private var mockCoreCrypto: MockCoreCryptoProtocol!
+    private var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     private var mockCRLAPI: MockCertificateRevocationListAPIProtocol!
     private var mockMLSGroupVerification: MockMLSGroupVerificationProtocol!
     private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
@@ -38,8 +38,8 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
-        mockCoreCrypto = MockCoreCryptoProtocol()
-        let safeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        let safeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
         let provider = MockCoreCryptoProviderProtocol()
         provider.coreCrypto_MockValue = safeCoreCrypto
 
@@ -68,7 +68,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
 
     override func tearDown() async throws {
         sut = nil
-        mockCoreCrypto = nil
+        mockCoreCryptoContext = nil
         mockCRLAPI = nil
         mockMLSGroupVerification = nil
         mockSelfClientCertificateProvider = nil
@@ -117,9 +117,9 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         )
 
         // It registers the CRLs with core crypto
-        XCTAssertEqual(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 2)
+        XCTAssertEqual(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 2)
         XCTAssertEqual(
-            Set(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
+            Set(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
             Set([dp2, dp3])
         )
 
@@ -153,7 +153,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         XCTAssertTrue(mockCRLAPI.getRevocationListFrom_Invocations.isEmpty)
 
         // It doesn't register any CRL with core crypto
-        XCTAssertTrue(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.isEmpty)
+        XCTAssertTrue(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.isEmpty)
 
         // It desn't store expiration date
         XCTAssertTrue(mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.isEmpty)
@@ -212,9 +212,9 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         )
 
         // It registers the fetched CRLs with core crypto
-        XCTAssertEqual(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 1)
+        XCTAssertEqual(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.count, 1)
         XCTAssertEqual(
-            Set(mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
+            Set(mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_Invocations.map(\.crlDp)),
             Set([dp2])
         )
 
@@ -244,7 +244,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
 
     private func mockCRLRegistration(with configurations: [String: (dirty: Bool, expiration: Date?)]) {
         // Mock registering the CRL with core crypto and returning the registration
-        mockCoreCrypto.e2eiRegisterCrlCrlDpCrlDer_MockMethod = { dp, _ in
+        mockCoreCryptoContext.e2eiRegisterCrlCrlDpCrlDer_MockMethod = { dp, _ in
             guard let configuration = configurations[dp] else {
                 return .init(dirty: false, expiration: nil)
             }

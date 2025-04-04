@@ -27,6 +27,7 @@
 import WireAPI
 import WireDataModel
 import WireDomainPackage
+import WireCoreCrypto
 
 @testable import WireDomain
 
@@ -2074,6 +2075,38 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
         }
 
         try await mock(eventData)
+    }
+
+}
+
+public class MockMLSTransportProvider: MLSTransportProvider {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - provideMLSTransport
+
+    public var provideMLSTransport_Invocations: [Void] = []
+    public var provideMLSTransport_MockError: Error?
+    public var provideMLSTransport_MockMethod: (() throws -> MlsTransport)?
+    public var provideMLSTransport_MockValue: MlsTransport?
+
+    public func provideMLSTransport() throws -> MlsTransport {
+        provideMLSTransport_Invocations.append(())
+
+        if let error = provideMLSTransport_MockError {
+            throw error
+        }
+
+        if let mock = provideMLSTransport_MockMethod {
+            return try mock()
+        } else if let mock = provideMLSTransport_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `provideMLSTransport`")
+        }
     }
 
 }

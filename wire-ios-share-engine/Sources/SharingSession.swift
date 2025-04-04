@@ -443,14 +443,9 @@ public final class SharingSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             allowCreation: false
         )
-        let commitSender = CommitSender(
-            coreCryptoProvider: coreCryptoProvider,
-            notificationContext: coreDataStack.syncContext.notificationContext
-        )
         let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender,
             featureRepository: featureRepository
         )
         let contextStorage = LAContextStorage()

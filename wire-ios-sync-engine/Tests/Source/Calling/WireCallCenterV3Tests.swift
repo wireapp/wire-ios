@@ -1157,9 +1157,11 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
 
         // So we can inform of new conference infos
+        let listentingOnConferenceInfoChange = expectation(description: "listenting to onConferenceInfoChange")
         let conferenceInfoChangeSubject = PassthroughSubject<MLSConferenceInfo, Never>()
         mlsService.onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod = { _, _ in
             var iterator = conferenceInfoChangeSubject.values.makeAsyncIterator()
+            listentingOnConferenceInfoChange.fulfill()
             return AsyncThrowingStream {
                 await iterator.next()
             }
@@ -1173,6 +1175,8 @@ final class WireCallCenterV3Tests: MessagingTest {
             // when
             try block()
         }
+        
+        wait(for: [listentingOnConferenceInfoChange])
 
         let didSetConferenceInfo2 = customExpectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {

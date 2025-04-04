@@ -34,6 +34,12 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             useCache: true
         )
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        let coreCryptoProvider = MockCoreCryptoProviderProtocol()
+        coreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         let coreDataStack = createCoreDataStack()
         let selfClient = coreDataStack.syncContext.performAndWait {
@@ -59,6 +65,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
+            coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStore,
             earService: mockEARService,

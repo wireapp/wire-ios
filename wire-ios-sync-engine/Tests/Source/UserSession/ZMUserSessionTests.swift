@@ -108,6 +108,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let userClient = syncMOC.performAndWait {
             self.createSelfClient()
         }
+        
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
 
         // WHEN
         syncMOC.performGroupedBlock { [self] in
@@ -520,7 +522,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
-
+        mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
+        
         syncMOC.performAndWait {
             XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
 
@@ -545,8 +548,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         // THEN
         syncMOC.performAndWait {
-            XCTAssertFalse(selfUserClient.mlsPublicKeys.isEmpty)
-
+            XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
             XCTAssertTrue(BackendInfo.isMLSEnabled)
             XCTAssertTrue(sut.featureRepository.fetchMLS().isEnabled)
         }
