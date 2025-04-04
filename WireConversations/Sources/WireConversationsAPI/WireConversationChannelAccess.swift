@@ -16,4 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Go back to new conversation overview";
+public enum WireConversationChannelAccess: Equatable, Hashable {
+    public enum PrivateChannelInvitePolicy: Equatable, Hashable {
+        case admins
+        case adminsAndMembers
+    }
+
+    case `public`
+    case `private`(PrivateChannelInvitePolicy)
+}
