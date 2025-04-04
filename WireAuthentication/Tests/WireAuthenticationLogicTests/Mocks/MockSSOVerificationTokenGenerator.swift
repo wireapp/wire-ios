@@ -16,20 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-package struct SafariBrowser: UIViewControllerRepresentable {
+@testable import WireAuthenticationLogic
 
-    private let url: URL
+final class MockSSOLoginVerificationTokenGenerator: SSOLoginVerificationTokenGeneratorProtocol {
 
-    package init(url: URL) {
-        self.url = url
+    var mockToken: SSOLoginVerificationToken?
+
+    func generateToken() -> SSOLoginVerificationToken {
+        guard let mockToken else {
+            fatalError("no mock for `generateToken`!")
+        }
+        return mockToken
     }
-
-    package func makeUIViewController(context: Context) -> BrowserViewController {
-        BrowserViewController(url: url)
-    }
-
-    package func updateUIViewController(_ viewController: BrowserViewController, context: Context) {}
 
 }

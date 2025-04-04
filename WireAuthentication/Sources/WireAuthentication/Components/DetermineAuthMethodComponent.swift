@@ -31,7 +31,6 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
-    var userDefaults: UserDefaults { get }
     var existsAnotherAccount: Bool { get }
 
 }
@@ -87,29 +86,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    func loginViaSSOComponent(
-        ssoURL: URL,
-        backendInfo: BackendInfo?,
-        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
-    ) -> LoginViaSSOComponent {
-        let networkStack: NetworkStack = if let backendInfo {
-            NetworkStack(
-                backendInfo: backendInfo,
-                minTLSVersion: dependency.minTLSVersion,
-                preferredAPIVersion: dependency.preferredAPIVersion
-            )
-        } else {
-            self.networkStack
-        }
-
-        return LoginViaSSOComponent(
-            parent: self,
-            ssoURL: ssoURL,
-            networkStack: networkStack,
-            onAuthenticationResult: onAuthenticationResult
-        )
-    }
-
     func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
         NoHistoryComponent(
             parent: self,
@@ -135,38 +111,30 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol {
-        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
-        return SSOLinkGenerator(
-            authenticationAPI: authenticationAPI,
-            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
-        )
-    }
-
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
         FetchBackendConfigUseCase()
     }
 
-    func fetchSSOURLUseCase(
-        backendInfo: BackendInfo
-    ) async throws -> any FetchSSOURLUseCaseProtocol {
-        let networkStack = NetworkStack(
-            backendInfo: backendInfo,
-            minTLSVersion: dependency.minTLSVersion,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
+    @MainActor
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+        let networkStack: NetworkStack = if let backendInfo {
+            NetworkStack(
+                backendInfo: backendInfo,
+                minTLSVersion: dependency.minTLSVersion,
+                preferredAPIVersion: dependency.preferredAPIVersion
+            )
+        } else {
+            self.networkStack
+        }
+
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
-        let linkGenerator = SSOLinkGenerator(
+        return LoginViaSSOUseCase(
             authenticationAPI: authenticationAPI,
-            baseURL: backendInfo.backendConfig.endpoints.backendURL,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
-        )
-        return FetchSSOURLUseCase(
-            authenticationAPI: authenticationAPI,
-            linkGenerator: linkGenerator
+            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
+            ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
+            verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
+            webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
+            createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
         )
     }
 
@@ -186,19 +154,6 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
             backendInfo: backendInfo
-        ).view
-    }
-
-    @MainActor
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendInfo: BackendInfo?,
-        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
-    ) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendInfo: backendInfo,
-            onAuthenticationResult: onAuthenticationResult
         ).view
     }
 

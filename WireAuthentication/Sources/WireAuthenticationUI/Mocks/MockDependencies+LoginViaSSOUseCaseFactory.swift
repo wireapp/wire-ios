@@ -16,40 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 import WireAuthenticationAPI
 
-package protocol LoginViaSSOBuilder {
+extension MockDependencies: LoginViaSSOUseCaseFactory {
 
     @MainActor
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendInfo: BackendInfo?,
-        onAuthenticationResult: @escaping (Result<AuthenticationResult, any Error>) -> Void
-    ) -> LoginViaSSOView
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+        MockLoginViaSSOUseCase(backendEnvironment: backendEnvironment)
+    }
 
 }
 
-package struct LoginViaSSOView: View {
+struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
-    @ObservedObject var viewModel: LoginViaSSOViewModel
+    let backendEnvironment: WireAuthenticationBackendEnvironment
 
-    package init(
-        viewModel: LoginViaSSOViewModel
-    ) {
-        self.viewModel = viewModel
+    func invoke(code: UUID?) async throws -> AuthenticationResult {
+        AuthenticationResult(
+            userID: UUID(),
+            cookies: [],
+            accessToken: nil,
+            emailCredentials: nil,
+            backendEnvironment: backendEnvironment
+        )
     }
 
-    package var body: some View {
-        SafariBrowser(url: viewModel.ssoURL)
-    }
-}
-
-#Preview {
-    let url = URL(string: "https://www.wire.com")!
-    MockDependencies().loginViaSSOView(
-        ssoURL: url,
-        backendInfo: nil,
-        onAuthenticationResult: { _ in }
-    )
 }
