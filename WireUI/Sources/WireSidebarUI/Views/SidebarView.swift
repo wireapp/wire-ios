@@ -123,6 +123,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 .all,
                 .favorites,
                 .groups,
+                .channels,
                 .oneOnOne,
                 .folders,
                 .archive
@@ -192,6 +193,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     ) -> some View {
         let text: Text
         let icon: String
+        var iconHighlighted: String?
         let accessibilityLabel: Text
         switch menuItem {
         case .all:
@@ -208,6 +210,12 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text(Strings.ConversationFilter.Groups.title)
             icon = "person.3"
             accessibilityLabel = Text(Strings.ConversationFilter.Groups.title)
+
+        case .channels:
+            text = Text(Strings.ConversationFilter.Channels.title)
+            icon = "number"
+            iconHighlighted = "number"
+            accessibilityLabel = Text(Strings.ConversationFilter.Channels.title)
 
         case .oneOnOne:
             text = Text(Strings.ConversationFilter.OneOnOneConversations.title)
@@ -232,6 +240,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
         return SidebarMenuItemView(
             icon: icon,
+            iconHighlighted: iconHighlighted,
             iconSize: iconSize,
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,

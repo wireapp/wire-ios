@@ -113,4 +113,9 @@
     }
 }
 
+- (BOOL)isChannel
+{
+    return false;
+}
+
 @end
