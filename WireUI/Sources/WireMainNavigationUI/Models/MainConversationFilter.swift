@@ -21,6 +21,7 @@ import Foundation
 public enum MainConversationFilter: Sendable, Equatable {
     case favorites
     case groups
+    case channels
     case oneOnOne
     case folder(id: UUID, name: String)
 }

@@ -16,12 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
+import WireConversationsAPI
+import WireConversationsUIBindings
 import WireDesign
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
@@ -36,6 +40,38 @@ final class StartUIViewController: UIViewController {
     let searchController = UISearchController(searchResultsController: nil)
 
     let groupSelector = SearchGroupSelector()
+
+    lazy var conversationTypePicker: UIViewController = {
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel() {
+            [.channel, .group]
+        } else {
+            [.group]
+        }
+
+        let view = WireConversationTypePickerFactory().create(
+            availableConversationTypes: availableConversationTypes,
+            onConversationTypeSelected: { [weak self] selectedConversationType in
+                guard let self else { return }
+                switch selectedConversationType {
+                case .group:
+                    Task { @MainActor [weak self] in
+                        self?.navigateToConversationCreation()
+                    }
+                case .channel:
+                    break
+                }
+            }
+        )
+        let vc = UIHostingController(rootView: view)
+        vc.sizingOptions = .intrinsicContentSize
+        vc.view.backgroundColor = .clear
+        return vc
+    }()
+
+    private func canCreateChannel() -> Bool {
+        DeveloperFlag.wireChannels.isOn
+            && userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole)
+    }
 
     let searchResultsViewController: SearchResultsViewController
 
@@ -66,13 +102,7 @@ final class StartUIViewController: UIViewController {
     // MARK: - Init
 
     private var navigationBarTitle: String? {
-        if let title = userSession.selfUser.membership?.team?.name {
-            return title
-        } else if let title = userSession.selfUser.name {
-            return title
-        }
-
-        return nil
+        L10n.Localizable.Peoplepicker.NavigationHeader.title
     }
 
     init(
@@ -137,6 +167,7 @@ final class StartUIViewController: UIViewController {
 
     func setupViews() {
         configGroupSelector()
+        configConversationTypePicker()
         emptyResultView = EmptySearchResultsView(
             isSelfUserAdmin: userSession.selfUser.canManageTeam,
             isFederationEnabled: isFederationEnabled
@@ -153,6 +184,7 @@ final class StartUIViewController: UIViewController {
         if showsGroupSelector {
             view.addSubview(groupSelector)
         }
+        view.addSubview(conversationTypePicker.view)
 
         searchResults.delegate = self
         addToSelf(searchResults)
@@ -186,6 +218,13 @@ final class StartUIViewController: UIViewController {
         }
     }
 
+    private func configConversationTypePicker() {
+        conversationTypePicker.view.translatesAutoresizingMaskIntoConstraints = false
+        conversationTypePicker.view.backgroundColor = backgroundColor
+        addChild(conversationTypePicker)
+        conversationTypePicker.didMove(toParent: self)
+    }
+
     // MARK: - Setup constraints
 
     private func createConstraints() {
@@ -198,15 +237,25 @@ final class StartUIViewController: UIViewController {
                 groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor)
+                conversationTypePicker.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor, constant: 24)
             ])
         } else {
             NSLayoutConstraint.activate([
-                searchResultsViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+                conversationTypePicker.view.topAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.topAnchor,
+                    constant: 24
+                )
             ])
         }
 
         NSLayoutConstraint.activate([
+            conversationTypePicker.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            conversationTypePicker.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+
+            searchResultsViewController.view.topAnchor.constraint(
+                equalTo: conversationTypePicker.view.bottomAnchor,
+                constant: 16
+            ),
             searchResultsViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchResultsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchResultsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -244,6 +293,12 @@ final class StartUIViewController: UIViewController {
         )
     }
 
+    // MARK: - Navigation methods
+
+    private func navigateToConversationCreation() {
+        let conversationCreationController = createGroupConversationUIBuilder.build()
+        navigationController?.pushViewController(conversationCreationController, animated: true)
+    }
 }
 
 // MARK: - UISearchResultsUpdating, UISearchBarDelegate

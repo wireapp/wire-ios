@@ -195,13 +195,6 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var canBeCombinedWithOtherCells: Bool { true }
-
-    var showEphemeralTimer: Bool = false
-
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

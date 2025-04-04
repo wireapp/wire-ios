@@ -54,6 +54,8 @@ public extension UpdateEvent {
                 "conversation.rename"
             case .typing:
                 "conversation.typing"
+            case .permissionUpdate:
+                "conversation.add-permission-update"
             }
         case let .featureConfig(event):
             switch event {

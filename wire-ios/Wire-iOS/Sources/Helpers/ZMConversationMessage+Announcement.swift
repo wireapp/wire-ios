@@ -47,7 +47,7 @@ extension ZMConversationMessage {
         } else if isFile {
             return ConversationAnnouncement.File.description(filename ?? "", senderName)
         } else if isSystem, let cellDescription = ConversationSystemMessageCellDescription.cells(
-            for: self, isCollapsed: true, buttonAction: nil, showEphemeralTimer: false
+            for: self, isCollapsed: true, buttonAction: nil
         ).first {
             return cellDescription.cellAccessibilityLabel
         }

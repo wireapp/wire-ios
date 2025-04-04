@@ -35,5 +35,6 @@ enum ConversationEventType: String {
     case receiptModeUpdate = "conversation.receipt-mode-update"
     case rename = "conversation.rename"
     case typing = "conversation.typing"
+    case addPermissionUpdate = "conversation.add-permission-update"
 
 }
