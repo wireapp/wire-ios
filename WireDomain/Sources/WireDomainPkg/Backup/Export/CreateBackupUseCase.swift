@@ -27,13 +27,13 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
     let fileArchiver: any ExportBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
     let selfUserID: QualifiedID
-    // let logger: any LoggerProtocol // TODO: fix Sendable error
+    // let logger: any LoggerProtocol // TODO: [WPB-14592] fix Sendable error
 
     public init(
         fileArchiver: any ExportBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding,
-        // TODO: inject the persistent container or any CoreData context
-        // TODO: inject the self user id
+        // TODO: [WPB-14592] inject the persistent container or any CoreData context
+        // TODO: [WPB-14592] inject the self user id
         selfUserID: QualifiedID,
         logger: any LoggerProtocol
     ) {
@@ -50,13 +50,13 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
                     continuation.yield(.progress(0))
 
-                    // TODO: use logger
+                    // TODO: [WPB-14592] use logger
                     // logger.debug("creating backup ...")
 
                     let backupExporter = MPBackupExporter(
                         selfUserId: BackupQualifiedId(selfUserID),
-                        workDirectory: "TODO-0", // TODO: pass temporary directory URL
-                        outputDirectory: "TODO-1", // TODO: pass temporary directory URL
+                        workDirectory: "TODO-0", // TODO: [WPB-14592] pass temporary directory URL
+                        outputDirectory: "TODO-1", // TODO: [WPB-14592] pass temporary directory URL
                         fileZipper: ExportBackupFileZipper2FileZipperAdapter(
                             fileManager: .default,
                             fileArchiver: fileArchiver,
@@ -64,18 +64,18 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
                         )
                     )
 
-                    // TODO: fetch form CoreData and call these methods:
+                    // TODO: [WPB-14592] fetch form CoreData and call these methods:
                     // backupExporter.add(user: <#T##BackupUser#>)
                     // backupExporter.add(message: <#T##BackupMessage#>)
                     // backupExporter.add(conversation: <#T##BackupConversation#>)
 
-                    // TODO: report accurate progress
+                    // TODO: [WPB-14592] report accurate progress
                     continuation.yield(.progress(0.25))
 
-                    // TODO: then finalize:
+                    // TODO: [WPB-14592] then finalize:
                     // try await backupExporter.finalize(password: password)
 
-                    // TODO: send correct URL
+                    // TODO: [WPB-14592] send correct URL
                     continuation.yield(.done(URL(fileURLWithPath: "", isDirectory: false)))
                     continuation.finish()
 
