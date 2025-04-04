@@ -20,6 +20,7 @@ import WireDesign
 import WireTestingPackage
 import XCTest
 
+import WireConversationsUIBindings
 @testable import Wire
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
@@ -66,6 +67,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
             createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
+            channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory(),
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault

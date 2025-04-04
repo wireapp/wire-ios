@@ -16,4 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"conversation.create.channel.back" = "Go back to new conversation overview";
+public struct WireConversationChannelCreationSettings: Equatable, Hashable {
+    let channelName: String
+    let channelAccess: WireConversationChannelAccess
+    let servicesAllowed: Bool
+    let guestsAllowed: Bool
+    let readReceiptsEnabled: Bool
+
+    package init(
+        channelName: String,
+        channelAccess: WireConversationChannelAccess,
+        servicesAllowed: Bool,
+        guestsAllowed: Bool,
+        readReceiptsEnabled: Bool
+    ) {
+        self.channelName = channelName
+        self.channelAccess = channelAccess
+        self.servicesAllowed = servicesAllowed
+        self.guestsAllowed = guestsAllowed
+        self.readReceiptsEnabled = readReceiptsEnabled
+    }
+}
