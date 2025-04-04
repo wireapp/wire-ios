@@ -28,14 +28,10 @@ import WireSyncEngine
 
 final class WireConversationChannelCreationFormViewController: UIViewController {
 
-    private let onNext: @Sendable (
-        _ settings: WireConversationChannelCreationSettings,
-        _ participants: UserSet
-    ) -> Void
     private let userSession: UserSession
     private var values: ConversationCreationValues
 
-    private lazy var viewModel =  WireConversationChannelCreationFormViewModel(
+    private lazy var viewModel = WireConversationChannelCreationFormViewModel(
         channelName: "",
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
@@ -53,18 +49,13 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         return UIHostingController(rootView: rootView)
     }()
 
-    @MainActor var channelCreationSettings: Result<WireConversationChannelCreationSettings, any Error> {
+    @MainActor var channelCreationSettings: WireConversationChannelCreationSettings? {
         viewModel.getChannelCreationSettings()
     }
 
     init(
-        onNext: @escaping @Sendable (
-            _ settings: WireConversationChannelCreationSettings,
-            _ participants: UserSet
-        ) -> Void,
         userSession: UserSession
     ) {
-        self.onNext = onNext
         self.userSession = userSession
         self.values = ConversationCreationValues(
             encryptionProtocol: userSession.defaultProtocol,
@@ -105,17 +96,17 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     private func setupNavigationBarButtonItems() {
         let backButton = UIBarButtonItem.createNavigationLeftBarButtonItem(
-            title: "Back" /*L10n.Localizable.Conversation.Create.Channel.back*/,
+            title: "Back" /* L10n.Localizable.Conversation.Create.Channel.back */,
             action: UIAction { [weak self] _ in
                 self?.navigationController?.popViewController(animated: true)
             }
         )
-        backButton.accessibilityLabel = "Back" /*L10n.Accessibility.Conversation.Create.Channel.back*/
+        backButton.accessibilityLabel = "Back" /// L10n.Accessibility.Conversation.Create.Channel.back
         backButton.accessibilityIdentifier = "back"
         navigationItem.leftBarButtonItem = backButton
 
         let nextButton = UIBarButtonItem.createNavigationRightBarButtonItem(
-            title: "Next" /*L10n.Localizable.Conversation.Create.Channel.next*/,
+            title: "Next" /* L10n.Localizable.Conversation.Create.Channel.next */,
             action: UIAction { @MainActor [weak self] _ in
                 guard let self else { return }
                 attemptToProceedToParticipants()
@@ -137,15 +128,15 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     @MainActor
     func attemptToProceedToParticipants() {
-        guard case .success(let settings) = channelCreationSettings else {
+        guard let channelCreationSettings else {
             return
         }
 
-        guard !settings.channelName.isEmpty else {
+        guard !channelCreationSettings.channelName.isEmpty else {
             return
         }
 
-        values.name = settings.channelName
+        values.name = channelCreationSettings.channelName
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),

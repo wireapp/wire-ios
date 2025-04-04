@@ -306,12 +306,9 @@ final class StartUIViewController: UIViewController {
     }
 
     private func navigateToChannelCreation() {
-        let vc = channelConversationFormFactory.create(onNext: { _, _ in
-            // TODO: Close flow / funnel? Create channel? ???
-        }, userSession: userSession)
+        let vc = channelConversationFormFactory.create(onNext: { _, _ in }, userSession: userSession)
         navigationController?.pushViewController(vc, animated: true)
     }
-
 
     /// Checks whether a channel can be created, conditions are:
     /// - conversation message protocol is MLS

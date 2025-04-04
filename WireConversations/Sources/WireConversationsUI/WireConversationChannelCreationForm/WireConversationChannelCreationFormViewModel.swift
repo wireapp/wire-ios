@@ -87,7 +87,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
 
-    @Published private(set) public var isFormValid: Bool
+    @Published public private(set) var isFormValid: Bool
 
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
 
@@ -149,7 +149,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         return .success(channelName)
     }
 
-    public func getChannelCreationSettings() -> Result<WireConversationChannelCreationSettings, any Error> {
+    public func getChannelCreationSettings() -> WireConversationChannelCreationSettings? {
         channelName
             .map { value in
                 WireConversationChannelCreationSettings(
@@ -162,13 +162,12 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                     readReceiptsEnabled: readReceiptsEnabled
                 )
             }
-        // TK: This is lazy, we need to handle the error properly.
-            .mapError { error in error as any Error }
+            .mapError { _ in nil }
     }
 }
 
 // From WireUtilities String+Emoji.swift:19
-fileprivate extension CharacterSet {
+private extension CharacterSet {
     static let asciiPrintableSet =
         CharacterSet(
             charactersIn: "\u{0020}!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
@@ -181,7 +180,7 @@ fileprivate extension CharacterSet {
 }
 
 // From WireUtilities String+Emoji.swift:31
-fileprivate extension Unicode.Scalar {
+private extension Unicode.Scalar {
     static let cancelTag: Unicode.Scalar = .init(0xE007F)!
 
     var isEmojiComponentOrMiscSymbol: Bool {
@@ -206,7 +205,7 @@ fileprivate extension Unicode.Scalar {
 }
 
 // From WireUtilities String+Emoji.swift:56
-fileprivate extension Character {
+private extension Character {
     var isEmoji: Bool {
         unicodeScalars.contains(where: \.isEmoji)
     }

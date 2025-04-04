@@ -27,17 +27,11 @@ final class WireConversationChannelCreationFormViewControllerFactory {
 
     public init() {}
 
-
     @MainActor
     func create(
-        onNext: @escaping @Sendable (
-            _ settings: WireConversationChannelCreationSettings,
-            _ participants: UserSet
-        ) -> Void,
         userSession: UserSession
     ) -> WireConversationChannelCreationFormViewController {
         let vc = WireConversationChannelCreationFormViewController(
-            onNext: onNext,
             userSession: userSession
         )
         vc.delegate = delegate

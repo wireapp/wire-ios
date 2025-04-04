@@ -37,7 +37,7 @@ public struct WireConversationChannelCreationForm: View {
         Form {
             channelNameSection
             channelAccessSection
-// TODO: [WPB-16814] This will be used when implementing the channels history settings.
+            // TODO: [WPB-16814] This will be used when implementing the channels history settings.
 //            channelHistorySection
             servicesSection
             readReceiptsSection
@@ -61,7 +61,10 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelAccessSection: some View {
         Section(content: {
-            Picker(L10n.Localizable.Conversation.CreationForm.Options.channelAccess, selection: $viewModel.channelAccess) {
+            Picker(
+                L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
+                selection: $viewModel.channelAccess
+            ) {
                 Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.public)
                     .tag(ViewModel.ChannelAccessOption.public)
                 Label(
@@ -91,7 +94,7 @@ public struct WireConversationChannelCreationForm: View {
         })
     }
 
-// TODO: [WPB-16814] This will be used when implementing the channels history settings.
+    // TODO: [WPB-16814] This will be used when implementing the channels history settings.
 //    var channelHistorySection: some View {
 //            Section(content: {
 //                Picker("Channel history", selection: $channelHistory) {
@@ -128,9 +131,9 @@ public struct WireConversationChannelCreationForm: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    WireConversationChannelCreationForm(
 //        viewModel:
 //        onFormValidityUpdate: { _ in }
 //    )
-//}
+// }
