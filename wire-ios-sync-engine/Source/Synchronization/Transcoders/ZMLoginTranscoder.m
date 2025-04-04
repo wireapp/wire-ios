@@ -178,8 +178,9 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
             if ([self isResponseForPendingEmailActionvation:response]) {
                 [authenticationStatus didFailLoginWithEmailBecausePendingValidation];
                 shouldStartTimer = YES;
-            }
-            else {
+            } else if ([self isTooManyRequests:response]) {
+                [authenticationStatus didFailLoginBecauseTooManyRequests];
+            } else {
                 [authenticationStatus didFailLoginWithEmail:[self isResponseForInvalidCredentials:response]];
             }
         }
@@ -224,6 +225,11 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
 {
     NSString *label = [response.payload asDictionary][@"label"];
     return response.HTTPStatus == 403 && [label isEqualToString:@"suspended"];
+}
+
+- (BOOL)isTooManyRequests:(ZMTransportResponse *)response
+{
+    return response.HTTPStatus == 429;
 }
 
 @end

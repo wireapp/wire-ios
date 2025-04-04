@@ -38,6 +38,7 @@
 @property (nonatomic, readonly, nonnull) ZMConversationList* clearedConversations; /// conversations with deleted messages (clearedTimestamp is set)
 @property (nonatomic, readonly, nonnull) ZMConversationList* oneToOneConversations;
 @property (nonatomic, readonly, nonnull) ZMConversationList* groupConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* channelConversations;
 @property (nonatomic, readonly, nonnull) ZMConversationList* favoriteConversations;
 
 @property (nonatomic, readonly, nonnull) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;

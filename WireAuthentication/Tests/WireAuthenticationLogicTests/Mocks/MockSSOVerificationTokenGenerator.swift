@@ -18,12 +18,6 @@
 
 import Foundation
 
-<<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationUI/Mocks/Use cases/MockFetchSSOURLUseCase.swift
-struct MockFetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
-
-    func invoke() async throws -> URL? {
-        URL(string: "https://example.com/login/\(UUID().uuidString)")!
-========
 @testable import WireAuthenticationLogic
 
 final class MockSSOLoginVerificationTokenGenerator: SSOLoginVerificationTokenGeneratorProtocol {
@@ -35,7 +29,6 @@ final class MockSSOLoginVerificationTokenGenerator: SSOLoginVerificationTokenGen
             fatalError("no mock for `generateToken`!")
         }
         return mockToken
->>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778)):WireAuthentication/Tests/WireAuthenticationLogicTests/Mocks/MockSSOVerificationTokenGenerator.swift
     }
 
 }

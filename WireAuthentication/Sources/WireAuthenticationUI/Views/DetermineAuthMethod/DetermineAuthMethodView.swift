@@ -25,25 +25,16 @@ package protocol DetermineAuthMethodBuilder {
 
     @MainActor
     func determineAuthMethodView(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
+        backendInfo: BackendInfo
     ) -> DetermineAuthMethodView
-
-    @MainActor
-    func determineAuthMethodView() -> DetermineAuthMethodView
 
 }
 
 package struct DetermineAuthMethodView: View {
 
-<<<<<<< HEAD
-    package typealias Factory = LoginViaEmailBuilder & LoginViaSSOBuilder & SwitchBackendConfirmationBuilder
-=======
     package typealias Factory =
         LoginViaEmailBuilder &
         NoHistoryViewBuilder
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
@@ -64,7 +55,7 @@ package struct DetermineAuthMethodView: View {
                     Spacer()
                         .frame(maxWidth: .infinity)
                     if viewModel.isOnPremiseBackend {
-                        OnPremHeaderView(backendConfig: viewModel.backendConfig)
+                        OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
                             .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
                             .frame(width: 164, height: 95)
                     } else {
@@ -93,6 +84,8 @@ package struct DetermineAuthMethodView: View {
                     )
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
+                    .textContentType(.username)
+                    .keyboardType(.emailAddress)
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 }
@@ -132,13 +125,8 @@ package struct DetermineAuthMethodView: View {
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
-            actions: { alert in
-                switch alert {
-                case .obsoleteClient:
-                    Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
-                default:
-                    Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
-                }
+            actions: { _ in
+                Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
             }
         )
         .navigationDestination(for: Destination.self) {
@@ -146,67 +134,57 @@ package struct DetermineAuthMethodView: View {
             case let .login(
                 email,
                 didDetectDomainConflict,
-                environmentType,
-                backendConfig,
-                backendMetadata
+                backendInfo
             ):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: false,
                     didDetectDomainConflict: didDetectDomainConflict,
-                    environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
+                    backendInfo: backendInfo
                 )
             case let .loginOrRegister(
                 email,
-                environmentType,
-                backendConfig,
-                backendMetadata
+                didDetectDomainConflict,
+                backendInfo
             ):
                 factory.loginViaEmailView(
                     email: email,
                     canCreateAccount: true,
-                    didDetectDomainConflict: false,
-                    environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendInfo: backendInfo
                 )
+            case let .noHistory(authenticationResult):
+                factory.noHistoryView(authenticationResult: authenticationResult)
             }
         }
         .sheet(
             item: $viewModel.modalDestination,
             content: {
                 switch $0 {
-<<<<<<< HEAD
-                case let .ssoLogin(
-                    ssoURL,
-                    backendEnvironment
-                ):
-                    factory.loginViaSSOView(
-                        ssoURL: ssoURL,
-                        backendEnvironment: backendEnvironment
-                    )
-                case let .switchBackend(
-=======
                 case let .switchBackendConfirmation(
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
                     email,
-                    environmentType,
-                    backendConfig
+                    backendInfo
                 ):
                     if #available(iOS 16.4, *) {
-                        factory.switchBackendView(
-                            email: email,
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        ).presentationBackground(Color.black.opacity(0.7))
+                        SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
+                            guard didConfirm else { return }
+                            Task {
+                                await viewModel.switchBackend(
+                                    email: email,
+                                    backendInfo: backendInfo
+                                )
+                            }
+                        }.presentationBackground(Color.black.opacity(0.7))
                     } else {
-                        factory.switchBackendView(
-                            email: email,
-                            environmentType: environmentType,
-                            backendConfig: backendConfig
-                        ).background(TransparentBackgroundView())
+                        SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
+                            guard didConfirm else { return }
+                            Task {
+                                await viewModel.switchBackend(
+                                    email: email,
+                                    backendInfo: backendInfo
+                                )
+                            }
+                        }.background(TransparentBackgroundView())
                     }
                 }
             }
@@ -218,19 +196,16 @@ package struct DetermineAuthMethodView: View {
     package enum Destination: Hashable {
 
         case login(
-            email: String,
+            email: String?,
             didDetectDomainConflict: Bool,
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
+            backendInfo: BackendInfo
         )
         case loginOrRegister(
             email: String,
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
+            didDetectDomainConflict: Bool,
+            backendInfo: BackendInfo
         )
-
+        case noHistory(AuthenticationResult)
     }
 
 }

@@ -26,14 +26,10 @@ package protocol SSOLoginVerificationTokenGeneratorProtocol: Sendable {
 
 package struct SSOLoginVerificationTokenGenerator: SSOLoginVerificationTokenGeneratorProtocol {
 
-<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationAPI/Use cases/FetchSSOURLUseCaseProtocol.swift
-    func fetchSSOURLUseCase(apiVersion: BackendMetadata.APIVersion) -> any FetchSSOURLUseCaseProtocol
-=======
     package init() {}
 
     package func generateToken() -> SSOLoginVerificationToken {
         SSOLoginVerificationToken()
     }
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778)):WireAuthentication/Sources/WireAuthenticationLogic/Utilities/SSOLoginVerificationTokenGenerator.swift
 
 }

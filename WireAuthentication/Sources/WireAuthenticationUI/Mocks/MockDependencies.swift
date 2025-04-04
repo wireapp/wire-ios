@@ -24,7 +24,19 @@ import WireReusableUIComponents
 final class MockDependencies {
 
     private var rootViewModel: RootViewModel {
-        RootViewModel(bridge: WireAuthenticationBridge())
+        RootViewModel(
+            factory: self,
+            bridge: WireAuthenticationBridge(),
+            backendInfo: backendInfo
+
+        )
+    }
+
+    var backendInfo: BackendInfo {
+        BackendInfo(
+            environmentType: environmentType,
+            backendConfig: backendConfig
+        )
     }
 
     var environmentType: BackendEnvironmentType {
@@ -47,7 +59,8 @@ final class MockDependencies {
         WireAuthenticationBackendEnvironment(
             environmentType: environmentType,
             config: backendConfig,
-            metadata: backendMetadata
+            metadata: backendMetadata,
+            proxySettings: nil
         )
     }
 
@@ -83,9 +96,7 @@ final class MockDependencies {
             router: rootViewModel,
             factory: self,
             bridge: WireAuthenticationBridge(),
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: nil,
+            backendInfo: backendInfo,
             emailOrSSOCode: emailOrSSOCode,
             existsAnotherAccount: existsAnotherAccount,
             isLoading: isLoading
@@ -100,60 +111,6 @@ final class MockDependencies {
 
 }
 
-extension MockDependencies: DetermineAuthMethodViewModel.Factory {
-
-    nonisolated
-    func resolveBackendMetadataUseCase() -> any WireAuthenticationAPI.ResolveBackendMetadataUseCaseProtocol {
-        MockResolveBackendMetadataUseCase()
-    }
-
-    nonisolated
-    func determineAuthMethodUseCase(apiVersion: BackendMetadata.APIVersion) -> any DetermineAuthMethodUseCaseProtocol {
-        MockDetermineAuthMethodUseCase()
-    }
-
-    nonisolated
-    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
-        MockValidateEmailOrSSOCodeUseCase()
-    }
-
-    nonisolated
-    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol {
-        MockSSOLinkGenerator()
-    }
-
-    nonisolated
-    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
-        MockFetchBackendConfigUseCase()
-    }
-
-    nonisolated
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        MockOpenAppStoreUseCase()
-    }
-
-}
-
-extension MockDependencies: LoginViaEmailUseCaseProtocol {
-
-    func invoke(
-        email: String,
-        password: String,
-        verificationCode: String?
-    ) async throws -> ([HTTPCookie], AccessToken) {
-        ([], AccessToken(userID: UUID(), token: "", type: "", expirationDate: Date()))
-    }
-
-}
-
-extension MockDependencies: RequestLoginVerificationCodeUseCaseProtocol {
-
-    func invoke(email: String) async throws {
-        try! await Task.sleep(for: .seconds(3))
-    }
-
-}
-
 extension MockDependencies: DetermineAuthMethodBuilder {
 
     private var determineAuthMethodViewModel: DetermineAuthMethodViewModel {
@@ -161,17 +118,13 @@ extension MockDependencies: DetermineAuthMethodBuilder {
             router: rootViewModel,
             factory: self,
             bridge: WireAuthenticationBridge(),
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: nil,
+            backendInfo: backendInfo,
             existsAnotherAccount: false
         )
     }
 
     func determineAuthMethodView(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
+        backendInfo: BackendInfo
     ) -> DetermineAuthMethodView {
         DetermineAuthMethodView(
             viewModel: determineAuthMethodViewModel,
@@ -188,61 +141,6 @@ extension MockDependencies: DetermineAuthMethodBuilder {
 
 }
 
-extension MockDependencies: SwitchBackendConfirmationBuilder {
-
-    private func switchBackendConfirmationViewModel(
-        email: String?,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationViewModel {
-        SwitchBackendConfirmationViewModel(
-            router: rootViewModel,
-            factory: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: BackendConfig(
-                title: backendConfig.title,
-                endpoints: Endpoints(
-                    backendURL: backendConfig.endpoints.backendURL,
-                    backendWSURL: backendConfig.endpoints.backendWSURL,
-                    blackListURL: backendConfig.endpoints.blackListURL,
-                    teamsURL: backendConfig.endpoints.teamsURL,
-                    accountsURL: backendConfig.endpoints.accountsURL,
-                    websiteURL: backendConfig.endpoints.websiteURL,
-                    countlyURL: backendConfig.endpoints.countlyURL
-                ),
-                proxySettings: nil,
-                pinnedKeys: nil
-            )
-        )
-    }
-
-    func switchBackendView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationView {
-        SwitchBackendConfirmationView(
-            viewModel: switchBackendConfirmationViewModel(
-                email: email,
-                backendConfig: backendConfig
-            ),
-            factory: self
-        )
-    }
-
-}
-
-extension MockDependencies: FetchSSOURLUseCaseFactory {
-
-    nonisolated
-    func fetchSSOURLUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any FetchSSOURLUseCaseProtocol {
-        MockFetchSSOURLUseCase()
-    }
-
-}
-
 extension MockDependencies: NoHistoryViewBuilder {
 
     private var noHistoryViewModel: NoHistoryViewModel {
@@ -254,47 +152,42 @@ extension MockDependencies: NoHistoryViewBuilder {
         )
     }
 
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView {
+    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
         NoHistoryView(viewModel: noHistoryViewModel)
     }
 
 }
 
 extension MockDependencies: LoginViaEmailBuilder {
-
     private func loginViewModel(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
-        backendMetadata: BackendMetadata
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
     ) -> LoginViaEmailViewModel {
         LoginViaEmailViewModel(
             router: rootViewModel,
-            loginViaEmailUseCase: self,
-            backendEnvironment: backendEnvironment,
+            factory: self,
             email: email,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
+            backendInfo: backendInfo,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: false,
+            didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: {}
         )
     }
 
     func loginViaEmailView(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendInfo: BackendInfo
     ) -> LoginViaEmailView {
         LoginViaEmailView(
             viewModel: loginViewModel(
                 email: email,
                 canCreateAccount: canCreateAccount,
-                backendMetadata: backendMetadata
+                didDetectDomainConflict: didDetectDomainConflict,
+                backendInfo: backendInfo
             ),
             factory: self
         )
@@ -310,116 +203,37 @@ extension MockDependencies: VerificationCodeBuilder {
         code: [String] = ["", "", "", "", "", ""]
     ) -> VerificationCodeView {
         let viewModel = VerificationCodeViewModel(
+            factory: self,
             email: email,
             password: password,
-            loginViaEmailUseCase: self,
-            requestLoginVerificationCodeUseCase: self,
+            proxyCredentials: nil,
             router: rootViewModel,
-            backendEnvironment: backendEnvironment,
-            numberOfDigits: code.count,
-            didDetectDomainConflict: false
+            numberOfDigits: code.count
         )
         viewModel.code = code
 
-        return VerificationCodeView(viewModel: viewModel)
+        return VerificationCodeView(
+            viewModel: viewModel,
+            factory: self
+        )
     }
 
+    @MainActor
     func verificationCodeView(
         email: String,
         password: String,
-        didDetectDomainConflict: Bool
+        proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView {
         VerificationCodeView(
             viewModel: VerificationCodeViewModel(
-                email: email,
+                factory: self,
+                email: "jane@doe.com",
                 password: password,
-                loginViaEmailUseCase: self,
-                requestLoginVerificationCodeUseCase: self,
-                router: rootViewModel,
-                backendEnvironment: backendEnvironment,
-                didDetectDomainConflict: false
-            )
+                proxyCredentials: proxyCredentials,
+                router: rootViewModel
+            ),
+            factory: self
         )
     }
 
 }
-<<<<<<< HEAD
-
-extension MockDependencies: LoginViaEmailOnPremBuilder {
-
-    private func loginViaEmailOnPremViewModel(
-        email: String?,
-        backendConfig: BackendConfig
-    ) -> LoginViaEmailOnPremViewModel {
-        LoginViaEmailOnPremViewModel(
-            router: rootViewModel,
-            factory: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: nil,
-            passwordValidator: MockPasswordValidator(validationCallback: { _ in true }),
-            canCreateAccount: false
-        )
-    }
-
-    func loginViaEmailOnPremView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> LoginViaEmailOnPremView {
-        LoginViaEmailOnPremView(
-            viewModel: loginViaEmailOnPremViewModel(email: email, backendConfig: backendConfig)
-        )
-    }
-}
-
-extension MockDependencies: LoginViaEmailUseCaseFactory {
-
-    nonisolated
-    func loginViaEmailUseCase(apiVersion: BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol {
-        MockMockLoginViaEmailUseCase()
-    }
-
-}
-
-extension MockDependencies: LoginViaSSOBuilder {
-
-    private func loginViewModel(ssoURL: URL) -> LoginViaSSOViewModel {
-        LoginViaSSOViewModel(
-            ssoURL: ssoURL,
-            bridge: WireAuthenticationBridge(),
-            router: rootViewModel,
-            backendEnvironment: backendEnvironment
-        )
-    }
-
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
-        LoginViaSSOView(viewModel: loginViewModel(ssoURL: ssoURL))
-    }
-
-}
-
-private struct MockPasswordValidator: PasswordValidator {
-
-    let validationCallback: @Sendable (String) -> Bool
-
-    init(validationCallback: @Sendable @escaping (String) -> Bool) {
-        self.validationCallback = validationCallback
-    }
-
-    func isPasswordValid(_ password: String) -> Bool {
-        validationCallback(password)
-    }
-
-    var localizedRulesDescription: String? {
-        "Password rules"
-    }
-
-}
-=======
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))

@@ -31,8 +31,6 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-
     var topMargin: CGFloat = 5
     var bottomMargin: CGFloat = 0
 

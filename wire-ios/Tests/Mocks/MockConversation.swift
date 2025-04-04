@@ -82,9 +82,12 @@ class SwiftMockConversation: NSObject, Conversation {
     var domain: String?
 
     var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+
+    var isChannel: Bool = false
 }
 
-final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
+final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation,
+    HasChannelAccessLevelPermission, HasConversationGroupType {
 
     var userDefinedName: String?
 
@@ -100,6 +103,7 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 
     var mlsVerificationStatus: MLSVerificationStatus?
 
+    var accessLevelPermission: WireDataModel.ChannelAccessLevelPermission?
 }
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {

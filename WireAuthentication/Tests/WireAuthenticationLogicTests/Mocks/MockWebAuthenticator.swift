@@ -18,16 +18,6 @@
 
 import Foundation
 
-<<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationUI/Mocks/MockSSOLinkGenerator.swift
-struct MockSSOLinkGenerator: SSOLinkGeneratorProtocol {
-
-    func generateSSOLink(ssoCode: UUID) async throws -> URL {
-        URL(string: "https://example.com/login/\(ssoCode)")!
-    }
-
-    func flushToken() {}
-
-========
 @testable import WireAuthenticationLogic
 
 final class MockWebAuthenticator: WebAuthenticatorProtocol {
@@ -47,5 +37,4 @@ final class MockWebAuthenticator: WebAuthenticatorProtocol {
         }
     }
 
->>>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778)):WireAuthentication/Tests/WireAuthenticationLogicTests/Mocks/MockWebAuthenticator.swift
 }

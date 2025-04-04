@@ -12,13 +12,12 @@ let package = Package(
         .library(name: "WireConversationsAPI", targets: ["WireConversationsAPI"]),
         .library(name: "WireConversationsBindings", targets: ["WireConversationsBindings"]),
         .library(name: "WireConversationsUI", targets: ["WireConversationsUI"]),
-        .library(name: "WireConversationsUIBindings", targets: ["WireConversationsUIBindings"]),
+        .library(name: "WireConversationsUIBindings", targets: ["WireConversationsUIBindings"])
     ],
     dependencies: [
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins"),
-        .package(name: "WireUI", path: "../WireUI"),
-        .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1"))
+        .package(name: "WireUI", path: "../WireUI")
     ],
     targets: [
         .target(
@@ -27,16 +26,13 @@ let package = Package(
         .target(
             name: "WireConversationsBindings",
             dependencies: [
-                .product(name: "NeedleFoundation", package: "needle"),
                 "WireConversationsAPI",
-                "WireConversationsImplementation",
-                "WireConversationsUI"
+                "WireConversationsImplementation"
             ]
         ),
         .target(
             name: "WireConversationsUIBindings",
             dependencies: [
-                .product(name: "NeedleFoundation", package: "needle"),
                 "WireConversationsAPI",
                 "WireConversationsImplementation",
                 "WireConversationsUI"
@@ -56,16 +52,29 @@ let package = Package(
             name: "WireConversationsUI",
             dependencies: [
                 "WireConversationsAPI",
+                "WireConversationsImplementation",
+                "WireConversationsImplementationSupport",
                 "WireConversationsResources",
                 .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireReusableUIComponents", package: "WireUI"),
                 .product(name: "WireFoundation", package: "WireFoundation")
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .target(
+            name: "WireConversationsImplementationSupport",
+            dependencies: [
+                "WireConversationsImplementation",
+                "WireConversationsAPI"
+            ],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireConversationsUITests",
             dependencies: [
                 "WireConversationsUIBindings",
+                "WireConversationsUI",
+                "WireConversationsImplementationSupport",
                 .product(name: "WireFoundation", package: "WireFoundation")
             ]
         ),

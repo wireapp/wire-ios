@@ -20,6 +20,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireLogging
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
@@ -27,32 +28,23 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
-    var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
-<<<<<<< HEAD
-    var userDefaults: UserDefaults { get }
-    var appStoreURL: URL { get }
-=======
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     var existsAnotherAccount: Bool { get }
 
 }
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
-            router: dependency.router,
-            factory: self,
-            bridge: dependency.bridge,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig,
-            backendMetadata: nil,
-            existsAnotherAccount: dependency.existsAnotherAccount
-        )
+    public let networkStack: NetworkStack
+
+    init(
+        parent: any Scope,
+        networkStack: NetworkStack
+    ) {
+        self.networkStack = networkStack
+        super.init(parent: parent)
     }
 
     @MainActor var view: DetermineAuthMethodView {
@@ -62,52 +54,43 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    public var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: .init(dependency.backendConfig),
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
+    @MainActor private var viewModel: DetermineAuthMethodViewModel {
+        DetermineAuthMethodViewModel(
+            router: dependency.router,
+            factory: self,
+            bridge: dependency.bridge,
+            backendInfo: networkStack.backendInfo,
+            existsAnotherAccount: dependency.existsAnotherAccount
+        )
     }
 
     // MARK: - Children
 
-    func loginViaEmailComponent(backendMetadata: BackendMetadata) -> LoginViaEmailComponent {
-        LoginViaEmailComponent(
-            parent: self,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig,
-            backendMetadata: backendMetadata
-        )
-    }
-
-<<<<<<< HEAD
-    func loginViaSSOComponent(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOComponent {
-        LoginViaSSOComponent(
-            parent: self,
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
-        )
-    }
-
-    func switchBackendConfirmationComponent(
+    func loginViaEmailComponent(
         email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationComponent {
-        SwitchBackendConfirmationComponent(
-=======
-    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
-        NoHistoryComponent(
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailComponent {
+        let networkStack = NetworkStack(
+            backendInfo: backendInfo,
+            minTLSVersion: dependency.minTLSVersion,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
+        return LoginViaEmailComponent(
             parent: self,
             email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
+            networkStack: networkStack
+        )
+    }
+
+    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: false
         )
     }
 
@@ -119,12 +102,8 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         ValidateEmailOrSSOCodeUseCase()
     }
 
-    func determineAuthMethodUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any DetermineAuthMethodUseCaseProtocol {
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
             authenticationAPI: authenticationAPI,
@@ -132,40 +111,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-<<<<<<< HEAD
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
-        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
-        return ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
-    }
-
-    func ssoLinkGenerator(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any SSOLinkGeneratorProtocol {
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
-        return SSOLinkGenerator(
-            authenticationAPI: authenticationAPI,
-            baseURL: dependency.backendConfig.endpoints.backendURL,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
-        )
-    }
-
-=======
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
         FetchBackendConfigUseCase()
     }
 
-<<<<<<< HEAD
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        OpenAppStoreUseCase(url: dependency.appStoreURL)
-=======
     @MainActor
     func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
         let networkStack: NetworkStack = if let backendInfo {
@@ -187,7 +136,6 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
             createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
         )
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     }
 
 }
@@ -196,45 +144,21 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
 
     @MainActor
     func loginViaEmailView(
-        email: String,
+        email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
+        backendInfo: BackendInfo
     ) -> LoginViaEmailView {
-        loginViaEmailComponent(backendMetadata: backendMetadata).view(
+        loginViaEmailComponent(
             email: email,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
-    }
-
-<<<<<<< HEAD
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            didDetectDomainConflict: didDetectDomainConflict,
+            backendInfo: backendInfo
         ).view
     }
 
-    func switchBackendView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationView {
-        switchBackendConfirmationComponent(
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        ).view
-=======
     func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
         noHistoryComponent(authenticationResult: authenticationResult).view
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))
     }
 
 }

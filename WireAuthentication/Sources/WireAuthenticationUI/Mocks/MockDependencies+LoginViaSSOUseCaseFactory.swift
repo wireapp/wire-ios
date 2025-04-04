@@ -22,38 +22,12 @@ import WireAuthenticationAPI
 extension MockDependencies: LoginViaSSOUseCaseFactory {
 
     @MainActor
-<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationUI/Views/Login/LoginViaSSO/LoginViaSSOView.swift
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView
-
-}
-
-package struct LoginViaSSOView: View {
-
-    @ObservedObject var viewModel: LoginViaSSOViewModel
-
-    package init(
-        viewModel: LoginViaSSOViewModel
-    ) {
-        self.viewModel = viewModel
-=======
     func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
         MockLoginViaSSOUseCase(backendEnvironment: backendEnvironment)
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778)):WireAuthentication/Sources/WireAuthenticationUI/Mocks/MockDependencies+LoginViaSSOUseCaseFactory.swift
     }
 
 }
 
-<<<<<<< HEAD:WireAuthentication/Sources/WireAuthenticationUI/Views/Login/LoginViaSSO/LoginViaSSOView.swift
-#Preview {
-    let url = URL(string: "https://www.wire.com")!
-    MockDependencies().loginViaSSOView(
-        ssoURL: url,
-        backendEnvironment: MockDependencies().backendEnvironment
-    )
-=======
 struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
     let backendEnvironment: WireAuthenticationBackendEnvironment
@@ -68,5 +42,4 @@ struct MockLoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
         )
     }
 
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778)):WireAuthentication/Sources/WireAuthenticationUI/Mocks/MockDependencies+LoginViaSSOUseCaseFactory.swift
 }

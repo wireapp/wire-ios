@@ -35,8 +35,6 @@ package protocol Router {
     func presentAlert(_ alert: Alert)
 
 }
-<<<<<<< HEAD
-=======
 
 package extension Router {
 
@@ -46,4 +44,3 @@ package extension Router {
     }
 
 }
->>>>>>> c679b9d42e (fix: cached SSO authentication - WPB-16767 (#2778))

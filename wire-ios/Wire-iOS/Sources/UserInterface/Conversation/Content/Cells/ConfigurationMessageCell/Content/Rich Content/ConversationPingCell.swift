@@ -136,11 +136,6 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool {
-        get { false }
-        set { /* pings doesn't support the ephemeral timer */ }
-    }
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 

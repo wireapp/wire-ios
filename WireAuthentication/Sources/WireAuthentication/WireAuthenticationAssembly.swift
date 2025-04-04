@@ -30,7 +30,7 @@ public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.Wi
 public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
 public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
 public typealias Endpoints = WireAuthenticationAPI.Endpoints
-public typealias ProxySettings = WireAuthenticationAPI.ProxySettings
+public typealias ProxySettings = WireAuthenticationAPI.UnresolvedProxySettings
 public typealias TrustData = WireAuthenticationAPI.TrustData
 public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
 
@@ -54,9 +54,12 @@ public struct WireAuthenticationAssembly {
         appStoreURL: URL,
         existsAnotherAccount: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
-        let rootComponent = RootComponent(
+        let backendInfo = BackendInfo(
             environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendConfig: backendConfig
+        )
+        let rootComponent = RootComponent(
+            backendInfo: backendInfo,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             howToChangeEmailURL: howToChangeEmailURL,
