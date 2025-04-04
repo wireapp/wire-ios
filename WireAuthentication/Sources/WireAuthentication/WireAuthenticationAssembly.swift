@@ -51,7 +51,6 @@ public struct WireAuthenticationAssembly {
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults,
         appStoreURL: URL,
         existsAnotherAccount: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
@@ -67,7 +66,6 @@ public struct WireAuthenticationAssembly {
             howToDeleteAccountURL: howToDeleteAccountURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
-            userDefaults: userDefaults,
             appStoreURL: appStoreURL,
             existsAnotherAccount: existsAnotherAccount
         )

@@ -17,28 +17,19 @@
 //
 
 import Foundation
-import WireAPI
-import WireAuthenticationAPI
 
-package struct FetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
+package protocol SSOLoginVerificationTokenGeneratorProtocol: Sendable {
 
-    private let authenticationAPI: any AuthenticationAPI
-    private let linkGenerator: any SSOLinkGeneratorProtocol
+    func generateToken() -> SSOLoginVerificationToken
 
-    package init(
-        authenticationAPI: any AuthenticationAPI,
-        linkGenerator: any SSOLinkGeneratorProtocol
-    ) {
-        self.authenticationAPI = authenticationAPI
-        self.linkGenerator = linkGenerator
-    }
+}
 
-    package func invoke() async throws -> URL? {
-        guard let ssoCode = try await authenticationAPI.getSSOCode() else {
-            return nil
-        }
+package struct SSOLoginVerificationTokenGenerator: SSOLoginVerificationTokenGeneratorProtocol {
 
-        return try await linkGenerator.generateSSOLink(ssoCode: ssoCode)
+    package init() {}
+
+    package func generateToken() -> SSOLoginVerificationToken {
+        SSOLoginVerificationToken()
     }
 
 }

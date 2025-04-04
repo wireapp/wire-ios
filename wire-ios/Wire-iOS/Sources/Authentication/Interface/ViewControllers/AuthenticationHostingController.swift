@@ -70,17 +70,10 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         .store(in: &cancellables)
 
         authenticationCoordinator?.unauthenticatedSession.appendURLActionProcessors(
-            handleSSOLoginSuccess: { userID, cookies in
-                bridge.sendInboundEvent(.ssoAuthenticationSuccess(userID: userID, cookies: cookies))
-            },
             handleBackendSwitch: { url in
                 bridge.sendInboundEvent(.backendSwitchRequested(configURL: url))
             }
         )
-
-        authenticationCoordinator?.unauthenticatedSession.setErrorHandler {
-            bridge.sendInboundEvent(.ssoAutheticationFailure)
-        }
 
         NotificationCenter.default
             .publisher(for: AccountManagerDidUpdateAccountsNotificationName)
