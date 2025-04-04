@@ -101,4 +101,8 @@ extension ZMConversation: ConversationLike {
     public var isProteusConversationDegraded: Bool {
         securityLevel == .secureWithIgnored
     }
+
+    public var isChannel: Bool {
+        groupType == .channel
+    }
 }
