@@ -15,12 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
-import WireAuthenticationAPI
 
-enum VerificationCodeDestination: Hashable {
-
-    case noHistory(authenticationResult: AuthenticationResult)
+struct FakeNoHistoryFactory: NoHistoryFactory {
+    var viewModel: NoHistoryViewModel {
+        NoHistoryViewModel(
+            didDetectDomainConflict: false,
+            howToChangeEmailURL: URL(string: "https://wire.com")!,
+            howToDeleteAccountURL: URL(string: "https://wire.com")!,
+            onFlowCompletion: {}
+        )
+    }
 
 }

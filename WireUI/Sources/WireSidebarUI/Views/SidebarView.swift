@@ -72,12 +72,8 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                     .padding(.vertical)
 
                 let menuItemsScrollView = ScrollView(.vertical) { scrollableMenuItems }
-                if #available(iOS 16.4, *) {
-                    menuItemsScrollView
-                        .scrollBounceBehavior(.basedOnSize)
-                } else {
-                    menuItemsScrollView
-                }
+                menuItemsScrollView
+                    .scrollBounceBehavior(.basedOnSize)
 
                 // bottom menu items
                 Group {

@@ -74,6 +74,15 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         mockCreateAuthenticationResultUseCase
     }
 
+    var viewModel: WireAuthenticationUI.VerificationCodeViewModel {
+        fatalError("not needed here")
+    }
+
+    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI
+        .NoHistoryFactory {
+        fatalError("not needed here")
+    }
+
     // MARK: - isConfirmButtonDisabled tests
 
     @MainActor

@@ -18,9 +18,25 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireReusableUIComponents
 
-enum VerificationCodeDestination: Hashable {
+struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
+    var mockDependencies = MockDependencies()
 
-    case noHistory(authenticationResult: AuthenticationResult)
+    var viewModel: RootViewModel {
+        RootViewModel(
+            factory: self,
+            bridge: WireAuthenticationBridge(),
+            backendInfo: mockDependencies.backendInfo
 
+        )
+    }
+
+    func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any DetermineAuthMethodFactory {
+        FakeDetermineAuthMethodFactory()
+    }
+
+    func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
+        mockDependencies.openAppStoreUseCase()
+    }
 }

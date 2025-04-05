@@ -21,33 +21,30 @@ import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
-package protocol LoginViaEmailBuilder {
+package protocol LoginViaEmailFactory {
+
+    @MainActor var viewModel: LoginViaEmailViewModel { get }
 
     @MainActor
-    func loginViaEmailView(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    ) -> LoginViaEmailView
+    func verificationCodeFactory(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> any VerificationCodeFactory
+
+    @MainActor
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
 }
 
 package struct LoginViaEmailView: View {
 
-    package typealias Factory =
-        NoHistoryViewBuilder &
-        VerificationCodeBuilder
-
-    @StateObject var viewModel: LoginViaEmailViewModel
-    private let factory: any Factory
+    @StateObject private var viewModel: LoginViaEmailViewModel
 
     package init(
-        viewModel: LoginViaEmailViewModel,
-        factory: any Factory
+        factory: @autoclosure @escaping () -> any LoginViaEmailFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -78,14 +75,9 @@ package struct LoginViaEmailView: View {
             .navigationTitle(L10n.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
             .padding(32)
-            .background(ColorTheme.Backgrounds.surface.color)
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
-            )
             .setPreferredSize(navigationBarHidden: false)
             .customBackButton()
+            .background(ColorTheme.Backgrounds.surface.color)
         }
         .alert(
             item: $viewModel.alert,
@@ -95,25 +87,36 @@ package struct LoginViaEmailView: View {
                 Button(L10n.Authentication.Error.confirm, action: {})
             }
         )
-        .navigationDestination(for: Destination.self) { destination in
-            switch destination {
-            case let .verifyLogin(
-                email,
-                password,
-                proxyCredentials
-            ):
-                factory.verificationCodeView(
-                    email: email,
-                    password: password,
-                    proxyCredentials: proxyCredentials
-                )
-            case let .noHistory(authenticationResult):
-                factory.noHistoryView(authenticationResult: authenticationResult)
-            }
+        .navigationDestination(for: LoginViaEmailDestination.self) { destination in
+            destinationView(destination)
         }
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+    }
+
+    @ViewBuilder
+    func destinationView(_ destination: LoginViaEmailDestination) -> some View {
+        switch destination {
+        case let .verifyLogin(
+            email,
+            password,
+            proxyCredentials
+        ):
+            VerificationCodeView(
+                factory: viewModel.factory.verificationCodeFactory(
+                    email: email,
+                    password: password,
+                    proxyCredentials: proxyCredentials
+                )
+            )
+        case let .noHistory(authenticationResult):
+            NoHistoryView(
+                factory: viewModel.factory.noHistoryFactory(
+                    authenticationResult: authenticationResult
+                )
+            )
+        }
     }
 
     @ViewBuilder private var welcomeMessage: some View {
@@ -240,29 +243,4 @@ package struct LoginViaEmailView: View {
         }
     }
 
-    enum Destination: Hashable {
-
-        case verifyLogin(
-            email: String,
-            password: String,
-            proxyCredentials: ProxyCredentials?
-        )
-        case noHistory(
-            authenticationResult: AuthenticationResult
-        )
-
-    }
-
-}
-
-#Preview() {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            MockDependencies().loginViaEmailView(
-                email: "foo@bar.com",
-                canCreateAccount: false,
-                didDetectDomainConflict: false,
-                backendInfo: MockDependencies().backendInfo
-            )
-        }
 }
