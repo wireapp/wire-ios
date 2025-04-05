@@ -32,13 +32,11 @@ public final class ConversationList: NSObject {
     private let sortDescriptors: [NSSortDescriptor]
 
     public convenience init(
-        allConversations: [ZMConversation],
         filteringPredicate: NSPredicate,
         managedObjectContext: NSManagedObjectContext,
         description: String
     ) {
         self.init(
-            allConversations: allConversations,
             filteringPredicate: filteringPredicate,
             managedObjectContext: managedObjectContext,
             description: description,
@@ -47,7 +45,6 @@ public final class ConversationList: NSObject {
     }
 
     public init(
-        allConversations: [ZMConversation],
         filteringPredicate: NSPredicate,
         managedObjectContext: NSManagedObjectContext,
         description: String,
@@ -60,7 +57,9 @@ public final class ConversationList: NSObject {
         self.sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
         self.conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
-        self.items = Self.createItems(allConversations, filteringPredicate, sortDescriptors)
+        
+        
+        self.items = Self.createItems(filteringPredicate, sortDescriptors, managedObjectContext)
 
         super.init()
 
@@ -77,13 +76,22 @@ public final class ConversationList: NSObject {
         }
     }
 
-    private static func createItems(
-        _ conversations: [ZMConversation],
+    static func createItems(
         _ filteringPredicate: NSPredicate,
-        _ sortDescriptors: [NSSortDescriptor]
+        _ sortDescriptors: [NSSortDescriptor],
+        _ context: NSManagedObjectContext
     ) -> [ZMConversation] {
-        let filtered = (conversations as NSArray).filtered(using: filteringPredicate)
-        return NSSet(array: filtered).sortedArray(using: sortDescriptors) as! [ZMConversation]
+        let request = ZMConversation.sortedFetchRequest()
+        
+        // Since this is extremely likely to trigger the "participantRoles" and "connection" relationships, we make sure these gets prefetched:
+        var keyPaths =  request.relationshipKeyPathsForPrefetching
+        keyPaths?.append(ZMConversationParticipantRolesKey)
+        keyPaths?.append("\(ZMConversationOneOnOneUserKey).connection")
+
+        request.relationshipKeyPathsForPrefetching = keyPaths
+        request.predicate = filteringPredicate
+        request.sortDescriptors = sortDescriptors
+        return context.fetchOrAssert(request: request) as! [ZMConversation]
     }
 
     private static func calculateKeysAffectingPredicateAndSort(_ sortDescriptors: [NSSortDescriptor]) -> NSSet {
@@ -96,16 +104,13 @@ public final class ConversationList: NSObject {
         return keysAffectingSorting.adding(ZMConversationListIndicatorKey) as NSSet
     }
 
-    func recreate(
-        allConversations: [ZMConversation],
-        predicate: NSPredicate
-    ) {
+    @objc(recreateConversationsWithPredicate:managedContext:)
+    func recreateConversations(with predicate: NSPredicate, context: NSManagedObjectContext) {
         filteringPredicate = predicate
-        items = Self.createItems(allConversations, predicate, sortDescriptors)
+        items = Self.createItems(predicate, sortDescriptors, context)
 
-        let managedObjectContext = managedObjectContext
-        managedObjectContext?.performAndWait {
-            managedObjectContext?.conversationListObserverCenter.startObservingList(self)
+        context.performAndWait {
+            context.conversationListObserverCenter.startObservingList(self)
         }
     }
 
