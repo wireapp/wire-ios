@@ -53,12 +53,8 @@ struct EnterPasswordView: View {
     @ViewBuilder private var enterPasswordView: some View {
         VStack {
 
-            if #available(iOS 16.4, *) {
-                ScrollView(content: scrollViewContent)
-                    .scrollBounceBehavior(.basedOnSize)
-            } else {
-                ScrollView(content: scrollViewContent)
-            }
+            ScrollView(content: scrollViewContent)
+                .scrollBounceBehavior(.basedOnSize)
 
             Spacer()
 

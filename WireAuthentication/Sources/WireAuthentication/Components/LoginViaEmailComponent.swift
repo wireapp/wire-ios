@@ -55,19 +55,41 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         super.init(parent: parent)
     }
 
-    // MARK: - View
+    // MARK: - Children
 
-    @MainActor var view: LoginViaEmailView {
-        LoginViaEmailView(
-            viewModel: viewModel,
-            factory: self
+    func verificationCodeComponent(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> VerificationCodeComponent {
+        VerificationCodeComponent(
+            parent: self,
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials
         )
     }
 
-    @MainActor private var viewModel: LoginViaEmailViewModel {
+    func noHistoryComponent(
+        authenticationResult: AuthenticationResult
+    ) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: didDetectDomainConflict
+        )
+    }
+
+}
+
+extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: LoginViaEmailViewModel {
         LoginViaEmailViewModel(
-            router: dependency.router,
             factory: self,
+            router: dependency.router,
             email: email,
             backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
@@ -98,34 +120,27 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         )
     }
 
-    // MARK: - Children
-
-    func verificationCodeComponent(
+    func verificationCodeFactory(
         email: String,
         password: String,
         proxyCredentials: ProxyCredentials?
-    ) -> VerificationCodeComponent {
-        VerificationCodeComponent(
-            parent: self,
+    ) -> any VerificationCodeFactory {
+        verificationCodeComponent(
             email: email,
             password: password,
             proxyCredentials: proxyCredentials
         )
     }
 
-    func noHistoryComponent(
+    func noHistoryFactory(
         authenticationResult: AuthenticationResult
-    ) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
+    ) -> any NoHistoryFactory {
+        noHistoryComponent(
+            authenticationResult: authenticationResult
         )
     }
 
-}
-
-extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
+    // MARK: - Use cases
 
     func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
         SubmitProxyCredentialsUseCase(networkStack: networkStack)
@@ -142,28 +157,6 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
     func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
         ValidateEmailUseCase()
-    }
-
-}
-
-extension LoginViaEmailComponent: LoginViaEmailView.Factory {
-
-    @MainActor
-    func verificationCodeView(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> VerificationCodeView {
-        verificationCodeComponent(
-            email: email,
-            password: password,
-            proxyCredentials: proxyCredentials
-        ).view
-    }
-
-    @MainActor
-    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
-        noHistoryComponent(authenticationResult: authenticationResult).view
     }
 
 }
