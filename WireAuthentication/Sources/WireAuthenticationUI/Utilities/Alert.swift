@@ -92,6 +92,16 @@ extension Alert {
         message: Message.ssoLoginFailed
     )
 
+    static let invalidSSOLink = Alert(
+        title: Title.ssoLoginFailed,
+        message: Message.ssoLoginFailed
+    )
+
+    static let incorrectSSOCode = Alert(
+        title: Title.incorrectSsoCode,
+        message: Message.incorrectSsoCode
+    )
+
 }
 
 extension Alert {

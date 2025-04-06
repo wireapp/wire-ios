@@ -19,21 +19,15 @@
 import Foundation
 import WireAuthenticationAPI
 
-extension MockDependencies: FetchSSOURLUseCaseFactory {
+enum LoginViaEmailDestination: Hashable {
 
-    nonisolated
-    func fetchSSOURLUseCase(
-        backendInfo: BackendInfo
-    ) async throws -> any FetchSSOURLUseCaseProtocol {
-        MockFetchSSOURLUseCase()
-    }
-
-}
-
-struct MockFetchSSOURLUseCase: FetchSSOURLUseCaseProtocol {
-
-    func invoke() async throws -> URL? {
-        URL(string: "https://example.com/login/\(UUID().uuidString)")!
-    }
+    case verifyLogin(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    )
+    case noHistory(
+        authenticationResult: AuthenticationResult
+    )
 
 }

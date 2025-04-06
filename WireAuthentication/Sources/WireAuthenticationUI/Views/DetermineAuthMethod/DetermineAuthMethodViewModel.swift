@@ -26,36 +26,18 @@ import WireLogging
 package final class DetermineAuthMethodViewModel: ObservableObject {
 
     package typealias Factory =
+        DetermineAuthMethodFactory &
         DetermineAuthMethodUseCaseFactory &
         FetchBackendConfigUseCaseFactory &
-        FetchSSOURLUseCaseFactory &
-        SSOLinkGeneratorFactory &
+        LoginViaSSOUseCaseFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
 
-    package enum ModalDestination: Hashable, Identifiable, Sendable {
-        package var id: Self { self }
-
-        case ssoLogin(
-            url: URL,
-            backendInfo: BackendInfo?
-        )
-        case switchBackendConfirmation(
-            email: String?,
-            backendInfo: BackendInfo
-        )
-    }
-
-    private let router: any Router
-    private let factory: any Factory
-    private let bridge: WireAuthenticationBridge
-    private var ssoLinkGenerator: (any SSOLinkGeneratorProtocol)?
-    package let backendInfo: BackendInfo
-    private var cancellable: AnyCancellable?
+    // MARK: - View state
 
     @Published var emailOrSSOCode: String = ""
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
-    @Published var modalDestination: ModalDestination?
+    @Published var modalDestination: DetermineAuthMethodSheet?
     @Published var existsAnotherAccount: Bool
 
     var isNextButtonEnabled: Bool {
@@ -66,36 +48,48 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         backendInfo.environmentType != .production
     }
 
+    // MARK: - Dependencies
+
+    package let factory: any Factory
+    private let router: any Router
+    private let bridge: WireAuthenticationBridge
+    package let backendInfo: BackendInfo
+    private var cancellable: AnyCancellable?
+
+    // MARK: - Life cycle
+
     package init(
-        router: any Router,
         factory: any Factory,
+        router: any Router,
         bridge: WireAuthenticationBridge,
         backendInfo: BackendInfo,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
         isLoading: Bool = false
     ) {
-        self.router = router
         self.factory = factory
+        self.router = router
         self.bridge = bridge
         self.backendInfo = backendInfo
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
 
-        self.cancellable = bridge.inboundEvents.sink { event in
+        self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case let .backendSwitchRequested(configURL):
                 Task { [weak self] in
                     await self?.handleOnPremLogin(email: nil, backendConfigURL: configURL)
                 }
             case let .updateAnotherAccountExistence(newValue):
-                self.existsAnotherAccount = newValue
+                self?.existsAnotherAccount = newValue
             default:
                 break
             }
         }
     }
+
+    // MARK: - Actions
 
     func submitEmailOrSSOCode() async {
         isLoading = true
@@ -122,7 +116,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             case ProxyModeError.proxyCredentialsRequired:
                 // Login via email is the only place we ask from proxy credentials.
                 router.navigate(
-                    to: DetermineAuthMethodView.Destination.login(
+                    to: DetermineAuthMethodDestination.login(
                         email: nil,
                         didDetectDomainConflict: false,
                         backendInfo: backendInfo
@@ -136,7 +130,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     func onAlertDismiss() {
-        ssoLinkGenerator?.flushToken()
         modalDestination = nil
     }
 
@@ -151,14 +144,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     ) async {
         switch method {
         case let .loginViaEmail(email, didDetectDomainConflict):
-            router.navigate(to: DetermineAuthMethodView.Destination.login(
+            router.navigate(to: DetermineAuthMethodDestination.login(
                 email: email,
                 didDetectDomainConflict: didDetectDomainConflict,
                 backendInfo: backendInfo
             ))
 
         case let .loginOrRegisterViaEmail(email):
-            router.navigate(to: DetermineAuthMethodView.Destination.loginOrRegister(
+            router.navigate(to: DetermineAuthMethodDestination.loginOrRegister(
                 email: email,
                 didDetectDomainConflict: false,
                 backendInfo: backendInfo
@@ -166,22 +159,30 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
         case let .loginViaSSO(code):
             do {
-                let url = try await generateSSOLink(code: code)
-                WireLogger.authentication.error("Generating SSO link succeeded")
-                modalDestination = .ssoLogin(
-                    url: url,
-                    backendInfo: nil
-                )
-            } catch {
-                WireLogger.authentication.error("Generating SSO link failed: \(error)")
+                let authResult = try await loginViaSSO(code: code, backendInfo: nil)
+                router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
+            } catch let error as LoginViaSSOUseCaseError {
                 switch error {
-                case SSOLinkGeneratorFailure.invalidSSOCode:
+                case .invalidCode:
                     alert = .incorrectSSOCode
-                case SSOLinkGeneratorFailure.invalidSSOURL:
+                case .invalidURL:
                     alert = .invalidSSOLink
+                case .userCancelled:
+                    // no op
+                    break
+                case .noDefaultCodeAvailable:
+                    // This shouldn't happen because we should be providing an sso code.
+                    break
+                case let .authenticationFailed(samlError):
+                    WireLogger.authentication.error(
+                        "sso authentication failed with SAML error: \(String(describing: samlError))"
+                    )
+                    alert = .ssoLoginFailed
                 default:
                     router.presentAlert(for: error)
                 }
+            } catch {
+                router.presentAlert(for: error)
             }
 
         case let .onPremLogin(email, backendConfigURL):
@@ -189,12 +190,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
-    private func generateSSOLink(code: UUID) async throws -> URL {
-        let linkGenerator = try await factory.ssoLinkGenerator()
-        ssoLinkGenerator = linkGenerator
-        return try await Task.detached {
-            try await linkGenerator.generateSSOLink(ssoCode: code)
-        }.value
+    private func loginViaSSO(
+        code: UUID?,
+        backendInfo: BackendInfo?
+    ) async throws -> AuthenticationResult {
+        let loginViaSSO = try await factory.loginViaSSOUseCase(backendInfo: backendInfo)
+        return try await loginViaSSO.invoke(code: code)
     }
 
     private func handleOnPremLogin(
@@ -235,24 +236,37 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let useCase = try await factory.fetchSSOURLUseCase(
+            let authResult = try await loginViaSSO(
+                code: nil,
                 backendInfo: backendInfo
             )
-
-            if let ssoURL = try await useCase.invoke() {
-                modalDestination = .ssoLogin(
-                    url: ssoURL,
-                    backendInfo: backendInfo
+            router.navigate(
+                to: DetermineAuthMethodDestination.noHistory(authResult)
+            )
+        } catch let error as LoginViaSSOUseCaseError {
+            switch error {
+            case .invalidCode:
+                alert = .incorrectSSOCode
+            case .invalidURL:
+                alert = .invalidSSOLink
+            case .userCancelled:
+                // No op
+                break
+            case .noDefaultCodeAvailable:
+                router.popToRoot() // clear the navigation stack before replacing root
+                router.presentSheet(.authFlow(backendInfo: backendInfo))
+            case let .authenticationFailed(samlError):
+                WireLogger.authentication.error(
+                    "sso authentication failed with SAML error: \(String(describing: samlError))"
                 )
-            } else {
-                router.presentSheet(
-                    RootView.ModalDestination.authFlow(backendInfo: backendInfo)
-                )
+                alert = .ssoLoginFailed
+            default:
+                router.presentAlert(for: error)
             }
         } catch ProxyModeError.proxyCredentialsRequired {
             // Login via email is the only place we ask from proxy credentials.
             router.navigate(
-                to: DetermineAuthMethodView.Destination.login(
+                to: DetermineAuthMethodDestination.login(
                     email: email,
                     didDetectDomainConflict: false,
                     backendInfo: backendInfo
@@ -260,16 +274,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             )
         } catch {
             router.presentAlert(for: error)
-        }
-    }
-
-    func onSSOAuthenticationResult(_ result: Result<AuthenticationResult, any Error>) {
-        modalDestination = nil
-        switch result {
-        case let .success(authenticationResult):
-            router.navigate(to: DetermineAuthMethodView.Destination.noHistory(authenticationResult))
-        case .failure:
-            router.presentAlert(Alert.ssoLoginFailed)
         }
     }
 

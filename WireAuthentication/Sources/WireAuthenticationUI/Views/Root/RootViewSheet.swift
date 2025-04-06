@@ -17,17 +17,12 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-public protocol FetchSSOURLUseCaseProtocol: Sendable {
+package enum RootViewSheet: Identifiable, Hashable {
 
-    func invoke() async throws -> URL?
+    public var id: Self { self }
 
-}
-
-public protocol FetchSSOURLUseCaseFactory {
-
-    func fetchSSOURLUseCase(
-        backendInfo: BackendInfo
-    ) async throws -> any FetchSSOURLUseCaseProtocol
+    case authFlow(backendInfo: BackendInfo)
 
 }

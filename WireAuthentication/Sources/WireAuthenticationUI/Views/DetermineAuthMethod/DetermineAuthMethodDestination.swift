@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
+import WireAuthenticationAPI
 
-package struct SafariBrowser: UIViewControllerRepresentable {
+package enum DetermineAuthMethodDestination: Hashable {
 
-    private let url: URL
-
-    package init(url: URL) {
-        self.url = url
-    }
-
-    package func makeUIViewController(context: Context) -> BrowserViewController {
-        BrowserViewController(url: url)
-    }
-
-    package func updateUIViewController(_ viewController: BrowserViewController, context: Context) {}
-
+    case login(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    )
+    case loginOrRegister(
+        email: String,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    )
+    case noHistory(AuthenticationResult)
 }
