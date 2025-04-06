@@ -32,6 +32,12 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     var isHidden: Bool {
         false
     }
+    
+    var titleFooter: String {
+        conversation.isChannel ?
+        L10n.Localizable.Participants.Section.Name.channelFooter(ZMConversation.maxParticipants) :
+        L10n.Localizable.Participants.Section.Name.groupFooter(ZMConversation.maxParticipants)
+    }
 
     init(conversation: GroupDetailsConversationType, userSession: UserSession) {
         self.conversation = conversation
@@ -88,8 +94,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
             withReuseIdentifier: "SectionFooter",
             for: indexPath
         )
-        (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.Participants.Section.Name
-            .footer(ZMConversation.maxParticipants)
+        (view as? SectionFooter)?.titleLabel.text = titleFooter
         return view
     }
 
@@ -111,11 +116,11 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
             user.hasTeam
         else { return .zero }
 
-        sizingFooter.titleLabel.text = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+        sizingFooter.titleLabel.text = titleFooter
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
         return sizingFooter.bounds.size
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         focus()
     }

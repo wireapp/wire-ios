@@ -75,9 +75,6 @@
 "peoplepicker.services.add_service.error.default" = "The service is unavailable at the moment";
 "peoplepicker.services.add_service.error.full" = "The conversation is full";
 
-"peoplepicker.title.create_conversation" = "Create group";
-"peoplepicker.title.add_to_conversation" = "Add participants";
-
 "peoplepicker.no_contacts_title" = "No Contacts.";
 
 "peoplepicker.no_search_results" = "No matching results. Try entering a different name.";
@@ -234,10 +231,10 @@
 "list.archived_conversations" = "ARCHIVE";
 "list.archived_conversations_close" = "Close archive";
 
-"list.section.groups" = "Groups";
-"list.section.contacts" = "People";
-"list.section.requests" = "Requests";
-"list.section.favorites" = "Favorites";
+//"list.section.groups" = "Groups";
+//"list.section.contacts" = "People";
+//"list.section.requests" = "Requests";
+//"list.section.favorites" = "Favorites";
 
 "conversation.voiceover.value.active" = "active";
 "conversation.voiceover.value.disabled" = "disabled";
@@ -295,7 +292,6 @@
 "conversation.invite_more_people.button_title" = "Add People";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Empty group conversation";
 
 "conversation.input_bar.verified" = "Verified";
 "conversation.input_bar.placeholder" = "Type a message";
@@ -863,7 +859,8 @@
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Options";
 "participants.footer.add_title" = "Add Participants";
-"participants.section.name.footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.group_footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.channel_footer" = "Up to %1$d participants can join a channel.";
 "participants.section.admins.footer" = "There are no admins.";
 "participants.section.members.footer" = "There are no members.";
 
@@ -872,10 +869,12 @@
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "More actions";
 "meta.menu.rename" = "Rename";
-"meta.menu.leave" = "Leave Group…";
+"meta.menu.leave_group" = "Leave Group…";
+"meta.menu.leave_channel" = "Leave Channel…";
 "meta.menu.archive" = "Archive";
 "meta.menu.unarchive" = "Unarchive";
-"meta.menu.delete" = "Delete Group…";
+"meta.menu.delete_group" = "Delete Group…";
+"meta.menu.delete_channel" = "Delete Channel…";
 "meta.menu.clear_content" = "Clear Content…";
 "meta.menu.move_to_folder" = "Move to…";
 "meta.menu.remove_from_folder" = "Remove from \"%@\"";
@@ -1050,6 +1049,10 @@
 
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
+
+// Channel details
+"channel_details.conversation_admins_header.title" = "Channel admins";
+"channel_details.conversation_members_header.title" = "Channel members";
 
 // Channel Access level
 "channel_access_level.public" = "Public";

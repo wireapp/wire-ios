@@ -22,11 +22,11 @@ import WireDataModel
 extension ZMConversation {
     enum Action: Equatable {
 
-        case deleteGroup
+        case delete(isChannel: Bool)
         case moveToFolder
         case removeFromFolder(folder: String)
         case clearContent
-        case leave
+        case leave(isChannel: Bool)
         case configureNotifications
         case silence(isSilenced: Bool)
         case archive(isArchived: Bool)
@@ -39,7 +39,12 @@ extension ZMConversation {
     }
 
     var listActions: [Action] {
-        actions.filter { $0 != .deleteGroup }
+        actions.filter {
+            if case .delete = $0 {
+                return false
+            }
+            return true
+        }
     }
 
     var detailActions: [Action] {
@@ -84,11 +89,11 @@ extension ZMConversation {
             return actions
         }
         if localParticipants.contains(selfUser) {
-            actions.append(.leave)
+            actions.append(.leave(isChannel: groupType == .channel))
         }
 
         if selfUser.canDeleteConversation(self) {
-            actions.append(.deleteGroup)
+            actions.append(.delete(isChannel: groupType == .channel))
         }
 
         return actions
@@ -141,7 +146,7 @@ extension ZMConversation.Action {
     fileprivate var isDestructive: Bool {
         switch self {
         case .remove,
-             .deleteGroup:
+             .delete:
             true
         default: false
         }
@@ -152,8 +157,8 @@ extension ZMConversation.Action {
         typealias ProfileLocale = L10n.Localizable.Profile
 
         switch self {
-        case .deleteGroup:
-            return MetaMenuLocale.delete
+        case .delete(let isChannel):
+            return isChannel ? MetaMenuLocale.deleteChannel: MetaMenuLocale.deleteGroup
         case .moveToFolder:
             return MetaMenuLocale.moveToFolder
         case let .removeFromFolder(folder):
@@ -162,8 +167,8 @@ extension ZMConversation.Action {
             return ProfileLocale.removeDialogButtonRemove
         case .clearContent:
             return MetaMenuLocale.clearContent
-        case .leave:
-            return MetaMenuLocale.leave
+        case .leave(let isChannel):
+            return isChannel ? MetaMenuLocale.leaveChannel: MetaMenuLocale.leaveGroup
         case .markRead:
             return MetaMenuLocale.markRead
         case .markUnread:

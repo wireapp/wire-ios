@@ -56,25 +56,28 @@ private struct ParticipantsSectionViewModel {
     let conversationRole: ConversationRole
     let userSession: UserSession
     let showSectionCount: Bool
-    var sectionAccesibilityIdentifier = "label.groupdetails.participants"
+    let isChannel: Bool
+    var sectionAccessibilityIdentifier = "label.groupdetails.participants"
+
+    private typealias GroupDetails = L10n.Localizable.GroupDetails
+    private typealias ChannelDetails = L10n.Localizable.ChannelDetails
+    
+    private var adminsHeaderTitle: String? {
+        let format = isChannel ? ChannelDetails.ConversationAdminsHeader.title :
+        GroupDetails.ConversationAdminsHeader.title
+        return formatHeader(format)
+    }
+        
+    var memberHeaderTitle: String? {
+        let format = isChannel ? ChannelDetails.ConversationMembersHeader.title :
+        GroupDetails.ConversationMembersHeader.title
+        return formatHeader(format)
+    }
 
     var sectionTitle: String? {
-        typealias GroupDetails = L10n.Localizable.GroupDetails
-
-        switch (conversationRole, showSectionCount) {
-        case (.member, true):
-            return GroupDetails.ConversationMembersHeader.title.localizedUppercase + " (%d)"
-                .localized(args: participants.count)
-
-        case (.member, false):
-            return GroupDetails.ConversationMembersHeader.title.localizedUppercase
-
-        case (.admin, true):
-            return GroupDetails.ConversationAdminsHeader.title.localizedUppercase + " (%d)"
-                .localized(args: participants.count)
-
-        case (.admin, false):
-            return GroupDetails.ConversationAdminsHeader.title.localizedUppercase
+        switch conversationRole {
+        case .member: memberHeaderTitle
+        case .admin: adminsHeaderTitle
         }
     }
 
@@ -116,12 +119,14 @@ private struct ParticipantsSectionViewModel {
         maxParticipants: Int,
         maxDisplayedParticipants: Int,
         showSectionCount: Bool = true,
+        isChannel: Bool,
         userSession: UserSession
     ) {
         self.participants = users.sortedAscendingPrependingNil(by: \.name)
         self.userStatuses = userStatuses
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
+        self.isChannel = isChannel
         self.userSession = userSession
         self.rows = clipSection
             ? ParticipantsSectionViewModel.computeRows(
@@ -133,6 +138,15 @@ private struct ParticipantsSectionViewModel {
             : participants.map { participant in
                 .user(participant)
             }
+    }
+    
+    private func formatHeader(_ title: String) -> String? {
+        var result = title.localizedUppercase
+        if showSectionCount {
+            result += " (%d)"
+                .localized(args: participants.count)
+        }
+        return result
     }
 
     static func computeRows(
@@ -211,6 +225,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             maxParticipants: maxParticipants,
             maxDisplayedParticipants: maxDisplayedParticipants,
             showSectionCount: showSectionCount,
+            isChannel: conversation.isChannel,
             userSession: userSession
         )
         self.conversation = conversation
@@ -235,7 +250,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     }
 
     override var sectionAccessibilityIdentifier: String {
-        viewModel.sectionAccesibilityIdentifier
+        viewModel.sectionAccessibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
