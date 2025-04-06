@@ -61,16 +61,16 @@ private struct ParticipantsSectionViewModel {
 
     private typealias GroupDetails = L10n.Localizable.GroupDetails
     private typealias ChannelDetails = L10n.Localizable.ChannelDetails
-    
+
     private var adminsHeaderTitle: String? {
         let format = isChannel ? ChannelDetails.ConversationAdminsHeader.title :
-        GroupDetails.ConversationAdminsHeader.title
+            GroupDetails.ConversationAdminsHeader.title
         return formatHeader(format)
     }
-        
+
     var memberHeaderTitle: String? {
         let format = isChannel ? ChannelDetails.ConversationMembersHeader.title :
-        GroupDetails.ConversationMembersHeader.title
+            GroupDetails.ConversationMembersHeader.title
         return formatHeader(format)
     }
 
@@ -139,7 +139,7 @@ private struct ParticipantsSectionViewModel {
                 .user(participant)
             }
     }
-    
+
     private func formatHeader(_ title: String) -> String? {
         var result = title.localizedUppercase
         if showSectionCount {

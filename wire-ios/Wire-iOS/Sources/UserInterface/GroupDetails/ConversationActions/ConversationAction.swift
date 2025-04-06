@@ -157,8 +157,8 @@ extension ZMConversation.Action {
         typealias ProfileLocale = L10n.Localizable.Profile
 
         switch self {
-        case .delete(let isChannel):
-            return isChannel ? MetaMenuLocale.deleteChannel: MetaMenuLocale.deleteGroup
+        case let .delete(isChannel):
+            return isChannel ? MetaMenuLocale.deleteChannel : MetaMenuLocale.deleteGroup
         case .moveToFolder:
             return MetaMenuLocale.moveToFolder
         case let .removeFromFolder(folder):
@@ -167,8 +167,8 @@ extension ZMConversation.Action {
             return ProfileLocale.removeDialogButtonRemove
         case .clearContent:
             return MetaMenuLocale.clearContent
-        case .leave(let isChannel):
-            return isChannel ? MetaMenuLocale.leaveChannel: MetaMenuLocale.leaveGroup
+        case let .leave(isChannel):
+            return isChannel ? MetaMenuLocale.leaveChannel : MetaMenuLocale.leaveGroup
         case .markRead:
             return MetaMenuLocale.markRead
         case .markUnread:
