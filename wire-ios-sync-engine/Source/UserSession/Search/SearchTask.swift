@@ -425,10 +425,6 @@ extension SearchTask {
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
 
-//                print("AAAAAAA //////////")
-//                print("search domain: \(searchRequest)")
-//                print(response)
-//                print("AAAAAAA //////////")
                 guard
                     let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asDictionary(),

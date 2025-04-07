@@ -102,6 +102,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .useWireAuthentication:
+            "UseWireAuthentication"
         default:
             nil
         }

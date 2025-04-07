@@ -106,7 +106,7 @@ public struct SearchRequest {
     let searchDomain: String?
     let searchOptions: SearchOptions
 
-    public init(//
+    public init(
         query: String,
         searchDomain: String? = nil,
         searchOptions: SearchOptions,
@@ -114,10 +114,7 @@ public struct SearchRequest {
     ) {
         let (query, parsedDomain) = Self.parseQuery(query)
         self.query = query
-        self.searchDomain = searchDomain // searchDomain ?? parsedDomain
-        print("/////////AAA searchDomain: \(searchDomain)")
-        print("/////////AAA parsedDomain: \(parsedDomain)")
-        print("/////////AAA")
+        self.searchDomain = searchDomain ?? parsedDomain
         self.searchOptions = searchOptions
         self.team = team
     }
