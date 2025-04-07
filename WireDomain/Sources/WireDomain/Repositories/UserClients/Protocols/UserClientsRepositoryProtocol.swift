@@ -66,6 +66,10 @@ public protocol UserClientsRepositoryProtocol {
 
     func deleteClient(id: String) async
 
+    /// Invalides the self client locally
+
+    func invalidateSelfClient() async
+
     /// Indicates whether self user clients are active MLS clients.
     /// - returns: A flag indicating whether all self user clients are active MLS clients.
 

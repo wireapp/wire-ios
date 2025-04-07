@@ -107,6 +107,33 @@ class MockBackendConfigRepositoryProtocol: BackendConfigRepositoryProtocol {
 
 }
 
+public class MockCalculateSupportedProtocolsUseCaseProtocol: CalculateSupportedProtocolsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() async -> Set<WireAPI.MessageProtocol>)?
+    public var invoke_MockValue: Set<WireAPI.MessageProtocol>?
+
+    public func invoke() async -> Set<WireAPI.MessageProtocol> {
+        invoke_Invocations.append(())
+
+        if let mock = invoke_MockMethod {
+            return await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -2918,6 +2945,21 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
         await mock(id)
     }
 
+    // MARK: - invalidateSelfClient
+
+    public var invalidateSelfClient_Invocations: [Void] = []
+    public var invalidateSelfClient_MockMethod: (() async -> Void)?
+
+    public func invalidateSelfClient() async {
+        invalidateSelfClient_Invocations.append(())
+
+        guard let mock = invalidateSelfClient_MockMethod else {
+            fatalError("no mock for `invalidateSelfClient`")
+        }
+
+        await mock()
+    }
+
     // MARK: - updateClient
 
     public var updateClientIdIsNewClientUserClientInfo_Invocations: [(id: String, isNewClient: Bool, userClientInfo: UserClientInfo)] = []
@@ -3153,6 +3195,21 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
         }
 
         await mock(id)
+    }
+
+    // MARK: - invalidateSelfClient
+
+    public var invalidateSelfClient_Invocations: [Void] = []
+    public var invalidateSelfClient_MockMethod: (() async -> Void)?
+
+    public func invalidateSelfClient() async {
+        invalidateSelfClient_Invocations.append(())
+
+        guard let mock = invalidateSelfClient_MockMethod else {
+            fatalError("no mock for `invalidateSelfClient`")
+        }
+
+        await mock()
     }
 
     // MARK: - allSelfUserClientsAreActiveMLSClients
