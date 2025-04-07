@@ -453,6 +453,15 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingIsChannel: Bool!
 
+    // MARK: - privateChannelPermission
+
+    public var privateChannelPermission: PrivateChannelPermission {
+        get { return underlyingPrivateChannelPermission }
+        set(value) { underlyingPrivateChannelPermission = value }
+    }
+
+    public var underlyingPrivateChannelPermission: PrivateChannelPermission!
+
 
     // MARK: - localParticipantsContain
 
