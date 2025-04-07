@@ -38,7 +38,7 @@ public protocol SSOLinkGeneratorProtocol: Sendable {
 
 public protocol SSOLinkGeneratorFactory {
 
-    func ssoLinkGenerator(apiVersion: BackendMetadata.APIVersion) -> any SSOLinkGeneratorProtocol
+    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol
 
 }
 

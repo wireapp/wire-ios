@@ -21,6 +21,7 @@ import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
+import WireConversationsUIBindings
 import WireDesign
 import WireFoundation
 import WireLogging
@@ -93,6 +94,8 @@ final class ZClientViewController: UIViewController {
         mediaPlaybackManager: mediaPlaybackManager
     )
 
+    private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
+
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
         isPublicDomain: userSession.selfUser.domain?.domainType == .publicDomain,
         userSession: userSession,
@@ -125,6 +128,7 @@ final class ZClientViewController: UIViewController {
         userSession: userSession,
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         createGroupConversationUIBuilder: createGroupConversationBuilder,
+        channelConversationFormFactory: channelConversationFormFactory,
         selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
 

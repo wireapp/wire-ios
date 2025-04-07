@@ -83,7 +83,7 @@ final class AuthenticationAPITests: XCTestCase {
             _ = try await sut.login(
                 email: "email@example.com",
                 password: "123456",
-                verificationCode: nil,
+                verificationCode: "193756",
                 label: nil
             )
         }

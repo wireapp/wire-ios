@@ -30,3 +30,9 @@ public enum RequestLoginVerificationCodeUseCaseFailure: Error {
     case invalidEmail
 
 }
+
+public protocol RequestLoginVerificationCodeUseCaseFactory {
+
+    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol
+
+}
