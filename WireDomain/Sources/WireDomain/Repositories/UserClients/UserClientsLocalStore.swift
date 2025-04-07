@@ -237,4 +237,20 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         }
     }
 
+    public func invalidateSelfClient() async {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+
+            guard let selfClient = selfUser.selfClient() else {
+                return
+            }
+
+            selfClient.remoteIdentifier = nil
+            selfClient.resetLocallyModifiedKeys(selfClient.keysThatHaveLocalModifications)
+            selfClient.clearMLSPublicKeys()
+            context.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
+            context.saveOrRollback()
+        }
+    }
+
 }
