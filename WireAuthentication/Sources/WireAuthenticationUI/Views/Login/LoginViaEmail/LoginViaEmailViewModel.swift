@@ -27,9 +27,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     package typealias Factory =
         CreateAuthenticationResultUseCaseFactory &
+        LoginViaEmailFactory &
         LoginViaEmailUseCaseFactory &
         SubmitProxyCredentialsUseCaseFactory &
         ValidateEmailUseCaseFactory
+
+    // MARK: - View state
 
     @Published var email: String
     @Published var password: String = ""
@@ -37,42 +40,12 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published var proxyUsername: String = ""
     @Published var proxyPassword: String = ""
 
-    let backendInfo: BackendInfo
-    let isEmailPrefilled: Bool
-    let canCreateAccount: Bool
-
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
 
-    private let router: any Router
-    private let factory: any Factory
-    private let onCreateAccount: () -> Void
-    private let didDetectDomainConflict: Bool
-
-    // MARK: - Life cycle
-
-    package init(
-        router: any Router,
-        factory: any Factory,
-        email: String?,
-        backendInfo: BackendInfo,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        onCreateAccount: @escaping () -> Void
-    ) {
-        self.router = router
-        self.factory = factory
-        self.email = email ?? ""
-        self.backendInfo = backendInfo
-        self.canCreateAccount = canCreateAccount
-        self.didDetectDomainConflict = didDetectDomainConflict
-        self.isEmailPrefilled = email != nil
-        self.onCreateAccount = onCreateAccount
-    }
-
-    private var forgotPasswordURL: URL {
-        backendInfo.backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
-    }
+    let backendInfo: BackendInfo
+    let isEmailPrefilled: Bool
+    let canCreateAccount: Bool
 
     var areProxyCredentialsRequired: Bool {
         backendInfo.backendConfig.proxySettings?.needsAuthentication == true
@@ -97,6 +70,36 @@ package final class LoginViaEmailViewModel: ObservableObject {
             areAccountCredentialsValid
         }
     }
+
+    // MARK: - Dependencies
+
+    package let factory: any Factory
+    private let router: any Router
+    private let onCreateAccount: () -> Void
+    private let didDetectDomainConflict: Bool
+
+    // MARK: - Life cycle
+
+    package init(
+        factory: any Factory,
+        router: any Router,
+        email: String?,
+        backendInfo: BackendInfo,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        onCreateAccount: @escaping () -> Void
+    ) {
+        self.factory = factory
+        self.router = router
+        self.email = email ?? ""
+        self.backendInfo = backendInfo
+        self.canCreateAccount = canCreateAccount
+        self.didDetectDomainConflict = didDetectDomainConflict
+        self.isEmailPrefilled = email != nil
+        self.onCreateAccount = onCreateAccount
+    }
+
+    // MARK: - Actions
 
     func submitCredentials() async {
         isLoading = true
@@ -129,7 +132,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
             )
 
             router.navigate(
-                to: LoginViaEmailView.Destination.noHistory(authenticationResult: authenticationResult)
+                to: LoginViaEmailDestination.noHistory(authenticationResult: authenticationResult)
             )
 
         } catch {
@@ -140,7 +143,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
                 alert = .invalidCredentials
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
-                    to: LoginViaEmailView.Destination
+                    to: LoginViaEmailDestination
                         .verifyLogin(
                             email: sanitizedEmail,
                             password: sanitizedPassword,
@@ -160,7 +163,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func recoverPassword() {
-        UIApplication.shared.open(forgotPasswordURL)
+        UIApplication.shared.open(
+            backendInfo.backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
+        )
     }
 
     func createAccount() {

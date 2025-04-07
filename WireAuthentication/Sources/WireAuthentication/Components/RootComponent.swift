@@ -34,9 +34,18 @@ class RootComponent: BootstrapComponent {
     public let howToDeleteAccountURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
-    public let userDefaults: UserDefaults
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
+
+    @MainActor public var bridge: WireAuthenticationBridge {
+        shared {
+            WireAuthenticationBridge()
+        }
+    }
+
+    @MainActor public var router: any Router {
+        viewModel
+    }
 
     init(
         backendInfo: BackendInfo,
@@ -46,7 +55,6 @@ class RootComponent: BootstrapComponent {
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults,
         appStoreURL: URL,
         existsAnotherAccount: Bool
     ) {
@@ -58,40 +66,8 @@ class RootComponent: BootstrapComponent {
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
-        self.userDefaults = userDefaults
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
-    }
-
-    // MARK: - View
-
-    @MainActor var view: some View {
-        RootView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
-
-    @MainActor private var viewModel: RootViewModel {
-        shared {
-            RootViewModel(
-                factory: self,
-                bridge: bridge,
-                backendInfo: backendInfo
-            )
-        }
-    }
-
-    // MARK: - Public dependencies
-
-    @MainActor public var bridge: WireAuthenticationBridge {
-        shared {
-            WireAuthenticationBridge()
-        }
-    }
-
-    @MainActor public var router: any Router {
-        viewModel
     }
 
     // MARK: - Children
@@ -113,17 +89,26 @@ class RootComponent: BootstrapComponent {
 
 extension RootComponent: RootViewModel.Factory {
 
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        OpenAppStoreUseCase(url: appStoreURL)
+    // MARK: - Factory
+
+    @MainActor var viewModel: RootViewModel {
+        shared {
+            RootViewModel(
+                factory: self,
+                bridge: bridge,
+                backendInfo: backendInfo
+            )
+        }
     }
 
-}
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
+        determineAuthMethodComponent(backendInfo: backendInfo)
+    }
 
-extension RootComponent: RootView.Factory {
+    // MARK: - Use cases
 
-    @MainActor
-    func determineAuthMethodView(backendInfo: BackendInfo) -> DetermineAuthMethodView {
-        determineAuthMethodComponent(backendInfo: backendInfo).view
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: appStoreURL)
     }
 
 }

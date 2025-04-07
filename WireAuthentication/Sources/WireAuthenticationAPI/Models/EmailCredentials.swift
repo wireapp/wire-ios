@@ -20,7 +20,7 @@ import Foundation
 
 /// Email credentials for a user.
 
-public struct EmailCredentials: Equatable, Hashable {
+public struct EmailCredentials: Equatable, Hashable, Sendable {
 
     /// The user's email address.
 

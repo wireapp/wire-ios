@@ -20,38 +20,24 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
 
-package protocol VerificationCodeBuilder {
+package protocol VerificationCodeFactory {
+
+    @MainActor var viewModel: VerificationCodeViewModel { get }
 
     @MainActor
-    func verificationCodeView(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> VerificationCodeView
-
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 }
 
 package struct VerificationCodeView: View {
 
-    package typealias Factory = NoHistoryViewBuilder
-
-    // MARK: - Constants
-
-    private enum Constants {
-        static let backgroundCornerRadius: CGFloat = 16
-    }
-
     @StateObject private var viewModel: VerificationCodeViewModel
-    private let factory: any Factory
 
     @FocusState private var focusedIndex: Int?
 
     package init(
-        viewModel: VerificationCodeViewModel,
-        factory: any Factory
+        factory: @autoclosure @escaping () -> VerificationCodeFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -88,11 +74,6 @@ package struct VerificationCodeView: View {
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
-        .cornerRadius(Constants.backgroundCornerRadius)
-        .overlay(
-            RoundedRectangle(cornerRadius: Constants.backgroundCornerRadius)
-                .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
-        )
         .navigationTitle(L10n.VerificationCode.title)
         .navigationBarTitleDisplayMode(.inline)
         .setPreferredSize(navigationBarHidden: false)
@@ -108,7 +89,11 @@ package struct VerificationCodeView: View {
         .navigationDestination(for: VerificationCodeDestination.self) {
             switch $0 {
             case let .noHistory(authenticationResult):
-                factory.noHistoryView(authenticationResult: authenticationResult)
+                NoHistoryView(
+                    factory: viewModel.factory.noHistoryFactory(
+                        authenticationResult: authenticationResult
+                    )
+                )
             }
         }
         .onAppear {
@@ -145,33 +130,4 @@ package struct VerificationCodeView: View {
         }
     }
 
-}
-
-#Preview("Empty code") {
-    MockDependencies().previewVerificationCodeView(
-        email: "name.name@mail.com",
-        password: "pasword"
-    )
-}
-
-#Preview("Not empty code") {
-    MockDependencies().previewVerificationCodeView(
-        email: "name.name@mail.com",
-        password: "pasword",
-        code: ["1", "2", "3", "4", "5", ""]
-    )
-}
-
-#Preview {
-    BackgroundView()
-        .overlay {
-            VStack(spacing: 0) {
-                Spacer()
-                    .frame(maxHeight: .infinity)
-                MockDependencies().previewVerificationCodeView(
-                    email: "name.name@mail.com",
-                    password: "pasword"
-                )
-            }
-        }
 }

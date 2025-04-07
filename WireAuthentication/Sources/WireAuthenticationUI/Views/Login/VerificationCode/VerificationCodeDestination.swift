@@ -19,11 +19,7 @@
 import Foundation
 import WireAuthenticationAPI
 
-enum VerificationCodeDestination: Identifiable, Hashable {
-
-    var id: Self {
-        self
-    }
+enum VerificationCodeDestination: Hashable {
 
     case noHistory(authenticationResult: AuthenticationResult)
 

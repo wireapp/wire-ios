@@ -19,21 +19,13 @@
 import Foundation
 import WireAuthenticationAPI
 
-extension MockDependencies: SSOLinkGeneratorFactory {
+package enum DetermineAuthMethodSheet: Identifiable, Hashable, Sendable {
 
-    nonisolated
-    func ssoLinkGenerator() async throws -> any SSOLinkGeneratorProtocol {
-        MockSSOLinkGenerator()
-    }
+    package var id: Self { self }
 
-}
-
-struct MockSSOLinkGenerator: SSOLinkGeneratorProtocol {
-
-    func generateSSOLink(ssoCode: UUID) async throws -> URL {
-        URL(string: "https://example.com/login/\(ssoCode)")!
-    }
-
-    func flushToken() {}
+    case switchBackendConfirmation(
+        email: String?,
+        backendInfo: BackendInfo
+    )
 
 }

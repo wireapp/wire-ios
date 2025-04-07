@@ -50,23 +50,6 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         super.init(parent: parent)
     }
 
-    @MainActor var view: VerificationCodeView {
-        VerificationCodeView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
-
-    @MainActor private var viewModel: VerificationCodeViewModel {
-        VerificationCodeViewModel(
-            factory: self,
-            email: email,
-            password: password,
-            proxyCredentials: proxyCredentials,
-            router: dependency.router
-        )
-    }
-
     // MARK: - Children
 
     func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
@@ -80,6 +63,24 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
 }
 
 extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: VerificationCodeViewModel {
+        VerificationCodeViewModel(
+            factory: self,
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials,
+            router: dependency.router
+        )
+    }
+
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
+        noHistoryComponent(authenticationResult: authenticationResult)
+    }
+
+    // MARK: - Use cases
 
     func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
         SubmitProxyCredentialsUseCase(networkStack: dependency.networkStack)
@@ -97,16 +98,6 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
 
     func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
         CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
-    }
-
-}
-
-extension VerificationCodeComponent: VerificationCodeView.Factory {
-
-    func noHistoryView(authenticationResult: AuthenticationResult) -> NoHistoryView {
-        noHistoryComponent(
-            authenticationResult: authenticationResult
-        ).view
     }
 
 }
