@@ -22,8 +22,7 @@ import XCTest
 
 @testable import Wire
 
-private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation,
-    HasChannelAccessLevelPermission {
+private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
     var userDefinedName: String?
 
@@ -38,8 +37,6 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
     var mlsGroupID: WireDataModel.MLSGroupID?
 
     var mlsVerificationStatus: WireDataModel.MLSVerificationStatus?
-
-    var accessLevelPermission: ChannelAccessLevelPermission?
 
 }
 

@@ -891,10 +891,10 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationPermissionConversation_Invocations: [(permission: String, conversation: ZMConversation)] = []
-    public var storeConversationPermissionConversation_MockMethod: ((String, ZMConversation) async -> Void)?
+    public var storeConversationPermissionConversation_Invocations: [(permission: WireDomain.Conversation.ChannelPermission, conversation: ZMConversation)] = []
+    public var storeConversationPermissionConversation_MockMethod: ((WireDomain.Conversation.ChannelPermission, ZMConversation) async -> Void)?
 
-    public func storeConversation(permission: String, conversation: ZMConversation) async {
+    public func storeConversation(permission: WireDomain.Conversation.ChannelPermission, conversation: ZMConversation) async {
         storeConversationPermissionConversation_Invocations.append((permission: permission, conversation: conversation))
 
         guard let mock = storeConversationPermissionConversation_MockMethod else {
