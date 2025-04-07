@@ -18,11 +18,10 @@
 
 import Foundation
 
-/// A timestamp that encodes to and decodes from ISO8601 date without
-/// fractional secconds, i.e yyyy-mm-ddThh:MM:ssZ
-///
-/// See `UTCTimeMillis` if encoding and decoding fractional seconds
-/// is required.
+/// A timestamp that encodes to ISO8601 date without fractional
+/// seconds and decodes from ISO8601 date with or without
+/// fractional seconds, i.e yyyy-mm-ddThh:MM:ss.qqqZ or
+/// yyyy-mm-ddThh:MM:ssZ
 
 struct UTCTime: Codable {
 
@@ -32,12 +31,18 @@ struct UTCTime: Codable {
         let container = try decoder.singleValueContainer()
         let string = try container.decode(String.self)
 
+        // Although the backend distinguishes between dates with and without
+        // fractional seconds, it sometimes mixes up the formats, even with
+        // the same model. So it's safest to try decode both formats in a
+        // single time object.
         if let date = ISO8601DateFormatter.internetDateTime.date(from: string) {
+            self.date = date
+        } else if let date = ISO8601DateFormatter.fractionalInternetDateTime.date(from: string) {
             self.date = date
         } else {
             throw DecodingError.dataCorruptedError(
                 in: container,
-                debugDescription: "Expected date string to be ISO8601-formatted without fractional seconds"
+                debugDescription: "Expected date string to be ISO8601-formatted either with or without fractional seconds"
             )
         }
     }
