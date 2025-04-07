@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 import WireDomainPkg
+import WireDomainPkgSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -27,7 +28,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
     private var mockStreamDecryptor: MockImportBackupStreamDecryptorProtocol!
-    private var mockFileArchiver: MockImportBackupFileArchiverProtocol!
+    private var mockFileArchiver: ImportBackupFileArchiverProtocolMock!
     private var mockEntityStorage: MockImportBackupEntityStorageProtocol!
     private var mockAppStateUpdater: MockImportBackupAppStateUpdaterProtocol!
     private var dispatchGroup: ZMSDispatchGroup!
@@ -46,7 +47,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
         mockStreamDecryptor.decryptInputOutputAccountIDPassword_MockMethod = { _, _, _, _ in }
 
         mockFileArchiver = .init()
-        mockFileArchiver.unzipFileAtTo_MockMethod = { _, _ in }
+        mockFileArchiver.unzipFileAtSourceURLURLToDestinationURLURLVoidClosure = { _, _ in }
 
         mockEntityStorage = .init()
         mockEntityStorage.importsDirectory = fileManager
@@ -184,7 +185,9 @@ final class ImportBackupUseCaseTests: XCTestCase {
             mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.password,
             "c<%I2f41\"6!'"
         )
-        XCTAssertFalse(mockFileArchiver.unzipFileAtTo_Invocations.isEmpty)
+        XCTAssertFalse(
+            mockFileArchiver.unzipFileAtSourceURLURLToDestinationURLURLVoidReceivedInvocations.isEmpty
+        )
         XCTAssertFalse(mockAppStateUpdater.reportMigrationNeeded_Invocations.isEmpty)
         XCTAssertFalse(
             mockEntityStorage

@@ -16,9 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-// sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol: Sendable {
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+public extension CurrentDateProviding where Self == SystemDateProvider {
+
+    /// Returns a new instance of `SystemDateProvider`.
+    static var system: Self { .init() }
+}
+
+/// Provides date values based on the system clock.
+public struct SystemDateProvider: CurrentDateProviding {
+
+    public var now: Date { .now }
+
+    public init() {}
 }

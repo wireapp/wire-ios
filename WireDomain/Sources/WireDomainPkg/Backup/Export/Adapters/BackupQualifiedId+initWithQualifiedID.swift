@@ -16,18 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
+import WireBackup
 
-public extension CurrentDateProviding where Self == SystemDateProvider {
+extension BackupQualifiedId {
 
-    /// Returns a new instance of `SystemDateProvider`.
-    static var system: Self { .init() }
-}
-
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: CurrentDateProviding {
-
-    public var now: Date { .now }
-
-    public init() {}
+    convenience init(_ qualifiedID: QualifiedID) {
+        self.init(
+            id: qualifiedID.uuid.uuidString,
+            domain: qualifiedID.domain
+        )
+    }
 }

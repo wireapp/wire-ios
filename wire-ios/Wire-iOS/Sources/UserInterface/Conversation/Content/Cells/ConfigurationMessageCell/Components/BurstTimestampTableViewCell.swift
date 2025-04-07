@@ -18,7 +18,7 @@
 
 import UIKit
 import WireConversationUI
-import WireSystem
+import WireFoundation
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell

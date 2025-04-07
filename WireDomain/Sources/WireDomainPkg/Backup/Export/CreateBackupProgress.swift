@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-// sourcery: AutoMockable
-/// Abstracts accessing the current system date in order to be mockable in unit tests.
-public protocol CurrentDateProviding {
-    var now: Date { get }
+public enum CreateBackupProgress: Sendable {
+    case progress(Float)
+    case done(URL)
 }

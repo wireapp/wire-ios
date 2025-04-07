@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import WireFoundation
 
 public enum E2EIdentityCertificateStatus: CaseIterable {
     case notActivated

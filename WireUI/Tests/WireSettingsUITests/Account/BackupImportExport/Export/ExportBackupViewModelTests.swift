@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDomainPkg
+import WireDomainPkgSupport
 import WireLogging
 import WireTestingPackage
 import XCTest
@@ -26,7 +28,7 @@ import XCTest
 @MainActor
 final class ExportBackupViewModelTests: XCTestCase {
 
-    private var mockCreateBackupUseCase: MockCreateBackupUseCaseProtocol!
+    private var mockCreateBackupUseCase: CreateBackupUseCaseProtocolMock!
     private var mockCleanUpBackupsUseCase: MockCleanUpBackupsUseCaseProtocol!
     private var mockLogger: (any LoggerProtocol)!
     private var sut: ExportBackupViewModel!
@@ -62,7 +64,9 @@ final class ExportBackupViewModelTests: XCTestCase {
     func testProgressIsReported() {
         // Given
         var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        mockCreateBackupUseCase.invokePasswordStringAsyncThrowingStreamCreateBackupProgressAnyErrorReturnValue = .init {
+            continuation = $0
+        }
         let url = URL(fileURLWithPath: "/")
         let sut = sut as ExportBackupViewModel
 
@@ -85,7 +89,9 @@ final class ExportBackupViewModelTests: XCTestCase {
     func testCancelTerminatesTask() {
         // Given
         var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        mockCreateBackupUseCase.invokePasswordStringAsyncThrowingStreamCreateBackupProgressAnyErrorReturnValue = .init {
+            continuation = $0
+        }
         let sut = sut as ExportBackupViewModel
         let expectation = XCTestExpectation()
         continuation.onTermination = { @Sendable _ in expectation.fulfill() }
@@ -104,7 +110,9 @@ final class ExportBackupViewModelTests: XCTestCase {
     func testErrorPresentsAlert() {
         // Given
         var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
+        mockCreateBackupUseCase.invokePasswordStringAsyncThrowingStreamCreateBackupProgressAnyErrorReturnValue = .init {
+            continuation = $0
+        }
         let sut = sut as ExportBackupViewModel
 
         // When
