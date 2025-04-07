@@ -100,7 +100,7 @@ public final class ConversationPredicateFactory: NSObject {
         let isGroupConversationType =
             NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let isNotChannelGroupType =
-            NSPredicate(format: "\(ZMConversationGroupTypeValueKey) != \(ConversationGroupType.channel.rawValue)")
+            NSPredicate(format: "\(ZMConversationGroupTypeKey) != \(ConversationGroupType.channel.rawValue)")
 
         return .all(of: [
             predicateForConversationsExcludingArchived(),
@@ -114,7 +114,7 @@ public final class ConversationPredicateFactory: NSObject {
         let isGroupConversationType =
             NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let isChannelGroupType =
-            NSPredicate(format: "\(ZMConversationGroupTypeValueKey) == \(ConversationGroupType.channel.rawValue)")
+            NSPredicate(format: "\(ZMConversationGroupTypeKey) == \(ConversationGroupType.channel.rawValue)")
 
         return .all(of: [
             predicateForConversationsExcludingArchived(),
