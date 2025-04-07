@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -30,6 +30,7 @@ import WireDataModel
 import WireDomainPkg
 
 @testable import WireDomain
+
 
 
 
@@ -1287,33 +1288,6 @@ public class MockCreateGroupConversationUseCaseProtocol: CreateGroupConversation
 
 }
 
-public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeUrlPassword_Invocations: [(url: URL, password: String)] = []
-    public var invokeUrlPassword_MockMethod: ((URL, String) -> AsyncThrowingStream<ImportBackupProgress, any Error>)?
-    public var invokeUrlPassword_MockValue: AsyncThrowingStream<ImportBackupProgress, any Error>?
-
-    public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
-        invokeUrlPassword_Invocations.append((url: url, password: password))
-
-        if let mock = invokeUrlPassword_MockMethod {
-            return mock(url, password)
-        } else if let mock = invokeUrlPassword_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `invokeUrlPassword`")
-        }
-    }
-
-}
-
 public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
 
     // MARK: - Life cycle
@@ -1341,38 +1315,6 @@ public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
             return mock
         } else {
             fatalError("no mock for `perform`")
-        }
-    }
-
-}
-
-public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigrationUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeTeamName_Invocations: [String] = []
-    public var invokeTeamName_MockError: Error?
-    public var invokeTeamName_MockMethod: ((String) async throws -> IndividualToTeamMigrationResult)?
-    public var invokeTeamName_MockValue: IndividualToTeamMigrationResult?
-
-    public func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
-        invokeTeamName_Invocations.append(teamName)
-
-        if let error = invokeTeamName_MockError {
-            throw error
-        }
-
-        if let mock = invokeTeamName_MockMethod {
-            return try await mock(teamName)
-        } else if let mock = invokeTeamName_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `invokeTeamName`")
         }
     }
 
