@@ -17,56 +17,59 @@
 //
 
 import Foundation
-import XCTest
 import WireTestingPackage
+import XCTest
 @testable import Wire
 
 final class ConversationDetailsTests: XCTestCase {
-    
+
     lazy var conversation = {
         let conversation = MockGroupDetailsConversation()
         conversation.isChannel = true
         return conversation
     }()
-    
+
     let user = {
         let user = MockUserType()
         user.canManageTeam = false
         user.isGroupAdminInConversation = false
         return user
     }()
-    
+
+    let sut = GroupOptionsSectionController.Option.channelAccess
+
     func testAccessOptionNotAllowedForGroup() {
         user.canManageTeam = true
         conversation.isChannel = false
-    
-        XCTAssertFalse(GroupOptionsSectionController.Option.channelAccess
-            .accessible(in: conversation, by: user))
+
+        XCTAssertFalse(
+            sut.accessible(in: conversation, by: user)
+        )
     }
-    
+
     func testAccessOptionAllowed_ForChannel_andTeamAdmin() {
         user.canManageTeam = true
-        
-        XCTAssertTrue(GroupOptionsSectionController.Option.channelAccess
-            .accessible(in: conversation, by: user))
+
+        XCTAssertTrue(
+            sut.accessible(in: conversation, by: user)
+        )
     }
-    
+
     func testAccessOptionNotAllowed_ForChannel_Member() {
-        XCTAssertFalse(GroupOptionsSectionController.Option.channelAccess
-            .accessible(in: conversation, by: user))
+        XCTAssertFalse(
+            sut.accessible(in: conversation, by: user)
+        )
     }
-    
+
     func testAccessOptionAllowed_ForChannel_MemberButTeamOwner() {
         user.canManageTeam = true
-        
-        XCTAssertTrue(GroupOptionsSectionController.Option.channelAccess
-            .accessible(in: conversation, by: user))
+
+        XCTAssertTrue(sut.accessible(in: conversation, by: user))
     }
-    
+
     func testAccessOptionAllowed_ForChannel_ChannelOwner() {
         user.isGroupAdminInConversation = true
-        
-        XCTAssertTrue(GroupOptionsSectionController.Option.channelAccess
-            .accessible(in: conversation, by: user))
+
+        XCTAssertTrue(sut.accessible(in: conversation, by: user))
     }
 }
