@@ -6,5 +6,7 @@
 	<string>$(USE_WIRE_AUTHENTICATION)</string>
 	<key>ProteusByCoreCryptoEnabled</key>
 	<string>$(PROTEUS_BY_CORECRYPTO_ENABLED)</string>
+	<key>WireAuthenticationEnabled</key>
+	<string>$(WIRE_AUTHENTICATION_ENABLED)</string>
 </dict>
 </plist>

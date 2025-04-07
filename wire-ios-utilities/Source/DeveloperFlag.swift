@@ -103,7 +103,7 @@ public enum DeveloperFlag: String, CaseIterable {
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
         case .useWireAuthentication:
-            "UseWireAuthentication"
+            "WireAuthenticationEnabled"
         default:
             nil
         }
