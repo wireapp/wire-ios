@@ -22,7 +22,7 @@ import WireDataModel
 extension ZMConversation {
     enum Action: Equatable {
 
-        case deleteGroup
+        case delete
         case moveToFolder
         case removeFromFolder(folder: String)
         case clearContent
@@ -39,7 +39,7 @@ extension ZMConversation {
     }
 
     var listActions: [Action] {
-        actions.filter { $0 != .deleteGroup }
+        actions.filter { $0 != .delete }
     }
 
     var detailActions: [Action] {
@@ -88,7 +88,7 @@ extension ZMConversation {
         }
 
         if selfUser.canDeleteConversation(self) {
-            actions.append(.deleteGroup)
+            actions.append(.delete)
         }
 
         return actions
@@ -141,7 +141,7 @@ extension ZMConversation.Action {
     fileprivate var isDestructive: Bool {
         switch self {
         case .remove,
-             .deleteGroup:
+             .delete:
             true
         default: false
         }
@@ -152,7 +152,7 @@ extension ZMConversation.Action {
         typealias ProfileLocale = L10n.Localizable.Profile
 
         switch self {
-        case .deleteGroup:
+        case .delete:
             return MetaMenuLocale.delete
         case .moveToFolder:
             return MetaMenuLocale.moveToFolder
