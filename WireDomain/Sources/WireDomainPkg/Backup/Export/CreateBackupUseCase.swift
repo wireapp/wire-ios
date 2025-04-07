@@ -24,6 +24,7 @@ public import WireLogging
 
 public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
+    let eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol
     let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
     let selfUserID: QualifiedID
@@ -31,12 +32,13 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     public init(
         // TODO: [WPB-14592] inject the persistent container or any CoreData context
-        // TODO: inject type to stop incoming notification processing
+        eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol,
         fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding,
         selfUserID: QualifiedID,
-        logger: @escaping @Sendable () -> any LoggerProtocol
+        logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.eventProcessorHandle = eventProcessorHandle
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
         self.selfUserID = selfUserID

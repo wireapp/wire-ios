@@ -377,8 +377,15 @@ extension SettingsCellDescriptorFactory {
         let sessionManager = SessionManager.shared!
         let selfUser = ZMUser.selfUser()!
 
+        // TODO: remove
+        struct EventProcessorHandle: CreateBackupEventProcessorHandleProtocol {
+            func pauseProcessingEvents() { fatalError() }
+            func continueProcessingEvents() { fatalError() }
+        }
+
         let importBackupUseCase = sessionManager.importBackupUseCase!
         let createBackupUseCase = CreateBackupUseCase(
+            eventProcessorHandle: EventProcessorHandle(),
             fileArchiver: CreateBackupFileArchiver(),
             currentDateProvider: SystemDateProvider(),
             selfUserID: WireAPI.QualifiedID(selfUser.qualifiedID!),
