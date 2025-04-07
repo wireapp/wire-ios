@@ -319,3 +319,6 @@
 "searchGifs.norResultsLabel.description" = "No Gifs found";
 "searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
 "searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";
+
+// MARK: - Channel Creation UI - Navigation
+"conversation.create.channel.back" = "Go back to new conversation overview";
