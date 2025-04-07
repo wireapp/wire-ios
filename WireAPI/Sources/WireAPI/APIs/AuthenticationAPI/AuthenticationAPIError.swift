@@ -42,6 +42,8 @@ public enum AuthenticationAPIError: Error {
 
     case invalidCredentials
 
+    case serviceUnavailable
+
     /// Thrown by `requestVerificationCode(for:)`.
 
     case invalidEmail
