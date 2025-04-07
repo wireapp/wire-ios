@@ -21,7 +21,7 @@ public protocol CreateBackupEventProcessorHandleProtocol: Sendable {
 
     /// Interrupts processing incoming events.
     /// If it's already paused, this method does nothing.
-    func pauseProcessingEvents()
+    func pauseProcessingEvents() async
 
     /// Continues processing incoming events if it was paused/interrupted.
     func continueProcessingEvents()

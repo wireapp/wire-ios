@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import CoreData
 public import WireAPI
 public import WireFoundation
 public import WireLogging
@@ -24,6 +25,7 @@ public import WireLogging
 
 public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
+    let context: NSManagedObjectContext
     let eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol
     let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
@@ -31,6 +33,7 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
+        context: NSManagedObjectContext,
         // TODO: [WPB-14592] inject the persistent container or any CoreData context
         eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol,
         fileArchiver: any CreateBackupFileArchiverProtocol,
@@ -38,6 +41,7 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
         selfUserID: QualifiedID,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.context = context
         self.eventProcessorHandle = eventProcessorHandle
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
@@ -47,7 +51,7 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [logger, selfUserID, fileArchiver, currentDateProvider] in
+            let task = Task<Void, Never> { [logger, selfUserID, fileArchiver, currentDateProvider, eventProcessorHandle] in
                 do {
                     let logger = logger()
 
@@ -70,9 +74,18 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
                         )
                     )
 
-                    // TODO: stop incoming notifications
+                    // finish processing incoming events and then stop
+                    await eventProcessorHandle.pauseProcessingEvents()
+                    defer { eventProcessorHandle.continueProcessingEvents() }
 
-                    // TODO: [WPB-14592] fetch form CoreData and call these methods:
+                    let fr = ZMUser.fetchRequest()
+                    let frc = NSFetchedResultsController(
+                        fetchRequest: <#T##NSFetchRequest<_>#>,
+                        managedObjectContext: <#T##NSManagedObjectContext#>,
+                        sectionNameKeyPath: <#T##String?#>,
+                        cacheName: <#T##String?#>
+                    )
+                    // TODO: [WPB-14592] fetch from CoreData and call these methods:
                     // backupExporter.add(user: <#T##BackupUser#>)
                     // backupExporter.add(message: <#T##BackupMessage#>)
                     // backupExporter.add(conversation: <#T##BackupConversation#>)
