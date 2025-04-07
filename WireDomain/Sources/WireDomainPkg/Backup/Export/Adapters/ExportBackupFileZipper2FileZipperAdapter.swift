@@ -23,12 +23,12 @@ import WireFoundation
 final class ExportBackupFileZipper2FileZipperAdapter: FileZipper {
 
     let fileManager: FileManager
-    let fileArchiver: any ExportBackupFileArchiverProtocol
+    let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
 
     init(
         fileManager: FileManager,
-        fileArchiver: any ExportBackupFileArchiverProtocol,
+        fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding
     ) {
         self.fileManager = fileManager

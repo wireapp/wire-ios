@@ -18,6 +18,6 @@
 
 // sourcery: AutoMockable
 /// A use case to export the current app state using a provided `password`.
-public protocol CreateBackupUseCaseProtocol: Sendable {
+public protocol CreateBackupUseCaseProtocol {
     func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error>
 }

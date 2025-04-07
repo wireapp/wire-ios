@@ -16,18 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportBackupError: Error, Equatable, CaseIterable {
-    case noActiveAccountForImport
-    /// The backup file is encrypted and a password is needed for decryption.
-    case passwordRequired
-    /// E.g. if the file to import was created with a different (incompatible) version of the app.
-    case incompatibleFileFormat // there is no mapping to this error (it's never thrown)
-    case invalidAccountID
-    case decompressionError
-    case invalidFileExtension
-    case keyCreationFailed
-    case decryptionError
-    case faildToBackUpUserClient
-    /// Failed to create `InputStream` or `OutputStream` from `URL`.
-    case failedToCreateStreamForDecryption
+import WireDomainPkg
+import ZipArchive
+
+struct CreateBackupFileArchiver: CreateBackupFileArchiverProtocol {
+
+    func zipResources(
+        at resourceURLs: [URL],
+        into destinationURL: URL
+    ) throws {
+        let success = SSZipArchive.createZipFile(
+            atPath: destinationURL.path(),
+            withFilesAtPaths: resourceURLs.map { $0.path() }
+        )
+        guard success else {
+            throw CreateBackupError.compressionError
+        }
+    }
 }

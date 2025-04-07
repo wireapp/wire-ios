@@ -19,7 +19,7 @@
 public import Foundation
 
 // sourcery: AutoMockable
-public protocol ExportBackupFileArchiverProtocol: Sendable {
+public protocol CreateBackupFileArchiverProtocol: Sendable {
 
     /// Creates a ZIP file at `destinationURL` from the file or directory at `sourceURL`.
     func zipResources(

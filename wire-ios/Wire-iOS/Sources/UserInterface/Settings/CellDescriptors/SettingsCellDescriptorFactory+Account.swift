@@ -20,10 +20,12 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomainPkg
 import WireFoundation
 import WireLogging
 import WireSettingsUI
 import WireSyncEngine
+import WireAPI
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -373,12 +375,20 @@ extension SettingsCellDescriptorFactory {
 
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
+        let selfUser = ZMUser.selfUser()!
+
         let importBackupUseCase = sessionManager.importBackupUseCase!
+        let createBackupUseCase = CreateBackupUseCase(
+            fileArchiver: CreateBackupFileArchiver(),
+            currentDateProvider: SystemDateProvider(),
+            selfUserID: WireAPI.QualifiedID(selfUser.qualifiedID!),
+            logger: WireLogger.backupExport
+        )
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
             // TODO: [WPB-14592] inject the new use case via `createBackupUseCase` here
-            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
+            createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,

@@ -24,13 +24,13 @@ public import WireLogging
 
 public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
-    let fileArchiver: any ExportBackupFileArchiverProtocol
+    let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
     let selfUserID: QualifiedID
-    // let logger: any LoggerProtocol // TODO: [WPB-14592] fix Sendable error
+    let logger: any LoggerProtocol // TODO: [WPB-14592] fix Sendable error
 
     public init(
-        fileArchiver: any ExportBackupFileArchiverProtocol,
+        fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding,
         // TODO: [WPB-14592] inject the persistent container or any CoreData context
         // TODO: [WPB-14592] inject the self user id
@@ -40,12 +40,12 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
         self.selfUserID = selfUserID
-        // self.logger = logger
+        self.logger = logger
     }
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> {
+            let task = Task<Void, Never> { [selfUserID, fileArchiver, currentDateProvider] in
                 do {
 
                     continuation.yield(.progress(0))
