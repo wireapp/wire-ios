@@ -134,19 +134,20 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         // From StringLengthValidator (WireUtilities StringLengthValidator.swift:22)
         let trimmed = channelName
             .trimmingCharacters(in: .whitespaces)
-            .map { $0.isEmoji || !$0.contains(anyCharacterFrom: Constants.controlSet) ? String($0) : " " }
 
-        if trimmed.count < Constants.channelNameMinStringLength {
+        let array = trimmed.map { $0.isEmoji || !$0.contains(anyCharacterFrom: Constants.controlSet) ? String($0) : " " }
+
+        if array.count < Constants.channelNameMinStringLength {
             return .failure(.tooShort)
         }
-        if channelName.count > Constants.channelNameMaxStringLength {
+        if array.count > Constants.channelNameMaxStringLength {
             return .failure(.tooLong)
         }
-        if channelName.utf8.count > Constants.channelNameMaxByteLength {
+        if trimmed.utf8.count > Constants.channelNameMaxByteLength {
             return .failure(.tooLong)
         }
 
-        return .success(channelName)
+        return .success(trimmed)
     }
 
     public func getChannelCreationSettings() -> WireConversationChannelCreationSettings? {

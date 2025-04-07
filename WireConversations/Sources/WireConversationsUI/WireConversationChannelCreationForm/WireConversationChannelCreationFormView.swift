@@ -131,9 +131,8 @@ public struct WireConversationChannelCreationForm: View {
     }
 }
 
-// #Preview {
-//    WireConversationChannelCreationForm(
-//        viewModel:
-//        onFormValidityUpdate: { _ in }
-//    )
-// }
+ #Preview {
+    WireConversationChannelCreationForm(
+        viewModel: WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+    )
+ }
