@@ -101,14 +101,15 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testRevokedCertificateForSelfUserResultsInFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
-            [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .revoked)
+        mockSafeCoreCrypto.coreCryptoContext
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
+                [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![0].rawValue, status: .valid),
+                        .with(clientID: clientIDs![1].rawValue, status: .revoked)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(
@@ -122,14 +123,15 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testValidCertificatesForSelfUserResultsInTrue() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
-            [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .valid)
+        mockSafeCoreCrypto.coreCryptoContext
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
+                [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![0].rawValue, status: .valid),
+                        .with(clientID: clientIDs![1].rawValue, status: .valid)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(
@@ -179,14 +181,15 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testRevokedCertificateOfOtherUserResultsInFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
-            [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![2].rawValue, status: .valid),
-                    .with(clientID: clientIDs![3].rawValue, status: .revoked)
+        mockSafeCoreCrypto.coreCryptoContext
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
+                [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![2].rawValue, status: .valid),
+                        .with(clientID: clientIDs![3].rawValue, status: .revoked)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(
@@ -200,14 +203,15 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testValidCertificatesForOtherUserResultsInTrue() async throws {
         // Given
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
-            [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![2].rawValue, status: .valid),
-                    .with(clientID: clientIDs![3].rawValue, status: .valid)
+        mockSafeCoreCrypto.coreCryptoContext
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
+                [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![2].rawValue, status: .valid),
+                        .with(clientID: clientIDs![3].rawValue, status: .valid)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(
@@ -224,14 +228,15 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     func testPassingSelfConversationFromViewContext() async throws {
         // Given
         setupMLSSelfConversations(in: uiMOC)
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
-            [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .valid)
+        mockSafeCoreCrypto.coreCryptoContext
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
+                [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![0].rawValue, status: .valid),
+                        .with(clientID: clientIDs![1].rawValue, status: .valid)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(
@@ -248,14 +253,15 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
         mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
-            [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .valid)
+        mockSafeCoreCrypto.coreCryptoContext
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
+                [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![0].rawValue, status: .valid),
+                        .with(clientID: clientIDs![1].rawValue, status: .valid)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(
@@ -270,14 +276,15 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     func testPassingOneOnOneConversationFromViewContext() async throws {
         // Given
         setupMLSSelfConversations(in: uiMOC)
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
-            [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .valid)
+        mockSafeCoreCrypto.coreCryptoContext
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
+                [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![0].rawValue, status: .valid),
+                        .with(clientID: clientIDs![1].rawValue, status: .valid)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(
@@ -294,14 +301,15 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
         mockSafeCoreCrypto.coreCryptoContext.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
-        mockSafeCoreCrypto.coreCryptoContext.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
-            [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![2].rawValue, status: .valid),
-                    .with(clientID: clientIDs![3].rawValue, status: .valid)
+        mockSafeCoreCrypto.coreCryptoContext
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
+                [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![2].rawValue, status: .valid),
+                        .with(clientID: clientIDs![3].rawValue, status: .valid)
+                    ]
                 ]
-            ]
-        }
+            }
 
         // When
         let isCertified = try await sut.invoke(

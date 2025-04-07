@@ -103,9 +103,9 @@ final class MLSAPITests: XCTestCase {
             try await api.getBackendMLSPublicKeys()
         }
     }
-    
+
     // MARK: - Send commit bundle
-    
+
     func testPostCommitBundleRequest() async throws {
         // Given
         let apiVersions = APIVersion.v5.andNextVersions
@@ -116,10 +116,10 @@ final class MLSAPITests: XCTestCase {
             _ = try await sut.postCommitBundle(Scaffolding.commitBundle)
         }
     }
-    
+
     func testPostCommitBundle_SuccessResponse_201_V5_And_Next_Versions() async throws {
         // Given
-        try await withThrowingTaskGroup(of: Array<UpdateEvent>.self) { taskGroup in
+        try await withThrowingTaskGroup(of: [UpdateEvent].self) { taskGroup in
             let testedVersions = APIVersion.v5.andNextVersions
 
             for version in testedVersions {
@@ -130,7 +130,7 @@ final class MLSAPITests: XCTestCase {
 
                 taskGroup.addTask {
                     // When
-                    return try await sut.postCommitBundle(Scaffolding.commitBundle)
+                    try await sut.postCommitBundle(Scaffolding.commitBundle)
                 }
 
                 for try await value in taskGroup {
@@ -140,10 +140,10 @@ final class MLSAPITests: XCTestCase {
             }
         }
     }
-    
+
     func testPostCommitBundle_SuccessResponseWithEvents_201_V5_And_Next_Versions() async throws {
         // Given
-        try await withThrowingTaskGroup(of: Array<UpdateEvent>.self) { taskGroup in
+        try await withThrowingTaskGroup(of: [UpdateEvent].self) { taskGroup in
             let testedVersions = APIVersion.v5.andNextVersions
 
             for version in testedVersions {
@@ -154,7 +154,7 @@ final class MLSAPITests: XCTestCase {
 
                 taskGroup.addTask {
                     // When
-                    return try await sut.postCommitBundle(Scaffolding.commitBundle)
+                    try await sut.postCommitBundle(Scaffolding.commitBundle)
                 }
 
                 for try await value in taskGroup {
@@ -164,7 +164,7 @@ final class MLSAPITests: XCTestCase {
             }
         }
     }
-    
+
     func testPostCommitBundle_givenV5AndErrorResponse() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
@@ -194,15 +194,15 @@ private extension APIVersion {
 // MARK: Helpers
 
 private enum Scaffolding {
-    
+
     static let commitBundle = CommitBundle(
         welcome: nil,
-        commit: "commit".data(using: .utf8)!,
-        groupInfo: "groupinfo".data(using: .utf8)!
+        commit: Data("commit".utf8),
+        groupInfo: Data("groupinfo".utf8)
     )
-    
+
     static let updateEvents = [
-        UpdateEvent.unknown(eventType: "some event"),
+        UpdateEvent.unknown(eventType: "some event")
     ]
-    
+
 }

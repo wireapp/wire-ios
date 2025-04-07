@@ -524,7 +524,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
-        
+
         syncMOC.performAndWait {
             XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
 

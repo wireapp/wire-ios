@@ -16,23 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCoreCrypto
 import WireAPI
+import WireCoreCrypto
 import WireLogging
 
 final class MLSTransportImpl: MlsTransport {
 
     let mlsAPI: MLSAPI
     let conversationEventProcessor: ConversationEventProcessorProtocol
-    
+
     init(mlsAPI: MLSAPI, conversationEventProcessor: ConversationEventProcessorProtocol) {
         self.mlsAPI = mlsAPI
         self.conversationEventProcessor = conversationEventProcessor
     }
-    
-    func sendCommitBundle(commitBundle: WireCoreCryptoUniffi.CommitBundle) async -> WireCoreCryptoUniffi.MlsTransportResponse {
+
+    func sendCommitBundle(commitBundle: WireCoreCryptoUniffi.CommitBundle) async -> WireCoreCryptoUniffi
+        .MlsTransportResponse {
         let events: [UpdateEvent]
-        
+
         do {
             events = try await mlsAPI.postCommitBundle(commitBundle.toAPIModel())
         } catch let error as MLSAPIError {
@@ -44,22 +45,25 @@ final class MLSTransportImpl: MlsTransport {
         } catch {
             return .abort(reason: error.localizedDescription)
         }
-        
+
         for event in events {
             do {
-                if case .conversation(let conversationEvent) = event {
+                if case let .conversation(conversationEvent) = event {
                     try await conversationEventProcessor.processEvent(conversationEvent)
                 }
             } catch {
-                WireLogger.mls.error("Commit bundle was accepted by the backend so can't roll back after failing to process conversation event)")
+                WireLogger.mls
+                    .error(
+                        "Commit bundle was accepted by the backend so can't roll back after failing to process conversation event)"
+                    )
             }
         }
-        
+
         return .success
     }
-    
+
     func sendMessage(mlsMessage: Data) async -> WireCoreCryptoUniffi.MlsTransportResponse {
-        return .abort(reason: "not implemented")
+        .abort(reason: "not implemented")
     }
-    
+
 }

@@ -149,7 +149,7 @@ struct ZMUserSessionBuilder {
         journal: Journal
     ) {
         // reused dependencies
-        
+
         let lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults

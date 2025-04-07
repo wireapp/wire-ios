@@ -18,9 +18,8 @@
 
 import WireAPI
 
-/// Process conversation update events.
-
 // sourcery: AutoMockable
+/// Process conversation update events.
 protocol ConversationEventProcessorProtocol {
 
     /// Process a conversation update event.

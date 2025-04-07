@@ -18,10 +18,10 @@
 
 import Combine
 import Foundation
+import WireAPI
 import WireCoreCrypto
 import WireFoundation
 import WireLogging
-import WireAPI
 
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
@@ -1584,7 +1584,7 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             logger.info("sending external commit to join group (\(logInfo))")
-            
+
             guard let context else { return }
 
             guard let parentConversationInfo = fetchConversationInfo(
@@ -1616,7 +1616,7 @@ public final class MLSService: MLSServiceInterface {
                     parentConversationInfo.conversation.mlsStatus = .ready
                 }
             }
-            
+
             logger.info("success: joined group with external commit (\(logInfo))")
 
         } catch {
@@ -1859,12 +1859,12 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Error recovery
-    
+
     enum MLSRetryError: Error, Equatable {
         case retryLimitReached
         case nonRecoverableError(_ reason: String)
     }
-    
+
     enum RecoveryStrategy: Equatable {
 
         /// Perform a quick sync, then retry the action in its entirety.
@@ -1886,7 +1886,7 @@ public final class MLSService: MLSServiceInterface {
         /// There is no way to automatically recover from the error.
 
         case giveUp
-        
+
         init(from reason: String) {
             if let error = try? MLSAPIError(from: reason) {
                 switch error {
@@ -1897,7 +1897,7 @@ public final class MLSService: MLSServiceInterface {
                 default:
                     self = .giveUp
                 }
-            } else {   
+            } else {
                 self = .giveUp
             }
         }
@@ -1912,12 +1912,18 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             try await operation()
-        } catch CoreCryptoError.Mls(.MessageRejected(reason: let reason)) {
+        } catch let CoreCryptoError.Mls(.MessageRejected(reason: reason)) {
             switch RecoveryStrategy(from: reason) {
             case .retryAfterQuickSync:
-                logger.warn("failed to send commit, syncing then retrying operation...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
-            	try await mlsSyncDelegate?.recoverWithIncrementalSync()
-                logger.info("sync finished, retrying operation...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
+                logger.warn(
+                    "failed to send commit, syncing then retrying operation...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+                try await mlsSyncDelegate?.recoverWithIncrementalSync()
+                logger.info(
+                    "sync finished, retrying operation...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
 
                 guard retryCount <= maxRetryAttempts else {
                     throw MLSRetryError.retryLimitReached
@@ -1927,14 +1933,24 @@ public final class MLSService: MLSServiceInterface {
                 currentRetryCount += 1
 
                 try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-                
+
             case .retryAfterRepairingGroup:
-                logger.warn("failed to send commit, repairing group then retrying operation...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
+                logger.warn(
+                    "failed to send commit, repairing group then retrying operation...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
                 await fetchAndRepairGroup(with: groupID)
-                logger.info("repair finished, retrying operation...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
+                logger.info(
+                    "repair finished, retrying operation...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
                 try await operation()
+
             case .giveUp:
-                logger.warn("failed to send commit, giving up...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
+                logger.warn(
+                    "failed to send commit, giving up...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
                 throw MLSRetryError.nonRecoverableError(reason)
             }
         }
@@ -2197,7 +2213,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Epoch
-    
+
     public func startObservingEpochs() {
         Task {
             await coreCryptoProvider.registerEpochObserver(self)
@@ -2207,7 +2223,7 @@ public final class MLSService: MLSServiceInterface {
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         onEpochChangedSubject.eraseToAnyPublisher()
     }
-    
+
     public func epochChanged(conversationId: Data, epoch: UInt64) async throws {
         onEpochChangedSubject.send(MLSGroupID(conversationId))
     }
@@ -2298,10 +2314,7 @@ public final class MLSService: MLSServiceInterface {
     }
 }
 
-
-extension MLSService: EpochObserver {
-    
-}
+extension MLSService: EpochObserver {}
 
 // MARK: - Helper types
 

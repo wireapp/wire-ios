@@ -113,7 +113,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             bufferedMessages: nil,
             crlNewDistributionPoints: nil
         )
-        
+
         mockCoreCryptoContext.decryptMessageConversationIdPayload_MockValue = decryptedMessage
 
         // When
@@ -230,7 +230,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then
         XCTAssertEqual(groupID, result)
-        XCTAssertEqual(mockCoreCryptoContext.processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.count, 1)
+        XCTAssertEqual(
+            mockCoreCryptoContext.processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.count,
+            1
+        )
     }
 
     func test_processWelcomeMessage_PublishesNewDistributionPoints() async throws {
@@ -417,10 +420,11 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
         )
 
-        mockCoreCryptoContext.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { groupState, _, _ in
-            mockJoinByExternalCommitArguments.append(groupState)
-            return .init(id: .random(), crlNewDistributionPoints: [])
-        }
+        mockCoreCryptoContext
+            .joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { groupState, _, _ in
+                mockJoinByExternalCommitArguments.append(groupState)
+                return .init(id: .random(), crlNewDistributionPoints: [])
+            }
 
         // When
         try await sut.joinGroup(groupID, groupInfo: mockGroupInfo)
@@ -436,10 +440,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock joining by external commit
         mockCoreCryptoContext.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { _, _, _ in
-                .init(
-                    id: .random(),
-                    crlNewDistributionPoints: [distributionPoint]
-                )
+            .init(
+                id: .random(),
+                crlNewDistributionPoints: [distributionPoint]
+            )
         }
 
         // Mock MLS feature config
@@ -466,7 +470,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_BufferedFutureMessageError() async throws {
         try await internalTest_decryptMessage_throwsError(
-            CoreCryptoError.Mls(.BufferedFutureMessage))
+            CoreCryptoError.Mls(.BufferedFutureMessage)
+        )
     }
 
     func test_decryptMessage_throwsBufferedDecryptedMessage_withBufferedCommit() async throws {

@@ -134,7 +134,7 @@ public final class E2EIService: E2EIServiceInterface {
             guard let coreCrypto = $0 as? CoreCryptoContext else {
                 throw E2EIServiceFailure.missingCoreCrypto
             }
-            
+
             return try await self.e2eIdentity.contextNewOidcChallengeResponse(cc: coreCrypto, challenge: challenge)
         }
     }

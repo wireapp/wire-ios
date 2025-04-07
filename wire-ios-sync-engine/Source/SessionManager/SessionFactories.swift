@@ -117,9 +117,9 @@ open class AuthenticatedSessionFactory {
             selfClientID: selfClientID,
             isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
-        
+
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        
+
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: account.userIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,

@@ -224,7 +224,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
-                
+
                 let crlNewDistributionPoints = try await coreCrypto.perform {
                     try await $0.addClientsToConversation(
                         conversationId: groupID.data,
@@ -237,7 +237,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 ) {
                     onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
                 }
-                
+
                 WireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
             } catch {
                 WireLogger.mls
@@ -292,9 +292,9 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
-                try await coreCrypto.perform({
+                try await coreCrypto.perform {
                     try await $0.commitPendingProposals(conversationId: groupID.data)
-                })
+                }
                 WireLogger.mls
                     .info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
             } catch {
@@ -345,7 +345,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                     return try await $0.decryptMessage(conversationId: groupID.data, payload: message)
                 } catch let CoreCryptoError.Mls(error) {
                     switch error {
-                    case .BufferedFutureMessage,.BufferedCommit:
+                    case .BufferedFutureMessage, .BufferedCommit:
                         // ignore error so transaction is saved and message is saved too.
                         return nil
                     default:
@@ -356,7 +356,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 }
             }
         }
-        
+
         if let result {
             return result
         } else {

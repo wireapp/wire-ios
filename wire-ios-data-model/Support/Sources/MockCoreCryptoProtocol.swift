@@ -24,17 +24,23 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     public init() {}
 
-
     // MARK: - transaction<Result>
-    
-    public typealias transaction_MethodType<Result> = (( (_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Void)
 
-    public var transaction_Invocations: [(_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Any] = []
+    public typealias transaction_MethodType<Result> =
+        ((_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Void
+
+    public var transaction_Invocations: [
+        (_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws
+            -> Any
+    ] = []
     public var transaction_MockError: Error?
     public var transaction_MockMethod: transaction_MethodType<Any>?
     public var transaction_MockValue: Any?
 
-    public func transaction<Result>(_ block: @escaping (_ context: any WireCoreCryptoUniffi.CoreCryptoContextProtocol) async throws -> Result) async throws -> Result {
+    public func transaction<Result>(_ block: @escaping (
+        _ context: any WireCoreCryptoUniffi
+            .CoreCryptoContextProtocol
+    ) async throws -> Result) async throws -> Result {
         transaction_Invocations.append(block)
 
         if let error = transaction_MockError {
@@ -49,13 +55,13 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
             fatalError("no mock for `transaction`")
         }
     }
-    
+
     // MARK: - registerEpochObserver
-    
+
     public var registerEpochObserver_Invocations: [any WireCoreCryptoUniffi.EpochObserver] = []
     public var registerEpochObserver_MockError: Error?
     public var registerEpochObserver_MockMethod: ((any WireCoreCryptoUniffi.EpochObserver) async throws -> Void)?
-    
+
     public func registerEpochObserver(_ epochObserver: any WireCoreCryptoUniffi.EpochObserver) async throws {
         registerEpochObserver_Invocations.append(epochObserver)
 
@@ -95,7 +101,7 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
     public static var setLogger_Invocations: [any WireCoreCryptoUniffi.CoreCryptoLogger] = []
     public static var setLogger_MockMethod: ((any WireCoreCryptoUniffi.CoreCryptoLogger) -> Void)?
 
-    static public func setLogger(_ logger: any WireCoreCryptoUniffi.CoreCryptoLogger) {
+    public static func setLogger(_ logger: any WireCoreCryptoUniffi.CoreCryptoLogger) {
         setLogger_Invocations.append(logger)
 
         guard let mock = setLogger_MockMethod else {
@@ -110,7 +116,7 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
     public static var setMaxLogLevel_Invocations: [WireCoreCryptoUniffi.CoreCryptoLogLevel] = []
     public static var setMaxLogLevel_MockMethod: ((WireCoreCryptoUniffi.CoreCryptoLogLevel) -> Void)?
 
-    static public func setMaxLogLevel(_ level: WireCoreCryptoUniffi.CoreCryptoLogLevel) {
+    public static func setMaxLogLevel(_ level: WireCoreCryptoUniffi.CoreCryptoLogLevel) {
         setMaxLogLevel_Invocations.append(level)
 
         guard let mock = setMaxLogLevel_MockMethod else {
@@ -126,7 +132,7 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
     public static var version_MockMethod: (() -> String)?
     public static var version_MockValue: String?
 
-    static public func version() -> String {
+    public static func version() -> String {
         version_Invocations.append(())
 
         if let mock = version_MockMethod {
@@ -144,7 +150,7 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
     public static var buildMetadata_MockMethod: (() -> WireCoreCryptoUniffi.BuildMetadata)?
     public static var buildMetadata_MockValue: WireCoreCryptoUniffi.BuildMetadata?
 
-    static public func buildMetadata() -> WireCoreCryptoUniffi.BuildMetadata {
+    public static func buildMetadata() -> WireCoreCryptoUniffi.BuildMetadata {
         buildMetadata_Invocations.append(())
 
         if let mock = buildMetadata_MockMethod {

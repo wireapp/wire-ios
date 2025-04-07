@@ -31,7 +31,7 @@ public enum MLSAPIError: Error, Codable, Equatable {
         encoder.outputFormatting = .sortedKeys
         return String(decoding: try encoder.encode(self), as: UTF8.self)
     }
-    
+
     /// Unsupported endpoint for API version
 
     case unsupportedEndpointForAPIVersion
@@ -43,17 +43,17 @@ public enum MLSAPIError: Error, Codable, Equatable {
     /// Message was sent in an too old epoch
 
     case mlsStaleMessage
-    
+
     /// A proposal of type Add or Remove does not apply to the full list of clients for a user
-    
+
     case mlsClientMismatch
-    
+
     /// The commit is not referencing all pending proposals
-    
+
     case mlsCommitMissingReferences
-    
+
     /// Generic error for all non recoverable MLS error
-    
+
     case mlsError(_ label: String, _ message: String)
 
 }

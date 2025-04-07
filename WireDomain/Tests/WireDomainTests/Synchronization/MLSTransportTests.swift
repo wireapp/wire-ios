@@ -17,20 +17,20 @@
 //
 
 import Foundation
-import XCTest
-import WireCoreCrypto
 import WireAPI
+import WireCoreCrypto
+import XCTest
 
+@testable import WireAPISupport
 @testable import WireDomain
 @testable import WireDomainSupport
-@testable import WireAPISupport
 
 final class MLSTransportTests: XCTestCase {
 
     private var sut: MLSTransportImpl!
     private var mlsAPI: MockMLSAPI!
     private var conversationEventProcessor: MockConversationEventProcessorProtocol!
-    
+
     override func setUp() async throws {
         mlsAPI = MockMLSAPI()
         conversationEventProcessor = MockConversationEventProcessorProtocol()
@@ -39,7 +39,7 @@ final class MLSTransportTests: XCTestCase {
             conversationEventProcessor: conversationEventProcessor
         )
     }
-    
+
     override func tearDown() async throws {
         sut = nil
         mlsAPI = nil
@@ -49,71 +49,62 @@ final class MLSTransportTests: XCTestCase {
     func testOnSendCommitBundle_CommitBundleIsPostedToMLSAPI() async throws {
         // Given
         mlsAPI.postCommitBundle_MockValue = []
-        
-        
+
         // When
         _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
-        
-        
+
         // Then
         XCTAssertEqual(mlsAPI.postCommitBundle_Invocations, [Scaffolding.commitBundle.toAPIModel()])
     }
-    
+
     func testOnSendCommitBundle_ConversationEventsAreForwaredToConversationEventProcessor() async throws {
         // Given
         mlsAPI.postCommitBundle_MockValue = [Scaffolding.conversationUpdateEvent]
         conversationEventProcessor.processEvent_MockMethod = { _ in }
-        
+
         // When
         _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
-        
-        
+
         // Then
         XCTAssertEqual(conversationEventProcessor.processEvent_Invocations, [Scaffolding.conversationEvent])
     }
-    
+
     func testOnSendCommitBundle_UnknownEventsAreNotForwaredToConversationEventProcessor() async throws {
         // Given
         mlsAPI.postCommitBundle_MockValue = [Scaffolding.unknownUpdateEvent]
         conversationEventProcessor.processEvent_MockMethod = { _ in }
-        
-        
+
         // When
         _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
-        
-        
+
         // Then
         XCTAssertEqual(conversationEventProcessor.processEvent_Invocations, [])
     }
-    
+
     func testOnSendCommitBundle_ReturnsSuccessWhenThereIsNoError() async throws {
         // Given
         mlsAPI.postCommitBundle_MockValue = []
-        
-        
+
         // When
         let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
-        
-        
+
         // Then
         XCTAssertEqual(result, .success)
     }
-    
+
     func testOnSendCommitBundle_ReturnsAbortWhenThereIsAnError() async throws {
         // Given
         mlsAPI.postCommitBundle_MockError = MLSAPIError.mlsStaleMessage
-        
-        
+
         // When
         let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
-        
-        
+
         // Then
         XCTAssertEqual(result, .abort(reason: try MLSAPIError.mlsStaleMessage.encodeAsString()))
     }
-    
-    struct Scaffolding {
-        
+
+    enum Scaffolding {
+
         static let conversationID = ConversationID(
             uuid: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
             domain: "example.com"
@@ -123,18 +114,18 @@ final class MLSTransportTests: XCTestCase {
             uuid: UUID(uuidString: "f55fe9b0-a0cc-4b11-944b-125c834d9b6a")!,
             domain: "example.com"
         )
-        
+
         static let commitBundle = CommitBundle(
             welcome: .random(),
             commit: .random(),
             groupInfo:
-                GroupInfoBundle(
-                    encryptionType: .plaintext,
-                    ratchetTreeType: .full,
-                    payload: .random()
-                )
+            GroupInfoBundle(
+                encryptionType: .plaintext,
+                ratchetTreeType: .full,
+                payload: .random()
+            )
         )
-        
+
         static let conversationEvent = ConversationEvent.typing(
             ConversationTypingEvent(
                 conversationID: conversationID,
@@ -142,10 +133,10 @@ final class MLSTransportTests: XCTestCase {
                 isTyping: true
             )
         )
-        
+
         static let conversationUpdateEvent = UpdateEvent.conversation(conversationEvent)
-        
+
         static let unknownUpdateEvent = UpdateEvent.unknown(eventType: "Unknown event")
-        
+
     }
 }

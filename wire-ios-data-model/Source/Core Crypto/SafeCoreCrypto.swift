@@ -25,7 +25,7 @@ import WireLogging
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T
     func unsafePerform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T
-    func configure(block: (CoreCryptoProtocol) async throws -> Void) async throws -> Void
+    func configure(block: (CoreCryptoProtocol) async throws -> Void) async throws
     func tearDown() throws
 }
 
@@ -40,7 +40,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     private let databasePath: String
 
     public convenience init(path: String, key: String) async throws {
-        
+
         let coreCrypto = try await CoreCrypto(
             keystorePath: path,
             keystoreSecret: Data(key.utf8)
@@ -64,18 +64,18 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     public func perform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T {
         safeContext.acquireDirectoryLock()
         await restoreFromDisk()
-        
+
         defer {
             safeContext.releaseDirectoryLock()
         }
-        
+
         return try await coreCrypto.transaction(block)
     }
 
     public func unsafePerform<T>(_ block: @escaping (CoreCryptoContextProtocol) async throws -> T) async throws -> T {
         try await coreCrypto.transaction(block)
     }
-    
+
     public func configure(block: (any CoreCryptoProtocol) async throws -> Void) async throws {
         try await block(coreCrypto)
     }

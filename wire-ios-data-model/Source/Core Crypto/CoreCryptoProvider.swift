@@ -47,8 +47,7 @@ public protocol CoreCryptoProviderProtocol {
     /// - parameters:
     ///   - transport: mls transport which sends mls messages to the backend
     func registerMlsTransport(_ transport: any MlsTransport)
-    
-    
+
     /// Register observer of epochs
     ///
     /// - parameters:
@@ -131,17 +130,17 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         try await registerEpochObserverIfNecessary(with: coreCrypto)
         return crls
     }
-    
+
     public func registerEpochObserver(_ epochObserver: any EpochObserver) async {
         self.epochObserver = epochObserver
-        
+
         do {
             try await registerEpochObserverIfNecessary(with: coreCrypto())
         } catch {
             WireLogger.mls.warn("Failed to register epoch observer, will try again later")
         }
     }
-    
+
     private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCryptoProtocol) async throws {
         guard let epochObserver, !hasRegisteredEpochObserver else {
             return
@@ -160,7 +159,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         guard let mlsTransport, !hasRegisteredMlsTransport else {
             return
         }
-        
+
         try await coreCrypto.configure { coreCrypto in
             try await coreCrypto.provideTransport(transport: mlsTransport)
         }

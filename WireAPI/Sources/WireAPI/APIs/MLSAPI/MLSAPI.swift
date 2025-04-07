@@ -24,7 +24,7 @@ public protocol MLSAPI {
     /// Fetch the info of MLS support on the backend available from ``APIVersion`` v5.
 
     func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys
-    
+
     /// Post a commit bundle.
     ///
     /// - Parameter bundle: commit bundle to post
@@ -32,7 +32,7 @@ public protocol MLSAPI {
     ///
     /// Available from ``APIVersion`` v5.
     ///
-    
+
     func postCommitBundle(_ bundle: CommitBundle) async throws -> [UpdateEvent]
 
 }

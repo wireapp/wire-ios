@@ -49,7 +49,7 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
     public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoContextProtocol) async throws -> T) async rethrows -> T {
         try await block(coreCryptoContext)
     }
-    
+
     public func configure(block: (any WireCoreCrypto.CoreCryptoProtocol) async throws -> Void) async throws {
         try await block(coreCrypto)
     }

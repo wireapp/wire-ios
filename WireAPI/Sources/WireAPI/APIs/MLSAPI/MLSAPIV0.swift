@@ -18,7 +18,7 @@
 
 import Foundation
 
-class MLSAPIV0: MLSAPI, VersionedAPI {    
+class MLSAPIV0: MLSAPI, VersionedAPI {
 
     // MARK: - Properties
 
@@ -37,7 +37,7 @@ class MLSAPIV0: MLSAPI, VersionedAPI {
     func getBackendMLSPublicKeys() async throws -> BackendMLSPublicKeys {
         throw MLSAPIError.unsupportedEndpointForAPIVersion
     }
-    
+
     func postCommitBundle(_ bundle: CommitBundle) async throws -> [UpdateEvent] {
         throw MLSAPIError.unsupportedEndpointForAPIVersion
     }

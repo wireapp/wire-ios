@@ -62,7 +62,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         set { serialQueue.sync { _mockAddMembers = newValue } }
     }
 
-    func addMembers(_ keyPackages: [KeyPackage], to groupID: MLSGroupID) async throws -> Void {
+    func addMembers(_ keyPackages: [KeyPackage], to groupID: MLSGroupID) async throws {
         guard let mock = mockAddMembers else {
             fatalError("no mock for `addMembers`")
         }
@@ -79,7 +79,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         set { serialQueue.sync { mockRemoveClients_ = newValue } }
     }
 
-    func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> Void {
+    func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws {
         guard let mock = mockRemoveClients else {
             fatalError("no mock for `removeClients`")
         }
@@ -102,7 +102,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         set { serialQueue.sync { updateKeyMaterialCount_ = newValue } }
     }
 
-    func updateKeyMaterial(for groupID: MLSGroupID) async throws -> Void {
+    func updateKeyMaterial(for groupID: MLSGroupID) async throws {
         guard let mock = mockUpdateKeyMaterial else {
             fatalError("no mock for `updateKeyMaterial`")
         }
@@ -126,7 +126,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         set { serialQueue.sync { commitPendingProposalsCount_ = newValue } }
     }
 
-    func commitPendingProposals(in groupID: MLSGroupID) async throws -> Void {
+    func commitPendingProposals(in groupID: MLSGroupID) async throws {
         guard let mock = mockCommitPendingProposals else {
             fatalError("no mock for `commitPendingProposals`")
         }
@@ -150,7 +150,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         set { serialQueue.sync { mockJoinGroupCount_ = newValue } }
     }
 
-    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> Void {
+    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws {
         guard let mock = mockJoinGroup else {
             fatalError("no mock for `joinGroup`")
         }

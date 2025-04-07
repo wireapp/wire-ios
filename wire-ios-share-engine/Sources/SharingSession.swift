@@ -17,12 +17,12 @@
 //
 
 import Foundation
+import WireAPI
 import WireDataModel
+import WireDomain
 import WireLinkPreview
 import WireRequestStrategy
 import WireTransport
-import WireDomain
-import WireAPI
 
 final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
 
@@ -314,7 +314,7 @@ public final class SharingSession {
             // in the sharing session.
             isSyncV2Enabled: false
         )
-        
+
         let proxySettings: WireAPI.ProxySettings? = {
             guard let proxy = environment.proxy else { return nil }
 
@@ -326,12 +326,17 @@ public final class SharingSession {
                     return nil
                 }
 
-                return .authenticated(host: proxy.host, port: proxy.port, username: proxyUsername, password: proxyPassword)
+                return .authenticated(
+                    host: proxy.host,
+                    port: proxy.port,
+                    username: proxyUsername,
+                    password: proxyPassword
+                )
             } else {
                 return .unauthenticated(host: proxy.host, port: proxy.port)
             }
         }()
-        
+
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
             webSocketURL: environment.backendWSURL,
@@ -350,13 +355,13 @@ public final class SharingSession {
             },
             proxySettings: proxySettings
         )
-        
+
         guard let apiVersion = BackendInfo.apiVersion,
               let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
             fatal("cannot resolve api version")
 
         }
-        
+
         try self.init(
             accountIdentifier: accountIdentifier,
             selfClientID: selfClientID!,
@@ -524,7 +529,7 @@ public final class SharingSession {
             userDefaults: .standard,
             userID: coreDataStack.account.userIdentifier
         )
-    
+
         let userSessionComponent = UserSessionComponent(
             selfUserID: accountIdentifier,
             backendEnvironment: wireAPIBackendEnvironment,
@@ -540,17 +545,18 @@ public final class SharingSession {
             mlsDecryptionService: mlsService,
             proteusService: proteusService
         )
-        
+
         let processHandlers = ClientSessionComponent.ProcessorHandlers(
             onProcessedCallEvent: { _ in },
-            onSelfClientInvalidated: { },
-            onProcessedTypingUsers: { _ in })
+            onSelfClientInvalidated: {},
+            onProcessedTypingUsers: { _ in }
+        )
 
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
             processorHandlers: processHandlers
         )
-    
+
         coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
 
         try self.init(

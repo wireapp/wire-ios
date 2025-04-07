@@ -84,14 +84,14 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         guard let enrollment = enrollment as? E2eiEnrollment else {
             throw Error.invalidIdentity
         }
-        
+
         let crlNewDistributionPoints = try await coreCrypto.perform { context in
             try await context.saveX509Credential(
                 enrollment: enrollment,
                 certificateChain: certificateChain
             )
         }
-        
+
         try await replaceKeyPackages()
         try await replaceCredentialsInExistingConversations()
 
@@ -102,27 +102,30 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     }
 
     // MARK: - Helpers
-    
+
     private func replaceCredentialsInExistingConversations() async throws {
-        let mlsConversationsToMigrate = try await context.perform ({
+        let mlsConversationsToMigrate = try await context.perform {
             var mlsGroupIDs = try ZMConversation.fetchConversationsWithMLSGroupStatus(
                 mlsGroupStatus: .ready,
                 in: self.context
-            ).compactMap { $0.mlsGroupID }
-            
+            ).compactMap(\.mlsGroupID)
+
             if let selfMLSGroupID = ZMConversation.fetchSelfMLSConversation(in: self.context)?.mlsGroupID {
                 mlsGroupIDs.append(selfMLSGroupID)
             }
-            
+
             return mlsGroupIDs
-        })
-        
+        }
+
         try await coreCrypto.perform { context in
             for groupID in mlsConversationsToMigrate {
                 do {
                     try await context.e2eiRotate(conversationId: groupID.data)
                 } catch {
-                    WireLogger.e2ei.warn("failed to rotate keys for group \(groupID.safeForLoggingDescription): \(String(describing: error))")
+                    WireLogger.e2ei
+                        .warn(
+                            "failed to rotate keys for group \(groupID.safeForLoggingDescription): \(String(describing: error))"
+                        )
                 }
             }
         }
@@ -130,25 +133,25 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
 
     private func replaceKeyPackages() async throws {
         let mlsConfig = await featureRepository.fetchMLS().config
-        
+
         guard let clientID = await context.perform({ [self] in
             ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
         }) else {
             throw Error.noSelfClient
         }
-        
+
         guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
             throw Error.invalidCiphersuite
         }
-        
+
         try await coreCrypto.perform { coreCryptoContext in
             let rawCiphersuite = UInt16(ciphersuite.rawValue)
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
                 ciphersuite: rawCiphersuite,
                 credentialType: .x509,
                 amountRequested: self.newKeyPackageCount
-            ).map({ $0.base64String() })
-            
+            ).map { $0.base64String() }
+
             var action = ReplaceSelfMLSKeyPackagesAction(
                 clientID: clientID,
                 keyPackages: newKeyPackages,
@@ -160,5 +163,5 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             )
         }
     }
-    
+
 }

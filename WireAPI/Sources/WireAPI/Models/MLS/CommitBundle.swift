@@ -31,17 +31,17 @@ public struct CommitBundle: Sendable, Equatable {
         self.commit = commit
         self.groupInfo = groupInfo
     }
-    
+
     func transportData() -> Data {
         var data = Data()
         data.append(commit)
-        
+
         if let welcome {
             data.append(welcome)
         }
-        
+
         data.append(groupInfo)
-        
+
         return data
     }
 }

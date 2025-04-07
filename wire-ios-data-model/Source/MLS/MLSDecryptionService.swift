@@ -124,7 +124,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         case failedToDecodeSenderClientID
         case wrongEpoch
 
-        public static func == (lhs: MLSDecryptionService.MLSMessageDecryptionError, rhs: MLSDecryptionService.MLSMessageDecryptionError) -> Bool {
+        public static func == (
+            lhs: MLSDecryptionService.MLSMessageDecryptionError,
+            rhs: MLSDecryptionService.MLSMessageDecryptionError
+        ) -> Bool {
             switch (lhs, rhs) {
             case (.failedToConvertMessageToBytes, .failedToConvertMessageToBytes): true
             case (.failedToDecryptMessage, .failedToDecryptMessage): true
@@ -196,7 +199,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             // Message arrive in future epoch, it has been buffered and will be consumed later.
             case .BufferedFutureMessage: return []
-            
+
             // Commit arrive in future epoch, it has been buffered and will be consumed later.
             case .BufferedCommit: return []
 

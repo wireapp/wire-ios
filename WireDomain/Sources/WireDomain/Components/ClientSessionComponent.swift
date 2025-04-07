@@ -584,7 +584,7 @@ public final class ClientSessionComponent {
     private lazy var addPermissionEventProcessor = ConversationAddPermissionEventProcessor(
         localStore: conversationLocalStore
     )
-    
+
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
         createEventProcessor: conversationCreateEventProcessor,
@@ -604,7 +604,7 @@ public final class ClientSessionComponent {
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {
-    
+
         let featureConfigEventProcessor = FeatureConfigEventProcessor(
             updateEventProcessor: featureConfigUpdateEventProcessor
         )

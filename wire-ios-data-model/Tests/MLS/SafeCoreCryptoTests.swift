@@ -28,12 +28,12 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         let tempURL = createTempFolder()
         let mockCoreCrypto = MockCoreCryptoProtocol()
         let mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        
+
         mockCoreCrypto.transaction_MockMethod = { block in
             _ = try await block(mockCoreCryptoContext)
         }
-        
-        mockCoreCryptoContext.proteusReloadSessions_MockMethod = { }
+
+        mockCoreCryptoContext.proteusReloadSessions_MockMethod = {}
         let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 
         // WHEN / THEN
@@ -45,12 +45,12 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         let tempURL = createTempFolder()
         let mockCoreCrypto = MockCoreCryptoProtocol()
         let mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        
+
         mockCoreCrypto.transaction_MockMethod = { block in
             _ = try await block(mockCoreCryptoContext)
         }
-                
-        mockCoreCryptoContext.proteusReloadSessions_MockMethod = { }
+
+        mockCoreCryptoContext.proteusReloadSessions_MockMethod = {}
 
         let sut = SafeCoreCrypto(coreCrypto: mockCoreCrypto, databasePath: tempURL.path)
 

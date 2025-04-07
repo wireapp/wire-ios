@@ -1175,7 +1175,7 @@ final class WireCallCenterV3Tests: MessagingTest {
             // when
             try block()
         }
-        
+
         wait(for: [listentingOnConferenceInfoChange])
 
         let didSetConferenceInfo2 = customExpectation(description: "didSetConferenceInfo2")
