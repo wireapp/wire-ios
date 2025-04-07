@@ -387,14 +387,13 @@ extension SettingsCellDescriptorFactory {
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            // TODO: [WPB-14592] inject the new use case via `createBackupUseCase` here
             createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default
+            wireAccentColor: selfUser.accentColor ?? .default
         )
     }
 

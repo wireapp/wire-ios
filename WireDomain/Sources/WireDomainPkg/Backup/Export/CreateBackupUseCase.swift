@@ -27,15 +27,15 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
     let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
     let selfUserID: QualifiedID
-    let logger: any LoggerProtocol // TODO: [WPB-14592] fix Sendable error
+    let logger: @Sendable () -> any LoggerProtocol
 
     public init(
+        // TODO: [WPB-14592] inject the persistent container or any CoreData context
+        // TODO: inject type to stop incoming notification processing
         fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding,
-        // TODO: [WPB-14592] inject the persistent container or any CoreData context
-        // TODO: [WPB-14592] inject the self user id
         selfUserID: QualifiedID,
-        logger: any LoggerProtocol
+        logger: @escaping @Sendable () -> any LoggerProtocol
     ) {
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
@@ -45,24 +45,30 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [selfUserID, fileArchiver, currentDateProvider] in
+            let task = Task<Void, Never> { [logger, selfUserID, fileArchiver, currentDateProvider] in
                 do {
+                    let logger = logger()
 
-                    continuation.yield(.progress(0))
+                    continuation.yield(CreateBackupProgress.progress(0))
 
-                    // TODO: [WPB-14592] use logger
-                    // logger.debug("creating backup ...")
+                    let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+                        .appendingPathComponent(UUID().uuidString)
+                    let outputDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+                        .appendingPathComponent(UUID().uuidString)
 
+                    logger.debug("initializing MPBackupExporter")
                     let backupExporter = MPBackupExporter(
                         selfUserId: BackupQualifiedId(selfUserID),
-                        workDirectory: "TODO-0", // TODO: [WPB-14592] pass temporary directory URL
-                        outputDirectory: "TODO-1", // TODO: [WPB-14592] pass temporary directory URL
+                        workDirectory: workDirectoryURL.path(),
+                        outputDirectory: outputDirectoryURL.path(),
                         fileZipper: ExportBackupFileZipper2FileZipperAdapter(
                             fileManager: .default,
                             fileArchiver: fileArchiver,
                             currentDateProvider: currentDateProvider
                         )
                     )
+
+                    // TODO: stop incoming notifications
 
                     // TODO: [WPB-14592] fetch form CoreData and call these methods:
                     // backupExporter.add(user: <#T##BackupUser#>)
