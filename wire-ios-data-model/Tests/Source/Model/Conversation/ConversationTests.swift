@@ -507,67 +507,43 @@ extension ConversationTests {
         }
     }
 
-    // MARK: Test groupType
+    // MARK: Test isChannel
 
-    func testGroupType_whenConversationTypeNotGroup() throws {
+    func testIsChannel_whenConversationTypeNotGroup() throws {
         // given a conversation which is not a group conversation and any group conversation type
         let conversation = insertMockGroupConversation(userDefinedName: "ABC")
         conversation.conversationType = .oneOnOne
 
-        let testCases: [ConversationGroupType?] = [nil, .group, .channel]
+        let testCases: [ConversationGroupType] = [.none, .group, .channel]
         for testCase in testCases {
-
             conversation.groupType = testCase
             try uiMOC.save()
 
             // when
-            let groupType = conversation.groupType
+            let isChannel = conversation.isChannel
 
-            // then it always returns nil
-            XCTAssertNil(groupType)
+            // then it always returns false
+            XCTAssertFalse(isChannel)
         }
     }
 
-    func testGroupType_whenGroupConversationTypeIsNil() throws {
-        // given a group conversation which has nil group conversation type
+    func testIsChannel_whenConversationTypeIsGroup() throws {
+        // given a conversation which is not a group conversation and any group conversation type
         let conversation = insertMockGroupConversation(userDefinedName: "ABC")
         conversation.conversationType = .group
-        conversation.groupType = nil
-        try uiMOC.save()
 
-        // when
-        let groupType = conversation.groupType
+        let testCases: [(groupType: ConversationGroupType, expected: Bool)] = [
+            (.none, false),
+            (.group, false),
+            (.channel, true)
+        ]
+        for testCase in testCases {
+            conversation.groupType = testCase.groupType
+            try uiMOC.save()
 
-        // then it returns group type by default
-        XCTAssertEqual(groupType, .group)
-    }
-
-    func testGroupType_whenGroupConversationType() throws {
-        // given
-        let conversation = insertMockGroupConversation(userDefinedName: "ABC")
-        conversation.conversationType = .group
-        conversation.groupType = .group
-        try uiMOC.save()
-
-        // when
-        let groupType = conversation.groupType
-
-        // then
-        XCTAssertEqual(groupType, .group)
-    }
-
-    func testGroupType_whenChannelConversationType() throws {
-        // given
-        let conversation = insertMockGroupConversation(userDefinedName: "ABC")
-        conversation.conversationType = .group
-        conversation.groupType = .channel
-        try uiMOC.save()
-
-        // when
-        let groupType = conversation.groupType
-
-        // then
-        XCTAssertEqual(groupType, .channel)
+            // when, then
+            XCTAssertEqual(conversation.isChannel, testCase.expected)
+        }
     }
 
 }

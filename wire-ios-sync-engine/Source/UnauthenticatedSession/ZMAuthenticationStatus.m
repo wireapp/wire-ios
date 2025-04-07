@@ -288,6 +288,19 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
+- (void)didFailLoginBecauseTooManyRequests
+{
+    ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
+    // This fixes a request loop on login
+    // we break the state of currentPhase ZMAuthenticationPhaseLoginWithEmail
+    if (self.isWaitingForLogin) {
+        self.isWaitingForLogin = NO;
+    }
+    NSError *error = [NSError userSessionErrorWithCode:ZMUserSessionErrorCodeTooManyRequests userInfo:nil];
+    [self.delegate authenticationDidFail: error];
+    ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
+}
+
 - (void)cancelWaitingForEmailVerification
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));

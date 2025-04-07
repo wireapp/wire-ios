@@ -46,7 +46,13 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
         super.init(parent: parent)
     }
 
-    @MainActor private var viewModel: NoHistoryViewModel {
+}
+
+extension NoHistoryComponent: NoHistoryFactory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
             didDetectDomainConflict: didDetectDomainConflict,
             howToChangeEmailURL: dependency.howToChangeEmailURL,
@@ -55,10 +61,6 @@ class NoHistoryComponent: Component<NoHistoryComponentDependency> {
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
             }
         )
-    }
-
-    @MainActor var view: NoHistoryView {
-        NoHistoryView(viewModel: viewModel)
     }
 
 }
