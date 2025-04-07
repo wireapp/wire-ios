@@ -60,21 +60,24 @@ private struct ParticipantsSectionViewModel {
 
     var sectionTitle: String? {
         typealias GroupDetails = L10n.Localizable.GroupDetails
-        
+
         switch (conversationRole, showSectionCount) {
         case (.member, true):
             return GroupDetails.ConversationMembersHeader.title.localizedUppercase + " (%d)"
                 .localized(args: participants.count)
+
         case (.member, false):
             return GroupDetails.ConversationMembersHeader.title.localizedUppercase
+
         case (.admin, true):
             return GroupDetails.ConversationAdminsHeader.title.localizedUppercase + " (%d)"
                 .localized(args: participants.count)
+
         case (.admin, false):
             return GroupDetails.ConversationAdminsHeader.title.localizedUppercase
         }
     }
-    
+
     var footerTitle: String {
         switch conversationRole {
         case .admin:
@@ -130,15 +133,6 @@ private struct ParticipantsSectionViewModel {
             : participants.map { participant in
                 .user(participant)
             }
-    }
-
-    private func formatHeader(_ title: String) -> String? {
-        var result = title.localizedUppercase
-        if showSectionCount {
-            result += " (%d)"
-                .localized(args: participants.count)
-        }
-        return result
     }
 
     static func computeRows(

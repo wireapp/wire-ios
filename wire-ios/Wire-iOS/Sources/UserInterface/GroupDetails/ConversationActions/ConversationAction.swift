@@ -39,12 +39,7 @@ extension ZMConversation {
     }
 
     var listActions: [Action] {
-        actions.filter {
-            if case .delete = $0 {
-                return false
-            }
-            return true
-        }
+        actions.filter { $0 != .delete }
     }
 
     var detailActions: [Action] {
