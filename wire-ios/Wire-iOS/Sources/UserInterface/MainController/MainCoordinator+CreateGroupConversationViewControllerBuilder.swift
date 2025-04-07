@@ -31,4 +31,14 @@ extension MainCoordinator: ConversationCreationControllerDelegate
             showConversation(conversation: conversation, message: nil)
         }
     }
+
+    func conversationCreationController(
+        _ controller: WireConversationChannelCreationFormViewController,
+        didCreateConversation conversation: ZMConversation
+    ) {
+        Task {
+            await showConversationList(conversationFilter: .none)
+            showConversation(conversation: conversation, message: nil)
+        }
+    }
 }
