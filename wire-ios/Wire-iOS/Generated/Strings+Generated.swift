@@ -1537,16 +1537,6 @@ internal enum L10n {
       /// Public
       internal static let `public` = L10n.tr("Localizable", "channel_access_level.public", fallback: "Public")
     }
-    internal enum ChannelDetails {
-      internal enum ConversationAdminsHeader {
-        /// Channel admins
-        internal static let title = L10n.tr("Localizable", "channel_details.conversation_admins_header.title", fallback: "Channel admins")
-      }
-      internal enum ConversationMembersHeader {
-        /// Channel members
-        internal static let title = L10n.tr("Localizable", "channel_details.conversation_members_header.title", fallback: "Channel members")
-      }
-    }
     internal enum Collections {
       internal enum ImageViewer {
         internal enum Copied {
@@ -3598,12 +3588,12 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "group_details.access_options_cell.title", fallback: "Channel access")
       }
       internal enum ConversationAdminsHeader {
-        /// Group admins
-        internal static let title = L10n.tr("Localizable", "group_details.conversation_admins_header.title", fallback: "Group admins")
+        /// Conversation admins
+        internal static let title = L10n.tr("Localizable", "group_details.conversation_admins_header.title", fallback: "Conversation admins")
       }
       internal enum ConversationMembersHeader {
-        /// Group members
-        internal static let title = L10n.tr("Localizable", "group_details.conversation_members_header.title", fallback: "Group members")
+        /// Conversation members
+        internal static let title = L10n.tr("Localizable", "group_details.conversation_members_header.title", fallback: "Conversation members")
       }
       internal enum ConversationVerificationStatus {
         /// Verified (End-to-end Identity)
@@ -4268,14 +4258,10 @@ internal enum L10n {
         internal static let clearContent = L10n.tr("Localizable", "meta.menu.clear_content", fallback: "Clear Content…")
         /// Notifications…
         internal static let configureNotifications = L10n.tr("Localizable", "meta.menu.configure_notifications", fallback: "Notifications…")
-        /// Delete Channel…
-        internal static let deleteChannel = L10n.tr("Localizable", "meta.menu.delete_channel", fallback: "Delete Channel…")
-        /// Delete Group…
-        internal static let deleteGroup = L10n.tr("Localizable", "meta.menu.delete_group", fallback: "Delete Group…")
-        /// Leave Channel…
-        internal static let leaveChannel = L10n.tr("Localizable", "meta.menu.leave_channel", fallback: "Leave Channel…")
-        /// Leave Group…
-        internal static let leaveGroup = L10n.tr("Localizable", "meta.menu.leave_group", fallback: "Leave Group…")
+        /// Delete Conversation…
+        internal static let delete = L10n.tr("Localizable", "meta.menu.delete", fallback: "Delete Conversation…")
+        /// Leave Conversation…
+        internal static let leave = L10n.tr("Localizable", "meta.menu.leave", fallback: "Leave Conversation…")
         /// Mark as Read
         internal static let markRead = L10n.tr("Localizable", "meta.menu.mark_read", fallback: "Mark as Read")
         /// Mark as Unread
@@ -4465,13 +4451,9 @@ internal enum L10n {
           internal static let footer = L10n.tr("Localizable", "participants.section.members.footer", fallback: "There are no members.")
         }
         internal enum Name {
-          /// Up to %1$d participants can join a channel.
-          internal static func channelFooter(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "participants.section.name.channel_footer", p1, fallback: "Up to %1$d participants can join a channel.")
-          }
-          /// Up to %1$d participants can join a group conversation.
-          internal static func groupFooter(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "participants.section.name.group_footer", p1, fallback: "Up to %1$d participants can join a group conversation.")
+          /// Up to %1$d participants can join a conversation.
+          internal static func footer(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "participants.section.name.footer", p1, fallback: "Up to %1$d participants can join a conversation.")
           }
         }
       }

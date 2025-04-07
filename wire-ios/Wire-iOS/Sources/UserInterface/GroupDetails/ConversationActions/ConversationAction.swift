@@ -22,11 +22,11 @@ import WireDataModel
 extension ZMConversation {
     enum Action: Equatable {
 
-        case delete(isChannel: Bool)
+        case delete
         case moveToFolder
         case removeFromFolder(folder: String)
         case clearContent
-        case leave(isChannel: Bool)
+        case leave
         case configureNotifications
         case silence(isSilenced: Bool)
         case archive(isArchived: Bool)
@@ -89,11 +89,11 @@ extension ZMConversation {
             return actions
         }
         if localParticipants.contains(selfUser) {
-            actions.append(.leave(isChannel: groupType == .channel))
+            actions.append(.leave)
         }
 
         if selfUser.canDeleteConversation(self) {
-            actions.append(.delete(isChannel: groupType == .channel))
+            actions.append(.delete)
         }
 
         return actions
@@ -157,8 +157,8 @@ extension ZMConversation.Action {
         typealias ProfileLocale = L10n.Localizable.Profile
 
         switch self {
-        case let .delete(isChannel):
-            return isChannel ? MetaMenuLocale.deleteChannel : MetaMenuLocale.deleteGroup
+        case .delete:
+            return MetaMenuLocale.delete
         case .moveToFolder:
             return MetaMenuLocale.moveToFolder
         case let .removeFromFolder(folder):
@@ -167,8 +167,8 @@ extension ZMConversation.Action {
             return ProfileLocale.removeDialogButtonRemove
         case .clearContent:
             return MetaMenuLocale.clearContent
-        case let .leave(isChannel):
-            return isChannel ? MetaMenuLocale.leaveChannel : MetaMenuLocale.leaveGroup
+        case .leave:
+            return MetaMenuLocale.leave
         case .markRead:
             return MetaMenuLocale.markRead
         case .markUnread:

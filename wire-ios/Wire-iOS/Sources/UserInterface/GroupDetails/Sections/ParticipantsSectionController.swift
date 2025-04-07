@@ -56,31 +56,25 @@ private struct ParticipantsSectionViewModel {
     let conversationRole: ConversationRole
     let userSession: UserSession
     let showSectionCount: Bool
-    let isChannel: Bool
     var sectionAccessibilityIdentifier = "label.groupdetails.participants"
 
-    private typealias GroupDetails = L10n.Localizable.GroupDetails
-    private typealias ChannelDetails = L10n.Localizable.ChannelDetails
-
-    private var adminsHeaderTitle: String? {
-        let format = isChannel ? ChannelDetails.ConversationAdminsHeader.title :
-            GroupDetails.ConversationAdminsHeader.title
-        return formatHeader(format)
-    }
-
-    var memberHeaderTitle: String? {
-        let format = isChannel ? ChannelDetails.ConversationMembersHeader.title :
-            GroupDetails.ConversationMembersHeader.title
-        return formatHeader(format)
-    }
-
     var sectionTitle: String? {
-        switch conversationRole {
-        case .member: memberHeaderTitle
-        case .admin: adminsHeaderTitle
+        typealias GroupDetails = L10n.Localizable.GroupDetails
+        
+        switch (conversationRole, showSectionCount) {
+        case (.member, true):
+            return GroupDetails.ConversationMembersHeader.title.localizedUppercase + " (%d)"
+                .localized(args: participants.count)
+        case (.member, false):
+            return GroupDetails.ConversationMembersHeader.title.localizedUppercase
+        case (.admin, true):
+            return GroupDetails.ConversationAdminsHeader.title.localizedUppercase + " (%d)"
+                .localized(args: participants.count)
+        case (.admin, false):
+            return GroupDetails.ConversationAdminsHeader.title.localizedUppercase
         }
     }
-
+    
     var footerTitle: String {
         switch conversationRole {
         case .admin:
@@ -119,14 +113,12 @@ private struct ParticipantsSectionViewModel {
         maxParticipants: Int,
         maxDisplayedParticipants: Int,
         showSectionCount: Bool = true,
-        isChannel: Bool,
         userSession: UserSession
     ) {
         self.participants = users.sortedAscendingPrependingNil(by: \.name)
         self.userStatuses = userStatuses
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
-        self.isChannel = isChannel
         self.userSession = userSession
         self.rows = clipSection
             ? ParticipantsSectionViewModel.computeRows(
@@ -225,7 +217,6 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             maxParticipants: maxParticipants,
             maxDisplayedParticipants: maxDisplayedParticipants,
             showSectionCount: showSectionCount,
-            isChannel: conversation.isChannel,
             userSession: userSession
         )
         self.conversation = conversation

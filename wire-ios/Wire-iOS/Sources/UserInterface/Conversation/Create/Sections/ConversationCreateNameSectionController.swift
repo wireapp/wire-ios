@@ -37,7 +37,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     private let selfUser: UserType
 
     private lazy var footerText: String = L10n.Localizable.Participants.Section.Name
-        .groupFooter(ZMConversation.maxParticipants)
+        .footer(ZMConversation.maxParticipants)
 
     init(
         selfUser: UserType,
