@@ -385,6 +385,8 @@ extension SettingsCellDescriptorFactory {
 
         let importBackupUseCase = sessionManager.importBackupUseCase!
         let createBackupUseCase = CreateBackupUseCase(
+            context: selfUser.managedObjectContext!.zm_sync,
+            userEntity: ZMUser.self,
             eventProcessorHandle: EventProcessorHandle(),
             fileArchiver: CreateBackupFileArchiver(),
             currentDateProvider: SystemDateProvider(),

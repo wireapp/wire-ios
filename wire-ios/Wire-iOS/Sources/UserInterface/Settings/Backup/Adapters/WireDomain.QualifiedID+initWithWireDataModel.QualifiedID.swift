@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
+import WireDataModel
+import WireDomainPkg
 
-public protocol CreateBackupUserEntityProtocol {
+extension WireDomainPkg.QualifiedID {
 
-    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult>
-
-    var qualifiedID: QualifiedID { get }
-    var name: String { get }
-    var handle: String { get }
-
-    init?(_ record: any NSFetchRequestResult)
-
+    init(_ qualifiedID: WireDataModel.QualifiedID) {
+        self.init(
+            uuid: qualifiedID.uuid,
+            domain: qualifiedID.domain
+        )
+    }
 }

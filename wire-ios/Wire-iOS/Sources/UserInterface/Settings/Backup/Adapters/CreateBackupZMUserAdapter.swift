@@ -16,16 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
+import WireDataModel
+import WireDomainPkg
 
-public protocol CreateBackupUserEntityProtocol {
+struct CreateBackupZMUserAdapter: CreateBackupUserEntityProtocol {
 
-    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult>
+    typealias QualifiedID = WireDomainPkg.QualifiedID
 
-    var qualifiedID: QualifiedID { get }
-    var name: String { get }
-    var handle: String { get }
+    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
+        ZMUser.fetchRequest()
+    }
 
-    init?(_ record: any NSFetchRequestResult)
+    let qualifiedID: QualifiedID
+    let name: String
+    let handle: String
+
+    init?(_ record: any NSFetchRequestResult) {
+        guard let user = record as? ZMUser, let qualifiedID = user.qualifiedID.map(QualifiedID.init) else { return nil }
+
+        self.qualifiedID = qualifiedID
+        name = user.name ?? ""
+        handle = user.handle ?? ""
+    }
 
 }

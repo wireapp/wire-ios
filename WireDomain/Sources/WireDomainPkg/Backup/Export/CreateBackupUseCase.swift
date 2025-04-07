@@ -17,15 +17,16 @@
 //
 
 public import CoreData
-public import WireAPI
 public import WireFoundation
 public import WireLogging
 
 @preconcurrency import WireBackup
 
-public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
+public struct CreateBackupUseCase<
+    UserAdapter: CreateBackupUserEntityProtocol
+>: CreateBackupUseCaseProtocol {
 
-    let context: NSManagedObjectContext
+    let context: @Sendable () -> NSManagedObjectContext
     let eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol
     let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
@@ -33,8 +34,8 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
-        context: NSManagedObjectContext,
-        // TODO: [WPB-14592] inject the persistent container or any CoreData context
+        context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext,
+        userAdapterType _: UserAdapter.Type = UserAdapter.self,
         eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol,
         fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding,
@@ -51,9 +52,10 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [logger, selfUserID, fileArchiver, currentDateProvider, eventProcessorHandle] in
+            let task = Task<Void, Never> { [context, currentDateProvider, eventProcessorHandle, fileArchiver, logger, selfUserID] in
                 do {
                     let logger = logger()
+                    let context = context()
 
                     continuation.yield(CreateBackupProgress.progress(0))
 
@@ -78,15 +80,8 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
                     await eventProcessorHandle.pauseProcessingEvents()
                     defer { eventProcessorHandle.continueProcessingEvents() }
 
-                    let fr = ZMUser.fetchRequest()
-                    let frc = NSFetchedResultsController(
-                        fetchRequest: <#T##NSFetchRequest<_>#>,
-                        managedObjectContext: <#T##NSManagedObjectContext#>,
-                        sectionNameKeyPath: <#T##String?#>,
-                        cacheName: <#T##String?#>
-                    )
                     // TODO: [WPB-14592] fetch from CoreData and call these methods:
-                    // backupExporter.add(user: <#T##BackupUser#>)
+                    try await Self.exportUsers(from: context, using: backupExporter)
                     // backupExporter.add(message: <#T##BackupMessage#>)
                     // backupExporter.add(conversation: <#T##BackupConversation#>)
 
@@ -109,4 +104,27 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
             }
         }
     }
+
+    private static func exportUsers(
+        from context: NSManagedObjectContext,
+        using backupExporter: MPBackupExporter
+    ) async throws {
+
+        let fetchRequest = UserAdapter.fetchRequest()
+        fetchRequest.fetchBatchSize = 50
+        let records = try context.fetch(fetchRequest)
+        for record in records {
+            guard let user = UserAdapter(record) else { continue }
+            autoreleasepool {
+                let backupUser = BackupUser(
+                    id: BackupQualifiedId.init(id: "", domain: ""),// (user.qualifiedID), // TODO: fix
+                    name: user.name,
+                    handle: user.handle
+                )
+                backupExporter.add(user: backupUser)
+            }
+        }
+
+    }
+
 }

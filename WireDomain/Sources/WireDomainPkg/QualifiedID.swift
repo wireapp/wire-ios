@@ -16,16 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
+public import Foundation
 
-public protocol CreateBackupUserEntityProtocol {
+/// Fully qualified identifier in a federated environment.
 
-    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult>
+public struct QualifiedID: Sendable {
 
-    var qualifiedID: QualifiedID { get }
-    var name: String { get }
-    var handle: String { get }
+    public var uuid: UUID
+    public var domain: String
 
-    init?(_ record: any NSFetchRequestResult)
+    public init(
+        uuid: UUID,
+        domain: String
+    ) {
+        self.uuid = uuid
+        self.domain = domain
+    }
 
 }
