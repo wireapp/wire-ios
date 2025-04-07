@@ -24,14 +24,31 @@ import WireAuthenticationAPI
 @MainActor
 package final class RootViewModel: ObservableObject, Router {
 
+    package typealias Factory =
+        OpenAppStoreUseCaseFactory &
+        RootFactory
+
+    // MARK: - View state
+
     @Published var path = NavigationPath()
-    @Published var modalDestination: RootView.ModalDestination? = .authFlow
+    @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
 
-    private var cancellable: AnyCancellable?
-    private var lastModalDestination: RootView.ModalDestination?
+    // MARK: - Dependencies
 
-    package init(bridge: WireAuthenticationBridge) {
+    package let factory: any Factory
+    private var cancellable: AnyCancellable?
+    private var lastModalDestination: RootViewSheet?
+
+    // MARK: - Life cycle
+
+    package init(
+        factory: any Factory,
+        bridge: WireAuthenticationBridge,
+        backendInfo: BackendInfo
+    ) {
+        self.factory = factory
+        self.modalDestination = .authFlow(backendInfo: backendInfo)
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:
@@ -42,6 +59,8 @@ package final class RootViewModel: ObservableObject, Router {
         }
     }
 
+    // MARK: - Actions
+
     package func popToRoot() {
         path.removeLast(path.count)
     }
@@ -50,7 +69,7 @@ package final class RootViewModel: ObservableObject, Router {
         path.append(destination)
     }
 
-    package func presentSheet(_ modalDestination: RootView.ModalDestination) {
+    package func presentSheet(_ modalDestination: RootViewSheet) {
         self.modalDestination = modalDestination
     }
 
@@ -62,6 +81,12 @@ package final class RootViewModel: ObservableObject, Router {
         lastModalDestination = modalDestination
         modalDestination = nil
     }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+    }
+
+    // MARK: - Private
 
     private func restoreSheet() {
         if let lastModalDestination, modalDestination == nil {

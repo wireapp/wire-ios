@@ -142,7 +142,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
             let selfUser = ZMUser.selfUser(in: syncMOC)
             let action = RemoveParticipantAction(user: user, conversation: conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(
+            let memberLeave = Payload.UpdateConversationMemberLeave(
                 userIDs: [user.remoteIdentifier!],
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .left
@@ -184,7 +184,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
             let selfUser = ZMUser.selfUser(in: syncMOC)
             let action = RemoveParticipantAction(user: service, conversation: conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(
+            let memberLeave = Payload.UpdateConversationMemberLeave(
                 userIDs: [service.remoteIdentifier!],
                 qualifiedUserIDs: [service.qualifiedID!],
                 reason: .left
@@ -236,7 +236,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             self.syncMOC.saveOrRollback()
 
             let action = RemoveParticipantAction(user: selfUser, conversation: self.conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(
+            let memberLeave = Payload.UpdateConversationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier!],
                 qualifiedUserIDs: [selfUser.qualifiedID!],
                 reason: .left
@@ -282,7 +282,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 }
             }
 
-            let memberLeave = Payload.UpdateConverationMemberLeave(
+            let memberLeave = Payload.UpdateConversationMemberLeave(
                 userIDs: [user.remoteIdentifier!],
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .left

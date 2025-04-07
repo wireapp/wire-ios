@@ -49,8 +49,10 @@ struct PreferredSizeModifier: ViewModifier {
     private func setSize(value: CGSize?) {
         if let value {
             DispatchQueue.main.async {
-                size.height = min(value.height, maxSize.height)
-                size.width = min(value.width, maxSize.width)
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    size.height = min(value.height, maxSize.height)
+                    size.width = min(value.width, maxSize.width)
+                }
             }
         }
     }

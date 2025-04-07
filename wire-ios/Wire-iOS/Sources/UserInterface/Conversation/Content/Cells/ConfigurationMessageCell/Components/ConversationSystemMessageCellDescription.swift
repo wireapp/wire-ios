@@ -167,7 +167,11 @@ enum ConversationSystemMessageCellDescription {
                user.isTeamMember,
                conversation.selfCanAddUsers,
                conversation.isOpenGroup {
-                cells.append(AnyConversationMessageCellDescription(GuestsAllowedCellDescription()))
+                cells.append(
+                    AnyConversationMessageCellDescription(
+                        GuestsAllowedCellDescription(isChannel: conversation.isChannel)
+                    )
+                )
             }
             if conversation.isOpenGroup {
                 let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()

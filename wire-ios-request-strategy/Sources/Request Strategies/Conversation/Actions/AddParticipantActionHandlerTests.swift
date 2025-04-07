@@ -197,7 +197,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
                 qualifiedID: user.qualifiedID,
                 conversationRole: ZMConversation.defaultMemberRoleName
             )
-            let memberJoined = Payload.UpdateConverationMemberJoin(
+            let memberJoined = Payload.UpdateConversationMemberJoin(
                 userIDs: [user.remoteIdentifier],
                 users: [member]
             )
@@ -288,7 +288,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
                 qualifiedID: user.qualifiedID,
                 conversationRole: ZMConversation.defaultMemberRoleName
             )
-            let memberJoined = Payload.UpdateConverationMemberJoin(
+            let memberJoined = Payload.UpdateConversationMemberJoin(
                 userIDs: [user.remoteIdentifier],
                 users: [member]
             )
