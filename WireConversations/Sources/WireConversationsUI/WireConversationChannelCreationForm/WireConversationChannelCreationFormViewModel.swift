@@ -167,6 +167,8 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     }
 }
 
+// TODO: [WPB-17005] When extracting these methods from WireUtilities, we should remove this duplicated code.
+
 // From WireUtilities String+Emoji.swift:19
 private extension CharacterSet {
     static let asciiPrintableSet =
