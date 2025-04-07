@@ -73,9 +73,6 @@ protocol ConversationMessageCell: UIView {
     /// The frame to highlight when the cell is selected.
     var selectionRect: CGRect { get }
 
-    /// Top inset for ephemeral timer relative to the cell content
-    var ephemeralTimerTopInset: CGFloat { get }
-
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
 
@@ -110,10 +107,6 @@ extension ConversationMessageCell {
 
     var selectionRect: CGRect {
         selectionView?.bounds ?? .zero
-    }
-
-    var ephemeralTimerTopInset: CGFloat {
-        8
     }
 
     var menuPresenter: ConversationMessageCellMenuPresenter? {
@@ -153,11 +146,6 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// now.
     var conversationCellModel: ConversationCellModel? { get }
 
-    /// The views of neighbouring cell descriptions which return `true` might be
-    /// arranged in a vertical stack view inside a single table view cell.
-    /// If `false` the resulting view will always end up in a single table view cell.
-    var canBeCombinedWithOtherCells: Bool { get }
-
     /// The top margin is used to configure the spacing between the current and the previous cell.
     var topMargin: CGFloat { get set }
 
@@ -166,9 +154,6 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     /// Whether the cell supports actions.
     var supportsActions: Bool { get }
-
-    /// Whether the cell should display an ephemeral timer in the margin given it's an ephemeral message
-    var showEphemeralTimer: Bool { get }
 
     /// Whether the cell contains content that can be highlighted.
     var containsHighlightableContent: Bool { get }
@@ -209,16 +194,22 @@ extension ConversationMessageCellDescription {
         nil
     }
 
-    var canBeCombinedWithOtherCells: Bool {
-        false
-    }
-
     var supportsActions: Bool {
         false
     }
 
     var isAccessibilityElement: Bool {
         false
+    }
+
+    var topMargin: CGFloat {
+        get { objc_getAssociatedObject(self, &topMarginKey) as? CGFloat ?? 2 }
+        set { objc_setAssociatedObject(self, &topMarginKey, newValue, .OBJC_ASSOCIATION_ASSIGN) }
+    }
+
+    var bottomMargin: CGFloat {
+        get { objc_getAssociatedObject(self, &bottomMarginKey) as? CGFloat ?? 2 }
+        set { objc_setAssociatedObject(self, &bottomMarginKey, newValue, .OBJC_ASSOCIATION_ASSIGN) }
     }
 
     func willDisplayCell() {
@@ -267,6 +258,9 @@ extension ConversationMessageCellDescription {
 
 }
 
+private nonisolated(unsafe) var topMarginKey = 0
+private nonisolated(unsafe) var bottomMarginKey = 0
+
 extension ConversationMessageCellDescription where View.Configuration: Equatable {
 
     /// Default implementation of isConfigurationEqual
@@ -296,10 +290,8 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _delegate: AnyMutableProperty<ConversationMessageCellDelegate?>
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationMessageActionController?>
-    private let _canBeCombinedWithOtherCells: () -> Bool
     private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _supportsActions: () -> Bool
-    private let _showEphemeralTimer: AnyConstantProperty<Bool>
     private let _isAccessibilityElement: AnyConstantProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
@@ -341,10 +333,8 @@ final class AnyConversationMessageCellDescription: NSObject {
         self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
         self._message = AnyMutableProperty(description, keyPath: \.message)
         self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
-        self._canBeCombinedWithOtherCells = { description.canBeCombinedWithOtherCells }
         self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         self._supportsActions = { description.supportsActions }
-        self._showEphemeralTimer = AnyConstantProperty(description, keyPath: \.showEphemeralTimer)
         self._isAccessibilityElement = AnyConstantProperty(description, keyPath: \.isAccessibilityElement)
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
@@ -377,20 +367,12 @@ final class AnyConversationMessageCellDescription: NSObject {
         set { _actionController.setter(newValue) }
     }
 
-    var canBeCombinedWithOtherCells: Bool {
-        _canBeCombinedWithOtherCells()
-    }
-
     var containsHighlightableContent: Bool {
         _containsHighlightableContent.getter()
     }
 
     var supportsActions: Bool {
         _supportsActions()
-    }
-
-    var showEphemeralTimer: Bool {
-        _showEphemeralTimer.getter()
     }
 
     var cellIsAccessibilityElement: Bool {

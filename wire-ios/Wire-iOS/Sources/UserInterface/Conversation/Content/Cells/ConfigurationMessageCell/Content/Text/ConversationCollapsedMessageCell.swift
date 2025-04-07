@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAccountImageUI
 import WireDesign
 import WireSyncEngine
 
@@ -48,6 +49,22 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.isUserInteractionEnabled = true
         view.setContentHuggingPriority(.required, for: .horizontal)
         view.setContentCompressionResistancePriority(.required, for: .horizontal)
+        view.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 24).isActive = true
+        return view
+    }()
+
+    private lazy var availabilityIndicatorView = {
+        let view = AvailabilityIndicatorView(availability: .away)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.widthAnchor.constraint(equalToConstant: 9).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 9).isActive = true
+
+        let design = AccountImageViewDesign().availabilityIndicator
+        view.availableColor = design.availableColor
+        view.awayColor = design.awayColor
+        view.busyColor = design.busyColor
+        view.backgroundViewColor = design.backgroundViewColor
 
         return view
     }()
@@ -100,6 +117,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     private lazy var wholeViewTapButton = UIButton()
 
+    private var userObservation: NSObjectProtocol?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubviews()
@@ -113,6 +132,11 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         avatar.user = user
+        availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
+
+        if let session = ZMUserSession.shared(), let user {
+            userObservation = UserChangeInfo.add(observer: self, for: user, in: session)
+        }
 
         let message = object.message
         if message.isText {
@@ -160,17 +184,33 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         addSubview(wholeViewTapButton)
         wholeViewTapButton.pin(to: self)
 
+        avatar.addSubview(availabilityIndicatorView)
+        availabilityIndicatorView.trailingAnchor.constraint(
+            equalTo: avatar.trailingAnchor,
+            constant: 3
+        ).isActive = true
+        availabilityIndicatorView.bottomAnchor.constraint(
+            equalTo: avatar.bottomAnchor,
+            constant: 3
+        ).isActive = true
+
+        let spacingView = UIView()
+        spacingView.widthAnchor.constraint(equalToConstant: 13).isActive = true
+
         let stack = UIStackView.horizontal(
             views: [
-                avatar.wrapInView(leadingInset: margins.left - 36, bottomInset: -7),
+                spacingView,
+                avatar,
                 messageTextView,
                 [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
                     .horizontalStack(spacing: 8)
                     .wrapInView(bottomInset: -1)
             ],
-            spacing: 10,
+            spacing: 7,
             alignment: .center
         )
+        stack.setCustomSpacing(12, after: avatar)
+        stack.setCustomSpacing(10, after: messageTextView)
 
         addSubview(stack)
 
@@ -212,11 +252,6 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-
-    var topMargin: CGFloat = 0
-    var bottomMargin: CGFloat = 0
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 
@@ -241,4 +276,13 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
         )
     }
 
+}
+
+extension ConversationCollapsedMessageCell: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.availabilityChanged {
+            availabilityIndicatorView.availability = changeInfo.user.availability.mapToAccountImageAvailability()
+        }
+    }
 }

@@ -42,6 +42,10 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var conversationType: ZMConversationType = .group
 
+    var groupType: ConversationGroupType?
+
+    var isChannel: Bool = false
+
     var teamRemoteIdentifier: UUID?
 
     var mockLocalParticipantsContain: Bool = false
@@ -80,6 +84,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var domain: String?
 
     var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+
+    var privateChannelPermission: WireDataModel.PrivateChannelPermission = .unset
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
@@ -97,7 +103,6 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
     var mlsGroupID: MLSGroupID?
 
     var mlsVerificationStatus: MLSVerificationStatus?
-
 }
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {

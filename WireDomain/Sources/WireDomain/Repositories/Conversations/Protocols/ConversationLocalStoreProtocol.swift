@@ -395,4 +395,13 @@ public protocol ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
 
+    /// Stores the private conversation (aka channel) permission locally.
+    /// - Parameters
+    ///     - permission: The new permission value (`admins` or `everyone`)
+
+    func storeConversation(
+        permission: WireDomain.Conversation.ChannelPermission,
+        conversation: ZMConversation
+    ) async
+
 }

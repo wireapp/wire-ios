@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-typealias GroupConversationCellConversation = Conversation & HasQualifiedID & StableRandomParticipantsProvider
+typealias GroupConversationCellConversation
+    = Conversation & HasQualifiedID & StableRandomParticipantsProvider
 
 final class GroupConversationCell: UICollectionViewCell {
 

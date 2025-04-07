@@ -155,8 +155,36 @@ extension WireAPI.Conversation {
             accessRoles: accessRoles?.map(\.rawValue),
             legacyAccessRole: legacyAccessRole?.toDomainModel(),
             lastEvent: lastEvent,
-            lastEventTime: lastEventTime
+            lastEventTime: lastEventTime,
+            groupType: groupType?.toDomainModel(),
+            addPermission: addPermission?.toDomainModel()
         )
+    }
+
+}
+
+extension WireAPI.ConversationGroupType {
+
+    func toDomainModel() -> WireDomain.Conversation.GroupType {
+        switch self {
+        case .group:
+            .group
+        case .channel:
+            .channel
+        }
+    }
+
+}
+
+extension WireAPI.ChannelPermission {
+
+    func toDomainModel() -> WireDomain.Conversation.ChannelPermission {
+        switch self {
+        case .admins:
+            .admins
+        case .everyone:
+            .everyone
+        }
     }
 
 }

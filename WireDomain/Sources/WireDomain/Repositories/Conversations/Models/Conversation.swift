@@ -45,6 +45,16 @@ public struct Conversation: Equatable {
         }
     }
 
+    enum GroupType {
+        case group
+        case channel
+    }
+
+    public enum ChannelPermission: String {
+        case admins
+        case everyone
+    }
+
     let id: UUID?
     let qualifiedID: QualifiedID?
     let teamID: UUID?
@@ -64,5 +74,7 @@ public struct Conversation: Equatable {
     let legacyAccessRole: ConversationAccessRole?
     let lastEvent: String?
     let lastEventTime: Date?
+    let groupType: GroupType?
+    let addPermission: ChannelPermission?
 
 }

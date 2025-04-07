@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
+import WireConversationsAPI
+import WireConversationsUIBindings
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
@@ -542,6 +545,29 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let userSession = ZMUserSession.shared() else { return }
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
+    }
+
+    func presentAccessOptions(animated: Bool) {
+        guard let conversation = conversation as? ZMConversation,
+              let session = ZMUserSession.shared() else { return }
+
+        let permission: ChannelAccessLevelPermission? = switch conversation.privateChannelPermission {
+        case .unset: .none
+        case .admins: .admins
+        case .everyone: .everyone
+        }
+
+        let accessView = ChannelViewFactory.makeChannelAccessView(
+            permission: permission,
+            accentColor: session.selfUser.accentColor.color,
+            repository: ChannelAccessRepository(
+                conversationID: conversation.remoteIdentifier.uuidString,
+                conversationDomain: conversation.domain ?? "",
+                session: session
+            )
+        )
+
+        navigationController?.pushViewController(accessView, animated: animated)
     }
 }
 

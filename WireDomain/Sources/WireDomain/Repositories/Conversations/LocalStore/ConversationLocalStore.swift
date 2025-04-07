@@ -224,6 +224,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func storeConversation(
+        permission: Conversation.ChannelPermission,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.privateChannelPermission = PrivateChannelPermission(permission)
+        }
+    }
+
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),
@@ -910,6 +919,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.remoteIdentifier = id
             localConversation.isPendingMetadataRefresh = false
             localConversation.isPendingInitialFetch = false
+            localConversation.groupType = conversation.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            } ?? .none
+
+            localConversation.privateChannelPermission = conversation
+                .addPermission.map { PrivateChannelPermission($0) } ?? .unset
 
             commonUpdate(
                 from: conversation,
@@ -1120,4 +1140,18 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+}
+
+// MARK: - Private helpers
+
+private extension PrivateChannelPermission {
+
+    init(_ value: Conversation.ChannelPermission) {
+        switch value {
+        case .admins:
+            self = .admins
+        case .everyone:
+            self = .everyone
+        }
+    }
 }

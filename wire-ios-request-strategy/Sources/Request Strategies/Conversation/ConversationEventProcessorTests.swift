@@ -84,7 +84,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
             let payload = ConversationEventProcessor.MemberJoinPayload(
                 id: groupConversation.remoteIdentifier,
-                data: Payload.UpdateConverationMemberJoin(
+                data: Payload.UpdateConversationMemberJoin(
                     userIDs: [],
                     users: [selfMember]
                 ),
@@ -198,7 +198,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             groupConversation.messageProtocol = messageProtocol
 
             // Create the event
-            let payload = Payload.UpdateConverationMemberLeave(
+            let payload = Payload.UpdateConversationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
                 qualifiedUserIDs: [selfUser.qualifiedID!],
                 reason: .userDeleted
@@ -247,7 +247,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             groupConversation.messageProtocol = .mls
 
             // create the event
-            let payload = Payload.UpdateConverationMemberLeave(
+            let payload = Payload.UpdateConversationMemberLeave(
                 userIDs: [user.remoteIdentifier],
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .userDeleted

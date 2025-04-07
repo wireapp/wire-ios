@@ -526,10 +526,10 @@ final class ConversationContentViewController: UIViewController {
         var indexPathsToReload = [IndexPath]()
         for indexPath in tableView.indexPathsForVisibleRows ?? [] {
             let section = dataSource.currentSections[indexPath.section]
-            for cellDescription in section.elements {
-                if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
-                    indexPathsToReload += [indexPath]
-                }
+            let cellDescription = section.elements[indexPath.row]
+            if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
+                indexPathsToReload += [indexPath]
+                continue
             }
         }
         tableView.reloadRows(at: indexPathsToReload, with: .fade)
@@ -605,6 +605,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
+
         let sections = dataSource.currentSections
         guard
             sections.indices.contains(indexPath.section),
