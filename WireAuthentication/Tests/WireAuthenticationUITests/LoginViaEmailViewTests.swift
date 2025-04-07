@@ -18,19 +18,15 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireAuthenticationAPISupport
 import WireTestingPackage
 import XCTest
 
 @testable import WireAuthenticationUI
 
-class LoginViaEmailViewTests: XCTestCase {
+final class LoginViaEmailViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private let backendMetadata = BackendMetadata(
-        apiVersion: .v8,
-        domain: "wire.com",
-        isFederationEnabled: true
-    )
 
     override func setUp() {
         snapshotHelper = .init()
@@ -45,14 +41,16 @@ class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailView(
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: MockDependencies()._backendConfig
+            ),
             canCreateAccount: true,
-            didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
-        )
+            didDetectDomainConflict: false
+        ))
+        .inNavigationStack()
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -67,14 +65,16 @@ class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailView(
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: MockDependencies()._backendConfig
+            ),
             canCreateAccount: true,
-            didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
-        )
+            didDetectDomainConflict: false
+        ))
+        .inNavigationStack()
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
@@ -90,14 +90,16 @@ class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailView(
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .anta,
+                backendConfig: MockDependencies()._backendConfig
+            ),
             canCreateAccount: false,
-            didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
-        )
+            didDetectDomainConflict: false
+        ))
+        .inNavigationStack()
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -112,14 +114,94 @@ class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MockDependencies().loginViaEmailView(
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .anta,
+                backendConfig: MockDependencies()._backendConfig
+            ),
             canCreateAccount: false,
-            didDetectDomainConflict: false,
-            environmentType: MockDependencies().environmentType,
-            backendConfig: MockDependencies()._backendConfig,
-            backendMetadata: backendMetadata
+            didDetectDomainConflict: false
+        ))
+        .frame(width: screenBounds.width, height: screenBounds.height)
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+    @MainActor
+    func testColorSchemeVariantsWithProxySettings() {
+        let screenBounds = UIScreen.main.bounds
+
+        let backendConfig = BackendConfig(
+            title: "<backen name>",
+            endpoints: Endpoints(
+                backendURL: URL(string: "https://example.com")!,
+                backendWSURL: URL(string: "https://example.com")!,
+                blackListURL: URL(string: "https://example.com")!,
+                teamsURL: URL(string: "https://example.com")!,
+                accountsURL: URL(string: "https://example.com")!,
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
+            ),
+            proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
+            pinnedKeys: nil
         )
+
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+            email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: backendConfig
+            ),
+            canCreateAccount: false,
+            didDetectDomainConflict: false
+        ))
+        .inNavigationStack()
+        .frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariantsWithProxySettings() {
+        let screenBounds = UIScreen.main.bounds
+
+        let backendConfig = BackendConfig(
+            title: "<backend name>",
+            endpoints: Endpoints(
+                backendURL: URL(string: "https://example.com")!,
+                backendWSURL: URL(string: "https://example.com")!,
+                blackListURL: URL(string: "https://example.com")!,
+                teamsURL: URL(string: "https://example.com")!,
+                accountsURL: URL(string: "https://example.com")!,
+                websiteURL: URL(string: "https://example.com")!,
+                countlyURL: URL(string: "https://example.com")!
+            ),
+            proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
+            pinnedKeys: nil
+        )
+        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+            email: "foo@bar.com",
+            backendInfo: BackendInfo(
+                environmentType: .production,
+                backendConfig: backendConfig
+            ),
+            canCreateAccount: false,
+            didDetectDomainConflict: false
+
+        ))
+        .inNavigationStack()
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireAPI",
-    platforms: [.iOS(.v16), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         .library(name: "WireAPI", targets: ["WireAPI"]),
         .library(name: "WireAPISupport", targets: ["WireAPISupport"])
