@@ -75,6 +75,8 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Favorites.title
         case .groups:
             return FilterMenuLocale.Groups.title
+        case .channels:
+            return FilterMenuLocale.Channels.title
         case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
         case let .folder(_, name):
@@ -441,6 +443,8 @@ final class ConversationListViewController: UIViewController {
             L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
         case .groups:
             L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+        case .channels:
+            L10n.Localizable.ConversationList.SearchBar.channelsPlaceholder
         case .oneOnOne:
             L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
         case let .folder(_, name):
@@ -516,11 +520,11 @@ final class ConversationListViewController: UIViewController {
 
         let filter = listContentController.listViewModel.selectedFilter
         navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
-        if #available(iOS 16.4, *) {
-            // This should actually be done as a result of an empty list of conversations, not directly when selecting a
-            // filter.
-            navigationItem.searchController?.searchBar.isEnabled = !isEmptyPlaceholderVisible
-        }
+
+        // This should actually be done as a result of an empty list of conversations, not directly when selecting a
+        // filter.
+        navigationItem.searchController?.searchBar.isEnabled = !isEmptyPlaceholderVisible
+
     }
 
     @objc

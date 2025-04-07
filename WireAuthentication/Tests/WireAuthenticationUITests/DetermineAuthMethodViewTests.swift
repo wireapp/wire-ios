@@ -23,7 +23,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class DetermineAuthMethodViewTests: XCTestCase {
+final class DetermineAuthMethodViewTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
@@ -44,12 +44,13 @@ class DetermineAuthMethodViewTests: XCTestCase {
 
         let screenBounds = UIScreen.main.bounds
         for (index, emailOrSSOCode) in variants.enumerated() {
-            let view = makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: emailOrSSOCode
-            )
-            .frame(width: screenBounds.width, height: screenBounds.height)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
+            let factory = FakeDetermineAuthMethodFactory(emailOrSSOCode: emailOrSSOCode)
+
+            let view = DetermineAuthMethodView(factory: factory)
+                .inNavigationStack()
+                .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+                .frame(width: screenBounds.width, height: screenBounds.height)
             snapshotHelper
                 .withUserInterfaceStyle(.light)
                 .verify(matching: view, named: "variant\(index)-light")
@@ -63,7 +64,8 @@ class DetermineAuthMethodViewTests: XCTestCase {
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = makeDetermineAuthMethodViewPreview()
+        let view = DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory())
+            .inNavigationStack()
             .frame(width: screenBounds.width, height: screenBounds.height)
             .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
@@ -81,12 +83,18 @@ class DetermineAuthMethodViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = NavigationStack {
-            makeDetermineAuthMethodViewPreview(existsAnotherAccount: true)
+            DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory(existsAnotherAccount: true))
         }
         .frame(width: screenBounds.width, height: screenBounds.height)
         .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         .tint(.primary)
 
         snapshotHelper.verify(matching: view)
+    }
+}
+
+extension View {
+    func inNavigationStack() -> some View {
+        NavigationStack(root: { self })
     }
 }

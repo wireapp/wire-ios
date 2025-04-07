@@ -119,7 +119,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
     // MARK: - Interface Properties
 
     private func updateSubtitle() {
-        guard let sentDate = message.formattedReceivedDate() else {
+        guard let sentDate = message.formattedReceivedDateTime() else {
             return
         }
 

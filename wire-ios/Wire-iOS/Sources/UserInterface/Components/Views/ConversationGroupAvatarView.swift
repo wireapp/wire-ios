@@ -21,7 +21,7 @@ import WireConversationsUIBindings
 import WireSyncEngine
 
 typealias ConversationGroupAvatarViewConversation
-    = ConversationLike & HasConversationGroupType & HasQualifiedID & StableRandomParticipantsProvider
+    = ConversationLike & HasQualifiedID & StableRandomParticipantsProvider
 
 final class ConversationGroupAvatarView: UIView {
     struct Context {
@@ -37,7 +37,7 @@ final class ConversationGroupAvatarView: UIView {
             return
         }
 
-        let iconView = if conversation.groupType == .channel {
+        let iconView = if conversation.isChannel {
             WireConversationChannelIconFactory().createUIKit(conversationID: id)
         } else {
             WireConversationGroupIconFactory().createUIKit(conversationID: id)

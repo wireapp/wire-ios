@@ -179,7 +179,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         conversationID: String,
         conversationDomain: String,
         permission: ChannelPermission
-    ) async throws {
+    ) async throws -> ChannelPermission {
         throw ConversationsAPIError.unsupportedEndpointForAPIVersion
     }
 

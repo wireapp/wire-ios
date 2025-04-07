@@ -42,7 +42,7 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if DeveloperFlag.wireChannels.isOn {
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel() {
             [.channel, .group]
         } else {
             [.group]
@@ -68,12 +68,18 @@ final class StartUIViewController: UIViewController {
         return vc
     }()
 
+    private func canCreateChannel() -> Bool {
+        DeveloperFlag.wireChannels.isOn
+            && userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole)
+    }
+
     let searchResultsViewController: SearchResultsViewController
 
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
+    let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
 
     let isFederationEnabled: Bool
 
@@ -105,6 +111,7 @@ final class StartUIViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
+        channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
@@ -118,6 +125,7 @@ final class StartUIViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
+        self.channelConversationFormFactory = channelConversationFormFactory
         self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -293,6 +301,13 @@ final class StartUIViewController: UIViewController {
     private func navigateToConversationCreation() {
         let conversationCreationController = createGroupConversationUIBuilder.build()
         navigationController?.pushViewController(conversationCreationController, animated: true)
+    }
+
+    private func navigateToChannelCreation() {
+        let vc = channelConversationFormFactory.create(onNext: { _ in
+            // TODO: [WPB-16762] - Display participants selection screen
+        })
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

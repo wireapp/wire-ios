@@ -1246,7 +1246,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             groupConversation.messageProtocol = .mls
 
             // Create the event
-            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+            let memberLeaveEvent = Payload.UpdateConversationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
                 qualifiedUserIDs: [selfUser.qualifiedID!],
                 reason: .userDeleted
@@ -1289,7 +1289,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             groupConversation.messageProtocol = .mls
 
             // create the event
-            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+            let memberLeaveEvent = Payload.UpdateConversationMemberLeave(
                 userIDs: [user.remoteIdentifier],
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .userDeleted
@@ -1329,7 +1329,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             groupConversation.messageProtocol = .proteus
 
             // create the event
-            let memberLeaveEvent = Payload.UpdateConverationMemberLeave(
+            let memberLeaveEvent = Payload.UpdateConversationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
                 qualifiedUserIDs: [selfUser.qualifiedID!],
                 reason: .userDeleted
@@ -1361,7 +1361,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testProcessingConverationMemberLeave_SelfUserTriggersAccountDeletedNotification() async {
         // Given
-        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConversationMemberLeaveTests(
             selfUserLeaves: true
         )
         let expectation = XCTNSNotificationExpectation(
@@ -1394,7 +1394,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() async {
         // Given
-        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
+        let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConversationMemberLeaveTests(
             selfUserLeaves: false
         )
 
@@ -1436,16 +1436,16 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // Then
         await syncMOC.perform {
-            XCTAssertEqual(self.groupConversation.channelPermission, "admins")
+            XCTAssertEqual(self.groupConversation.privateChannelPermission, .admins)
         }
     }
 
-    private func setupForProcessingConverationMemberLeaveTests(
+    private func setupForProcessingConversationMemberLeaveTests(
         selfUserLeaves: Bool
     ) -> (
         conversation: ZMConversation,
         users: [ZMUser],
-        conversationEvent: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
+        conversationEvent: Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>,
         originalEvent: ZMUpdateEvent
     ) {
         syncMOC.performAndWait {
@@ -1469,7 +1469,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             conversation.conversationType = .group
             conversation.domain = owningDomain
 
-            let memberLeavePayload = Payload.UpdateConverationMemberLeave(
+            let memberLeavePayload = Payload.UpdateConversationMemberLeave(
                 userIDs: .none,
                 qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap { $0 },
                 reason: .userDeleted

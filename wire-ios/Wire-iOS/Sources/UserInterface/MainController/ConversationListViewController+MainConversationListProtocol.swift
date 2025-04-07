@@ -39,6 +39,7 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         switch mainConversationFilter {
         case .favorites: self = .favorites
         case .groups: self = .groups
+        case .channels: self = .channels
         case .oneOnOne: self = .oneOnOne
         case let .folder(id, name): self = .folder(id: id, name: name)
         }
@@ -48,6 +49,7 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         switch self {
         case .favorites: .favorites
         case .groups: .groups
+        case .channels: .channels
         case .oneOnOne: .oneOnOne
         case let .folder(id, name): .folder(id: id, name: name)
         }

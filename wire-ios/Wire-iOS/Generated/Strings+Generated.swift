@@ -669,6 +669,14 @@ internal enum L10n {
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.selected.description", fallback: "All conversations, selected")
           }
         }
+        internal enum Channels {
+          /// Show all channel conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.channels.description", fallback: "Show all channel conversations")
+          internal enum Selected {
+            /// Channels, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.channels.selected.description", fallback: "Channels, selected")
+          }
+        }
         internal enum Favorites {
           /// Show all favorite conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.description", fallback: "Show all favorite conversations")
@@ -1535,6 +1543,12 @@ internal enum L10n {
       /// AE/AF Lock
       internal static let aeafLock = L10n.tr("Localizable", "camera_controls.aeaf_lock", fallback: "AE/AF Lock")
     }
+    internal enum ChannelAccessLevel {
+      /// Private
+      internal static let `private` = L10n.tr("Localizable", "channel_access_level.private", fallback: "Private")
+      /// Public
+      internal static let `public` = L10n.tr("Localizable", "channel_access_level.public", fallback: "Public")
+    }
     internal enum Collections {
       internal enum ImageViewer {
         internal enum Copied {
@@ -2043,6 +2057,32 @@ internal enum L10n {
           }
           /// You can now decrypt messages from yourself. To recover lost messages, you need to resend them.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt_resolved.self", fallback: "You can now decrypt messages from yourself. To recover lost messages, you need to resend them.")
+        }
+        internal enum Channel {
+          internal enum Guest {
+            /// %@ joined the channel
+            internal static func joined(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.guest.joined", String(describing: p1), fallback: "%@ joined the channel")
+            }
+            /// You joined the channel
+            internal static let youJoined = L10n.tr("Localizable", "content.system.channel.guest.you_joined", fallback: "You joined the channel")
+          }
+          internal enum Invite {
+            /// Copy Channel link
+            internal static let button = L10n.tr("Localizable", "content.system.channel.invite.button", fallback: "Copy Channel link")
+            /// This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:
+            internal static let title = L10n.tr("Localizable", "content.system.channel.invite.title", fallback: "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:")
+          }
+          internal enum WithName {
+            /// %@ started the channel
+            internal static func title(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.with_name.title", String(describing: p1), fallback: "%@ started the channel")
+            }
+            /// %@ started the channel
+            internal static func titleYou(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.channel.with_name.title-you", String(describing: p1), fallback: "%@ started the channel")
+            }
+          }
         }
         internal enum Conversation {
           internal enum Guest {
@@ -2787,6 +2827,12 @@ internal enum L10n {
           /// Connect with others or create a new group to start collaborating!
           internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.subheadline", fallback: "Connect with others or create a new group to start collaborating!")
         }
+        internal enum Channels {
+          /// Learn more about channels
+          internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.channels.link", fallback: "Learn more about channels")
+          /// Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.channels.subheadline", fallback: "Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.")
+        }
         internal enum Favorite {
           /// How to label conversations as favorites
           internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.link", fallback: "How to label conversations as favorites")
@@ -2830,6 +2876,10 @@ internal enum L10n {
         internal enum AllConversations {
           /// All Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.all_conversations.title", fallback: "All Conversations")
+        }
+        internal enum Channels {
+          /// Channels
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.channels.title", fallback: "Channels")
         }
         internal enum Favorites {
           /// Favorites
@@ -2881,6 +2931,8 @@ internal enum L10n {
         }
       }
       internal enum SearchBar {
+        /// Search channels
+        internal static let channelsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.channelsPlaceholder", fallback: "Search channels")
         /// Search favourites
         internal static let favoritesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.favoritesPlaceholder", fallback: "Search favourites")
         /// Search %@
@@ -3277,6 +3329,8 @@ internal enum L10n {
         internal static let networkError = L10n.tr("Localizable", "error.user.network_error", fallback: "There seems to be a problem with your network. Please try again later.")
         /// Something went wrong. Please try again.
         internal static let registrationUnknownError = L10n.tr("Localizable", "error.user.registration_unknown_error", fallback: "Something went wrong. Please try again.")
+        /// Too many requests, please try again later.
+        internal static let tooManyRequests = L10n.tr("Localizable", "error.user.too_many_requests", fallback: "Too many requests, please try again later.")
         /// Something went wrong, please try again
         internal static let unkownError = L10n.tr("Localizable", "error.user.unkown_error", fallback: "Something went wrong, please try again")
         /// Please enter a valid verification code.
@@ -3545,6 +3599,10 @@ internal enum L10n {
       }
     }
     internal enum GroupDetails {
+      internal enum AccessOptionsCell {
+        /// Channel access
+        internal static let title = L10n.tr("Localizable", "group_details.access_options_cell.title", fallback: "Channel access")
+      }
       internal enum ConversationAdminsHeader {
         /// Group admins
         internal static let title = L10n.tr("Localizable", "group_details.conversation_admins_header.title", fallback: "Group admins")
