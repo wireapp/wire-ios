@@ -31,45 +31,57 @@ protocol PullEventsDependency: Dependency {
     var sharedUserDefaults: UserDefaults { get }
 }
 
-protocol PullEventsServiceProvider {
-    var userLocalStore: any UserLocalStoreProtocol { get }
-
-    func pullEventsService(
-        selfUserID: UUID,
-        selfClientID: String
-    ) async -> any PullEventsServiceProtocol
+protocol PullEventsStepFactory {
+    func pullEvents() async throws
 }
 
 /// Provides sync objects.
-final class PullEventsComponent: Component<PullEventsDependency>, PullEventsServiceProvider {
+final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepFactory {
 
-    func pullEventsService(
-        selfUserID: UUID,
-        selfClientID: String
-    ) async -> any PullEventsServiceProtocol {
-
-        let pullPendingEventsSync = await pullEventsSync(
-            selfUserID: selfUserID,
+    func pullEvents() async throws {
+        let selfUser = await userLocalStore.selfUserInfo()
+        
+        guard let selfClientID = selfUser.clientId else {
+            return
+        }
+        
+        let selfUserID = selfUser.id
+        
+        let updateEventsAPI = await updateEventsAPI(
             selfClientID: selfClientID
         )
 
-        return PullEventsService(
-            userClientsLocalStore: userClientsLocalStore,
-            updateEventsLocalStore: updateEventsLocalStore,
-            pendingEventsSync: pullPendingEventsSync,
-            generateNotificationProvider: generateNotificationComponent
+        let updateEventDecryptor = updateEventDecryptor(
+            selfUserID: selfUserID
+        )
+
+        let pendingEventsSync = PullPendingUpdateEventsSync(
+            selfClientID: selfClientID,
+            api: updateEventsAPI,
+            store: updateEventsLocalStore,
+            decryptor: updateEventDecryptor
+        )
+        
+        let pullEventsUseCase = PullEventsUseCase(
+            pendingEventsSync: pendingEventsSync
+        )
+        
+        let eventsStream = try await pullEventsUseCase.invoke()
+        
+        try await generateNotificationStep.generateNotification(
+            eventsStream: eventsStream
         )
     }
 
     // MARK: - Children
 
-    var generateNotificationComponent: GenerateNotificationComponent {
-        GenerateNotificationComponent(parent: self)
+    var generateNotificationStep: any GenerateNotificationStepFactory {
+        GenerateNotificationStep(parent: self)
     }
 
 }
 
-extension PullEventsComponent {
+extension PullEventsStep {
     public var conversationLocalStore: any ConversationLocalStoreProtocol {
         ConversationLocalStore(
             context: dependency.coreData.syncContext,
@@ -88,26 +100,6 @@ extension PullEventsComponent {
         UserLocalStore(
             context: dependency.coreData.syncContext,
             messageLocalStore: messageLocalStore
-        )
-    }
-
-    private func pullEventsSync(
-        selfUserID: UUID,
-        selfClientID: String
-    ) async -> any PullPendingUpdateEventsSyncProtocol {
-        let updateEventsAPI = await updateEventsAPI(
-            selfClientID: selfClientID
-        )
-
-        let updateEventDecryptor = updateEventDecryptor(
-            selfUserID: selfUserID
-        )
-
-        return PullPendingUpdateEventsSync(
-            selfClientID: selfClientID,
-            api: updateEventsAPI,
-            store: updateEventsLocalStore,
-            decryptor: updateEventDecryptor
         )
     }
 
@@ -215,7 +207,7 @@ extension PullEventsComponent {
     }
 }
 
-extension PullEventsComponent {
+extension PullEventsStep {
     func updateEventsAPI(
         selfClientID: String
     ) async -> any UpdateEventsAPI {

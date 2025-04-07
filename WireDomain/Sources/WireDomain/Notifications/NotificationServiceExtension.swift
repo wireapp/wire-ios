@@ -57,33 +57,33 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 
             do {
 
-                let userInfo = request.content.userInfo
-                let data = try JSONSerialization.data(
-                    withJSONObject: userInfo
-                )
-                let notificationPayload = try JSONDecoder().decode(
-                    NotificationPayload.self,
-                    from: data
-                )
-
-                let userID = notificationPayload.userID
-
-                let rootComponent = try setupRootComponent(
-                    userID: userID,
-                    notificationHandler: contentHandler
-                )
-
-                let verifyUserSession = rootComponent.verifyUserSession
-                let startSyncingEvents: () async throws -> Void = {
-                    try await verifyUserSession.startSyncingEvents(
-                        eventID: notificationPayload.eventID
-                    )
-                }
-
-                try await verifyUserSession.verify(
-                    userID: userID,
-                    then: startSyncingEvents
-                )
+//                let userInfo = request.content.userInfo
+//                let data = try JSONSerialization.data(
+//                    withJSONObject: userInfo
+//                )
+//                let notificationPayload = try JSONDecoder().decode(
+//                    NotificationPayload.self,
+//                    from: data
+//                )
+//
+//                let userID = notificationPayload.userID
+//
+//                let rootComponent = try setupRootComponent(
+//                    userID: userID,
+//                    notificationHandler: contentHandler
+//                )
+//
+//                let verifyUserSession = rootComponent.verifyUserSession
+//                let startSyncingEvents: () async throws -> Void = {
+//                    try await verifyUserSession.startSyncingEvents(
+//                        eventID: notificationPayload.eventID
+//                    )
+//                }
+//
+//                try await verifyUserSession.verify(
+//                    userID: userID,
+//                    then: startSyncingEvents
+//                )
 
             } catch {
                 logError(error)

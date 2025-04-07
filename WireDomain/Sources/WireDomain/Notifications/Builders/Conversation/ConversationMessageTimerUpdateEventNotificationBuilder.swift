@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuilder {
+struct ConversationMessageTimerUpdateEventNotificationBuilder {
 
     private struct Context {
         let senderName: String?
@@ -74,11 +74,15 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder: NotificationBuild
 
     }
 
-    func shouldBuildNotification() async -> Bool {
+    private func shouldBuildNotification() async -> Bool {
         true
     }
 
-    func buildContent() async -> UserNotification {
+    func buildContent() async -> UserNotification? {
+        guard await shouldBuildNotification() else {
+            return nil
+        }
+        
         var timeoutStrValue: String?
 
         if let timeoutValue = context.newTimer {

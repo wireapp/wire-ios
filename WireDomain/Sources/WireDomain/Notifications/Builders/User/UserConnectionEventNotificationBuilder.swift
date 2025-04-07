@@ -19,7 +19,7 @@
 import UserNotifications
 import WireAPI
 
-struct UserConnectionEventNotificationBuilder: NotificationBuilder {
+struct UserConnectionEventNotificationBuilder {
 
     private enum ConnectionStatus {
         case pending
@@ -56,16 +56,20 @@ struct UserConnectionEventNotificationBuilder: NotificationBuilder {
         )
     }
 
-    func shouldBuildNotification() async -> Bool {
+    private func shouldBuildNotification() async -> Bool {
         true
     }
 
-    func buildContent() async -> UserNotification {
+    func buildContent() async -> UserNotification? {
+        guard await shouldBuildNotification() else {
+            return nil
+        }
+        
         switch context.connectionStatus {
         case .pending:
-            buildConnectionRequestNotification(isPending: true)
+            return buildConnectionRequestNotification(isPending: true)
         case .accepted:
-            buildConnectionRequestNotification(isPending: false)
+            return buildConnectionRequestNotification(isPending: false)
         }
     }
 

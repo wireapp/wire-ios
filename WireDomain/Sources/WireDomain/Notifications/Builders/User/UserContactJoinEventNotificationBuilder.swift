@@ -19,7 +19,7 @@
 import UserNotifications
 import WireAPI
 
-struct UserContactJoinEventNotificationBuilder: NotificationBuilder {
+struct UserContactJoinEventNotificationBuilder {
 
     private struct Context {
         let name: String
@@ -35,12 +35,16 @@ struct UserContactJoinEventNotificationBuilder: NotificationBuilder {
         )
     }
 
-    func shouldBuildNotification() async -> Bool {
+    private func shouldBuildNotification() async -> Bool {
         true
     }
 
-    func buildContent() async -> UserNotification {
-        buildUserContactJoinNotification()
+    func buildContent() async -> UserNotification? {
+        guard await shouldBuildNotification() else {
+            return nil
+        }
+        
+        return buildUserContactJoinNotification()
     }
 
     // MARK: - Build notifications

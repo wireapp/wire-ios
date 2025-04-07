@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
+struct ConversationDeleteEventNotificationBuilder {
 
     private struct Context {
         let conversation: ZMConversation
@@ -95,12 +95,16 @@ struct ConversationDeleteEventNotificationBuilder: NotificationBuilder {
 
     }
 
-    func shouldBuildNotification() async -> Bool {
+    private func shouldBuildNotification() async -> Bool {
         validator.validate()
     }
 
-    func buildContent() async -> UserNotification {
-        await buildDeletedConversationNotification()
+    func buildContent() async -> UserNotification? {
+        guard await shouldBuildNotification() else {
+            return nil
+        }
+        
+        return await buildDeletedConversationNotification()
     }
 
     // MARK: - Build notifications

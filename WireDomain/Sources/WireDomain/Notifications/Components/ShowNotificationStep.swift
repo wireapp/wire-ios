@@ -17,43 +17,39 @@
 //
 
 import NeedleFoundation
+import Foundation
 import UserNotifications
-import WireAPI
 import WireDataModel
 
-protocol GenerateNotificationDependency: Dependency {
+protocol ShowNotificationDependency: Dependency {
     var contentHandler: (UNNotificationContent) -> Void { get }
     var accountManager: AccountManager { get }
     var selectedAccount: Account { get }
     var sharedUserDefaults: UserDefaults { get }
     var userID: UUID { get }
-    var messageLocalStore: any MessageLocalStoreProtocol { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
-    var userLocalStore: any UserLocalStoreProtocol { get }
 }
 
-protocol GenerateNotificationProvider {
-    func generateNotificationService(
-        eventsStream: AsyncStream<[UpdateEvent]>
-    ) -> GenerateNotificationServiceProtocol
+protocol ShowNotificationStepFactory {
+    func showNotifications(
+        _ notifications: [UserNotification]
+    ) async throws
 }
 
-final class GenerateNotificationComponent: Component<GenerateNotificationDependency>, GenerateNotificationProvider {
+final class ShowNotificationStep: Component<ShowNotificationDependency>, ShowNotificationStepFactory {
 
-    func generateNotificationService(
-        eventsStream: AsyncStream<[UpdateEvent]>
-    ) -> GenerateNotificationServiceProtocol {
-        GenerateNotificationService(
-            eventsStream: eventsStream,
+    func showNotifications(
+        _ notifications: [UserNotification]
+    ) async throws {
+        let showNotificationUseCase = ShowNotificationUseCase(
             contentHandler: dependency.contentHandler,
-            accountManager: dependency.accountManager,
-            selectedAccount: dependency.selectedAccount,
-            accountID: dependency.userID,
-            userDefaults: dependency.sharedUserDefaults,
-            userLocalStore: dependency.userLocalStore,
             conversationLocalStore: dependency.conversationLocalStore,
-            messageLocalStore: dependency.messageLocalStore
+            selectedAccount: dependency.selectedAccount,
+            accountManager: dependency.accountManager
+        )
+        
+        try await showNotificationUseCase.invoke(
+            userNotifications: notifications
         )
     }
-
 }

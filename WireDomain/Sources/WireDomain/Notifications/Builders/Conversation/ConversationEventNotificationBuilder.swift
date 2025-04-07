@@ -20,7 +20,7 @@ import UserNotifications
 import WireAPI
 import WireDataModel
 
-struct ConversationEventNotificationBuilder: NotificationBuilder {
+struct ConversationEventNotificationBuilder {
 
     enum Failure: Error {
         case failedToDecryptMLSMessage
@@ -68,16 +68,33 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
     private let userLocalStore: any UserLocalStoreProtocol
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
+    
+    private let callKitNotificationBuilder: CallKitNotificationBuilder
+    private let callNotificationBuilder: CallNotificationBuilder
+    private let conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder
+    private let conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder
+    private let conversationMemberLeaveEventNotificationBuilder:  ConversationMemberLeaveEventNotificationBuilder
+    private let conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder
+    private let conversationCreateEventNotificationBuilder: ConversationCreateEventNotificationBuilder
+    private let conversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilder
+    private let conversationMessageTimerUpdateEventNotificationBuilder: ConversationMessageTimerUpdateEventNotificationBuilder
 
     init(
-        event: ConversationEvent,
         userID: UUID,
         userDefaults: UserDefaults,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        messageLocalStore: any MessageLocalStoreProtocol
+        messageLocalStore: any MessageLocalStoreProtocol,
+        callKitNotificationBuilder: CallKitNotificationBuilder,
+        callNotificationBuilder: CallNotificationBuilder,
+        conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder,
+        conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder,
+        conversationMemberLeaveEventNotificationBuilder:  ConversationMemberLeaveEventNotificationBuilder,
+        conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder,
+        conversationCreateEventNotificationBuilder: ConversationCreateEventNotificationBuilder,
+        conversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilder,
+        conversationMessageTimerUpdateEventNotificationBuilder: ConversationMessageTimerUpdateEventNotificationBuilder
     ) async {
-        self.event = event
         self.userLocalStore = userLocalStore
         self.conversationLocalStore = conversationLocalStore
         self.messageLocalStore = messageLocalStore
@@ -120,13 +137,13 @@ struct ConversationEventNotificationBuilder: NotificationBuilder {
         )
     }
 
-    func shouldBuildNotification() async -> Bool {
+    private func shouldBuildNotification() async -> Bool {
         validator.validate()
     }
 
-    func buildContent() async throws -> UserNotification {
-        let builder: NotificationBuilder
-
+    func buildContent(
+        event: ConversationEvent
+    ) async throws -> UserNotification {
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
             let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message

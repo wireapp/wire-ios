@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UserNotifications
-
-protocol NotificationBuilder {
-    func shouldBuildNotification() async -> Bool
-    func buildContent() async throws -> UserNotification
-}
+//import UserNotifications
+//
+//protocol NotificationBuilder {
+//    func shouldBuildNotification() async -> Bool
+//    func buildContent() async throws -> UserNotification
+//}

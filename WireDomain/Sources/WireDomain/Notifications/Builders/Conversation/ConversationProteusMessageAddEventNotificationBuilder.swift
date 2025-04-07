@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilder {
+struct ConversationProteusMessageAddEventNotificationBuilder {
 
     private enum AssetType {
         case image
@@ -112,11 +112,15 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         )
     }
 
-    func shouldBuildNotification() async -> Bool {
+    private func shouldBuildNotification() async -> Bool {
         validator.validate()
     }
 
-    func buildContent() async -> UserNotification {
+    func buildContent() async -> UserNotification? {
+        guard await shouldBuildNotification() else {
+            return nil
+        }
+        
         guard !context.hidesNotificationContent else {
             return buildHiddenNotification()
         }
@@ -153,7 +157,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         case .hidden:
             return buildHiddenNotification()
         default:
-            return .notDisplayed
+            return nil
         }
     }
 
@@ -231,15 +235,15 @@ struct ConversationProteusMessageAddEventNotificationBuilder: NotificationBuilde
         return .text(content)
     }
 
-    private func buildTextNotification(_ text: Text?) async -> UserNotification {
+    private func buildTextNotification(_ text: Text?) async -> UserNotification? {
         guard let textMessageData = text else {
-            return .notDisplayed
+            return nil
         }
 
         let text = textMessageData.content.removingExtremeCombiningCharacters
 
         guard !text.isEmpty else {
-            return .notDisplayed
+            return nil
         }
 
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)

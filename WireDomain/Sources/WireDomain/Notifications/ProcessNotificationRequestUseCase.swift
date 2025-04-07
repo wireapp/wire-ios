@@ -1,0 +1,46 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import UserNotifications
+
+// sourcery: AutoMockable
+protocol ProcessNotificationUseCaseProtocol {
+    func invoke() async throws -> NotificationPayload
+}
+
+struct ProcessNotificationRequestUseCase: ProcessNotificationUseCaseProtocol {
+    private let request: UNNotificationRequest
+    
+    init(request: UNNotificationRequest) {
+        self.request = request
+    }
+    
+    func invoke() async throws -> NotificationPayload {
+        let userInfo = request.content.userInfo
+        let data = try JSONSerialization.data(
+            withJSONObject: userInfo
+        )
+        
+        let notificationPayload = try JSONDecoder().decode(
+            NotificationPayload.self,
+            from: data
+        )
+        
+        return notificationPayload
+    }
+}

@@ -23,5 +23,4 @@ typealias CallKitContent = [String: Any]
 enum UserNotification {
     case text(UNMutableNotificationContent)
     case callKit(CallKitContent)
-    case notDisplayed
 }

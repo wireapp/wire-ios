@@ -20,7 +20,7 @@ import UserNotifications
 import WireAPI
 import WireDataModel
 
-struct UserNotificationBuilder: NotificationBuilder {
+struct UserNotificationBuilder {
 
     private let event: UserEvent
     private let userLocalStore: any UserLocalStoreProtocol

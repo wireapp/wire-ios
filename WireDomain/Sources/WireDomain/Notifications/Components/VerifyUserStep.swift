@@ -29,24 +29,38 @@ protocol VerifyUserDependency: Dependency {
     var applicationIdentifier: String { get }
 }
 
-final class VerifyUserComponent: Component<VerifyUserDependency> {
+protocol VerifyUserStepFactory {
+    func verifyUserSession(
+        userID: UUID,
+        eventID: UUID
+    ) async throws
+}
 
-    var verifyUserSession: VerifyUserSession {
-        VerifyUserSession(
-            pullEventsServiceProvider: pullEventsComponent,
+final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFactory {
+
+    func verifyUserSession(
+        userID: UUID,
+        eventID: UUID
+    ) async throws {
+        let verifyUserSessionUseCase = VerifyUserSessionUseCase(
+            userID: userID,
             cookieStorage: cookieStorage,
             coreData: coreData
         )
+        
+        try await verifyUserSessionUseCase.invoke()
+        
+        try await pullEventsStep.pullEvents()
     }
 
     // MARK: - Children
 
-    var pullEventsComponent: PullEventsComponent {
-        PullEventsComponent(parent: self)
+    var pullEventsStep: any PullEventsStepFactory {
+        PullEventsStep(parent: self)
     }
 }
 
-extension VerifyUserComponent {
+extension VerifyUserStep {
 
     public var sharedUserDefaults: UserDefaults {
         UserDefaults(suiteName: dependency.applicationIdentifier)!

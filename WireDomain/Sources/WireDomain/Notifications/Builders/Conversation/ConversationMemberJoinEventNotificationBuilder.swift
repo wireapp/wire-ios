@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
+struct ConversationMemberJoinEventNotificationBuilder {
 
     private struct Context {
         let senderName: String?
@@ -93,12 +93,16 @@ struct ConversationMemberJoinEventNotificationBuilder: NotificationBuilder {
 
     }
 
-    func shouldBuildNotification() async -> Bool {
+    private func shouldBuildNotification() async -> Bool {
         validator.validate()
     }
 
-    func buildContent() async -> UserNotification {
-        buildMemberJoinNotification()
+    func buildContent() async -> UserNotification? {
+        guard await shouldBuildNotification() else {
+            return nil
+        }
+        
+        return buildMemberJoinNotification()
     }
 
     // MARK: - Build notifications

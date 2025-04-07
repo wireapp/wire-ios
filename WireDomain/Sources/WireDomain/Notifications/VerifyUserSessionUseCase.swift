@@ -20,7 +20,7 @@ import WireAPI
 import WireDataModel
 
 /// Observes pending events, process them and generates new notifications content.
-struct VerifyUserSession {
+struct VerifyUserSessionUseCase {
 
     enum Constants {
         static let cookieName = "zuid"
@@ -31,25 +31,21 @@ struct VerifyUserSession {
     enum Failure: Error {
         case coreDataMissingSharedContainer
         case coreDataMigrationRequired
-        case userUnauthenticated
-        case missingUserClient
         case unableToLoadStores(Error)
+        case userUnauthenticated
     }
 
     // MARK: - Properties
-
-    typealias NotificationHandler = (UNMutableNotificationContent) -> Void
-
-    private let pullEventsServiceProvider: any PullEventsServiceProvider
+    private let userID: UUID
     private let cookieStorage: any CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
 
     init(
-        pullEventsServiceProvider: any PullEventsServiceProvider,
+        userID: UUID,
         cookieStorage: any CookieStorageProtocol,
         coreData: any CoreDataStackProtocol
     ) {
-        self.pullEventsServiceProvider = pullEventsServiceProvider
+        self.userID = userID
         self.cookieStorage = cookieStorage
         self.coreData = coreData
     }
@@ -59,10 +55,7 @@ struct VerifyUserSession {
     ///     - userID: The user ID to verify the authentication for.
     ///     - handler: Completion block called if the user is authenticated.
 
-    func verify(
-        userID: UUID,
-        then completion: () async throws -> Void
-    ) async throws {
+    func invoke() async throws {
         let cookies = try await cookieStorage.fetchCookies()
         var hasExpirationDate = false
 
@@ -73,35 +66,10 @@ struct VerifyUserSession {
         guard hasExpirationDate else {
             throw Failure.userUnauthenticated
         }
-
-        try await completion()
-    }
-
-    /// Start syncing events.
-    /// - parameter eventID: The id to start fetching the events from remotely.
-
-    func startSyncingEvents(
-        eventID: UUID
-    ) async throws {
+        
         try await setupCoreData()
-
-        let userLocalStore = pullEventsServiceProvider.userLocalStore
-        let selfUserInfo = await userLocalStore.selfUserInfo()
-
-        guard let selfClientID = selfUserInfo.clientId else {
-            throw Failure.missingUserClient
-        }
-
-        let pullEventsService = await pullEventsServiceProvider.pullEventsService(
-            selfUserID: selfUserInfo.id,
-            selfClientID: selfClientID
-        )
-
-        try await pullEventsService.startSync(
-            newEventID: eventID
-        )
     }
-
+    
     /// Setup core data stores and its dependencies.
     private func setupCoreData() async throws {
         guard coreData.storesExists else {
