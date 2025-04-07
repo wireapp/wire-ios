@@ -35,13 +35,15 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         XCTAssertEqual(sut.channelName, .failure(.tooShort))
     }
 
-
     // MARK: - Update Channel Name with Excessively Long String
 
     func testOnChannelNameUpdate_longString() {
         // Given
         let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
-        let value = String(repeating: "a", count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength + 1)
+        let value = String(
+            repeating: "a",
+            count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength + 1
+        )
 
         // When
         sut.onChannelNameUpdate(value)
@@ -50,13 +52,15 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         XCTAssertEqual(sut.channelName, .failure(.tooLong))
     }
 
-
     // MARK: - Update Channel Name with Excessively Big String
 
     func testOnChannelNameUpdate_bigString() {
         // Given
         let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
-        let value = String(repeating: "\(0x27BF)", count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxByteLength + 1)
+        let value = String(
+            repeating: "\(0x27BF)",
+            count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxByteLength + 1
+        )
 
         // When
         sut.onChannelNameUpdate(value)
@@ -70,7 +74,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
     func testOnChannelNameUpdate_whitespaceString() {
         // Given
         let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
-        let value = String(repeating: " ", count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength)
+        let value = String(
+            repeating: " ",
+            count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
+        )
 
         // When
         sut.onChannelNameUpdate(value)
@@ -79,14 +86,20 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         XCTAssertEqual(sut.channelName, .failure(.tooShort))
     }
 
-
     // MARK: - Update Channel Name with Whitespace Surrounded String
 
     func testOnChannelNameUpdate_whitespaceSurroundedString() {
         // Given
         let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
-        let value = " " + String(repeating: "a", count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength) + " "
-        let expectedValue = String(repeating: "a", count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength)
+        let value = " " +
+            String(
+                repeating: "a",
+                count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
+            ) + " "
+        let expectedValue = String(
+            repeating: "a",
+            count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
+        )
 
         // When
         sut.onChannelNameUpdate(value)
@@ -94,7 +107,6 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         // Then
         XCTAssertEqual(sut.channelName, .success(expectedValue))
     }
-
 
     // MARK: - Update Channel Name with Valid String
 

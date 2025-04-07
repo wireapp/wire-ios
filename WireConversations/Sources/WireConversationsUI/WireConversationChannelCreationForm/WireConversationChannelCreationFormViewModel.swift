@@ -135,7 +135,8 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         let trimmed = channelName
             .trimmingCharacters(in: .whitespaces)
 
-        let array = trimmed.map { $0.isEmoji || !$0.contains(anyCharacterFrom: Constants.controlSet) ? String($0) : " " }
+        let array = trimmed
+            .map { $0.isEmoji || !$0.contains(anyCharacterFrom: Constants.controlSet) ? String($0) : " " }
 
         if array.count < Constants.channelNameMinStringLength {
             return .failure(.tooShort)
