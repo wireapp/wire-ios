@@ -105,7 +105,7 @@ private struct ConnectionResponseV0: Decodable, ToAPIModelConvertible {
     let qualifiedTo: QualifiedID?
     let conversationID: UUID?
     let qualifiedConversationID: QualifiedID?
-    let lastUpdate: UTCTimeMillis
+    let lastUpdate: UTCTime
     let status: ConnectionStatus
 
     func toAPIModel() -> Connection {

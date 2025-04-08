@@ -75,9 +75,6 @@
 "peoplepicker.services.add_service.error.default" = "The service is unavailable at the moment";
 "peoplepicker.services.add_service.error.full" = "The conversation is full";
 
-"peoplepicker.title.create_conversation" = "Create group";
-"peoplepicker.title.add_to_conversation" = "Add participants";
-
 "peoplepicker.no_contacts_title" = "No Contacts.";
 
 "peoplepicker.no_search_results" = "No matching results. Try entering a different name.";
@@ -107,6 +104,11 @@
 "add_participants.alert.title" = "The group is full";
 "add_participants.alert.message.new_conversation" = "Up to %d people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.";
+
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "Back";
+"conversation.create.channel.next" = "Next";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "Search by name";
@@ -234,11 +236,6 @@
 "list.archived_conversations" = "ARCHIVE";
 "list.archived_conversations_close" = "Close archive";
 
-"list.section.groups" = "Groups";
-"list.section.contacts" = "People";
-"list.section.requests" = "Requests";
-"list.section.favorites" = "Favorites";
-
 "conversation.voiceover.value.active" = "active";
 "conversation.voiceover.value.disabled" = "disabled";
 
@@ -295,7 +292,6 @@
 "conversation.invite_more_people.button_title" = "Add People";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Empty group conversation";
 
 "conversation.input_bar.verified" = "Verified";
 "conversation.input_bar.placeholder" = "Type a message";
@@ -863,7 +859,7 @@
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Options";
 "participants.footer.add_title" = "Add Participants";
-"participants.section.name.footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
 "participants.section.admins.footer" = "There are no admins.";
 "participants.section.members.footer" = "There are no members.";
 
@@ -872,10 +868,10 @@
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "More actions";
 "meta.menu.rename" = "Rename";
-"meta.menu.leave" = "Leave Group…";
+"meta.menu.leave" = "Leave Conversation…";
 "meta.menu.archive" = "Archive";
 "meta.menu.unarchive" = "Unarchive";
-"meta.menu.delete" = "Delete Group…";
+"meta.menu.delete" = "Delete Conversation…";
 "meta.menu.clear_content" = "Clear Content…";
 "meta.menu.move_to_folder" = "Move to…";
 "meta.menu.remove_from_folder" = "Remove from \"%@\"";
@@ -1048,8 +1044,8 @@
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
-"group_details.conversation_admins_header.title" = "Group admins";
-"group_details.conversation_members_header.title" = "Group members";
+"group_details.conversation_admins_header.title" = "Conversation admins";
+"group_details.conversation_members_header.title" = "Conversation members";
 
 // Channel Access level
 "channel_access_level.public" = "Public";

@@ -34,7 +34,7 @@ struct ConversationMemberUpdateEventDecoder {
         )
 
         let timestamp = try container.decode(
-            UTCTimeMillis.self,
+            UTCTime.self,
             forKey: .timestamp
         )
 
@@ -63,9 +63,9 @@ struct ConversationMemberUpdateEventDecoder {
         let userID: UserID
         let role: String?
         let muteStatus: Int?
-        let muteStatusReference: UTCTimeMillis?
+        let muteStatusReference: UTCTime?
         let archivedStatus: Bool?
-        let archivedStatusReference: UTCTimeMillis?
+        let archivedStatusReference: UTCTime?
 
         enum CodingKeys: String, CodingKey {
 

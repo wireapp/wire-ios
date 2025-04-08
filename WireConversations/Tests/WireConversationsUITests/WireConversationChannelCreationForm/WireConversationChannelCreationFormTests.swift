@@ -37,9 +37,11 @@ class WireConversationChannelCreationFormTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let view = WireConversationChannelCreationForm(onFormValidityUpdate: { _ in })
-            .frame(width: 375, height: 667)
-            .padding()
+        let view = WireConversationChannelCreationForm(
+            viewModel: WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        )
+        .frame(width: 375, height: 667)
+        .padding()
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -51,9 +53,11 @@ class WireConversationChannelCreationFormTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = WireConversationChannelCreationForm(onFormValidityUpdate: { _ in })
-            .frame(width: 375, height: 667)
-            .padding()
+        let view = WireConversationChannelCreationForm(
+            viewModel: WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        )
+        .frame(width: 375, height: 667)
+        .padding()
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
