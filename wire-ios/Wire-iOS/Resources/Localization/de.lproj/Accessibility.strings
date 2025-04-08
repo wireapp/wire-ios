@@ -321,4 +321,4 @@
 "searchGifs.gifItems_loaded.announcement" = "%@ neue GIFs geladen";
 
 // MARK: - Channel Creation UI - Navigation
-"conversation.create.channel.back" = "Go back to new conversation overview";
+"conversation.create.channel.back" = "Zurück zur Übersicht der neuen Unterhaltung";
