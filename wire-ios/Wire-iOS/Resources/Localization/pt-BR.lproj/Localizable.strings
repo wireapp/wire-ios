@@ -859,7 +859,7 @@
 "participants.section.services" = "Serviços (%d)";
 "participants.section.settings" = "Opções";
 "participants.footer.add_title" = "Adicionar Participantes";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Até %1$d participantes podem se juntar à conversa.";
 "participants.section.admins.footer" = "Não há administradores.";
 "participants.section.members.footer" = "Não há membros.";
 
@@ -868,10 +868,10 @@
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Mais ações";
 "meta.menu.rename" = "Renomear";
-"meta.menu.leave" = "Leave Conversation…";
+"meta.menu.leave" = "Deixar a conversa...";
 "meta.menu.archive" = "Arquivar";
 "meta.menu.unarchive" = "Desarquivar";
-"meta.menu.delete" = "Delete Conversation…";
+"meta.menu.delete" = "Deletar a conversa...";
 "meta.menu.clear_content" = "Limpar conteúdo…";
 "meta.menu.move_to_folder" = "Mover para…";
 "meta.menu.remove_from_folder" = "Remover de \"%@\"";
@@ -1044,8 +1044,8 @@
 "group_details.message_protocol.title" = "Protocolo";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
-"group_details.conversation_admins_header.title" = "Conversation admins";
-"group_details.conversation_members_header.title" = "Conversation members";
+"group_details.conversation_admins_header.title" = "Administradores da conversa";
+"group_details.conversation_members_header.title" = "Membros da conversa";
 
 // Channel Access level
 "channel_access_level.public" = "Público";
