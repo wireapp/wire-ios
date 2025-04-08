@@ -169,6 +169,21 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testGetDomainRegistration_Response_Handling_V8_Service_Unavailable() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.serviceUnavailable, "GetDomainRegistrationErrorResponse_ServiceUnavailableV8")
+        ])
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.serviceUnavailable) {
+            // When
+            try await sut.getDomainRegistration(forEmail: "email@example.com")
+        }
+    }
+
     func testGetOnPremConfigURL_Response_Handling_Success() async throws {
         // Given
         let networkService = MockNetworkServiceProtocol.withResponses([
