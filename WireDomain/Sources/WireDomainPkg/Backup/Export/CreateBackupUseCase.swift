@@ -98,11 +98,21 @@ public struct CreateBackupUseCase<
                             reportProgress(userProgressOffset + userProgressMultiplier * progress)
                         }
                     }
+
+                    let conversationProgressOffset = Float(userCount)
+                    let conversationProgressMultiplier = Float(conversationCount) / Float(userCount + messageCount + conversationCount)
                     try await context.perform {
-                        // backupExporter.add(conversation: <#T##BackupConversation#>)
+                        try Self.exportConversations(from: context, using: backupExporter) { progress in
+                            reportProgress(conversationProgressOffset + conversationProgressMultiplier * progress)
+                        }
                     }
+
+                    let messageProgressOffset = Float(userCount + conversationCount)
+                    let messageProgressMultiplier = Float(messageCount) / Float(userCount + messageCount + conversationCount)
                     try await context.perform {
-                        // backupExporter.add(message: <#T##BackupMessage#>)
+                        try Self.exportMessages(from: context, using: backupExporter) { progress in
+                            reportProgress(messageProgressOffset + messageProgressMultiplier * progress)
+                        }
                     }
 
                     let outputFileURL = try await backupExporter.finalize(password: password)
@@ -152,10 +162,10 @@ public struct CreateBackupUseCase<
         let userCount = try context.count(for: userFetchRequest)
 
         let conversationFetchRequest = ConversationAdapter.fetchRequest()
-        let conversationCount = 0
+        let conversationCount = try context.count(for: conversationFetchRequest)
 
         let messageFetchRequest = MessageAdapter.fetchRequest()
-        let messageCount = 0
+        let messageCount = try context.count(for: messageFetchRequest)
 
         return (userCount, conversationCount, messageCount)
 
@@ -181,7 +191,67 @@ public struct CreateBackupUseCase<
                 )
                 backupExporter.add(user: backupUser)
             }
-            if index % 100 == 0 || index == recordCount - 1 {
+            if index % 50 == 0 || index == recordCount - 1 {
+                reportingProgress(Float(index + 1) / Float(recordCount))
+            }
+        }
+
+    }
+
+    private static func exportConversations(
+        from context: NSManagedObjectContext,
+        using backupExporter: MPBackupExporter,
+        reportingProgress: (Float) -> Void
+    ) throws {
+
+        let fetchRequest = ConversationAdapter.fetchRequest()
+        fetchRequest.fetchBatchSize = 50
+        let records = try context.fetch(fetchRequest)
+        let recordCount = records.count
+        for (index, record) in records.enumerated() {
+            guard let conversation = ConversationAdapter(record) else { continue }
+            autoreleasepool {
+                let backupConversation = BackupConversation(
+                    id: BackupQualifiedId(conversation.qualifiedID),
+                    name: conversation.name
+                )
+                backupExporter.add(conversation: backupConversation)
+            }
+            if index % 50 == 0 || index == recordCount - 1 {
+                reportingProgress(Float(index + 1) / Float(recordCount))
+            }
+        }
+
+    }
+
+    private static func exportMessages(
+        from context: NSManagedObjectContext,
+        using backupExporter: MPBackupExporter,
+        reportingProgress: (Float) -> Void
+    ) throws {
+
+        let fetchRequest = MessageAdapter.fetchRequest()
+        fetchRequest.fetchBatchSize = 50
+        let records = try context.fetch(fetchRequest)
+        let recordCount = records.count
+        for (index, record) in records.enumerated() {
+            guard let message = MessageAdapter(record) else { continue }
+            autoreleasepool {
+                // TODO: finish
+                /*
+                let backupMessage = BackupMessage(
+                    id: <#T##String#>,
+                    conversationId: <#T##BackupQualifiedId#>,
+                    senderUserId: <#T##BackupQualifiedId#>,
+                    senderClientId: <#T##String#>,
+                    creationDate: <#T##BackupDateTime#>,
+                    content: <#T##BackupMessageContent#>,
+                    webPrimaryKey: <#T##KotlinInt?#>
+                )
+                backupExporter.add(message: backupMessage)
+                 */
+            }
+            if index % 50 == 0 || index == recordCount - 1 {
                 reportingProgress(Float(index + 1) / Float(recordCount))
             }
         }

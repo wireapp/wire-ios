@@ -27,16 +27,17 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
         ZMMessage.fetchRequest()
     }
 
-    let qualifiedID: QualifiedID
-    let name: String
-    let handle: String
+//    let qualifiedID: QualifiedID
+//    let name: String
+//    let handle: String
 
     init?(_ record: any NSFetchRequestResult) {
-        guard let user = record as? ZMUser, let qualifiedID = user.qualifiedID.map(QualifiedID.init) else { return nil }
-
-        self.qualifiedID = qualifiedID
-        name = user.name ?? ""
-        handle = user.handle ?? ""
+        fatalError()
+//        guard let user = record as? ZMUser, let qualifiedID = user.qualifiedID.map(QualifiedID.init) else { return nil }
+//
+//        self.qualifiedID = qualifiedID
+//        name = user.name ?? ""
+//        handle = user.handle ?? ""
     }
 
 }
