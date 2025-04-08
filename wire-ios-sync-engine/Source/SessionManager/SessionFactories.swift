@@ -97,6 +97,11 @@ open class AuthenticatedSessionFactory {
                 authenticationManager: authenticationManager
             )
         }
+        
+        let selfClientID = coreDataStack.syncContext.performAndWait {
+            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
+        }
+        
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,
@@ -106,7 +111,8 @@ open class AuthenticatedSessionFactory {
             initialAccessToken: nil,
             applicationGroupIdentifier: nil,
             applicationVersion: appVersion,
-            minTLSVersion: minTLSVersion
+            minTLSVersion: minTLSVersion,
+            selfClientID: selfClientID
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()
