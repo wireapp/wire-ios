@@ -376,21 +376,24 @@ extension SettingsCellDescriptorFactory {
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
         let selfUser = ZMUser.selfUser()!
+        let context = selfUser.managedObjectContext!.performAndWait {
+            selfUser.managedObjectContext!.zm_sync!
+        }
 
         // TODO: remove
         struct EventProcessorHandle: CreateBackupEventProcessorHandleProtocol {
-            func pauseProcessingEvents() { fatalError() }
-            func continueProcessingEvents() { fatalError() }
+            func pauseProcessingEvents() {}
+            func continueProcessingEvents() {}
         }
 
         let importBackupUseCase = sessionManager.importBackupUseCase!
         let createBackupUseCase = CreateBackupUseCase(
-            context: selfUser.managedObjectContext!.zm_sync,
-            userEntity: ZMUser.self,
+            context: context,
+            userAdapterType: CreateBackupZMUserAdapter.self,
             eventProcessorHandle: EventProcessorHandle(),
             fileArchiver: CreateBackupFileArchiver(),
             currentDateProvider: SystemDateProvider(),
-            selfUserID: WireAPI.QualifiedID(selfUser.qualifiedID!),
+            selfUserID: WireDomainPkg.QualifiedID(selfUser.qualifiedID!),
             logger: WireLogger.backupExport
         )
 

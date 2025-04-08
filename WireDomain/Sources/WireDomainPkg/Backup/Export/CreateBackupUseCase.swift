@@ -81,9 +81,11 @@ public struct CreateBackupUseCase<
                     defer { eventProcessorHandle.continueProcessingEvents() }
 
                     // TODO: [WPB-14592] fetch from CoreData and call these methods:
-                    try await Self.exportUsers(from: context, using: backupExporter)
-                    // backupExporter.add(message: <#T##BackupMessage#>)
-                    // backupExporter.add(conversation: <#T##BackupConversation#>)
+                    try await context.perform {
+                        try Self.exportUsers(from: context, using: backupExporter)
+                        // backupExporter.add(message: <#T##BackupMessage#>)
+                        // backupExporter.add(conversation: <#T##BackupConversation#>)
+                    }
 
                     // TODO: [WPB-14592] report accurate progress
                     continuation.yield(.progress(0.25))
@@ -108,7 +110,7 @@ public struct CreateBackupUseCase<
     private static func exportUsers(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter
-    ) async throws {
+    ) throws {
 
         let fetchRequest = UserAdapter.fetchRequest()
         fetchRequest.fetchBatchSize = 50
@@ -117,7 +119,7 @@ public struct CreateBackupUseCase<
             guard let user = UserAdapter(record) else { continue }
             autoreleasepool {
                 let backupUser = BackupUser(
-                    id: BackupQualifiedId.init(id: "", domain: ""),// (user.qualifiedID), // TODO: fix
+                    id: BackupQualifiedId(user.qualifiedID),
                     name: user.name,
                     handle: user.handle
                 )
