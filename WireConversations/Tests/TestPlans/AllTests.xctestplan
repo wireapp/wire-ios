@@ -16,9 +16,16 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:WireConversations",
+        "containerPath" : "container:",
         "identifier" : "WireConversationsUITests",
         "name" : "WireConversationsUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireConversationsTests",
+        "name" : "WireConversationsTests"
       }
     }
   ],

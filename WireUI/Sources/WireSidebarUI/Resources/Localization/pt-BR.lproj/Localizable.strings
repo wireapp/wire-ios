@@ -22,8 +22,9 @@
 "sidebar.conversation_filter.all.title" = "Todos";
 "sidebar.conversation_filter.favorites.title" = "Favoritos";
 "sidebar.conversation_filter.groups.title" = "Grupos";
-"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
-"sidebar.conversation_filter.folders.title" = "Folders";
+"sidebar.conversation_filter.channels.title" = "Canais";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversas";
+"sidebar.conversation_filter.folders.title" = "Pastas";
 "sidebar.conversation_filter.archived.title" = "Arquivar";
 
 "sidebar.contacts.title" = "Contatos";
