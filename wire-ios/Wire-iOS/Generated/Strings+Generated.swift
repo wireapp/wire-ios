@@ -330,6 +330,12 @@ internal enum L10n {
         /// Use code format
         internal static let description = L10n.tr("Accessibility", "conversation.codeButton.description", fallback: "Use code format")
       }
+      internal enum Create {
+        internal enum Channel {
+          /// Go back to new conversation overview
+          internal static let back = L10n.tr("Accessibility", "conversation.create.channel.back", fallback: "Go back to new conversation overview")
+        }
+      }
       internal enum EmphemeralButton {
         /// Set a timer for self-deleting messages
         internal static let description = L10n.tr("Accessibility", "conversation.emphemeralButton.description", fallback: "Set a timer for self-deleting messages")
@@ -2440,6 +2446,14 @@ internal enum L10n {
         internal static let sensitiveInformationWarning = L10n.tr("Localizable", "conversation.connection_view.sensitive_information_warning", fallback: "Please still be careful with who you share sensitive information.")
       }
       internal enum Create {
+        internal enum Channel {
+          /// Back
+          internal static let back = L10n.tr("Localizable", "conversation.create.channel.back", fallback: "Back")
+          /// Next
+          internal static let next = L10n.tr("Localizable", "conversation.create.channel.next", fallback: "Next")
+          /// New channel
+          internal static let title = L10n.tr("Localizable", "conversation.create.channel.title", fallback: "New channel")
+        }
         internal enum GroupName {
           /// Group name
           internal static let label = L10n.tr("Localizable", "conversation.create.group_name.label", fallback: "Group name")

@@ -108,6 +108,11 @@
 "add_participants.alert.message.new_conversation" = "Up to %d people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.";
 
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "Back";
+"conversation.create.channel.next" = "Next";
+
 // Contacts UI
 "contacts_ui.search_placeholder" = "Search by name";
 "contacts_ui.invite_others" = "Invite others";
