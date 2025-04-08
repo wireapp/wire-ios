@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol CreateBackupUserEntityProtocol: CreateBackupEntityProtocol {
+import WireBackup
 
-    var id: QualifiedID { get }
-    var name: String { get }
-    var handle: String { get }
+extension CreateBackupMessageContent {
 
+    var backupMessageContent: BackupMessageContent {
+        fatalError()
+    }
 }

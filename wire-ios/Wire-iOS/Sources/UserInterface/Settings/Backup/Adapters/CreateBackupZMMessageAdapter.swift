@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireDataModel
 import WireDomainPkg
 
@@ -27,14 +28,17 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
         ZMMessage.fetchRequest()
     }
 
-//    let qualifiedID: QualifiedID
-//    let name: String
-//    let handle: String
+    let id: String
+    let conversationID: QualifiedID
+    let senderUserID: QualifiedID
+    let senderClientID: String
+    let creationDate: Date
+    let content: CreateBackupMessageContent
 
     init?(_ record: any NSFetchRequestResult) {
+        guard let message = record as? ZMMessage else { return nil }
         fatalError()
-//        guard let user = record as? ZMUser, let qualifiedID = user.qualifiedID.map(QualifiedID.init) else { return nil }
-//
+
 //        self.qualifiedID = qualifiedID
 //        name = user.name ?? ""
 //        handle = user.handle ?? ""

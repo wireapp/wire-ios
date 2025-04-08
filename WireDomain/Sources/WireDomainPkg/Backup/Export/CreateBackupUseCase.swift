@@ -64,7 +64,11 @@ public struct CreateBackupUseCase<
                     let reportProgress: (Float) -> Void = { progressValue in
                         logger.debug("reporting overall process: \(progressValue * 100)%")
                         continuation.yield(.progress(progressValue))
+                        Thread.sleep(forTimeInterval: 1)
                     }
+
+                    // TODO: clean up temporary directories
+                    // TODO: handle cancellation
 
                     reportProgress(0)
 
@@ -185,7 +189,7 @@ public struct CreateBackupUseCase<
             guard let user = UserAdapter(record) else { continue }
             autoreleasepool {
                 let backupUser = BackupUser(
-                    id: BackupQualifiedId(user.qualifiedID),
+                    id: BackupQualifiedId(user.id),
                     name: user.name,
                     handle: user.handle
                 )
@@ -212,7 +216,7 @@ public struct CreateBackupUseCase<
             guard let conversation = ConversationAdapter(record) else { continue }
             autoreleasepool {
                 let backupConversation = BackupConversation(
-                    id: BackupQualifiedId(conversation.qualifiedID),
+                    id: BackupQualifiedId(conversation.id),
                     name: conversation.name
                 )
                 backupExporter.add(conversation: backupConversation)
@@ -237,19 +241,16 @@ public struct CreateBackupUseCase<
         for (index, record) in records.enumerated() {
             guard let message = MessageAdapter(record) else { continue }
             autoreleasepool {
-                // TODO: finish
-                /*
                 let backupMessage = BackupMessage(
-                    id: <#T##String#>,
-                    conversationId: <#T##BackupQualifiedId#>,
-                    senderUserId: <#T##BackupQualifiedId#>,
-                    senderClientId: <#T##String#>,
-                    creationDate: <#T##BackupDateTime#>,
-                    content: <#T##BackupMessageContent#>,
-                    webPrimaryKey: <#T##KotlinInt?#>
+                    id: message.id,
+                    conversationId: BackupQualifiedId(message.conversationID),
+                    senderUserId: BackupQualifiedId(message.senderUserID),
+                    senderClientId: message.senderClientID,
+                    creationDate: BackupDateTime(message.creationDate),
+                    content: message.content.backupMessageContent,
+                    webPrimaryKey: nil // TODO: remove
                 )
                 backupExporter.add(message: backupMessage)
-                 */
             }
             if index % 50 == 0 || index == recordCount - 1 {
                 reportingProgress(Float(index + 1) / Float(recordCount))

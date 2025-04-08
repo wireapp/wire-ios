@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol CreateBackupUserEntityProtocol: CreateBackupEntityProtocol {
+import Foundation
+import WireBackup
 
-    var id: QualifiedID { get }
-    var name: String { get }
-    var handle: String { get }
+extension BackupDateTime {
 
+    convenience init(_ date: Date) {
+        let isoString = ISO8601FormatStyle.format(date)
+        let instant = Kotlinx_datetimeInstant.Companion().parse(isoString: isoString)
+        self.init(instant: instant)
+    }
 }
+
+private let ISO8601FormatStyle = Date.ISO8601FormatStyle()

@@ -27,13 +27,13 @@ struct CreateBackupZMConversationAdapter: CreateBackupConversationEntityProtocol
         ZMConversation.fetchRequest()
     }
 
-    let qualifiedID: QualifiedID
+    let id: QualifiedID
     let name: String
 
     init?(_ record: any NSFetchRequestResult) {
         guard let conversation = record as? ZMConversation, let qualifiedID = conversation.qualifiedID.map(QualifiedID.init) else { return nil }
 
-        self.qualifiedID = qualifiedID
+        id = qualifiedID
         name = conversation.name ?? ""
     }
 

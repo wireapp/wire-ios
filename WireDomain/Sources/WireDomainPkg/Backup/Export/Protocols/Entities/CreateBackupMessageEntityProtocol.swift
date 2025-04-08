@@ -16,4 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol CreateBackupMessageEntityProtocol: CreateBackupEntityProtocol {}
+public import Foundation
+
+public protocol CreateBackupMessageEntityProtocol: CreateBackupEntityProtocol {
+
+    var id: String { get }
+    var conversationID: QualifiedID { get }
+    var senderUserID: QualifiedID { get }
+    var senderClientID: String { get }
+    var creationDate: Date { get }
+    var content: CreateBackupMessageContent { get }
+
+}
+
+public enum CreateBackupMessageContent {
+
+}

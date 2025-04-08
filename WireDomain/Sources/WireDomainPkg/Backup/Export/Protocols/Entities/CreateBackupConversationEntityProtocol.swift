@@ -18,7 +18,7 @@
 
 public protocol CreateBackupConversationEntityProtocol: CreateBackupEntityProtocol {
 
-    var qualifiedID: QualifiedID { get }
+    var id: QualifiedID { get }
     var name: String { get }
 
 }
