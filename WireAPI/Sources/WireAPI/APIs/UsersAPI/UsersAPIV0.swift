@@ -80,7 +80,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let assets: [UserAsset]
     let deleted: Bool?
     let email: String?
-    let expiresAt: UTCTimeMillis?
+    let expiresAt: UTCTime?
     let service: ServiceResponseV0?
     let legalholdStatus: LegalholdStatusV0
 
