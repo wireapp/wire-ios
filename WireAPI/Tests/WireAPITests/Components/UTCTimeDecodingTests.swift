@@ -20,29 +20,29 @@ import XCTest
 @testable import WireAPI
 
 final class UTCTimeDecodingTests: XCTestCase {
-    
+
     func test_DecodingWithFractionalSeconds() throws {
         // Given
         let timestamp = "\"2024-06-04T15:03:07.598Z\""
         let data = Data(timestamp.utf8)
-        
+
         // When
         let utcTime = try JSONDecoder().decode(UTCTime.self, from: data)
-        
+
         // Then
-        XCTAssertEqual(utcTime.date, Date(timeIntervalSince1970: 1717513387.598))
+        XCTAssertEqual(utcTime.date, Date(timeIntervalSince1970: 1_717_513_387.598))
     }
-    
+
     func test_DecodingWithoutFractionalSeconds() throws {
         // Given
         let timestamp = "\"2021-05-12T10:52:02Z\""
         let data = Data(timestamp.utf8)
-        
+
         // When
         let utcTime = try JSONDecoder().decode(UTCTime.self, from: data)
-        
+
         // Then
-        XCTAssertEqual(utcTime.date, Date(timeIntervalSince1970: 1620816722))
+        XCTAssertEqual(utcTime.date, Date(timeIntervalSince1970: 1_620_816_722))
     }
-    
+
 }
