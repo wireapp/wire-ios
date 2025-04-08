@@ -27,7 +27,8 @@ jobs:
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
           token: ${{ secrets.CROWDIN_API_TOKEN }}
           config: crowdin.yml
-
+          command_args: '--verbose'
+          
           upload_sources: true
           download_translations: true
           download_translations_args: "-l ar -l da -l de -l es-ES -l et -l fi -l fr -l it -l ja -l lt -l nl -l pl -l pt-BR -l ru -l sl -l tr -l uk -l zh-CN -l zh-TW"

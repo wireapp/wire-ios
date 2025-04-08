@@ -34,7 +34,7 @@ struct ConversationCreateEventDecoder {
         )
 
         let timestamp = try container.decode(
-            UTCTimeMillis.self,
+            UTCTime.self,
             forKey: .timestamp
         )
 
@@ -91,7 +91,7 @@ struct ConversationCreateEventDecoder {
         let accessRoles: Set<ConversationAccessRole>?
         let legacyAccessRole: ConversationAccessRoleLegacy?
         let lastEvent: String?
-        let lastEventTime: UTCTimeMillis?
+        let lastEventTime: UTCTime?
 
         enum CodingKeys: String, CodingKey {
 
@@ -149,11 +149,11 @@ struct ConversationCreateEventDecoder {
         let conversationRole: String?
         let service: Service?
         let archived: Bool?
-        let archivedReference: UTCTimeMillis?
+        let archivedReference: UTCTime?
         let hidden: Bool?
         let hiddenReference: String?
         let mutedStatus: Int?
-        let mutedReference: UTCTimeMillis?
+        let mutedReference: UTCTime?
 
         enum CodingKeys: String, CodingKey {
 

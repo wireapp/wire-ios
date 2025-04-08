@@ -23,6 +23,7 @@
 
 "cloud_user_login.title" = "Enter your password to log in";
 "cloud_user_login.input_email.title" = "メール";
+"cloud_user_login.input_email.placeholder" = "Enter email";
 "cloud_user_login.input_password.title" = "パスワード";
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "次へ";
