@@ -28,9 +28,10 @@ public struct CreateBackupUseCase<
 
     let context: @Sendable () -> NSManagedObjectContext
     let eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol
+    let fileManager: @Sendable () -> FileManager = { .default }
+    let selfUserID: QualifiedID
     let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
-    let selfUserID: QualifiedID
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
@@ -52,49 +53,56 @@ public struct CreateBackupUseCase<
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [context, currentDateProvider, eventProcessorHandle, fileArchiver, logger, selfUserID] in
+            let task = Task<Void, Never> { [context, currentDateProvider, eventProcessorHandle, fileManager, fileArchiver, logger, selfUserID] in
                 do {
                     let logger = logger()
                     let context = context()
+                    let reportProgress: (Float) -> Void = { progressValue in
+                        logger.debug("reporting overall process: \(progressValue * 100)%")
+                        continuation.yield(.progress(progressValue))
+                    }
 
-                    continuation.yield(CreateBackupProgress.progress(0))
-
-                    let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-                        .appendingPathComponent(UUID().uuidString)
-                    let outputDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-                        .appendingPathComponent(UUID().uuidString)
+                    reportProgress(0)
 
                     logger.debug("initializing MPBackupExporter")
-                    let backupExporter = MPBackupExporter(
-                        selfUserId: BackupQualifiedId(selfUserID),
-                        workDirectory: workDirectoryURL.path(),
-                        outputDirectory: outputDirectoryURL.path(),
-                        fileZipper: ExportBackupFileZipper2FileZipperAdapter(
-                            fileManager: .default,
-                            fileArchiver: fileArchiver,
-                            currentDateProvider: currentDateProvider
-                        )
+                    let backupExporter = Self.createBackupExporter(
+                        selfUserID: selfUserID,
+                        fileManager: fileManager,
+                        fileArchiver: fileArchiver,
+                        currentDateProvider: currentDateProvider
                     )
 
                     // finish processing incoming events and then stop
+                    logger.debug("pausing event processing")
                     await eventProcessorHandle.pauseProcessingEvents()
                     defer { eventProcessorHandle.continueProcessingEvents() }
 
-                    // TODO: [WPB-14592] fetch from CoreData and call these methods:
-                    try await context.perform {
-                        try Self.exportUsers(from: context, using: backupExporter)
-                        // backupExporter.add(message: <#T##BackupMessage#>)
-                        // backupExporter.add(conversation: <#T##BackupConversation#>)
+                    // get the counts of users, messages and conversations in order to report progress accurately
+                    logger.debug("calculating entity counts")
+                    let (userCount, messageCount, conversationCount) = try await context.perform {
+                        try Self.calculateCounts(in: context)
                     }
 
-                    // TODO: [WPB-14592] report accurate progress
-                    continuation.yield(.progress(0.25))
+                    // fetch the data and pass it into the backup exporter
+                    logger.debug("""
+                    userCount: \(userCount), messageCount: \(messageCount), conversationCount: \(conversationCount)
+                    """)
+                    let userProgressOffset = Float()
+                    let userProgressMultiplier = Float(userCount) / Float(userCount + messageCount + conversationCount)
+                    try await context.perform {
+                        try Self.exportUsers(from: context, using: backupExporter) { progress in
+                            reportProgress(userProgressOffset + userProgressMultiplier * progress)
+                        }
+                    }
+                    try await context.perform {
+                        // backupExporter.add(conversation: <#T##BackupConversation#>)
+                    }
+                    try await context.perform {
+                        // backupExporter.add(message: <#T##BackupMessage#>)
+                    }
 
-                    // TODO: [WPB-14592] then finalize:
-                    // try await backupExporter.finalize(password: password)
-
-                    // TODO: [WPB-14592] send correct URL
-                    continuation.yield(.done(URL(fileURLWithPath: "", isDirectory: false)))
+                    let outputFileURL = try await backupExporter.finalize(password: password)
+                    continuation.yield(.done(outputFileURL))
                     continuation.finish()
 
                 } catch {
@@ -107,15 +115,59 @@ public struct CreateBackupUseCase<
         }
     }
 
+    private static func createBackupExporter(
+        selfUserID: QualifiedID,
+        fileManager: () -> FileManager,
+        fileArchiver: any CreateBackupFileArchiverProtocol,
+        currentDateProvider: any CurrentDateProviding
+    ) -> MPBackupExporter {
+
+        let fileManager = fileManager()
+        let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(UUID().uuidString)
+        let outputDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(UUID().uuidString)
+
+        return MPBackupExporter(
+            selfUserId: BackupQualifiedId(selfUserID),
+            workDirectory: workDirectoryURL.path(),
+            outputDirectory: outputDirectoryURL.path(),
+            fileZipper: ExportBackupFileZipper2FileZipperAdapter(
+                fileManager: fileManager,
+                fileArchiver: fileArchiver,
+                currentDateProvider: currentDateProvider
+            )
+        )
+    }
+
+    private static func calculateCounts(
+        in context: NSManagedObjectContext
+    ) throws -> (userCount: Int, messageCount: Int, conversationCount: Int) {
+
+        let userFetchRequest = UserAdapter.fetchRequest()
+        let userCount = try context.count(for: userFetchRequest)
+
+        // let conversationFetchRequest = ConversationAdapter.fetchRequest()
+        let conversationCount = 0
+
+        // let messageFetchRequest = MessageAdapter.fetchRequest()
+        let messageCount = 0
+
+        return (userCount, conversationCount, messageCount)
+
+    }
+
     private static func exportUsers(
         from context: NSManagedObjectContext,
-        using backupExporter: MPBackupExporter
+        using backupExporter: MPBackupExporter,
+        reportingProgress: (Float) -> Void
     ) throws {
 
         let fetchRequest = UserAdapter.fetchRequest()
         fetchRequest.fetchBatchSize = 50
         let records = try context.fetch(fetchRequest)
-        for record in records {
+        let recordCount = records.count
+        for (index, record) in records.enumerated() {
             guard let user = UserAdapter(record) else { continue }
             autoreleasepool {
                 let backupUser = BackupUser(
@@ -124,6 +176,9 @@ public struct CreateBackupUseCase<
                     handle: user.handle
                 )
                 backupExporter.add(user: backupUser)
+            }
+            if index % 100 == 0 || index == recordCount - 1 {
+                reportingProgress(Float(index + 1) / Float(recordCount))
             }
         }
 

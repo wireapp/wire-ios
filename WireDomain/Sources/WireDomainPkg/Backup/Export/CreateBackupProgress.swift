@@ -19,6 +19,6 @@
 public import Foundation
 
 public enum CreateBackupProgress: Sendable {
-    case progress(Float)
+    case progress(Float) // TODO: use two integers instead (current/total)
     case done(URL)
 }

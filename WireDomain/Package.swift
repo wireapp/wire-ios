@@ -15,7 +15,8 @@ let package = Package(
         .package(path: "../WireAPI"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
-        .package(path: "../WirePlugins")
+        .package(path: "../WirePlugins"),
+        .package(url: "https://github.com/rickclephas/KMP-NativeCoroutines.git", exact: "1.0.0-ALPHA-27")
     ],
     targets: [
         .target(
@@ -24,7 +25,8 @@ let package = Package(
                 "WireAPI",
                 "WireBackup",
                 "WireLogging",
-                .product(name: "WireFoundation", package: "WireFoundation")
+                .product(name: "WireFoundation", package: "WireFoundation"),
+                .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines")
             ]
         ),
         .target(
