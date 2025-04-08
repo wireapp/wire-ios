@@ -17,7 +17,7 @@
 //
 
 "passwordtextfield.preview.title" = "Password (OPTIONAL)";
-"passwordtextfield.preview.placeholder" = "Enter password";
+"passwordtextfield.preview.placeholder" = "键入密码";
 "passwordtextfield.preview.passwordrules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
 "passwordtextfield.hide_password" = "Hide password";
 "passwordtextfield.show_password" = "Show password";

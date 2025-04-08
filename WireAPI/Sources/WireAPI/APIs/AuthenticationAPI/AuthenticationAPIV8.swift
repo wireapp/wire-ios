@@ -45,6 +45,7 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
 
         return try ResponseParser()
             .success(code: .ok, type: DomainRegistrationConfigurationV8.self)
+            .failure(code: .serviceUnavailable, error: AuthenticationAPIError.serviceUnavailable)
             .failure(code: .badRequest, label: "invalid-domain", error: AuthenticationAPIError.invalidDomain)
             .failure(code: .badRequest, error: AuthenticationAPIError.invalidRequestBody)
             .parse(code: response.statusCode, data: data)
