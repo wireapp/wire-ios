@@ -144,10 +144,6 @@
 "conversationDetails.showParticipantsButton.hint" = "Double tap to open participant list";
 "conversationDetails.participantCell.hint" = "Double tap to open profile";
 
-"createConversation.backButton.description" = "Go back to contact list";
-"createConversation.hideSettings.hint" = "Double tap to hide settings";
-"createConversation.openSettings.hint" = "Double tap to open settings";
-"createConversation.searchView.description" = "Type group name";
 "createConversation.selectedUser.hint" = "Double tap to deselect";
 "createConversation.unselectedUser.hint" = "Double tap to select";
 
