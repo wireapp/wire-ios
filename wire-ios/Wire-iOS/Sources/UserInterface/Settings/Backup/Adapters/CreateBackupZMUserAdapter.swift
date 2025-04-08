@@ -32,7 +32,7 @@ struct CreateBackupZMUserAdapter: CreateBackupUserEntityProtocol {
     let handle: String
 
     init?(_ record: any NSFetchRequestResult) {
-        guard let user = record as? ZMUser, let qualifiedID = user.qualifiedID.map(QualifiedID.init) else { return nil }
+        guard let user = record as? ZMUser, let qualifiedID = user.qualifiedID.map(QualifiedID.init) else { return nil } // TODO: prevent silent failure?
 
         id = qualifiedID
         name = user.name ?? ""

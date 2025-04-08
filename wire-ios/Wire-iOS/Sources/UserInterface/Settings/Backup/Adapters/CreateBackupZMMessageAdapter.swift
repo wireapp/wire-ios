@@ -36,12 +36,18 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
     let content: CreateBackupMessageContent
 
     init?(_ record: any NSFetchRequestResult) {
-        guard let message = record as? ZMMessage else { return nil }
-        fatalError()
+        guard
+            let message = record as? ZMMessage,
+            let senderUserID = message.senderUser?.qualifiedID,
+            let creationDate = message.serverTimestamp
+        else { return nil } // TODO: prevent silent failure?
 
-//        self.qualifiedID = qualifiedID
-//        name = user.name ?? ""
-//        handle = user.handle ?? ""
+        id = "???"
+        conversationID = QualifiedID(uuid: UUID(), domain: "")
+        self.senderUserID = QualifiedID(senderUserID)
+        senderClientID = "???"
+        self.creationDate = creationDate
+        content = .some
     }
 
 }
