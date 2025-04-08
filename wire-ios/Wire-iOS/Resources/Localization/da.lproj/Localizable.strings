@@ -856,7 +856,7 @@
 "participants.section.admins.footer" = "There are no admins.";
 "participants.section.members.footer" = "There are no members.";
 
-"profile.profile.group_admin_options.title" = "Group admin";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Flere handlinger";
@@ -919,8 +919,8 @@
 "profile.remove_dialog_title" = "Fjern?";
 "profile.remove_dialog_message" = "%@ vil ikke være i stand til at sende eller modtage beskeder i denne samtale.";
 "profile.remove_dialog_button_cancel" = "Annuller";
-"profile.remove_dialog_button_remove" = "Remove From Group…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Group";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Blokér?";
@@ -982,7 +982,7 @@
 // User Details
 "profile.details.title" = "Detaljer";
 "profile.details.guest" = "Gæst";
-"profile.details.group_admin" = "Group admin";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1726,7 +1726,7 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
 "feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId

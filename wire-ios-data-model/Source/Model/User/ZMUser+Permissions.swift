@@ -84,6 +84,9 @@ public extension ZMUser {
     @objc(canRemoveUserFromConversation:)
     func canRemoveUser(from conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
+        if conversation.isChannel, canManageTeam {
+            return true
+        }
         return hasRoleWithAction(
             actionName: ConversationAction.removeConversationMember.name,
             conversation: conversation
@@ -105,6 +108,9 @@ public extension ZMUser {
     @objc(canModifyOtherMemberInConversation:)
     func canModifyOtherMember(in conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
+        if conversation.isChannel, canManageTeam {
+            return true
+        }
         return hasRoleWithAction(
             actionName: ConversationAction.modifyOtherConversationMember.name,
             conversation: conversation

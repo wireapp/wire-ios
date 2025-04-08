@@ -1726,7 +1726,7 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "自動削除メッセージは必須です。新しいメッセージは %@ 後に自動削除されます。";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
 "feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId
