@@ -21,9 +21,11 @@ import UIKit
 package import WireConversationsAPI
 import WireReusableUIComponents
 
-package class WireConversationChannelCreationFormViewController: UIViewController {
+class WireConversationChannelCreationFormViewController: UIViewController {
 
     private let onNext: @Sendable (WireConversationChannelCreationSettings) -> Void
+    private var values: ConversationCreationValues
+
     private lazy var hostingController: UIHostingController<WireConversationChannelCreationForm> = {
         let rootView = WireConversationChannelCreationForm(
             onFormValidityUpdate: { formIsValid in
@@ -41,6 +43,10 @@ package class WireConversationChannelCreationFormViewController: UIViewControlle
 
     package init(onNext: @escaping @Sendable (WireConversationChannelCreationSettings) -> Void) {
         self.onNext = onNext
+        self.values = ConversationCreationValues(
+            encryptionProtocol: userSession.defaultProtocol,
+            selfUser: userSession.selfUser
+        )
         super.init()
     }
 

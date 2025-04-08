@@ -16,18 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-public import UIKit
-public import WireConversationsAPI
 import WireConversationsUI
-
-public class WireConversationChannelCreationFormViewControllerFactory {
-
-    public init() {}
-
-    @MainActor
-    public func create(onNext: @escaping @Sendable (WireConversationChannelCreationSettings) -> Void)
-        -> UIViewController {
-        WireConversationChannelCreationFormViewController(onNext: onNext)
-    }
-}
+import WireDataModel
+import WireSyncEngine
