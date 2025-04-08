@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/awslabs/aws-crt-swift",
         "state": {
           "branch": null,
-          "revision": "5a65eb60edbd080a8a79af813a5bb6e5ff387550",
-          "version": "0.43.0"
+          "revision": "74d970dde8a0d6b2fe1d8374767ca9793088ce2c",
+          "version": "0.48.0"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "13fd05c74d7d1c421707ef5b738a5b18d5fa347a",
-          "version": "1.2.17"
+          "revision": "fbdf582e56ea3f507309508f3fecf442f64753e8",
+          "version": "1.2.54"
         }
       },
       {
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
-          "revision": "fec2ff791b27fd9b9ceab9072025dea56409cca1",
-          "version": "1.11.3"
+          "revision": "8c61e5e38e9f737dd68512ed1ea5ab081244ad65",
+          "version": "1.12.0"
         }
       },
       {
@@ -168,8 +168,8 @@
         "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
         "state": {
           "branch": null,
-          "revision": "edfc55c48a3d8c17720780872d94c17449241d88",
-          "version": "0.115.0"
+          "revision": "755367ae4e10004f8b5a94fbfdf3f638a1f225bc",
+          "version": "0.125.0"
         }
       },
       {
@@ -204,8 +204,8 @@
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
-          "revision": "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
-          "version": "1.6.2"
+          "revision": "3d8596ed08bd13520157f0355e35caed215ffbfa",
+          "version": "1.6.3"
         }
       },
       {

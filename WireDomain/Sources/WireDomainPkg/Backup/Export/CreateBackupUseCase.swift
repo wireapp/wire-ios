@@ -150,7 +150,7 @@ public struct CreateBackupUseCase<
             selfUserId: BackupQualifiedId(selfUserID),
             workDirectory: workDirectoryURL.path(),
             outputDirectory: outputDirectoryURL.path(),
-            fileZipper: ExportBackupFileZipper2FileZipperAdapter(
+            fileZipper: CreateBackupFileZipper2FileZipperAdapter(
                 fileManager: fileManager,
                 fileArchiver: fileArchiver,
                 currentDateProvider: currentDateProvider

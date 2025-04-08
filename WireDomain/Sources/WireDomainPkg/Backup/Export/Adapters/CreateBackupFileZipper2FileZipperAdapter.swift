@@ -20,7 +20,7 @@ import Foundation
 import WireBackup
 import WireFoundation
 
-final class ExportBackupFileZipper2FileZipperAdapter: FileZipper {
+final class CreateBackupFileZipper2FileZipperAdapter: FileZipper {
 
     let fileManager: FileManager
     let fileArchiver: any CreateBackupFileArchiverProtocol
