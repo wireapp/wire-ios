@@ -98,7 +98,6 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
                 switch result {
                 case .failure:
                     cell.configure(with: conversation)
-                    self?.presentingViewController?.present(UIAlertController.checkYourConnection(), animated: true)
                 default:
                     break
                 }
