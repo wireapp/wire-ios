@@ -72,4 +72,36 @@ final class ConversationDetailsTests: XCTestCase {
 
         XCTAssertTrue(sut.accessible(in: conversation, by: user))
     }
+
+    func testAddParticipants_NotShown_ForGroups_EvenUserIsTeamOwnerAndChannelPermissionEveryone() {
+        conversation.isChannel = false
+        user.canManageTeam = true
+        conversation.privateChannelPermission = .everyone
+        let sut = GroupDetailsFooterView()
+        sut.update(for: conversation, user: user)
+        XCTAssertTrue(sut.leftButton.isHidden)
+    }
+
+    func testAddParticipants_Shown_ForGroup_UserGroupAdmin() {
+        user.isGroupAdminInConversation = true
+        user.canManageTeam = false
+        conversation.isChannel = false
+        let sut = GroupDetailsFooterView()
+        sut.update(for: conversation, user: user)
+        XCTAssertFalse(sut.leftButton.isHidden)
+    }
+
+    func testAddParticipants_Shown_ForChannel_UserIsRegularMember_PermissionEveryone() {
+        conversation.privateChannelPermission = .everyone
+        let sut = GroupDetailsFooterView()
+        sut.update(for: conversation, user: user)
+        XCTAssertFalse(sut.leftButton.isHidden)
+    }
+
+    func testAddParticipants_Shown_ForChannel_UserIsTeamAdmin() {
+        user.canManageTeam = true
+        let sut = GroupDetailsFooterView()
+        sut.update(for: conversation, user: user)
+        XCTAssertFalse(sut.leftButton.isHidden)
+    }
 }
