@@ -32,6 +32,7 @@ final class ConversationDetailsTests: XCTestCase {
     let user = {
         let user = MockUserType()
         user.canManageTeam = false
+        user.canAddUserToConversation = false
         user.isGroupAdminInConversation = false
         return user
     }()
