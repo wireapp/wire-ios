@@ -255,6 +255,14 @@ final class OneOnOneMigratorTests: XCTestCase {
             let systemMessage = try XCTUnwrap(mlsMessages[3] as? ZMSystemMessage)
             XCTAssertEqual(systemMessage.systemMessageType, .mlsMigrationFinalized)
 
+            XCTAssertEqual(mlsConversation.lastServerTimeStamp, proteusConversation.lastServerTimeStamp)
+            XCTAssertEqual(mlsConversation.lastReadServerTimeStamp, proteusConversation.lastReadServerTimeStamp)
+            XCTAssertEqual(mlsConversation.pendingLastReadServerTimestamp, proteusConversation.pendingLastReadServerTimestamp)
+            XCTAssertEqual(mlsConversation.previousLastReadServerTimestamp, proteusConversation.previousLastReadServerTimestamp)
+            XCTAssertEqual(mlsConversation.clearedTimeStamp, proteusConversation.clearedTimeStamp)
+            XCTAssertEqual(mlsConversation.archivedChangedTimestamp, proteusConversation.archivedChangedTimestamp)
+            XCTAssertEqual(mlsConversation.silencedChangedTimestamp, proteusConversation.silencedChangedTimestamp)
+
             XCTAssertNil(proteusConversation.lastMessage)
         }
         withExtendedLifetime(handler) {}

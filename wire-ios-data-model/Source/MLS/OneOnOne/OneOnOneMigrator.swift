@@ -171,7 +171,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
 
-//                setConversationDate(for: mlsConversation, from: proteusConversation)
+                setConversationDate(for: mlsConversation, from: proteusConversation)
             }
 
             if !proteusConversations.isEmpty {
