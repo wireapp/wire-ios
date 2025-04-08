@@ -158,6 +158,10 @@ public extension ZMUser {
     @objc(canModifyTitleInConversation:)
     func canModifyTitle(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group else { return false }
+        
+        if conversation.isChannel, canManageTeam {
+            return true
+        }
 
         return hasRoleWithAction(actionName: ConversationAction.modifyConversationName.name, conversation: conversation)
     }
