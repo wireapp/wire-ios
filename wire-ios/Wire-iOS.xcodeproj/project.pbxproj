@@ -589,6 +589,7 @@
 				ConversationCell/UnknownMessageCellTests.swift,
 				ConversationContentViewControllerTests.swift,
 				ConversationCreationControllerSnapshotTests.swift,
+				ConversationDetail/ConversationDetailsTests.swift,
 				ConversationDetail/GroupDetailsReceiptOptionsCellTests.swift,
 				ConversationDetail/GroupDetailsTimeoutOptionsCellTests.swift,
 				ConversationDetail/GroupDetailsViewControllerSnapshotTests.swift,

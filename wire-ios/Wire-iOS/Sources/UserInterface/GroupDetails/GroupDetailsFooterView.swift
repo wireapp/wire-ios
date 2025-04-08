@@ -32,13 +32,13 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
         case invite
     }
 
-    func update(for conversation: GroupDetailsConversationType) {
-        guard let user = SelfUser.provider?.providedSelfUser else {
-            assertionFailure("expected available 'user'!")
-            return
-        }
-
-        leftButton.isHidden = !user.canAddUser(to: conversation)
+    func update(
+        for conversation: GroupDetailsConversationType,
+        user: any UserType
+    ) {
+        let shouldShow = user.canAddUser(to: conversation) ||
+            ((user.canManageTeam || conversation.privateChannelPermission == .everyone) && conversation.isChannel)
+        leftButton.isHidden = !shouldShow
         leftButton.isEnabled = conversation.freeParticipantSlots > 0
     }
 
