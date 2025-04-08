@@ -19,24 +19,24 @@
 import SwiftUI
 import WireAuthenticationAPI
 
+package protocol RootFactory {
+
+    @MainActor var viewModel: RootViewModel { get }
+
+    @MainActor
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+}
+
 package struct RootView: View {
 
-    package typealias Factory =
-        DetermineAuthMethodBuilder &
-        LoginViaEmailOnPremBuilder &
-        LoginViaSSOBuilder &
-        NoHistoryViewBuilder
+    @StateObject private var viewModel: RootViewModel
 
-    @StateObject var viewModel: RootViewModel
-    let factory: any Factory
     private let cornerRadius: CGFloat = 10
 
     package init(
-        viewModel: RootViewModel,
-        factory: any Factory
+        factory: @autoclosure @escaping () -> any RootFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.factory = factory
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -47,86 +47,36 @@ package struct RootView: View {
     }
 
     @ViewBuilder
-    private func sheetContent(for sheet: RootView.ModalDestination) -> some View {
+    private func sheetContent(for sheet: RootViewSheet) -> some View {
         switch sheet {
-        case .authFlow:
+        case let .authFlow(backendInfo):
             NavigationStack(path: $viewModel.path) {
-                factory.determineAuthMethodView()
-            }
-            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-
-        case let .onPremiseAuthFlow(environmentType, backendConfig, backendMetadata):
-            NavigationStack(path: $viewModel.path) {
-                factory.determineAuthMethodView(
-                    environmentType: environmentType,
-                    backendConfig: backendConfig,
-                    backendMetadata: backendMetadata
+                DetermineAuthMethodView(
+                    factory: viewModel.factory.determineAuthMethodFactory(
+                        backendInfo: backendInfo
+                    )
                 )
             }
+            // We must provide an explicit id so it knows to create a new
+            // view when the backend info changes.
+            .id(backendInfo)
             .sheetCornerRadius(cornerRadius, inNavigationStack: true)
-
-        case let .noHistory(
-            authenticationResult,
-            didDetectDomainConflict
-        ):
-            factory.noHistoryView(
-                authenticationResult: authenticationResult,
-                didDetectDomainConflict: didDetectDomainConflict
+            // The alert should be shown on the navigation stack, otherwise
+            // it will dismiss the sheet.
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { alert in
+                    switch alert {
+                    case .obsoleteClient:
+                        Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                    default:
+                        Button(L10n.Authentication.Error.confirm, action: {})
+                    }
+                }
             )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
-
-        case let .onPremiseLogin(
-            email,
-            environmentType,
-            backendConfig,
-            backendMetadata
-        ):
-            factory.loginViaEmailOnPremView(
-                email: email,
-                environmentType: environmentType,
-                backendConfig: backendConfig,
-                backendMetadata: backendMetadata
-            )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
-
-        case let .ssoLogin(
-            ssoURL,
-            backendEnvironment
-        ):
-            factory.loginViaSSOView(
-                ssoURL: ssoURL,
-                backendEnvironment: backendEnvironment
-            )
-            .sheetCornerRadius(cornerRadius, inNavigationStack: false)
         }
     }
 
-    package enum ModalDestination: Identifiable, Hashable {
-        public var id: Self { self }
-
-        case authFlow
-        case onPremiseAuthFlow(
-            environmentType: BackendEnvironmentType,
-            backendConfig: BackendConfig,
-            backendMetadata: BackendMetadata
-        )
-        case noHistory(
-            authenticationResult: AuthenticationResult,
-            didDetectDomainConflict: Bool
-        )
-        case onPremiseLogin(
-            email: String?,
-            environmentType: BackendEnvironmentType,
-            environment: BackendConfig,
-            backendMetadata: BackendMetadata?
-        )
-        case ssoLogin(
-            url: URL,
-            backendEnvironment: WireAuthenticationBackendEnvironment
-        )
-    }
-}
-
-#Preview {
-    MockDependencies().rootView
 }

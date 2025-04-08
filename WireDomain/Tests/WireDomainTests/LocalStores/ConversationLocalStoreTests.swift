@@ -561,24 +561,24 @@ final class ConversationLocalStoreTests: XCTestCase {
 
             conversation.groupType = .channel
 
-            XCTAssertEqual(conversation.accessLevelPermission, nil)
+            XCTAssertEqual(conversation.privateChannelPermission, .unset)
 
             return conversation
         }
 
         // When
 
-        let channelPermission = ChannelPermission.admins
+        let channelPermission = Conversation.ChannelPermission.admins
 
         await sut.storeConversation(
-            permission: channelPermission.rawValue,
+            permission: channelPermission,
             conversation: conversation
         )
 
         // Then
 
         await context.perform {
-            XCTAssertEqual(conversation.accessLevelPermission, .admins)
+            XCTAssertEqual(conversation.privateChannelPermission, .admins)
         }
     }
 

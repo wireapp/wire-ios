@@ -108,6 +108,11 @@
 "add_participants.alert.message.new_conversation" = "Up to %d people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.";
 
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "Back";
+"conversation.create.channel.next" = "Next";
+
 // Contacts UI
 "contacts_ui.search_placeholder" = "Search by name";
 "contacts_ui.invite_others" = "Invite others";
@@ -1674,6 +1679,7 @@
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "This account is no longer authorized to log in.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
+"error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Too many people to call";
 "error.group_call.too_many_members_in_conversation" = "Calls work in conversations with up to %d people.";

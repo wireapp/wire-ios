@@ -438,7 +438,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
 
         await appendFailedToAddUsersMessage(
             in: conversation,
-            users: users
+            users: failedUsers
         )
     }
 
