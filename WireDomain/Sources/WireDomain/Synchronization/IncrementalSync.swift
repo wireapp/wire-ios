@@ -28,6 +28,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let decryptor: any UpdateEventDecryptorProtocol
     private let store: any UpdateEventsLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
+    private let databaseSaver: any DatabaseSaverProtocol
     private let logger = WireLogger.sync
 
     public init(
@@ -36,7 +37,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         updateEventsSync: any PullPendingUpdateEventsSyncProtocol,
         decryptor: any UpdateEventDecryptorProtocol,
         store: any UpdateEventsLocalStoreProtocol,
-        processor: any UpdateEventProcessorProtocol
+        processor: any UpdateEventProcessorProtocol,
+        databaseSaver: any DatabaseSaverProtocol
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -44,6 +46,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.decryptor = decryptor
         self.store = store
         self.processor = processor
+        self.databaseSaver = databaseSaver
     }
 
     public func perform() async throws -> Token {
@@ -59,7 +62,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         logger.debug("processing stored update events")
         let processedEnvelopeIDs = try await processStoredEvents()
 
-        let task = Task { @Sendable [logger, decryptor, store, processor] in
+        let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver] in
             logger.debug("handling live event stream")
 
             do {
@@ -136,6 +139,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         )
                     }
 
+                    do {
+                        // Save.
+                        try await databaseSaver.save()
+                    } catch {
+                        logger.error("failed to save database: \(String(describing: error))")
+                    }
                 }
             } catch {
                 logger.warn("live event stream encountered error: \(String(describing: error))")
@@ -184,6 +193,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             processedEnvelopeIDs.formUnion(envelopes.map(\.id))
             try await store.deleteNextPendingEvents(limit: batchSize)
+
+            do {
+                try await databaseSaver.save()
+            } catch {
+                logger.error("failed to save database: \(String(describing: error))")
+            }
         }
 
         return processedEnvelopeIDs
