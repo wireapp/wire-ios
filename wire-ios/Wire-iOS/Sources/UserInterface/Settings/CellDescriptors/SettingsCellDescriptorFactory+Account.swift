@@ -390,6 +390,8 @@ extension SettingsCellDescriptorFactory {
         let createBackupUseCase = CreateBackupUseCase(
             context: context,
             userAdapterType: CreateBackupZMUserAdapter.self,
+            conversationAdapterType: CreateBackupZMConversationAdapter.self,
+            messageAdapterType: CreateBackupZMMessageAdapter.self,
             eventProcessorHandle: EventProcessorHandle(),
             fileArchiver: CreateBackupFileArchiver(),
             currentDateProvider: SystemDateProvider(),

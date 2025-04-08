@@ -23,7 +23,9 @@ public import WireLogging
 @preconcurrency import WireBackup
 
 public struct CreateBackupUseCase<
-    UserAdapter: CreateBackupUserEntityProtocol
+    UserAdapter: CreateBackupUserEntityProtocol,
+    ConversationAdapter: CreateBackupConversationEntityProtocol,
+    MessageAdapter: CreateBackupMessageEntityProtocol
 >: CreateBackupUseCaseProtocol {
 
     let context: @Sendable () -> NSManagedObjectContext
@@ -37,6 +39,8 @@ public struct CreateBackupUseCase<
     public init(
         context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext,
         userAdapterType _: UserAdapter.Type = UserAdapter.self,
+        conversationAdapterType _: ConversationAdapter.Type = ConversationAdapter.self,
+        messageAdapterType _: MessageAdapter.Type = MessageAdapter.self,
         eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol,
         fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding,
@@ -80,13 +84,13 @@ public struct CreateBackupUseCase<
                     // get the counts of users, messages and conversations in order to report progress accurately
                     logger.debug("calculating entity counts")
                     let (userCount, messageCount, conversationCount) = try await context.perform {
-                        try Self.calculateCounts(in: context)
+                        try Self.fetchCounts(in: context)
                     }
-
-                    // fetch the data and pass it into the backup exporter
                     logger.debug("""
                     userCount: \(userCount), messageCount: \(messageCount), conversationCount: \(conversationCount)
                     """)
+
+                    // fetch the data and pass it into the backup exporter
                     let userProgressOffset = Float()
                     let userProgressMultiplier = Float(userCount) / Float(userCount + messageCount + conversationCount)
                     try await context.perform {
@@ -140,17 +144,17 @@ public struct CreateBackupUseCase<
         )
     }
 
-    private static func calculateCounts(
+    private static func fetchCounts(
         in context: NSManagedObjectContext
     ) throws -> (userCount: Int, messageCount: Int, conversationCount: Int) {
 
         let userFetchRequest = UserAdapter.fetchRequest()
         let userCount = try context.count(for: userFetchRequest)
 
-        // let conversationFetchRequest = ConversationAdapter.fetchRequest()
+        let conversationFetchRequest = ConversationAdapter.fetchRequest()
         let conversationCount = 0
 
-        // let messageFetchRequest = MessageAdapter.fetchRequest()
+        let messageFetchRequest = MessageAdapter.fetchRequest()
         let messageCount = 0
 
         return (userCount, conversationCount, messageCount)

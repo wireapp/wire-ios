@@ -18,4 +18,10 @@
 
 public import CoreData
 
-public protocol CreateBackupConversationMessageEntityProtocol: NSManagedObject {}
+public protocol CreateBackupEntityProtocol {
+
+    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult>
+
+    init?(_ record: any NSFetchRequestResult)
+
+}
