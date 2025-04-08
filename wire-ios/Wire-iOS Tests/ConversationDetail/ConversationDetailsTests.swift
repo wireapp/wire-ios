@@ -84,7 +84,7 @@ final class ConversationDetailsTests: XCTestCase {
     }
 
     func testAddParticipants_Shown_ForGroup_UserGroupAdmin() {
-        user.isGroupAdminInConversation = true
+        user.canAddUserToConversation = true
         user.canManageTeam = false
         conversation.isChannel = false
         let sut = GroupDetailsFooterView()
