@@ -88,7 +88,7 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
     let assets: [UserAsset]
     let deleted: Bool?
     let email: String?
-    let expiresAt: UTCTimeMillis?
+    let expiresAt: UTCTime?
     let service: ServiceResponseV0?
     let supportedProtocols: Set<MessageProtocol>?
     let legalholdStatus: LegalholdStatusV0
