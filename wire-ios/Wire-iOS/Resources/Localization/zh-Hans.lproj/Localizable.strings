@@ -859,7 +859,7 @@
 "participants.section.services" = "服务 (%d)";
 "participants.section.settings" = "选项";
 "participants.footer.add_title" = "添加参与者";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "最多 %1$d 位参与者可以加入对话。";
 "participants.section.admins.footer" = "没有管理员。";
 "participants.section.members.footer" = "暂时还没有成员";
 
@@ -868,10 +868,10 @@
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "更多操作";
 "meta.menu.rename" = "重新命名";
-"meta.menu.leave" = "Leave Conversation…";
+"meta.menu.leave" = "离开对话…";
 "meta.menu.archive" = "归档";
 "meta.menu.unarchive" = "取消归档";
-"meta.menu.delete" = "Delete Conversation…";
+"meta.menu.delete" = "删除对话…";
 "meta.menu.clear_content" = "清除内容…";
 "meta.menu.move_to_folder" = "移至 ...";
 "meta.menu.remove_from_folder" = "从 \"%@\"中移除";
@@ -1044,8 +1044,8 @@
 "group_details.message_protocol.title" = "协议";
 "group_details.message_protocol.cipher_suite" = "密码套件";
 
-"group_details.conversation_admins_header.title" = "Conversation admins";
-"group_details.conversation_members_header.title" = "Conversation members";
+"group_details.conversation_admins_header.title" = "对话管理员";
+"group_details.conversation_members_header.title" = "对话成员";
 
 // Channel Access level
 "channel_access_level.public" = "公开";
