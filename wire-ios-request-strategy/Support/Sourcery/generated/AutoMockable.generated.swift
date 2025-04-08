@@ -1336,11 +1336,11 @@ public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - deleteUserClient
 
-    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String?)] = []
     public var deleteUserClientClientIdPassword_MockError: Error?
-    public var deleteUserClientClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    public var deleteUserClientClientIdPassword_MockMethod: ((String, String?) async throws -> Void)?
 
-    public func deleteUserClient(clientId: String, password: String) async throws {
+    public func deleteUserClient(clientId: String, password: String?) async throws {
         deleteUserClientClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
         if let error = deleteUserClientClientIdPassword_MockError {
