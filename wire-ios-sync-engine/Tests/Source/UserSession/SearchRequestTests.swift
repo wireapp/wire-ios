@@ -66,6 +66,20 @@ class SearchRequestTests: MessagingTest {
         try assertHandleAndDomain(from: "@john", handle: "john", domain: nil)
     }
 
+    func testThatItConfiguresRequestIfFederationSearchIsAllowed() throws {
+        // given
+        let query = "john@example.com"
+        let domain = "wire.com"
+
+        // when
+        let request = SearchRequest(query: query, searchDomain: domain, searchOptions: [])
+
+        // then
+        XCTAssertEqual(request.query.string, query)
+        XCTAssertEqual(request.searchDomain, domain)
+    }
+
+
     // MARK: - Helpers
 
     func assertHandleAndDomain(
