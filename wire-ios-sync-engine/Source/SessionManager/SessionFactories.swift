@@ -97,11 +97,11 @@ open class AuthenticatedSessionFactory {
                 authenticationManager: authenticationManager
             )
         }
-        
+
         let selfClientID = coreDataStack.syncContext.performAndWait {
             ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
         }
-        
+
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,

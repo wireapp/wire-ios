@@ -167,7 +167,7 @@ public final class NotificationSession {
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
-        
+
         let selfClientID = coreDataStack.syncContext.performAndWait {
             ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
         }

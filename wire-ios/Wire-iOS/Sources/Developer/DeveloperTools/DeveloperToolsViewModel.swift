@@ -238,7 +238,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
                         selfClient: self?
                             .selfClient,
-                        onDismiss: { self?.onDismiss { } }
+                        onDismiss: { self?.onDismiss {} }
                     )))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {

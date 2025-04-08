@@ -24,7 +24,7 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
     var reachability: ReachabilityProvider & TearDownCapable { get }
 
     var pushChannel: ZMPushChannel { get }
-    
+
     var accessTokenHandler: ZMAccessTokenHandler { get }
 
     var cookieStorage: ZMPersistentCookieStorage { get }

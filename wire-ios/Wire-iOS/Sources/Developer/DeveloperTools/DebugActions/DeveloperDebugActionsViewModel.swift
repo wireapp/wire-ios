@@ -80,19 +80,19 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie)
         ]
     }
-    
+
     // MARK: - Clear access token & cookie
-    
+
     private func clearAccessTokenAndCookie() {
         let accessTokenHandler = userSession?.transportSession.accessTokenHandler
-        
+
         let responseFailure = ZMTransportResponse(
             payload: nil,
             httpStatus: 400,
             transportSessionError: nil,
             apiVersion: APIVersion.v0.rawValue
         )
-        
+
         accessTokenHandler?.processAccessTokenResponse(responseFailure)
         onDismiss?()
     }
