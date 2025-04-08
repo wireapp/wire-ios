@@ -98,6 +98,12 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
                 switch result {
                 case .failure:
                     cell.configure(with: conversation)
+
+                    // Read receipts are currently disabled for MLS conversations. In the case of MLS we match web
+                    // behavior and don't show an alert.
+                    if conversation.messageProtocol != .mls {
+                        self?.presentingViewController?.present(UIAlertController.checkYourConnection(), animated: true)
+                    }
                 default:
                     break
                 }
