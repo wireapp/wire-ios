@@ -1320,8 +1320,8 @@
 "self.settings.privacy_security.disable_link_previews.title" = "Link-Vorschau erstellen";
 "self.settings.privacy_security.disable_link_previews.footer" = "Vorschauen für Links von anderen Personen können weiterhin angezeigt werden.";
 
-"self.settings.privacy_security.collapse_own_messages.title" = "Collapse own messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "If this is enabled, all your messages are collapsed to a single line.";
+"self.settings.privacy_security.collapse_own_messages.title" = "Meine Nachrichten ausblenden";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Wenn diese Option aktiviert ist, werden all Ihre Nachrichten bis auf eine Zeile ausgeblendet.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Geräte";
 
@@ -1658,6 +1658,7 @@
 "error.user.last_identity_cant_be_deleted" = "Eine E-Mail-Adresse ist erforderlich.";
 "error.user.account_suspended" = "Benutzerkonto ist nicht mehr zur Anmeldung berechtigt.";
 "error.user.account_limit_reached" = "Es können maximal 3 Konten genutzt werden.";
+"error.user.too_many_requests" = "Zu viele Anfragen. Bitte versuchen Sie es später erneut.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Zu viele Teilnehmer";
 "error.group_call.too_many_members_in_conversation" = "Anrufe sind nur in Unterhaltungen mit bis zu %d Teilnehmern möglich.";
