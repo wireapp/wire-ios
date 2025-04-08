@@ -1658,7 +1658,7 @@
 "error.user.last_identity_cant_be_deleted" = "Eine E-Mail-Adresse ist erforderlich.";
 "error.user.account_suspended" = "Benutzerkonto ist nicht mehr zur Anmeldung berechtigt.";
 "error.user.account_limit_reached" = "Es können maximal 3 Konten genutzt werden.";
-"error.user.too_many_requests" = "Too many requests, please try again later.";
+"error.user.too_many_requests" = "Zu viele Anfragen. Bitte versuchen Sie es später erneut.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Zu viele Teilnehmer";
 "error.group_call.too_many_members_in_conversation" = "Anrufe sind nur in Unterhaltungen mit bis zu %d Teilnehmern möglich.";

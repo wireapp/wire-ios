@@ -23,7 +23,7 @@
 
 "cloud_user_login.title" = "Geben Sie Ihr Passwort ein, um sich anzumelden ";
 "cloud_user_login.input_email.title" = "E-Mail";
-"cloud_user_login.input_email.placeholder" = "E-Mail eingeben";
+"cloud_user_login.input_email.placeholder" = "E-Mail-Adresse eingeben";
 "cloud_user_login.input_password.title" = "Passwort";
 "cloud_user_login.input_password.placeholder" = "Passwort eingeben";
 "cloud_user_login.submit" = "Weiter";
