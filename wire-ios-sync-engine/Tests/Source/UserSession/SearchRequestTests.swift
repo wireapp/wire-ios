@@ -79,7 +79,6 @@ class SearchRequestTests: MessagingTest {
         XCTAssertEqual(request.searchDomain, domain)
     }
 
-
     // MARK: - Helpers
 
     func assertHandleAndDomain(
