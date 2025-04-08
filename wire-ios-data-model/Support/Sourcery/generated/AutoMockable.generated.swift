@@ -207,45 +207,6 @@ public class MockCRLExpirationDatesRepositoryProtocol: CRLExpirationDatesReposit
 
 }
 
-public class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - processConversationEvents
-
-    public var processConversationEvents_Invocations: [[ZMUpdateEvent]] = []
-    public var processConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
-
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
-        processConversationEvents_Invocations.append(events)
-
-        guard let mock = processConversationEvents_MockMethod else {
-            fatalError("no mock for `processConversationEvents`")
-        }
-
-        await mock(events)
-    }
-
-    // MARK: - processAndSaveConversationEvents
-
-    public var processAndSaveConversationEvents_Invocations: [[ZMUpdateEvent]] = []
-    public var processAndSaveConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
-
-    public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
-        processAndSaveConversationEvents_Invocations.append(events)
-
-        guard let mock = processAndSaveConversationEvents_MockMethod else {
-            fatalError("no mock for `processAndSaveConversationEvents`")
-        }
-
-        await mock(events)
-    }
-
-}
-
 public class MockConversationLike: ConversationLike {
 
     // MARK: - Life cycle
@@ -1185,10 +1146,10 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     public var getUserIdentitiesConversationIdUserIds_Invocations: [(conversationId: Data, userIds: [String])] = []
     public var getUserIdentitiesConversationIdUserIds_MockError: Error?
-    public var getUserIdentitiesConversationIdUserIds_MockMethod: ((Data, [String]) async throws -> [String : [WireCoreCryptoUniffi.WireIdentity]])?
-    public var getUserIdentitiesConversationIdUserIds_MockValue: [String : [WireCoreCryptoUniffi.WireIdentity]]?
+    public var getUserIdentitiesConversationIdUserIds_MockMethod: ((Data, [String]) async throws -> [String: [WireCoreCryptoUniffi.WireIdentity]])?
+    public var getUserIdentitiesConversationIdUserIds_MockValue: [String: [WireCoreCryptoUniffi.WireIdentity]]?
 
-    public func getUserIdentities(conversationId: Data, userIds: [String]) async throws -> [String : [WireCoreCryptoUniffi.WireIdentity]] {
+    public func getUserIdentities(conversationId: Data, userIds: [String]) async throws -> [String: [WireCoreCryptoUniffi.WireIdentity]] {
         getUserIdentitiesConversationIdUserIds_Invocations.append((conversationId: conversationId, userIds: userIds))
 
         if let error = getUserIdentitiesConversationIdUserIds_MockError {
@@ -1403,10 +1364,10 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     public var proteusEncryptBatchedSessionsPlaintext_Invocations: [(sessions: [String], plaintext: Data)] = []
     public var proteusEncryptBatchedSessionsPlaintext_MockError: Error?
-    public var proteusEncryptBatchedSessionsPlaintext_MockMethod: (([String], Data) async throws -> [String : Data])?
-    public var proteusEncryptBatchedSessionsPlaintext_MockValue: [String : Data]?
+    public var proteusEncryptBatchedSessionsPlaintext_MockMethod: (([String], Data) async throws -> [String: Data])?
+    public var proteusEncryptBatchedSessionsPlaintext_MockValue: [String: Data]?
 
-    public func proteusEncryptBatched(sessions: [String], plaintext: Data) async throws -> [String : Data] {
+    public func proteusEncryptBatched(sessions: [String], plaintext: Data) async throws -> [String: Data] {
         proteusEncryptBatchedSessionsPlaintext_Invocations.append((sessions: sessions, plaintext: plaintext))
 
         if let error = proteusEncryptBatchedSessionsPlaintext_MockError {
@@ -3586,6 +3547,45 @@ public class MockLastEventIDRepositoryInterface: LastEventIDRepositoryInterface 
         }
 
         mock(id)
+    }
+
+}
+
+public class MockLegacyConversationEventProcessorProtocol: LegacyConversationEventProcessorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - processConversationEvents
+
+    public var processConversationEvents_Invocations: [[ZMUpdateEvent]] = []
+    public var processConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
+
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
+        processConversationEvents_Invocations.append(events)
+
+        guard let mock = processConversationEvents_MockMethod else {
+            fatalError("no mock for `processConversationEvents`")
+        }
+
+        await mock(events)
+    }
+
+    // MARK: - processAndSaveConversationEvents
+
+    public var processAndSaveConversationEvents_Invocations: [[ZMUpdateEvent]] = []
+    public var processAndSaveConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
+
+    public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
+        processAndSaveConversationEvents_Invocations.append(events)
+
+        guard let mock = processAndSaveConversationEvents_MockMethod else {
+            fatalError("no mock for `processAndSaveConversationEvents`")
+        }
+
+        await mock(events)
     }
 
 }

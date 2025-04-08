@@ -287,7 +287,6 @@ public final class ZMUserSession: NSObject {
 
         let keyRotator = E2EIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: conversationEventProcessor,
             context: syncContext,
             onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
             featureRepository: featureRepository

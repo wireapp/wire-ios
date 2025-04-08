@@ -1632,7 +1632,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
 
         var count = 0
-        mockCoreCryptoContext.wipeConversationConversationId_MockMethod = { (id: ConversationId) in
+        mockCoreCryptoContext.wipeConversationConversationId_MockMethod = { (id: Data) in
             count += 1
             XCTAssertEqual(id, groupID.data)
         }
