@@ -223,7 +223,7 @@
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "Double tap to open profile";
 
-"conversationList.startConversationButton.description" = "Create group or search for people";
+"conversationList.startConversationButton.description" = "Create a group or channel, or search for people";
 "conversationsList.filterButton.description" = "Filter conversations";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
