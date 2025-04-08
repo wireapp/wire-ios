@@ -48,13 +48,13 @@ struct QualifiedConversationMember: Decodable, ToAPIModelConvertible {
     }
 
     let archived: Bool?
-    let archivedReference: UTCTimeMillis?
+    let archivedReference: UTCTime?
     let conversationRole: String?
     let hidden: Bool?
     let hiddenReference: String?
     let id: UUID?
     let mutedStatus: Int?
-    let mutedReference: UTCTimeMillis?
+    let mutedReference: UTCTime?
     let qualifiedID: QualifiedID?
     let qualifiedTarget: QualifiedID?
     let service: Service?

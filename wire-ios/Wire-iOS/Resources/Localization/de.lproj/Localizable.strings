@@ -106,7 +106,7 @@
 "add_participants.alert.message.existing_conversation" = "Bis zu %1$d Personen können an einer Unterhaltung teilnehmen. Jetzt ist noch Platz für %2$d weitere.";
 
 // Channel Creation UI - Navigation
-"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.title" = "Neuer Channel";
 "conversation.create.channel.back" = "Zurück";
 "conversation.create.channel.next" = "Weiter";
 
@@ -859,7 +859,7 @@
 "participants.section.services" = "Dienste (%d)";
 "participants.section.settings" = "Optionen";
 "participants.footer.add_title" = "Teilnehmer hinzufügen";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Bis zu %1$d Personen können an einer Unterhaltung teilnehmen.";
 "participants.section.admins.footer" = "Es gibt keine Admins.";
 "participants.section.members.footer" = "Es gibt keine Mitglieder.";
 
@@ -868,10 +868,10 @@
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Weitere Aktionen";
 "meta.menu.rename" = "Umbenennen";
-"meta.menu.leave" = "Leave Conversation…";
+"meta.menu.leave" = "Unterhaltung verlassen";
 "meta.menu.archive" = "Archiv";
 "meta.menu.unarchive" = "Reaktivieren";
-"meta.menu.delete" = "Delete Conversation…";
+"meta.menu.delete" = "Unterhaltung löschen…";
 "meta.menu.clear_content" = "Verlauf löschen…";
 "meta.menu.move_to_folder" = "Verschieben nach…";
 "meta.menu.remove_from_folder" = "Aus \"%@\" entfernen";
@@ -1670,7 +1670,7 @@
 "error.user.last_identity_cant_be_deleted" = "Eine E-Mail-Adresse ist erforderlich.";
 "error.user.account_suspended" = "Benutzerkonto ist nicht mehr zur Anmeldung berechtigt.";
 "error.user.account_limit_reached" = "Es können maximal 3 Konten genutzt werden.";
-"error.user.too_many_requests" = "Too many requests, please try again later.";
+"error.user.too_many_requests" = "Zu viele Anfragen. Bitte versuchen Sie es später erneut.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Zu viele Teilnehmer";
 "error.group_call.too_many_members_in_conversation" = "Anrufe sind nur in Unterhaltungen mit bis zu %d Teilnehmern möglich.";
