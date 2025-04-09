@@ -91,13 +91,20 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
         notification.interruptionLevel = .timeSensitive
         notification.badge = await getNotificationBadge()
         
-        WireLogger.notifications.info("Displaying push notification", attributes: .newNSE)
+        WireLogger.notifications.info(
+            "Displaying push notification",
+            attributes: .newNSE
+        )
+        
         // Displays the notification to the user
         contentHandler(notification)
     }
     
     private func getNotificationBadge() async -> NSNumber {
-        let unreadConversationCount = await Int(conversationLocalStore.unreadConversationCount())
+        let unreadConversationCount = await Int(
+            conversationLocalStore.unreadConversationCount()
+        )
+        
         selectedAccount.unreadConversationCount = unreadConversationCount
         let totalUnreadCount = accountManager.totalUnreadCount
         

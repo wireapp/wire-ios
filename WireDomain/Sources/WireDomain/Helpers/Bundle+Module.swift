@@ -24,5 +24,5 @@ import Foundation
     message: "Use generated Bundle.module instead (package currently doesn't automatically generate .module for the Localizable.strings)"
 )
 extension Bundle {
-    static let module = Bundle(for: GenerateNotificationComponent.self)
+    static let module = Bundle(for: NotificationServiceExtension.self)
 }

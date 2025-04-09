@@ -18,6 +18,7 @@
 
 import UserNotifications
 import WireAPI
+import WireDataModel
 
 struct UserConnectionEventNotificationBuilder {
 
@@ -26,61 +27,52 @@ struct UserConnectionEventNotificationBuilder {
         case accepted
     }
 
-    private struct Context {
-        let connectionStatus: ConnectionStatus
-        let username: String?
-        let conversationID: WireAPI.QualifiedID?
-        let senderID: UUID?
-        let selfUserID: UUID
-    }
+    let context: Context
+    let validator: Validator
 
-    private let context: Context
-
-    init(
-        userConnectionEvent: UserConnectionEvent,
-        conversationID: WireAPI.QualifiedID?,
-        senderID: UUID?,
-        userLocalStore: any UserLocalStoreProtocol
-    ) async {
-        let isPendingConnection = userConnectionEvent.connection.status == .pending
-
-        let selfUser = await userLocalStore.fetchSelfUser()
-        let selfUserID = await userLocalStore.id(for: selfUser)
-
-        self.context = Context(
-            connectionStatus: isPendingConnection ? .pending : .accepted,
-            username: userConnectionEvent.userName,
-            conversationID: conversationID,
-            senderID: senderID,
-            selfUserID: selfUserID
-        )
-    }
-
-    private func shouldBuildNotification() async -> Bool {
-        true
-    }
-
-    func buildContent() async -> UserNotification? {
-        guard await shouldBuildNotification() else {
+    func buildContent(
+        event: UserConnectionEvent
+    ) async -> UserNotification? {
+        let canBuildNotification = await validator.validate()
+        
+        guard canBuildNotification else {
             return nil
         }
         
-        switch context.connectionStatus {
-        case .pending:
-            return buildConnectionRequestNotification(isPending: true)
-        case .accepted:
-            return buildConnectionRequestNotification(isPending: false)
+        var qualifiedID: WireAPI.QualifiedID?
+        let connection = event.connection
+
+        if let qualifiedConversationID = connection.qualifiedConversationID {
+            qualifiedID = qualifiedConversationID
+        } else if let conversationID = connection.conversationID {
+            qualifiedID = .init(uuid: conversationID, domain: "")
         }
+        
+        let isPendingConnection = event.connection.status == .pending
+        let connectionStatus = isPendingConnection ? ConnectionStatus.pending : .accepted
+        let selfUser = await context.getSelfUser()
+        let selfUserID = await context.selfUserID(selfUser: selfUser)
+        
+        return buildConnectionRequestNotification(
+            connectionStatus: connectionStatus,
+            username: event.userName,
+            selfUserID: selfUserID,
+            senderID: connection.senderID,
+            conversationID: qualifiedID
+        )
+
     }
 
     // MARK: - Build notifications
 
     private func buildConnectionRequestNotification(
-        isPending: Bool
+        connectionStatus:  ConnectionStatus,
+        username: String?,
+        selfUserID: UUID,
+        senderID: UUID?,
+        conversationID: WireAPI.QualifiedID?
     ) -> UserNotification {
         let content = UNMutableNotificationContent()
-
-        let connectionStatus = context.connectionStatus
 
         let localizableKey: String.LocalizationValue = switch connectionStatus {
         case .pending:
@@ -89,16 +81,22 @@ struct UserConnectionEventNotificationBuilder {
             "push.notification.body.connectionAccepted"
         }
 
-        let body = if let username = context.username {
+        let body = if let username {
             String.formated(key: localizableKey, bundle: .module, username)
         } else {
             String.localized(key: localizableKey, bundle: .module)
         }
 
         content.body = body
-        content.categoryIdentifier = makeCategory()
+        content.categoryIdentifier = makeCategory(
+            connectionStatus: connectionStatus
+        )
         content.sound = makeSound()
-        content.userInfo = makeUserInfo()
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID,
+            conversationID: conversationID
+        )
 
         return .text(content)
     }
@@ -110,8 +108,8 @@ struct UserConnectionEventNotificationBuilder {
         return UNNotificationSound(named: notificationSoundName)
     }
 
-    private func makeCategory() -> String {
-        switch context.connectionStatus {
+    private func makeCategory(connectionStatus: ConnectionStatus) -> String {
+        switch connectionStatus {
         case .accepted:
             NotificationCategory.nonActionable.rawValue
         case .pending:
@@ -119,14 +117,81 @@ struct UserConnectionEventNotificationBuilder {
         }
     }
 
-    private func makeUserInfo() -> [AnyHashable: Any] {
+    private func makeUserInfo(
+        selfUserID: UUID,
+        senderID: UUID?,
+        conversationID: WireAPI.QualifiedID?
+    ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID.uuidString
-        userInfo[NotificationUserInfoKey.senderID] = context.senderID?.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID?.uuid.uuidString
+        userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
+        userInfo[NotificationUserInfoKey.senderID] = senderID?.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID?.uuid.uuidString
 
         return userInfo
     }
 
+}
+
+extension UserConnectionEventNotificationBuilder {
+    struct Validator {
+
+        func validate() async -> Bool {
+            true // No validation criteria for this notification
+        }
+    }
+    
+    struct Context {
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+        let userLocalStore: any UserLocalStoreProtocol
+        
+        func getConversation(
+            conversationID: ConversationID
+        ) async -> ZMConversation {
+            await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+        }
+        
+        func getSelfUser() async -> ZMUser {
+            await userLocalStore.fetchSelfUser()
+        }
+        
+        func getSender(
+            senderID: UserID
+        ) async -> ZMUser {
+            await userLocalStore.fetchOrCreateUser(
+                id: senderID.uuid,
+                domain: senderID.domain
+            )
+        }
+        
+        func senderName(
+            sender: ZMUser
+        ) async -> String? {
+            await userLocalStore.name(for: sender)
+        }
+        
+        func isGroupConversation(conversation: ZMConversation) async -> Bool {
+            await conversationLocalStore.isGroupConversation(conversation)
+        }
+        
+        func selfUserID(selfUser: ZMUser) async -> UUID {
+            await userLocalStore.id(for: selfUser)
+        }
+        
+        func conversationName(
+            conversation: ZMConversation
+        ) async -> String? {
+            await conversationLocalStore.name(for: conversation)
+        }
+        
+        func teamName(
+            selfUser: ZMUser
+        ) async -> String? {
+            await userLocalStore.teamName(for: selfUser)
+        }
+
+    }
 }

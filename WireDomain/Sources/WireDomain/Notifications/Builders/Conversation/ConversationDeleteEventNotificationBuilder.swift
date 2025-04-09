@@ -25,9 +25,10 @@ struct ConversationDeleteEventNotificationBuilder {
     let validator: Validator
 
     func buildContent(
-        conversationID: WireAPI.QualifiedID,
-        senderID: UserID
+        event: ConversationDeleteEvent
     ) async -> UserNotification? {
+        let conversationID = event.conversationID
+        
         let canBuildNotification = await validator.validate(
             conversationID: conversationID
         )
@@ -36,6 +37,7 @@ struct ConversationDeleteEventNotificationBuilder {
             return nil
         }
         
+        let senderID = event.senderID
         let conversation = await context.getConversation(conversationID: conversationID)
         let sender = await context.getSender(senderID: senderID)
         let selfUser = await context.getSelfUser()
@@ -185,7 +187,7 @@ extension ConversationDeleteEventNotificationBuilder {
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
-            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+            await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.uuid,
                 domain: conversationID.domain
             )

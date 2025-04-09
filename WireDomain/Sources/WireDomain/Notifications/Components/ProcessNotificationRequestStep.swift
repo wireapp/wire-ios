@@ -18,6 +18,7 @@
 
 import NeedleFoundation
 import UserNotifications
+import WireDataModel
 
 protocol ProcessNotificationRequestStepFactory {
     func process(
@@ -27,6 +28,8 @@ protocol ProcessNotificationRequestStepFactory {
 
 final class ProcessNotificationRequestStep: Component<EmptyDependency>, ProcessNotificationRequestStepFactory {
     
+    public var userID: UUID!
+    
     func process(
         request: UNNotificationRequest
     ) async throws {
@@ -35,9 +38,10 @@ final class ProcessNotificationRequestStep: Component<EmptyDependency>, ProcessN
         )
         let payload = try await processNotificationUseCase.invoke()
         
+        self.userID = payload.userID
+        
         try await verifyUserStep.verifyUserSession(
-            userID: payload.userID,
-            eventID: payload.eventID
+            userID: payload.userID
         )
     }
     

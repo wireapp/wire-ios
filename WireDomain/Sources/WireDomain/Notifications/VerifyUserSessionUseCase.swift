@@ -36,6 +36,7 @@ struct VerifyUserSessionUseCase {
     }
 
     // MARK: - Properties
+    
     private let userID: UUID
     private let cookieStorage: any CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
@@ -51,9 +52,6 @@ struct VerifyUserSessionUseCase {
     }
 
     /// Ensures user is properly authenticated.
-    /// - parameters
-    ///     - userID: The user ID to verify the authentication for.
-    ///     - handler: Completion block called if the user is authenticated.
 
     func invoke() async throws {
         let cookies = try await cookieStorage.fetchCookies()

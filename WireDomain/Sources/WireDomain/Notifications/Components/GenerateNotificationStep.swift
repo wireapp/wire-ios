@@ -24,9 +24,8 @@ import WireDataModel
 protocol GenerateNotificationDependency: Dependency {
     var contentHandler: (UNNotificationContent) -> Void { get }
     var accountManager: AccountManager { get }
-    var selectedAccount: Account { get }
     var sharedUserDefaults: UserDefaults { get }
-    var userID: UUID { get }
+    var userID: UUID! { get }
     var messageLocalStore: any MessageLocalStoreProtocol { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
     var userLocalStore: any UserLocalStoreProtocol { get }
@@ -38,7 +37,7 @@ protocol GenerateNotificationStepFactory {
     ) async throws
 }
 
-final class GenerateNotificationStep: Component<GenerateNotificationDependency> {
+final class GenerateNotificationStep: Component<GenerateNotificationDependency>, GenerateNotificationStepFactory {
 
     func generateNotification(
         eventsStream: AsyncStream<[UpdateEvent]>
@@ -76,8 +75,7 @@ extension GenerateNotificationStep {
         
         return ConversationEventNotificationBuilder(
             validator: validator,
-            callKitNotificationBuilder: callKitNotificationBuilder,
-            callNotificationBuilder: callNotificationBuilder,
+            conversationCallingEventNotificationBuilder: conversationCallingEventNotificationBuilder,
             conversationMLSMessageAddEventNotificationBuilder: conversationMLSMessageAddEventNotificationBuilder,
             conversationProteusMessageAddEventNotificationBuilder: conversationProteusMessageAddEventNotificationBuilder,
             conversationMemberLeaveEventNotificationBuilder: conversationMemberLeaveEventNotificationBuilder,
@@ -201,46 +199,59 @@ extension GenerateNotificationStep {
         )
     }
     
-    var callKitNotificationBuilder: CallKitNotificationBuilder {
-        let validator = CallKitNotificationBuilder.Validator(
+    var conversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilder {
+        let validator = ConversationCallingEventNotificationBuilder.Validator(
             userLocalStore: dependency.userLocalStore,
             conversationLocalStore: dependency.conversationLocalStore,
-            messageLocalStore: dependency.messageLocalStore,
             userDefaults: dependency.sharedUserDefaults
         )
         
-        let context = CallKitNotificationBuilder.Context(
+        let context = ConversationCallingEventNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore,
             userDefaults: dependency.sharedUserDefaults
         )
         
-        return CallKitNotificationBuilder(
+        return ConversationCallingEventNotificationBuilder(
             context: context,
             validator: validator,
             accountID: dependency.userID
         )
     }
     
-    var callNotificationBuilder: CallNotificationBuilder {
-        let validator = CallNotificationBuilder.Validator(
-            userLocalStore: dependency.userLocalStore,
-            conversationLocalStore: dependency.conversationLocalStore
+    private var userEventNotificationBuilder: UserEventNotificationBuilder {
+        let validator = UserEventNotificationBuilder.Validator()
+        
+        return UserEventNotificationBuilder(
+            validator: validator,
+            userConnectionEventNotificationBuilder: userConnectionEventNotificationBuilder,
+            userContactJoinEventNotificationBuilder: userContactJoinEventNotificationBuilder
         )
         
-        let context = CallNotificationBuilder.Context(
-            conversationLocalStore: dependency.conversationLocalStore,
-            userLocalStore: dependency.userLocalStore
-        )
+    }
+    
+    private var userContactJoinEventNotificationBuilder: UserContactJoinEventNotificationBuilder {
+        let context = UserContactJoinEventNotificationBuilder.Context()
+        let validator = UserContactJoinEventNotificationBuilder.Validator()
         
-        return CallNotificationBuilder(
+        return UserContactJoinEventNotificationBuilder(
             context: context,
             validator: validator
         )
     }
     
-    private var userEventNotificationBuilder: UserNotificationBuilder {
-        UserNotificationBuilder(event: <#T##UserEvent#>, userLocalStore: <#T##any UserLocalStoreProtocol#>)
+    private var userConnectionEventNotificationBuilder: UserConnectionEventNotificationBuilder {
         
+        let context = UserConnectionEventNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        let validator = UserConnectionEventNotificationBuilder.Validator()
+        
+        return UserConnectionEventNotificationBuilder(
+            context: context,
+            validator: validator
+        )
     }
 }

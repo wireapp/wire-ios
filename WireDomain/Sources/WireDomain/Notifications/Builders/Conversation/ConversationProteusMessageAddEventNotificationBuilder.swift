@@ -32,10 +32,20 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
     let validator: Validator
 
     func buildContent(
-        message: GenericMessage,
-        conversationID: ConversationID,
-        senderID: UserID
+        event: ConversationProteusMessageAddEvent
     ) async -> UserNotification?  {
+        let decryptedMessage = event.message.decryptedMessage
+        let external = event.externalData?.encryptedMessage
+        let senderID = event.senderID
+        let conversationID = event.conversationID
+        
+        guard let message = decryptMessage(
+            decryptedMessage: decryptedMessage,
+            external: external
+        ) else {
+            return nil
+        }
+        
         let canDisplayNotification = await validator.validate(
             message: message,
             senderID: senderID,
@@ -107,7 +117,9 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
             return await buildEphemeralNotification(
                 conversation: conversation,
                 conversationID: conversationID,
-                ephemeral: ephemeral
+                ephemeral: ephemeral,
+                selfUserID: selfUserID,
+                senderID: senderID
             )
         case let .text(text):
             return await buildTextNotification(
@@ -424,7 +436,9 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
     private func buildEphemeralNotification(
         conversation: ZMConversation,
         conversationID: ConversationID,
-        ephemeral: Ephemeral
+        ephemeral: Ephemeral,
+        selfUserID: UUID,
+        senderID: UserID
     ) async -> UserNotification {
         let isMention: Bool
         let isReply: Bool
@@ -464,9 +478,9 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo(
-            selfUserID: <#UUID#>,
-            senderID: <#UUID#>,
-            conversationID: <#ConversationID#>
+            selfUserID: selfUserID,
+            senderID: senderID.uuid,
+            conversationID: conversationID
         )
 
         if isMention {
@@ -549,6 +563,21 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
             return
         }
     }
+    
+    private func decryptMessage(
+        decryptedMessage: String?,
+        external: String?
+    ) -> GenericMessage? {
+        guard let decryptedMessage,
+              let (genericMessage, _) = ProtobufMessageDecoder.getProtobufMessage(
+                  from: decryptedMessage,
+                  externalData: external
+              ) else {
+            return nil
+        }
+
+        return genericMessage
+    }
 
 }
 
@@ -565,8 +594,6 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 id: conversationID.uuid,
                 domain: conversationID.domain
             )
-
-            // Validation criteria
 
             let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
                 message,
@@ -586,7 +613,7 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
-            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+            await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.uuid,
                 domain: conversationID.domain
             )

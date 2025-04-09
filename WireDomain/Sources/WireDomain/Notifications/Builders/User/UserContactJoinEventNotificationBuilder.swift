@@ -18,41 +18,42 @@
 
 import UserNotifications
 import WireAPI
+import WireDataModel
 
 struct UserContactJoinEventNotificationBuilder {
+    
+    let context: Context
+    let validator: Validator
 
-    private struct Context {
-        let name: String
-    }
-
-    private let context: Context
-
-    init(
-        name: String
-    ) {
-        self.context = Context(
+    func buildContent(
+        event: UserContactJoinEvent
+    ) async -> UserNotification? {
+        let canBuildNotification = await validator.validate()
+        
+        guard canBuildNotification else {
+            return nil
+        }
+        
+        let name = event.name
+        
+        return buildUserContactJoinNotification(
             name: name
         )
     }
 
-    private func shouldBuildNotification() async -> Bool {
-        true
-    }
-
-    func buildContent() async -> UserNotification? {
-        guard await shouldBuildNotification() else {
-            return nil
-        }
-        
-        return buildUserContactJoinNotification()
-    }
-
     // MARK: - Build notifications
 
-    private func buildUserContactJoinNotification() -> UserNotification {
+    private func buildUserContactJoinNotification(
+        name: String
+    ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
-        let body = String.formated(key: "push.notification.body.contactJoined", bundle: .module, context.name)
+        let body = String.formated(
+            key: "push.notification.body.contactJoined",
+            bundle: .module,
+            name
+        )
+        
         content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
@@ -72,3 +73,15 @@ struct UserContactJoinEventNotificationBuilder {
     }
 
 }
+
+extension UserContactJoinEventNotificationBuilder {
+    struct Validator {
+
+        func validate() async -> Bool {
+            true // No validation criteria for this notification
+        }
+    }
+    
+    struct Context {}
+}
+

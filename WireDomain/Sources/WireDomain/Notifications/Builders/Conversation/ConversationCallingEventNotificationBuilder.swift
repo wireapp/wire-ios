@@ -20,43 +20,11 @@ import WireAPI
 import WireDataModel
 
 /// Handles a regular push notification related to an incoming / missed call
-struct CallNotificationBuilder {
+struct ConversationCallingEventNotificationBuilder {
 
-    enum CallState: Equatable {
-        case incomingCall(video: Bool)
-        case missedCall
-        case unhandled
-
-        init(callContent: CallContent) {
-            let isStartCall = callContent.type.isOne(
-                of: [
-                    CallType.setup,
-                    CallType.groupStart,
-                    CallType.confStart
-                ]
-            )
-            let isIncomingCall = isStartCall && !callContent.responded
-            let isEndCall = callContent.type.isOne(
-                of: [
-                    CallType.cancel,
-                    CallType.groupEnd,
-                    CallType.confEnd
-                ]
-            )
-
-            if isIncomingCall {
-                self = .incomingCall(video: callContent.properties?.isVideo ?? false)
-            } else if isEndCall {
-                self = .missedCall
-            } else {
-                self = .unhandled
-            }
-
-        }
-    }
-
-    let context: CallNotificationBuilder.Context
-    let validator: CallNotificationBuilder.Validator
+    let context: ConversationCallingEventNotificationBuilder.Context
+    let validator: ConversationCallingEventNotificationBuilder.Validator
+    let accountID: UUID
 
     func buildContent(
         calling: Calling,
@@ -68,18 +36,89 @@ struct CallNotificationBuilder {
             return nil
         }
         
+        // CallKit notification
+        
+        let callKitState = context.callKitState(
+            callContent: callContent,
+            accountID: accountID,
+            conversationID: conversationID
+        )
+        
+        let canDisplayCallKitNotification = await validator.validate(
+            callKitState: callKitState,
+            accountID: accountID,
+            senderID: senderID,
+            conversationID: conversationID
+        )
+        
+        // Call notification
+        
         let callState = CallState(callContent: callContent)
         
-        let canDisplayNotification = await validator.validate(
+        let canDisplayCallNotification = await validator.validate(
             callState: callState,
             time: time,
             senderID: senderID,
             conversationID: conversationID
         )
         
-        guard canDisplayNotification else {
+        // First, let's try to return a CallKit notification.
+        // If not, try to return a regular call notification.
+        // Else, this is not a call, return nil.
+        
+        if canDisplayCallKitNotification {
+            
+            return await buildCallKitNotification(
+                accountID: accountID,
+                conversationID: conversationID,
+                senderID: senderID
+            )
+            
+        } else if canDisplayCallNotification {
+      
+            return await buildCallNotification(
+                callState: callState,
+                callContent: callContent,
+                senderID: senderID,
+                conversationID: conversationID
+            )
+        } else {
+            
             return nil
         }
+
+    }
+    
+    // MARK: - Build CallKit notification
+    
+    private func buildCallKitNotification(
+        accountID: UUID,
+        conversationID: ConversationID,
+        senderID: UserID
+    ) async -> UserNotification {
+        let callKitContent: [String: Any] = [
+            "accountID": accountID,
+            "conversationID": conversationID,
+            "shouldRing": context.shouldRing,
+            "callerName": await makeCallKitTitle(
+                conversationID: conversationID,
+                senderID: senderID
+            ) ?? "",
+            "hasVideo": context.isVideo
+        ]
+
+        return .callKit(callKitContent)
+    }
+    
+
+    // MARK: - Build call notifications
+    
+    private func buildCallNotification(
+        callState: CallState,
+        callContent: CallContent,
+        senderID: UserID,
+        conversationID: ConversationID
+    ) async -> UserNotification {
         
         let conversation = await context.getConversation(conversationID: conversationID)
         let caller = await context.getCaller(senderID: senderID)
@@ -125,8 +164,6 @@ struct CallNotificationBuilder {
         }
     }
 
-    // MARK: - Build notifications
-
     private func buildIncomingCallNotification(
         callState: CallState,
         selfUserID: UUID,
@@ -142,7 +179,7 @@ struct CallNotificationBuilder {
     ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
-        if let title = makeTitle(
+        if let title = makeCallTitle(
             isGroupConversation: isGroupConversation,
             callerName: senderName,
             conversationName: conversationName,
@@ -190,7 +227,7 @@ struct CallNotificationBuilder {
     ) async -> UserNotification {
         let content = UNMutableNotificationContent()
 
-        if let title = makeTitle(
+        if let title = makeCallTitle(
             isGroupConversation: isGroupConversation,
             callerName: senderName,
             conversationName: conversationName,
@@ -224,8 +261,60 @@ struct CallNotificationBuilder {
     }
 
     // MARK: - Helpers
+    
+    private func makeCallKitTitle(
+        conversationID: ConversationID,
+        senderID: UserID
+    ) async -> String? {
+        let conversation = await context.getConversation(
+            conversationID: conversationID
+        )
+        
+        let selfUser = await context.getSelfUser()
+        let caller = await context.getCaller(
+            senderID: senderID
+        )
+        
+        let isGroupConversation = await context.isGroupConversation(
+            conversation: conversation
+        )
+        
+        let teamName = await context.teamName(
+            selfUser: selfUser
+        )
+        
+        let conversationName = await context.conversationName(
+            conversation: conversation
+        )
+        
+        let callerName = await context.callerName(
+            caller: caller
+        )
 
-    private func makeTitle(
+        guard let conversationName, let callerName else {
+            return nil
+        }
+
+        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
+            if let teamName {
+                .conversationInTeam(conversation: conversationName, team: teamName)
+            } else {
+                .conversation(conversation: conversationName)
+            }
+        } else {
+            if let teamName {
+                .senderInTeam(sender: callerName, team: teamName)
+            } else {
+                .sender(sender: callerName)
+            }
+        }
+
+        return NotificationTitle
+            .conversationMessage(format)
+            .make()
+    }
+
+    private func makeCallTitle(
         isGroupConversation: Bool,
         callerName: String?,
         conversationName: String?,
@@ -296,10 +385,56 @@ struct CallNotificationBuilder {
     }
 }
 
-extension CallNotificationBuilder {
+extension ConversationCallingEventNotificationBuilder {
     struct Validator {
+        
+        private enum Constants {
+            static let isAvsReady = "isAVSReady"
+            static let isCallKitAvailable = "isCallKitAvailable"
+            static let loadedUserSessions = "loadedUserSessions"
+        }
+        
         let userLocalStore: any UserLocalStoreProtocol
         let conversationLocalStore: any ConversationLocalStoreProtocol
+        let userDefaults: UserDefaults
+        
+        func validate(
+            callKitState: CallKitState,
+            accountID: UUID,
+            senderID: UserID,
+            conversationID: ConversationID
+        ) async -> Bool {
+            
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+            
+            let selfUser = await userLocalStore.fetchSelfUser()
+            let caller = await userLocalStore.fetchOrCreateUser(
+                id: senderID.uuid,
+                domain: senderID.domain
+            )
+
+            let needsToBeUpdatedFromBackend = await conversationLocalStore.conversationNeedsBackendUpdate(conversation)
+            let mutedMessagesTypes = await conversationLocalStore
+                .conversationMutedMessageTypesIncludingAvailability(conversation)
+            let isConversationMuted = mutedMessagesTypes == .all
+            let isConversationForcedReadOnly = await conversationLocalStore.isConversationForcedReadOnly(conversation)
+            let isAVSReady = userDefaults.bool(forKey: Constants.isAvsReady)
+            let isCallKitReady = userDefaults.bool(forKey: Constants.isCallKitAvailable)
+            let loadedUserSessions = userDefaults.object(forKey: Constants.loadedUserSessions) as? [String] ?? []
+            let loaderUserSessionsIDs = loadedUserSessions.compactMap(UUID.init(uuidString:))
+            let isUserSessionLoaded = loaderUserSessionsIDs.contains(accountID)
+
+            return !needsToBeUpdatedFromBackend
+                && !isConversationMuted
+                && !isConversationForcedReadOnly
+                && isAVSReady
+                && isCallKitReady
+                && isUserSessionLoaded
+                && callKitState != .unhandled
+        }
 
         func validate(
             callState: CallState,
@@ -320,8 +455,6 @@ extension CallNotificationBuilder {
                 domain: senderID.domain
             )
 
-            // Validation criteria
-
             let mutedMessagesTypes = await conversationLocalStore
                 .conversationMutedMessageTypesIncludingAvailability(conversation)
             let isConversationMuted = mutedMessagesTypes == .all
@@ -338,11 +471,16 @@ extension CallNotificationBuilder {
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
+        let userDefaults: UserDefaults
+        
+        private enum Constants {
+            static let knownCalls = "knownCalls"
+        }
         
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
-            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+            await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.uuid,
                 domain: conversationID.domain
             )
@@ -385,6 +523,33 @@ extension CallNotificationBuilder {
             selfUser: ZMUser
         ) async -> String? {
             await userLocalStore.teamName(for: selfUser)
+        }
+        
+        func callKitState(
+            callContent: CallContent,
+            accountID: UUID,
+            conversationID: ConversationID
+        ) -> CallKitState {
+            let handle = "\(accountID.transportString())+\(conversationID.uuid.transportString())"
+            let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
+            let wasCallHandleReported = knownCallHandles.contains(handle)
+
+            return CallKitState(
+                callContent: callContent,
+                wasCallHandleReported: wasCallHandleReported
+            )
+        }
+        
+        func shouldRing(
+            callKitState: CallKitState
+        ) -> Bool {
+            callKitState == .initiatesRinging
+        }
+        
+        func isVideo(
+            callContent: CallContent
+        ) -> Bool {
+            callContent.properties?.isVideo ?? false
         }
         
         func callerID(

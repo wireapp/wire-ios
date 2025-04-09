@@ -25,9 +25,7 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder {
     let validator: Validator
     
     func buildContent(
-        newTimer: Int64?,
-        conversationID: WireAPI.QualifiedID,
-        senderID: UserID
+        event: ConversationMessageTimerUpdateEvent
     ) async -> UserNotification? {
         let canBuildNotification = await validator.validate()
         
@@ -35,6 +33,9 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder {
             return nil
         }
         
+        let newTimer = event.newTimer
+        let conversationID = event.conversationID
+        let senderID = event.senderID
         var timeoutStrValue: String?
 
         if let timeoutValue = newTimer {
@@ -178,7 +179,7 @@ extension ConversationMessageTimerUpdateEventNotificationBuilder {
     struct Validator {
 
         func validate() async -> Bool {
-            true
+            true // No validation criteria for this notification
         }
     }
     
@@ -189,7 +190,7 @@ extension ConversationMessageTimerUpdateEventNotificationBuilder {
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
-            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+            await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.uuid,
                 domain: conversationID.domain
             )

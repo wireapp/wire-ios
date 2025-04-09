@@ -25,11 +25,6 @@ import WireLogging
 /// content based on these events.
 public final class NotificationServiceExtension: NotificationServiceProtocol {
 
-    enum Failure: Error {
-        case noAccountFound
-        case missingAppGroupID
-    }
-
     // MARK: - Properties
 
     private let logger = WireLogger.notifications
@@ -56,34 +51,12 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             }
 
             do {
-
-//                let userInfo = request.content.userInfo
-//                let data = try JSONSerialization.data(
-//                    withJSONObject: userInfo
-//                )
-//                let notificationPayload = try JSONDecoder().decode(
-//                    NotificationPayload.self,
-//                    from: data
-//                )
-//
-//                let userID = notificationPayload.userID
-//
-//                let rootComponent = try setupRootComponent(
-//                    userID: userID,
-//                    notificationHandler: contentHandler
-//                )
-//
-//                let verifyUserSession = rootComponent.verifyUserSession
-//                let startSyncingEvents: () async throws -> Void = {
-//                    try await verifyUserSession.startSyncingEvents(
-//                        eventID: notificationPayload.eventID
-//                    )
-//                }
-//
-//                try await verifyUserSession.verify(
-//                    userID: userID,
-//                    then: startSyncingEvents
-//                )
+                
+                let rootComponent = try NotificationServiceExtensionFlow(
+                    contentHandler: contentHandler
+                )
+                
+                try await rootComponent.start(request: request)
 
             } catch {
                 logError(error)
@@ -97,40 +70,6 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         onGoingTask?.cancel()
         onGoingTask = nil
     }
-
-    private func setupRootComponent(
-        userID: UUID,
-        notificationHandler: @escaping (UNNotificationContent) -> Void
-    ) throws -> RootComponent {
-        let infoDictionary = Bundle.main.infoDictionary
-        guard let appGroupID = infoDictionary?["WireGroupId"] as? String else {
-            throw Failure.missingAppGroupID
-        }
-
-        let applicationIdentifier = "group.\(appGroupID)"
-        let applicationContainer = FileManager.sharedContainerDirectory(
-            for: applicationIdentifier
-        )
-
-        let accountManager = AccountManager(
-            sharedDirectory: applicationContainer
-        )
-
-        guard let selectedAccount = accountManager.account(
-            with: userID
-        ) else {
-            throw Failure.noAccountFound
-        }
-
-        return RootComponent(
-            accountManager: accountManager,
-            userID: userID,
-            applicationIdentifier: applicationIdentifier,
-            applicationContainer: applicationContainer,
-            selectedAccount: selectedAccount,
-            contentHandler: notificationHandler
-        )
-    }
 }
 
 // MARK: - Error logger
@@ -138,16 +77,11 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 extension NotificationServiceExtension {
     private func logError(_ error: any Error) {
         switch error {
-        case let verifyUserSessionError as VerifyUserSession.Failure:
+        case let verifyUserSessionError as VerifyUserSessionUseCase.Failure:
             switch verifyUserSessionError {
             case .userUnauthenticated:
                 WireLogger.notifications.error(
                     "Not displaying notification because app is not authenticated",
-                    attributes: .newNSE
-                )
-            case .missingUserClient:
-                WireLogger.notifications.error(
-                    "Not displaying notification because user client is missing",
                     attributes: .newNSE
                 )
             case .coreDataMissingSharedContainer:
@@ -166,7 +100,7 @@ extension NotificationServiceExtension {
                     attributes: .newNSE
                 )
             }
-        case let pullEventsServiceError as PullEventsService.Failure:
+        case let pullEventsServiceError as PullEventsUseCase.Failure:
             switch pullEventsServiceError {
             case let .unableToPullPendingEvents(error):
                 logger.error(
@@ -174,16 +108,19 @@ extension NotificationServiceExtension {
                     attributes: .newNSE
                 )
             }
-        case let serviceSetupError as NotificationServiceExtension.Failure:
-            switch serviceSetupError {
-            case .noAccountFound:
-                logger.error(
-                    "failed to process notification: no selected account found",
-                    attributes: .newNSE
-                )
+        case let notificationServiceError as NotificationServiceExtensionFlow.Failure:
+            switch notificationServiceError {
             case .missingAppGroupID:
                 logger.error(
                     "failed to process notification: missing app group id",
+                    attributes: .newNSE
+                )
+            }
+        case let verifyUserError as VerifyUserStep.Failure:
+            switch verifyUserError {
+            case .noAccountFound:
+                logger.error(
+                    "failed to process notification: no selected account found",
                     attributes: .newNSE
                 )
             }

@@ -32,11 +32,11 @@ protocol GenerateNotificationUseCaseProtocol {
 struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
     private let conversationEventBuilder: ConversationEventNotificationBuilder
-    private let userEventBuilder: UserNotificationBuilder
+    private let userEventBuilder: UserEventNotificationBuilder
 
     init(
         conversationEventBuilder: ConversationEventNotificationBuilder,
-        userEventBuilder: UserNotificationBuilder
+        userEventBuilder: UserEventNotificationBuilder
     ) {
         self.conversationEventBuilder = conversationEventBuilder
         self.userEventBuilder = userEventBuilder

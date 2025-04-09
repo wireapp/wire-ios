@@ -24,23 +24,25 @@ import WireDataModel
 import WireFoundation
 
 protocol VerifyUserDependency: Dependency {
-    var userID: UUID { get }
-    var selectedAccount: Account { get }
+    var userID: UUID! { get }
     var applicationIdentifier: String { get }
+    var applicationContainer: URL { get }
 }
 
 protocol VerifyUserStepFactory {
     func verifyUserSession(
-        userID: UUID,
-        eventID: UUID
+        userID: UUID
     ) async throws
 }
 
 final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFactory {
+    
+    enum Failure: Error {
+        case noAccountFound
+    }
 
     func verifyUserSession(
-        userID: UUID,
-        eventID: UUID
+        userID: UUID
     ) async throws {
         let verifyUserSessionUseCase = VerifyUserSessionUseCase(
             userID: userID,
@@ -61,6 +63,18 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFacto
 }
 
 extension VerifyUserStep {
+    
+    public var accountManager: AccountManager {
+        AccountManager(
+            sharedDirectory: dependency.applicationContainer
+        )
+    }
+    
+    public var selectedAccount: Account {
+        accountManager.account(
+            with: dependency.userID
+        )!
+    }
 
     public var sharedUserDefaults: UserDefaults {
         UserDefaults(suiteName: dependency.applicationIdentifier)!
@@ -75,7 +89,7 @@ extension VerifyUserStep {
     public var coreData: CoreDataStack {
         shared {
             makeCoreData(
-                account: dependency.selectedAccount,
+                account: selectedAccount,
                 applicationIdentifier: dependency.applicationIdentifier
             )
         }

@@ -21,15 +21,14 @@ import WireAPI
 import WireDataModel
 
 struct ConversationEventNotificationBuilder {
-
+    
     enum Failure: Error {
         case failedToDecryptMLSMessage
         case failedToDecryptProteusMessage
     }
     
     let validator: ConversationEventNotificationBuilder.Validator
-    let callKitNotificationBuilder: CallKitNotificationBuilder
-    let callNotificationBuilder: CallNotificationBuilder
+    let conversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilder
     let conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder
     let conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder
     let conversationMemberLeaveEventNotificationBuilder:  ConversationMemberLeaveEventNotificationBuilder
@@ -42,7 +41,9 @@ struct ConversationEventNotificationBuilder {
         event: ConversationEvent
     ) async throws -> UserNotification? {
         let canDisplayNotification = await validator.validate(
-            event: event
+            conversationID: event.conversationID,
+            senderID: event.senderID,
+            time: event.timestamp
         )
         
         guard canDisplayNotification else {
@@ -53,34 +54,30 @@ struct ConversationEventNotificationBuilder {
         case let .mlsMessageAdd(mlsMessageEvent):
             let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
 
+            // Decrypt the message.
             let genericMessage = try decryptMessage(
                 decryptedMessage: decryptedMessage,
                 isProteus: false
             )
-
-            let callKitNotification = await callKitNotificationBuilder.buildContent(
-                calling: genericMessage.calling,
-                conversationID: mlsMessageEvent.conversationID,
-                senderID: mlsMessageEvent.senderID
-            )
             
-            let callNotification = await callNotificationBuilder.buildContent(
-                calling: genericMessage.calling,
+            // Gets its calling payload.
+            let calling = genericMessage.calling
+            
+            // Builds a calling notification - if there's a call.
+            let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
+                calling: calling,
                 at: mlsMessageEvent.timestamp,
                 conversationID: mlsMessageEvent.conversationID,
                 senderID: mlsMessageEvent.senderID
             )
             
-            // First, let's try to return a call notification with CallKit.
-            // If not, try fallback to regular push notification builder.
-            // Else, this is not a call.
-            
-            if let callKitNotification {
-                return callKitNotification
-            } else if let callNotification {
-                return callNotification
+            if let callingNotification {
+                return callingNotification
             } else {
-                return nil
+                // Else, builds the message notification.
+                return await conversationMLSMessageAddEventNotificationBuilder.buildContent(
+                    event: mlsMessageEvent
+                )
             }
 
         case let .proteusMessageAdd(proteusMessageEvent):
@@ -91,66 +88,52 @@ struct ConversationEventNotificationBuilder {
                 decryptedMessage: decryptedMessage,
                 external: external
             )
-
-            let callKitNotification = await callKitNotificationBuilder.buildContent(
-                calling: genericMessage.calling,
-                conversationID: proteusMessageEvent.conversationID,
-                senderID: proteusMessageEvent.senderID
-            )
             
-            let callNotification = await callNotificationBuilder.buildContent(
-                calling: genericMessage.calling,
+            let calling = genericMessage.calling
+            
+            let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
+                calling: calling,
                 at: proteusMessageEvent.timestamp,
                 conversationID: proteusMessageEvent.conversationID,
                 senderID: proteusMessageEvent.senderID
             )
             
-            if let callKitNotification {
-                return callKitNotification
-            } else if let callNotification {
-                return callNotification
+            if let callingNotification {
+                return callingNotification
             } else {
-                return nil
+                return await conversationProteusMessageAddEventNotificationBuilder.buildContent(
+                    event: proteusMessageEvent
+                )
             }
 
         case let .memberLeave(memberLeaveEvent):
-            let removedUserIDs = Set(memberLeaveEvent.removedUserIDs.compactMap(\.uuid))
 
             return await conversationMemberLeaveEventNotificationBuilder.buildContent(
-                removedUserIDs: removedUserIDs,
-                conversationID: memberLeaveEvent.conversationID,
-                senderID: memberLeaveEvent.senderID
+                event: memberLeaveEvent
             )
 
         case let .memberJoin(memberJoinEvent):
-            let addedUserIDs = Set(memberJoinEvent.members.compactMap(\.id))
 
             return await conversationMemberJoinEventNotificationBuilder.buildContent(
-                addedUserIDs: addedUserIDs,
-                conversationID: memberJoinEvent.conversationID,
-                senderID: memberJoinEvent.senderID
+                event: memberJoinEvent
             )
 
         case let .create(conversationCreateEvent):
 
             return await conversationCreateEventNotificationBuilder.buildContent(
-                conversationID: conversationCreateEvent.conversationID,
-                senderID: conversationCreateEvent.senderID
+                event: conversationCreateEvent
             )
 
         case let .delete(conversationDeleteEvent):
 
             return await conversationDeleteEventNotificationBuilder.buildContent(
-                conversationID: conversationDeleteEvent.conversationID,
-                senderID: conversationDeleteEvent.senderID
+                event: conversationDeleteEvent
             )
 
         case let .messageTimerUpdate(messageTimerUpdateEvent):
 
             return await conversationMessageTimerUpdateEventNotificationBuilder.buildContent(
-                newTimer: messageTimerUpdateEvent.newTimer,
-                conversationID: messageTimerUpdateEvent.conversationID,
-                senderID: messageTimerUpdateEvent.senderID
+                event: messageTimerUpdateEvent
             )
 
         default:
@@ -181,13 +164,15 @@ extension ConversationEventNotificationBuilder {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let messageLocalStore: any MessageLocalStoreProtocol
         
-        func validate(event: ConversationEvent) async -> Bool {
+        func validate(
+            conversationID: ConversationID,
+            senderID: UserID,
+            time: Date?
+        ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: event.conversationID.uuid,
-                domain: event.conversationID.domain
+                id: conversationID.uuid,
+                domain: conversationID.domain
             )
-
-            // Validation criteria
 
             let conversationMutedMessages = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(
                 conversation
@@ -196,11 +181,11 @@ extension ConversationEventNotificationBuilder {
             let isConversationMuted = conversationMutedMessages != .none
 
             let isSelfUser = try? await userLocalStore.isSelfUser(
-                id: event.senderID.uuid,
-                domain: event.senderID.domain
+                id: senderID.uuid,
+                domain: senderID.domain
             ).isSelfUser
 
-            let eventTimeStamp = event.timestamp
+            let eventTimeStamp = time
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
 
             guard let isSelfUser,
