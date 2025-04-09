@@ -61,20 +61,31 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelAccessSection: some View {
         Section(content: {
-            // Channel access is always hard coded to private for now.
-            Picker(
-                L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
-                selection: $viewModel.channelAccess
-            ) {
-                Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.public)
-                    .tag(ViewModel.ChannelAccessOption.public)
-                Label(
-                    L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private,
-                    systemImage: "lock.fill"
-                )
-                .tag(ViewModel.ChannelAccessOption.private)
+// Channel access is always hard coded to private for now.
+//            Picker(
+//                L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
+//                selection: $viewModel.channelAccess
+//            ) {
+//                Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.public)
+//                    .tag(ViewModel.ChannelAccessOption.public)
+//                Label(
+//                    L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private,
+//                    systemImage: "lock.fill"
+//                )
+//                .tag(ViewModel.ChannelAccessOption.private)
+//            }
+            HStack {
+                Text("Channel access")
+
+                Spacer()
+
+                HStack(spacing: 4) {
+                    Image(systemName: "lock.fill")
+                        .foregroundColor(.gray)
+                    Text("Private")
+                        .foregroundColor(.gray)
+                }
             }
-            .disabled(true)
             if case .private = viewModel.channelAccess {
                 Picker(
                     L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.invitePolicy,
