@@ -1461,25 +1461,33 @@ public class MockCreateGroupConversationUseCaseProtocol: CreateGroupConversation
 
 }
 
-class MockGenerateNotificationServiceProtocol: GenerateNotificationServiceProtocol {
+class MockGenerateNotificationUseCaseProtocol: GenerateNotificationUseCaseProtocol {
 
     // MARK: - Life cycle
 
 
 
-    // MARK: - process
+    // MARK: - invoke
 
-    var process_Invocations: [Void] = []
-    var process_MockMethod: (() async -> Void)?
+    var invokeUpdateEvents_Invocations: [AsyncStream<[UpdateEvent]>] = []
+    var invokeUpdateEvents_MockError: Error?
+    var invokeUpdateEvents_MockMethod: ((AsyncStream<[UpdateEvent]>) async throws -> [UserNotification])?
+    var invokeUpdateEvents_MockValue: [UserNotification]?
 
-    func process() async {
-        process_Invocations.append(())
+    func invoke(updateEvents: AsyncStream<[UpdateEvent]>) async throws -> [UserNotification] {
+        invokeUpdateEvents_Invocations.append(updateEvents)
 
-        guard let mock = process_MockMethod else {
-            fatalError("no mock for `process`")
+        if let error = invokeUpdateEvents_MockError {
+            throw error
         }
 
-        await mock()
+        if let mock = invokeUpdateEvents_MockMethod {
+            return try await mock(updateEvents)
+        } else if let mock = invokeUpdateEvents_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUpdateEvents`")
+        }
     }
 
 }
@@ -1990,6 +1998,37 @@ public class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
 
 }
 
+class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockError: Error?
+    var invoke_MockMethod: (() async throws -> NotificationPayload)?
+    var invoke_MockValue: NotificationPayload?
+
+    func invoke() async throws -> NotificationPayload {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
 
     // MARK: - Life cycle
@@ -2105,30 +2144,33 @@ class MockPullConversationLabelsSyncProtocol: PullConversationLabelsSyncProtocol
 
 }
 
-class MockPullEventsServiceProtocol: PullEventsServiceProtocol {
+class MockPullEventsUseCaseProtocol: PullEventsUseCaseProtocol {
 
     // MARK: - Life cycle
 
 
 
-    // MARK: - startSync
+    // MARK: - invoke
 
-    var startSyncNewEventID_Invocations: [UUID] = []
-    var startSyncNewEventID_MockError: Error?
-    var startSyncNewEventID_MockMethod: ((UUID) async throws -> Void)?
+    var invoke_Invocations: [Void] = []
+    var invoke_MockError: Error?
+    var invoke_MockMethod: (() async throws -> AsyncStream<[UpdateEvent]>)?
+    var invoke_MockValue: AsyncStream<[UpdateEvent]>?
 
-    func startSync(newEventID id: UUID) async throws {
-        startSyncNewEventID_Invocations.append(id)
+    func invoke() async throws -> AsyncStream<[UpdateEvent]> {
+        invoke_Invocations.append(())
 
-        if let error = startSyncNewEventID_MockError {
+        if let error = invoke_MockError {
             throw error
         }
 
-        guard let mock = startSyncNewEventID_MockMethod else {
-            fatalError("no mock for `startSyncNewEventID`")
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
         }
-
-        try await mock(id)
     }
 
 }

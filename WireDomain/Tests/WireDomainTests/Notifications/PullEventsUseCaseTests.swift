@@ -22,35 +22,23 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class PullEventsServiceTests: XCTestCase {
-    private var sut: PullEventsService!
+final class PullEventsUseCaseTests: XCTestCase {
+    private var sut: PullEventsUseCase!
     private var updateEventsLocalStore: MockUpdateEventsLocalStoreProtocol!
     private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
     private var eventsSync: MockPullPendingUpdateEventsSyncProtocol!
-    private var generateNotificationService: MockGenerateNotificationServiceProtocol!
 
     override func setUp() async throws {
         updateEventsLocalStore = MockUpdateEventsLocalStoreProtocol()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
         eventsSync = MockPullPendingUpdateEventsSyncProtocol()
-        generateNotificationService = MockGenerateNotificationServiceProtocol()
 
-        let generateNotificationProvider = MockenerateNotificationProvider(
-            mockGenerateNotificationService: generateNotificationService
-        )
-
-        sut = PullEventsService(
-            userClientsLocalStore: userClientsLocalStore,
-            updateEventsLocalStore: updateEventsLocalStore,
-            pendingEventsSync: eventsSync,
-            generateNotificationProvider: generateNotificationProvider
-        )
+        sut = PullEventsUseCase(pendingEventsSync: eventsSync)
     }
 
     override func tearDown() async throws {
         sut = nil
         eventsSync = nil
-        generateNotificationService = nil
         updateEventsLocalStore = nil
         userClientsLocalStore = nil
     }
@@ -60,22 +48,24 @@ final class PullEventsServiceTests: XCTestCase {
         // Mock
         updateEventsLocalStore.lastEventID_MockValue = .some(nil)
         updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
-        eventsSync.pull_MockValue = AsyncStream {
-            []
+        let mockAsyncStream = AsyncStream {
+            [UpdateEvent.user(.pushRemove),
+             UpdateEvent.user(.pushRemove)]
         }
-        generateNotificationService.process_MockMethod = {}
+        eventsSync.pull_MockValue = mockAsyncStream
 
         // When
-        try await sut.startSync(
-            newEventID: Scaffolding.newEventID
-        )
+        let asyncStream = try await sut.invoke()
 
         // Then
         XCTAssertEqual(updateEventsLocalStore.lastEventID_Invocations.count, 1)
         XCTAssertEqual(updateEventsLocalStore.lastEventID_Invocations.count, 1)
         XCTAssertEqual(updateEventsLocalStore.storeLastEventIDId_Invocations.count, 1)
         XCTAssertEqual(eventsSync.pull_Invocations.count, 1)
-        XCTAssertEqual(generateNotificationService.process_Invocations.count, 1)
+        
+        for await value in asyncStream {
+            XCTAssertEqual(value, [UpdateEvent.user(.pushRemove), UpdateEvent.user(.pushRemove)])
+        }
     }
 
     func testStartsSync_It_Throws_Error() async throws {
@@ -88,31 +78,15 @@ final class PullEventsServiceTests: XCTestCase {
         updateEventsLocalStore.lastEventID_MockValue = .some(nil)
         updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
         eventsSync.pull_MockError = MockError.someError
-        generateNotificationService.process_MockMethod = {}
 
         do {
             // When
-            try await sut.startSync(
-                newEventID: Scaffolding.newEventID
-            )
+            _ = try await sut.invoke()
 
         } catch {
-            XCTAssert(error is PullEventsService.Failure)
+            // Then
+            XCTAssert(error is PullEventsUseCase.Failure)
         }
-    }
-
-    struct MockenerateNotificationProvider: GenerateNotificationProvider {
-        let mockGenerateNotificationService: MockGenerateNotificationServiceProtocol
-
-        func generateNotificationService(
-            eventsStream: AsyncStream<[WireAPI.UpdateEvent]>
-        ) -> WireDomain.GenerateNotificationServiceProtocol {
-            mockGenerateNotificationService
-        }
-    }
-
-    private enum Scaffolding {
-        static let newEventID = UUID.mockID2
     }
 
 }

@@ -25,7 +25,7 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class GenerateNotificationServiceTests: XCTestCase {
+final class GenerateNotificationUseCaseTests: XCTestCase {
     private var sut: GenerateNotificationService!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
