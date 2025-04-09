@@ -84,8 +84,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
+            "state" : "translated",
+            "value" : "Adicione suas conversas às pastas para ficar organizado."
           }
         },
         "ru" : {
@@ -334,8 +334,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
+            "state" : "translated",
+            "value" : "Pastas"
           }
         },
         "ru" : {

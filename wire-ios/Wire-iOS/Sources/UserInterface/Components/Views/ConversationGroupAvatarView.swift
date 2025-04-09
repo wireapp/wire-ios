@@ -38,7 +38,8 @@ final class ConversationGroupAvatarView: UIView {
         }
 
         let iconView = if conversation.isChannel {
-            WireConversationChannelIconFactory().createUIKit(conversationID: id)
+            // TODO: [WPB-16527] Pass in correct `isPrivateChannel` when we implement public channels
+            WireConversationChannelIconFactory().createUIKit(conversationID: id, isPrivateChannel: true)
         } else {
             WireConversationGroupIconFactory().createUIKit(conversationID: id)
         }
@@ -55,7 +56,7 @@ final class ConversationGroupAvatarView: UIView {
     lazy var iconContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.clipsToBounds = true
+        view.clipsToBounds = false
         view.layer.cornerRadius = 4
         return view
     }()
@@ -64,7 +65,7 @@ final class ConversationGroupAvatarView: UIView {
         super.init(frame: .zero)
 
         autoresizesSubviews = false
-        layer.masksToBounds = true
+        layer.masksToBounds = false
         addSubview(iconContainer)
         iconContainer.fitIn(view: self)
     }

@@ -33,6 +33,10 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
         false
     }
 
+    var titleFooter: String {
+        L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+    }
+
     init(conversation: GroupDetailsConversationType, userSession: UserSession) {
         self.conversation = conversation
         self.userSession = userSession
@@ -88,8 +92,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
             withReuseIdentifier: "SectionFooter",
             for: indexPath
         )
-        (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.Participants.Section.Name
-            .footer(ZMConversation.maxParticipants)
+        (view as? SectionFooter)?.titleLabel.text = titleFooter
         return view
     }
 
@@ -111,7 +114,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
             user.hasTeam
         else { return .zero }
 
-        sizingFooter.titleLabel.text = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+        sizingFooter.titleLabel.text = titleFooter
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
         return sizingFooter.bounds.size
     }

@@ -27,7 +27,7 @@ enum ConversationAction {
     case modifyConversationAccess
     case modifyOtherConversationMember
     case leaveConversation
-    case deleteConvesation
+    case deleteConversation
 
     var name: String {
         switch self {
@@ -39,7 +39,7 @@ enum ConversationAction {
         case .modifyConversationAccess: "modify_conversation_access"
         case .modifyOtherConversationMember: "modify_other_conversation_member"
         case .leaveConversation: "leave_conversation"
-        case .deleteConvesation: "delete_conversation"
+        case .deleteConversation: "delete_conversation"
         }
     }
 }
@@ -96,7 +96,7 @@ public extension ZMUser {
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
 
         return hasRoleWithAction(
-            actionName: ConversationAction.deleteConvesation.name,
+            actionName: ConversationAction.deleteConversation.name,
             conversation: conversation
         ) && conversation.creator == self
             && selfUser.hasTeam && selfUser.teamIdentifier == teamIdentifier
