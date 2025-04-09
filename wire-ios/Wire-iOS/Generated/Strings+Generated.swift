@@ -725,6 +725,16 @@ internal enum L10n {
       internal enum ItemCell {
         /// Double tap to open conversation
         internal static let hint = L10n.tr("Accessibility", "conversationsList.itemCell.hint", fallback: "Double tap to open conversation")
+        internal enum Avatar {
+          internal enum Channel {
+            /// Channel
+            internal static let label = L10n.tr("Accessibility", "conversationsList.itemCell.avatar.channel.label", fallback: "Channel")
+          }
+          internal enum Group {
+            /// Group
+            internal static let label = L10n.tr("Accessibility", "conversationsList.itemCell.avatar.group.label", fallback: "Group")
+          }
+        }
       }
       internal enum JoinButton {
         /// Join
