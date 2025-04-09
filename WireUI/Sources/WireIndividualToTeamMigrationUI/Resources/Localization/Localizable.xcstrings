@@ -83,8 +83,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Explore extra features for free with the same level of security."
+            "state" : "translated",
+            "value" : "Explore recursos extras gratuitamente com o mesmo nível de segurança."
           }
         },
         "ru" : {
@@ -207,8 +207,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Create Wire Team"
+            "state" : "translated",
+            "value" : "Criar Equipe Wire"
           }
         },
         "ru" : {
@@ -331,8 +331,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Enjoy benefits of a team"
+            "state" : "translated",
+            "value" : "Aproveite os benefícios de uma equipe"
           }
         },
         "ru" : {
@@ -706,8 +706,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "When you leave now, you lose your progress and need to restart the team creation."
+            "state" : "translated",
+            "value" : "Quando você sair agora, você perde seu progresso e precisa reiniciar a criação de equipe."
           }
         },
         "ru" : {
@@ -831,8 +831,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Continue Team Creation"
+            "state" : "translated",
+            "value" : "Continuar Criação de Equipe"
           }
         },
         "ru" : {
@@ -956,8 +956,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave Without Saving"
+            "state" : "translated",
+            "value" : "Sair sem salvar"
           }
         },
         "ru" : {
@@ -1081,8 +1081,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Leave without saving?"
+            "state" : "translated",
+            "value" : "Sair sem salvar?"
           }
         },
         "ru" : {
@@ -1206,8 +1206,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+            "state" : "translated",
+            "value" : "Agora você é o dono da equipe %@.\n\nVá para Gerenciamento de Equipe para: \n• convidar seus primeiros membros da equipe e começarem a trabalhar juntos\n• Personalizar suas configurações de equipe"
           }
         },
         "ru" : {
@@ -1331,8 +1331,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Back To Wire"
+            "state" : "translated",
+            "value" : "Voltar ao Wire"
           }
         },
         "ru" : {
@@ -1456,8 +1456,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Go To Team Management"
+            "state" : "translated",
+            "value" : "Ir para o gerenciamento de equipe"
           }
         },
         "ru" : {
@@ -1580,8 +1580,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "Fechar visualização de equipe criada"
           }
         },
         "ru" : {
@@ -1705,8 +1705,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You’re now the owner of the team %@."
+            "state" : "translated",
+            "value" : "Agora você é dono da equipe %@."
           }
         },
         "ru" : {
@@ -1830,8 +1830,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Congratulations %@!"
+            "state" : "translated",
+            "value" : "Parabéns, %@!"
           }
         },
         "ru" : {
@@ -1954,8 +1954,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You create a team and transfer your personal account into a team account"
+            "state" : "translated",
+            "value" : "Você cria uma equipe e transfere a sua conta pessoal para uma conta de equipe"
           }
         },
         "ru" : {
@@ -2078,8 +2078,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "This change is permanent and irrevocable"
+            "state" : "translated",
+            "value" : "Esta mudança é permanente e irrevogável"
           }
         },
         "ru" : {
@@ -2202,8 +2202,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "As the team owner you can invite and remove team members and  manage team settings"
+            "state" : "translated",
+            "value" : "Como proprietário da equipe, você pode convidar e remover membros da equipe e gerenciar as configurações da equipe"
           }
         },
         "ru" : {
@@ -2326,8 +2326,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "Fechar visualização de confirmação"
           }
         },
         "ru" : {
@@ -2701,8 +2701,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "I understand that this migration from Personal to Team is permanent and cannot be undone."
+            "state" : "translated",
+            "value" : "Entendo que esta migração de Pessoal para Equipe é permanente e não pode ser desfeita."
           }
         },
         "ru" : {
@@ -2826,8 +2826,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Accept our [Terms & Conditions](%@) and [Privacy Policy](%@)."
+            "state" : "translated",
+            "value" : "Aceite nossos [Termos e Condições](%@) e [Política de Privacidade](%@)."
           }
         },
         "ru" : {
@@ -2951,8 +2951,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Confirmation"
+            "state" : "translated",
+            "value" : "Confirmação"
           }
         },
         "ru" : {
@@ -3076,7 +3076,7 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Ok"
           }
         },
@@ -3201,8 +3201,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You've created or joined a team with this email address on another device."
+            "state" : "translated",
+            "value" : "Você criou ou juntou-se a uma equipe com este endereço de e-mail em outro dispositivo."
           }
         },
         "ru" : {
@@ -3326,8 +3326,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "Já faz parte de uma equipe"
           }
         },
         "ru" : {
@@ -3451,8 +3451,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "Tente novamente"
           }
         },
         "ru" : {
@@ -3576,8 +3576,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "O Wire não pôde completar a criação de sua equipe devido a um erro desconhecido."
           }
         },
         "ru" : {
@@ -3701,8 +3701,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "Equipe não criada"
           }
         },
         "ru" : {
@@ -3950,8 +3950,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "Transforme sua conta pessoal em uma conta de equipe para obter mais da sua colaboração."
           }
         },
         "ru" : {
@@ -4074,8 +4074,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Fechar visão geral da conta da equipe"
           }
         },
         "ru" : {
@@ -4199,8 +4199,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**Console administrativo**: Convide membros da equipe e gerencie as configurações."
           }
         },
         "ru" : {
@@ -4324,8 +4324,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**Colaboração sem esforço**: Comunique-se com convidados e partes externas."
           }
         },
         "ru" : {
@@ -4449,8 +4449,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**Atualize para Enterprise**: Obtenha recursos adicionais e suporte premium."
           }
         },
         "ru" : {
@@ -4574,8 +4574,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**Reuniões grandes**: Participe de videoconferências de até 150 participantes."
           }
         },
         "ru" : {
@@ -4699,8 +4699,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**Status de disponibilidade**: avise sua equipe se você estiver disponível, ocupado ou ausente."
           }
         },
         "ru" : {
@@ -4824,8 +4824,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "Conta de equipe"
           }
         },
         "ru" : {
@@ -4949,8 +4949,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "Saiba mais sobre os planos do Wire"
           }
         },
         "ru" : {
@@ -5074,8 +5074,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "Passo %d de %d"
           }
         },
         "ru" : {
@@ -5199,8 +5199,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "Selecione um nome para sua equipe. Você pode mudá-lo a qualquer momento."
           }
         },
         "ru" : {
@@ -5323,8 +5323,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Fechar visualização do nome da equipe"
           }
         },
         "ru" : {
@@ -5448,8 +5448,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "Sua equipe"
           }
         },
         "ru" : {
@@ -5698,8 +5698,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "Nome da equipe"
           }
         },
         "ru" : {

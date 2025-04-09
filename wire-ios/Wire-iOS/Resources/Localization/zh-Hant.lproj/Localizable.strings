@@ -48,6 +48,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // People picker/start UI
+"peoplepicker.navigation_header.title" = "New conversation";
 "peoplepicker.search_placeholder" = "搜尋使用者名稱或名字";
 "peoplepicker.header.top_people" = "常用連絡人";
 "peoplepicker.button.create_conversation" = "Create Group";
@@ -73,9 +74,6 @@
 "peoplepicker.services.add_service.error.title" = "無法加入服務";
 "peoplepicker.services.add_service.error.default" = "服務暫時無法使用";
 "peoplepicker.services.add_service.error.full" = "對話人數已達上限";
-
-"peoplepicker.title.create_conversation" = "建立群組";
-"peoplepicker.title.add_to_conversation" = "加入參與者";
 
 "peoplepicker.no_contacts_title" = "沒有連絡人。";
 
@@ -107,6 +105,11 @@
 "add_participants.alert.message.new_conversation" = "最多%d人可以加入對話。";
 "add_participants.alert.message.existing_conversation" = "最多%1$d人可以加入對話。當前還可加入%2$d人。";
 
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "返回";
+"conversation.create.channel.next" = "下一步";
+
 // Contacts UI
 "contacts_ui.search_placeholder" = "按名稱搜尋";
 "contacts_ui.invite_others" = "邀請其他人";
@@ -127,6 +130,7 @@
 "conversation_list.search_bar.placeholder" = "Search conversations";
 "conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
@@ -135,6 +139,7 @@
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "我的最愛";
 "conversation_list.filter.groups.title" = "群組";
+"conversation_list.filter.channels.title" = "Channels";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
 "conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
@@ -150,6 +155,8 @@
 // Conversation List - Empty states
 "conversation_list.empty_placeholder.all.headline" = "Welcome";
 "conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.channels.subheadline" = "Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.";
+"conversation_list.empty_placeholder.channels.link" = "Learn more about channels";
 "conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
 "conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
@@ -229,11 +236,6 @@
 "list.archived_conversations" = "封存";
 "list.archived_conversations_close" = "關閉封存";
 
-"list.section.groups" = "群組";
-"list.section.contacts" = "聯絡人";
-"list.section.requests" = "請求";
-"list.section.favorites" = "我的最愛";
-
 "conversation.voiceover.value.active" = "啟動";
 "conversation.voiceover.value.disabled" = "已停用";
 
@@ -290,7 +292,6 @@
 "conversation.invite_more_people.button_title" = "加入連絡人";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "空聊天室";
 
 "conversation.input_bar.verified" = "已驗證";
 "conversation.input_bar.placeholder" = "請輸入訊息";
@@ -342,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "取消";
-"conversation.create.non_federating_domains_error.title" = "Group can't be created";
-"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.title" = "Conversation can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "瞭解更多";
-"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -529,10 +530,6 @@
 
 "content.system.other_renamed_conv_to_nothing" = "%@刪除了聊天室名稱";
 "content.system.you_renamed_conv_to_nothing" = "您刪除了聊天室名稱";
-"content.system.pending_message_timestamp" = "傳送中...";
-"content.system.message_sent_timestamp" = "已送出";
-"content.system.message_delivered_timestamp" = "已傳送";
-"content.system.message_read_timestamp" = "閱";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
 "content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
@@ -579,6 +576,15 @@
 
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
+
+"content.system.channel.with_name.title" = "%@ started the channel";
+"content.system.channel.with_name.title-you" = "%@ started the channel";
+
+"content.system.channel.invite.title" = "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:";
+"content.system.channel.invite.button" = "Copy Channel link";
+
+"content.system.channel.guest.joined" = "%@ joined the channel";
+"content.system.channel.guest.you_joined" = "You joined the channel";
 
 // read receipt
 
@@ -639,6 +645,7 @@
 "content.message.delete" = "刪除";
 "content.message.save" = "儲存";
 "content.message.resend" = "重新發送";
+"content.message.edited" = "已編輯";
 
 "content.message.delete_ellipsis" = "刪除...";
 
@@ -852,7 +859,7 @@
 "participants.section.services" = "服務 (%d)";
 "participants.section.settings" = "選項";
 "participants.footer.add_title" = "加入參與者";
-"participants.section.name.footer" = "最多%1$d位參與者可以加入群組對話。";
+"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
 "participants.section.admins.footer" = "沒有管理員";
 "participants.section.members.footer" = "沒有成員";
 
@@ -861,10 +868,10 @@
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "更多動作";
 "meta.menu.rename" = "重新命名";
-"meta.menu.leave" = "離開群組";
+"meta.menu.leave" = "Leave Conversation…";
 "meta.menu.archive" = "封存";
 "meta.menu.unarchive" = "解除封存";
-"meta.menu.delete" = "刪除群組…";
+"meta.menu.delete" = "Delete Conversation…";
 "meta.menu.clear_content" = "清除內容…";
 "meta.menu.move_to_folder" = "移動到...";
 "meta.menu.remove_from_folder" = "從 \"%@\" 中移除";
@@ -1031,13 +1038,18 @@
 "group_details.notification_options_cell.description" = "您可以收到有關所有內容 (包括音訊和視頻通話) 的通知, 或者僅當有人提及您或回復您的訊息時才會收到通知。";
 "group_details.receipt_options_cell.title" = "讀取回條";
 "group_details.receipt_options_cell.description" = "當這啓用時, 參與者可以看到他們在此對話中的消息何時已閱讀。";
+"group_details.access_options_cell.title" = "Channel access";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
-"group_details.conversation_admins_header.title" = "群組管理員";
-"group_details.conversation_members_header.title" = "群組成員";
+"group_details.conversation_admins_header.title" = "Conversation admins";
+"group_details.conversation_members_header.title" = "Conversation members";
+
+// Channel Access level
+"channel_access_level.public" = "Public";
+"channel_access_level.private" = "Private";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";
@@ -1658,6 +1670,7 @@
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "此帳戶不再被授權登錄";
 "error.user.account_limit_reached" = "您最多可添加三個賬號";
+"error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "已超過群組通話限定人數";
 "error.group_call.too_many_members_in_conversation" = "群組通話功能最多支援%d 人";

@@ -96,7 +96,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
             for: message,
             preferredDisplayMode: preferredDisplayMode
         )
-
     }
 
     private func perform(action: MessageAction, sender: UIView? = nil) {
