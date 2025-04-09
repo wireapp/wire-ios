@@ -37,16 +37,13 @@ struct VerifyUserSessionUseCase {
 
     // MARK: - Properties
     
-    private let userID: UUID
     private let cookieStorage: any CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
 
     init(
-        userID: UUID,
         cookieStorage: any CookieStorageProtocol,
         coreData: any CoreDataStackProtocol
     ) {
-        self.userID = userID
         self.cookieStorage = cookieStorage
         self.coreData = coreData
     }

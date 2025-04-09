@@ -24,7 +24,7 @@ import WireDataModel
 protocol ShowNotificationDependency: Dependency {
     var contentHandler: (UNNotificationContent) -> Void { get }
     var accountManager: AccountManager { get }
-    var selectedAccount: Account { get }
+    var selectedAccount: Account! { get }
     var sharedUserDefaults: UserDefaults { get }
     var userID: UUID! { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }

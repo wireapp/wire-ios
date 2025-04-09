@@ -30,9 +30,7 @@ protocol VerifyUserDependency: Dependency {
 }
 
 protocol VerifyUserStepFactory {
-    func verifyUserSession(
-        userID: UUID
-    ) async throws
+    func verifyUserSession() async throws
 }
 
 final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFactory {
@@ -40,12 +38,13 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFacto
     enum Failure: Error {
         case noAccountFound
     }
+    
+    public var selectedAccount: Account!
 
-    func verifyUserSession(
-        userID: UUID
-    ) async throws {
+    func verifyUserSession() async throws {
+        try setSelectedAccount()
+        
         let verifyUserSessionUseCase = VerifyUserSessionUseCase(
-            userID: userID,
             cookieStorage: cookieStorage,
             coreData: coreData
         )
@@ -53,6 +52,16 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFacto
         try await verifyUserSessionUseCase.invoke()
         
         try await pullEventsStep.pullEvents()
+    }
+    
+    private func setSelectedAccount() throws {
+        guard let selectedAccount = accountManager.account(
+            with: dependency.userID
+        ) else {
+            throw Failure.noAccountFound
+        }
+        
+        self.selectedAccount = selectedAccount
     }
 
     // MARK: - Children
@@ -68,12 +77,6 @@ extension VerifyUserStep {
         AccountManager(
             sharedDirectory: dependency.applicationContainer
         )
-    }
-    
-    public var selectedAccount: Account {
-        accountManager.account(
-            with: dependency.userID
-        )!
     }
 
     public var sharedUserDefaults: UserDefaults {

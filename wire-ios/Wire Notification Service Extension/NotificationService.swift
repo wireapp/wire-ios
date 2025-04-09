@@ -31,7 +31,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         let isNewSyncOn = DeveloperFlag.newInitialSync.isOn
-        self.notificationService = NotificationServiceExtension()
+        self.notificationService = isNewSyncOn ? NotificationServiceExtension() : LegacyNotificationService()
         super.init()
         WireAnalytics.setup()
     }

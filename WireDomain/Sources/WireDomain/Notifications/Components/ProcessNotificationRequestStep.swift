@@ -37,12 +37,9 @@ final class ProcessNotificationRequestStep: Component<EmptyDependency>, ProcessN
             request: request
         )
         let payload = try await processNotificationUseCase.invoke()
-        
         self.userID = payload.userID
         
-        try await verifyUserStep.verifyUserSession(
-            userID: payload.userID
-        )
+        try await verifyUserStep.verifyUserSession()
     }
     
     var verifyUserStep: any VerifyUserStepFactory {

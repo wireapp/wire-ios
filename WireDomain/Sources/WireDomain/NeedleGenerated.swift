@@ -44,7 +44,7 @@ private class ShowNotificationDependencya0b9d9633053c7a7a814Provider: ShowNotifi
     var accountManager: AccountManager {
         return verifyUserStep.accountManager
     }
-    var selectedAccount: Account {
+    var selectedAccount: Account! {
         return verifyUserStep.selectedAccount
     }
     var sharedUserDefaults: UserDefaults {
@@ -167,7 +167,7 @@ extension ShowNotificationStep: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\ShowNotificationDependency.contentHandler] = "contentHandler-(UNNotificationContent) -> Void"
         keyPathToName[\ShowNotificationDependency.accountManager] = "accountManager-AccountManager"
-        keyPathToName[\ShowNotificationDependency.selectedAccount] = "selectedAccount-Account"
+        keyPathToName[\ShowNotificationDependency.selectedAccount] = "selectedAccount-Account!"
         keyPathToName[\ShowNotificationDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
         keyPathToName[\ShowNotificationDependency.userID] = "userID-UUID!"
         keyPathToName[\ShowNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
@@ -184,8 +184,8 @@ extension VerifyUserStep: NeedleFoundation.Registration {
         keyPathToName[\VerifyUserDependency.userID] = "userID-UUID!"
         keyPathToName[\VerifyUserDependency.applicationIdentifier] = "applicationIdentifier-String"
         keyPathToName[\VerifyUserDependency.applicationContainer] = "applicationContainer-URL"
+        localTable["selectedAccount-Account!"] = { [unowned self] in self.selectedAccount as Any }
         localTable["accountManager-AccountManager"] = { [unowned self] in self.accountManager as Any }
-        localTable["selectedAccount-Account"] = { [unowned self] in self.selectedAccount as Any }
         localTable["sharedUserDefaults-UserDefaults"] = { [unowned self] in self.sharedUserDefaults as Any }
         localTable["cookieStorage-any CookieStorageProtocol"] = { [unowned self] in self.cookieStorage as Any }
         localTable["coreData-CoreDataStack"] = { [unowned self] in self.coreData as Any }
