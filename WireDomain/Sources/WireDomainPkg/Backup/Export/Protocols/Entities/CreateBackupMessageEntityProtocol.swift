@@ -30,11 +30,27 @@ public protocol CreateBackupMessageEntityProtocol: CreateBackupEntityProtocol {
 }
 
 public enum CreateBackupMessageContent {
+
     case text(_ content: String)
+
     case location(
         longitude: Float,
         latitude: Float,
         name: String?,
         zoom: Int32?
     )
+
+    case asset(
+        mimeType: String,
+        size: UInt64,
+        name: String?,
+        otrKey: Data,
+        sha256: Data,
+//        assetID: String,
+//        assetToken: String?,
+//        assetDomain: String?,
+//        encryption: EncryptionAlgorithm?,
+//        metaData: AssetMetadata?
+    )
+
 }

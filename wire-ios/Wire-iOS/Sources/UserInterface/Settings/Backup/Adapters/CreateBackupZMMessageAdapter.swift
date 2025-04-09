@@ -85,8 +85,10 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
 extension ZMMessage {
 
     fileprivate var content: CreateBackupMessageContent? {
+
         if isText, let messageText = textMessageData?.messageText {
             .text(messageText)
+
         } else if isLocation, let locationMessageData {
             .location(
                 longitude: locationMessageData.longitude,
@@ -94,8 +96,31 @@ extension ZMMessage {
                 name: locationMessageData.name,
                 zoom: locationMessageData.zoomLevel
             )
+
+//        } else if isImage {
+//            fatalError()
+//
+//        } else if isVideo {
+//            fatalError()
+//
+//        } else if isAudio {
+//            fatalError()
+
+        } else if isFile, let fileMessageData {
+            fatalError()
+            /*
+            .asset(
+                mimeType: fileMessageData.mimeType ?? "", // TODO: empty string?
+                size: fileMessageData.size,
+                name: fileMessageData.filename,
+                otrKey: <#T##Data#>,
+                sha256: <#T##Data#>
+            )
+             */
+
         } else {
             nil
+
         }
     }
 }
