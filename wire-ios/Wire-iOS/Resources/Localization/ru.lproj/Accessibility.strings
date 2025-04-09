@@ -145,10 +145,6 @@
 "conversationDetails.showParticipantsButton.hint" = "Нажмите дважды, чтобы открыть список участников";
 "conversationDetails.participantCell.hint" = "Нажмите дважды для открытия профиля";
 
-"createConversation.backButton.description" = "Вернуться к списку контактов";
-"createConversation.hideSettings.hint" = "Нажмите дважды, чтобы скрыть настройки";
-"createConversation.openSettings.hint" = "Нажмите дважды, чтобы открыть настройки";
-"createConversation.searchView.description" = "Введите имя группы";
 "createConversation.selectedUser.hint" = "Нажмите дважды, чтобы отменить выбор";
 "createConversation.unselectedUser.hint" = "Нажмите дважды, чтобы выбрать";
 
@@ -234,12 +230,14 @@
 "conversationsList.filter_menu_options.allConversations.description" = "Показать все беседы";
 "conversationsList.filter_menu_options.favorites.description" = "Показать все избранные беседы";
 "conversationsList.filter_menu_options.groups.description" = "Показать все групповые беседы";
+"conversationsList.filter_menu_options.channels.description" = "Показать все беседы каналов";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Показать все беседы 1:1";
 "conversationsList.filter_menu_options.folders.description" = "Папки";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "Все беседы, выбраны";
 "conversationsList.filter_menu_options.favorites.selected.description" = "Избранные, выбраны";
 "conversationsList.filter_menu_options.groups.selected.description" = "Группы, выбраны";
+"conversationsList.filter_menu_options.channels.selected.description" = "Каналы, выбраны";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "Беседы один на один, выбраны";
 "conversationsList.filter_menu_options.folders.selected.description" = "Папка, выбрана";
 
@@ -322,3 +320,6 @@
 "searchGifs.norResultsLabel.description" = "GIF не найдены";
 "searchGifs.gifItem.accessibilityHint" = "Нажмите для выбора GIF";
 "searchGifs.gifItems_loaded.announcement" = "Загружено %@ новых GIF";
+
+// MARK: - Channel Creation UI - Navigation
+"conversation.create.channel.back" = "Вернуться к обзору новой беседы";
