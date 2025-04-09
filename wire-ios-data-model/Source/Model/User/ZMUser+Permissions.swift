@@ -79,7 +79,7 @@ public extension ZMUser {
             actionName: ConversationAction.addConversationMember.name,
             conversation: conversation
         ) || canDoChannelAdminStuff(conversation)
-        || (conversation.privateChannelPermission == .everyone && conversation.isChannel)
+            || (conversation.privateChannelPermission == .everyone && conversation.isChannel)
     }
 
     @objc(canRemoveUserFromConversation:)
@@ -163,7 +163,7 @@ public extension ZMUser {
         guard conversation.conversationType == .group else { return false }
 
         return hasRoleWithAction(actionName: ConversationAction.modifyConversationName.name, conversation: conversation)
-        || canDoChannelAdminStuff(conversation)
+            || canDoChannelAdminStuff(conversation)
     }
 
     @objc(canLeave:)
@@ -248,8 +248,8 @@ public extension ZMUser {
         else { return false }
         return role.actions.contains(where: { $0.name == actionName })
     }
-    
+
     private func canDoChannelAdminStuff(_ conversation: ConversationLike) -> Bool {
-        return conversation.isChannel && canManageTeam
+        conversation.isChannel && canManageTeam
     }
 }
