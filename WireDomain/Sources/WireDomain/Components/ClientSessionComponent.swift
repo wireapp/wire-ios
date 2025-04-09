@@ -143,6 +143,8 @@ public final class ClientSessionComponent {
 
     // MARK: - Local storage
 
+    private lazy var databaseSaver = DatabaseSaver(context: syncContext)
+
     private lazy var backendConfigLocalStore = BackendConfigLocalStore(
         sharedUserDefaults: sharedUserDefaults
     )
@@ -322,7 +324,8 @@ public final class ClientSessionComponent {
         updateEventsSync: pullPendingUpdateEventsSync,
         decryptor: updateEventDecryptor,
         store: updateEventsLocalStore,
-        processor: updateEventProcessor
+        processor: updateEventProcessor,
+        databaseSaver: databaseSaver
     )
 
     // MARK: - Repositories
