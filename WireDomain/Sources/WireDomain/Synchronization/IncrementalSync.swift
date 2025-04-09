@@ -62,9 +62,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         logger.debug("processing stored update events")
         let processedEnvelopeIDs = try await processStoredEvents()
 
-        logger.debug("processing stored update events")
-        let processedEnvelopeIDs = try await processStoredEvents()
-
         let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver] in
             logger.debug("handling live event stream")
 
