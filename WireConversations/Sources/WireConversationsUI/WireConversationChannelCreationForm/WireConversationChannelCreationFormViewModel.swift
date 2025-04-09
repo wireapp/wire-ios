@@ -93,7 +93,8 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
 
     public init(
         channelName: String,
-        channelAccess: ChannelAccessOption = .public,
+        // Channel access is always hard coded to private for now.
+        channelAccess: ChannelAccessOption = .private,
         channelInvitePolicy: ChannelInvitePolicyOption = .admins,
         servicesAllowed: Bool = true,
         guestsAllowed: Bool = true,
