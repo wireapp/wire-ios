@@ -171,7 +171,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 // forming this union also removes the relationship to the proteus conversation.
                 mlsConversation.mutableMessages.union(proteusConversation.allMessages)
 
-                setConversationDate(for: mlsConversation, from: proteusConversation)
+                setConversationDates(for: mlsConversation, from: proteusConversation)
             }
 
             if !proteusConversations.isEmpty {
@@ -187,7 +187,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    private func setConversationDate(for mlsConversation: ZMConversation, from proteusConversation: ZMConversation) {
+    private func setConversationDates(for mlsConversation: ZMConversation, from proteusConversation: ZMConversation) {
         if let lastReadServerTimeStamp = proteusConversation.lastReadServerTimeStamp {
             mlsConversation.lastReadServerTimeStamp = lastReadServerTimeStamp
         }
