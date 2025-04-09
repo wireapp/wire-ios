@@ -30,6 +30,7 @@ final class IncrementalSyncTests: XCTestCase {
     var decryptor: MockUpdateEventDecryptorProtocol!
     var store: MockUpdateEventsLocalStoreProtocol!
     var processor: MockUpdateEventProcessorProtocol!
+    var databaseSaver: MockDatabaseSaverProtocol!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelAPI()
@@ -37,13 +38,15 @@ final class IncrementalSyncTests: XCTestCase {
         decryptor = MockUpdateEventDecryptorProtocol()
         store = MockUpdateEventsLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
+        databaseSaver = MockDatabaseSaverProtocol()
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
             updateEventsSync: updateEventsSync,
             decryptor: decryptor,
             store: store,
-            processor: processor
+            processor: processor,
+            databaseSaver: databaseSaver
         )
     }
 
@@ -54,6 +57,7 @@ final class IncrementalSyncTests: XCTestCase {
         decryptor = nil
         store = nil
         processor = nil
+        databaseSaver = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -106,6 +110,9 @@ final class IncrementalSyncTests: XCTestCase {
         // Events are processed.
         processor.processEvent_MockMethod = { _ in }
 
+        // Database is saved.
+        databaseSaver.save_MockMethod = {}
+
         // When
         let token = try await sut.perform()
         await token.task.value
@@ -156,6 +163,10 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Then live events were deleted (duplicates skipped).
         XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11, 12])
+
+        // Then the database was saved once after processing pending events
+        // and once after processing each live event.
+        XCTAssertEqual(databaseSaver.save_Invocations.count, 3)
     }
 
 }
