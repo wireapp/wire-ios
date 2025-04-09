@@ -67,7 +67,7 @@ public struct CreateBackupUseCase<
                         Thread.sleep(forTimeInterval: 1)
                     }
 
-                    // TODO: clean up temporary directories
+                    // TODO: clean up temporary directories?
                     // TODO: handle cancellation
 
                     reportProgress(0)
@@ -247,7 +247,7 @@ public struct CreateBackupUseCase<
                     senderUserId: BackupQualifiedId(message.senderUserID),
                     senderClientId: message.senderClientID,
                     creationDate: BackupDateTime(message.creationDate),
-                    content: message.content.backupMessageContent,
+                    content: .from(message.content),
                     webPrimaryKey: nil // TODO: remove
                 )
                 backupExporter.add(message: backupMessage)

@@ -18,9 +18,12 @@
 
 import WireBackup
 
-extension CreateBackupMessageContent {
+extension BackupMessageContent {
 
-    var backupMessageContent: BackupMessageContent {
-        fatalError()
+    static func from(_ content: CreateBackupMessageContent) -> BackupMessageContent {
+        switch content {
+        case .text(let text):
+            BackupMessageContent.Text(text: text)
+        }
     }
 }

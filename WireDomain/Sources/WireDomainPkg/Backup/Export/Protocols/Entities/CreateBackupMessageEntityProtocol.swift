@@ -30,5 +30,5 @@ public protocol CreateBackupMessageEntityProtocol: CreateBackupEntityProtocol {
 }
 
 public enum CreateBackupMessageContent {
-    case some
+    case text(_ content: String)
 }
