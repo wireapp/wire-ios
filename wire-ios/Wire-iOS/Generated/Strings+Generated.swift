@@ -2471,19 +2471,19 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
         internal enum NonFederatingDomainsError {
-          /// Discard Group Creation
-          internal static let abort = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.abort", fallback: "Discard Group Creation")
+          /// Discard Conversation Creation
+          internal static let abort = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.abort", fallback: "Discard Conversation Creation")
           /// Edit Participants List
           internal static let editParticipantList = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.edit_participant_list", fallback: "Edit Participants List")
           /// Learn More
           internal static let learnMore = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.learn_more", fallback: "Learn More")
-          /// People from backends %@ can't join the same group conversation.
-          /// To create the group, remove affected participants.
+          /// People from backends %@ can't join the same conversation.
+          /// To create the conversation, remove affected participants.
           internal static func message(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "conversation.create.non_federating_domains_error.message", String(describing: p1), fallback: "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.")
+            return L10n.tr("Localizable", "conversation.create.non_federating_domains_error.message", String(describing: p1), fallback: "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.")
           }
-          /// Group can't be created
-          internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Group can't be created")
+          /// Conversation can't be created
+          internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Conversation can't be created")
         }
         internal enum Options {
           /// CONVERSATION OPTIONS
