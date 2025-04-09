@@ -225,6 +225,13 @@ extension ConversationMessageCellDescription {
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
         cell.cellView.delegate = delegate
+        if let messageText = message?.textMessageData?.messageText {
+            if delegate == nil {
+                print("\(messageText) delegate == nil")
+            } else {
+                print("\(messageText) delegate != nil")
+            }
+        }
         cell.cellView.message = message
         cell.cellView.actionController = actionController
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()

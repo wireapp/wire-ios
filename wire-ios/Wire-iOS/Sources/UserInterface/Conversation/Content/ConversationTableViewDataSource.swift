@@ -243,6 +243,13 @@ final class ConversationTableViewDataSource: NSObject {
             contentWidth: contentWidth
         )
         sectionController.cellDelegate = conversationCellDelegate
+        if let messageText = message.textMessageData?.messageText {
+            if conversationCellDelegate == nil {
+                print("\(messageText) conversationCellDelegate == nil")
+            } else {
+                print("\(messageText) conversationCellDelegate != nil")
+            }
+        }
         sectionController.sectionDelegate = self
         sectionController.actionController = actionController(for: message, sectionController: sectionController)
 
@@ -646,6 +653,7 @@ extension ConversationTableViewDataSource {
 
                 // we notify the table view by creating a new cell description
                 let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
+                newCellDescription.delegate = previousStatus?.cellDescription.delegate
                 previousStatus?.replace(newCellDescription, &sections)
 
                 // for collapsing the space we will refer to the cell description before the previous message's status

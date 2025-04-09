@@ -416,6 +416,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescription.message = message
             cellDescription.actionController = actionController
             cellDescription.delegate = cellDelegate
+            if let messageText = message.textMessageData?.messageText {
+                if cellDelegate == nil {
+                    print("\(messageText) cellDelegate == nil")
+                } else {
+                    print("\(messageText) cellDelegate != nil")
+                }
+            }
         }
     }
 
