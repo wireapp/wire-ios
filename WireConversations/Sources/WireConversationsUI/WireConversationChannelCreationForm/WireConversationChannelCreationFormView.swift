@@ -61,7 +61,7 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelAccessSection: some View {
         Section(content: {
-// Channel access is always hard coded to private for now.
+            // Channel access is always hard coded to private for now.
 //            Picker(
 //                L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
 //                selection: $viewModel.channelAccess
@@ -75,14 +75,14 @@ public struct WireConversationChannelCreationForm: View {
 //                .tag(ViewModel.ChannelAccessOption.private)
 //            }
             HStack {
-                Text("Channel access")
+                Text(L10n.Localizable.Conversation.CreationForm.Options.channelAccess)
 
                 Spacer()
 
                 HStack(spacing: 4) {
                     Image(systemName: "lock.fill")
                         .foregroundColor(.gray)
-                    Text("Private")
+                    Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private)
                         .foregroundColor(.gray)
                 }
             }
