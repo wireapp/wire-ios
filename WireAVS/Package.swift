@@ -3,7 +3,7 @@
 import Foundation
 import PackageDescription
 
-// Temporary local package replacing integration of CoreCrypto via Carthage
+// Temporary local package replacing integration of AVS via Carthage
 let package = Package(
     name: "WireAVS",
     platforms: [.iOS(.v16), .macOS(.v12)],
