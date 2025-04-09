@@ -68,21 +68,175 @@ final class GenerateNotificationStep: Component<GenerateNotificationDependency> 
 
 extension GenerateNotificationStep {
     private var conversationEventNotificationBuilder: ConversationEventNotificationBuilder {
-        ConversationEventNotificationBuilder(
-            userID: <#T##UUID#>,
-            userDefaults: <#T##UserDefaults#>,
-            userLocalStore: <#T##any UserLocalStoreProtocol#>,
-            conversationLocalStore: <#T##any ConversationLocalStoreProtocol#>,
-            messageLocalStore: <#T##any MessageLocalStoreProtocol#>,
-            callKitNotificationBuilder: <#T##CallKitNotificationBuilder#>,
-            callNotificationBuilder: <#T##CallNotificationBuilder#>,
-            conversationMLSMessageAddEventNotificationBuilder: <#T##ConversationMLSMessageAddEventNotificationBuilder#>,
-            conversationProteusMessageAddEventNotificationBuilder: <#T##ConversationProteusMessageAddEventNotificationBuilder#>,
-            conversationMemberLeaveEventNotificationBuilder: <#T##ConversationMemberLeaveEventNotificationBuilder#>,
-            conversationMemberJoinEventNotificationBuilder: <#T##ConversationMemberJoinEventNotificationBuilder#>,
-            conversationCreateEventNotificationBuilder: <#T##ConversationCreateEventNotificationBuilder#>,
-            conversationDeleteEventNotificationBuilder: <#T##ConversationDeleteEventNotificationBuilder#>,
-            conversationMessageTimerUpdateEventNotificationBuilder: <#T##ConversationMessageTimerUpdateEventNotificationBuilder#>)
+        let validator = ConversationEventNotificationBuilder.Validator(
+            userLocalStore: dependency.userLocalStore,
+            conversationLocalStore: dependency.conversationLocalStore,
+            messageLocalStore: dependency.messageLocalStore
+        )
+        
+        return ConversationEventNotificationBuilder(
+            validator: validator,
+            callKitNotificationBuilder: callKitNotificationBuilder,
+            callNotificationBuilder: callNotificationBuilder,
+            conversationMLSMessageAddEventNotificationBuilder: conversationMLSMessageAddEventNotificationBuilder,
+            conversationProteusMessageAddEventNotificationBuilder: conversationProteusMessageAddEventNotificationBuilder,
+            conversationMemberLeaveEventNotificationBuilder: conversationMemberLeaveEventNotificationBuilder,
+            conversationMemberJoinEventNotificationBuilder: conversationMemberJoinEventNotificationBuilder,
+            conversationCreateEventNotificationBuilder: conversationCreateEventNotificationBuilder,
+            conversationDeleteEventNotificationBuilder: conversationDeleteEventNotificationBuilder,
+            conversationMessageTimerUpdateEventNotificationBuilder: conversationMessageTimerUpdateEventNotificationBuilder)
+    }
+    
+    var conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder {
+        let context = ConversationMemberLeaveEventNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        let validator = ConversationMemberLeaveEventNotificationBuilder.Validator(
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationMemberLeaveEventNotificationBuilder(
+            context: context,
+            validator: validator
+        )
+    }
+    
+    var conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder {
+        let context = ConversationMemberJoinEventNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        let validator = ConversationMemberJoinEventNotificationBuilder.Validator(
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationMemberJoinEventNotificationBuilder(
+            context: context,
+            validator: validator
+        )
+    }
+    
+    var conversationMessageTimerUpdateEventNotificationBuilder: ConversationMessageTimerUpdateEventNotificationBuilder {
+        let context = ConversationMessageTimerUpdateEventNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        let validator = ConversationMessageTimerUpdateEventNotificationBuilder.Validator()
+        
+        return ConversationMessageTimerUpdateEventNotificationBuilder(
+            context: context,
+            validator: validator
+        )
+    }
+    
+    var conversationCreateEventNotificationBuilder: ConversationCreateEventNotificationBuilder {
+        let context = ConversationCreateEventNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        let validator = ConversationCreateEventNotificationBuilder.Validator(
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationCreateEventNotificationBuilder(
+            context: context,
+            validator: validator
+        )
+    }
+    
+    var conversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilder {
+        let context = ConversationDeleteEventNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        let validator = ConversationDeleteEventNotificationBuilder.Validator(
+            conversationLocalStore: dependency.conversationLocalStore
+        )
+        
+        return ConversationDeleteEventNotificationBuilder(
+            context: context,
+            validator: validator
+        )
+    }
+    
+    var conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder {
+        
+        let context = ConversationMLSMessageAddEventNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore,
+            messageLocalStore: dependency.messageLocalStore
+        )
+        
+        let validator = ConversationMLSMessageAddEventNotificationBuilder.Validator(
+            conversationLocalStore: dependency.conversationLocalStore
+        )
+        
+        return ConversationMLSMessageAddEventNotificationBuilder(
+            context: context,
+            validator: validator
+        )
+    }
+    
+    var conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder {
+        
+        let context = ConversationProteusMessageAddEventNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore,
+            messageLocalStore: dependency.messageLocalStore
+        )
+        
+        let validator = ConversationProteusMessageAddEventNotificationBuilder.Validator(
+            conversationLocalStore: dependency.conversationLocalStore
+        )
+        
+        return ConversationProteusMessageAddEventNotificationBuilder(
+            context: context,
+            validator: validator
+        )
+    }
+    
+    var callKitNotificationBuilder: CallKitNotificationBuilder {
+        let validator = CallKitNotificationBuilder.Validator(
+            userLocalStore: dependency.userLocalStore,
+            conversationLocalStore: dependency.conversationLocalStore,
+            messageLocalStore: dependency.messageLocalStore,
+            userDefaults: dependency.sharedUserDefaults
+        )
+        
+        let context = CallKitNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore,
+            userDefaults: dependency.sharedUserDefaults
+        )
+        
+        return CallKitNotificationBuilder(
+            context: context,
+            validator: validator,
+            accountID: dependency.userID
+        )
+    }
+    
+    var callNotificationBuilder: CallNotificationBuilder {
+        let validator = CallNotificationBuilder.Validator(
+            userLocalStore: dependency.userLocalStore,
+            conversationLocalStore: dependency.conversationLocalStore
+        )
+        
+        let context = CallNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return CallNotificationBuilder(
+            context: context,
+            validator: validator
+        )
     }
     
     private var userEventNotificationBuilder: UserNotificationBuilder {

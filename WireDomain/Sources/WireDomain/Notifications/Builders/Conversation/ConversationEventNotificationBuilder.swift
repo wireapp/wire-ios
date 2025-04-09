@@ -26,124 +26,29 @@ struct ConversationEventNotificationBuilder {
         case failedToDecryptMLSMessage
         case failedToDecryptProteusMessage
     }
-
-    private struct Context {
-        let senderID: UserID
-        let conversationID: ConversationID
-        let userID: UUID
-        let userDefaults: UserDefaults
-    }
-
-    private struct Validator {
-        let isSelfUser: Bool
-        let isConversationMuted: Bool
-        let eventTimeStamp: Date?
-        let lastReadTimestamp: Date?
-
-        func validate() -> Bool {
-            let isSelfUser = isSelfUser
-            let isConversationMuted = isConversationMuted
-            let eventTimeStamp = eventTimeStamp
-            let lastReadTimestamp = lastReadTimestamp
-
-            guard !isSelfUser,
-                  !isConversationMuted else {
-                return false
-            }
-
-            if let timeStamp = eventTimeStamp,
-               let lastRead = lastReadTimestamp, lastRead.compare(timeStamp) != .orderedAscending {
-                // don't show notifications that have already been read
-                return false
-            }
-
-            return true
-        }
-    }
-
-    private let event: ConversationEvent
-    private let context: Context
-    private let validator: Validator
-
-    private let userLocalStore: any UserLocalStoreProtocol
-    private let conversationLocalStore: any ConversationLocalStoreProtocol
-    private let messageLocalStore: any MessageLocalStoreProtocol
     
-    private let callKitNotificationBuilder: CallKitNotificationBuilder
-    private let callNotificationBuilder: CallNotificationBuilder
-    private let conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder
-    private let conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder
-    private let conversationMemberLeaveEventNotificationBuilder:  ConversationMemberLeaveEventNotificationBuilder
-    private let conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder
-    private let conversationCreateEventNotificationBuilder: ConversationCreateEventNotificationBuilder
-    private let conversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilder
-    private let conversationMessageTimerUpdateEventNotificationBuilder: ConversationMessageTimerUpdateEventNotificationBuilder
-
-    init(
-        userID: UUID,
-        userDefaults: UserDefaults,
-        userLocalStore: any UserLocalStoreProtocol,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        messageLocalStore: any MessageLocalStoreProtocol,
-        callKitNotificationBuilder: CallKitNotificationBuilder,
-        callNotificationBuilder: CallNotificationBuilder,
-        conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder,
-        conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder,
-        conversationMemberLeaveEventNotificationBuilder:  ConversationMemberLeaveEventNotificationBuilder,
-        conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder,
-        conversationCreateEventNotificationBuilder: ConversationCreateEventNotificationBuilder,
-        conversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilder,
-        conversationMessageTimerUpdateEventNotificationBuilder: ConversationMessageTimerUpdateEventNotificationBuilder
-    ) async {
-        self.userLocalStore = userLocalStore
-        self.conversationLocalStore = conversationLocalStore
-        self.messageLocalStore = messageLocalStore
-
-        let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: event.conversationID.uuid,
-            domain: event.conversationID.domain
-        )
-
-        // Validation criteria
-
-        let conversationMutedMessages = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(
-            conversation
-        )
-
-        let isConversationMuted = conversationMutedMessages != .none
-
-        let isSelfUser = try? await userLocalStore.isSelfUser(
-            id: event.senderID.uuid,
-            domain: event.senderID.domain
-        ).isSelfUser
-
-        let eventTimeStamp = event.timestamp
-        let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
-
-        self.validator = Validator(
-            isSelfUser: isSelfUser == true,
-            isConversationMuted: isConversationMuted,
-            eventTimeStamp: eventTimeStamp,
-            lastReadTimestamp: lastReadTimestamp
-        )
-
-        // Context
-
-        self.context = Context(
-            senderID: event.senderID,
-            conversationID: event.conversationID,
-            userID: userID,
-            userDefaults: userDefaults
-        )
-    }
-
-    private func shouldBuildNotification() async -> Bool {
-        validator.validate()
-    }
+    let validator: ConversationEventNotificationBuilder.Validator
+    let callKitNotificationBuilder: CallKitNotificationBuilder
+    let callNotificationBuilder: CallNotificationBuilder
+    let conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder
+    let conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder
+    let conversationMemberLeaveEventNotificationBuilder:  ConversationMemberLeaveEventNotificationBuilder
+    let conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder
+    let conversationCreateEventNotificationBuilder: ConversationCreateEventNotificationBuilder
+    let conversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilder
+    let conversationMessageTimerUpdateEventNotificationBuilder: ConversationMessageTimerUpdateEventNotificationBuilder
 
     func buildContent(
         event: ConversationEvent
-    ) async throws -> UserNotification {
+    ) async throws -> UserNotification? {
+        let canDisplayNotification = await validator.validate(
+            event: event
+        )
+        
+        guard canDisplayNotification else {
+            return nil
+        }
+        
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
             let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
@@ -153,25 +58,29 @@ struct ConversationEventNotificationBuilder {
                 isProteus: false
             )
 
-            let callingBuilder = await callingBuilder(
+            let callKitNotification = await callKitNotificationBuilder.buildContent(
+                calling: genericMessage.calling,
+                conversationID: mlsMessageEvent.conversationID,
+                senderID: mlsMessageEvent.senderID
+            )
+            
+            let callNotification = await callNotificationBuilder.buildContent(
                 calling: genericMessage.calling,
                 at: mlsMessageEvent.timestamp,
                 conversationID: mlsMessageEvent.conversationID,
                 senderID: mlsMessageEvent.senderID
             )
-
-            if let callingBuilder {
-                builder = callingBuilder
+            
+            // First, let's try to return a call notification with CallKit.
+            // If not, try fallback to regular push notification builder.
+            // Else, this is not a call.
+            
+            if let callKitNotification {
+                return callKitNotification
+            } else if let callNotification {
+                return callNotification
             } else {
-                builder = await ConversationMLSMessageAddEventNotificationBuilder(
-                    message: genericMessage,
-                    conversationID: mlsMessageEvent.conversationID,
-                    senderID: mlsMessageEvent.senderID,
-                    userLocalStore: userLocalStore,
-                    conversationLocalStore: conversationLocalStore,
-                    messageLocalStore: messageLocalStore
-                )
-
+                return nil
             }
 
         case let .proteusMessageAdd(proteusMessageEvent):
@@ -183,121 +92,68 @@ struct ConversationEventNotificationBuilder {
                 external: external
             )
 
-            let callingBuilder = await callingBuilder(
+            let callKitNotification = await callKitNotificationBuilder.buildContent(
+                calling: genericMessage.calling,
+                conversationID: proteusMessageEvent.conversationID,
+                senderID: proteusMessageEvent.senderID
+            )
+            
+            let callNotification = await callNotificationBuilder.buildContent(
                 calling: genericMessage.calling,
                 at: proteusMessageEvent.timestamp,
                 conversationID: proteusMessageEvent.conversationID,
                 senderID: proteusMessageEvent.senderID
             )
-
-            // If there's a call to handle, there will be some value, else, there is no call to handle.
-            if let callingBuilder {
-                builder = callingBuilder
+            
+            if let callKitNotification {
+                return callKitNotification
+            } else if let callNotification {
+                return callNotification
             } else {
-                builder = await ConversationProteusMessageAddEventNotificationBuilder(
-                    message: genericMessage,
-                    conversationID: proteusMessageEvent.conversationID,
-                    senderID: proteusMessageEvent.senderID,
-                    userLocalStore: userLocalStore,
-                    conversationLocalStore: conversationLocalStore,
-                    messageLocalStore: messageLocalStore
-                )
+                return nil
             }
 
         case let .memberLeave(memberLeaveEvent):
             let removedUserIDs = Set(memberLeaveEvent.removedUserIDs.compactMap(\.uuid))
 
-            builder = await ConversationMemberLeaveEventNotificationBuilder(
+            return await conversationMemberLeaveEventNotificationBuilder.buildContent(
                 removedUserIDs: removedUserIDs,
                 conversationID: memberLeaveEvent.conversationID,
-                senderID: memberLeaveEvent.senderID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                senderID: memberLeaveEvent.senderID
             )
 
         case let .memberJoin(memberJoinEvent):
             let addedUserIDs = Set(memberJoinEvent.members.compactMap(\.id))
 
-            builder = await ConversationMemberJoinEventNotificationBuilder(
+            return await conversationMemberJoinEventNotificationBuilder.buildContent(
                 addedUserIDs: addedUserIDs,
                 conversationID: memberJoinEvent.conversationID,
-                senderID: memberJoinEvent.senderID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                senderID: memberJoinEvent.senderID
             )
 
         case let .create(conversationCreateEvent):
 
-            builder = await ConversationCreateEventNotificationBuilder(
+            return await conversationCreateEventNotificationBuilder.buildContent(
                 conversationID: conversationCreateEvent.conversationID,
-                senderID: conversationCreateEvent.senderID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                senderID: conversationCreateEvent.senderID
             )
 
         case let .delete(conversationDeleteEvent):
 
-            builder = await ConversationDeleteEventNotificationBuilder(
+            return await conversationDeleteEventNotificationBuilder.buildContent(
                 conversationID: conversationDeleteEvent.conversationID,
-                senderID: conversationDeleteEvent.senderID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                senderID: conversationDeleteEvent.senderID
             )
 
         case let .messageTimerUpdate(messageTimerUpdateEvent):
 
-            builder = await ConversationMessageTimerUpdateEventNotificationBuilder(
+            return await conversationMessageTimerUpdateEventNotificationBuilder.buildContent(
                 newTimer: messageTimerUpdateEvent.newTimer,
                 conversationID: messageTimerUpdateEvent.conversationID,
-                senderID: messageTimerUpdateEvent.senderID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                senderID: messageTimerUpdateEvent.senderID
             )
 
         default:
-            return .notDisplayed
-        }
-
-        guard await builder.shouldBuildNotification() else {
-            return .notDisplayed
-        }
-
-        return try await builder.buildContent()
-    }
-
-    private func callingBuilder(
-        calling: Calling,
-        at date: Date? = nil,
-        conversationID: WireAPI.QualifiedID,
-        senderID: WireAPI.QualifiedID
-    ) async -> NotificationBuilder? {
-        let callKitBuilder = await CallKitNotificationBuilder(
-            calling: calling,
-            conversationID: conversationID,
-            senderID: senderID,
-            accountID: context.userID,
-            userDefaults: context.userDefaults,
-            conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
-        )
-
-        let callNotificationBuilder = await CallNotificationBuilder(
-            calling: calling,
-            at: date,
-            conversationID: conversationID,
-            senderID: senderID,
-            conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
-        )
-
-        // First, let's try to handle a call notification with CallKit.
-        // If not, try fallback to regular push notification builder.
-        // Else, this is not a call.
-        if let callKitBuilder, await callKitBuilder.shouldBuildNotification() {
-            return callKitBuilder
-        } else if let callNotificationBuilder {
-            return callNotificationBuilder
-        } else {
             return nil
         }
     }
@@ -317,5 +173,49 @@ struct ConversationEventNotificationBuilder {
 
         return genericMessage
     }
+}
 
+extension ConversationEventNotificationBuilder {
+    struct Validator {
+        let userLocalStore: any UserLocalStoreProtocol
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+        let messageLocalStore: any MessageLocalStoreProtocol
+        
+        func validate(event: ConversationEvent) async -> Bool {
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: event.conversationID.uuid,
+                domain: event.conversationID.domain
+            )
+
+            // Validation criteria
+
+            let conversationMutedMessages = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(
+                conversation
+            )
+
+            let isConversationMuted = conversationMutedMessages != .none
+
+            let isSelfUser = try? await userLocalStore.isSelfUser(
+                id: event.senderID.uuid,
+                domain: event.senderID.domain
+            ).isSelfUser
+
+            let eventTimeStamp = event.timestamp
+            let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
+
+            guard let isSelfUser,
+                    !isSelfUser,
+                  !isConversationMuted else {
+                return false
+            }
+
+            if let timeStamp = eventTimeStamp,
+               let lastRead = lastReadTimestamp, lastRead.compare(timeStamp) != .orderedAscending {
+                // don't show notifications that have already been read
+                return false
+            }
+
+            return true
+        }
+    }
 }

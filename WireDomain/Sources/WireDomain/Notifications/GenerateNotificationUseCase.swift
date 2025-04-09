@@ -62,14 +62,14 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
     ) async -> UserNotification? {
         switch event {
         case let .conversation(conversationEvent):
-            // TODO: implement reusable builder
-            //return conversationNotificationBuilder.buildContent(for: conversationEvent)
-            return nil
+            return try? await conversationEventBuilder.buildContent(
+                event: conversationEvent
+            )
             
         case let .user(userEvent):
-            // TODO: implement reusable builder
-            //return userNotificationBuilder.buildContent(for: userEvent)
-            return nil
+            return try? await userEventBuilder.buildContent(
+                event: userEvent
+            )
             
         default:
             return nil

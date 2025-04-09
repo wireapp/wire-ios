@@ -21,102 +21,68 @@ import WireDataModel
 
 struct ConversationDeleteEventNotificationBuilder {
 
-    private struct Context {
-        let conversation: ZMConversation
-        let senderName: String?
-        let conversationName: String?
-        let isGroupConversation: Bool
-        let teamName: String?
-        let conversationID: WireAPI.QualifiedID
-        let senderID: UUID
-        let selfUserID: UUID
-    }
+    let context: Context
+    let validator: Validator
 
-    private struct Validator {
-        let isGroupConversation: Bool
-
-        func validate() -> Bool {
-            isGroupConversation
-        }
-    }
-
-    private let context: Context
-    private let validator: Validator
-
-    private let userLocalStore: any UserLocalStoreProtocol
-    private let conversationLocalStore: any ConversationLocalStoreProtocol
-
-    init(
+    func buildContent(
         conversationID: WireAPI.QualifiedID,
-        senderID: UserID,
-        userLocalStore: any UserLocalStoreProtocol,
-        conversationLocalStore: any ConversationLocalStoreProtocol
-    ) async {
-        self.userLocalStore = userLocalStore
-        self.conversationLocalStore = conversationLocalStore
-
-        let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: conversationID.uuid,
-            domain: conversationID.domain
+        senderID: UserID
+    ) async -> UserNotification? {
+        let canBuildNotification = await validator.validate(
+            conversationID: conversationID
         )
-
-        // Validation criteria
-
-        let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
-
-        self.validator = Validator(
-            isGroupConversation: isGroupConversation
-        )
-
-        // Context
-
-        let sender = await userLocalStore.fetchOrCreateUser(
-            id: senderID.uuid,
-            domain: senderID.domain
-        )
-
-        let senderName = await userLocalStore.name(for: sender)
-        let conversationName = await conversationLocalStore.name(for: conversation)
-        let selfUser = await userLocalStore.fetchSelfUser()
-        let teamName = await userLocalStore.teamName(for: selfUser)
-
-        let selfUserID = await userLocalStore.id(for: selfUser)
-
-        self.context = Context(
-            conversation: conversation,
-            senderName: senderName,
-            conversationName: conversationName,
-            isGroupConversation: isGroupConversation,
-            teamName: teamName,
-            conversationID: conversationID,
-            senderID: senderID.uuid,
-            selfUserID: selfUserID
-        )
-
-    }
-
-    private func shouldBuildNotification() async -> Bool {
-        validator.validate()
-    }
-
-    func buildContent() async -> UserNotification? {
-        guard await shouldBuildNotification() else {
+        
+        guard canBuildNotification else {
             return nil
         }
         
-        return await buildDeletedConversationNotification()
+        let conversation = await context.getConversation(conversationID: conversationID)
+        let sender = await context.getSender(senderID: senderID)
+        let selfUser = await context.getSelfUser()
+        let selfUserID = await context.selfUserID(selfUser: selfUser)
+        let senderName = await context.senderName(sender: sender)
+        let conversationName = await context.conversationName(conversation: conversation)
+        let teamName = await context.teamName(selfUser: selfUser)
+        let isGroupConversation = await context.isGroupConversation(
+            conversation: conversation
+        )
+        
+        return await buildDeletedConversationNotification(
+            conversation: conversation,
+            isGroupConversation: isGroupConversation,
+            teamName: teamName,
+            conversationName: conversationName,
+            senderName: senderName,
+            selfUserID: selfUserID,
+            senderID: senderID.uuid,
+            conversationID: conversationID
+        )
     }
 
     // MARK: - Build notifications
 
-    private func buildDeletedConversationNotification() async -> UserNotification {
+    private func buildDeletedConversationNotification(
+        conversation: ZMConversation,
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        senderName: String?,
+        selfUserID: UUID,
+        senderID: UUID,
+        conversationID: ConversationID
+    ) async -> UserNotification {
         let content = UNMutableNotificationContent()
 
-        if let title = makeTitle() {
+        if let title = makeTitle(
+            isGroupConversation: isGroupConversation,
+            teamName: teamName,
+            conversationName: conversationName,
+            senderName: senderName
+        ) {
             content.title = title
         }
 
-        let body = if let senderName = context.senderName {
+        let body = if let senderName = senderName {
             String.formated(key: "push.notification.body.senderDeletedGroup", bundle: .module, senderName)
         } else {
             String.localized(key: "push.notification.body.deletedGroup", bundle: .module)
@@ -125,11 +91,15 @@ struct ConversationDeleteEventNotificationBuilder {
         content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
-        await conversationLocalStore.decreaseUnreadCount(
-            for: context.conversation
+        await context.decreaseUnreadCount(
+            conversation: conversation
         )
 
         return .text(content)
@@ -137,12 +107,12 @@ struct ConversationDeleteEventNotificationBuilder {
 
     // MARK: - Helpers
 
-    private func makeTitle() -> String? {
-        let isGroupConversation = context.isGroupConversation
-        let teamName = context.teamName
-        let conversationName = context.conversationName
-        let senderName = context.senderName
-
+    private func makeTitle(
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        senderName: String?
+    ) -> String? {
         guard let conversationName, let senderName else {
             return nil
         }
@@ -176,14 +146,98 @@ struct ConversationDeleteEventNotificationBuilder {
         return category.rawValue
     }
 
-    private func makeUserInfo() -> [AnyHashable: Any] {
+    private func makeUserInfo(
+        selfUserID: UUID,
+        senderID: UUID,
+        conversationID: ConversationID
+    ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID.uuidString
-        userInfo[NotificationUserInfoKey.senderID] = context.senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
+        userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
 
         return userInfo
     }
 
 }
+
+extension ConversationDeleteEventNotificationBuilder {
+    struct Validator {
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+
+        func validate(conversationID: ConversationID) async -> Bool {
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+            
+            let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
+            
+            return isGroupConversation
+        }
+    }
+    
+    struct Context {
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+        let userLocalStore: any UserLocalStoreProtocol
+        
+        func getConversation(
+            conversationID: ConversationID
+        ) async -> ZMConversation {
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+        }
+        
+        func getSelfUser() async -> ZMUser {
+            await userLocalStore.fetchSelfUser()
+        }
+        
+        func getSender(
+            senderID: UserID
+        ) async -> ZMUser {
+            await userLocalStore.fetchOrCreateUser(
+                id: senderID.uuid,
+                domain: senderID.domain
+            )
+        }
+        
+        func senderName(
+            sender: ZMUser
+        ) async -> String? {
+            await userLocalStore.name(for: sender)
+        }
+        
+        func isGroupConversation(conversation: ZMConversation) async -> Bool {
+            await conversationLocalStore.isGroupConversation(conversation)
+        }
+        
+        func selfUserID(selfUser: ZMUser) async -> UUID {
+            await userLocalStore.id(for: selfUser)
+        }
+        
+        func conversationName(
+            conversation: ZMConversation
+        ) async -> String? {
+            await conversationLocalStore.name(for: conversation)
+        }
+        
+        func teamName(
+            selfUser: ZMUser
+        ) async -> String? {
+            await userLocalStore.teamName(for: selfUser)
+        }
+        
+        func decreaseUnreadCount(conversation: ZMConversation) async {
+            await conversationLocalStore.decreaseUnreadCount(
+                for: conversation
+            )
+        }
+
+    }
+}
+
+
+

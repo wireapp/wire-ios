@@ -21,98 +21,84 @@ import WireDataModel
 
 struct ConversationMessageTimerUpdateEventNotificationBuilder {
 
-    private struct Context {
-        let senderName: String?
-        let conversationName: String?
-        let isGroupConversation: Bool
-        let newTimer: Int64?
-        let teamName: String?
-        let conversationID: WireAPI.QualifiedID
-        let senderID: UUID
-        let selfUserID: UUID
-    }
-
-    private let context: Context
-
-    init(
+    let context: Context
+    let validator: Validator
+    
+    func buildContent(
         newTimer: Int64?,
         conversationID: WireAPI.QualifiedID,
-        senderID: UserID,
-        userLocalStore: any UserLocalStoreProtocol,
-        conversationLocalStore: any ConversationLocalStoreProtocol
-    ) async {
-
-        // Context
-
-        let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: conversationID.uuid,
-            domain: conversationID.domain
-        )
-
-        let sender = await userLocalStore.fetchOrCreateUser(
-            id: senderID.uuid,
-            domain: senderID.domain
-        )
-
-        let senderName = await userLocalStore.name(for: sender)
-        let conversationName = await conversationLocalStore.name(for: conversation)
-        let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
-        let selfUser = await userLocalStore.fetchSelfUser()
-        let teamName = await userLocalStore.teamName(for: selfUser)
-        let selfUserID = await userLocalStore.id(for: selfUser)
-
-        self.context = Context(
-            senderName: senderName,
-            conversationName: conversationName,
-            isGroupConversation: isGroupConversation,
-            newTimer: newTimer,
-            teamName: teamName,
-            conversationID: conversationID,
-            senderID: senderID.uuid,
-            selfUserID: selfUserID
-        )
-
-    }
-
-    private func shouldBuildNotification() async -> Bool {
-        true
-    }
-
-    func buildContent() async -> UserNotification? {
-        guard await shouldBuildNotification() else {
+        senderID: UserID
+    ) async -> UserNotification? {
+        let canBuildNotification = await validator.validate()
+        
+        guard canBuildNotification else {
             return nil
         }
         
         var timeoutStrValue: String?
 
-        if let timeoutValue = context.newTimer {
+        if let timeoutValue = newTimer {
             let timerInMilliseconds = Double(timeoutValue)
             let timeoutValue = timerInMilliseconds / 1000
             let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
 
             timeoutStrValue = timeout.displayString
         }
+        
+        let conversation = await context.getConversation(conversationID: conversationID)
+        let sender = await context.getSender(senderID: senderID)
+        let selfUser = await context.getSelfUser()
+        let selfUserID = await context.selfUserID(selfUser: selfUser)
+        let senderName = await context.senderName(sender: sender)
+        let conversationName = await context.conversationName(conversation: conversation)
+        let teamName = await context.teamName(selfUser: selfUser)
+        let isGroupConversation = await context.isGroupConversation(
+            conversation: conversation
+        )
 
-        return buildTimerUpdateNotification(timeout: timeoutStrValue)
+        return buildTimerUpdateNotification(
+            timeout: timeoutStrValue,
+            isGroupConversation: isGroupConversation,
+            teamName: teamName,
+            conversationName: conversationName,
+            senderName: senderName,
+            selfUserID: selfUserID,
+            senderID: senderID.uuid,
+            conversationID: conversationID
+        )
     }
 
     // MARK: - Build notifications
 
-    private func buildTimerUpdateNotification(timeout: String?) -> UserNotification {
+    private func buildTimerUpdateNotification(
+        timeout: String?,
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        senderName: String?,
+        selfUserID: UUID,
+        senderID: UUID,
+        conversationID: ConversationID
+    ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
-        if let title = makeTitle() {
+        if let title = makeTitle(
+            isGroupConversation: isGroupConversation,
+            teamName: teamName,
+            conversationName: conversationName,
+            senderName: senderName
+        ) {
             content.title = title
         }
 
         let body = if let timeout {
-            if let senderName = context.senderName {
+            if let senderName = senderName {
                 String.formated(key: "push.notification.body.senderSetTimerOn", bundle: .module, senderName, timeout)
             } else {
                 String.formated(key: "push.notification.body.setTimerOn", bundle: .module, timeout)
             }
         } else {
-            if let senderName = context.senderName {
+            if let senderName = senderName {
                 String.formated(key: "push.notification.body.senderSetTimerOff", bundle: .module, senderName)
             } else {
                 String.localized(key: "push.notification.body.setTimerOff", bundle: .module)
@@ -122,20 +108,24 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder {
         content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
         return .text(content)
     }
 
     // MARK: - Helpers
 
-    private func makeTitle() -> String? {
-        let isGroupConversation = context.isGroupConversation
-        let teamName = context.teamName
-        let conversationName = context.conversationName
-        let senderName = context.senderName
-
+    private func makeTitle(
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        senderName: String?
+    ) -> String? {
         guard let conversationName, let senderName else {
             return nil
         }
@@ -169,13 +159,81 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder {
         return category.rawValue
     }
 
-    private func makeUserInfo() -> [AnyHashable: Any] {
+    private func makeUserInfo(
+        selfUserID: UUID,
+        senderID: UUID,
+        conversationID: ConversationID
+    ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID.uuidString
-        userInfo[NotificationUserInfoKey.senderID] = context.senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
+        userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
 
         return userInfo
     }
 }
+
+extension ConversationMessageTimerUpdateEventNotificationBuilder {
+    struct Validator {
+
+        func validate() async -> Bool {
+            true
+        }
+    }
+    
+    struct Context {
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+        let userLocalStore: any UserLocalStoreProtocol
+        
+        func getConversation(
+            conversationID: ConversationID
+        ) async -> ZMConversation {
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+        }
+        
+        func getSelfUser() async -> ZMUser {
+            await userLocalStore.fetchSelfUser()
+        }
+        
+        func getSender(
+            senderID: UserID
+        ) async -> ZMUser {
+            await userLocalStore.fetchOrCreateUser(
+                id: senderID.uuid,
+                domain: senderID.domain
+            )
+        }
+        
+        func senderName(
+            sender: ZMUser
+        ) async -> String? {
+            await userLocalStore.name(for: sender)
+        }
+        
+        func isGroupConversation(conversation: ZMConversation) async -> Bool {
+            await conversationLocalStore.isGroupConversation(conversation)
+        }
+        
+        func selfUserID(selfUser: ZMUser) async -> UUID {
+            await userLocalStore.id(for: selfUser)
+        }
+        
+        func conversationName(
+            conversation: ZMConversation
+        ) async -> String? {
+            await conversationLocalStore.name(for: conversation)
+        }
+        
+        func teamName(
+            selfUser: ZMUser
+        ) async -> String? {
+            await userLocalStore.teamName(for: selfUser)
+        }
+
+    }
+}
+

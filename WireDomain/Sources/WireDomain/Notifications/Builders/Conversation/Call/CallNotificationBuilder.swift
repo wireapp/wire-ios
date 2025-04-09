@@ -20,9 +20,9 @@ import WireAPI
 import WireDataModel
 
 /// Handles a regular push notification related to an incoming / missed call
-struct CallNotificationBuilder: NotificationBuilder {
+struct CallNotificationBuilder {
 
-    private enum CallState: Equatable {
+    enum CallState: Equatable {
         case incomingCall(video: Bool)
         case missedCall
         case unhandled
@@ -55,110 +55,71 @@ struct CallNotificationBuilder: NotificationBuilder {
         }
     }
 
-    private struct Context {
-        let conversation: ZMConversation
-        let callState: CallState
-        let callerID: UUID?
-        let callerName: String?
-        let conversationName: String?
-        let isGroupConversation: Bool
-        let teamName: String?
-        let conversationID: WireAPI.QualifiedID
-        let selfUserID: UUID
-    }
+    let context: CallNotificationBuilder.Context
+    let validator: CallNotificationBuilder.Validator
 
-    private struct Validator {
-        let isCallStateValid: Bool
-        let isCallerSelf: Bool
-        let isConversationMuted: Bool
-        let isCallTimedOut: Bool
-
-        func validate() -> Bool {
-            isCallStateValid
-                && !isCallerSelf
-                && !isConversationMuted
-                && !isCallTimedOut
-        }
-    }
-
-    private let conversationLocalStore: any ConversationLocalStoreProtocol
-    private let context: Context
-    private let validator: Validator
-
-    init?(
+    func buildContent(
         calling: Calling,
         at time: Date?,
         conversationID: ConversationID,
-        senderID: UserID,
-        conversationLocalStore: ConversationLocalStoreProtocol,
-        userLocalStore: UserLocalStoreProtocol
-    ) async {
+        senderID: UserID
+    ) async -> UserNotification? {
         guard let callContent: CallContent = .decode(from: calling) else {
             return nil
         }
-
-        self.conversationLocalStore = conversationLocalStore
-
+        
         let callState = CallState(callContent: callContent)
-
-        let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: conversationID.uuid,
-            domain: conversationID.domain
-        )
-
-        let selfUser = await userLocalStore.fetchSelfUser()
-
-        let caller = await userLocalStore.fetchOrCreateUser(
-            id: senderID.uuid,
-            domain: senderID.domain
-        )
-
-        // Validation criteria
-
-        let mutedMessagesTypes = await conversationLocalStore
-            .conversationMutedMessageTypesIncludingAvailability(conversation)
-        let isConversationMuted = mutedMessagesTypes == .all
-        let isCallTimeOut = time != nil ? Int(Date.now.timeIntervalSince(time!)) > 30 : true
-
-        self.validator = Validator(
-            isCallStateValid: callState != .unhandled,
-            isCallerSelf: selfUser == caller,
-            isConversationMuted: isConversationMuted,
-            isCallTimedOut: isCallTimeOut
-        )
-
-        // Context
-
-        let conversationName = await conversationLocalStore.name(for: conversation)
-        let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
-        let selfUserID = await userLocalStore.id(for: selfUser)
-        let teamName = await userLocalStore.teamName(for: selfUser)
-        let callerName = await userLocalStore.name(for: caller)
-        let callerID = callContent.callerUserID.flatMap(UUID.init(transportString:))
-
-        self.context = Context(
-            conversation: conversation,
+        
+        let canDisplayNotification = await validator.validate(
             callState: callState,
-            callerID: callerID,
-            callerName: callerName,
-            conversationName: conversationName,
-            isGroupConversation: isGroupConversation,
-            teamName: teamName,
-            conversationID: conversationID,
-            selfUserID: selfUserID
+            time: time,
+            senderID: senderID,
+            conversationID: conversationID
         )
-    }
-
-    func shouldBuildNotification() async -> Bool {
-        validator.validate()
-    }
-
-    func buildContent() async -> UserNotification {
-        switch context.callState {
+        
+        guard canDisplayNotification else {
+            return nil
+        }
+        
+        let conversation = await context.getConversation(conversationID: conversationID)
+        let caller = await context.getCaller(senderID: senderID)
+        let selfUser = await context.getSelfUser()
+        let selfUserID = await context.selfUserID(selfUser: selfUser)
+        let callerID = context.callerID(callContent: callContent)
+        let senderName = await context.callerName(caller: caller)
+        let conversationName = await context.conversationName(conversation: conversation)
+        let teamName = await context.teamName(selfUser: selfUser)
+        let isGroupConversation = await context.isGroupConversation(conversation: conversation)
+        
+        switch callState {
         case let .incomingCall(isVideo):
-            buildIncomingCallNotification(isVideo: isVideo)
+            return buildIncomingCallNotification(
+                callState: callState,
+                selfUserID: selfUserID,
+                senderID: senderID.uuid,
+                callerID: callerID,
+                conversation: conversation,
+                conversationID: conversationID,
+                senderName: senderName,
+                conversationName: conversationName,
+                teamName: teamName,
+                isGroupConversation: isGroupConversation,
+                isVideo: isVideo
+            )
+            
         case .missedCall:
-            await buildMissedCallNotification()
+            return await buildMissedCallNotification(
+                callState: callState,
+                selfUserID: selfUserID,
+                senderID: senderID.uuid,
+                callerID: callerID,
+                conversation: conversation,
+                conversationID: conversationID,
+                senderName: senderName,
+                conversationName: conversationName,
+                teamName: teamName,
+                isGroupConversation: isGroupConversation
+            )
         case .unhandled:
             fatalError()
         }
@@ -166,15 +127,31 @@ struct CallNotificationBuilder: NotificationBuilder {
 
     // MARK: - Build notifications
 
-    private func buildIncomingCallNotification(isVideo: Bool) -> UserNotification {
+    private func buildIncomingCallNotification(
+        callState: CallState,
+        selfUserID: UUID,
+        senderID: UUID,
+        callerID: UUID?,
+        conversation: ZMConversation,
+        conversationID: ConversationID,
+        senderName: String?,
+        conversationName: String?,
+        teamName: String?,
+        isGroupConversation: Bool,
+        isVideo: Bool
+    ) -> UserNotification {
         let content = UNMutableNotificationContent()
-        let senderName = context.callerName
 
-        if let title = makeTitle() {
+        if let title = makeTitle(
+            isGroupConversation: isGroupConversation,
+            callerName: senderName,
+            conversationName: conversationName,
+            teamName: teamName
+        ) {
             content.title = title
         }
 
-        let body = if context.isGroupConversation, let senderName {
+        let body = if isGroupConversation, let senderName {
             String.formated(
                 key: isVideo ? "push.notification.body.videoCallFromSender" :
                     "push.notification.body.audioCallFromSender", bundle: .module, senderName
@@ -186,36 +163,61 @@ struct CallNotificationBuilder: NotificationBuilder {
         }
 
         content.body = body
-        content.categoryIdentifier = makeCategory()
-        content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.categoryIdentifier = makeCategory(callState: callState)
+        content.sound = makeSound(callState: callState)
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID,
+            callerID: callerID,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
         return .text(content)
     }
 
-    private func buildMissedCallNotification() async -> UserNotification {
+    private func buildMissedCallNotification(
+        callState: CallState,
+        selfUserID: UUID,
+        senderID: UUID,
+        callerID: UUID?,
+        conversation: ZMConversation,
+        conversationID: ConversationID,
+        senderName: String?,
+        conversationName: String?,
+        teamName: String?,
+        isGroupConversation: Bool
+    ) async -> UserNotification {
         let content = UNMutableNotificationContent()
-        let senderName = context.callerName
 
-        if let title = makeTitle() {
+        if let title = makeTitle(
+            isGroupConversation: isGroupConversation,
+            callerName: senderName,
+            conversationName: conversationName,
+            teamName: teamName
+        ) {
             content.title = title
         }
 
-        let body = if context.isGroupConversation, let senderName {
+        let body = if isGroupConversation, let senderName {
             String.formated(key: "push.notification.body.senderCalled", bundle: .module, senderName)
         } else {
             String.localized(key: "push.notification.body.missedCall", bundle: .module)
         }
 
         content.body = body
-        content.categoryIdentifier = makeCategory()
-        content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.categoryIdentifier = makeCategory(callState: callState)
+        content.sound = makeSound(callState: callState)
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID,
+            callerID: callerID,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
-        await conversationLocalStore.increaseUnreadCount(
-            for: context.conversation
+        await context.increaseReadCount(
+            conversation: conversation
         )
 
         return .text(content)
@@ -223,11 +225,12 @@ struct CallNotificationBuilder: NotificationBuilder {
 
     // MARK: - Helpers
 
-    private func makeTitle() -> String? {
-        let isGroupConversation = context.isGroupConversation
-        let teamName = context.teamName
-        let conversationName = context.conversationName
-        let callerName = context.callerName
+    private func makeTitle(
+        isGroupConversation: Bool,
+        callerName: String?,
+        conversationName: String?,
+        teamName: String?
+    ) -> String? {
 
         guard let conversationName, let callerName else {
             return nil
@@ -252,8 +255,8 @@ struct CallNotificationBuilder: NotificationBuilder {
             .make()
     }
 
-    private func makeSound() -> UNNotificationSound {
-        let notificationSound = switch context.callState {
+    private func makeSound(callState: CallState) -> UNNotificationSound {
+        let notificationSound = switch callState {
         case .incomingCall:
             NotificationSound.call
         case .missedCall:
@@ -266,8 +269,8 @@ struct CallNotificationBuilder: NotificationBuilder {
         return UNNotificationSound(named: notificationSoundName)
     }
 
-    private func makeCategory() -> String {
-        switch context.callState {
+    private func makeCategory(callState: CallState) -> String {
+        switch callState {
         case .incomingCall:
             NotificationCategory.incomingCall.rawValue
         case .missedCall:
@@ -277,13 +280,126 @@ struct CallNotificationBuilder: NotificationBuilder {
         }
     }
 
-    private func makeUserInfo() -> [AnyHashable: Any] {
+    private func makeUserInfo(
+        selfUserID: UUID,
+        senderID: UUID,
+        callerID: UUID?,
+        conversationID: ConversationID
+    ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID.uuidString
-        userInfo[NotificationUserInfoKey.senderID] = context.callerID?.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
+        userInfo[NotificationUserInfoKey.senderID] = callerID?.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
 
         return userInfo
+    }
+}
+
+extension CallNotificationBuilder {
+    struct Validator {
+        let userLocalStore: any UserLocalStoreProtocol
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+
+        func validate(
+            callState: CallState,
+            time: Date?,
+            senderID: UserID,
+            conversationID: ConversationID
+        ) async -> Bool {
+            
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+
+            let selfUser = await userLocalStore.fetchSelfUser()
+
+            let caller = await userLocalStore.fetchOrCreateUser(
+                id: senderID.uuid,
+                domain: senderID.domain
+            )
+
+            // Validation criteria
+
+            let mutedMessagesTypes = await conversationLocalStore
+                .conversationMutedMessageTypesIncludingAvailability(conversation)
+            let isConversationMuted = mutedMessagesTypes == .all
+            let isCallTimeOut = time != nil ? Int(Date.now.timeIntervalSince(time!)) > 30 : true
+            let isCallerSelf = selfUser == caller
+            
+            return callState != .unhandled
+                && !isCallerSelf
+                && !isConversationMuted
+                && !isCallTimeOut
+        }
+    }
+    
+    struct Context {
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+        let userLocalStore: any UserLocalStoreProtocol
+        
+        func getConversation(
+            conversationID: ConversationID
+        ) async -> ZMConversation {
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+        }
+        
+        func getSelfUser() async -> ZMUser {
+            await userLocalStore.fetchSelfUser()
+        }
+        
+        func getCaller(
+            senderID: UserID
+        ) async -> ZMUser {
+            await userLocalStore.fetchOrCreateUser(
+                id: senderID.uuid,
+                domain: senderID.domain
+            )
+        }
+        
+        func isGroupConversation(conversation: ZMConversation) async -> Bool {
+            await conversationLocalStore.isGroupConversation(conversation)
+        }
+        
+        func selfUserID(selfUser: ZMUser) async -> UUID {
+            await userLocalStore.id(for: selfUser)
+        }
+        
+        func callerName(
+            caller: ZMUser
+        ) async -> String? {
+            await userLocalStore.name(for: caller)
+        }
+        
+        func conversationName(
+            conversation: ZMConversation
+        ) async -> String? {
+            await conversationLocalStore.name(for: conversation)
+        }
+        
+        func teamName(
+            selfUser: ZMUser
+        ) async -> String? {
+            await userLocalStore.teamName(for: selfUser)
+        }
+        
+        func callerID(
+            callContent: CallContent
+        ) -> UUID? {
+            callContent.callerUserID.flatMap(UUID.init(transportString:))
+        }
+        
+        func increaseReadCount(
+            conversation: ZMConversation
+        ) async {
+            await conversationLocalStore.increaseUnreadCount(
+                for: conversation
+            )
+        }
+
     }
 }

@@ -28,134 +28,165 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         case fileUpload
     }
 
-    private struct Context {
-        let conversation: ZMConversation
-        let senderName: String?
-        let conversationName: String?
-        let isGroupConversation: Bool
-        let teamName: String?
-        let conversationID: WireAPI.QualifiedID
-        let senderID: UUID
-        let selfUserID: UUID
-        let hidesNotificationContent: Bool
-    }
+    let context: Context
+    let validator: Validator
 
-    private struct Validator {
-        let isMessageSilenced: Bool
-
-        func validate() -> Bool {
-            !isMessageSilenced
-        }
-    }
-
-    private let message: GenericMessage
-    private let context: Context
-    private let validator: Validator
-
-    private let conversationLocalStore: any ConversationLocalStoreProtocol
-    private let messageLocalStore: any MessageLocalStoreProtocol
-
-    init(
+    func buildContent(
         message: GenericMessage,
-        conversationID: WireAPI.QualifiedID,
-        senderID: UserID,
-        userLocalStore: any UserLocalStoreProtocol,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        messageLocalStore: any MessageLocalStoreProtocol
-    ) async {
-        self.conversationLocalStore = conversationLocalStore
-        self.messageLocalStore = messageLocalStore
-        self.message = message
-
-        let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: conversationID.uuid,
-            domain: conversationID.domain
+        conversationID: ConversationID,
+        senderID: UserID
+    ) async -> UserNotification?  {
+        let canDisplayNotification = await validator.validate(
+            message: message,
+            senderID: senderID,
+            conversationID: conversationID
         )
-
-        // Validation criteria
-
-        let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
-            message,
-            senderID: senderID.uuid,
-            conversation: conversation
-        )
-
-        self.validator = Validator(
-            isMessageSilenced: isMessageSilenced
-        )
-
-        // Context
-
-        let sender = await userLocalStore.fetchOrCreateUser(
-            id: senderID.uuid,
-            domain: senderID.domain
-        )
-
-        let senderName = await userLocalStore.name(for: sender)
-        let conversationName = await conversationLocalStore.name(for: conversation)
-        let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
-        let selfUser = await userLocalStore.fetchSelfUser()
-        let teamName = await userLocalStore.teamName(for: selfUser)
-        let selfUserID = await userLocalStore.id(for: selfUser)
-        let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
-
-        self.context = Context(
-            conversation: conversation,
-            senderName: senderName,
-            conversationName: conversationName,
-            isGroupConversation: isGroupConversation,
-            teamName: teamName,
-            conversationID: conversationID,
-            senderID: senderID.uuid,
-            selfUserID: selfUserID,
-            hidesNotificationContent: shouldHideNotification
-        )
-    }
-
-    private func shouldBuildNotification() async -> Bool {
-        validator.validate()
-    }
-
-    func buildContent() async -> UserNotification? {
-        guard await shouldBuildNotification() else {
+        
+        guard canDisplayNotification else {
             return nil
         }
         
-        guard !context.hidesNotificationContent else {
-            return buildHiddenNotification()
+        let hidesNotificationContent = await context.shouldHideNotification()
+        let conversation = await context.getConversation(conversationID: conversationID)
+        let sender = await context.getSender(senderID: senderID)
+        let selfUser = await context.getSelfUser()
+        let selfUserID = await context.selfUserID(selfUser: selfUser)
+        let senderName = await context.senderName(sender: sender)
+        let conversationName = await context.conversationName(conversation: conversation)
+        let teamName = await context.teamName(selfUser: selfUser)
+        let isGroupConversation = await context.isGroupConversation(
+            conversation: conversation
+        )
+        
+        guard !hidesNotificationContent else {
+            return buildHiddenNotification(
+                selfUserID: selfUserID,
+                senderID: senderID,
+                conversationID: conversationID
+            )
         }
 
         await updateConversationUnreadCount(
+            conversation: conversation,
             content: message.content
         )
 
         switch message.content {
         case .location:
-            return buildLocationNotification()
+            return buildLocationNotification(
+                senderName: senderName,
+                isGroupConversation: isGroupConversation,
+                teamName: teamName,
+                conversationName: conversationName,
+                selfUserID: selfUserID,
+                senderID: senderID,
+                conversationID: conversationID
+            )
         case .knock:
-            return buildPingNotification()
+            return buildPingNotification(
+                senderName: senderName,
+                isGroupConversation: isGroupConversation,
+                teamName: teamName,
+                conversationName: conversationName,
+                selfUserID: selfUserID,
+                senderID: senderID,
+                conversationID: conversationID
+            )
         case .image:
-            return buildAssetNotification(ofType: .image)
+            return buildAssetNotification(
+                ofType: .image,
+                senderName: senderName,
+                isGroupConversation: isGroupConversation,
+                teamName: teamName,
+                conversationName: conversationName,
+                selfUserID: selfUserID,
+                senderID: senderID,
+                conversationID: conversationID
+            )
         case let .ephemeral(ephemeral):
-            return await buildEphemeralNotification(ephemeral: ephemeral)
+            return await buildEphemeralNotification(
+                conversation: conversation,
+                conversationID: conversationID,
+                ephemeral: ephemeral
+            )
         case let .text(text):
-            return await buildTextNotification(text)
+            return await buildTextNotification(
+                text,
+                conversation: conversation,
+                conversationID: conversationID,
+                senderName: senderName,
+                isGroupConversation: isGroupConversation,
+                teamName: teamName,
+                conversationName: conversationName,
+                selfUserID: selfUserID,
+                senderID: senderID
+            )
         case let .composite(composite):
             let text = composite.items.compactMap(\.text).first
-            return await buildTextNotification(text)
+            return await buildTextNotification(
+                text,
+                conversation: conversation,
+                conversationID: conversationID,
+                senderName: senderName,
+                isGroupConversation: isGroupConversation,
+                teamName: teamName,
+                conversationName: conversationName,
+                selfUserID: selfUserID,
+                senderID: senderID
+            )
         case let .asset(assetData):
             switch assetData.original.metaData {
             case .audio:
-                return buildAssetNotification(ofType: .audio)
+                return buildAssetNotification(
+                    ofType: .audio,
+                    senderName: senderName,
+                    isGroupConversation: isGroupConversation,
+                    teamName: teamName,
+                    conversationName: conversationName,
+                    selfUserID: selfUserID,
+                    senderID: senderID,
+                    conversationID: conversationID
+                )
             case .video:
-                return buildAssetNotification(ofType: .video)
+                return buildAssetNotification(
+                    ofType: .video,
+                    senderName: senderName,
+                    isGroupConversation: isGroupConversation,
+                    teamName: teamName,
+                    conversationName: conversationName,
+                    selfUserID: selfUserID,
+                    senderID: senderID,
+                    conversationID: conversationID
+                )
             case .image:
-                return buildAssetNotification(ofType: .image)
+                return buildAssetNotification(
+                    ofType: .image,
+                    senderName: senderName,
+                    isGroupConversation: isGroupConversation,
+                    teamName: teamName,
+                    conversationName: conversationName,
+                    selfUserID: selfUserID,
+                    senderID: senderID,
+                    conversationID: conversationID
+                )
             default:
-                return buildAssetNotification(ofType: .fileUpload)
+                return buildAssetNotification(
+                    ofType: .fileUpload,
+                    senderName: senderName,
+                    isGroupConversation: isGroupConversation,
+                    teamName: teamName,
+                    conversationName: conversationName,
+                    selfUserID: selfUserID,
+                    senderID: senderID,
+                    conversationID: conversationID
+                )
             }
         case .hidden:
-            return buildHiddenNotification()
+            return buildHiddenNotification(
+                selfUserID: selfUserID,
+                senderID: senderID,
+                conversationID: conversationID
+            )
         default:
             return nil
         }
@@ -163,12 +194,24 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
 
     // MARK: - Build notifications
 
-    private func buildAssetNotification(ofType assetType: AssetType) -> UserNotification {
+    private func buildAssetNotification(
+        ofType assetType: AssetType,
+        senderName: String?,
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        selfUserID: UUID,
+        senderID: UserID,
+        conversationID: ConversationID
+    ) -> UserNotification {
         let content = UNMutableNotificationContent()
-        let isGroupConversation = context.isGroupConversation
-        let senderName = context.senderName
 
-        if let title = makeTitle() {
+        if let title = makeTitle(
+            isGroupConversation: isGroupConversation,
+            teamName: teamName,
+            conversationName: conversationName,
+            senderName: senderName
+        ) {
             content.title = title
         }
 
@@ -194,34 +237,58 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID.uuid,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
         return .text(content)
     }
 
-    private func buildPingNotification() -> UserNotification {
+    private func buildPingNotification(
+        senderName: String?,
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        selfUserID: UUID,
+        senderID: UserID,
+        conversationID: ConversationID
+    ) -> UserNotification {
         let content = UNMutableNotificationContent()
-        let senderName = context.senderName
 
-        if let title = makeTitle() {
+        if let title = makeTitle(
+            isGroupConversation: isGroupConversation,
+            teamName: teamName,
+            conversationName: conversationName,
+            senderName: senderName
+        ) {
             content.title = title
         }
 
         let body = NotificationBody.singleMessage(
-            .ping(senderName: context.isGroupConversation ? senderName : nil)
+            .ping(senderName: isGroupConversation ? senderName : nil)
         )
 
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound(type: .ping)
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID.uuid,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
         return .text(content)
     }
 
-    private func buildHiddenNotification() -> UserNotification {
+    private func buildHiddenNotification(
+        selfUserID: UUID,
+        senderID: UserID,
+        conversationID: ConversationID
+    ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
         // No title for hidden message, only a body.
@@ -229,13 +296,27 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID.uuid,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
         return .text(content)
     }
 
-    private func buildTextNotification(_ text: Text?) async -> UserNotification? {
+    private func buildTextNotification(
+        _ text: Text?,
+        conversation: ZMConversation,
+        conversationID: ConversationID,
+        senderName: String?,
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        selfUserID: UUID,
+        senderID: UserID
+    ) async -> UserNotification? {
         guard let textMessageData = text else {
             return nil
         }
@@ -247,19 +328,22 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         }
 
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
-        let quotedMessage = await messageLocalStore.fetchMessage(
+        let quotedMessage = await context.fetchMessage(
             id: quotedMessageId,
-            conversationID: context.conversationID.uuid,
-            conversationDomain: context.conversationID.domain
+            conversationID: conversationID
         )
 
-        let isMention = await messageLocalStore.isMessageMentioningSelf(text: textMessageData)
-        let isReply = await messageLocalStore.isMessageQuotingSelf(quotedMessage: quotedMessage)
-        let senderName = context.senderName
+        let isMention = await context.isMessageMentionSelf(text: textMessageData)
+        let isReply = await context.isMessageQuotingSelf(message: quotedMessage)
 
         let content = UNMutableNotificationContent()
 
-        if let title = makeTitle() {
+        if let title = makeTitle(
+            isGroupConversation: isGroupConversation,
+            teamName: teamName,
+            conversationName: conversationName,
+            senderName: senderName
+        ) {
             content.title = title
         }
 
@@ -278,30 +362,45 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID.uuid,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
         if isMention {
-            await conversationLocalStore.increaseUnreadSelfMentionCount(
-                for: context.conversation
+            await context.increateUnreadSelfMentionCount(
+                for: conversation
             )
         }
 
         if isReply {
-            await conversationLocalStore.increaseUnreadSelfReplyCount(
-                for: context.conversation
+            await context.increaseUnreadSelfReplyCount(
+                for: conversation
             )
         }
 
         return .text(content)
     }
 
-    private func buildLocationNotification() -> UserNotification {
+    private func buildLocationNotification(
+        senderName: String?,
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        selfUserID: UUID,
+        senderID: UserID,
+        conversationID: ConversationID
+    ) -> UserNotification {
         let content = UNMutableNotificationContent()
-        let isGroupConversation = context.isGroupConversation
-        let senderName = context.senderName
 
-        if let title = makeTitle() {
+        if let title = makeTitle(
+            isGroupConversation: isGroupConversation,
+            teamName: teamName,
+            conversationName: conversationName,
+            senderName: senderName
+        ) {
             content.title = title
         }
 
@@ -312,13 +411,19 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
-        content.userInfo = makeUserInfo()
-        content.threadIdentifier = context.conversationID.uuid.transportString()
+        content.userInfo = makeUserInfo(
+            selfUserID: selfUserID,
+            senderID: senderID.uuid,
+            conversationID: conversationID
+        )
+        content.threadIdentifier = conversationID.uuid.transportString()
 
         return .text(content)
     }
 
     private func buildEphemeralNotification(
+        conversation: ZMConversation,
+        conversationID: ConversationID,
         ephemeral: Ephemeral
     ) async -> UserNotification {
         let isMention: Bool
@@ -327,14 +432,13 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         if ephemeral.hasText {
             let textMessageData = ephemeral.text
             let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
-            let quotedMessage = await messageLocalStore.fetchMessage(
+            let quotedMessage = await context.fetchMessage(
                 id: quotedMessageId,
-                conversationID: context.conversationID.uuid,
-                conversationDomain: context.conversationID.domain
+                conversationID: conversationID
             )
 
-            isMention = await messageLocalStore.isMessageMentioningSelf(text: textMessageData)
-            isReply = await messageLocalStore.isMessageQuotingSelf(quotedMessage: quotedMessage)
+            isMention = await context.isMessageMentionSelf(text: textMessageData)
+            isReply = await context.isMessageQuotingSelf(message: quotedMessage)
 
         } else {
             isMention = false
@@ -359,18 +463,18 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
-        content.userInfo = makeUserInfo()
+        content.userInfo = makeUserInfo(
+            selfUserID: <#UUID#>,
+            senderID: <#UUID#>,
+            conversationID: <#ConversationID#>
+        )
 
         if isMention {
-            await conversationLocalStore.increaseUnreadSelfMentionCount(
-                for: context.conversation
-            )
+            await context.increateUnreadSelfMentionCount(for: conversation)
         }
 
         if isReply {
-            await conversationLocalStore.increaseUnreadSelfReplyCount(
-                for: context.conversation
-            )
+            await context.increaseUnreadSelfReplyCount(for: conversation)
         }
 
         return .text(content)
@@ -379,11 +483,11 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
     // MARK: - Helpers
 
     private func makeTitle(
+        isGroupConversation: Bool,
+        teamName: String?,
+        conversationName: String?,
+        senderName: String?
     ) -> String? {
-        let isGroupConversation = context.isGroupConversation
-        let teamName = context.teamName
-        let conversationName = context.conversationName
-        let senderName = context.senderName
 
         guard let conversationName, let senderName else {
             return nil
@@ -418,29 +522,174 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         return category.rawValue
     }
 
-    private func makeUserInfo() -> [AnyHashable: Any] {
+    private func makeUserInfo(
+        selfUserID: UUID,
+        senderID: UUID,
+        conversationID: ConversationID
+    ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
-        userInfo[NotificationUserInfoKey.selfUserID] = context.selfUserID.uuidString
-        userInfo[NotificationUserInfoKey.senderID] = context.senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = context.conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
+        userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
 
         return userInfo
     }
 
     private func updateConversationUnreadCount(
+        conversation: ZMConversation,
         content: GenericMessage.OneOf_Content?
     ) async {
         guard let content else { return }
 
         switch content {
         case .image, .asset, .location, .knock, .hidden, .ephemeral, .text:
-            await conversationLocalStore.increaseUnreadCount(
-                for: context.conversation
-            )
+            await context.increaseReadCount(conversation: conversation)
         default:
             return
         }
     }
 
+}
+
+extension ConversationProteusMessageAddEventNotificationBuilder {
+    struct Validator {
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+
+        func validate(
+            message: GenericMessage,
+            senderID: UserID,
+            conversationID: ConversationID
+        ) async -> Bool {
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+
+            // Validation criteria
+
+            let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
+                message,
+                senderID: senderID.uuid,
+                conversation: conversation
+            )
+            
+            return !isMessageSilenced
+        }
+    }
+    
+    struct Context {
+        let conversationLocalStore: any ConversationLocalStoreProtocol
+        let userLocalStore: any UserLocalStoreProtocol
+        let messageLocalStore: any MessageLocalStoreProtocol
+        
+        func getConversation(
+            conversationID: ConversationID
+        ) async -> ZMConversation {
+            let conversation = await conversationLocalStore.fetchOrCreateConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+        }
+        
+        func getSelfUser() async -> ZMUser {
+            await userLocalStore.fetchSelfUser()
+        }
+        
+        func getSender(
+            senderID: UserID
+        ) async -> ZMUser {
+            await userLocalStore.fetchOrCreateUser(
+                id: senderID.uuid,
+                domain: senderID.domain
+            )
+        }
+        
+        func isGroupConversation(conversation: ZMConversation) async -> Bool {
+            await conversationLocalStore.isGroupConversation(conversation)
+        }
+        
+        func selfUserID(selfUser: ZMUser) async -> UUID {
+            await userLocalStore.id(for: selfUser)
+        }
+        
+        func senderName(
+            sender: ZMUser
+        ) async -> String? {
+            await userLocalStore.name(for: sender)
+        }
+        
+        func conversationName(
+            conversation: ZMConversation
+        ) async -> String? {
+            await conversationLocalStore.name(for: conversation)
+        }
+        
+        func teamName(
+            selfUser: ZMUser
+        ) async -> String? {
+            await userLocalStore.teamName(for: selfUser)
+        }
+        
+        func callerID(
+            callContent: CallContent
+        ) -> UUID? {
+            callContent.callerUserID.flatMap(UUID.init(transportString:))
+        }
+        
+        func shouldHideNotification() async -> Bool {
+            await conversationLocalStore.shouldHideNotification()
+        }
+        
+        func fetchMessage(
+            id: UUID?,
+            conversationID: ConversationID
+        ) async -> ZMOTRMessage? {
+            await messageLocalStore.fetchMessage(
+                id: id,
+                conversationID: conversationID.uuid,
+                conversationDomain: conversationID.domain
+            )
+        }
+        
+        func isMessageMentionSelf(
+            text: Text
+        ) async -> Bool {
+            await messageLocalStore.isMessageMentioningSelf(
+                text: text
+            )
+        }
+        
+        func isMessageQuotingSelf(
+            message: ZMOTRMessage?
+        ) async -> Bool {
+            await messageLocalStore.isMessageQuotingSelf(
+                quotedMessage: message
+            )
+        }
+        
+        func increateUnreadSelfMentionCount(
+            for conversation: ZMConversation
+        ) async {
+            await conversationLocalStore.increaseUnreadSelfMentionCount(
+                for: conversation
+            )
+        }
+        
+        func increaseUnreadSelfReplyCount(
+            for conversation: ZMConversation
+        ) async {
+            await conversationLocalStore.increaseUnreadSelfReplyCount(
+                for: conversation
+            )
+        }
+        
+        func increaseReadCount(
+            conversation: ZMConversation
+        ) async {
+            await conversationLocalStore.increaseUnreadCount(
+                for: conversation
+            )
+        }
+    }
 }
