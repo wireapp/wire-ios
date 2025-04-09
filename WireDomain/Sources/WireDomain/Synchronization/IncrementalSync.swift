@@ -62,6 +62,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         logger.debug("processing stored update events")
         let processedEnvelopeIDs = try await processStoredEvents()
 
+        logger.debug("processing stored update events")
+        let processedEnvelopeIDs = try await processStoredEvents()
+
         let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver] in
             logger.debug("handling live event stream")
 
@@ -145,6 +148,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     } catch {
                         logger.error("failed to save database: \(String(describing: error))")
                     }
+
                 }
             } catch {
                 logger.warn("live event stream encountered error: \(String(describing: error))")
