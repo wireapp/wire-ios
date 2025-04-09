@@ -49,10 +49,15 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     public func perform() async throws -> Token {
         logger.debug("performing incremental sync")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
+
         logger.debug("opening push channel")
         let liveEventStream = try await pushChannel.open()
+
+        logger.debug("pulling pending update events")
         try await updateEventsSync.pull()
-        try await processStoredEvents()
+
+        logger.debug("processing stored update events")
+        let processedEnvelopeIDs = try await processStoredEvents()
 
         let task = Task { @Sendable [logger, decryptor, store, processor] in
             logger.debug("handling live event stream")
@@ -61,45 +66,76 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 for try await var envelope in liveEventStream {
                     logger.debug("received live event envelope")
 
-                    // TODO: [WPB-16165] skip if duplicate.
+                    if processedEnvelopeIDs.contains(envelope.id) {
+                        logger.debug(
+                            "live event already processed, skipping...",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
+                        continue
+                    }
 
                     do {
                         // Decrypt.
-                        logger.debug("decrypting live event envelope")
+                        logger.debug(
+                            "decrypting live event envelope",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
                         envelope.events = try await decryptor.decryptEvents(in: envelope)
                     } catch {
-                        logger.error("failed to decrypt live event envelope: \(String(describing: error))")
+                        logger.error(
+                            "failed to decrypt live event envelope: \(String(describing: error))",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
                         continue
                     }
 
                     let index: Int64
                     do {
                         // Store.
-                        logger.debug("storing live event envelope")
+                        logger.debug(
+                            "storing live event envelope",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
                         index = try await store.indexOfLastEventEnvelope() + 1
                         try await store.persistEventEnvelope(envelope, index: index)
                     } catch {
-                        logger.error("failed to store live event envelope: \(String(describing: error))")
+                        logger.error(
+                            "failed to store live event envelope: \(String(describing: error))",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
                         continue
                     }
 
                     // Process.
                     for event in envelope.events {
                         do {
-                            logger.debug("processing live event: \(event.name)")
+                            logger.debug(
+                                "processing live event: \(event.name)",
+                                attributes: [.eventEnvelopeID: envelope.id]
+                            )
                             try await processor.processEvent(event)
                         } catch {
-                            logger.error("failed to process live event: \(String(describing: error))")
+                            logger.error(
+                                "failed to process live event: \(String(describing: error))",
+                                attributes: [.eventEnvelopeID: envelope.id]
+                            )
                         }
                     }
 
                     do {
                         // Delete.
-                        logger.debug("deleting live event envelope")
+                        logger.debug(
+                            "deleting live event envelope",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
                         try await store.deleteEventEnvelope(atIndex: index)
                     } catch {
-                        logger.error("failed to delete live event envelope: \(String(describing: error))")
+                        logger.error(
+                            "failed to delete live event envelope: \(String(describing: error))",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
                     }
+
                 }
             } catch {
                 logger.warn("live event stream encountered error: \(String(describing: error))")
@@ -113,8 +149,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         })
     }
 
-    private func processStoredEvents() async throws {
+    private func processStoredEvents() async throws -> Set<UUID> {
         let batchSize: UInt = 500
+        var processedEnvelopeIDs = Set<UUID>()
 
         while true {
             // If we need to abort, do it before processing the next batch.
@@ -128,17 +165,28 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             logger.debug("fetched \(envelopes.count) stored envelopes for processing")
 
-            for event in envelopes.flatMap(\.events) {
-                do {
-                    logger.debug("processing pending event: \(event.name)")
-                    try await processor.processEvent(event)
-                } catch {
-                    logger.error("failed to process stored event, dropping: \(error)")
+            for envelope in envelopes {
+                for event in envelope.events {
+                    do {
+                        logger.debug(
+                            "processing pending event: \(event.name)",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
+                        try await processor.processEvent(event)
+                    } catch {
+                        logger.error(
+                            "failed to process stored event, dropping: \(error)",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
+                    }
                 }
             }
 
+            processedEnvelopeIDs.formUnion(envelopes.map(\.id))
             try await store.deleteNextPendingEvents(limit: batchSize)
         }
+
+        return processedEnvelopeIDs
     }
 
     /// A token containing the task that processes live events via the push
