@@ -86,9 +86,16 @@ extension ZMMessage {
 
     fileprivate var content: CreateBackupMessageContent? {
         if isText, let messageText = textMessageData?.messageText {
-            return .text(messageText)
+            .text(messageText)
+        } else if isLocation, let locationMessageData {
+            .location(
+                longitude: locationMessageData.longitude,
+                latitude: locationMessageData.latitude,
+                name: locationMessageData.name,
+                zoom: locationMessageData.zoomLevel
+            )
         } else {
-            return nil
+            nil
         }
     }
 }

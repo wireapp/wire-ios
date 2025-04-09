@@ -31,4 +31,10 @@ public protocol CreateBackupMessageEntityProtocol: CreateBackupEntityProtocol {
 
 public enum CreateBackupMessageContent {
     case text(_ content: String)
+    case location(
+        longitude: Float,
+        latitude: Float,
+        name: String?,
+        zoom: Int32?
+    )
 }

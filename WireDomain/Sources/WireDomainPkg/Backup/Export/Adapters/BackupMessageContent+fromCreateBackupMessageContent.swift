@@ -23,7 +23,17 @@ extension BackupMessageContent {
     static func from(_ content: CreateBackupMessageContent) -> BackupMessageContent {
         switch content {
         case .text(let text):
-            BackupMessageContent.Text(text: text)
+            BackupMessageContent.Text(
+                text: text
+            )
+        case let .location(longitude, latitude, name, zoom):
+            BackupMessageContent.Location(
+                longitude: longitude,
+                latitude: latitude,
+                name: name,
+                zoom: zoom.map { .init(int: $0) }
+            )
         }
     }
 }
+
