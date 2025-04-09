@@ -36,21 +36,46 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
     let content: CreateBackupMessageContent
 
     init?(_ record: any NSFetchRequestResult) {
+        if !(record is ZMSystemMessage) {
+            print("record as? ZMMessage", record as? ZMMessage)
+            if let message = record as? ZMMessage {
+                print("message.nonce?.transportString()", message.nonce?.transportString())
+                if let id = message.nonce?.transportString() {
+                    print("message.senderUser?.qualifiedID", message.senderUser?.qualifiedID)
+                    if let senderUserID = message.senderUser?.qualifiedID {
+                        print("message.senderClientID", message.senderClientID)
+                        print("message.serverTimestamp", message.serverTimestamp)
+                        if let creationDate = message.serverTimestamp {
+                            print("message.conversation?.qualifiedID", message.conversation?.qualifiedID)
+                            if let conversationID = message.conversation?.qualifiedID {
+                                print("message.content", message.content)
+                                if let content = message.content {
+                                    print("message.isObfuscated", message.isObfuscated)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         guard
             let message = record as? ZMMessage,
             let id = message.nonce?.transportString(),
             let senderUserID = message.senderUser?.qualifiedID,
-            let senderClientID = message.senderClientID,
+            // let senderClientID = message.senderClientID,
             let creationDate = message.serverTimestamp,
             let conversationID = message.conversation?.qualifiedID,
             let content = message.content,
             !message.isObfuscated
-        else { return nil } // TODO: prevent silent failure?
+        else {
+            return nil // TODO: prevent silent failure?
+        }
 
         self.id = id
         self.conversationID = QualifiedID(conversationID)
         self.senderUserID = QualifiedID(senderUserID)
-        self.senderClientID = senderClientID
+        self.senderClientID = message.senderClientID ?? "" // TODO: should be optional
         self.creationDate = creationDate
         self.content = content
     }
@@ -60,7 +85,7 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
 extension ZMMessage {
 
     fileprivate var content: CreateBackupMessageContent? {
-        if isText, let messageText = textMessageData?.messageText { // TODO: markdown
+        if isText, let messageText = textMessageData?.messageText {
             return .text(messageText)
         } else {
             return nil

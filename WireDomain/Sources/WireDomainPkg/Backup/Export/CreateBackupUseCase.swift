@@ -239,7 +239,9 @@ public struct CreateBackupUseCase<
         let records = try context.fetch(fetchRequest)
         let recordCount = records.count
         for (index, record) in records.enumerated() {
-            guard let message = MessageAdapter(record) else { continue }
+            guard let message = MessageAdapter(record) else {
+                continue
+            }
             autoreleasepool {
                 let backupMessage = BackupMessage(
                     id: message.id,
