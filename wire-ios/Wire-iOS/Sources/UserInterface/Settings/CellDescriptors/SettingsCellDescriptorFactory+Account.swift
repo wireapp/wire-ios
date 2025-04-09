@@ -401,7 +401,7 @@ extension SettingsCellDescriptorFactory {
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            createBackupUseCase: createBackupUseCase,
+            createBackupUseCase: createBackupUseCase, // TODO: add feature flag for "new backup creation"
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,

@@ -43,7 +43,8 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
             let senderClientID = message.senderClientID,
             let creationDate = message.serverTimestamp,
             let conversationID = message.conversation?.qualifiedID,
-            let content = message.content
+            let content = message.content,
+            !message.isObfuscated
         else { return nil } // TODO: prevent silent failure?
 
         self.id = id
@@ -59,6 +60,10 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
 extension ZMMessage {
 
     fileprivate var content: CreateBackupMessageContent? {
-        fatalError("TODO")
+        if isText, let messageText = textMessageData?.messageText { // TODO: markdown
+            return .text(messageText)
+        } else {
+            return nil
+        }
     }
 }
