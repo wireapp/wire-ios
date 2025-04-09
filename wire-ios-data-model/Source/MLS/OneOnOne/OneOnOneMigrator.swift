@@ -210,7 +210,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             mlsConversation.silencedChangedTimestamp = silencedChangedTimestamp
         }
     }
-    
+
     private func createOrJoinMLSConversationIfNeeded(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID,

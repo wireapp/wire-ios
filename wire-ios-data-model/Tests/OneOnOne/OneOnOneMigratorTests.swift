@@ -261,7 +261,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         }
         withExtendedLifetime(handler) {}
     }
-    
+
     func test_migrateToMLS_moveMessagesFromDuplicateProteusConversations() async throws {
         let modelHelper = ModelHelper()
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
@@ -357,7 +357,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         // Then
         await syncContext.perform {
             self.assertDates(for: mlsConversation, from: proteusConversation)
-            
+
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
             let expectedMessagesCount = 7
             if mlsMessages.count == expectedMessagesCount {
@@ -527,12 +527,18 @@ final class OneOnOneMigratorTests: XCTestCase {
         }
         withExtendedLifetime(handler) {}
     }
-    
+
     private func assertDates(for mlsConversation: ZMConversation, from proteusConversation: ZMConversation) {
         XCTAssertEqual(mlsConversation.lastServerTimeStamp, proteusConversation.lastServerTimeStamp)
         XCTAssertEqual(mlsConversation.lastReadServerTimeStamp, proteusConversation.lastReadServerTimeStamp)
-        XCTAssertEqual(mlsConversation.pendingLastReadServerTimestamp, proteusConversation.pendingLastReadServerTimestamp)
-        XCTAssertEqual(mlsConversation.previousLastReadServerTimestamp, proteusConversation.previousLastReadServerTimestamp)
+        XCTAssertEqual(
+            mlsConversation.pendingLastReadServerTimestamp,
+            proteusConversation.pendingLastReadServerTimestamp
+        )
+        XCTAssertEqual(
+            mlsConversation.previousLastReadServerTimestamp,
+            proteusConversation.previousLastReadServerTimestamp
+        )
         XCTAssertEqual(mlsConversation.clearedTimeStamp, proteusConversation.clearedTimeStamp)
         XCTAssertEqual(mlsConversation.archivedChangedTimestamp, proteusConversation.archivedChangedTimestamp)
         XCTAssertEqual(mlsConversation.silencedChangedTimestamp, proteusConversation.silencedChangedTimestamp)
