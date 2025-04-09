@@ -255,6 +255,8 @@ final class OneOnOneMigratorTests: XCTestCase {
             let systemMessage = try XCTUnwrap(mlsMessages[3] as? ZMSystemMessage)
             XCTAssertEqual(systemMessage.systemMessageType, .mlsMigrationFinalized)
 
+            self.assertDates(for: mlsConversation, from: proteusConversation)
+
             XCTAssertNil(proteusConversation.lastMessage)
         }
         withExtendedLifetime(handler) {}
@@ -354,6 +356,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Then
         await syncContext.perform {
+            self.assertDates(for: mlsConversation, from: proteusConversation)
+
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
             let expectedMessagesCount = 7
             if mlsMessages.count == expectedMessagesCount {
@@ -501,6 +505,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Then
         await syncContext.perform {
+            self.assertDates(for: mlsConversation, from: proteusConversation)
+
             let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
             let expectedMessagesCount = 10
             if mlsMessages.count == expectedMessagesCount {
@@ -520,6 +526,22 @@ final class OneOnOneMigratorTests: XCTestCase {
             XCTAssertNil(proteusConversation.lastMessage)
         }
         withExtendedLifetime(handler) {}
+    }
+
+    private func assertDates(for mlsConversation: ZMConversation, from proteusConversation: ZMConversation) {
+        XCTAssertEqual(mlsConversation.lastServerTimeStamp, proteusConversation.lastServerTimeStamp)
+        XCTAssertEqual(mlsConversation.lastReadServerTimeStamp, proteusConversation.lastReadServerTimeStamp)
+        XCTAssertEqual(
+            mlsConversation.pendingLastReadServerTimestamp,
+            proteusConversation.pendingLastReadServerTimestamp
+        )
+        XCTAssertEqual(
+            mlsConversation.previousLastReadServerTimestamp,
+            proteusConversation.previousLastReadServerTimestamp
+        )
+        XCTAssertEqual(mlsConversation.clearedTimeStamp, proteusConversation.clearedTimeStamp)
+        XCTAssertEqual(mlsConversation.archivedChangedTimestamp, proteusConversation.archivedChangedTimestamp)
+        XCTAssertEqual(mlsConversation.silencedChangedTimestamp, proteusConversation.silencedChangedTimestamp)
     }
 
     // MARK: - Core Data Objects

@@ -635,11 +635,11 @@ public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtoco
 
     // MARK: - invoke
 
-    public var invokeClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var invokeClientIdPassword_Invocations: [(clientId: String, password: String?)] = []
     public var invokeClientIdPassword_MockError: Error?
-    public var invokeClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    public var invokeClientIdPassword_MockMethod: ((String, String?) async throws -> Void)?
 
-    public func invoke(clientId: String, password: String) async throws {
+    public func invoke(clientId: String, password: String?) async throws {
         invokeClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
         if let error = invokeClientIdPassword_MockError {
