@@ -99,7 +99,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     }
 
     private func perform(action: MessageAction, sender: UIView? = nil) {
-        delegate?.perform(action: action, for: message!, view: selectionView ?? sender ?? self) // delegate nil
+        delegate?.perform(action: action, for: message!, view: selectionView ?? sender ?? self)
     }
 
     func messageToolboxViewDidSelectDelete(_ sender: UIView?) {

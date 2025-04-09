@@ -243,13 +243,6 @@ final class ConversationTableViewDataSource: NSObject {
             contentWidth: contentWidth
         )
         sectionController.cellDelegate = conversationCellDelegate
-        if let messageText = message.textMessageData?.messageText {
-            if conversationCellDelegate == nil {
-                print("\(messageText) conversationCellDelegate == nil")
-            } else {
-                print("\(messageText) conversationCellDelegate != nil")
-            }
-        }
         sectionController.sectionDelegate = self
         sectionController.actionController = actionController(for: message, sectionController: sectionController)
 
