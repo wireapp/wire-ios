@@ -277,8 +277,8 @@ internal enum L10n {
     }
     internal enum ContactsList {
       internal enum CancelButton {
-        /// Close contact list
-        internal static let description = L10n.tr("Accessibility", "contactsList.cancelButton.description", fallback: "Close contact list")
+        /// Close new conversation overview
+        internal static let description = L10n.tr("Accessibility", "contactsList.cancelButton.description", fallback: "Close new conversation overview")
       }
       internal enum ExternalIcon {
         /// External
@@ -561,8 +561,8 @@ internal enum L10n {
     }
     internal enum ConversationList {
       internal enum StartConversationButton {
-        /// Create group or search for people
-        internal static let description = L10n.tr("Accessibility", "conversationList.startConversationButton.description", fallback: "Create group or search for people")
+        /// Create a group or channel, or search for people
+        internal static let description = L10n.tr("Accessibility", "conversationList.startConversationButton.description", fallback: "Create a group or channel, or search for people")
       }
     }
     internal enum ConversationSearch {
@@ -725,6 +725,16 @@ internal enum L10n {
       internal enum ItemCell {
         /// Double tap to open conversation
         internal static let hint = L10n.tr("Accessibility", "conversationsList.itemCell.hint", fallback: "Double tap to open conversation")
+        internal enum Avatar {
+          internal enum Channel {
+            /// Channel
+            internal static let label = L10n.tr("Accessibility", "conversationsList.itemCell.avatar.channel.label", fallback: "Channel")
+          }
+          internal enum Group {
+            /// Group
+            internal static let label = L10n.tr("Accessibility", "conversationsList.itemCell.avatar.group.label", fallback: "Group")
+          }
+        }
       }
       internal enum JoinButton {
         /// Join
