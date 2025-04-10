@@ -606,6 +606,26 @@ extension ZMUserTests_Permissions {
         XCTAssertFalse(adminUser.canModifyChannelAccessLevelSettings(in: conversation))
     }
     
+    func testAccessOption_ForChannel_MemberNotTeamAdminButAssignedAdmin() {
+        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
+        let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
+        
+        makeUserAdmin(adminUser)
+        XCTAssertTrue(adminUser.canModifyChannelAccessLevelSettings(in: conversation))
+
+        let memberUserAssignedAsAdmin = createUserAndAddInConversation()
+        XCTAssertFalse(memberUserAssignedAsAdmin.canModifyChannelAccessLevelSettings(in: conversation))
+        
+        let participantRole = ParticipantRole.create(
+            managedObjectContext: uiMOC,
+            user: memberUserAssignedAsAdmin,
+            conversation: conversation)
+        participantRole.role = makeAdminRole(actionName: ConversationAction.modifyAddPermission.name)
+        memberUserAssignedAsAdmin.participantRoles.insert(participantRole)
+        
+        XCTAssertTrue(memberUserAssignedAsAdmin.canModifyChannelAccessLevelSettings(in: conversation))
+    }
+    
     // MARK: - Private
 
     private func makeAdminRole(actionName: String? = nil) -> Role {

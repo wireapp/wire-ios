@@ -28,6 +28,7 @@ enum ConversationAction {
     case modifyOtherConversationMember
     case leaveConversation
     case deleteConversation
+    case modifyAddPermission
 
     var name: String {
         switch self {
@@ -40,6 +41,7 @@ enum ConversationAction {
         case .modifyOtherConversationMember: "modify_other_conversation_member"
         case .leaveConversation: "leave_conversation"
         case .deleteConversation: "delete_conversation"
+        case .modifyAddPermission: "modify_add_permission"
         }
     }
 }
@@ -148,7 +150,10 @@ public extension ZMUser {
     
     @objc(canModifyChannelAccessLevelSettingsInConversation:)
     func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
-        isChannelAdmin(conversation)
+        (conversation.isChannel && hasRoleWithAction(
+            actionName: ConversationAction.modifyAddPermission.name,
+            conversation: conversation
+        )) || isChannelAdmin(conversation)
     }
 
     @objc(canModifyGuestsAccessControlSettingsInConversation:)
