@@ -215,7 +215,6 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         // Sound
         XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
 
-
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,

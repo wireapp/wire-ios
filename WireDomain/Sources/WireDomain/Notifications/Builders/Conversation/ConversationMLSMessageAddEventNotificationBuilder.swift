@@ -33,7 +33,7 @@ struct ConversationMLSMessageAddEventNotificationBuilder {
 
     func buildContent(
         event: ConversationMLSMessageAddEvent
-    ) async -> UserNotification?  {
+    ) async -> UserNotification? {
 
         let decryptedMessage = event.decryptedMessages.first?.message
         let senderID = event.senderID
@@ -715,4 +715,3 @@ extension ConversationMLSMessageAddEventNotificationBuilder {
         }
     }
 }
-

@@ -33,7 +33,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
 
     func buildContent(
         event: ConversationProteusMessageAddEvent
-    ) async -> UserNotification?  {
+    ) async -> UserNotification? {
         let decryptedMessage = event.message.decryptedMessage
         let external = event.externalData?.encryptedMessage
         let senderID = event.senderID

@@ -238,6 +238,3 @@ extension ConversationDeleteEventNotificationBuilder {
 
     }
 }
-
-
-

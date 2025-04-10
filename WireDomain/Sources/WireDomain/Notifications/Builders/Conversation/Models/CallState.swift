@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 enum CallState: Equatable {
     case incomingCall(video: Bool)
     case missedCall

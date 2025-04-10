@@ -219,5 +219,3 @@ extension ConversationCreateEventNotificationBuilder {
 
     }
 }
-
-

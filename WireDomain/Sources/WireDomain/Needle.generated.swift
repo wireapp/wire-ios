@@ -1,5 +1,3 @@
-
-
 import Foundation
 import NeedleFoundation
 import UserNotifications
@@ -300,7 +298,6 @@ private func parent5(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
             localTable["userLocalStore-any UserLocalStoreProtocol"] = { [unowned self] in userLocalStore as Any }
         }
     }
-
 
 #endif
 

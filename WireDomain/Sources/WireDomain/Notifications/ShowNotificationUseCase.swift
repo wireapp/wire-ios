@@ -111,5 +111,3 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
         return NSNumber(value: totalUnreadCount)
     }
 }
-
-

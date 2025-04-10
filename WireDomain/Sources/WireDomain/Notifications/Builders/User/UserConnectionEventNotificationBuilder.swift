@@ -66,7 +66,7 @@ struct UserConnectionEventNotificationBuilder {
     // MARK: - Build notifications
 
     private func buildConnectionRequestNotification(
-        connectionStatus:  ConnectionStatus,
+        connectionStatus: ConnectionStatus,
         username: String?,
         selfUserID: UUID,
         senderID: UUID?,

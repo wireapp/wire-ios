@@ -114,7 +114,6 @@ struct ConversationCallingEventNotificationBuilder {
         return .callKit(callKitContent)
     }
 
-
     // MARK: - Build call notifications
 
     private func buildCallNotification(

@@ -47,5 +47,3 @@ final class ProcessNotificationRequestStep: Component<EmptyDependency>, ProcessN
     }
 
 }
-
-

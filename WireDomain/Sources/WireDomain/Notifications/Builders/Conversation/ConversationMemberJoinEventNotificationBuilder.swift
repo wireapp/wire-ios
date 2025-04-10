@@ -228,4 +228,3 @@ extension ConversationMemberJoinEventNotificationBuilder {
 
     }
 }
-

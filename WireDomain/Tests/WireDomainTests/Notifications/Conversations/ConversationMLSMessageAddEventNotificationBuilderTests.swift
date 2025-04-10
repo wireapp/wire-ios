@@ -208,7 +208,6 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
 
         XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
 
-
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,
