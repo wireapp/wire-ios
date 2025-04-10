@@ -1,7 +1,7 @@
 sources:
 - ${PACKAGE_ROOT_DIR}/Sources/WireReusableUIComponents
 templates:
-- ${TARGET_DIR}/Sourcery/AutoMockable.stencil
+- ${TARGET_DIR}/Sourcery/LegacyAutoMockable.stencil
 output:
   ${DERIVED_SOURCES_DIR}
 args:
