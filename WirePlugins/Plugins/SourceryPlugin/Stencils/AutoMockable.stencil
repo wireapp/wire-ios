@@ -19,12 +19,16 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-{% for import in argument.autoMockablePublicImports %}
-public import {{ import }}
-{% endfor %}
-
 {% for import in argument.autoMockableImports %}
 import {{ import }}
+{% endfor %}
+
+{% for import in argument.autoMockablePackageImports %}
+package import {{ import }}
+{% endfor %}
+
+{% for import in argument.autoMockablePublicImports %}
+public import {{ import }}
 {% endfor %}
 
 {% for import in argument.autoMockableTestableImports %}
