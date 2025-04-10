@@ -33,8 +33,5 @@ extension StartUIViewController {
         cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
         cancelButton.accessibilityIdentifier = "cancel"
         navigationItem.rightBarButtonItem = cancelButton
-
-        cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
-
     }
 }
