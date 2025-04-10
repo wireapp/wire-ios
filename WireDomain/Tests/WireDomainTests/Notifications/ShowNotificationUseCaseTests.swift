@@ -16,4 +16,55 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPISupport
+import XCTest
+import WireDataModel
+@testable import WireAPI
+@testable import WireDomain
+@testable import WireDomainSupport
+
+final class ShowNotificationUseCaseTests: XCTestCase {
+    private var sut: ShowNotificationUseCase!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var didDisplayNotification = false
+
+    override func setUp() async throws {
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+        
+        let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let url = applicationSupport.appendingPathComponent(
+            "GenerateNotificationServiceTests"
+        )
+
+        sut = ShowNotificationUseCase(
+            contentHandler: { _ in self.didDisplayNotification = true },
+            conversationLocalStore: conversationLocalStore,
+            selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
+            accountManager: AccountManager(sharedDirectory: url)
+        )
+    }
+
+    override func tearDown() async throws {
+        sut = nil
+        conversationLocalStore = nil
+        didDisplayNotification = false
+    }
+
+    func testProcess_It_Invokes_Notification_Content_Handler() async throws {
+        
+        // Mock
+        
+        let userNotifications: [UserNotification] = [
+            .text(UNMutableNotificationContent())
+        ]
+        
+        // When
+        try await sut.invoke(
+            userNotifications: userNotifications
+        )
+
+        // Then
+        XCTAssertEqual(didDisplayNotification, true)
+    }
+
+}

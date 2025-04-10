@@ -20,7 +20,14 @@ import UserNotifications
 import WireAPI
 import WireDataModel
 
-struct UserEventNotificationBuilder {
+// sourcery: AutoMockable
+protocol UserEventNotificationBuilderProtocol {
+    func buildContent(
+        event: UserEvent
+    ) async throws -> UserNotification?
+}
+
+struct UserEventNotificationBuilder: UserEventNotificationBuilderProtocol {
 
     let validator: Validator
     let userConnectionEventNotificationBuilder: UserConnectionEventNotificationBuilder

@@ -20,7 +20,14 @@ import UserNotifications
 import WireAPI
 import WireDataModel
 
-struct ConversationEventNotificationBuilder {
+// sourcery: AutoMockable
+protocol ConversationEventNotificationBuilderProtocol {
+    func buildContent(
+        event: ConversationEvent
+    ) async throws -> UserNotification?
+}
+
+struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilderProtocol {
     
     enum Failure: Error {
         case failedToDecryptMLSMessage

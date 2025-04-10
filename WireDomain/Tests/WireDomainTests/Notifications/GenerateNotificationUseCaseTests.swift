@@ -26,7 +26,7 @@ import XCTest
 @testable import WireDomainSupport
 
 final class GenerateNotificationUseCaseTests: XCTestCase {
-    private var sut: GenerateNotificationService!
+    private var sut: GenerateNotificationUseCase!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
@@ -43,36 +43,29 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
         )
 
         let asyncStream = AsyncStream<[UpdateEvent]> {
-            $0.yield([])
+            $0.yield([.user(.pushRemove)])
             $0.finish()
         }
 
-        sut = GenerateNotificationService(
-            eventsStream: asyncStream,
-            contentHandler: { [self] _ in didCallNotificationContentHandler = true },
-            accountManager: AccountManager(sharedDirectory: url),
-            selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
-            accountID: .mockID1,
-            userDefaults: UserDefaults(suiteName: UUID.mockID1.uuidString)!,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore,
-            messageLocalStore: messageLocalStore
-        )
+//        sut = GenerateNotificationUseCase(
+//            conversationEventBuilder: <#T##ConversationEventNotificationBuilder#>,
+//            userEventBuilder: <#T##UserEventNotificationBuilder#>
+//        )
     }
 
-    override func tearDown() async throws {
-        sut = nil
-        conversationLocalStore = nil
-        userLocalStore = nil
-        messageLocalStore = nil
-    }
-
-    func testProcess_It_Invokes_Notification_Content_Handler() async throws {
-        // When
-        await sut.process()
-
-        // Then
-        XCTAssertEqual(didCallNotificationContentHandler, true)
-    }
+//    override func tearDown() async throws {
+//        sut = nil
+//        conversationLocalStore = nil
+//        userLocalStore = nil
+//        messageLocalStore = nil
+//    }
+//
+//    func testProcess_It_Invokes_Notification_Content_Handler() async throws {
+//        // When
+//        await sut.process()
+//
+//        // Then
+//        XCTAssertEqual(didCallNotificationContentHandler, true)
+//    }
 
 }

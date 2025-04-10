@@ -65,20 +65,20 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationDeleteEventNotificationBuilder(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationDeleteEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(conversationLocalStore: conversationLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -93,20 +93,20 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationDeleteEventNotificationBuilder(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationDeleteEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(conversationLocalStore: conversationLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -122,15 +122,19 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationDeleteEventNotificationBuilder(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationDeleteEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(conversationLocalStore: conversationLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, false)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
+
+        // Then
+        XCTAssertNil(userNotification)
     }
 
     private func internalTest_assertNotificationContent(
@@ -217,6 +221,11 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
         static let teamName = "Team1"
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let event = ConversationDeleteEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now
+        )
     }
 
 }

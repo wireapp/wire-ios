@@ -64,21 +64,28 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-
-        sut = await ConversationCreateEventNotificationBuilder(
+        
+        sut = ConversationCreateEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
+        )
+        
+        let event = ConversationCreateEvent(
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+            timestamp: .now,
+            conversation: Scaffolding.conversation
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -93,20 +100,27 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationCreateEventNotificationBuilder(
+        sut = ConversationCreateEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
+        )
+        
+        let event = ConversationCreateEvent(
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+            timestamp: .now,
+            conversation: Scaffolding.conversation
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -121,20 +135,20 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationCreateEventNotificationBuilder(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationCreateEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -225,6 +239,13 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         static let teamName = "Team1"
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let conversation = WireAPI.Conversation()
+        static let event = ConversationCreateEvent(
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID,
+            timestamp: .now,
+            conversation: Scaffolding.conversation
+        )
     }
 
 }

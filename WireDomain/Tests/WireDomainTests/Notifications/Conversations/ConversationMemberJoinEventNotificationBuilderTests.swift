@@ -65,21 +65,20 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationMemberJoinEventNotificationBuilder(
-            addedUserIDs: Set([Scaffolding.selfUserID]),
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationMemberJoinEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.addedSelfEvent)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -94,21 +93,20 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationMemberJoinEventNotificationBuilder(
-            addedUserIDs: Set([Scaffolding.selfUserID]),
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationMemberJoinEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.addedSelfEvent)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -123,21 +121,20 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationMemberJoinEventNotificationBuilder(
-            addedUserIDs: Set([Scaffolding.selfUserID]),
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationMemberJoinEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.addedSelfEvent)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -153,16 +150,19 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationMemberJoinEventNotificationBuilder(
-            addedUserIDs: Set([.mockID5]), // doesn't contain self user ID
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationMemberJoinEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, false)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.addedNotSelfEvent)
+
+        // Then
+        XCTAssertNil(userNotification)
     }
 
     private func internalTest_assertNotificationContent(
@@ -250,6 +250,50 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
+        
+        static let addedSelfEvent = ConversationMemberJoinEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now,
+            members: [selfMember]
+        )
+        
+        static let addedNotSelfEvent = ConversationMemberJoinEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now,
+            members: [otherMember]
+        )
+        
+        static let selfMember = Conversation.Member(
+            qualifiedID: nil,
+            id: selfUserID,
+            qualifiedTarget: nil,
+            target: nil,
+            conversationRole: nil,
+            service: nil,
+            archived: nil,
+            archivedReference: nil,
+            hidden: nil,
+            hiddenReference: nil,
+            mutedStatus: nil,
+            mutedReference: nil
+        )
+        
+        static let otherMember = Conversation.Member(
+            qualifiedID: nil,
+            id: .mockID4,
+            qualifiedTarget: nil,
+            target: nil,
+            conversationRole: nil,
+            service: nil,
+            archived: nil,
+            archivedReference: nil,
+            hidden: nil,
+            hiddenReference: nil,
+            mutedStatus: nil,
+            mutedReference: nil
+        )
     }
 
 }

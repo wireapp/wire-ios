@@ -66,12 +66,6 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
         sut = await ConversationMemberLeaveEventNotificationBuilder(
-            removedUserIDs: Set([Scaffolding.selfUserID]),
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
-        )
 
         let shouldBuildNotification = await sut.shouldBuildNotification()
         XCTAssertEqual(shouldBuildNotification, true)
