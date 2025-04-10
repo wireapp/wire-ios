@@ -58,9 +58,10 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
         }
         
         // When
-        let userNotification = try await sut.invoke(updateEvents: asyncStream)
+        let userNotifications = try await sut.invoke(updateEvents: asyncStream)
 
         // Then
+        XCTAssertEqual(userNotifications.count, 2)
         XCTAssertEqual(conversationEventBuilder.buildContentEvent_Invocations.count, 1)
         XCTAssertEqual(userEventBuilder.buildContentEvent_Invocations.count, 1)
     }

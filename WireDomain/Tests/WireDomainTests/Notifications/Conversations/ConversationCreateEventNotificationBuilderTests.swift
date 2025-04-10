@@ -72,13 +72,6 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
             ),
             validator: .init(userLocalStore: userLocalStore)
         )
-        
-        let event = ConversationCreateEvent(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            timestamp: .now,
-            conversation: Scaffolding.conversation
-        )
 
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
@@ -108,13 +101,6 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
             validator: .init(userLocalStore: userLocalStore)
         )
         
-        let event = ConversationCreateEvent(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            timestamp: .now,
-            conversation: Scaffolding.conversation
-        )
-
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
 

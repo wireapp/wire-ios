@@ -74,7 +74,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         )
 
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.selfAddedEvent)
+        let userNotification = await sut.buildContent(event: Scaffolding.selfUserAddedEvent)
 
         // Then
         try await internalTest_assertNotificationContent(
@@ -102,7 +102,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         )
 
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.selfAddedEvent)
+        let userNotification = await sut.buildContent(event: Scaffolding.selfUserAddedEvent)
 
         // Then
         try await internalTest_assertNotificationContent(
@@ -130,7 +130,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         )
 
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.selfAddedEvent)
+        let userNotification = await sut.buildContent(event: Scaffolding.selfUserAddedEvent)
 
         // Then
         try await internalTest_assertNotificationContent(
@@ -159,7 +159,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         )
 
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.otherAddedEvent)
+        let userNotification = await sut.buildContent(event: Scaffolding.otherUserAddedEvent)
 
         // Then
         XCTAssertNil(userNotification)
@@ -251,14 +251,14 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
         
-        static let selfAddedEvent = ConversationMemberJoinEvent(
+        static let selfUserAddedEvent = ConversationMemberJoinEvent(
             conversationID: conversationID,
             senderID: userID,
             timestamp: .now,
             members: [selfMember]
         )
         
-        static let otherAddedEvent = ConversationMemberJoinEvent(
+        static let otherUserAddedEvent = ConversationMemberJoinEvent(
             conversationID: conversationID,
             senderID: userID,
             timestamp: .now,
@@ -267,7 +267,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         
         static let selfMember = Conversation.Member(
             qualifiedID: nil,
-            id: selfUserID,
+            id: selfUserID, // self user was added, notification will be processed
             qualifiedTarget: nil,
             target: nil,
             conversationRole: nil,
@@ -282,7 +282,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         
         static let otherMember = Conversation.Member(
             qualifiedID: nil,
-            id: .mockID4,
+            id: .mockID4, // self user was NOT added, notification will not be processed
             qualifiedTarget: nil,
             target: nil,
             conversationRole: nil,

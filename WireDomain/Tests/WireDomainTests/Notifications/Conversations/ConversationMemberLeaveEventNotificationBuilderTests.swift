@@ -74,7 +74,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         )
 
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.selfRemovedEvent)
+        let userNotification = await sut.buildContent(event: Scaffolding.selfUserRemovedEvent)
 
         // Then
         try await internalTest_assertNotificationContent(
@@ -103,7 +103,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         )
 
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.selfRemovedEvent)
+        let userNotification = await sut.buildContent(event: Scaffolding.selfUserRemovedEvent)
 
         // Then
         try await internalTest_assertNotificationContent(
@@ -131,7 +131,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         )
 
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.selfRemovedEvent)
+        let userNotification = await sut.buildContent(event: Scaffolding.selfUserRemovedEvent)
 
         // Then
         try await internalTest_assertNotificationContent(
@@ -160,7 +160,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         )
 
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.otherRemovedfEvent)
+        let userNotification = await sut.buildContent(event: Scaffolding.otherUserRemovedEvent)
 
         // Then
         XCTAssertNil(userNotification)
@@ -253,17 +253,17 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
         
-        static let selfRemovedEvent = ConversationMemberLeaveEvent(
+        static let selfUserRemovedEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
-            senderID: userID,
+            senderID: userID, // self user was removed, notification will be processed
             timestamp: .now,
             removedUserIDs: [.init(uuid: selfUserID, domain: "")],
             reason: .userRemoved
         )
         
-        static let otherRemovedfEvent = ConversationMemberLeaveEvent(
+        static let otherUserRemovedEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
-            senderID: userID,
+            senderID: userID, // self user was not removed, notification will NOT be processed
             timestamp: .now,
             removedUserIDs: [.init(uuid: .mockID4, domain: "")],
             reason: .userRemoved
