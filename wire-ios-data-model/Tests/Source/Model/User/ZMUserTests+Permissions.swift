@@ -622,7 +622,7 @@ extension ZMUserTests_Permissions {
             conversation: conversation
         )
         participantRole.role = makeAdminRole(actionName: ConversationAction.modifyAddPermission.name)
-        memberUserAssignedAsAdmin.participantRoles.insert(participantRole)
+        memberUserAssignedAsAdmin.participantRoles = Set([participantRole])
 
         XCTAssertTrue(memberUserAssignedAsAdmin.canModifyChannelAccessLevelSettings(in: conversation))
     }
