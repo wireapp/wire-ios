@@ -87,6 +87,13 @@ private extension UpdateEvent {
 
             self = .conversation(.mlsMessageAdd(event))
 
+        case .conversationMLSWelcome:
+            guard let event = Self.conversationMLSWelcomEvent(from: legacyEvent) else {
+                return nil
+            }
+
+            self = .conversation(.mlsWelcome(event))
+
         default:
             return nil
         }
@@ -261,6 +268,26 @@ private extension UpdateEvent {
         )
     }
 
+    private static func conversationMLSWelcomEvent(from event: ZMUpdateEvent) -> ConversationMLSWelcomeEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.ConversationEvent<MLSWelcomeEvent>.self,
+                from: event.payload
+            ),
+            let conversationID = payload.conversationID,
+            let senderID = payload.senderID
+        else {
+            return nil
+        }
+
+        return ConversationMLSWelcomeEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            welcomeMessage: payload.data.message
+        )
+    }
+
 }
 
 private extension Payload.ConversationEvent {
@@ -331,5 +358,25 @@ private struct DecryptedMLSMessageAddEvent: EventData, Codable {
 
     let text: String
     let sender: String?
+
+}
+
+private struct MLSWelcomeEvent: EventData, Codable {
+
+    static var eventType: ZMUpdateEventType {
+        .conversationMLSWelcome
+    }
+
+    let message: String
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        message = try container.decode(String.self)
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(message)
+    }
 
 }
