@@ -19,15 +19,15 @@
 import Foundation
 
 extension Payload {
-    struct ConversationEvent<T: CodableEventData>: Codable {
+    public struct ConversationEvent<T: CodableEventData>: Codable {
 
-        let id: UUID?
-        let data: T
-        let from: UUID?
-        let qualifiedID: QualifiedID?
-        let qualifiedFrom: QualifiedID?
-        let timestamp: Date?
-        let type: String?
+        public let id: UUID?
+        public let data: T
+        public let from: UUID?
+        public let qualifiedID: QualifiedID?
+        public let qualifiedFrom: QualifiedID?
+        public let timestamp: Date?
+        public let type: String?
 
         enum CodingKeys: String, CodingKey {
             case id = "conversation"

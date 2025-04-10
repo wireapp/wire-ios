@@ -20,8 +20,8 @@ import Foundation
 import WireTransport
 
 extension Payload {
-    struct UpdateConversationDeleted: CodableEventData {
-        static var eventType: ZMUpdateEventType {
+    public struct UpdateConversationDeleted: CodableEventData {
+        public static var eventType: ZMUpdateEventType {
             .conversationDelete
         }
     }

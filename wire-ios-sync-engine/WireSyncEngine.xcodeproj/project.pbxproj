@@ -169,6 +169,7 @@
 		25CCE9DC2BA4A943002AB21F /* String+Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */; };
 		25D57F1D2BA892720038521E /* MessagingTest+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BBF7002473D51D00A26626 /* MessagingTest+Swift.swift */; };
 		25D57F202BA8928E0038521E /* MessagingTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5474C8051921309400185A3A /* MessagingTest.h */; };
+		342189D32DA7C278000FA6A1 /* UpdateEventMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342189D22DA7C278000FA6A1 /* UpdateEventMigrator.swift */; };
 		3E05F252192A4FBD00F22D80 /* UserSessionErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E05F250192A4FBD00F22D80 /* UserSessionErrorTests.m */; };
 		3E1858BC1951D6DA005FE78F /* MemoryLeaksObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E1858B31951D69B005FE78F /* MemoryLeaksObserver.m */; };
 		3E1860BA191A5D99000FE027 /* TestHost-main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E1860B6191A5D99000FE027 /* TestHost-main.m */; };
@@ -757,6 +758,7 @@
 		16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SessionManager+Logs.swift"; sourceTree = "<group>"; };
 		259AAB0C2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastE2EIdentityUpdateDateProtocol.swift; sourceTree = "<group>"; };
 		25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Mocks.swift"; sourceTree = "<group>"; };
+		342189D22DA7C278000FA6A1 /* UpdateEventMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventMigrator.swift; sourceTree = "<group>"; };
 		3D6B0837E10BD4D5E88805E3 /* ZMSyncStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMSyncStrategyTests.swift; sourceTree = "<group>"; };
 		3E05F247192A4F8900F22D80 /* NSError+ZMUserSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+ZMUserSession.h"; sourceTree = "<group>"; };
 		3E05F250192A4FBD00F22D80 /* UserSessionErrorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserSessionErrorTests.m; sourceTree = "<group>"; };
@@ -2423,6 +2425,7 @@
 				54131BC525C7F71400CE2CA2 /* LoginDelegate.swift */,
 				BF2AD9FF1F41A3DF000980E8 /* SessionFactories.swift */,
 				F19F1D371EFBF61800275E27 /* SessionManager.swift */,
+				342189D22DA7C278000FA6A1 /* UpdateEventMigrator.swift */,
 				E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */,
 				E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */,
 				EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */,
@@ -3117,6 +3120,7 @@
 				166DCDBA2555ADD2004F4F59 /* SessionManager+EncryptionAtRest.swift in Sources */,
 				54A170651B300696001B41A5 /* ProxiedRequestStrategy.swift in Sources */,
 				160C31441E8049320012E4BC /* ApplicationStatusDirectory.swift in Sources */,
+				342189D32DA7C278000FA6A1 /* UpdateEventMigrator.swift in Sources */,
 				7CD279862338E31D00E638CD /* SessionManager+Authentication.swift in Sources */,
 				16FF474C1F0D54B20044C491 /* SessionManager+Logs.swift in Sources */,
 				F19F1D281EFBC34E00275E27 /* ZMUserSessionRegistrationNotification.m in Sources */,
