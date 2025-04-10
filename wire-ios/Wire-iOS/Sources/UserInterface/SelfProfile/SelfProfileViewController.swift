@@ -21,7 +21,7 @@ import WireAnalytics
 import WireAPI
 import WireCommonComponents
 import WireDesign
-import WireDomainPkg
+import WireDomainPackage
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents

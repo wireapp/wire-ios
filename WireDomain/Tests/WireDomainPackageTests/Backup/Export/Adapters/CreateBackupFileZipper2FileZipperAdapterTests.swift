@@ -18,10 +18,10 @@
 
 import Testing
 import WireBackup
-import WireDomainPkgSupport
+import WireDomainPackageSupport
 import WireFoundationSupport
 
-@testable import WireDomainPkg
+@testable import WireDomainPackage
 
 struct CreateBackupFileZipper2FileZipperAdapterTests {
 

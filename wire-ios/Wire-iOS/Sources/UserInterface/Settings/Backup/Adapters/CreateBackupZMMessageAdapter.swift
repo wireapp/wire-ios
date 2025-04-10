@@ -19,15 +19,15 @@
 todo:
 feature flag
 swift 6 package
-extract wiredomainpkg oder neue struktur
+extract WireDomainPackage oder neue struktur
 
 import Foundation
 import WireDataModel
-import WireDomainPkg
+import WireDomainPackage
 
 struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
 
-    typealias QualifiedID = WireDomainPkg.QualifiedID
+    typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
         ZMMessage.fetchRequest()

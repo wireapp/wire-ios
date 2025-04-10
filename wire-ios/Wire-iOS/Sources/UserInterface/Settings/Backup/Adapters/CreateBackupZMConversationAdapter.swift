@@ -17,11 +17,11 @@
 //
 
 import WireDataModel
-import WireDomainPkg
+import WireDomainPackage
 
 struct CreateBackupZMConversationAdapter: CreateBackupConversationEntityProtocol {
 
-    typealias QualifiedID = WireDomainPkg.QualifiedID
+    typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
         ZMConversation.fetchRequest()

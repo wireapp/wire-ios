@@ -20,7 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireDomainPkg
+import WireDomainPackage
 import WireFoundation
 import WireLogging
 import WireSettingsUI
@@ -395,7 +395,7 @@ extension SettingsCellDescriptorFactory {
             eventProcessorHandle: EventProcessorHandle(),
             fileArchiver: CreateBackupFileArchiver(),
             currentDateProvider: SystemDateProvider(),
-            selfUserID: WireDomainPkg.QualifiedID(selfUser.qualifiedID!),
+            selfUserID: WireDomainPackage.QualifiedID(selfUser.qualifiedID!),
             logger: WireLogger.backupExport
         )
 

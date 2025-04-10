@@ -17,9 +17,9 @@
 //
 
 import WireDataModel
-import WireDomainPkg
+import WireDomainPackage
 
-extension WireDomainPkg.QualifiedID {
+extension WireDomainPackage.QualifiedID {
 
     init(_ qualifiedID: WireDataModel.QualifiedID) {
         self.init(
