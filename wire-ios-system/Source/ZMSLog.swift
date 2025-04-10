@@ -246,9 +246,9 @@ extension ZMSLog {
         line: UInt = #line
     ) {
         // disables completly for release build
-#if !DEBUG
-        return
-#endif
+        #if !DEBUG
+            return
+        #endif
         logQueue.async {
             guard let tag, level.rawValue <= ZMSLog.getLevelNoLock(tag: tag).rawValue else {
                 return
