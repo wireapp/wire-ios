@@ -38,7 +38,7 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
     let conversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilder
     let conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder
     let conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder
-    let conversationMemberLeaveEventNotificationBuilder:  ConversationMemberLeaveEventNotificationBuilder
+    let conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder
     let conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder
     let conversationCreateEventNotificationBuilder: ConversationCreateEventNotificationBuilder
     let conversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilder
@@ -188,16 +188,15 @@ extension ConversationEventNotificationBuilder {
 
             let isConversationMuted = conversationMutedMessages != .none
 
-            let isSelfUser = try? await userLocalStore.isSelfUser(
+            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
                 id: senderID.uuid,
                 domain: senderID.domain
-            ).isSelfUser
+            ).isSelfUser) ?? false
 
             let eventTimeStamp = time
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
 
-            guard let isSelfUser,
-                  !isSelfUser,
+            guard !isSenderSelfUser,
                   !isConversationMuted else {
                 return false
             }
