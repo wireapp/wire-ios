@@ -20,11 +20,11 @@ import Foundation
 
 extension Payload {
 
-    struct ConversationMember: CodableEventData {
+    public struct ConversationMember: CodableEventData {
 
-        struct Service: Codable {
-            let id: UUID
-            let provider: UUID
+        public struct Service: Codable {
+            public let id: UUID
+            public let provider: UUID
         }
 
         enum CodingKeys: String, CodingKey {
@@ -42,22 +42,22 @@ extension Payload {
             case conversationRole = "conversation_role"
         }
 
-        static var eventType: ZMUpdateEventType {
+        public static var eventType: ZMUpdateEventType {
             .conversationMemberUpdate
         }
 
-        let id: UUID?
-        let qualifiedID: QualifiedID?
-        let target: UUID?
-        let qualifiedTarget: QualifiedID?
-        let service: Service?
-        let mutedStatus: Int?
-        let mutedReference: Date?
-        let archived: Bool?
-        let archivedReference: Date?
-        let hidden: Bool?
-        let hiddenReference: String?
-        let conversationRole: String?
+        public let id: UUID?
+        public let qualifiedID: QualifiedID?
+        public let target: UUID?
+        public let qualifiedTarget: QualifiedID?
+        public let service: Service?
+        public let mutedStatus: Int?
+        public let mutedReference: Date?
+        public let archived: Bool?
+        public let archivedReference: Date?
+        public let hidden: Bool?
+        public let hiddenReference: String?
+        public let conversationRole: String?
 
         init(
             id: UUID? = nil,

@@ -59,6 +59,13 @@ private extension UpdateEvent {
 
             self = event
 
+        case .conversationMemberJoin:
+            guard let event = Self.conversationMemberJoinEvent(from: legacyEvent) else {
+                return nil
+            }
+
+            self = event
+
         default:
             return nil
         }
@@ -85,6 +92,63 @@ private extension UpdateEvent {
         )
 
         return .conversation(.delete(eventData))
+    }
+
+    private static func conversationMemberJoinEvent(from event: ZMUpdateEvent) -> UpdateEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>.self,
+                from: event.payload
+            ),
+            let conversationID = payload.conversationID,
+            let senderID = payload.senderID,
+            let timestamp = payload.timestamp,
+            let members = payload.data.users
+        else {
+            return nil
+        }
+
+        let memberData = members.map { member in
+            Conversation.Member(
+                qualifiedID: member.qualifiedID.map { id in
+                    QualifiedID(
+                        uuid: id.uuid,
+                        domain: id.domain
+                    )
+                },
+                id: member.id,
+                qualifiedTarget: member.qualifiedTarget.map { id in
+                    QualifiedID(
+                        uuid: id.uuid,
+                        domain: id.domain
+                    )
+                },
+                target: member.target,
+                conversationRole: member.conversationRole,
+                service: member.service.map { service in
+                    Service(
+                        id: service.id,
+                        provider: service.provider
+                    )
+                },
+                archived: member.archived,
+                archivedReference: member.archivedReference,
+                hidden: member.hidden,
+                hiddenReference: member.hiddenReference,
+                mutedStatus: member.mutedStatus,
+                mutedReference: member.mutedReference
+            )
+        }
+
+        let eventData = ConversationMemberJoinEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            members: memberData
+        )
+
+        return .conversation(.memberJoin(eventData))
     }
 
 }

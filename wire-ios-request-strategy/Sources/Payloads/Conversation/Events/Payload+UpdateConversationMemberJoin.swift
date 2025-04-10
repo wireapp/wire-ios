@@ -20,18 +20,18 @@ import Foundation
 import WireTransport
 
 extension Payload {
-    struct UpdateConversationMemberJoin: CodableEventData {
+    public struct UpdateConversationMemberJoin: CodableEventData {
         enum CodingKeys: String, CodingKey {
             case userIDs = "user_ids"
             case users
         }
 
-        static var eventType: ZMUpdateEventType {
+        public static var eventType: ZMUpdateEventType {
             .conversationMemberJoin
         }
 
-        let userIDs: [UUID]?
-        let users: [ConversationMember]?
+        public let userIDs: [UUID]?
+        public let users: [ConversationMember]?
 
     }
 }

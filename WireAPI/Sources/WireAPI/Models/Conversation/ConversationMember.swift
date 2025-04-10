@@ -37,6 +37,34 @@ public extension Conversation {
         public let mutedStatus: Int?
         public let mutedReference: Date?
 
+        public init(
+            qualifiedID: QualifiedID?,
+            id: UUID?,
+            qualifiedTarget: QualifiedID?,
+            target: UUID?,
+            conversationRole: String?,
+            service: Service?,
+            archived: Bool?,
+            archivedReference: Date?,
+            hidden: Bool?,
+            hiddenReference: String?,
+            mutedStatus: Int?,
+            mutedReference: Date?
+        ) {
+            self.qualifiedID = qualifiedID
+            self.id = id
+            self.qualifiedTarget = qualifiedTarget
+            self.target = target
+            self.conversationRole = conversationRole
+            self.service = service
+            self.archived = archived
+            self.archivedReference = archivedReference
+            self.hidden = hidden
+            self.hiddenReference = hiddenReference
+            self.mutedStatus = mutedStatus
+            self.mutedReference = mutedReference
+        }
+
         enum CodingKeys: String, CodingKey {
 
             case qualifiedID = "qualified_id"

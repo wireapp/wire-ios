@@ -30,4 +30,12 @@ public struct Service: Equatable, Codable, Sendable {
 
     public let provider: UUID
 
+    public init(
+        id: UUID,
+        provider: UUID
+    ) {
+        self.id = id
+        self.provider = provider
+    }
+
 }
