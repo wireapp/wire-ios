@@ -69,6 +69,8 @@ struct ConversationCallingEventNotificationBuilder {
         if canDisplayCallKitNotification {
             
             return await buildCallKitNotification(
+                callKitState: callKitState,
+                callContent: callContent,
                 accountID: accountID,
                 conversationID: conversationID,
                 senderID: senderID
@@ -92,19 +94,21 @@ struct ConversationCallingEventNotificationBuilder {
     // MARK: - Build CallKit notification
     
     private func buildCallKitNotification(
+        callKitState: CallKitState,
+        callContent: CallContent,
         accountID: UUID,
         conversationID: ConversationID,
         senderID: UserID
     ) async -> UserNotification {
         let callKitContent: [String: Any] = [
-            "accountID": accountID,
-            "conversationID": conversationID,
-            "shouldRing": context.shouldRing,
+            "accountID": accountID.uuidString,
+            "conversationID": conversationID.uuid.uuidString,
+            "shouldRing": context.shouldRing(callKitState: callKitState),
             "callerName": await makeCallKitTitle(
                 conversationID: conversationID,
                 senderID: senderID
             ) ?? "",
-            "hasVideo": context.isVideo
+            "hasVideo": context.isVideo(callContent: callContent)
         ]
 
         return .callKit(callKitContent)

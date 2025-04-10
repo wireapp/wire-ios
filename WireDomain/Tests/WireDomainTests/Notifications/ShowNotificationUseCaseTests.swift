@@ -33,7 +33,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         
         let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let url = applicationSupport.appendingPathComponent(
-            "GenerateNotificationServiceTests"
+            "ShowNotificationUseCaseTests"
         )
 
         sut = ShowNotificationUseCase(
@@ -57,6 +57,8 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         let userNotifications: [UserNotification] = [
             .text(UNMutableNotificationContent())
         ]
+        
+        conversationLocalStore.unreadConversationCount_MockValue = 1
         
         // When
         try await sut.invoke(

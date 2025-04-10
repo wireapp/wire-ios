@@ -28,6 +28,7 @@ import XCTest
 final class UserConnectionEventNotificationBuilderTests: XCTestCase {
     private var sut: UserConnectionEventNotificationBuilder!
     private var userLocalStore: MockUserLocalStoreProtocol!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
 
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -38,6 +39,7 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
     }
 
     override func setUp() async throws {
+        conversationLocalStore = MockConversationLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
@@ -48,6 +50,7 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
         stack = nil
         sut = nil
         userLocalStore = nil
+        conversationLocalStore = nil
         try coreDataStackHelper.cleanupDirectory()
         modelHelper = nil
         coreDataStackHelper = nil
@@ -67,14 +70,15 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
 
         for connectionEvent in connectionEvents {
             // When
-            sut = await UserConnectionEventNotificationBuilder(
-                userConnectionEvent: connectionEvent,
-                conversationID: nil,
-                senderID: nil,
-                userLocalStore: userLocalStore
+            sut = UserConnectionEventNotificationBuilder(
+                context: .init(
+                    conversationLocalStore: conversationLocalStore,
+                    userLocalStore: userLocalStore
+                ),
+                validator: .init()
             )
 
-            let userNotification = await sut.buildContent()
+            let userNotification = await sut.buildContent(event: connectionEvent)
 
             guard case let .text(notificationContent) = userNotification else {
                 return

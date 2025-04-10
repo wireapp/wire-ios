@@ -46,26 +46,20 @@ final class PullEventsUseCaseTests: XCTestCase {
     func testStartsSync_It_Invokes_Methods() async throws {
 
         // Mock
-        updateEventsLocalStore.lastEventID_MockValue = .some(nil)
-        updateEventsLocalStore.storeLastEventIDId_MockMethod = { _ in }
-        let mockAsyncStream = AsyncStream {
+        eventsSync.pull_MockValue = AsyncStream {
             [UpdateEvent.user(.pushRemove),
              UpdateEvent.user(.pushRemove)]
         }
-        eventsSync.pull_MockValue = mockAsyncStream
 
         // When
         let asyncStream = try await sut.invoke()
 
         // Then
-        XCTAssertEqual(updateEventsLocalStore.lastEventID_Invocations.count, 1)
-        XCTAssertEqual(updateEventsLocalStore.lastEventID_Invocations.count, 1)
-        XCTAssertEqual(updateEventsLocalStore.storeLastEventIDId_Invocations.count, 1)
         XCTAssertEqual(eventsSync.pull_Invocations.count, 1)
-        
-        for await value in asyncStream {
-            XCTAssertEqual(value, [UpdateEvent.user(.pushRemove), UpdateEvent.user(.pushRemove)])
-        }
+        let containsEvents = await asyncStream.contains(
+            [.user(.pushRemove), .user(.pushRemove)]
+        )
+        XCTAssertTrue(containsEvents)
     }
 
     func testStartsSync_It_Throws_Error() async throws {

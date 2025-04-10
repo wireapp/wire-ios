@@ -67,32 +67,26 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        let messagesCapable = getAllMessagesCapable()
-
-        for messageCapable in messagesCapable {
-            let genericMessage = GenericMessage(content: messageCapable)
-            sut = await ConversationProteusMessageAddEventNotificationBuilder(
-                message: genericMessage,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID,
-                userLocalStore: userLocalStore,
+        
+        sut = ConversationProteusMessageAddEventNotificationBuilder(
+            context: .init(
                 conversationLocalStore: conversationLocalStore,
-                messageLocalStore: messageLocalStore
+                userLocalStore: userLocalStore,
+                messageLocalStore: messageLocalStore),
+            validator: .init(
+                conversationLocalStore: conversationLocalStore
             )
-
-            let shouldBuildNotification = await sut.shouldBuildNotification()
-            XCTAssertEqual(shouldBuildNotification, true)
-
-            let notification = await sut.buildContent()
-
-            try await internalTest_assertNotificationContent(
-                notification,
-                messageContent: try XCTUnwrap(genericMessage.content),
-                isGroup: isGroup,
-                isTeam: isTeam
-            )
-
-        }
+        )
+        
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
+        
+        // Then
+        try await internalTest_assertNotificationContent(
+            try XCTUnwrap(userNotification),
+            isGroup: isGroup,
+            isTeam: isTeam
+        )
     }
 
     func testGenerateProteusMessageNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
@@ -103,32 +97,24 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         let isTeam = false
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        let messagesCapable = getAllMessagesCapable()
 
-        for messageCapable in messagesCapable {
-            let genericMessage = GenericMessage(content: messageCapable)
-            sut = await ConversationProteusMessageAddEventNotificationBuilder(
-                message: genericMessage,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID,
-                userLocalStore: userLocalStore,
+        sut = ConversationProteusMessageAddEventNotificationBuilder(
+            context: .init(
                 conversationLocalStore: conversationLocalStore,
-                messageLocalStore: messageLocalStore
-            )
-
-            let shouldBuildNotification = await sut.shouldBuildNotification()
-            XCTAssertEqual(shouldBuildNotification, true)
-
-            let notification = await sut.buildContent()
-
-            try await internalTest_assertNotificationContent(
-                notification,
-                messageContent: try XCTUnwrap(genericMessage.content),
-                isGroup: isGroup,
-                isTeam: isTeam
-            )
-
-        }
+                userLocalStore: userLocalStore,
+                messageLocalStore: messageLocalStore),
+            validator: .init(conversationLocalStore: conversationLocalStore)
+        )
+        
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
+        
+        // Then
+        try await internalTest_assertNotificationContent(
+            try XCTUnwrap(userNotification),
+            isGroup: isGroup,
+            isTeam: isTeam
+        )
     }
 
     func testGenerateProteusMessageNotification_Is_OneOnOne_Conversation_And_Team() async throws {
@@ -139,32 +125,24 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        let messagesCapable = getAllMessagesCapable()
-
-        for messageCapable in messagesCapable {
-            let genericMessage = GenericMessage(content: messageCapable)
-            sut = await ConversationProteusMessageAddEventNotificationBuilder(
-                message: genericMessage,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID,
-                userLocalStore: userLocalStore,
+        
+        sut = ConversationProteusMessageAddEventNotificationBuilder(
+            context: .init(
                 conversationLocalStore: conversationLocalStore,
-                messageLocalStore: messageLocalStore
-            )
-
-            let shouldBuildNotification = await sut.shouldBuildNotification()
-            XCTAssertEqual(shouldBuildNotification, true)
-
-            let notificationContent = await sut.buildContent()
-
-            try await internalTest_assertNotificationContent(
-                notificationContent,
-                messageContent: try XCTUnwrap(genericMessage.content),
-                isGroup: isGroup,
-                isTeam: isTeam
-            )
-
-        }
+                userLocalStore: userLocalStore,
+                messageLocalStore: messageLocalStore),
+            validator: .init(conversationLocalStore: conversationLocalStore)
+        )
+        
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
+        
+        // Then
+        try await internalTest_assertNotificationContent(
+            try XCTUnwrap(userNotification),
+            isGroup: isGroup,
+            isTeam: isTeam
+        )
     }
 
     func testGenerateProteusMessageNotification_It_Should_Not_Build_Notification() async throws {
@@ -180,27 +158,23 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
             isMessageSilenced: true
         )
 
-        let messagesCapable = getAllMessagesCapable()
-
-        for messageCapable in messagesCapable {
-            let genericMessage = GenericMessage(content: messageCapable)
-            sut = await ConversationProteusMessageAddEventNotificationBuilder(
-                message: genericMessage,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID,
-                userLocalStore: userLocalStore,
+        sut = ConversationProteusMessageAddEventNotificationBuilder(
+            context: .init(
                 conversationLocalStore: conversationLocalStore,
-                messageLocalStore: messageLocalStore
-            )
-
-            let shouldBuildNotification = await sut.shouldBuildNotification()
-            XCTAssertEqual(shouldBuildNotification, false)
-        }
+                userLocalStore: userLocalStore,
+                messageLocalStore: messageLocalStore),
+            validator: .init(conversationLocalStore: conversationLocalStore)
+        )
+        
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.event)
+        
+        // Then
+        XCTAssertNil(userNotification)
     }
 
     private func internalTest_assertNotificationContent(
         _ userNotification: UserNotification,
-        messageContent: GenericMessage.OneOf_Content,
         isGroup: Bool,
         isTeam: Bool
     ) async throws {
@@ -210,70 +184,21 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         }
 
         // Title
-        switch messageContent {
-        case .ephemeral, .hidden:
-            XCTAssert(notificationContent.title.isEmpty)
-        default:
-            if isGroup {
-                XCTAssertEqual(
-                    notificationContent.title,
-                    isTeam ? "\(Scaffolding.conversationName) in \(Scaffolding.teamName)" :
-                        "\(Scaffolding.conversationName)"
-                )
-            } else {
-                XCTAssertEqual(
-                    notificationContent.title,
-                    isTeam ? "\(Scaffolding.senderName) in \(Scaffolding.teamName)" : "\(Scaffolding.senderName)"
-                )
-            }
+        if isGroup {
+            XCTAssertEqual(
+                notificationContent.title,
+                isTeam ? "\(Scaffolding.conversationName) in \(Scaffolding.teamName)" :
+                    "\(Scaffolding.conversationName)"
+            )
+        } else {
+            XCTAssertEqual(
+                notificationContent.title,
+                isTeam ? "\(Scaffolding.senderName) in \(Scaffolding.teamName)" : "\(Scaffolding.senderName)"
+            )
         }
 
         // Body
-        switch messageContent {
-        case .image:
-            XCTAssertEqual(
-                notificationContent.body,
-                isGroup ? "\(Scaffolding.senderName) shared a picture" : "Shared a picture"
-            )
-        case let .asset(asset):
-            switch asset.original.metaData {
-            case .image:
-                XCTAssertEqual(
-                    notificationContent.body,
-                    isGroup ? "\(Scaffolding.senderName) shared a picture" : "Shared a picture"
-                )
-            case .video:
-                XCTAssertEqual(
-                    notificationContent.body,
-                    isGroup ? "\(Scaffolding.senderName) shared a video" : "Shared a video"
-                )
-            case .audio:
-                XCTAssertEqual(
-                    notificationContent.body,
-                    isGroup ? "\(Scaffolding.senderName) shared an audio message" : "Shared an audio message"
-                )
-            default:
-                XCTAssertEqual(
-                    notificationContent.body,
-                    isGroup ? "\(Scaffolding.senderName) shared a file" : "Shared a file"
-                )
-            }
-        case .knock:
-            XCTAssertEqual(notificationContent.body, isGroup ? "\(Scaffolding.senderName) pinged you" : "Pinged you")
-        case .text, .composite:
-            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName): Hello")
-        case .hidden:
-            XCTAssertEqual(notificationContent.body, "New message")
-        case .location:
-            XCTAssertEqual(
-                notificationContent.body,
-                isGroup ? "\(Scaffolding.senderName) shared a location" : "Shared a location"
-            )
-        case .ephemeral:
-            XCTAssertEqual(notificationContent.body, "Someone sent a message")
-        default:
-            XCTFail("Not handled")
-        }
+        XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName): Everything")
 
         XCTAssert(!notificationContent.body.isEmpty)
 
@@ -284,59 +209,20 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         )
 
         // Sound
-        switch messageContent {
-        case .knock:
-            XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("ping_from_them.caf")))
-        default:
-            XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
-        }
+        XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
+        
 
         // Thread ID
-        switch messageContent {
-        case .ephemeral:
-            XCTAssertEqual(notificationContent.threadIdentifier, "")
-        default:
-            XCTAssertEqual(
-                notificationContent.threadIdentifier,
-                Scaffolding.conversationID.uuid.uuidString.lowercased()
-            )
-        }
-
+        XCTAssertEqual(
+            notificationContent.threadIdentifier,
+            Scaffolding.conversationID.uuid.uuidString.lowercased()
+        )
+        
         // User info
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)
         XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! String, UUID.mockID3.uuidString)
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! String, UUID.mockID2.uuidString)
 
-    }
-
-    private func getAllMessagesCapable() -> [MessageCapable] {
-        var composite = Composite()
-        var textItem = Composite.Item()
-        textItem.text = Text(content: "Hello")
-        composite.items = [textItem]
-
-        var audioAsset = Asset()
-        audioAsset.original.metaData = .audio(Asset.AudioMetaData())
-
-        var videoAsset = Asset()
-        videoAsset.original.metaData = .video(Asset.VideoMetaData())
-
-        var imageAsset = Asset()
-        imageAsset.original.metaData = .image(Asset.ImageMetaData())
-
-        return [
-            Location(),
-            Knock(),
-            ImageAsset(),
-            Ephemeral(),
-            Text(content: "Hello"),
-            composite,
-            Asset(),
-            audioAsset,
-            videoAsset,
-            imageAsset,
-            MessageHide()
-        ]
     }
 
     private func setupMock(
@@ -379,5 +265,22 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         static let teamName = "Team1"
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let aliceID = UserID(uuid: UUID(), domain: "domain.com")
+        static let aliceClientID = "efgh5678"
+        static let selfClientID = "abcd1234"
+        
+        static let event = ConversationProteusMessageAddEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now,
+            message: .init(encryptedMessage: "", decryptedMessage: base64EncodedString),
+            externalData: nil,
+            messageSenderClientID: aliceClientID,
+            messageRecipientClientID: selfClientID
+        )
+        
+        static let messageContent = "foo"
+        
+        static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }
 }

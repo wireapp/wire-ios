@@ -17,6 +17,7 @@
 //
 
 import XCTest
+@testable import WireAPI
 @testable import WireDomain
 
 final class UserContactJoinEventNotificationBuilderTests: XCTestCase {
@@ -27,16 +28,18 @@ final class UserContactJoinEventNotificationBuilderTests: XCTestCase {
         // Mock
 
         sut = UserContactJoinEventNotificationBuilder(
-            name: Scaffolding.contactName
+            context: .init(),
+            validator: .init()
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(
+            event: Scaffolding.userContactJoinEvent
+        )
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification
+            try XCTUnwrap(userNotification)
         )
     }
 
@@ -72,6 +75,7 @@ final class UserContactJoinEventNotificationBuilderTests: XCTestCase {
 
     private enum Scaffolding {
         static let contactName = "User1"
+        static let userContactJoinEvent = UserContactJoinEvent(name: contactName)
     }
 
 }
