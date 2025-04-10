@@ -292,6 +292,10 @@ public final class SharingSession {
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
+        let selfClientID = coreDataStack.syncContext.performAndWait {
+            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
+        }
+
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: credentials?.username,
@@ -301,7 +305,8 @@ public final class SharingSession {
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
-            minTLSVersion: minTLSVersion
+            minTLSVersion: minTLSVersion,
+            selfClientID: selfClientID
         )
 
         try self.init(
