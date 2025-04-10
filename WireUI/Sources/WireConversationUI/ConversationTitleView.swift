@@ -154,7 +154,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .text("DS"),
         title: "Wolfgang Wolf",
-        subtitle: "FEDERATED"
+        subtitle: "FEDERATED",
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 
 }
@@ -164,7 +167,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel",
-        subtitle: "GUEST"
+        subtitle: "GUEST",
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 }
 
@@ -173,7 +179,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel",
-        subtitle: "GUEST"
+        subtitle: "GUEST",
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ), isDark: true)
 }
 
@@ -182,7 +191,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "John Snow",
-        subtitle: nil
+        subtitle: nil,
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 }
 
@@ -191,7 +203,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel NagelNagelNagelNagelNagelNagel",
-        subtitle: nil
+        subtitle: nil,
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 }
 
@@ -200,7 +215,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel NagelNagelNagelNagelNagelNagel",
-        subtitle: nil
+        subtitle: nil,
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 }
 

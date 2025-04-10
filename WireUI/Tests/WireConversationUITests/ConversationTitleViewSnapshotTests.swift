@@ -40,7 +40,10 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
         let sut = createSUT(ConversationTitleSource(
             accountImageSource: nil,
             title: "Title Sample",
-            subtitle: nil
+            subtitle: nil,
+            isMLS: false,
+            isVerified: false,
+            isUnderLegalHold: false
         ))
 
         snapshotHelper.verify(matching: sut)
@@ -51,7 +54,10 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
         let sut = createSUT(ConversationTitleSource(
             accountImageSource: AccountImageSource.text("JS"),
             title: "John snow",
-            subtitle: "FEDERATED"
+            subtitle: "FEDERATED",
+            isMLS: false,
+            isVerified: false,
+            isUnderLegalHold: false
         ))
 
         snapshotHelper.verify(matching: sut)
@@ -64,7 +70,10 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
         let sut = createSUT(ConversationTitleSource(
             accountImageSource: AccountImageSource.image(.init(systemName: "checkmark.circle.fill")!),
             title: "Willy Wonka",
-            subtitle: nil
+            subtitle: nil,
+            isMLS: false,
+            isVerified: false,
+            isUnderLegalHold: false
         ))
 
         snapshotHelper.verify(matching: sut)
