@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -13,18 +13,13 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0")
     ],
     targets: [
-        .target(
-            name: "WireDomainPkg",
-            path: "./Sources/WireDomain",
-            sources: ["./UseCases/Protocols"]
-        )
+        .target(name: "WireDomainPkg")
     ]
 )
 
 for target in package.targets {
     target.swiftSettings = [
-        .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("ExistentialAny")
     ]
 }
