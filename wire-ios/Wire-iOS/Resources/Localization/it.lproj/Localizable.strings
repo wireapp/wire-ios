@@ -1739,7 +1739,7 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
 "feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId
