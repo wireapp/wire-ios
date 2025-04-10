@@ -148,6 +148,18 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         }
     }
 
+    func testInvoke_withEmail_whenServiceUnavailable() async throws {
+        // given
+        let email = "user@example.com"
+        mockAuthenticationAPI.getDomainRegistrationForEmail_MockError = AuthenticationAPIError.serviceUnavailable
+
+        // when
+        let authMethod = try await sut.invoke(emailOrSSOCode: email)
+
+        // then
+        XCTAssertEqual(authMethod, .loginOrRegisterViaEmail(email: email))
+    }
+
     func testInvoke_forwardsUnderlyingErrors() async throws {
         // given
         mockAuthenticationAPI.getDomainRegistrationForEmail_MockError = URLError(.notConnectedToInternet)
