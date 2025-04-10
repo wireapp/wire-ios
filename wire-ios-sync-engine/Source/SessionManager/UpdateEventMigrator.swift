@@ -80,6 +80,13 @@ private extension UpdateEvent {
 
             self = .conversation(.messageTimerUpdate(event))
 
+        case .conversationMessageAdd:
+            guard let event = Self.conversationMLSMessageAddEvent(from: legacyEvent) else {
+                return nil
+            }
+
+            self = .conversation(.mlsMessageAdd(event))
+
         default:
             return nil
         }
@@ -216,6 +223,44 @@ private extension UpdateEvent {
         )
     }
 
+    private static func conversationMLSMessageAddEvent(from event: ZMUpdateEvent) -> ConversationMLSMessageAddEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.ConversationEvent<DecryptedMLSMessageAddEvent>.self,
+                from: event.payload
+            ),
+            let conversationID = payload.conversationID,
+            let senderID = payload.senderID,
+            let timestamp = payload.timestamp
+        else {
+            return nil
+        }
+
+        // Each mls message can actually produce multiple messages
+        // when it is decrypted. The legacy code will multiply the
+        // single ZMUpdateEvent, replacing the original encrypted
+        // message with one of the decrypted messages. For this
+        // reason we only have one decrypted message here. This
+        // differs from the new code, which will store all decrypted
+        // messages as an additional value in the add event. This
+        // means we will map of the legacy add events into a corresponding new add event with a single decrypted
+        // message.
+        let decryptedMessage = ConversationMLSMessageAddEvent.DecryptedMessage(
+            message: payload.data.text,
+            senderClientID: payload.data.sender
+        )
+
+        return ConversationMLSMessageAddEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            subconversation: payload.subconversationType?.rawValue,
+            message: decryptedMessage.message,
+            timestamp: timestamp,
+            decryptedMessages: [decryptedMessage]
+        )
+    }
+
 }
 
 private extension Payload.ConversationEvent {
@@ -275,5 +320,16 @@ private extension ConversationMemberLeaveReason {
             self = .userRemoved
         }
     }
+
+}
+
+private struct DecryptedMLSMessageAddEvent: EventData, Codable {
+
+    static var eventType: ZMUpdateEventType {
+        .conversationMLSMessageAdd
+    }
+
+    let text: String
+    let sender: String?
 
 }
