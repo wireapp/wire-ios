@@ -61,6 +61,7 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelAccessSection: some View {
         Section(content: {
+            // Channel access is always hard coded to private for now.
             Picker(
                 L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
                 selection: $viewModel.channelAccess
@@ -73,6 +74,7 @@ public struct WireConversationChannelCreationForm: View {
                 )
                 .tag(ViewModel.ChannelAccessOption.private)
             }
+            .disabled(true)
             if case .private = viewModel.channelAccess {
                 Picker(
                     L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.invitePolicy,

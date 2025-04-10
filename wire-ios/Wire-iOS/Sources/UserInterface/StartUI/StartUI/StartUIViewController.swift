@@ -313,9 +313,6 @@ final class StartUIViewController: UIViewController {
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
 
     private var canCreateChannel: Bool {
-        guard DeveloperFlag.wireChannels.isOn else {
-            return false
-        }
         guard let backendInfoApiVersion = BackendInfo.apiVersion else {
             return false
         }

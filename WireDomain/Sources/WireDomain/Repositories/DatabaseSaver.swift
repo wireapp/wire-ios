@@ -16,6 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireConversationsUI
-import WireDataModel
-import WireSyncEngine
+import CoreData
+import Foundation
+
+// sourcery: AutoMockable
+public protocol DatabaseSaverProtocol {
+
+    func save() async throws
+
+}
+
+public struct DatabaseSaver: DatabaseSaverProtocol {
+
+    private let context: NSManagedObjectContext
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    public func save() async throws {
+        try await context.perform {
+            try context.save()
+        }
+    }
+
+}

@@ -293,11 +293,12 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         }
 
         // Page 2 - Second half with video enabled
-        var expectedClients = [AVSClient]()
+        var expectedClientStreams = [AVSClientVideoStream]()
         for _ in half ..< CallGridViewController.maxItemsPerPage {
             let client = AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())
+
             configuration.streams += [stubProvider.stream(client: client, videoState: .started)]
-            expectedClients += [client]
+            expectedClientStreams += [AVSClientVideoStream(client: client, quality: .low)]
         }
 
         sut.configuration = configuration
@@ -306,7 +307,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         sut.requestVideoStreamsIfNeeded(forPage: 1)
 
         // then
-        XCTAssertEqual(mockDelegate.requestedClients, expectedClients)
+        XCTAssertEqual(mockDelegate.requestedClients, expectedClientStreams)
     }
 
     func testThatItDoesntRequestVideoStreams_IfPageIsInvalid() {
