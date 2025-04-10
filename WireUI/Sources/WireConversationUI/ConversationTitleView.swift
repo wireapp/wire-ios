@@ -29,6 +29,8 @@ public class ConversationTitleView: UIView {
     private let accountImageView = AccountImageView()
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
+    private let legalHoldImage = UIImageView(image: UIImage(resource: .legalHold))
+    private let verifiedImage = UIImageView(image: UIImage(resource: .verified))
     private let dropdownImage = UIImageView(image: .dropdown)
     private let tapButton = UIButton(type: .custom)
 
@@ -92,7 +94,7 @@ public class ConversationTitleView: UIView {
         let avatarAndNameStackView = UIStackView.horizontal(spacing: 4)
         avatarAndNameStackView.alignment = .center
 
-        [accountImageView, nameLabel, dropdownImage.wrapInView(topInset: 4)]
+        [accountImageView, legalHoldImage, nameLabel, verifiedImage, dropdownImage.wrapInView(topInset: 4)]
             .forEach(avatarAndNameStackView.addArrangedSubview)
 
         [
@@ -102,6 +104,8 @@ public class ConversationTitleView: UIView {
         .forEach(stackView.addArrangedSubview)
 
         accountImageView.constraintToSquare(sideLength: 26)
+        legalHoldImage.constraintToSquare(sideLength: 16)
+        verifiedImage.constraintToSquare(sideLength: 16)
         dropdownImage.constraintToSquare(sideLength: 16)
         stackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
 
@@ -120,6 +124,7 @@ public class ConversationTitleView: UIView {
         accountImageView.isHidden = source.accountImageSource == nil
         nameLabel.text = source.title
         subtitleLabel.text = source.subtitle
+
     }
 
     public func updateOtherUserAccentColor(_ color: UIColor) {
@@ -148,6 +153,40 @@ public class ConversationTitleView: UIView {
         }
     }
 }
+
+private extension NSTextAttachment {
+//    static func proteusVerifiedShield() -> NSTextAttachment {
+//        let attachment = NSTextAttachment()
+//        let shield = UIImage(resource: .verifiedShield)
+//        attachment.image = shield
+//        let ratio = shield.size.width / shield.size.height
+//        let height: CGFloat = 12
+//        attachment.bounds = CGRect(x: 0, y: 0, width: height * ratio, height: height)
+//        return attachment
+//    }
+//
+//    static func e2eiVerifiedShield() -> NSTextAttachment {
+//        let attachment = NSTextAttachment()
+//        let shield = UIImage(resource: .certificateValid)
+//        attachment.image = shield
+//        attachment.bounds = CGRect(x: 0, y: -2, width: shield.size.width, height: shield.size.height)
+//        return attachment
+//    }
+
+    static func legalHold() -> NSTextAttachment {
+        let attachment = NSTextAttachment()
+        let legalHold = StyleKitIcon.legalholdactive.makeImage(
+            size: .tiny,
+            color: SemanticColors.Icon.foregroundDefaultRed
+        )
+        attachment.image = legalHold
+        let ratio = legalHold.size.width / legalHold.size.height
+        let height: CGFloat = 12
+        attachment.bounds = CGRect(x: 0, y: -2, width: height * ratio, height: height)
+        return attachment
+    }
+}
+
 
 @available(iOS 17, *)
 #Preview("Account with Initials") {
