@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
 @testable import WireDataModel
-import WireDataModelSupport
 
 final class ZMUserTests_Permissions: ModelObjectsTests {
 
@@ -92,24 +92,24 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         // then
         XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
     }
-    
+
     func testChannelCanBeDeleted_ByNonCreatorTeamAdmin_Channel() {
         makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(adminUser.canDeleteConversation(conversation))
         makeUserAdmin(adminUser)
         XCTAssertTrue(adminUser.canDeleteConversation(conversation))
     }
-    
+
     func testChannelCanBeDeleted_ByNonCreatorTeamAdmin_Group() {
         makeSelfUserTeamMember(withPermissions: .member)
         conversation.creator = selfUser
         conversation.teamRemoteIdentifier = nil
         conversation.groupType = .group
-        
+
         let adminUser = createUserAndAddInConversation()
-        
+
         // just need one more user in conversation
         _ = createUserAndAddInConversation()
 
@@ -148,11 +148,11 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         // then
         XCTAssert(ZMUser.selfUser(in: uiMOC).isGuest(in: conversation))
     }
-    
+
     func testGuestsOptionCanUpdatedByTeamAdmin() {
         conversation.teamRemoteIdentifier = UUID.mockID10
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(adminUser.canModifyAccessControlSettings(in: conversation))
         makeUserOwner(adminUser)
         XCTAssertTrue(adminUser.canModifyAccessControlSettings(in: conversation))
@@ -377,26 +377,26 @@ extension ZMUserTests_Permissions {
         // then
         XCTAssertFalse(selfUser.canModifyTitle(in: conversation))
     }
-    
+
     func testCanRenameChannelByTeamAdmin() {
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(adminUser.canModifyTitle(in: conversation))
         makeUserAdmin(adminUser)
         XCTAssertTrue(adminUser.canModifyTitle(in: conversation))
     }
-    
+
     func testCanAddParticipantsInChannelByTeamAdmin() {
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(adminUser.canAddUser(to: conversation))
         makeUserOwner(adminUser)
         XCTAssertTrue(adminUser.canAddUser(to: conversation))
     }
-    
+
     func testCanAddParticipantsInChannelIfAddParticipantsIsAdminAndMember() {
         let user = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(user.canAddUser(to: conversation))
         conversation.privateChannelPermission = .everyone
         XCTAssertTrue(user.canAddUser(to: conversation))
@@ -430,12 +430,12 @@ extension ZMUserTests_Permissions {
         // then
         XCTAssertTrue(selfUser.canRemoveUser(from: conversation))
     }
-    
+
     func testCanRemoveParticipantInChannelByTeamAdmin() {
         makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
 
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(adminUser.canRemoveUser(from: conversation))
         makeUserAdmin(adminUser)
         XCTAssertTrue(adminUser.canRemoveUser(from: conversation))
@@ -468,12 +468,12 @@ extension ZMUserTests_Permissions {
         // then
         XCTAssertFalse(selfUser.canModifyEphemeralSettings(in: conversation))
     }
-    
+
     func testCanModifyMessageTimer_InChannelByTeamAdmin() {
         makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
 
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(adminUser.canModifyEphemeralSettings(in: conversation))
         makeUserAdmin(adminUser)
         XCTAssertTrue(adminUser.canModifyEphemeralSettings(in: conversation))
@@ -497,12 +497,12 @@ extension ZMUserTests_Permissions {
         // then
         XCTAssertFalse(selfUser.canModifyReadReceiptSettings(in: conversation))
     }
-    
+
     func testCanReadReceipts_InChannelByTeamAdmin() {
         makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
 
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(adminUser.canModifyReadReceiptSettings(in: conversation))
         makeUserOwner(adminUser)
         XCTAssertTrue(adminUser.canModifyReadReceiptSettings(in: conversation))
@@ -526,11 +526,11 @@ extension ZMUserTests_Permissions {
         // then
         XCTAssertFalse(selfUser.canModifyOtherMember(in: conversation))
     }
-    
+
     func testModifyOtherMember_InChannelByTeamAdmin() {
-        
+
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
-        
+
         XCTAssertFalse(adminUser.canModifyOtherMember(in: conversation))
         makeUserAdmin(adminUser)
         XCTAssertTrue(adminUser.canModifyOtherMember(in: conversation))
@@ -577,7 +577,7 @@ extension ZMUserTests_Permissions {
         // then
         XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
     }
-    
+
     private func makeAdminRole(actionName: String? = nil) -> Role {
         let adminRole = Role.insertNewObject(in: uiMOC)
         adminRole.name = defaultAdminRoleName
@@ -588,21 +588,21 @@ extension ZMUserTests_Permissions {
         }
         return adminRole
     }
-    
+
     private func createARole(user: ZMUser, actionName: String) {
         let participantRole = ParticipantRole.insertNewObject(in: uiMOC)
         participantRole.conversation = conversation
         participantRole.user = selfUser
 
         participantRole.role = makeAdminRole(actionName: actionName)
-        
+
         user.participantRoles = Set([participantRole])
     }
 
     private func createARoleForSelfUserWith(_ actionName: String) {
         createARole(user: selfUser, actionName: actionName)
     }
-    
+
     private func makeSelfUserTeamMember(withPermissions permissions: Permissions) {
         performPretendingUiMocIsSyncMoc {
             self.conversation.team = self.team
@@ -618,25 +618,26 @@ extension ZMUserTests_Permissions {
         conversation.addParticipantAndUpdateConversationState(user: user)
         return user
     }
-    
+
     private func updateConversationToChannelWithUserToBecomeTeamAdmin() -> ZMUser {
         let adminUser = createUserAndAddInConversation()
-        
+
         // just need one more user in conversation
         _ = createUserAndAddInConversation()
-        
-        // make sure to update conversation, because of potential force set of conversationType to OneOnOne when conditions are met
+
+        // make sure to update conversation, because of potential force set of conversationType to OneOnOne when
+        // conditions are met
         // see ZMConversation.m:439 '- (ZMConversationType)conversationType'
         conversation.groupType = .channel
         conversation.conversationType = .group
 
         return adminUser
     }
-    
+
     func makeUserAdmin(_ user: ZMUser) {
         user.membership?.setTeamRole(.admin)
     }
-    
+
     func makeUserOwner(_ user: ZMUser) {
         user.membership?.setTeamRole(.owner)
     }
