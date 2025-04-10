@@ -147,7 +147,7 @@ public extension ZMUser {
 
         return isTeamMember
     }
-    
+
     @objc(canModifyChannelAccessLevelSettingsInConversation:)
     func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
         (conversation.isChannel && hasRoleWithAction(

@@ -260,7 +260,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool {
         canModifyGuestsAccessControlSettings
     }
-    
+
     func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
         canModifyChannelAccessLevelSettings
     }

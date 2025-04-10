@@ -45,7 +45,8 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .channelAccess: user.canModifyChannelAccessLevelSettings(in: conversation)
             case .notifications: user.canModifyNotificationSettings(in: conversation)
             case .guests:        user.canModifyGuestsAccessControlSettings(in: conversation)
-            case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation.botCanBeAdded
+            case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
+                .botCanBeAdded
             case .timeout:       user.canModifyEphemeralSettings(in: conversation)
             }
         }
