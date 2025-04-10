@@ -51,18 +51,25 @@ struct VerifyUserSessionUseCase {
     /// Ensures user is properly authenticated.
 
     func invoke() async throws {
-        let cookies = try await cookieStorage.fetchCookies()
-        var hasExpirationDate = false
-
-        for cookie in cookies where cookie.name == Constants.cookieName {
-            hasExpirationDate = cookie.expiresDate != nil
-        }
-
-        guard hasExpirationDate else {
+        guard try await isAuthenticated() else {
             throw Failure.userUnauthenticated
         }
 
         try await setupCoreData()
+    }
+
+    private func isAuthenticated() async throws -> Bool {
+        let cookies = try await cookieStorage.fetchCookies()
+
+        for cookie in cookies where cookie.name == Constants.cookieName {
+            if let cookieExpirationDate = cookie.expiresDate {
+                return cookieExpirationDate > .now
+            } else {
+                return false
+            }
+        }
+
+        return false // no cookies found
     }
 
     /// Setup core data stores and its dependencies.

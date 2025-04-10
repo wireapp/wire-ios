@@ -67,9 +67,34 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
     func testVerify_It_Throws_User_Unauthenticated_Error() async throws {
 
         // Mock
-        let validCookie = try XCTUnwrap(Scaffolding.validCookie)
-        cookieStorage.fetchCookies_MockValue = [validCookie]
         cookieStorage.fetchCookies_MockValue = [.init()]
+
+        // Then
+        await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.userUnauthenticated) { [self] in
+            // When
+            try await sut.invoke()
+        }
+
+    }
+
+    func testVerify_It_Throws_User_Unauthenticated_Error_When_Cookie_Expired() async throws {
+
+        // Mock
+        let expiredCookie = try XCTUnwrap(Scaffolding.expiredCookie)
+        cookieStorage.fetchCookies_MockValue = [expiredCookie]
+
+        // Then
+        await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.userUnauthenticated) { [self] in
+            // When
+            try await sut.invoke()
+        }
+
+    }
+
+    func testVerify_It_Throws_User_Unauthenticated_Error_When_No_Cookies_Found() async throws {
+
+        // Mock
+        cookieStorage.fetchCookies_MockValue = []
 
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.userUnauthenticated) { [self] in
@@ -114,6 +139,14 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
             .value: "some value",
             .domain: "some domain",
             .expires: Date.distantFuture
+        ])
+
+        static let expiredCookie = HTTPCookie(properties: [
+            .name: "zuid",
+            .path: "some path",
+            .value: "some value",
+            .domain: "some domain",
+            .expires: Date.distantPast
         ])
     }
 
