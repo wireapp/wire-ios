@@ -15,3 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+public import Foundation
+
+// sourcery: AutoMockable
+public protocol ImportBackupUseCaseProtocol: Sendable {
+    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+}

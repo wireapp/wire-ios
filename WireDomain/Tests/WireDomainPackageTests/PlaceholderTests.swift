@@ -16,9 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import Testing
+import WireDomainPackageSupport
 
-// sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol: Sendable {
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+@testable import WireDomainPackage
+
+struct PlaceholderTests {
+
+    @Test func testNothing() async throws {
+        #expect(Bool(false))
+    }
+
 }
