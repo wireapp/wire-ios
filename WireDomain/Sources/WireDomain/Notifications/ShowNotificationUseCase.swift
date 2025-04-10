@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CallKit
 import Foundation
 import UserNotifications
-import WireLogging
-import CallKit
 import WireDataModel
+import WireLogging
 
 protocol ShowNotificationUseCaseProtocol {
     func invoke(
@@ -29,12 +29,12 @@ protocol ShowNotificationUseCaseProtocol {
 }
 
 struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
-    
+
     private let contentHandler: (UNNotificationContent) -> Void
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let selectedAccount: Account
     private let accountManager: AccountManager
-    
+
     init(
         contentHandler: @escaping (UNNotificationContent) -> Void,
         conversationLocalStore: any ConversationLocalStoreProtocol,
@@ -46,12 +46,12 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
         self.selectedAccount = selectedAccount
         self.accountManager = accountManager
     }
-    
+
     func invoke(
         userNotifications: [UserNotification]
     ) async throws {
         var notifications: [UNMutableNotificationContent] = []
-        
+
         for userNotification in userNotifications {
             switch userNotification {
             case let .text(notificationContent):
@@ -67,15 +67,15 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
                 }
             }
         }
-        
+
         await showNotifications(notifications)
     }
-    
+
     private func showNotifications(
         _ notifications: [UNMutableNotificationContent]
     ) async {
         var notification: UNMutableNotificationContent
-        
+
         switch notifications.count {
         case 0:
             // Nothing to show
@@ -87,27 +87,27 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
             let body = NotificationBody.bundled(messagesCount: notifications.count)
             notification.body = body.make()
         }
-        
+
         notification.interruptionLevel = .timeSensitive
         notification.badge = await getNotificationBadge()
-        
+
         WireLogger.notifications.info(
             "Displaying push notification",
             attributes: .newNSE
         )
-        
+
         // Displays the notification to the user
         contentHandler(notification)
     }
-    
+
     private func getNotificationBadge() async -> NSNumber {
         let unreadConversationCount = await Int(
             conversationLocalStore.unreadConversationCount()
         )
-        
+
         selectedAccount.unreadConversationCount = unreadConversationCount
         let totalUnreadCount = accountManager.totalUnreadCount
-        
+
         return NSNumber(value: totalUnreadCount)
     }
 }

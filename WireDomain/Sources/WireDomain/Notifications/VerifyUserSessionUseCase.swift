@@ -36,7 +36,7 @@ struct VerifyUserSessionUseCase {
     }
 
     // MARK: - Properties
-    
+
     private let cookieStorage: any CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
 
@@ -61,10 +61,10 @@ struct VerifyUserSessionUseCase {
         guard hasExpirationDate else {
             throw Failure.userUnauthenticated
         }
-        
+
         try await setupCoreData()
     }
-    
+
     /// Setup core data stores and its dependencies.
     private func setupCoreData() async throws {
         guard coreData.storesExists else {

@@ -28,15 +28,15 @@ struct ConversationMemberLeaveEventNotificationBuilder {
         event: ConversationMemberLeaveEvent
     ) async -> UserNotification? {
         let removedUserIDs = Set(event.removedUserIDs.compactMap(\.uuid))
-        
+
         let canBuildNotification = await validator.validate(
             removedUserIDs: removedUserIDs
         )
-        
+
         guard canBuildNotification else {
             return nil
         }
-        
+
         let conversationID = event.conversationID
         let senderID = event.senderID
         let conversation = await context.getConversation(conversationID: conversationID)
@@ -49,7 +49,7 @@ struct ConversationMemberLeaveEventNotificationBuilder {
         let isGroupConversation = await context.isGroupConversation(
             conversation: conversation
         )
-        
+
         return buildMemberLeaveNotification(
             isGroupConversation: isGroupConversation,
             teamName: teamName,
@@ -83,7 +83,7 @@ struct ConversationMemberLeaveEventNotificationBuilder {
             content.title = title
         }
 
-        let body = if let senderName = senderName {
+        let body = if let senderName {
             String.formated(key: "push.notification.body.senderRemovedYou", bundle: .module, senderName)
         } else {
             String.localized(key: "push.notification.body.removedYou", bundle: .module)
@@ -166,18 +166,18 @@ extension ConversationMemberLeaveEventNotificationBuilder {
         func validate(
             removedUserIDs: Set<UUID>
         ) async -> Bool {
-            
+
             let selfUser = await userLocalStore.fetchSelfUser()
             let selfUserID = await userLocalStore.id(for: selfUser)
 
             return removedUserIDs.contains(selfUserID)
         }
     }
-    
+
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
-        
+
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
@@ -186,11 +186,11 @@ extension ConversationMemberLeaveEventNotificationBuilder {
                 domain: conversationID.domain
             )
         }
-        
+
         func getSelfUser() async -> ZMUser {
             await userLocalStore.fetchSelfUser()
         }
-        
+
         func getSender(
             senderID: UserID
         ) async -> ZMUser {
@@ -199,27 +199,27 @@ extension ConversationMemberLeaveEventNotificationBuilder {
                 domain: senderID.domain
             )
         }
-        
+
         func senderName(
             sender: ZMUser
         ) async -> String? {
             await userLocalStore.name(for: sender)
         }
-        
+
         func isGroupConversation(conversation: ZMConversation) async -> Bool {
             await conversationLocalStore.isGroupConversation(conversation)
         }
-        
+
         func selfUserID(selfUser: ZMUser) async -> UUID {
             await userLocalStore.id(for: selfUser)
         }
-        
+
         func conversationName(
             conversation: ZMConversation
         ) async -> String? {
             await conversationLocalStore.name(for: conversation)
         }
-        
+
         func teamName(
             selfUser: ZMUser
         ) async -> String? {

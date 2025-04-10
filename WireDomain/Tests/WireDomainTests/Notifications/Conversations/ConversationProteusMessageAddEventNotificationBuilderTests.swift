@@ -67,20 +67,21 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        
+
         sut = ConversationProteusMessageAddEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore),
+                messageLocalStore: messageLocalStore
+            ),
             validator: .init(
                 conversationLocalStore: conversationLocalStore
             )
         )
-        
+
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
-        
+
         // Then
         try await internalTest_assertNotificationContent(
             try XCTUnwrap(userNotification),
@@ -102,13 +103,14 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore),
+                messageLocalStore: messageLocalStore
+            ),
             validator: .init(conversationLocalStore: conversationLocalStore)
         )
-        
+
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
-        
+
         // Then
         try await internalTest_assertNotificationContent(
             try XCTUnwrap(userNotification),
@@ -125,18 +127,19 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        
+
         sut = ConversationProteusMessageAddEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore),
+                messageLocalStore: messageLocalStore
+            ),
             validator: .init(conversationLocalStore: conversationLocalStore)
         )
-        
+
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
-        
+
         // Then
         try await internalTest_assertNotificationContent(
             try XCTUnwrap(userNotification),
@@ -162,13 +165,14 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore),
+                messageLocalStore: messageLocalStore
+            ),
             validator: .init(conversationLocalStore: conversationLocalStore)
         )
-        
+
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
-        
+
         // Then
         XCTAssertNil(userNotification)
     }
@@ -210,14 +214,14 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
 
         // Sound
         XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
-        
+
 
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,
             Scaffolding.conversationID.uuid.uuidString.lowercased()
         )
-        
+
         // User info
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)
         XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! String, UUID.mockID3.uuidString)
@@ -268,7 +272,7 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
         static let aliceID = UserID(uuid: UUID(), domain: "domain.com")
         static let aliceClientID = "efgh5678"
         static let selfClientID = "abcd1234"
-        
+
         static let event = ConversationProteusMessageAddEvent(
             conversationID: conversationID,
             senderID: userID,
@@ -278,9 +282,9 @@ final class ConversationProteusMessageAddEventNotificationBuilderTests: XCTestCa
             messageSenderClientID: aliceClientID,
             messageRecipientClientID: selfClientID
         )
-        
+
         static let messageContent = "foo"
-        
+
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }
 }

@@ -37,7 +37,7 @@ struct UserEventNotificationBuilder: UserEventNotificationBuilderProtocol {
         event: UserEvent
     ) async throws -> UserNotification? {
         let canDisplayNotification = await validator.validate()
-        
+
         guard canDisplayNotification else {
             return nil
         }
@@ -64,7 +64,7 @@ struct UserEventNotificationBuilder: UserEventNotificationBuilderProtocol {
 
 extension UserEventNotificationBuilder {
     struct Validator {
-        
+
         func validate() async -> Bool {
             true // No top level validation criteria for these notifications
         }

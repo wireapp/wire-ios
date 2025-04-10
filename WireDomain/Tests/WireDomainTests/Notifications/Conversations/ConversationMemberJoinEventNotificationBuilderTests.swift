@@ -250,21 +250,21 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
-        
+
         static let selfUserAddedEvent = ConversationMemberJoinEvent(
             conversationID: conversationID,
             senderID: userID,
             timestamp: .now,
             members: [selfMember]
         )
-        
+
         static let otherUserAddedEvent = ConversationMemberJoinEvent(
             conversationID: conversationID,
             senderID: userID,
             timestamp: .now,
             members: [otherMember]
         )
-        
+
         static let selfMember = Conversation.Member(
             qualifiedID: nil,
             id: selfUserID, // self user was added, notification will be processed
@@ -279,7 +279,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
             mutedStatus: nil,
             mutedReference: nil
         )
-        
+
         static let otherMember = Conversation.Member(
             qualifiedID: nil,
             id: .mockID4, // self user was NOT added, notification will not be processed

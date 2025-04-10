@@ -28,12 +28,12 @@ protocol ConversationEventNotificationBuilderProtocol {
 }
 
 struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilderProtocol {
-    
+
     enum Failure: Error {
         case failedToDecryptMLSMessage
         case failedToDecryptProteusMessage
     }
-    
+
     let validator: ConversationEventNotificationBuilder.Validator
     let conversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilder
     let conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder
@@ -52,11 +52,11 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
             senderID: event.senderID,
             time: event.timestamp
         )
-        
+
         guard canDisplayNotification else {
             return nil
         }
-        
+
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
             let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
@@ -66,10 +66,10 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
                 decryptedMessage: decryptedMessage,
                 isProteus: false
             )
-            
+
             // Gets its calling payload.
             let calling = genericMessage.calling
-            
+
             // Builds a calling notification - if there's a call.
             let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
                 calling: calling,
@@ -77,7 +77,7 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
                 conversationID: mlsMessageEvent.conversationID,
                 senderID: mlsMessageEvent.senderID
             )
-            
+
             if let callingNotification {
                 return callingNotification
             } else {
@@ -95,16 +95,16 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
                 decryptedMessage: decryptedMessage,
                 external: external
             )
-            
+
             let calling = genericMessage.calling
-            
+
             let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
                 calling: calling,
                 at: proteusMessageEvent.timestamp,
                 conversationID: proteusMessageEvent.conversationID,
                 senderID: proteusMessageEvent.senderID
             )
-            
+
             if let callingNotification {
                 return callingNotification
             } else {
@@ -170,7 +170,7 @@ extension ConversationEventNotificationBuilder {
         let userLocalStore: any UserLocalStoreProtocol
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let messageLocalStore: any MessageLocalStoreProtocol
-        
+
         func validate(
             conversationID: ConversationID,
             senderID: UserID,
@@ -181,9 +181,10 @@ extension ConversationEventNotificationBuilder {
                 domain: conversationID.domain
             )
 
-            let conversationMutedMessages = await conversationLocalStore.conversationMutedMessageTypesIncludingAvailability(
-                conversation
-            )
+            let conversationMutedMessages = await conversationLocalStore
+                .conversationMutedMessageTypesIncludingAvailability(
+                    conversation
+                )
 
             let isConversationMuted = conversationMutedMessages != .none
 
@@ -196,7 +197,7 @@ extension ConversationEventNotificationBuilder {
             let lastReadTimestamp = await conversationLocalStore.lastReadServerTimestamp(conversation)
 
             guard let isSelfUser,
-                    !isSelfUser,
+                  !isSelfUser,
                   !isConversationMuted else {
                 return false
             }

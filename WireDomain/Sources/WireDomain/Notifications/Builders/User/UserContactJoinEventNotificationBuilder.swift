@@ -21,7 +21,7 @@ import WireAPI
 import WireDataModel
 
 struct UserContactJoinEventNotificationBuilder {
-    
+
     let context: Context
     let validator: Validator
 
@@ -29,13 +29,13 @@ struct UserContactJoinEventNotificationBuilder {
         event: UserContactJoinEvent
     ) async -> UserNotification? {
         let canBuildNotification = await validator.validate()
-        
+
         guard canBuildNotification else {
             return nil
         }
-        
+
         let name = event.name
-        
+
         return buildUserContactJoinNotification(
             name: name
         )
@@ -53,7 +53,7 @@ struct UserContactJoinEventNotificationBuilder {
             bundle: .module,
             name
         )
-        
+
         content.body = body
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
@@ -81,7 +81,7 @@ extension UserContactJoinEventNotificationBuilder {
             true // No validation criteria for this notification
         }
     }
-    
+
     struct Context {}
 }
 

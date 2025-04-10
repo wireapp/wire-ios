@@ -28,15 +28,15 @@ struct ConversationDeleteEventNotificationBuilder {
         event: ConversationDeleteEvent
     ) async -> UserNotification? {
         let conversationID = event.conversationID
-        
+
         let canBuildNotification = await validator.validate(
             conversationID: conversationID
         )
-        
+
         guard canBuildNotification else {
             return nil
         }
-        
+
         let senderID = event.senderID
         let conversation = await context.getConversation(conversationID: conversationID)
         let sender = await context.getSender(senderID: senderID)
@@ -48,7 +48,7 @@ struct ConversationDeleteEventNotificationBuilder {
         let isGroupConversation = await context.isGroupConversation(
             conversation: conversation
         )
-        
+
         return await buildDeletedConversationNotification(
             conversation: conversation,
             isGroupConversation: isGroupConversation,
@@ -84,7 +84,7 @@ struct ConversationDeleteEventNotificationBuilder {
             content.title = title
         }
 
-        let body = if let senderName = senderName {
+        let body = if let senderName {
             String.formated(key: "push.notification.body.senderDeletedGroup", bundle: .module, senderName)
         } else {
             String.localized(key: "push.notification.body.deletedGroup", bundle: .module)
@@ -173,17 +173,15 @@ extension ConversationDeleteEventNotificationBuilder {
                 id: conversationID.uuid,
                 domain: conversationID.domain
             )
-            
-            let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
-            
-            return isGroupConversation
+
+            return await conversationLocalStore.isGroupConversation(conversation)
         }
     }
-    
+
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
-        
+
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
@@ -192,11 +190,11 @@ extension ConversationDeleteEventNotificationBuilder {
                 domain: conversationID.domain
             )
         }
-        
+
         func getSelfUser() async -> ZMUser {
             await userLocalStore.fetchSelfUser()
         }
-        
+
         func getSender(
             senderID: UserID
         ) async -> ZMUser {
@@ -205,33 +203,33 @@ extension ConversationDeleteEventNotificationBuilder {
                 domain: senderID.domain
             )
         }
-        
+
         func senderName(
             sender: ZMUser
         ) async -> String? {
             await userLocalStore.name(for: sender)
         }
-        
+
         func isGroupConversation(conversation: ZMConversation) async -> Bool {
             await conversationLocalStore.isGroupConversation(conversation)
         }
-        
+
         func selfUserID(selfUser: ZMUser) async -> UUID {
             await userLocalStore.id(for: selfUser)
         }
-        
+
         func conversationName(
             conversation: ZMConversation
         ) async -> String? {
             await conversationLocalStore.name(for: conversation)
         }
-        
+
         func teamName(
             selfUser: ZMUser
         ) async -> String? {
             await userLocalStore.teamName(for: selfUser)
         }
-        
+
         func decreaseUnreadCount(conversation: ZMConversation) async {
             await conversationLocalStore.decreaseUnreadCount(
                 for: conversation

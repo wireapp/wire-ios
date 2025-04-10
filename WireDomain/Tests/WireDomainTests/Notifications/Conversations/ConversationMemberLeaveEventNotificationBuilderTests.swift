@@ -252,7 +252,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
-        
+
         static let selfUserRemovedEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
             senderID: userID, // self user was removed, notification will be processed
@@ -260,7 +260,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
             removedUserIDs: [.init(uuid: selfUserID, domain: "")],
             reason: .userRemoved
         )
-        
+
         static let otherUserRemovedEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
             senderID: userID, // self user was not removed, notification will NOT be processed

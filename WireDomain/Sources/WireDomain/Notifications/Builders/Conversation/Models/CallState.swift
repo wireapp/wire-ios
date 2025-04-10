@@ -21,7 +21,7 @@ enum CallState: Equatable {
     case incomingCall(video: Bool)
     case missedCall
     case unhandled
-    
+
     init(callContent: CallContent) {
         let isStartCall = callContent.type.isOne(
             of: [
@@ -38,7 +38,7 @@ enum CallState: Equatable {
                 CallType.confEnd
             ]
         )
-        
+
         if isIncomingCall {
             self = .incomingCall(video: callContent.properties?.isVideo ?? false)
         } else if isEndCall {
@@ -46,6 +46,6 @@ enum CallState: Equatable {
         } else {
             self = .unhandled
         }
-        
+
     }
 }

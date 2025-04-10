@@ -65,19 +65,20 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
 
         let isGroup = true
         let isTeam = true
-        
+
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        
+
         sut = ConversationMLSMessageAddEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore),
+                messageLocalStore: messageLocalStore
+            ),
             validator: .init(conversationLocalStore: conversationLocalStore)
         )
-        
+
         let userNotification = await sut.buildContent(event: Scaffolding.event)
-        
+
         try await internalTest_assertNotificationContent(
             try XCTUnwrap(userNotification),
             isGroup: isGroup,
@@ -93,17 +94,18 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         let isTeam = false
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        
+
         sut = ConversationMLSMessageAddEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore),
+                messageLocalStore: messageLocalStore
+            ),
             validator: .init(conversationLocalStore: conversationLocalStore)
         )
-        
+
         let userNotification = await sut.buildContent(event: Scaffolding.event)
-        
+
         try await internalTest_assertNotificationContent(
             try XCTUnwrap(userNotification),
             isGroup: isGroup,
@@ -124,13 +126,14 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore),
+                messageLocalStore: messageLocalStore
+            ),
             validator: .init(conversationLocalStore: conversationLocalStore)
         )
-        
+
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
-        
+
         // Then
         try await internalTest_assertNotificationContent(
             try XCTUnwrap(userNotification),
@@ -156,13 +159,14 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore),
+                messageLocalStore: messageLocalStore
+            ),
             validator: .init(conversationLocalStore: conversationLocalStore)
         )
-        
+
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
-        
+
         // Then
         XCTAssertNil(userNotification)
     }
@@ -203,14 +207,14 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         )
 
         XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
-        
+
 
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,
             Scaffolding.conversationID.uuid.uuidString.lowercased()
         )
-        
+
         // User info
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)
         XCTAssertEqual(notificationContent.userInfo["senderIDString"] as! String, UUID.mockID3.uuidString)
@@ -269,7 +273,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
                 senderClientID: UUID.mockID1.uuidString
             )]
         )
-        
+
         static let messageContent = "foo"
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }

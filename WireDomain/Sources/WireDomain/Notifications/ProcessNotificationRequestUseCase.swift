@@ -25,22 +25,20 @@ protocol ProcessNotificationUseCaseProtocol {
 
 struct ProcessNotificationRequestUseCase: ProcessNotificationUseCaseProtocol {
     private let request: UNNotificationRequest
-    
+
     init(request: UNNotificationRequest) {
         self.request = request
     }
-    
+
     func invoke() async throws -> NotificationPayload {
         let userInfo = request.content.userInfo
         let data = try JSONSerialization.data(
             withJSONObject: userInfo
         )
-        
-        let notificationPayload = try JSONDecoder().decode(
+
+        return try JSONDecoder().decode(
             NotificationPayload.self,
             from: data
         )
-        
-        return notificationPayload
     }
 }

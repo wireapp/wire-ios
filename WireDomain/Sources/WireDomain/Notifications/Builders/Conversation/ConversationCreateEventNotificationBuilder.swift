@@ -28,11 +28,11 @@ struct ConversationCreateEventNotificationBuilder {
         event: ConversationCreateEvent
     ) async -> UserNotification? {
         let canBuildNotification = await validator.validate()
-        
+
         guard canBuildNotification else {
             return nil
         }
-        
+
         let conversationID = event.conversationID
         let senderID = event.senderID
         let conversation = await context.getConversation(conversationID: conversationID)
@@ -45,7 +45,7 @@ struct ConversationCreateEventNotificationBuilder {
         let isGroupConversation = await context.isGroupConversation(
             conversation: conversation
         )
-        
+
         return await buildConversationCreatedNotification(
             isGroupConversation: isGroupConversation,
             teamName: teamName,
@@ -79,7 +79,7 @@ struct ConversationCreateEventNotificationBuilder {
             content.title = title
         }
 
-        let body = if let senderName = senderName {
+        let body = if let senderName {
             String.formated(key: "push.notification.body.senderCreatedConversation", bundle: .module, senderName)
         } else {
             String.localized(key: "push.notification.body.createdConversation", bundle: .module)
@@ -164,11 +164,11 @@ extension ConversationCreateEventNotificationBuilder {
             return [Availability.none, .available].contains(availability)
         }
     }
-    
+
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
-        
+
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
@@ -177,11 +177,11 @@ extension ConversationCreateEventNotificationBuilder {
                 domain: conversationID.domain
             )
         }
-        
+
         func getSelfUser() async -> ZMUser {
             await userLocalStore.fetchSelfUser()
         }
-        
+
         func getSender(
             senderID: UserID
         ) async -> ZMUser {
@@ -190,27 +190,27 @@ extension ConversationCreateEventNotificationBuilder {
                 domain: senderID.domain
             )
         }
-        
+
         func senderName(
             sender: ZMUser
         ) async -> String? {
             await userLocalStore.name(for: sender)
         }
-        
+
         func isGroupConversation(conversation: ZMConversation) async -> Bool {
             await conversationLocalStore.isGroupConversation(conversation)
         }
-        
+
         func selfUserID(selfUser: ZMUser) async -> UUID {
             await userLocalStore.id(for: selfUser)
         }
-        
+
         func conversationName(
             conversation: ZMConversation
         ) async -> String? {
             await conversationLocalStore.name(for: conversation)
         }
-        
+
         func teamName(
             selfUser: ZMUser
         ) async -> String? {

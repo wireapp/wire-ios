@@ -36,35 +36,35 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
     /// Processes the events stream.
     func invoke(updateEvents: AsyncStream<[UpdateEvent]>) async throws -> [UserNotification] {
-         var notifications = [UserNotification]()
-         
-         for await events in updateEvents {
-             for event in events {
-                 if let notification = await generateNotification(for: event) {
-                     notifications.append(notification)
-                 }
-             }
-         }
-         
-         return notifications
-     }
-    
+        var notifications = [UserNotification]()
+
+        for await events in updateEvents {
+            for event in events {
+                if let notification = await generateNotification(for: event) {
+                    notifications.append(notification)
+                }
+            }
+        }
+
+        return notifications
+    }
+
     private func generateNotification(
         for event: UpdateEvent
     ) async -> UserNotification? {
         switch event {
         case let .conversation(conversationEvent):
-            return try? await conversationEventBuilder.buildContent(
+            try? await conversationEventBuilder.buildContent(
                 event: conversationEvent
             )
-            
+
         case let .user(userEvent):
-            return try? await userEventBuilder.buildContent(
+            try? await userEventBuilder.buildContent(
                 event: userEvent
             )
-            
+
         default:
-            return nil
+            nil
         }
     }
 }

@@ -59,7 +59,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         modelHelper = nil
         coreDataStackHelper = nil
     }
-    
+
     // MARK: - CallKit Tests
 
     func testGenerateCallKitNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
@@ -81,12 +81,13 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
             var calling = Calling()
             calling.content = callKitTestUsecase.json
-            
+
             sut = ConversationCallingEventNotificationBuilder(
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
                     userLocalStore: userLocalStore,
-                    userDefaults: defaults),
+                    userDefaults: defaults
+                ),
                 validator: .init(
                     userLocalStore: userLocalStore,
                     conversationLocalStore: conversationLocalStore,
@@ -94,7 +95,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 ),
                 accountID: Scaffolding.accountID
             )
-            
+
             let userNotification = await sut.buildContent(
                 calling: calling,
                 at: .now,
@@ -135,7 +136,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
                     userLocalStore: userLocalStore,
-                    userDefaults: defaults),
+                    userDefaults: defaults
+                ),
                 validator: .init(
                     userLocalStore: userLocalStore,
                     conversationLocalStore: conversationLocalStore,
@@ -143,7 +145,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 ),
                 accountID: Scaffolding.accountID
             )
-            
+
             let userNotification = await sut.buildContent(
                 calling: calling,
                 at: .now,
@@ -184,7 +186,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
                     userLocalStore: userLocalStore,
-                    userDefaults: defaults),
+                    userDefaults: defaults
+                ),
                 validator: .init(
                     userLocalStore: userLocalStore,
                     conversationLocalStore: conversationLocalStore,
@@ -192,7 +195,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 ),
                 accountID: Scaffolding.accountID
             )
-            
+
             let userNotification = await sut.buildContent(
                 calling: calling,
                 at: .now,
@@ -234,7 +237,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                userDefaults: defaults),
+                userDefaults: defaults
+            ),
             validator: .init(
                 userLocalStore: userLocalStore,
                 conversationLocalStore: conversationLocalStore,
@@ -242,7 +246,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             ),
             accountID: .mockID1
         )
-        
+
         let userNotification = await sut.buildContent(
             calling: calling,
             at: .now,
@@ -252,9 +256,9 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         XCTAssertNil(userNotification)
     }
-    
+
     // MARK: - "Regular" notification call tests
-    
+
     func testGenerateCallNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
 
         // Mock
@@ -273,7 +277,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
                     userLocalStore: userLocalStore,
-                    userDefaults: defaults),
+                    userDefaults: defaults
+                ),
                 validator: .init(
                     userLocalStore: userLocalStore,
                     conversationLocalStore: conversationLocalStore,
@@ -281,7 +286,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 ),
                 accountID: .mockID1
             )
-            
+
             let userNotification = await sut.buildContent(
                 calling: calling,
                 at: .now,
@@ -316,7 +321,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
                     userLocalStore: userLocalStore,
-                    userDefaults: defaults),
+                    userDefaults: defaults
+                ),
                 validator: .init(
                     userLocalStore: userLocalStore,
                     conversationLocalStore: conversationLocalStore,
@@ -324,7 +330,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 ),
                 accountID: .mockID1
             )
-            
+
             let userNotification = await sut.buildContent(
                 calling: calling,
                 at: .now,
@@ -360,7 +366,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
                     userLocalStore: userLocalStore,
-                    userDefaults: defaults),
+                    userDefaults: defaults
+                ),
                 validator: .init(
                     userLocalStore: userLocalStore,
                     conversationLocalStore: conversationLocalStore,
@@ -368,7 +375,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 ),
                 accountID: .mockID1
             )
-            
+
             let userNotification = await sut.buildContent(
                 calling: calling,
                 at: .now,
@@ -411,7 +418,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                userDefaults: defaults),
+                userDefaults: defaults
+            ),
             validator: .init(
                 userLocalStore: userLocalStore,
                 conversationLocalStore: conversationLocalStore,
@@ -419,7 +427,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             ),
             accountID: .mockID1
         )
-        
+
         let userNotification = await sut.buildContent(
             calling: calling,
             at: .now,
@@ -429,9 +437,9 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
         XCTAssertNil(userNotification)
     }
-    
+
     // MARK: - Internal tests assertion helpers
-    
+
     private func internalCallKitTest_assertNotificationContent(
         testUsecase: CallKitTestUseCase,
         content: UserNotification,

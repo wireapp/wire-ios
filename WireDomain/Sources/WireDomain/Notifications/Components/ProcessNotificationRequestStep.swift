@@ -27,9 +27,9 @@ protocol ProcessNotificationRequestStepFactory {
 }
 
 final class ProcessNotificationRequestStep: Component<EmptyDependency>, ProcessNotificationRequestStepFactory {
-    
+
     public var userID: UUID!
-    
+
     func process(
         request: UNNotificationRequest
     ) async throws {
@@ -37,15 +37,15 @@ final class ProcessNotificationRequestStep: Component<EmptyDependency>, ProcessN
             request: request
         )
         let payload = try await processNotificationUseCase.invoke()
-        self.userID = payload.userID
-        
+        userID = payload.userID
+
         try await verifyUserStep.verifyUserSession()
     }
-    
+
     var verifyUserStep: any VerifyUserStepFactory {
         VerifyUserStep(parent: self)
     }
-    
+
 }
 
 

@@ -17,8 +17,8 @@
 //
 
 import WireAPISupport
-import XCTest
 import WireDataModel
+import XCTest
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -30,7 +30,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
 
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
-        
+
         let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let url = applicationSupport.appendingPathComponent(
             "ShowNotificationUseCaseTests"
@@ -51,15 +51,15 @@ final class ShowNotificationUseCaseTests: XCTestCase {
     }
 
     func testProcess_It_Invokes_Notification_Content_Handler() async throws {
-        
+
         // Mock
-        
+
         let userNotifications: [UserNotification] = [
             .text(UNMutableNotificationContent())
         ]
-        
+
         conversationLocalStore.unreadConversationCount_MockValue = 1
-        
+
         // When
         try await sut.invoke(
             userNotifications: userNotifications

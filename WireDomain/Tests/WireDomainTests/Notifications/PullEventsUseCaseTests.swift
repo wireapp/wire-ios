@@ -47,8 +47,10 @@ final class PullEventsUseCaseTests: XCTestCase {
 
         // Mock
         eventsSync.pull_MockValue = AsyncStream {
-            [UpdateEvent.user(.pushRemove),
-             UpdateEvent.user(.pushRemove)]
+            [
+                UpdateEvent.user(.pushRemove),
+                UpdateEvent.user(.pushRemove)
+            ]
         }
 
         // When

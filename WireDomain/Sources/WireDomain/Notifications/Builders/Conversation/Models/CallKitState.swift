@@ -21,7 +21,7 @@ enum CallKitState: Equatable {
     case initiatesRinging
     case terminatesRinging
     case unhandled
-    
+
     init(callContent: CallContent, wasCallHandleReported: Bool) {
         let isStartCall = callContent.type.isOne(
             of: [
@@ -40,7 +40,7 @@ enum CallKitState: Equatable {
         )
         let isAnsweredElsewhere = isStartCall && callContent.responded
         let isRejected = callContent.type == CallType.reject
-        
+
         if isIncomingCall, !wasCallHandleReported {
             self = .initiatesRinging
         } else if isEndCall || isAnsweredElsewhere || isRejected, wasCallHandleReported {

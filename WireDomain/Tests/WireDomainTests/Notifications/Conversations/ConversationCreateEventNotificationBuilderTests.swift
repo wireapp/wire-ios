@@ -64,7 +64,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
         let isTeam = true
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
-        
+
         sut = ConversationCreateEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
@@ -100,7 +100,7 @@ final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
             ),
             validator: .init(userLocalStore: userLocalStore)
         )
-        
+
         // When
         let userNotification = await sut.buildContent(event: Scaffolding.event)
 

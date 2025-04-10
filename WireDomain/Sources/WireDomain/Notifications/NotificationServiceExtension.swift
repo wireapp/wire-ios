@@ -51,11 +51,11 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             }
 
             do {
-                
+
                 let rootComponent = try NotificationServiceExtensionFlow(
                     contentHandler: contentHandler
                 )
-                
+
                 try await rootComponent.start(request: request)
 
             } catch {

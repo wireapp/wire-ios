@@ -37,18 +37,16 @@ struct PullEventsUseCase: PullEventsUseCaseProtocol {
     ) {
         self.pendingEventsSync = pendingEventsSync
     }
-    
+
     func invoke() async throws -> AsyncStream<[UpdateEvent]> {
-        
+
         do {
-            let eventsStream = try await pendingEventsSync.pull()
-            
-            return eventsStream
-            
+            return try await pendingEventsSync.pull()
+
         } catch {
             throw Failure.unableToPullPendingEvents(error)
         }
-        
+
     }
 
 }

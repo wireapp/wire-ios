@@ -34,33 +34,33 @@ protocol VerifyUserStepFactory {
 }
 
 final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFactory {
-    
+
     enum Failure: Error {
         case noAccountFound
     }
-    
+
     public var selectedAccount: Account!
 
     func verifyUserSession() async throws {
         try setSelectedAccount()
-        
+
         let verifyUserSessionUseCase = VerifyUserSessionUseCase(
             cookieStorage: cookieStorage,
             coreData: coreData
         )
-        
+
         try await verifyUserSessionUseCase.invoke()
-        
+
         try await pullEventsStep.pullEvents()
     }
-    
+
     private func setSelectedAccount() throws {
         guard let selectedAccount = accountManager.account(
             with: dependency.userID
         ) else {
             throw Failure.noAccountFound
         }
-        
+
         self.selectedAccount = selectedAccount
     }
 
@@ -72,7 +72,7 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFacto
 }
 
 extension VerifyUserStep {
-    
+
     public var accountManager: AccountManager {
         AccountManager(
             sharedDirectory: dependency.applicationContainer

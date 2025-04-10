@@ -39,13 +39,13 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepFacto
 
     func pullEvents() async throws {
         let selfUser = await userLocalStore.selfUserInfo()
-        
+
         guard let selfClientID = selfUser.clientId else {
             return
         }
-        
+
         let selfUserID = selfUser.id
-        
+
         let updateEventsAPI = await updateEventsAPI(
             selfClientID: selfClientID
         )
@@ -60,13 +60,13 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepFacto
             store: updateEventsLocalStore,
             decryptor: updateEventDecryptor
         )
-        
+
         let pullEventsUseCase = PullEventsUseCase(
             pendingEventsSync: pendingEventsSync
         )
-        
+
         let eventsStream = try await pullEventsUseCase.invoke()
-        
+
         try await generateNotificationStep.generateNotification(
             eventsStream: eventsStream
         )

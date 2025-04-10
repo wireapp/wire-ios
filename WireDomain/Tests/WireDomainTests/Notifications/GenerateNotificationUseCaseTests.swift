@@ -48,15 +48,15 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
 
     func testProcess_It_Invokes_Notification_Content_Handler() async throws {
         // Mock
-        
+
         conversationEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
         userEventBuilder.buildContentEvent_MockValue = .text(UNMutableNotificationContent())
-        
+
         let asyncStream = AsyncStream<[UpdateEvent]> {
             $0.yield([Scaffolding.userPushRemoveEvent, Scaffolding.conversationRenameEvent])
             $0.finish()
         }
-        
+
         // When
         let userNotifications = try await sut.invoke(updateEvents: asyncStream)
 
@@ -65,7 +65,7 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
         XCTAssertEqual(conversationEventBuilder.buildContentEvent_Invocations.count, 1)
         XCTAssertEqual(userEventBuilder.buildContentEvent_Invocations.count, 1)
     }
-    
+
     private enum Scaffolding {
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
@@ -76,7 +76,8 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
                     conversationID: conversationID,
                     senderID: userID,
                     timestamp: .now,
-                    newName: "test")
+                    newName: "test"
+                )
             )
         )
     }

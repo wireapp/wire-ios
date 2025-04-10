@@ -38,24 +38,24 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         let external = event.externalData?.encryptedMessage
         let senderID = event.senderID
         let conversationID = event.conversationID
-        
+
         guard let message = decryptMessage(
             decryptedMessage: decryptedMessage,
             external: external
         ) else {
             return nil
         }
-        
+
         let canDisplayNotification = await validator.validate(
             message: message,
             senderID: senderID,
             conversationID: conversationID
         )
-        
+
         guard canDisplayNotification else {
             return nil
         }
-        
+
         let hidesNotificationContent = await context.shouldHideNotification()
         let conversation = await context.getConversation(conversationID: conversationID)
         let sender = await context.getSender(senderID: senderID)
@@ -67,7 +67,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
         let isGroupConversation = await context.isGroupConversation(
             conversation: conversation
         )
-        
+
         guard !hidesNotificationContent else {
             return buildHiddenNotification(
                 selfUserID: selfUserID,
@@ -563,7 +563,7 @@ struct ConversationProteusMessageAddEventNotificationBuilder {
             return
         }
     }
-    
+
     private func decryptMessage(
         decryptedMessage: String?,
         external: String?
@@ -600,16 +600,16 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 senderID: senderID.uuid,
                 conversation: conversation
             )
-            
+
             return !isMessageSilenced
         }
     }
-    
+
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
         let messageLocalStore: any MessageLocalStoreProtocol
-        
+
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
@@ -618,11 +618,11 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 domain: conversationID.domain
             )
         }
-        
+
         func getSelfUser() async -> ZMUser {
             await userLocalStore.fetchSelfUser()
         }
-        
+
         func getSender(
             senderID: UserID
         ) async -> ZMUser {
@@ -631,43 +631,43 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 domain: senderID.domain
             )
         }
-        
+
         func isGroupConversation(conversation: ZMConversation) async -> Bool {
             await conversationLocalStore.isGroupConversation(conversation)
         }
-        
+
         func selfUserID(selfUser: ZMUser) async -> UUID {
             await userLocalStore.id(for: selfUser)
         }
-        
+
         func senderName(
             sender: ZMUser
         ) async -> String? {
             await userLocalStore.name(for: sender)
         }
-        
+
         func conversationName(
             conversation: ZMConversation
         ) async -> String? {
             await conversationLocalStore.name(for: conversation)
         }
-        
+
         func teamName(
             selfUser: ZMUser
         ) async -> String? {
             await userLocalStore.teamName(for: selfUser)
         }
-        
+
         func callerID(
             callContent: CallContent
         ) -> UUID? {
             callContent.callerUserID.flatMap(UUID.init(transportString:))
         }
-        
+
         func shouldHideNotification() async -> Bool {
             await conversationLocalStore.shouldHideNotification()
         }
-        
+
         func fetchMessage(
             id: UUID?,
             conversationID: ConversationID
@@ -678,7 +678,7 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 conversationDomain: conversationID.domain
             )
         }
-        
+
         func isMessageMentionSelf(
             text: Text
         ) async -> Bool {
@@ -686,7 +686,7 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 text: text
             )
         }
-        
+
         func isMessageQuotingSelf(
             message: ZMOTRMessage?
         ) async -> Bool {
@@ -694,7 +694,7 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 quotedMessage: message
             )
         }
-        
+
         func increateUnreadSelfMentionCount(
             for conversation: ZMConversation
         ) async {
@@ -702,7 +702,7 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 for: conversation
             )
         }
-        
+
         func increaseUnreadSelfReplyCount(
             for conversation: ZMConversation
         ) async {
@@ -710,7 +710,7 @@ extension ConversationProteusMessageAddEventNotificationBuilder {
                 for: conversation
             )
         }
-        
+
         func increaseReadCount(
             conversation: ZMConversation
         ) async {

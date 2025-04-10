@@ -34,11 +34,11 @@ struct UserConnectionEventNotificationBuilder {
         event: UserConnectionEvent
     ) async -> UserNotification? {
         let canBuildNotification = await validator.validate()
-        
+
         guard canBuildNotification else {
             return nil
         }
-        
+
         var qualifiedID: WireAPI.QualifiedID?
         let connection = event.connection
 
@@ -47,12 +47,12 @@ struct UserConnectionEventNotificationBuilder {
         } else if let conversationID = connection.conversationID {
             qualifiedID = .init(uuid: conversationID, domain: "")
         }
-        
+
         let isPendingConnection = event.connection.status == .pending
         let connectionStatus = isPendingConnection ? ConnectionStatus.pending : .accepted
         let selfUser = await context.getSelfUser()
         let selfUserID = await context.selfUserID(selfUser: selfUser)
-        
+
         return buildConnectionRequestNotification(
             connectionStatus: connectionStatus,
             username: event.userName,
@@ -140,11 +140,11 @@ extension UserConnectionEventNotificationBuilder {
             true // No validation criteria for this notification
         }
     }
-    
+
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
-        
+
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
@@ -153,11 +153,11 @@ extension UserConnectionEventNotificationBuilder {
                 domain: conversationID.domain
             )
         }
-        
+
         func getSelfUser() async -> ZMUser {
             await userLocalStore.fetchSelfUser()
         }
-        
+
         func getSender(
             senderID: UserID
         ) async -> ZMUser {
@@ -166,27 +166,27 @@ extension UserConnectionEventNotificationBuilder {
                 domain: senderID.domain
             )
         }
-        
+
         func senderName(
             sender: ZMUser
         ) async -> String? {
             await userLocalStore.name(for: sender)
         }
-        
+
         func isGroupConversation(conversation: ZMConversation) async -> Bool {
             await conversationLocalStore.isGroupConversation(conversation)
         }
-        
+
         func selfUserID(selfUser: ZMUser) async -> UUID {
             await userLocalStore.id(for: selfUser)
         }
-        
+
         func conversationName(
             conversation: ZMConversation
         ) async -> String? {
             await conversationLocalStore.name(for: conversation)
         }
-        
+
         func teamName(
             selfUser: ZMUser
         ) async -> String? {

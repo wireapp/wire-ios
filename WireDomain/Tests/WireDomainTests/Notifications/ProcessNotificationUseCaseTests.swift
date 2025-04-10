@@ -33,13 +33,13 @@ final class ProcessNotificationUseCaseTests: XCTestCase {
                 ]
             ]
         ]
-        
+
         let request = UNNotificationRequest(
             identifier: "id",
             content: notificationContent,
             trigger: nil
         )
-        
+
         sut = ProcessNotificationRequestUseCase(
             request: request
         )
@@ -50,10 +50,10 @@ final class ProcessNotificationUseCaseTests: XCTestCase {
     }
 
     func testStartsSync_It_Processes_Notification_Request() async throws {
-        
+
         // When
         let payload = try await sut.invoke()
-        
+
         // Then
         XCTAssertEqual(payload.userID, .mockID1)
         XCTAssertEqual(payload.eventID, .mockID2)

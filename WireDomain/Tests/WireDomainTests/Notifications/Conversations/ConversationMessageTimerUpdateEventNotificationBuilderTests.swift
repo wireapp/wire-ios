@@ -69,7 +69,7 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         let timerEnabledTestCases = [true, false]
 
         for timerEnabledTestCase in timerEnabledTestCases {
-            
+
             sut = ConversationMessageTimerUpdateEventNotificationBuilder(
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
@@ -77,11 +77,11 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
                 ),
                 validator: .init()
             )
-            
+
             let userNotification = await sut.buildContent(
                 event: timerEnabledTestCase ? Scaffolding.timerEnabledEvent : Scaffolding.timerDisabledEvent
             )
-            
+
             try await internalTest_assertNotificationContent(
                 try XCTUnwrap(userNotification),
                 enableTimer: timerEnabledTestCase,
@@ -112,11 +112,11 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
                 ),
                 validator: .init()
             )
-            
+
             let userNotification = await sut.buildContent(
                 event: timerEnabledTestCase ? Scaffolding.timerEnabledEvent : Scaffolding.timerDisabledEvent
             )
-            
+
             try await internalTest_assertNotificationContent(
                 try XCTUnwrap(userNotification),
                 enableTimer: timerEnabledTestCase,
@@ -145,11 +145,11 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
                 ),
                 validator: .init()
             )
-            
+
             let userNotification = await sut.buildContent(
                 event: timerEnabledTestCase ? Scaffolding.timerEnabledEvent : Scaffolding.timerDisabledEvent
             )
-            
+
             try await internalTest_assertNotificationContent(
                 try XCTUnwrap(userNotification),
                 enableTimer: timerEnabledTestCase,
@@ -253,7 +253,7 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
             timestamp: .now,
             newTimer: 10_000
         )
-        
+
         static let timerDisabledEvent = ConversationMessageTimerUpdateEvent(
             conversationID: conversationID,
             senderID: userID,

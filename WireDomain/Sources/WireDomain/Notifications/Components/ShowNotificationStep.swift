@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import NeedleFoundation
 import Foundation
+import NeedleFoundation
 import UserNotifications
 import WireDataModel
 
@@ -47,7 +47,7 @@ final class ShowNotificationStep: Component<ShowNotificationDependency>, ShowNot
             selectedAccount: dependency.selectedAccount,
             accountManager: dependency.accountManager
         )
-        
+
         try await showNotificationUseCase.invoke(
             userNotifications: notifications
         )
