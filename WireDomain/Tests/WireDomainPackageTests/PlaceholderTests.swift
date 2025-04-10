@@ -23,7 +23,8 @@ import WireDomainPackageSupport
 
 struct PlaceholderTests {
 
-    @Test func testNothing() async throws {
+    @Test
+    func testNothing() async throws {
         #expect(Bool(false))
     }
 

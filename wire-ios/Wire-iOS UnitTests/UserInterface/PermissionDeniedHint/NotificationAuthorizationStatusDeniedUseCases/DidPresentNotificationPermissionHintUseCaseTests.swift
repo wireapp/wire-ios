@@ -18,7 +18,6 @@
 
 import WireSystemSupport
 import WireTesting
-import WireUtilitiesSupport
 import XCTest
 
 @testable import Wire
