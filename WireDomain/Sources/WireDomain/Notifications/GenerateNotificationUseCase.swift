@@ -31,16 +31,8 @@ protocol GenerateNotificationUseCaseProtocol {
 
 struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
-    private let conversationEventBuilder: ConversationEventNotificationBuilder
-    private let userEventBuilder: UserEventNotificationBuilder
-
-    init(
-        conversationEventBuilder: ConversationEventNotificationBuilder,
-        userEventBuilder: UserEventNotificationBuilder
-    ) {
-        self.conversationEventBuilder = conversationEventBuilder
-        self.userEventBuilder = userEventBuilder
-    }
+    let conversationEventBuilder: any ConversationEventNotificationBuilderProtocol
+    let userEventBuilder: any UserEventNotificationBuilderProtocol
 
     /// Processes the events stream.
     func invoke(updateEvents: AsyncStream<[UpdateEvent]>) async throws -> [UserNotification] {
