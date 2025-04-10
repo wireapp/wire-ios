@@ -57,21 +57,28 @@ private extension UpdateEvent {
                 return nil
             }
 
-            self = event
+            self = .conversation(.delete(event))
 
         case .conversationMemberJoin:
             guard let event = Self.conversationMemberJoinEvent(from: legacyEvent) else {
                 return nil
             }
 
-            self = event
+            self = .conversation(.memberJoin(event))
+
+        case .conversationMemberLeave:
+            guard let event = Self.conversationMemberLeaveEvent(from: legacyEvent) else {
+                return nil
+            }
+
+            self = .conversation(.memberLeave(event))
 
         default:
             return nil
         }
     }
 
-    private static func conversationDeleteEvent(from event: ZMUpdateEvent) -> UpdateEvent? {
+    private static func conversationDeleteEvent(from event: ZMUpdateEvent) -> ConversationDeleteEvent? {
         let decoder = EventPayloadDecoder()
         guard
             let payload = try? decoder.decode(
@@ -85,16 +92,14 @@ private extension UpdateEvent {
             return nil
         }
 
-        let eventData = ConversationDeleteEvent(
+        return ConversationDeleteEvent(
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp
         )
-
-        return .conversation(.delete(eventData))
     }
 
-    private static func conversationMemberJoinEvent(from event: ZMUpdateEvent) -> UpdateEvent? {
+    private static func conversationMemberJoinEvent(from event: ZMUpdateEvent) -> ConversationMemberJoinEvent? {
         let decoder = EventPayloadDecoder()
         guard
             let payload = try? decoder.decode(
@@ -111,19 +116,9 @@ private extension UpdateEvent {
 
         let memberData = members.map { member in
             Conversation.Member(
-                qualifiedID: member.qualifiedID.map { id in
-                    QualifiedID(
-                        uuid: id.uuid,
-                        domain: id.domain
-                    )
-                },
+                qualifiedID: member.qualifiedID.map(QualifiedID.init),
                 id: member.id,
-                qualifiedTarget: member.qualifiedTarget.map { id in
-                    QualifiedID(
-                        uuid: id.uuid,
-                        domain: id.domain
-                    )
-                },
+                qualifiedTarget: member.qualifiedTarget.map(QualifiedID.init),
                 target: member.target,
                 conversationRole: member.conversationRole,
                 service: member.service.map { service in
@@ -141,14 +136,51 @@ private extension UpdateEvent {
             )
         }
 
-        let eventData = ConversationMemberJoinEvent(
+        return ConversationMemberJoinEvent(
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp,
             members: memberData
         )
+    }
 
-        return .conversation(.memberJoin(eventData))
+    private static func conversationMemberLeaveEvent(from event: ZMUpdateEvent) -> ConversationMemberLeaveEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>.self,
+                from: event.payload
+            ),
+            let conversationID = payload.conversationID,
+            let senderID = payload.senderID,
+            let timestamp = payload.timestamp,
+            let reason = payload.data.reason
+        else {
+            return nil
+        }
+
+        let localDomain = "local.com"
+        var removedUserIDs = [UserID]()
+        if let qualifiedUserIDs = payload.data.qualifiedUserIDs {
+            removedUserIDs = qualifiedUserIDs.map(QualifiedID.init)
+        } else if let userIDs = payload.data.userIDs {
+            removedUserIDs = userIDs.map { id in
+                QualifiedID(
+                    uuid: id,
+                    domain: localDomain
+                )
+            }
+        } else {
+            return nil
+        }
+
+        return ConversationMemberLeaveEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            removedUserIDs: Set(removedUserIDs),
+            reason: ConversationMemberLeaveReason(reason)
+        )
     }
 
 }
@@ -183,6 +215,32 @@ private extension Payload.ConversationEvent {
             uuid: uuid,
             domain: domain
         )
+    }
+
+}
+
+private extension WireAPI.QualifiedID {
+
+    init(_ id: WireDataModel.QualifiedID) {
+        self.init(
+            uuid: id.uuid,
+            domain: id.domain
+        )
+    }
+
+}
+
+private extension ConversationMemberLeaveReason {
+
+    init(_ reason: Payload.UpdateConversationMemberLeave.Reason) {
+        switch reason {
+        case .userDeleted:
+            self = .userDeleted
+        case .left:
+            self = .userLeft
+        case .removed:
+            self = .userRemoved
+        }
     }
 
 }
