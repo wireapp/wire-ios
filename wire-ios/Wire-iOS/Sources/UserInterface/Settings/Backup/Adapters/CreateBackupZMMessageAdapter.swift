@@ -16,6 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+todo:
+feature flag
+swift 6 package
+extract wiredomainpkg oder neue struktur
+
 import Foundation
 import WireDataModel
 import WireDomainPkg
