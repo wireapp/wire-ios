@@ -60,19 +60,12 @@ public class ConversationTitleView: UIView {
     private func configureViews() {
         nameLabel.font = .preferredFont(forTextStyle: .headline)
         nameLabel.textColor = SemanticColors.Label.textDefault
-        nameLabel.text = source.title
 
         subtitleLabel.font = .boldSystemFont(ofSize: 9)
         subtitleLabel.textColor = .white
-        subtitleLabel.text = source.subtitle
-        subtitleLabel.isHidden = source.subtitle == nil
 
         accountImageView.availability = nil
-        if let imageSource = source.accountImageSource {
-            updateAvatar(source: imageSource, animated: false)
-        }
         accountImageView.hideProfileNotificationsBadge = true
-        accountImageView.isHidden = source.accountImageSource == nil
 
         let design = AccountImageViewDesign()
         accountImageView.imageBorderWidth = design.borderWidth
@@ -80,6 +73,21 @@ public class ConversationTitleView: UIView {
         accountImageView.initialsTextColor = .white
 
         dropdownImage.tintColor = ColorTheme.Backgrounds.onSurfaceVariant
+
+        configureViewValues()
+    }
+
+    private func configureViewValues() {
+        if let imageSource = source.accountImageSource {
+            updateAvatar(source: imageSource, animated: true)
+        }
+        accountImageView.isHidden = source.accountImageSource == nil
+        nameLabel.text = source.title
+        subtitleLabel.text = source.subtitle
+        subtitleLabel.isHidden = source.subtitle == nil
+        legalHoldImage.isHidden = !source.isUnderLegalHold
+        verifiedImage.isHidden = !source.isVerified
+        verifiedImage.image = source.isMLS ? UIImage(resource: .certificateValid) : UIImage(resource: .verified)
     }
 
     private func configureLayout() {
@@ -118,13 +126,7 @@ public class ConversationTitleView: UIView {
 
     public func updateSource(_ source: ConversationTitleSource) {
         self.source = source
-        if let imageSource = source.accountImageSource {
-            updateAvatar(source: imageSource, animated: true)
-        }
-        accountImageView.isHidden = source.accountImageSource == nil
-        nameLabel.text = source.title
-        subtitleLabel.text = source.subtitle
-
+        configureViewValues()
     }
 
     public func updateOtherUserAccentColor(_ color: UIColor) {
@@ -153,40 +155,6 @@ public class ConversationTitleView: UIView {
         }
     }
 }
-
-private extension NSTextAttachment {
-//    static func proteusVerifiedShield() -> NSTextAttachment {
-//        let attachment = NSTextAttachment()
-//        let shield = UIImage(resource: .verifiedShield)
-//        attachment.image = shield
-//        let ratio = shield.size.width / shield.size.height
-//        let height: CGFloat = 12
-//        attachment.bounds = CGRect(x: 0, y: 0, width: height * ratio, height: height)
-//        return attachment
-//    }
-//
-//    static func e2eiVerifiedShield() -> NSTextAttachment {
-//        let attachment = NSTextAttachment()
-//        let shield = UIImage(resource: .certificateValid)
-//        attachment.image = shield
-//        attachment.bounds = CGRect(x: 0, y: -2, width: shield.size.width, height: shield.size.height)
-//        return attachment
-//    }
-
-    static func legalHold() -> NSTextAttachment {
-        let attachment = NSTextAttachment()
-        let legalHold = StyleKitIcon.legalholdactive.makeImage(
-            size: .tiny,
-            color: SemanticColors.Icon.foregroundDefaultRed
-        )
-        attachment.image = legalHold
-        let ratio = legalHold.size.width / legalHold.size.height
-        let height: CGFloat = 12
-        attachment.bounds = CGRect(x: 0, y: -2, width: height * ratio, height: height)
-        return attachment
-    }
-}
-
 
 @available(iOS 17, *)
 #Preview("Account with Initials") {

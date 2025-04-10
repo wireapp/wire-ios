@@ -80,6 +80,20 @@ final class ConversationTitleViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
+    func testWithAllContent() {
+        let sut = createSUT(ConversationTitleSource(
+            accountImageSource: AccountImageSource.image(.init(systemName: "checkmark.circle.fill")!),
+            title: "Wonka",
+            subtitle: "FEDERATED",
+            isMLS: true,
+            isVerified: true,
+            isUnderLegalHold: true
+        ))
+
+        snapshotHelper.verify(matching: sut)
+    }
+
+    @MainActor
     private func createSUT(_ source: ConversationTitleSource) -> ConversationTitleView {
         let sut = ConversationTitleView(
             source: source,
