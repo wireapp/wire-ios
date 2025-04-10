@@ -153,8 +153,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                     for: mlsConversation,
                     commitDelay: commitDelay
                 )
-
-                await commitPendingProposalsIfNeeded()
             }
         }
 
