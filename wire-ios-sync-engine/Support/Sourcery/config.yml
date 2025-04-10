@@ -1,7 +1,7 @@
 sources:
   - ../../Source
 templates:
-  - ./AutoMockable.stencil
+  - ./LegacyAutoMockable.stencil
 output:
   ./generated
 args:

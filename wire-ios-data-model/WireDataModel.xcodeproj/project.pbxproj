@@ -968,7 +968,7 @@
 		017B55782CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SyncResources.swift"; sourceTree = "<group>"; };
 		017B557C2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+ForceSyncResources.swift"; sourceTree = "<group>"; };
 		017B55A82CFFC310005FFBD4 /* store2-120-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-120-0.wiredatabase"; sourceTree = "<group>"; };
-		017F67952C207EDB00B6E02D /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
+		017F67952C207EDB00B6E02D /* LegacyAutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyAutoMockable.stencil; sourceTree = "<group>"; };
 		017F67962C207EDB00B6E02D /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
 		01B6A89E2B16252300E409A0 /* zmessaging2.111.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.111.0.xcdatamodel; sourceTree = "<group>"; };
@@ -2230,7 +2230,7 @@
 		594EB2FE2B1E31D30022A5CD /* Sourcery */ = {
 			isa = PBXGroup;
 			children = (
-				017F67952C207EDB00B6E02D /* AutoMockable.stencil */,
+				017F67952C207EDB00B6E02D /* LegacyAutoMockable.stencil */,
 				017F67962C207EDB00B6E02D /* config.yml */,
 				594C4E462CCB199200F13D03 /* generated */,
 			);

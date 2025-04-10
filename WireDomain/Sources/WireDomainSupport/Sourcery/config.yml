@@ -1,7 +1,7 @@
 sources:
   - ../../WireDomain
 templates:
-  - ./AutoMockable.stencil
+  - ./LegacyAutoMockable.stencil
 output:
   ./generated
 args:
