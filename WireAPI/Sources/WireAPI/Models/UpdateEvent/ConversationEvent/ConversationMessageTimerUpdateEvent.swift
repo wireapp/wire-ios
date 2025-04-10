@@ -40,4 +40,16 @@ public struct ConversationMessageTimerUpdateEvent: Equatable, Codable, Sendable 
 
     public let newTimer: Int64?
 
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        newTimer: Int64?
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.newTimer = newTimer
+    }
+
 }
