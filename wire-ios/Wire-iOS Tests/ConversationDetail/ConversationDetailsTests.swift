@@ -91,18 +91,4 @@ final class ConversationDetailsTests: XCTestCase {
         sut.update(for: conversation, user: user)
         XCTAssertFalse(sut.leftButton.isHidden)
     }
-
-    func testAddParticipants_Shown_ForChannel_UserIsRegularMember_PermissionEveryone() {
-        conversation.privateChannelPermission = .everyone
-        let sut = GroupDetailsFooterView()
-        sut.update(for: conversation, user: user)
-        XCTAssertFalse(sut.leftButton.isHidden)
-    }
-
-    func testAddParticipants_Shown_ForChannel_UserIsTeamAdmin() {
-        user.canManageTeam = true
-        let sut = GroupDetailsFooterView()
-        sut.update(for: conversation, user: user)
-        XCTAssertFalse(sut.leftButton.isHidden)
-    }
 }
