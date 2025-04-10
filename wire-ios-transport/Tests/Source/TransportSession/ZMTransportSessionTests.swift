@@ -92,7 +92,8 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
             initialAccessToken: nil,
             applicationGroupIdentifier: containerIdentifier,
             applicationVersion: "1.0",
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            selfClientID: nil
         )
     }
 
