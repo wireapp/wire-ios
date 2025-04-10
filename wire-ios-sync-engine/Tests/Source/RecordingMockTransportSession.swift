@@ -96,4 +96,8 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
     func renewAccessToken(with clientID: String) {
         renewAccessTokenCalls.append(clientID)
     }
+
+    var accessTokenHandler: ZMAccessTokenHandler {
+        ZMAccessTokenHandler()
+    }
 }
