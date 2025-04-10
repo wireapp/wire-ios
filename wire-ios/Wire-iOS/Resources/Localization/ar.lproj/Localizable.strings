@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "المكالمة ممتلئة";
+"add_participants.alert.title" = "المحادثة مكتملة العدد";
 "add_participants.alert.message.new_conversation" = "Up to %d people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.";
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "لا يوجد مشرفين.";
 "participants.section.members.footer" = "لا يوجد اعضاء.";
 
-"profile.profile.group_admin_options.title" = "مدير المجموعة";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "المزيد من الإجراءات";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "التفاصيل";
 "profile.details.guest" = "ضيف";
-"profile.details.group_admin" = "مدير المجموعة";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1740,7 +1740,7 @@
 
 // Feature configs: conversation guest links
 "feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
