@@ -25,7 +25,7 @@ struct PlaceholderTests {
 
     @Test
     func testNothing() async throws {
-        #expect(Bool(false))
+        #expect(Bool(false)) // testing if CI runs this test
     }
 
 }
