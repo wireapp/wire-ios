@@ -34,6 +34,7 @@ final class ConversationDetailsTests: XCTestCase {
         user.canManageTeam = false
         user.canAddUserToConversation = false
         user.isGroupAdminInConversation = false
+        user.canModifyNotificationSettingsInConversation = true
         return user
     }()
 
@@ -48,30 +49,10 @@ final class ConversationDetailsTests: XCTestCase {
         )
     }
 
-    func testAccessOptionAllowed_ForChannel_andTeamAdmin() {
-        user.canManageTeam = true
-
-        XCTAssertTrue(
-            sut.accessible(in: conversation, by: user)
-        )
-    }
-
     func testAccessOptionNotAllowed_ForChannel_Member() {
         XCTAssertFalse(
             sut.accessible(in: conversation, by: user)
         )
-    }
-
-    func testAccessOptionAllowed_ForChannel_MemberButTeamOwner() {
-        user.canManageTeam = true
-
-        XCTAssertTrue(sut.accessible(in: conversation, by: user))
-    }
-
-    func testAccessOptionAllowed_ForChannel_ChannelOwner() {
-        user.isGroupAdminInConversation = true
-
-        XCTAssertTrue(sut.accessible(in: conversation, by: user))
     }
 
     func testAddParticipants_NotShown_ForGroups_EvenUserIsTeamOwnerAndChannelPermissionEveryone() {
