@@ -65,18 +65,24 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationMemberLeaveEventNotificationBuilder(
+        sut = ConversationMemberLeaveEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
+        )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.selfRemovedEvent)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
+
     }
 
     func testGenerateConversationMemberLeaveEventNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
@@ -88,21 +94,20 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationMemberLeaveEventNotificationBuilder(
-            removedUserIDs: Set([Scaffolding.selfUserID]),
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationMemberLeaveEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.selfRemovedEvent)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -117,21 +122,20 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationMemberLeaveEventNotificationBuilder(
-            removedUserIDs: Set([Scaffolding.selfUserID]),
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationMemberLeaveEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, true)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.selfRemovedEvent)
 
-        let userNotification = await sut.buildContent()
-
+        // Then
         try await internalTest_assertNotificationContent(
-            userNotification,
+            try XCTUnwrap(userNotification),
             isGroup: isGroup,
             isTeam: isTeam
         )
@@ -147,16 +151,19 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = await ConversationMemberLeaveEventNotificationBuilder(
-            removedUserIDs: Set([.mockID5]), // doesn't contain self user ID
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID,
-            userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+        sut = ConversationMemberLeaveEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(userLocalStore: userLocalStore)
         )
 
-        let shouldBuildNotification = await sut.shouldBuildNotification()
-        XCTAssertEqual(shouldBuildNotification, false)
+        // When
+        let userNotification = await sut.buildContent(event: Scaffolding.otherRemovedfEvent)
+
+        // Then
+        XCTAssertNil(userNotification)
     }
 
     private func internalTest_assertNotificationContent(
@@ -245,6 +252,22 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
+        
+        static let selfRemovedEvent = ConversationMemberLeaveEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now,
+            removedUserIDs: [.init(uuid: selfUserID, domain: "")],
+            reason: .userRemoved
+        )
+        
+        static let otherRemovedfEvent = ConversationMemberLeaveEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now,
+            removedUserIDs: [.init(uuid: .mockID4, domain: "")],
+            reason: .userRemoved
+        )
     }
 
 }

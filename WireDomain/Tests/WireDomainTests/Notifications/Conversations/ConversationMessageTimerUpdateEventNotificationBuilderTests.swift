@@ -69,25 +69,26 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         let timerEnabledTestCases = [true, false]
 
         for timerEnabledTestCase in timerEnabledTestCases {
-            sut = await ConversationMessageTimerUpdateEventNotificationBuilder(
-                newTimer: timerEnabledTestCase ? 10_000 : nil,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+            
+            sut = ConversationMessageTimerUpdateEventNotificationBuilder(
+                context: .init(
+                    conversationLocalStore: conversationLocalStore,
+                    userLocalStore: userLocalStore
+                ),
+                validator: .init()
             )
-
-            let shouldBuildNotification = await sut.shouldBuildNotification()
-            XCTAssertEqual(shouldBuildNotification, true)
-
-            let userNotification = await sut.buildContent()
-
+            
+            let userNotification = await sut.buildContent(
+                event: timerEnabledTestCase ? Scaffolding.timerEnabledEvent : Scaffolding.timerDisabledEvent
+            )
+            
             try await internalTest_assertNotificationContent(
-                userNotification,
+                try XCTUnwrap(userNotification),
                 enableTimer: timerEnabledTestCase,
                 isGroup: isGroup,
                 isTeam: isTeam
             )
+
         }
     }
 
@@ -104,21 +105,20 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         let timerEnabledTestCases = [true, false]
 
         for timerEnabledTestCase in timerEnabledTestCases {
-            sut = await ConversationMessageTimerUpdateEventNotificationBuilder(
-                newTimer: timerEnabledTestCase ? 10_000 : nil,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+            sut = ConversationMessageTimerUpdateEventNotificationBuilder(
+                context: .init(
+                    conversationLocalStore: conversationLocalStore,
+                    userLocalStore: userLocalStore
+                ),
+                validator: .init()
             )
-
-            let shouldBuildNotification = await sut.shouldBuildNotification()
-            XCTAssertEqual(shouldBuildNotification, true)
-
-            let userNotification = await sut.buildContent()
-
+            
+            let userNotification = await sut.buildContent(
+                event: timerEnabledTestCase ? Scaffolding.timerEnabledEvent : Scaffolding.timerDisabledEvent
+            )
+            
             try await internalTest_assertNotificationContent(
-                userNotification,
+                try XCTUnwrap(userNotification),
                 enableTimer: timerEnabledTestCase,
                 isGroup: isGroup,
                 isTeam: isTeam
@@ -138,21 +138,20 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         let timerEnabledTestCases = [true, false]
 
         for timerEnabledTestCase in timerEnabledTestCases {
-            sut = await ConversationMessageTimerUpdateEventNotificationBuilder(
-                newTimer: timerEnabledTestCase ? 10_000 : nil,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID,
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+            sut = ConversationMessageTimerUpdateEventNotificationBuilder(
+                context: .init(
+                    conversationLocalStore: conversationLocalStore,
+                    userLocalStore: userLocalStore
+                ),
+                validator: .init()
             )
-
-            let shouldBuildNotification = await sut.shouldBuildNotification()
-            XCTAssertEqual(shouldBuildNotification, true)
-
-            let userNotification = await sut.buildContent()
-
+            
+            let userNotification = await sut.buildContent(
+                event: timerEnabledTestCase ? Scaffolding.timerEnabledEvent : Scaffolding.timerDisabledEvent
+            )
+            
             try await internalTest_assertNotificationContent(
-                userNotification,
+                try XCTUnwrap(userNotification),
                 enableTimer: timerEnabledTestCase,
                 isGroup: isGroup,
                 isTeam: isTeam
@@ -248,6 +247,19 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
+        static let timerEnabledEvent = ConversationMessageTimerUpdateEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now,
+            newTimer: 10_000
+        )
+        
+        static let timerDisabledEvent = ConversationMessageTimerUpdateEvent(
+            conversationID: conversationID,
+            senderID: userID,
+            timestamp: .now,
+            newTimer: nil
+        )
     }
 
 }
