@@ -416,7 +416,6 @@ extension ZMLogTests {
 
 }
 
-
 extension ZMLogTests {
 
     func getLinesFromCurrentLog(file: StaticString = #filePath, line: UInt = #line) -> [String] {
