@@ -254,6 +254,8 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 
 public class MockUserSession: UserSession {
 
+    public var persistentContainer: NSPersistentContainer { fatalError() } // TODO: delete
+
     // MARK: - Life cycle
 
     public init() {}

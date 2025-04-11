@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public // TODO: public?
 struct MessageReaction: Equatable {
+    public // TODO: public?
     var emojiID: Emoji.ID
     var count: UInt
     var isSelfUserReacting: Bool

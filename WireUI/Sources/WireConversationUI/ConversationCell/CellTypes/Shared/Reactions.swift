@@ -16,10 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public // TODO: public?
 struct Reaction: Hashable, Sendable {
+    public // TODO: public?
     var emoji: Character
     var count: Int
     var isSelfReaction: Bool
 }
 
+public // TODO: public?
 typealias Reactions = [Reaction]

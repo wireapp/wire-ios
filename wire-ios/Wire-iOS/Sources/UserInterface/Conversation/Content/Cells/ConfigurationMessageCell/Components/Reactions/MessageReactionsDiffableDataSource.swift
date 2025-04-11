@@ -20,6 +20,7 @@ import UIKit
 
 typealias MessageReactionsDiffableDataSource = UICollectionViewDiffableDataSource<MessageReactionsSectionID, Emoji.ID>
 
+public // TODO: public?
 enum MessageReactionsSectionID: Hashable {
     case single
 }

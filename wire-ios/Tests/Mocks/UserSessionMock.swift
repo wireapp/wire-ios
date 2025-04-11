@@ -29,6 +29,8 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
+    var persistentContainer: NSPersistentContainer { fatalError() } // TODO: remove
+
     var isTornDown = false
 
     var userProfile: UserProfile

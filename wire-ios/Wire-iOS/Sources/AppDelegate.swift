@@ -25,6 +25,7 @@ import WireCoreCrypto
 import WireCountly
 import WireLogging
 import WireSyncEngine
+import WireConversationUI
 
 enum ApplicationLaunchType {
     case unknown
@@ -100,6 +101,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+
+        SimpleTextMessageContentViewReactionsFactory = { MessageReactionsCollectionView() }
+        SimpleTextMessageContentViewReactionsViewUpdater = { view, reactions in
+            guard let view = view as? MessageReactionsCollectionView else { return assertionFailure() }
+            guard let dataSource = view.dataSource as? MessageReactionsDiffableDataSource else { return assertionFailure() }
+
+            var snapshot = MessageReactionsDiffableDataSourceSnapshot()
+            snapshot.appendSections([.single])
+            snapshot.appendItems(reactions.map { "\($0.emoji)" })
+            dataSource.applySnapshotUsingReloadData(snapshot)
+        }
 
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")

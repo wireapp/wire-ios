@@ -43,7 +43,7 @@ struct SimpleTextMessageContentView: ConversationCellContentViewProtocol {
 
     @ViewBuilder
     private var reactions: some View {
-        ReactionsViewRepresentable?()
+        ReactionsViewRepresentable(reactions: model.reactions)
     }
 
 }
@@ -63,13 +63,18 @@ struct SimpleTextMessageContentView: ConversationCellContentViewProtocol {
 
 private struct ReactionsViewRepresentable: UIViewRepresentable {
 
+    let reactions: [Reaction]
+
     func makeUIView(context: Context) -> UIView {
-        SimpleTextMessageContentViewReactionsFactory?() ?? UIView()
+        let view = SimpleTextMessageContentViewReactionsFactory?() ?? UIView()
+        SimpleTextMessageContentViewReactionsViewUpdater(view, reactions)
+        return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        //
+    func updateUIView(_ view: UIView, context: Context) {
+        SimpleTextMessageContentViewReactionsViewUpdater(view, reactions)
     }
 }
 
 nonisolated(unsafe) public var SimpleTextMessageContentViewReactionsFactory: (() -> UIView)!
+nonisolated(unsafe) public var SimpleTextMessageContentViewReactionsViewUpdater: ((UIView, Reactions) -> Void)!
