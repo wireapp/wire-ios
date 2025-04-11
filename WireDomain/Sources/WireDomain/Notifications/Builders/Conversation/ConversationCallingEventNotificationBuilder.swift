@@ -414,12 +414,6 @@ extension ConversationCallingEventNotificationBuilder {
                 domain: conversationID.domain
             )
 
-            let selfUser = await userLocalStore.fetchSelfUser()
-            let caller = await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
-                domain: senderID.domain
-            )
-
             let needsToBeUpdatedFromBackend = await conversationLocalStore.conversationNeedsBackendUpdate(conversation)
             let mutedMessagesTypes = await conversationLocalStore
                 .conversationMutedMessageTypesIncludingAvailability(conversation)

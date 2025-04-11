@@ -41,6 +41,8 @@ public final class ClientSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
+    
+    private let onCalling: (CallEventInfo) -> Void
 
     public init(
         selfUserID: UUID,
@@ -57,7 +59,8 @@ public final class ClientSessionComponent {
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
-        proteusService: any ProteusServiceInterface
+        proteusService: any ProteusServiceInterface,
+        onCalling: @escaping (CallEventInfo) -> Void
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -74,6 +77,7 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
+        self.onCalling = onCalling
     }
 
     private lazy var authenticationManager = AuthenticationManager(
@@ -435,7 +439,8 @@ public final class ClientSessionComponent {
         conversationLocalStore: conversationLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        protobufMessageProcessor: conversationProtobufMessageProcessor
+        protobufMessageProcessor: conversationProtobufMessageProcessor,
+        onCalling: onCalling
     )
 
     private lazy var conversationMLSWelcomeEventProcessor = ConversationMLSWelcomeEventProcessor(
@@ -450,7 +455,8 @@ public final class ClientSessionComponent {
         conversationLocalStore: conversationLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        protobufMessageProcessor: conversationProtobufMessageProcessor
+        protobufMessageProcessor: conversationProtobufMessageProcessor,
+        onCalling: onCalling
     )
 
     private lazy var conversationProtocolUpdateEventProcessor = ConversationProtocolUpdateEventProcessor(

@@ -31,6 +31,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
     let messageLocalStore: any MessageLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
     let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
+    let onCalling: (CallEventInfo) -> Void
 
     func processEvent(_ event: ConversationMLSMessageAddEvent) async throws {
         let conversationID = event.conversationID
@@ -49,6 +50,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
                 decryptedMessage,
                 conversationID: conversationID,
                 senderID: senderID,
+                event: event,
                 date: date
             )
         }
@@ -58,6 +60,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         _ decryptedMessage: ConversationMLSMessageAddEvent.DecryptedMessage,
         conversationID: ConversationID,
         senderID: UserID,
+        event: ConversationMLSMessageAddEvent,
         date: Date?
     ) async throws {
         guard let conversation = await conversationLocalStore.fetchConversation(
@@ -99,6 +102,16 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
                 conversationID: conversationID,
                 date: date ?? .now
             )
+        }
+        
+        // Handle calling if there's one.
+        
+        if let callEventInfo = handleCallingIfNeeded(
+            event: event,
+            decryptedMessage: decryptedMessage,
+            genericMessage: genericMessage
+        ) {
+            return onCalling(callEventInfo)
         }
 
         await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
@@ -155,6 +168,54 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             messageType: systemMessageType,
             conversationID: conversationID.uuid,
             conversationDomain: conversationID.domain
+        )
+    }
+    
+    // MARK: - Calling
+    
+    func handleCallingIfNeeded(
+        event: ConversationMLSMessageAddEvent,
+        decryptedMessage: ConversationMLSMessageAddEvent.DecryptedMessage,
+        genericMessage: GenericMessage
+    ) -> CallEventInfo? {
+        guard genericMessage.hasCalling else {
+            return nil
+        }
+        
+        guard let callContent: CallContent = .decode(from: genericMessage.calling) else {
+            return nil
+        }
+        
+        guard let payload = genericMessage.calling.content.data(
+            using: .utf8, allowLossyConversion: false
+        ) else {
+            return nil
+        }
+        
+        let isRemoteMute = callContent.type == "REMOTEMUTE"
+        let callingConversationID = genericMessage.calling.qualifiedConversationID
+        let senderID = event.senderID
+        let eventTimestamp = event.timestamp
+        let clientID = decryptedMessage.senderClientID
+        
+        let conversationID = !callingConversationID.id
+            .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.uuid
+        
+        let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event.conversationID.domain
+        
+        guard let clientID, let eventTimestamp else {
+            return nil
+        }
+        
+        return CallEventInfo(
+            data: payload,
+            conversationID: conversationID,
+            conversationDomain: conversationDomain,
+            userID: senderID.uuid,
+            userDomain: senderID.domain,
+            eventTimestamp: eventTimestamp,
+            clientID: clientID,
+            isMuted: isRemoteMute
         )
     }
 
