@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
 
-"add_participants.alert.title" = "Эта группа заполнена";
+"add_participants.alert.title" = "Беседа переполнена";
 "add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %d человек.";
 "add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %1$d человек. На текущий момент в комнате есть места еще для %2$d.";
 
@@ -343,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Выберите MLS для создания группы с использованием протокола Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
 "conversation.create.mls.cancel" = "Отмена";
-"conversation.create.non_federating_domains_error.title" = "Невозможно создать группу";
-"conversation.create.non_federating_domains_error.message" = "Пользователи бэкэндов %@ не могут присоединиться к одной групповой беседе.\nДля создания группы удалите затронутых участников.";
+"conversation.create.non_federating_domains_error.title" = "Разговор не может быть создан";
+"conversation.create.non_federating_domains_error.message" = "Пользователи бэкендов %@ не могут присоединиться к одной беседе.\nДля создания беседы удалите затронутых участников.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
 "conversation.create.non_federating_domains_error.learn_more" = "Подробнее";
-"conversation.create.non_federating_domains_error.abort" = "Отменить создание группы";
+"conversation.create.non_federating_domains_error.abort" = "Отменить создание беседы";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (по умолчанию)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Здесь нет администраторов.";
 "participants.section.members.footer" = "Здесь нет участников.";
 
-"profile.profile.group_admin_options.title" = "Администратор группы";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Дополнительные действия";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Удалить?";
 "profile.remove_dialog_message" = "%@ больше не сможет отправлять и получать сообщения в этой беседе.";
 "profile.remove_dialog_button_cancel" = "Отмена";
-"profile.remove_dialog_button_remove" = "Удалить из группы…";
-"profile.remove_dialog_button_remove_confirm" = "Удалить из группы";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Заблокировать?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Подробности";
 "profile.details.guest" = "Гость";
-"profile.details.group_admin" = "Администратор группы";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "внешний";
 "profile.details.federated" = "Федеративный";
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Самоудаляющиеся сообщения теперь обязательны. Новые сообщения будут самоудаляться спустя %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Генерация гостевых ссылок теперь отключена для всех администраторов групп.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Генерация гостевых ссылок теперь включена для всех администраторов групп.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "Сертификат сквозной идентификации";
