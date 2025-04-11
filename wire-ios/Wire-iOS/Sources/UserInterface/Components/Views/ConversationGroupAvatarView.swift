@@ -21,7 +21,7 @@ import WireConversationsUIBindings
 import WireSyncEngine
 
 typealias ConversationGroupAvatarViewConversation
-    = ConversationLike & HasConversationGroupType & HasQualifiedID & StableRandomParticipantsProvider
+    = ConversationLike & HasQualifiedID & StableRandomParticipantsProvider
 
 final class ConversationGroupAvatarView: UIView {
     struct Context {
@@ -37,8 +37,9 @@ final class ConversationGroupAvatarView: UIView {
             return
         }
 
-        let iconView = if conversation.groupType == .channel {
-            WireConversationChannelIconFactory().createUIKit(conversationID: id)
+        let iconView = if conversation.isChannel {
+            // TODO: [WPB-16527] Pass in correct `isPrivateChannel` when we implement public channels
+            WireConversationChannelIconFactory().createUIKit(conversationID: id, isPrivateChannel: true)
         } else {
             WireConversationGroupIconFactory().createUIKit(conversationID: id)
         }
@@ -47,7 +48,9 @@ final class ConversationGroupAvatarView: UIView {
         iconContainer.addSubview(iconView)
         iconView.fitIn(view: iconContainer)
 
-        accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
+        typealias Avatar = L10n.Accessibility.ConversationsList.ItemCell.Avatar
+        accessibilityLabel = conversation.isChannel ? Avatar.Channel.label : Avatar.Group.label
+        isAccessibilityElement = true
     }
 
     private var qualifiedID: QualifiedID? = .none
@@ -55,7 +58,7 @@ final class ConversationGroupAvatarView: UIView {
     lazy var iconContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.clipsToBounds = true
+        view.clipsToBounds = false
         view.layer.cornerRadius = 4
         return view
     }()
@@ -64,7 +67,7 @@ final class ConversationGroupAvatarView: UIView {
         super.init(frame: .zero)
 
         autoresizesSubviews = false
-        layer.masksToBounds = true
+        layer.masksToBounds = false
         addSubview(iconContainer)
         iconContainer.fitIn(view: self)
     }

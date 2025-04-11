@@ -418,7 +418,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
 
         await appendFailedToAddUsersMessage(
             in: conversation,
-            users: users
+            users: failedUsers
         )
     }
 

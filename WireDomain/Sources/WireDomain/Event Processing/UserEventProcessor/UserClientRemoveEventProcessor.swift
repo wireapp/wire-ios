@@ -17,12 +17,68 @@
 //
 
 import WireAPI
+import WireDataModel
+import WireLogging
 
 struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
+    let userClientsRepository: any UserClientsRepositoryProtocol
+    let calculateSupportedProtocolsUseCase: any CalculateSupportedProtocolsUseCaseProtocol
+    let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
+    let oneOnOneResolver: any OneOnOneResolverProtocol
+    let context: NSManagedObjectContext
+    let onSelfClientInvalidated: () async -> Void // Defined at the app level in `ZMUserSession`
 
-    func processEvent(_: UserClientRemoveEvent) async throws {
-        // TODO: [WPB-10190]
-        assertionFailure("not implemented yet")
+    func processEvent(_ event: UserClientRemoveEvent) async throws {
+        let clientID = event.clientID
+
+        let isSelfClient = await context.perform { [context] in
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return selfClient?.remoteIdentifier == clientID
+        }
+
+        if isSelfClient == true {
+            await userClientsRepository.invalidateSelfClient()
+            await onSelfClientInvalidated()
+        } else {
+            await userClientsRepository.deleteClient(id: clientID)
+            try await resolveOneOnOneConversations()
+        }
+
+    }
+
+    private func resolveOneOnOneConversations() async throws {
+        let oldProtocols = await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            return selfUser.supportedProtocols
+        }
+
+        let newProtocols = await calculateSupportedProtocols().toDomainModel()
+
+        if oldProtocols != newProtocols {
+            try await pushSupportedProtocolsUseCase.invoke()
+
+            await context.perform {
+                let selfUser = ZMUser.selfUser(in: context)
+                selfUser.supportedProtocols = newProtocols
+            }
+        }
+
+        if newProtocols.contains(.mls) {
+            try await oneOnOneResolver.resolveAllOneOnOneConversations()
+        }
+    }
+
+    private func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
+        do {
+            // we need the self clients to be up to date before calculating supported protocols.
+            try await userClientsRepository.pullSelfClients()
+        } catch {
+            WireLogger.userClient.error(
+                "error syncing selfclients: \(error.localizedDescription)"
+            )
+        }
+
+        return await calculateSupportedProtocolsUseCase.invoke()
     }
 
 }

@@ -48,6 +48,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // People picker/start UI
+"peoplepicker.navigation_header.title" = "New conversation";
 "peoplepicker.search_placeholder" = "Rechercher par nom ou par identifiant";
 "peoplepicker.header.top_people" = "Contacts favoris";
 "peoplepicker.button.create_conversation" = "Créer un groupe";
@@ -73,9 +74,6 @@
 "peoplepicker.services.add_service.error.title" = "Le service n'a pas pu être ajouté";
 "peoplepicker.services.add_service.error.default" = "Le service est temporairement indisponible";
 "peoplepicker.services.add_service.error.full" = "Cette conversation est saturée";
-
-"peoplepicker.title.create_conversation" = "Créer un groupe";
-"peoplepicker.title.add_to_conversation" = "Ajouter des participants";
 
 "peoplepicker.no_contacts_title" = "Aucun contact.";
 
@@ -103,9 +101,14 @@
 
 "peoplepicker.federation.domain_unvailable" = "Le domaine fédéré n'est actuellement pas disponible. [En savoir plus](%@)";
 
-"add_participants.alert.title" = "Le groupe est complet";
+"add_participants.alert.title" = "Cette conversation est saturée";
 "add_participants.alert.message.new_conversation" = "Jusqu'à %d contacts peuvent participer à une conversation.";
 "add_participants.alert.message.existing_conversation" = "Jusqu'à %1$d contacts peuvent participer à une conversation. Actuellement, %2$d contacts peuvent encore rejoindre cette conversation.";
+
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "Précédent";
+"conversation.create.channel.next" = "Suivant";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "Cherchez par nom";
@@ -127,6 +130,7 @@
 "conversation_list.search_bar.placeholder" = "Search conversations";
 "conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
@@ -135,6 +139,7 @@
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Favoris";
 "conversation_list.filter.groups.title" = "Groupes";
+"conversation_list.filter.channels.title" = "Channels";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
 "conversation_list.filter.folders.title" = "Dossiers";
 "conversation_list.filter_label.text" = "Filtered by %@";
@@ -150,6 +155,8 @@
 // Conversation List - Empty states
 "conversation_list.empty_placeholder.all.headline" = "Bienvenue";
 "conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.channels.subheadline" = "Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.";
+"conversation_list.empty_placeholder.channels.link" = "Learn more about channels";
 "conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
 "conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
@@ -229,11 +236,6 @@
 "list.archived_conversations" = "ARCHIVES";
 "list.archived_conversations_close" = "Fermer les archives";
 
-"list.section.groups" = "Groupes";
-"list.section.contacts" = "Contacts";
-"list.section.requests" = "Demandes";
-"list.section.favorites" = "Favoris";
-
 "conversation.voiceover.value.active" = "active";
 "conversation.voiceover.value.disabled" = "désactivée";
 
@@ -290,7 +292,6 @@
 "conversation.invite_more_people.button_title" = "Ajouter des contacts";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Conversation de groupe vide";
 
 "conversation.input_bar.verified" = "Vérifié";
 "conversation.input_bar.placeholder" = "Écrivez un message";
@@ -342,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Sélectionnez MLS pour créer un groupe en utilisant le protocole Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Sélectionner un protocole";
 "conversation.create.mls.cancel" = "Annuler";
-"conversation.create.non_federating_domains_error.title" = "Le groupe ne peut pas être créé";
-"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.title" = "Conversation can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "En savoir plus";
-"conversation.create.non_federating_domains_error.abort" = "Annuler la création du groupe";
+"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -529,10 +530,6 @@
 
 "content.system.other_renamed_conv_to_nothing" = "%@ a supprimé le nom de la conversation";
 "content.system.you_renamed_conv_to_nothing" = "Vous avez supprimé le nom de la conversation";
-"content.system.pending_message_timestamp" = "Envoi…";
-"content.system.message_sent_timestamp" = "Envoyé";
-"content.system.message_delivered_timestamp" = "Distribué";
-"content.system.message_read_timestamp" = "Vu";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
 "content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
@@ -579,6 +576,15 @@
 
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
+
+"content.system.channel.with_name.title" = "%@ started the channel";
+"content.system.channel.with_name.title-you" = "%@ started the channel";
+
+"content.system.channel.invite.title" = "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:";
+"content.system.channel.invite.button" = "Copy Channel link";
+
+"content.system.channel.guest.joined" = "%@ joined the channel";
+"content.system.channel.guest.you_joined" = "You joined the channel";
 
 // read receipt
 
@@ -639,6 +645,7 @@
 "content.message.delete" = "Supprimer";
 "content.message.save" = "Enregistrer";
 "content.message.resend" = "Renvoyer";
+"content.message.edited" = "Modifié";
 
 "content.message.delete_ellipsis" = "Supprimer…";
 
@@ -852,19 +859,19 @@
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Options";
 "participants.footer.add_title" = "Ajouter des contacts";
-"participants.section.name.footer" = "Une conversation de groupe peut inclure jusqu'à %1$d contacts.";
+"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
 "participants.section.admins.footer" = "Il n'y a aucun administrateur.";
 "participants.section.members.footer" = "Il n'y a aucun participant.";
 
-"profile.profile.group_admin_options.title" = "Admin du groupe";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Plus d’actions";
 "meta.menu.rename" = "Renommer";
-"meta.menu.leave" = "Quitter le groupe…";
+"meta.menu.leave" = "Leave Conversation…";
 "meta.menu.archive" = "Archiver";
 "meta.menu.unarchive" = "Restaurer";
-"meta.menu.delete" = "Supprimer le groupe…";
+"meta.menu.delete" = "Delete Conversation…";
 "meta.menu.clear_content" = "Effacer le contenu…";
 "meta.menu.move_to_folder" = "Déplacer vers…";
 "meta.menu.remove_from_folder" = "Supprimer de \"%@\"";
@@ -919,8 +926,8 @@
 "profile.remove_dialog_title" = "Supprimer ?";
 "profile.remove_dialog_message" = "%@ ne pourra ni envoyer ni recevoir de messages dans cette conversation.";
 "profile.remove_dialog_button_cancel" = "Annuler";
-"profile.remove_dialog_button_remove" = "Retirer Du Groupe…";
-"profile.remove_dialog_button_remove_confirm" = "Retirer Du Groupe";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Bloquer ?";
@@ -982,7 +989,7 @@
 // User Details
 "profile.details.title" = "Détails";
 "profile.details.guest" = "Contact externe";
-"profile.details.group_admin" = "Admin du groupe";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "externe";
 "profile.details.federated" = "Fédéré";
 "profile.details.blocking_reason" = "Cet utilisateur est bloqué en raison de la conservation à des fins juridiques. [PLUS D'INFOS](%@)";
@@ -1031,13 +1038,18 @@
 "group_details.notification_options_cell.description" = "Vous pouvez être notifié pour tout (y compris les appels audio et vidéo) ou seulement quand quelqu'un vous mentionne ou répond à un de vos messages.";
 "group_details.receipt_options_cell.title" = "Accusés de lecture";
 "group_details.receipt_options_cell.description" = "Quand cette option est activée, les participants peuvent voir quand leurs messages ont été lus dans cette conversation.";
+"group_details.access_options_cell.title" = "Channel access";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocole";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
-"group_details.conversation_admins_header.title" = "Admins du groupe";
-"group_details.conversation_members_header.title" = "Participants à la conversation";
+"group_details.conversation_admins_header.title" = "Conversation admins";
+"group_details.conversation_members_header.title" = "Conversation members";
+
+// Channel Access level
+"channel_access_level.public" = "Public";
+"channel_access_level.private" = "Private";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";
@@ -1658,6 +1670,7 @@
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Ce compte n'est plus autorisé à se connecter.";
 "error.user.account_limit_reached" = "Vous ne pouvez pas ajouter plus de 3 comptes.";
+"error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Trop de participants pour un appel";
 "error.group_call.too_many_members_in_conversation" = "Les appels fonctionnent dans des conversations avec %d participants ou moins.";
@@ -1726,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Les messages éphémères sont maintenant obligatoires. Les nouveaux messages seront auto-supprimés après %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "La génération de liens d'invitation est maintenant désactivée pour tous les administrateurs de groupes.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "La génération de liens d'invitation est maintenant activée pour tous les administrateurs de groupes.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";

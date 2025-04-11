@@ -26,7 +26,7 @@
 "exportBackup.description" = "The backup will be compressed. If you use a password, Wire also encrypts the backup file. Make sure to store the password in a secure place.";
 "exportBackup.button" = "立即备份";
 "exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
-"exportBackup.setBackupPassword.placeholder" = "Enter password";
+"exportBackup.setBackupPassword.placeholder" = "键入密码";
 "exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
 
 "exportBackup.cancel.title" = "取消";
@@ -44,7 +44,7 @@
 "importBackup.overwriteConfirmation.title" = "File overwrites your history";
 "importBackup.overwriteConfirmation.message" = "The backup contents will replace the current conversation history on this device.";
 "importBackup.overwriteConfirmation.cancel" = "取消";
-"importBackup.overwriteConfirmation.proceed" = "Proceed";
+"importBackup.overwriteConfirmation.proceed" = "继续";
 
 "importBackup.alert.ok" = "好";
 "importBackup.alert.success.title" = "Success";
@@ -56,10 +56,10 @@
 "importBackup.alert.wrongFileError.title" = "Wrong backup file";
 "importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
 
-"importBackup.enterPassword.title" = "Enter password";
+"importBackup.enterPassword.title" = "键入密码";
 "importBackup.enterPassword.description" = "This backup is password protected.";
 "importBackup.enterPassword.textField.title" = "密码";
-"importBackup.enterPassword.textField.placeholder" = "Enter password";
+"importBackup.enterPassword.textField.placeholder" = "键入密码";
 "importBackup.enterPassword.wrongPassword" = "Wrong password. Please verify your input and try again";
 "importBackup.enterPassword.button.title" = "继续";
 

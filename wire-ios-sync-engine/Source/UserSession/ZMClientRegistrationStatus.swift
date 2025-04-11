@@ -106,7 +106,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     var lastResortPrekey: IdPrekeyTuple?
 
     private let managedObjectContext: NSManagedObjectContext
-    private let cookieProvider: CookieProvider
+    let cookieProvider: CookieProvider
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var needsRefreshSelfUser: Bool = false
     private var needsToCheckCredentials: Bool = false

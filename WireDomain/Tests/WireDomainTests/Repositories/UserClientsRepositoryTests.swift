@@ -151,6 +151,20 @@ final class UserClientsRepositoryTests: XCTestCase {
         XCTAssertEqual(userClientsLocalStore.deleteClientId_Invocations.count, 1)
     }
 
+    func testInvalidSelfClient_It_Invokes_Local_Store_Method() async throws {
+        // Mock
+
+        userClientsLocalStore.invalidateSelfClient_MockMethod = {}
+
+        // When
+
+        await sut.invalidateSelfClient()
+
+        // Then
+
+        XCTAssertEqual(userClientsLocalStore.invalidateSelfClient_Invocations.count, 1)
+    }
+
     private enum Scaffolding {
         static let userClientID = UUID.mockID1.uuidString
         static let otherUserClientID = UUID.mockID2.uuidString

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
 /// Identifies an alert and provides it's title and message.
 
@@ -91,6 +92,16 @@ extension Alert {
         message: Message.ssoLoginFailed
     )
 
+    static let invalidSSOLink = Alert(
+        title: Title.ssoLoginFailed,
+        message: Message.ssoLoginFailed
+    )
+
+    static let incorrectSSOCode = Alert(
+        title: Title.incorrectSsoCode,
+        message: Message.incorrectSsoCode
+    )
+
 }
 
 extension Alert {
@@ -101,6 +112,10 @@ extension Alert {
         switch error {
         case URLError.notConnectedToInternet, URLError.networkConnectionLost:
             .noInternet
+        case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
+            .obsoleteClient
+        case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
+            .obsoleteBackend
         default:
             .unknownError
         }

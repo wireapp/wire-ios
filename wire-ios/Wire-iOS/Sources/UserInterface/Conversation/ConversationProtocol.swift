@@ -43,8 +43,8 @@ protocol VoiceChannelProvider {
     var voiceChannel: VoiceChannel? { get }
 }
 
-protocol CanManageAccessProvider {
-    var canManageAccess: Bool { get }
+protocol CanManageGuestsAccessProvider {
+    var canManageGuestsAccess: Bool { get }
 }
 
 // MARK: - Input Bar View controller
@@ -114,14 +114,13 @@ protocol GroupDetailsConversation {
 
 }
 
-typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation & HasChannelAccessLevelPermission &
-    HasConversationGroupType
+typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation
 
 extension ZMConversation: ConversationStatusProvider {}
 
 extension ZMConversation: TypingStatusProvider {}
 extension ZMConversation: VoiceChannelProvider {}
-extension ZMConversation: CanManageAccessProvider {}
+extension ZMConversation: CanManageGuestsAccessProvider {}
 
 extension ZMConversation: GroupDetailsConversation {
 

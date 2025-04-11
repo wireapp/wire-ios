@@ -33,11 +33,11 @@ final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandle
         currentStep: AuthenticationFlowStep,
         context: (NSError?, Int)
     ) -> [AuthenticationCoordinatorAction]? {
-        if featureProvider.allowOnlyEmailLogin {
+        if DeveloperFlag.useWireAuthentication.isOn {
+            [.transition(.wireAuthenticationModule, mode: .reset)]
+        } else if featureProvider.allowOnlyEmailLogin {
             // Hide the landing screen if account creation is disabled.
             [.transition(.provideCredentials(nil), mode: .reset)]
-        } else if DeveloperFlag.useWireAuthentication.isOn {
-            [.transition(.wireAuthenticationModule, mode: .reset)]
         } else {
             [.transition(.landingScreen, mode: .reset)]
         }
