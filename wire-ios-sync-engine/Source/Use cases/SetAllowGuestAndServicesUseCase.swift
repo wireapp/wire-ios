@@ -43,7 +43,7 @@ struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol 
         allowServices: Bool,
         completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void
     ) {
-        guard conversation.canManageAccess else {
+        guard conversation.canManageGuestsAccess else {
             return completion(.failure(.invalidOperation))
         }
 

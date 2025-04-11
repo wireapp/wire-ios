@@ -29,7 +29,7 @@ struct UserDeleteEventDecoder {
         )
 
         let time = try container.decodeIfPresent(
-            UTCTimeMillis.self,
+            UTCTime.self,
             forKey: .time
         )
 

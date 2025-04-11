@@ -16,27 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystem
-import XCTest
+import SwiftUI
+import WireConversationsAPI
+import WireConversationsUI
+import WireSyncEngine
 
-class LoggingTest: XCTestCase {
+final class WireConversationChannelCreationFormViewControllerFactory {
 
-    func testThatCurrentLogIsNotEmpty() {
-        // given
-        ZMSLog.clearLogs()
+    weak var delegate: ConversationCreationControllerDelegate?
 
-        // when
-        ZMSLog.logWithLevel(.error, message: "test", tag: "AVS")
-        ZMSLog.sync()
+    public init() {}
 
-        // then
-
-        // Assert that some logs have been written to the current log file, which is the file
-        // that gets attached to debug reports.
-        XCTAssertNotNil(ZMSLog.currentZipLog)
-        XCTAssertNotNil(ZMSLog.currentLogURL)
-        XCTAssertFalse(ZMSLog.currentZipLog!.isEmpty)
-        XCTAssertFalse(FileManager.default.contents(atPath: ZMSLog.currentLogURL!.path)!.isEmpty)
+    @MainActor
+    func create(
+        userSession: UserSession
+    ) -> WireConversationChannelCreationFormViewController {
+        let vc = WireConversationChannelCreationFormViewController(
+            userSession: userSession
+        )
+        vc.delegate = delegate
+        return vc
     }
-
 }

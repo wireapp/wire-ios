@@ -22,6 +22,7 @@
 "sidebar.conversation_filter.all.title" = "الجميع";
 "sidebar.conversation_filter.favorites.title" = "المفضلة";
 "sidebar.conversation_filter.groups.title" = "المجموعات";
+"sidebar.conversation_filter.channels.title" = "Channels";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
 "sidebar.conversation_filter.folders.title" = "Folders";
 "sidebar.conversation_filter.archived.title" = "حفظ في الأرشيف";

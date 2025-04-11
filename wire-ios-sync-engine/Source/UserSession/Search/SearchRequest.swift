@@ -112,9 +112,14 @@ public struct SearchRequest {
         searchOptions: SearchOptions,
         team: Team? = nil
     ) {
-        let (query, parsedDomain) = Self.parseQuery(query)
-        self.query = query
-        self.searchDomain = searchDomain ?? parsedDomain
+        if let searchDomain {
+            self.query = .fullTextSearch(query)
+            self.searchDomain = searchDomain
+        } else {
+            let (query, parsedDomain) = Self.parseQuery(query)
+            self.query = query
+            self.searchDomain = parsedDomain
+        }
         self.searchOptions = searchOptions
         self.team = team
     }

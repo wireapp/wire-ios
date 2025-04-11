@@ -56,7 +56,7 @@ public final class ZMUserSession: NSObject {
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
-    private(set) var transportSession: TransportSessionType
+    public private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
     private(set) var legacyUpdateEventProcessor: UpdateEventProcessor?
