@@ -212,8 +212,7 @@
     // and when
     // refresh list and observer token
     {
-        NSArray *allConversations = @[c1,c2];
-        [(ZMConversationList*)list recreateWithAllConversations:allConversations predicate:[factory predicateForConversationsIncludingArchived]];
+        [(ZMConversationList*)list recreateConversationsWithPredicate:[factory predicateForConversationsIncludingArchived] managedContext:self.uiMOC];
 
         // then list is updated
         NSArray *expected = @[c1, c2];

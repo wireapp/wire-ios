@@ -163,10 +163,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssertEqual(observer.notifications.count, 0)
 
         // when refresing the list
-        sut.recreate(
-            allConversations: [conversation1, conversation2],
-            predicate: factory.predicateForConversationsIncludingArchived()
-        )
+        sut.recreateConversations(with: factory.predicateForConversationsIncludingArchived(), context: uiMOC)
 
         // then
         XCTAssertEqual(sut.items, [conversation1, conversation2])
