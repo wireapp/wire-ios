@@ -150,12 +150,12 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
     }
 
     func testGuestsOptionCanUpdatedByTeamAdmin() {
-        conversation.teamRemoteIdentifier = UUID.mockID10
+        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
 
-        XCTAssertFalse(adminUser.canModifyAccessControlSettings(in: conversation))
+        XCTAssertFalse(adminUser.canModifyGuestsAccessControlSettings(in: conversation))
         makeUserOwner(adminUser)
-        XCTAssertTrue(adminUser.canModifyAccessControlSettings(in: conversation))
+        XCTAssertTrue(adminUser.canModifyGuestsAccessControlSettings(in: conversation))
     }
 
     // MARK: Create services
@@ -379,6 +379,7 @@ extension ZMUserTests_Permissions {
     }
 
     func testCanRenameChannelByTeamAdmin() {
+        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
 
         XCTAssertFalse(adminUser.canModifyTitle(in: conversation))
@@ -387,6 +388,7 @@ extension ZMUserTests_Permissions {
     }
 
     func testCanAddParticipantsInChannelByTeamAdmin() {
+        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
 
         XCTAssertFalse(adminUser.canAddUser(to: conversation))
@@ -528,7 +530,7 @@ extension ZMUserTests_Permissions {
     }
 
     func testModifyOtherMember_InChannelByTeamAdmin() {
-
+        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
         let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
 
         XCTAssertFalse(adminUser.canModifyOtherMember(in: conversation))
@@ -566,7 +568,7 @@ extension ZMUserTests_Permissions {
         XCTAssertFalse(selfUser.canDeleteConversation(conversation))
     }
 
-    func testThatAccessControlInNonTeamConversationCantBeModified_ByAnyTeamMember() {
+    func testThatGuestAccessControlInNonTeamConversationCantBeModified_ByAnyTeamMember() {
         // given
         makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
         conversation.conversationType = .group
@@ -575,8 +577,57 @@ extension ZMUserTests_Permissions {
         conversation.team = nil
 
         // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyGuestsAccessControlSettings(in: conversation))
     }
+
+    // MARK: - Channel access level
+
+    func testAccessOptionAllowed_ForChannel_andTeamAdmin() {
+        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
+        let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
+
+        XCTAssertFalse(adminUser.canModifyChannelAccessLevelSettings(in: conversation))
+        makeUserAdmin(adminUser)
+        XCTAssertTrue(adminUser.canModifyChannelAccessLevelSettings(in: conversation))
+    }
+
+    func testAccessOptionNotAllowed_ForChannel_MemberButTeamOwnerFromOtherTeam() {
+        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
+        let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
+
+        makeUserAdmin(adminUser)
+        XCTAssertTrue(adminUser.canModifyChannelAccessLevelSettings(in: conversation))
+
+        let team2 = Team.insertNewObject(in: uiMOC)
+        team2.remoteIdentifier = .create()
+
+        ModelHelper().addUser(adminUser, to: team2, in: uiMOC)
+        makeUserAdmin(adminUser)
+        XCTAssertFalse(adminUser.canModifyChannelAccessLevelSettings(in: conversation))
+    }
+
+    func testAccessOption_ForChannel_MemberNotTeamAdminButAssignedAdmin() {
+        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
+        let adminUser = updateConversationToChannelWithUserToBecomeTeamAdmin()
+
+        makeUserAdmin(adminUser)
+        XCTAssertTrue(adminUser.canModifyChannelAccessLevelSettings(in: conversation))
+
+        let memberUserAssignedAsAdmin = createUserAndAddInConversation()
+        XCTAssertFalse(memberUserAssignedAsAdmin.canModifyChannelAccessLevelSettings(in: conversation))
+
+        let participantRole = ParticipantRole.create(
+            managedObjectContext: uiMOC,
+            user: memberUserAssignedAsAdmin,
+            conversation: conversation
+        )
+        participantRole.role = makeAdminRole(actionName: ConversationAction.modifyAddPermission.name)
+        memberUserAssignedAsAdmin.participantRoles = Set([participantRole])
+
+        XCTAssertTrue(memberUserAssignedAsAdmin.canModifyChannelAccessLevelSettings(in: conversation))
+    }
+
+    // MARK: - Private
 
     private func makeAdminRole(actionName: String? = nil) -> Role {
         let adminRole = Role.insertNewObject(in: uiMOC)

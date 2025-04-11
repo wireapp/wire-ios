@@ -71,7 +71,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         password: String?,
         _ completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
-        guard conversation.canManageAccess else {
+        guard conversation.canManageGuestsAccess else {
             completion(.failure(CreateConversationGuestLinkUseCaseError.invalidOperation))
             return
         }
