@@ -101,6 +101,13 @@ private extension UpdateEvent {
 
             self = .conversation(.proteusMessageAdd(event))
 
+        case .conversationReceiptModeUpdate:
+            guard let event = Self.conversationReceiptModeUpdateEvent(from: legacyEvent) else {
+                return nil
+            }
+            
+            self = .conversation(.receiptModeUpdate(event))
+
         default:
             return nil
         }
@@ -333,6 +340,26 @@ private extension UpdateEvent {
             externalData: externalData,
             messageSenderClientID: payload.data.sender,
             messageRecipientClientID: payload.data.recipient
+        )
+    }
+
+    private static func conversationReceiptModeUpdateEvent(from event: ZMUpdateEvent) -> ConversationReceiptModeUpdateEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>.self,
+                from: event.payload
+            ),
+            let conversationID = payload.conversationID,
+            let senderID = payload.senderID
+        else {
+            return nil
+        }
+
+        return ConversationReceiptModeUpdateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            newReceiptMode: payload.data.readReceiptMode
         )
     }
 
