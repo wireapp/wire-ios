@@ -94,6 +94,13 @@ private extension UpdateEvent {
 
             self = .conversation(.mlsWelcome(event))
 
+        case .conversationOtrMessageAdd:
+            guard let event = Self.conversationProteusMessageAddEvent(from: legacyEvent) else {
+                return nil
+            }
+
+            self = .conversation(.proteusMessageAdd(event))
+
         default:
             return nil
         }
@@ -288,6 +295,47 @@ private extension UpdateEvent {
         )
     }
 
+    private static func conversationProteusMessageAddEvent(from event: ZMUpdateEvent) -> ConversationProteusMessageAddEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.ConversationEvent<DecryptedProteusMessageEvent>.self,
+                from: event.payload
+            ),
+            let conversationID = payload.conversationID,
+            let senderID = payload.senderID,
+            let timestamp = payload.timestamp
+        else {
+            return nil
+        }
+
+        // We no longer have the encrypted message, but it
+        // doesn't matter.
+        let message = MessageContent(
+            encryptedMessage: "Not available",
+            decryptedMessage: payload.data.text
+        )
+
+        // External data is still encrypted because we only
+        // decrypt when processing the update event.
+        let externalData = payload.data.external.map { external in
+            MessageContent(
+                encryptedMessage: external,
+                decryptedMessage: nil
+            )
+        }
+
+        return ConversationProteusMessageAddEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            message: message,
+            externalData: externalData,
+            messageSenderClientID: payload.data.sender,
+            messageRecipientClientID: payload.data.recipient
+        )
+    }
+
 }
 
 private extension Payload.ConversationEvent {
@@ -378,5 +426,18 @@ private struct MLSWelcomeEvent: EventData, Codable {
         var container = encoder.singleValueContainer()
         try container.encode(message)
     }
+
+}
+
+private struct DecryptedProteusMessageEvent: EventData, Codable {
+
+    static var eventType: ZMUpdateEventType {
+        .conversationOtrMessageAdd
+    }
+
+    let text: String
+    let external: String?
+    let sender: String
+    let recipient: String
 
 }
