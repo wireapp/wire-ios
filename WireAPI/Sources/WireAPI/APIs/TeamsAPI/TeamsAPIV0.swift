@@ -251,7 +251,7 @@ struct TeamMemberResponseV0: Decodable {
     let user: UUID
     let permissions: PermissionsResponseV0?
     let createdBy: UUID?
-    let createdAt: UTCTimeMillis?
+    let createdAt: UTCTime?
     let legalholdStatus: LegalholdStatusV0?
 
     enum CodingKeys: String, CodingKey {

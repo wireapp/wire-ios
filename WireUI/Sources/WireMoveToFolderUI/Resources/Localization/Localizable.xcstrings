@@ -334,8 +334,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
+            "state" : "translated",
+            "value" : "Mover a conversa %@ para uma nova pasta"
           }
         },
         "ru" : {
@@ -709,8 +709,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
+            "state" : "translated",
+            "value" : "Mover para"
           }
         },
         "ru" : {

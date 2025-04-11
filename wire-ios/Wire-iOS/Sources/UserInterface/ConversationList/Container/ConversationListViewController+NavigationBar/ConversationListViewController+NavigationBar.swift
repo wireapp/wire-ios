@@ -77,6 +77,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
         accountImageView.isAccessibilityElement = true
+        accountImageView.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
+            .accessibilityValue(viewModel.userSession.selfUser.name ?? "")
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false

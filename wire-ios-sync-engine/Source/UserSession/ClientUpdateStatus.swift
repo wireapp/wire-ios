@@ -48,7 +48,7 @@ open class ClientUpdateStatus: NSObject {
 
     fileprivate var isFetchingClients = false
     fileprivate var isWaitingToDeleteClients = false
-    fileprivate var needsToVerifySelfClient = false
+    var needsToVerifySelfClient = false
     fileprivate var isGeneratingPrekeys = false
     fileprivate var internalCredentials: UserEmailCredentials?
 

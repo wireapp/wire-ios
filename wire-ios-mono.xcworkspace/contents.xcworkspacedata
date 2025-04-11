@@ -105,6 +105,9 @@
       location = "group:Jenkinsfile">
    </FileRef>
    <FileRef
+      location = "group:WireAVS">
+   </FileRef>
+   <FileRef
       location = "group:WireCoreCrypto">
    </FileRef>
    <FileRef
@@ -127,9 +130,6 @@
          location = "group:framework.rb">
       </FileRef>
    </Group>
-   <FileRef
-      location = "group:wire-avs.json">
-   </FileRef>
    <FileRef
       location = "group:scripts">
    </FileRef>

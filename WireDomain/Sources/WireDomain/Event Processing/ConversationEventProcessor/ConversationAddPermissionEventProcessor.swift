@@ -33,7 +33,7 @@ struct ConversationAddPermissionEventProcessor: ConversationAddPermissionEventPr
         )
 
         await localStore.storeConversation(
-            permission: addPermission.rawValue,
+            permission: addPermission.toDomainModel(),
             conversation: localConversation
         )
 

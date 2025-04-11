@@ -29,7 +29,7 @@ protocol GroupOptionsSectionControllerDelegate: AnyObject {
 
 final class GroupOptionsSectionController: GroupDetailsSectionController {
 
-    private enum Option: Int, CaseIterable {
+    enum Option: Int, CaseIterable {
 
         case channelAccess = 0
         case notifications
@@ -42,10 +42,11 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             by user: UserType
         ) -> Bool {
             switch self {
-            case .channelAccess: user.canManageTeam && conversation.groupType == .channel
+            case .channelAccess: user.canModifyChannelAccessLevelSettings(in: conversation)
             case .notifications: user.canModifyNotificationSettings(in: conversation)
-            case .guests:        user.canModifyAccessControlSettings(in: conversation)
-            case .services:      user.canModifyAccessControlSettings(in: conversation) && conversation.botCanBeAdded
+            case .guests:        user.canModifyGuestsAccessControlSettings(in: conversation)
+            case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
+                .botCanBeAdded
             case .timeout:       user.canModifyEphemeralSettings(in: conversation)
             }
         }

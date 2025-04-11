@@ -48,6 +48,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // People picker/start UI
+"peoplepicker.navigation_header.title" = "New conversation";
 "peoplepicker.search_placeholder" = "İsim veya kullanıcı adına göre ara";
 "peoplepicker.header.top_people" = "Sık Görüşülenler";
 "peoplepicker.button.create_conversation" = "Create Group";
@@ -73,9 +74,6 @@
 "peoplepicker.services.add_service.error.title" = "Hizmet eklenemiyor";
 "peoplepicker.services.add_service.error.default" = "Hizmet şu anda kullanılamıyor";
 "peoplepicker.services.add_service.error.full" = "Sohbet dolu";
-
-"peoplepicker.title.create_conversation" = "Grup oluştur";
-"peoplepicker.title.add_to_conversation" = "Katılımcıları ekle";
 
 "peoplepicker.no_contacts_title" = "Kişi yok.";
 
@@ -103,9 +101,14 @@
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "Dolup taşmış";
+"add_participants.alert.title" = "Sohbet dolu";
 "add_participants.alert.message.new_conversation" = "%d kişiye kadar sohbete katılabilinir.";
 "add_participants.alert.message.existing_conversation" = "Bir sohbete %1$d kişi katılabilir. Şu anda %2$d kişilik daha yer var.";
+
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "Geri";
+"conversation.create.channel.next" = "İleri";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "İsme göre ara";
@@ -127,6 +130,7 @@
 "conversation_list.search_bar.placeholder" = "Search conversations";
 "conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
@@ -135,6 +139,7 @@
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Favoriler";
 "conversation_list.filter.groups.title" = "Gruplar";
+"conversation_list.filter.channels.title" = "Channels";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
 "conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
@@ -150,6 +155,8 @@
 // Conversation List - Empty states
 "conversation_list.empty_placeholder.all.headline" = "Welcome";
 "conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.channels.subheadline" = "Start using channels to be more productive. Join public channels via the Browse tab. You’ll find your public and private channels listed here.";
+"conversation_list.empty_placeholder.channels.link" = "Learn more about channels";
 "conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
 "conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
@@ -229,11 +236,6 @@
 "list.archived_conversations" = "ARŞİVLE";
 "list.archived_conversations_close" = "Arşivi kapat";
 
-"list.section.groups" = "Gruplar";
-"list.section.contacts" = "İnsanlar";
-"list.section.requests" = "İstekler";
-"list.section.favorites" = "Favoriler";
-
 "conversation.voiceover.value.active" = "etkin";
 "conversation.voiceover.value.disabled" = "devre dışı";
 
@@ -290,7 +292,6 @@
 "conversation.invite_more_people.button_title" = "Kişi Ekle";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Boş grup konuşması";
 
 "conversation.input_bar.verified" = "Doğrulandı";
 "conversation.input_bar.placeholder" = "Bir mesaj yazın";
@@ -342,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "İptal";
-"conversation.create.non_federating_domains_error.title" = "Group can't be created";
-"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.title" = "Conversation can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "Daha Fazla";
-"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -529,10 +530,6 @@
 
 "content.system.other_renamed_conv_to_nothing" = "%@ konuşmanın adını kaldırdı";
 "content.system.you_renamed_conv_to_nothing" = "Bu konuşmadının adını kaldırdınız";
-"content.system.pending_message_timestamp" = "Gönderiliyor…";
-"content.system.message_sent_timestamp" = "Şimdi Çevrimiçi";
-"content.system.message_delivered_timestamp" = "Gönderildi";
-"content.system.message_read_timestamp" = "Görüldü";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
 "content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
@@ -579,6 +576,15 @@
 
 "content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
 "content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
+
+"content.system.channel.with_name.title" = "%@ started the channel";
+"content.system.channel.with_name.title-you" = "%@ started the channel";
+
+"content.system.channel.invite.title" = "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:";
+"content.system.channel.invite.button" = "Copy Channel link";
+
+"content.system.channel.guest.joined" = "%@ joined the channel";
+"content.system.channel.guest.you_joined" = "You joined the channel";
 
 // read receipt
 
@@ -639,6 +645,7 @@
 "content.message.delete" = "Sil";
 "content.message.save" = "Kaydet";
 "content.message.resend" = "Tekrar gönder";
+"content.message.edited" = "Düzenlenen";
 
 "content.message.delete_ellipsis" = "Sil…";
 
@@ -852,19 +859,19 @@
 "participants.section.services" = "Hizmetler (%d)";
 "participants.section.settings" = "Ayarlar";
 "participants.footer.add_title" = "Katılımcı ekle";
-"participants.section.name.footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
 "participants.section.admins.footer" = "Yönetici yok.";
 "participants.section.members.footer" = "There are no members.";
 
-"profile.profile.group_admin_options.title" = "Grup yöneticisi";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Diğer işlemler";
 "meta.menu.rename" = "Yeniden adlandır";
-"meta.menu.leave" = "Gruptan Ayrıl…";
+"meta.menu.leave" = "Leave Conversation…";
 "meta.menu.archive" = "Arşivle";
 "meta.menu.unarchive" = "Arşivden kaldır";
-"meta.menu.delete" = "Grubu sil…";
+"meta.menu.delete" = "Delete Conversation…";
 "meta.menu.clear_content" = "İçeriği sil…";
 "meta.menu.move_to_folder" = "Şuraya Taşı…";
 "meta.menu.remove_from_folder" = "%@'dan kaldır";
@@ -919,8 +926,8 @@
 "profile.remove_dialog_title" = "Sil?";
 "profile.remove_dialog_message" = "%@ bu konuşmaya mesaj gönderemeyecek ve bu görüşmeden mesaj alamayacak.";
 "profile.remove_dialog_button_cancel" = "İptal";
-"profile.remove_dialog_button_remove" = "Gruptan Kaldır…";
-"profile.remove_dialog_button_remove_confirm" = "Gruptan Kaldır";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Engelle?";
@@ -982,7 +989,7 @@
 // User Details
 "profile.details.title" = "Ayrıntılar";
 "profile.details.guest" = "Misafir";
-"profile.details.group_admin" = "Grup yöneticisi";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federe";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1031,13 +1038,18 @@
 "group_details.notification_options_cell.description" = "Her şeyden (sesli ve görüntülü aramalar dahil) veya yalnızca biri sizden bahsettiğinde veya mesajlarınızdan birini yanıtladığında size bildirim gelebilir.";
 "group_details.receipt_options_cell.title" = "Okundu bilgisi";
 "group_details.receipt_options_cell.description" = "Bu açıkken, insanlar bu görüşmedeki mesajlarının ne zaman okunduğunu görebilir.";
+"group_details.access_options_cell.title" = "Channel access";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
-"group_details.conversation_admins_header.title" = "Grup Yöneticileri";
-"group_details.conversation_members_header.title" = "Grup üyeleri";
+"group_details.conversation_admins_header.title" = "Conversation admins";
+"group_details.conversation_members_header.title" = "Conversation members";
+
+// Channel Access level
+"channel_access_level.public" = "Public";
+"channel_access_level.private" = "Private";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";
@@ -1658,6 +1670,7 @@
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Bu hesap artık giriş yapmak için yeterli yetkiye sahip değil.";
 "error.user.account_limit_reached" = "3'ten fazla hesap ekleyemezsiniz.";
+"error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Aramak için çok insan var";
 "error.group_call.too_many_members_in_conversation" = "Aramalar %d kişiye kadar yapılabilir.";
@@ -1726,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";

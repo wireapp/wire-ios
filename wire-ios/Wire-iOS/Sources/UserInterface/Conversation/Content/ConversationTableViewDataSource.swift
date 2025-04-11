@@ -646,6 +646,7 @@ extension ConversationTableViewDataSource {
 
                 // we notify the table view by creating a new cell description
                 let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
+                newCellDescription.delegate = previousStatus?.cellDescription.delegate
                 previousStatus?.replace(newCellDescription, &sections)
 
                 // for collapsing the space we will refer to the cell description before the previous message's status

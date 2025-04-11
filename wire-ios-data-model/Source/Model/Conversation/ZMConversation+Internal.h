@@ -50,7 +50,7 @@ extern NSString *const ZMConversationUserDefinedNameKey;
 extern NSString *const ZMNormalizedUserDefinedNameKey;
 extern NSString *const ZMConversationListIndicatorKey;
 extern NSString *const ZMConversationConversationTypeKey;
-extern NSString *const ZMConversationGroupTypeValueKey;
+extern NSString *const ZMConversationGroupTypeKey;
 extern NSString *const ZMConversationNeedsToDownloadRolesKey;
 extern NSString *const ZMConversationIsForcedReadOnlyKey;
 

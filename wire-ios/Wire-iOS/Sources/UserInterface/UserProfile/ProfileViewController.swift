@@ -566,6 +566,19 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
         }
     }
 
+    func conversationCreationController(
+        _ controller: WireConversationChannelCreationFormViewController,
+        didCreateConversation conversation: ZMConversation
+    ) {
+        controller.dismiss(animated: true) { [weak self] in
+            guard let self else { return }
+
+            delegate?.profileViewController(
+                self,
+                wantsToNavigateTo: conversation
+            )
+        }
+    }
 }
 
 extension ProfileViewController: ProfileViewControllerViewModelDelegate {

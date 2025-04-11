@@ -56,7 +56,7 @@ private struct ParticipantsSectionViewModel {
     let conversationRole: ConversationRole
     let userSession: UserSession
     let showSectionCount: Bool
-    var sectionAccesibilityIdentifier = "label.groupdetails.participants"
+    var sectionAccessibilityIdentifier = "label.groupdetails.participants"
 
     var sectionTitle: String? {
         typealias GroupDetails = L10n.Localizable.GroupDetails
@@ -235,7 +235,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     }
 
     override var sectionAccessibilityIdentifier: String {
-        viewModel.sectionAccesibilityIdentifier
+        viewModel.sectionAccessibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
