@@ -93,11 +93,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
         return emojiVersionTruncated <= supportedEmojiVersion
     }
 
-    private static let supportedEmojiVersion: Double = if #available(iOS 16.4, *) {
-        15.0
-    } else {
-        14.0
-    }
+    private static let supportedEmojiVersion: Double = 15.0
 
 }
 

@@ -107,8 +107,6 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-
     var topMargin: CGFloat = 8
     var bottomMargin: CGFloat = 0
 

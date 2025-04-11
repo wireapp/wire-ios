@@ -30,8 +30,12 @@ package final class NoHistoryViewModel: ObservableObject {
         case cloudAccountAlreadyRegistered
     }
 
+    // MARK: - View state
+
     @Published var isLoading = false
     @Published var alert: Alert?
+
+    // MARK: - Dependencies
 
     private let didDetectDomainConflict: Bool
     private let howToChangeEmailURL: URL
@@ -40,6 +44,8 @@ package final class NoHistoryViewModel: ObservableObject {
 
     /// Tracks if the user has already acknowledged the alert.
     private var didConfirmAlert = false
+
+    // MARK: - Life cycle
 
     package init(
         didDetectDomainConflict: Bool,
@@ -52,6 +58,8 @@ package final class NoHistoryViewModel: ObservableObject {
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.onFlowCompletion = onFlowCompletion
     }
+
+    // MARK: Actions
 
     func confirm() {
         onFlowCompletion()

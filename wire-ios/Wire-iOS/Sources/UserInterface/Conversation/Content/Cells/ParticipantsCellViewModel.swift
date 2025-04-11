@@ -94,6 +94,10 @@ final class ParticipantsCellViewModel {
         isSelfIncludedInUsers ? 14 : 15
     }
 
+    private var isChannel: Bool {
+        message.conversationLike?.isChannel == true
+    }
+
     private var showServiceUserWarning: Bool {
         guard case .added = action,
               let messageData = message.systemMessageData,
@@ -222,7 +226,12 @@ final class ParticipantsCellViewModel {
         else { return nil }
 
         let senderName = name(for: sender).capitalized
-        return formatter.heading(senderName: senderName, senderIsSelf: sender.isSelfUser, convName: conversationName)
+        return formatter.heading(
+            senderName: senderName,
+            senderIsSelf: sender.isSelfUser,
+            convName: conversationName,
+            isChannel: isChannel
+        )
     }
 
     func attributedTitle() -> NSAttributedString? {
@@ -238,10 +247,11 @@ final class ParticipantsCellViewModel {
                 senderName: senderName,
                 senderIsSelf: sender.isSelfUser,
                 names: nameList,
-                isSelfIncludedInUsers: isSelfIncludedInUsers
+                isSelfIncludedInUsers: isSelfIncludedInUsers,
+                isChannel: isChannel
             )
         } else {
-            return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser)
+            return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser, isChannel: isChannel)
         }
     }
 

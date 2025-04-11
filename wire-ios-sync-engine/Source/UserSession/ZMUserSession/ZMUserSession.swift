@@ -558,8 +558,31 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setUpSyncAgent(clientID: String) {
+        let onSelfClientInvalidated: () async -> Void = { [self] in
+            await syncContext.perform { [self] in
+                syncContext.tearDownCryptoStack()
+
+                let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
+                let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
+
+                clientRegistrationStatus.emailCredentials = nil
+                clientRegistrationStatus.cookieProvider.deleteKeychainItems()
+
+                let selfUser = ZMUser.selfUser(in: managedObjectContext)
+                let clientDeletedRemotelyError = NSError.userSessionError(
+                    code: .clientDeletedRemotely,
+                    userInfo: selfUser.loginCredentials.dictionaryRepresentation
+                )
+
+                didDeleteSelfUserClient(error: clientDeletedRemotelyError)
+
+                clientUpdateStatus.needsToVerifySelfClient = false
+            }
+        }
+
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
+            onSelfClientInvalidated: onSelfClientInvalidated,
             onCalling: onCalling(callEventInfo:)
         )
 

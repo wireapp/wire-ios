@@ -59,7 +59,7 @@
         <attribute name="draftMessageData" optional="YES" attributeType="Binary"/>
         <attribute name="draftMessageNonce" optional="YES" attributeType="Binary"/>
         <attribute name="epoch" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
-        <attribute name="groupTypeValue" optional="YES" attributeType="Integer 16" usesScalarValueType="NO"/>
+        <attribute name="groupType" optional="YES" attributeType="Integer 16" usesScalarValueType="NO"/>
         <attribute name="hasReadReceiptsEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="hasUnreadUnsentMessage" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="internalEstimatedUnreadCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
@@ -91,7 +91,7 @@
         <attribute name="needsToVerifyLegalHold" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="normalizedUserDefinedName" optional="YES" attributeType="String"/>
         <attribute name="primaryKey" optional="YES" attributeType="String"/>
-        <attribute name="privateChannelPermissionValue" optional="YES" attributeType="String"/>
+        <attribute name="privateChannelPermission" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="remoteIdentifier" optional="YES" transient="YES"/>
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="securityLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>

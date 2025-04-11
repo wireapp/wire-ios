@@ -17,33 +17,27 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 
-package protocol VerificationCodeBuilder {
+package protocol VerificationCodeFactory {
+
+    @MainActor var viewModel: VerificationCodeViewModel { get }
 
     @MainActor
-    func verificationCodeView(
-        email: String,
-        password: String,
-        didDetectDomainConflict: Bool
-    ) -> VerificationCodeView
-
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 }
 
 package struct VerificationCodeView: View {
-
-    // MARK: - Constants
-
-    private enum Constants {
-        static let backgroundCornerRadius: CGFloat = 16
-    }
 
     @StateObject private var viewModel: VerificationCodeViewModel
 
     @FocusState private var focusedIndex: Int?
 
-    package init(viewModel: VerificationCodeViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+    package init(
+        factory: @autoclosure @escaping () -> VerificationCodeFactory
+    ) {
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -71,7 +65,7 @@ package struct VerificationCodeView: View {
             .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
-                Task.detached { await viewModel.resend() }
+                Task.detached { await viewModel.requestVerificationCode() }
             }, label: {
                 Text(L10n.VerificationCode.resendCode)
             })
@@ -80,11 +74,6 @@ package struct VerificationCodeView: View {
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
-        .cornerRadius(Constants.backgroundCornerRadius)
-        .overlay(
-            RoundedRectangle(cornerRadius: Constants.backgroundCornerRadius)
-                .stroke(ColorTheme.Backgrounds.surface.color, lineWidth: 1)
-        )
         .navigationTitle(L10n.VerificationCode.title)
         .navigationBarTitleDisplayMode(.inline)
         .setPreferredSize(navigationBarHidden: false)
@@ -97,6 +86,21 @@ package struct VerificationCodeView: View {
                 Button(L10n.Authentication.Error.confirm, action: {})
             }
         )
+        .navigationDestination(for: VerificationCodeDestination.self) {
+            switch $0 {
+            case let .noHistory(authenticationResult):
+                NoHistoryView(
+                    factory: viewModel.factory.noHistoryFactory(
+                        authenticationResult: authenticationResult
+                    )
+                )
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.requestVerificationCode()
+            }
+        }
     }
 
     private var verificationCodeView: some View {
@@ -126,33 +130,4 @@ package struct VerificationCodeView: View {
         }
     }
 
-}
-
-#Preview("Empty code") {
-    MockDependencies().previewVerificationCodeView(
-        email: "name.name@mail.com",
-        password: "pasword"
-    )
-}
-
-#Preview("Not empty code") {
-    MockDependencies().previewVerificationCodeView(
-        email: "name.name@mail.com",
-        password: "pasword",
-        code: ["1", "2", "3", "4", "5", ""]
-    )
-}
-
-#Preview {
-    BackgroundView()
-        .overlay {
-            VStack(spacing: 0) {
-                Spacer()
-                    .frame(maxHeight: .infinity)
-                MockDependencies().previewVerificationCodeView(
-                    email: "name.name@mail.com",
-                    password: "pasword"
-                )
-            }
-        }
 }

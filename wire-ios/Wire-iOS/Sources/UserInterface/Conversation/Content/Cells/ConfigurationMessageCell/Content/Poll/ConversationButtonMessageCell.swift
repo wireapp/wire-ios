@@ -153,8 +153,6 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var supportsActions: Bool = false
 
-    var showEphemeralTimer: Bool = false
-
     var containsHighlightableContent: Bool = false
 
     var message: ZMConversationMessage?
@@ -163,7 +161,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var actionController: ConversationMessageActionController?
 
-    var configuration: View.Configuration
+    let configuration: View.Configuration
 
     var accessibilityIdentifier: String? = "PollCell"
 

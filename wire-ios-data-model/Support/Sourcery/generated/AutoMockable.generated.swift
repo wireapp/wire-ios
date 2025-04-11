@@ -51,6 +51,7 @@ import WireCoreCrypto
 
 
 
+
 public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
 
     // MARK: - Life cycle
@@ -442,6 +443,24 @@ public class MockConversationLike: ConversationLike {
     // MARK: - domain
 
     public var domain: String?
+
+    // MARK: - isChannel
+
+    public var isChannel: Bool {
+        get { return underlyingIsChannel }
+        set(value) { underlyingIsChannel = value }
+    }
+
+    public var underlyingIsChannel: Bool!
+
+    // MARK: - privateChannelPermission
+
+    public var privateChannelPermission: PrivateChannelPermission {
+        get { return underlyingPrivateChannelPermission }
+        set(value) { underlyingPrivateChannelPermission = value }
+    }
+
+    public var underlyingPrivateChannelPermission: PrivateChannelPermission!
 
 
     // MARK: - localParticipantsContain
