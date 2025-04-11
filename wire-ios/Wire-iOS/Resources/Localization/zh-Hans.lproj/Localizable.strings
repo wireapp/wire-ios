@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "没有管理员。";
 "participants.section.members.footer" = "暂时还没有成员";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "对话管理员";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "更多操作";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "移除？";
 "profile.remove_dialog_message" = "%@将不能够在此聊天发送或接收消息。";
 "profile.remove_dialog_button_cancel" = "取消";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "从对话移除…";
+"profile.remove_dialog_button_remove_confirm" = "从对话移除";
 
 // Block dialog
 "profile.block_dialog.title" = "拉黑？";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "详细信息";
 "profile.details.guest" = "游客";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "对话管理员";
 "profile.details.partner" = "外部合作者";
 "profile.details.federated" = "联邦";
 "profile.details.blocking_reason" = "由于合法保留，此用户已被屏蔽。[进一步了解](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "自毁消息现在是强制性的。新消息将在 %@ 之后自毁。";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "现在，所有对话管理员都无法生成访客链接。";
+"feature_config.alert.conversation_guest_links.message.enabled" = "现在，所有对话管理员都可以生成访客链接。";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "端到端身份证书";

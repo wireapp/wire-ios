@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Здесь нет администраторов.";
 "participants.section.members.footer" = "Здесь нет участников.";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "Администратор беседы";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Дополнительные действия";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Удалить?";
 "profile.remove_dialog_message" = "%@ больше не сможет отправлять и получать сообщения в этой беседе.";
 "profile.remove_dialog_button_cancel" = "Отмена";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "Удалить из беседы…";
+"profile.remove_dialog_button_remove_confirm" = "Удалить из беседы";
 
 // Block dialog
 "profile.block_dialog.title" = "Заблокировать?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Подробности";
 "profile.details.guest" = "Гость";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "Администратор беседы";
 "profile.details.partner" = "внешний";
 "profile.details.federated" = "Федеративный";
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Самоудаляющиеся сообщения теперь обязательны. Новые сообщения будут самоудаляться спустя %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Генерация гостевых ссылок теперь отключена для всех администраторов беседы.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Генерация гостевых ссылок теперь включена для всех администраторов беседы.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "Сертификат сквозной идентификации";
