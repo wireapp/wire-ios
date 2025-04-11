@@ -115,6 +115,13 @@ private extension UpdateEvent {
             
             self = .federation(.connectionRemoved(event))
 
+        case .federationDelete:
+            guard let event = Self.federationDeleteEvent(from: legacyEvent) else {
+                return nil
+            }
+
+            self = .federation(.delete(event))
+
         default:
             return nil
         }
@@ -386,6 +393,20 @@ private extension UpdateEvent {
         }
 
         return FederationConnectionRemovedEvent(domains: Set(payload.domains))
+    }
+
+    private static func federationDeleteEvent(from event: ZMUpdateEvent) -> FederationDeleteEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.FederationDelete.self,
+                from: event.payload
+            )
+        else {
+            return nil
+        }
+
+        return FederationDeleteEvent(domain: payload.domain)
     }
 
 }

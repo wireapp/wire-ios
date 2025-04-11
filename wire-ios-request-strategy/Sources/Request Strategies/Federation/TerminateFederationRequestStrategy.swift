@@ -98,10 +98,10 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
 extension Payload {
 
     /// The domain that the self domain has stopped federate with.
-    struct FederationDelete: Codable {
+    public struct FederationDelete: Codable {
 
-        let domain: String
-        let type: String
+        public let domain: String
+        public let type: String
 
     }
 
