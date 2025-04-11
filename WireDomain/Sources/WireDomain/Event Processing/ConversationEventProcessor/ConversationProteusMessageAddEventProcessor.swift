@@ -97,9 +97,9 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
                 date: date
             )
         }
-        
+
         // Handle calling if there's one.
-        
+
         if let callEventInfo = handleCallingIfNeeded(
             event: event,
             genericMessage: genericMessage
@@ -211,9 +211,9 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             conversationDomain: conversationID.domain
         )
     }
-    
+
     // MARK: - Calling
-    
+
     func handleCallingIfNeeded(
         event: ConversationProteusMessageAddEvent,
         genericMessage: GenericMessage
@@ -221,28 +221,29 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         guard genericMessage.hasCalling else {
             return nil
         }
-        
+
         guard let callContent: CallContent = .decode(from: genericMessage.calling) else {
             return nil
         }
-        
+
         guard let payload = genericMessage.calling.content.data(
             using: .utf8, allowLossyConversion: false
         ) else {
             return nil
         }
-        
+
         let isRemoteMute = callContent.type == "REMOTEMUTE"
         let callingConversationID = genericMessage.calling.qualifiedConversationID
         let senderID = event.senderID
         let eventTimestamp = event.timestamp
         let clientID = event.messageSenderClientID
-        
+
         let conversationID = !callingConversationID.id
             .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.uuid
-        
-        let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event.conversationID.domain
-        
+
+        let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event
+            .conversationID.domain
+
         return CallEventInfo(
             data: payload,
             conversationID: conversationID,

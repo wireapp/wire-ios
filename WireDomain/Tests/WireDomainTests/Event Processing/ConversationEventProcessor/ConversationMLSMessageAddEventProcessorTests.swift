@@ -35,6 +35,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
 
+    private var callEventInfo: CallEventInfo?
+
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
@@ -53,7 +55,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
             conversationLocalStore: conversationLocalStore,
             messageLocalStore: messageLocalStore,
             userLocalStore: userLocalStore,
-            protobufMessageProcessor: protobufMessageProcessor
+            protobufMessageProcessor: protobufMessageProcessor,
+            onCalling: { self.callEventInfo = $0 }
         )
     }
 
@@ -109,6 +112,26 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
             conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.count,
             1
         )
+
+        XCTAssertNil(callEventInfo)
+    }
+
+    func testProcessEvent_Message_Has_Calling_It_Invokes_Handler_With_Call_Event_Info() async throws {
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        messageLocalStore.canAddMessageConversationSenderID_MockValue = true
+
+        // When
+
+        try await sut.processEvent(Scaffolding.callingMessageEvent)
+
+        // Then
+
+        XCTAssertNotNil(callEventInfo) // There's a call, we got the call info.
     }
 
     private enum Scaffolding {
@@ -123,6 +146,36 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
                 senderClientID: UUID.mockID1.uuidString
             )]
         )
+
+        static let callingMessageEvent = ConversationMLSMessageAddEvent(
+            conversationID: ConversationID(uuid: UUID(), domain: "domain.com"),
+            senderID: UserID(uuid: UUID(), domain: "domain.com"),
+            subconversation: "",
+            message: "",
+            timestamp: .now,
+            decryptedMessages: [.init(
+                message: text!,
+                senderClientID: UUID.mockID1.uuidString
+            )]
+        )
+
+        private static let message = GenericMessage(
+            content: Calling(content: content, conversationId: .random())
+        )
+
+        private static let text = try? message.serializedData().base64String()
+
+        private static let content: String = {
+            let json = [
+                "src_userid": UUID.mockID1.uuidString,
+                "src_clientid": "clientID",
+                "resp": false,
+                "type": ""
+            ] as [String: Any]
+
+            let data = try! JSONSerialization.data(withJSONObject: json, options: [])
+            return String(decoding: data, as: UTF8.self)
+        }()
 
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }

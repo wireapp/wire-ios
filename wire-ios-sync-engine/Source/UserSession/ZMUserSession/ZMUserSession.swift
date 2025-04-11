@@ -562,7 +562,7 @@ public final class ZMUserSession: NSObject {
             clientID: clientID,
             onCalling: onCalling(callEventInfo:)
         )
-        
+
         let syncAgent = SyncAgent(
             lastUpdateEventIDRepository: lastEventIDRepository,
             initialSyncProvider: clientSessionComponent,
@@ -574,29 +574,29 @@ public final class ZMUserSession: NSObject {
         syncAgent.delegate = self
         syncAgent.resume()
     }
-    
-    func onCalling(callEventInfo: CallEventInfo) -> Void {
+
+    func onCalling(callEventInfo: CallEventInfo) {
         let serverTimeDelta = syncContext.performAndWait {
             syncContext.serverTimeDelta
         }
-        
+
         viewContext.perform { [weak self] in
             guard let self, let callCenter else { return }
             guard !callEventInfo.isMuted else {
                 callCenter.isMuted = true
                 return
             }
-            
+
             let conversationId = AVSIdentifier(
                 identifier: callEventInfo.conversationID,
                 domain: callEventInfo.conversationDomain
             )
-            
+
             let userId = AVSIdentifier(
                 identifier: callEventInfo.userID,
                 domain: callEventInfo.userDomain
             )
-            
+
             let callEvent = CallEvent(
                 data: callEventInfo.data,
                 currentTimestamp: Date().addingTimeInterval(serverTimeDelta),
@@ -605,10 +605,10 @@ public final class ZMUserSession: NSObject {
                 userId: userId,
                 clientId: callEventInfo.clientID
             )
-            
+
             callCenter.processCallEvent(callEvent)
         }
-        
+
     }
 
     // MARK: - Deinitalize

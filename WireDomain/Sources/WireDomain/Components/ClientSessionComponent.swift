@@ -41,7 +41,7 @@ public final class ClientSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
-    
+
     private let onCalling: (CallEventInfo) -> Void
 
     public init(

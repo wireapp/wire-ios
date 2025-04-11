@@ -103,9 +103,9 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
                 date: date ?? .now
             )
         }
-        
+
         // Handle calling if there's one.
-        
+
         if let callEventInfo = handleCallingIfNeeded(
             event: event,
             decryptedMessage: decryptedMessage,
@@ -170,9 +170,9 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             conversationDomain: conversationID.domain
         )
     }
-    
+
     // MARK: - Calling
-    
+
     func handleCallingIfNeeded(
         event: ConversationMLSMessageAddEvent,
         decryptedMessage: ConversationMLSMessageAddEvent.DecryptedMessage,
@@ -181,32 +181,33 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         guard genericMessage.hasCalling else {
             return nil
         }
-        
+
         guard let callContent: CallContent = .decode(from: genericMessage.calling) else {
             return nil
         }
-        
+
         guard let payload = genericMessage.calling.content.data(
             using: .utf8, allowLossyConversion: false
         ) else {
             return nil
         }
-        
+
         let isRemoteMute = callContent.type == "REMOTEMUTE"
         let callingConversationID = genericMessage.calling.qualifiedConversationID
         let senderID = event.senderID
         let eventTimestamp = event.timestamp
         let clientID = decryptedMessage.senderClientID
-        
+
         let conversationID = !callingConversationID.id
             .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.uuid
-        
-        let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event.conversationID.domain
-        
+
+        let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event
+            .conversationID.domain
+
         guard let clientID, let eventTimestamp else {
             return nil
         }
-        
+
         return CallEventInfo(
             data: payload,
             conversationID: conversationID,
