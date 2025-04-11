@@ -60,7 +60,7 @@ struct UserConnectionEventDecoder {
         let qualifiedTo: QualifiedID?
         let conversationID: UUID?
         let qualifiedConversationID: QualifiedID?
-        let lastUpdate: UTCTimeMillis
+        let lastUpdate: UTCTime
         let status: ConnectionStatus
 
         enum CodingKeys: String, CodingKey {
