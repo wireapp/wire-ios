@@ -173,6 +173,7 @@ public final class NewConversationViewController<
             snapshot.insertSections(["intro"], beforeSection: snapshot.sectionIdentifiers[0])
         }
         dataSource.apply(snapshot, animatingDifferences: true) {
+            /*
             if self.isFirstApply, snapshot.numberOfSections > 1 {
                 if let sections = self.fetchedResultsController.sections {
                     let lastSection = sections.count - 1
@@ -182,6 +183,7 @@ public final class NewConversationViewController<
                     self.isFirstApply = false
                 }
             }
+             */
         }
     }
 
