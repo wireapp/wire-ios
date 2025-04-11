@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "Dolup taşmış";
+"add_participants.alert.title" = "Sohbet dolu";
 "add_participants.alert.message.new_conversation" = "%d kişiye kadar sohbete katılabilinir.";
 "add_participants.alert.message.existing_conversation" = "Bir sohbete %1$d kişi katılabilir. Şu anda %2$d kişilik daha yer var.";
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Yönetici yok.";
 "participants.section.members.footer" = "There are no members.";
 
-"profile.profile.group_admin_options.title" = "Grup yöneticisi";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Diğer işlemler";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Sil?";
 "profile.remove_dialog_message" = "%@ bu konuşmaya mesaj gönderemeyecek ve bu görüşmeden mesaj alamayacak.";
 "profile.remove_dialog_button_cancel" = "İptal";
-"profile.remove_dialog_button_remove" = "Gruptan Kaldır…";
-"profile.remove_dialog_button_remove_confirm" = "Gruptan Kaldır";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Engelle?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Ayrıntılar";
 "profile.details.guest" = "Misafir";
-"profile.details.group_admin" = "Grup yöneticisi";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federe";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1740,7 +1740,7 @@
 
 // Feature configs: conversation guest links
 "feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
