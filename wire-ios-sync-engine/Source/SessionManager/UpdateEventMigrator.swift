@@ -122,6 +122,9 @@ private extension UpdateEvent {
 
             self = .federation(.delete(event))
 
+        case .userPushRemove:
+            self = .user(.pushRemove)
+
         default:
             return nil
         }
