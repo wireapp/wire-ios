@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct Reaction: Hashable, Sendable {
-    var emoji: Character
-    var count: Int
-    var isSelfReaction: Bool
+struct MessageReaction: Equatable {
+    var emojiID: Emoji.ID
+    var count: UInt
+    var isSelfUserReacting: Bool
 }
-
-typealias Reactions = [Reaction]

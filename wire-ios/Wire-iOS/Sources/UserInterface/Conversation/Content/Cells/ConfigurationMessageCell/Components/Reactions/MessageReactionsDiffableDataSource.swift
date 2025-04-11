@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct Reaction: Hashable, Sendable {
-    var emoji: Character
-    var count: Int
-    var isSelfReaction: Bool
+import UIKit
+
+typealias MessageReactionsDiffableDataSource = UICollectionViewDiffableDataSource<MessageReactionsSectionID, Emoji.ID>
+
+enum MessageReactionsSectionID: Hashable {
+    case single
 }
 
-typealias Reactions = [Reaction]
+typealias MessageReactionsDiffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<MessageReactionsSectionID, Emoji.ID>
