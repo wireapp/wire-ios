@@ -29,6 +29,8 @@ public class ConversationTitleView: UIView {
     private let accountImageView = AccountImageView()
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
+    private let legalHoldImage = UIImageView(image: UIImage(resource: .legalHold))
+    private let verifiedImage = UIImageView(image: UIImage(resource: .verified))
     private let dropdownImage = UIImageView(image: .dropdown)
     private let tapButton = UIButton(type: .custom)
 
@@ -58,19 +60,12 @@ public class ConversationTitleView: UIView {
     private func configureViews() {
         nameLabel.font = .preferredFont(forTextStyle: .headline)
         nameLabel.textColor = SemanticColors.Label.textDefault
-        nameLabel.text = source.title
 
         subtitleLabel.font = .boldSystemFont(ofSize: 9)
         subtitleLabel.textColor = .white
-        subtitleLabel.text = source.subtitle
-        subtitleLabel.isHidden = source.subtitle == nil
 
         accountImageView.availability = nil
-        if let imageSource = source.accountImageSource {
-            updateAvatar(source: imageSource, animated: false)
-        }
         accountImageView.hideProfileNotificationsBadge = true
-        accountImageView.isHidden = source.accountImageSource == nil
 
         let design = AccountImageViewDesign()
         accountImageView.imageBorderWidth = design.borderWidth
@@ -78,6 +73,21 @@ public class ConversationTitleView: UIView {
         accountImageView.initialsTextColor = .white
 
         dropdownImage.tintColor = ColorTheme.Backgrounds.onSurfaceVariant
+
+        configureViewValues()
+    }
+
+    private func configureViewValues() {
+        if let imageSource = source.accountImageSource {
+            updateAvatar(source: imageSource, animated: true)
+        }
+        accountImageView.isHidden = source.accountImageSource == nil
+        nameLabel.text = source.title
+        subtitleLabel.text = source.subtitle
+        subtitleLabel.isHidden = source.subtitle == nil
+        legalHoldImage.isHidden = !source.isUnderLegalHold
+        verifiedImage.isHidden = !source.isVerified
+        verifiedImage.image = source.isMLS ? UIImage(resource: .certificateValid) : UIImage(resource: .verified)
     }
 
     private func configureLayout() {
@@ -92,7 +102,7 @@ public class ConversationTitleView: UIView {
         let avatarAndNameStackView = UIStackView.horizontal(spacing: 4)
         avatarAndNameStackView.alignment = .center
 
-        [accountImageView, nameLabel, dropdownImage.wrapInView(topInset: 4)]
+        [accountImageView, legalHoldImage, nameLabel, verifiedImage, dropdownImage.wrapInView(topInset: 4)]
             .forEach(avatarAndNameStackView.addArrangedSubview)
 
         [
@@ -102,6 +112,8 @@ public class ConversationTitleView: UIView {
         .forEach(stackView.addArrangedSubview)
 
         accountImageView.constraintToSquare(sideLength: 26)
+        legalHoldImage.constraintToSquare(sideLength: 16)
+        verifiedImage.constraintToSquare(sideLength: 16)
         dropdownImage.constraintToSquare(sideLength: 16)
         stackView.heightAnchor.constraint(equalToConstant: 44).isActive = true
 
@@ -114,12 +126,7 @@ public class ConversationTitleView: UIView {
 
     public func updateSource(_ source: ConversationTitleSource) {
         self.source = source
-        if let imageSource = source.accountImageSource {
-            updateAvatar(source: imageSource, animated: true)
-        }
-        accountImageView.isHidden = source.accountImageSource == nil
-        nameLabel.text = source.title
-        subtitleLabel.text = source.subtitle
+        configureViewValues()
     }
 
     public func updateOtherUserAccentColor(_ color: UIColor) {
@@ -154,7 +161,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .text("DS"),
         title: "Wolfgang Wolf",
-        subtitle: "FEDERATED"
+        subtitle: "FEDERATED",
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 
 }
@@ -164,7 +174,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel",
-        subtitle: "GUEST"
+        subtitle: "GUEST",
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 }
 
@@ -173,7 +186,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel",
-        subtitle: "GUEST"
+        subtitle: "GUEST",
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ), isDark: true)
 }
 
@@ -182,7 +198,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "John Snow",
-        subtitle: nil
+        subtitle: nil,
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 }
 
@@ -191,7 +210,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel NagelNagelNagelNagelNagelNagel",
-        subtitle: nil
+        subtitle: nil,
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 }
 
@@ -200,7 +222,10 @@ public class ConversationTitleView: UIView {
     makeVC(source: ConversationTitleSource(
         accountImageSource: .image(.checkmark),
         title: "Paul Nagel NagelNagelNagelNagelNagelNagel",
-        subtitle: nil
+        subtitle: nil,
+        isMLS: false,
+        isVerified: false,
+        isUnderLegalHold: false
     ))
 }
 
