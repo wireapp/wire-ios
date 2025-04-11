@@ -200,7 +200,7 @@
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "双击打开个人资料";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.cancelButton.description" = "关闭新对话概览";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -218,12 +218,14 @@
 "conversationsList.replyStatus.value" = "回复";
 "conversationsList.badgeView.value" = "New messages: %d";
 "conversationsList.itemCell.hint" = "Double tap to open conversation";
+"conversationsList.itemCell.avatar.group.label" = "群组";
+"conversationsList.itemCell.avatar.channel.label" = "频道";
 "conversationsList.joinButton.description" = "加入";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "双击打开个人资料";
 
-"conversationList.startConversationButton.description" = "Create group or search for people";
+"conversationList.startConversationButton.description" = "创建一个群组或频道，或者搜索用户";
 "conversationsList.filterButton.description" = "Filter conversations";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";

@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "Le domaine fédéré n'est actuellement pas disponible. [En savoir plus](%@)";
 
-"add_participants.alert.title" = "Le groupe est complet";
+"add_participants.alert.title" = "Cette conversation est saturée";
 "add_participants.alert.message.new_conversation" = "Jusqu'à %d contacts peuvent participer à une conversation.";
 "add_participants.alert.message.existing_conversation" = "Jusqu'à %1$d contacts peuvent participer à une conversation. Actuellement, %2$d contacts peuvent encore rejoindre cette conversation.";
 
@@ -343,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Sélectionnez MLS pour créer un groupe en utilisant le protocole Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Sélectionner un protocole";
 "conversation.create.mls.cancel" = "Annuler";
-"conversation.create.non_federating_domains_error.title" = "La conversation ne peut pas être créée";
+"conversation.create.non_federating_domains_error.title" = "Conversation can't be created";
 "conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "En savoir plus";
-"conversation.create.non_federating_domains_error.abort" = "Annuler la création de la conversation";
+"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Il n'y a aucun administrateur.";
 "participants.section.members.footer" = "Il n'y a aucun participant.";
 
-"profile.profile.group_admin_options.title" = "Admin du groupe";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Plus d’actions";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Supprimer ?";
 "profile.remove_dialog_message" = "%@ ne pourra ni envoyer ni recevoir de messages dans cette conversation.";
 "profile.remove_dialog_button_cancel" = "Annuler";
-"profile.remove_dialog_button_remove" = "Retirer Du Groupe…";
-"profile.remove_dialog_button_remove_confirm" = "Retirer Du Groupe";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Bloquer ?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Détails";
 "profile.details.guest" = "Contact externe";
-"profile.details.group_admin" = "Admin du groupe";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "externe";
 "profile.details.federated" = "Fédéré";
 "profile.details.blocking_reason" = "Cet utilisateur est bloqué en raison de la conservation à des fins juridiques. [PLUS D'INFOS](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Les messages éphémères sont maintenant obligatoires. Les nouveaux messages seront auto-supprimés après %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "La génération de liens d'invitation est maintenant désactivée pour tous les administrateurs de groupes.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "La génération de liens d'invitation est maintenant activée pour tous les administrateurs de groupes.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
