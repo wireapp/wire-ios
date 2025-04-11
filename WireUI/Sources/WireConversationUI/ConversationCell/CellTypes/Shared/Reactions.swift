@@ -20,8 +20,17 @@ public // TODO: public?
 struct Reaction: Hashable, Sendable {
     public // TODO: public?
     var emoji: Character
+    public // TODO: public?
     var count: Int
+    public // TODO: public?
     var isSelfReaction: Bool
+
+    public // TODO: public?
+    init(emoji: Character, count: Int, isSelfReaction: Bool) {
+        self.emoji = emoji
+        self.count = count
+        self.isSelfReaction = isSelfReaction
+    }
 }
 
 public // TODO: public?

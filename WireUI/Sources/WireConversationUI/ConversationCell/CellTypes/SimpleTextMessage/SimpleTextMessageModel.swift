@@ -25,14 +25,25 @@ public struct SimpleTextMessageModel: ConversationCellModelProtocol {
 
     /// If `nil` no sender info is displayed (e.g. for subsequent messages of the same sender).
     var senderInfo: MessageSenderInfo?
-
     var text: AttributedString
-
     var dateTime: String
-
     var status: String
-
     var reactions: Reactions
+
+    public // TODO: public?
+    init(
+        senderInfo: MessageSenderInfo? = nil,
+        text: AttributedString,
+        dateTime: String,
+        status: String,
+        reactions: Reactions
+    ) {
+        self.senderInfo = senderInfo
+        self.text = text
+        self.dateTime = dateTime
+        self.status = status
+        self.reactions = reactions
+    }
 
 }
 

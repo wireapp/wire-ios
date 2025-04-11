@@ -67,12 +67,12 @@ private struct ReactionsViewRepresentable: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIView {
         let view = SimpleTextMessageContentViewReactionsFactory?() ?? UIView()
-        SimpleTextMessageContentViewReactionsViewUpdater(view, reactions)
+        SimpleTextMessageContentViewReactionsViewUpdater?(view, reactions)
         return view
     }
 
     func updateUIView(_ view: UIView, context: Context) {
-        SimpleTextMessageContentViewReactionsViewUpdater(view, reactions)
+        SimpleTextMessageContentViewReactionsViewUpdater?(view, reactions)
     }
 }
 

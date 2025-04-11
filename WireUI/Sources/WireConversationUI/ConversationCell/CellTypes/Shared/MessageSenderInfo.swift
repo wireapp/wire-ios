@@ -20,6 +20,7 @@ import WireAccountImageUI
 import WireFoundation
 
 /// Combines the info about the sender of a message, both for the image and the text.
+public // TODO: public?
 struct MessageSenderInfo: Hashable, Sendable {
 
     var accountImageSource: AccountImageSource

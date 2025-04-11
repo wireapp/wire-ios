@@ -120,6 +120,7 @@ public final class NewConversationViewController<
 
     private func registerCellTypes() {
         ConversationCellModel.timeDivider(.init()).registerIfNeeded(in: tableView)
+        ConversationCellModel.simpleTextMessage(SimpleTextMessageModel()).registerIfNeeded(in: tableView)
 //        for itemIdentifier in itemIdentifiers {
 //            itemIdentifier.registerIfNeeded(in: tableView)
 //        }

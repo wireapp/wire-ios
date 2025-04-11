@@ -26,6 +26,7 @@ import WireCountly
 import WireLogging
 import WireSyncEngine
 import WireConversationUI
+import SwiftUI
 
 enum ApplicationLaunchType {
     case unknown
@@ -102,10 +103,35 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        SimpleTextMessageContentViewReactionsFactory = { MessageReactionsCollectionView() }
-        SimpleTextMessageContentViewReactionsViewUpdater = { view, reactions in
-            guard let view = view as? MessageReactionsCollectionView else { return assertionFailure() }
-            guard let dataSource = view.dataSource as? MessageReactionsDiffableDataSource else { return assertionFailure() }
+        SimpleTextMessageContentViewReactionsFactory = {
+            let collectionView = MessageReactionsCollectionView()
+            collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "ReactionsCell")
+            return collectionView
+        }
+        SimpleTextMessageContentViewReactionsViewUpdater = { collectionView, reactions in
+            guard let collectionView = collectionView as? MessageReactionsCollectionView else { return assertionFailure() }
+            // guard let dataSource = view.dataSource as? MessageReactionsDiffableDataSource else { return assertionFailure() }
+
+            let dataSource = MessageReactionsDiffableDataSource(
+                collectionView: collectionView
+            ) { collectionView, indexPath, reaction in
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReactionsCell", for: indexPath)
+                let reaction = reactions[indexPath.item]
+                cell.contentConfiguration = UIHostingConfiguration {
+                    MessageReactionView(
+                        reaction: MessageReaction(
+                            emojiID: "\(reaction.emoji)",
+                            count: UInt(reaction.count),
+                            isSelfUserReacting: reaction.isSelfReaction
+                        )
+                    )
+                }
+                .margins(.all, 0)
+                .margins(.vertical, 1) // the border of the cell would be clipped otherwise
+                return cell
+            }
+            objc_setAssociatedObject(collectionView, &dataSourceHandle, dataSource, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
 
             var snapshot = MessageReactionsDiffableDataSourceSnapshot()
             snapshot.appendSections([.single])
@@ -440,3 +466,6 @@ private extension AppDelegate {
         .standard
     }
 }
+
+// TODO: delete
+nonisolated(unsafe) private var dataSourceHandle = 0

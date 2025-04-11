@@ -63,9 +63,35 @@ extension ZMMessage: NewConversationMessageModel {
 
     public var conversationCellModel: ConversationCellModel {
         if let textMessageData {
-            .timeDivider(TimeDividerModel(text: textMessageData.messageText ?? "<nil>", isUnreadIndicatorVisible: false))
+            // return .timeDivider(TimeDividerModel(text: textMessageData.messageText ?? "<nil>", isUnreadIndicatorVisible: false))
+
+            let reactions = reactionsSortedByCreationDate().compactMap { reaction -> MessageReaction? in
+
+                guard !reaction.users.isEmpty else { return nil }
+
+                return MessageReaction(
+                    emojiID: reaction.reactionString,
+                    count: UInt(reaction.users.count),
+                    isSelfUserReacting: reaction.users.contains(where: \.isSelfUser)
+                )
+            }.map {
+                WireConversationUI.Reaction(
+                    emoji: $0.emojiID.first!,
+                    count: Int($0.count),
+                    isSelfReaction: $0.isSelfUserReacting
+                )
+            }
+
+            let model = SimpleTextMessageModel(
+                senderInfo: nil,
+                text: AttributedString(textMessageData.messageText ?? "<nil>"),
+                dateTime: (serverTimestamp ?? .now).formattedDate,
+                status: "todo: status",
+                reactions: reactions
+            )
+            return .simpleTextMessage(model)
         } else {
-            .timeDivider(TimeDividerModel(text: "???", isUnreadIndicatorVisible: false))
+            return .timeDivider(TimeDividerModel(text: "???", isUnreadIndicatorVisible: false))
         }
     }
 
