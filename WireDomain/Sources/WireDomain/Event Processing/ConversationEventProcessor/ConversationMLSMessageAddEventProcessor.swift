@@ -106,7 +106,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
 
         // Handle calling if there's one.
 
-        if let callEventInfo = handleCallingIfNeeded(
+        if let callEventInfo = getCallEventInfo(
             event: event,
             decryptedMessage: decryptedMessage,
             genericMessage: genericMessage
@@ -173,7 +173,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
 
     // MARK: - Calling
 
-    func handleCallingIfNeeded(
+    func getCallEventInfo(
         event: ConversationMLSMessageAddEvent,
         decryptedMessage: ConversationMLSMessageAddEvent.DecryptedMessage,
         genericMessage: GenericMessage

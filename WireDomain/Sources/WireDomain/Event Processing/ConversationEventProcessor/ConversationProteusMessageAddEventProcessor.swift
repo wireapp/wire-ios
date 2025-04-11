@@ -100,7 +100,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
         // Handle calling if there's one.
 
-        if let callEventInfo = handleCallingIfNeeded(
+        if let callEventInfo = getCallEventInfo(
             event: event,
             genericMessage: genericMessage
         ) {
@@ -214,7 +214,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
     // MARK: - Calling
 
-    func handleCallingIfNeeded(
+    func getCallEventInfo(
         event: ConversationProteusMessageAddEvent,
         genericMessage: GenericMessage
     ) -> CallEventInfo? {
