@@ -27,7 +27,8 @@ enum ConversationAction {
     case modifyConversationAccess
     case modifyOtherConversationMember
     case leaveConversation
-    case deleteConvesation
+    case deleteConversation
+    case modifyAddPermission
 
     var name: String {
         switch self {
@@ -39,7 +40,8 @@ enum ConversationAction {
         case .modifyConversationAccess: "modify_conversation_access"
         case .modifyOtherConversationMember: "modify_other_conversation_member"
         case .leaveConversation: "leave_conversation"
-        case .deleteConvesation: "delete_conversation"
+        case .deleteConversation: "delete_conversation"
+        case .modifyAddPermission: "modify_add_permission"
         }
     }
 }
@@ -78,7 +80,8 @@ public extension ZMUser {
         return hasRoleWithAction(
             actionName: ConversationAction.addConversationMember.name,
             conversation: conversation
-        )
+        ) || isChannelAdmin(conversation)
+            || (conversation.privateChannelPermission == .everyone && conversation.isChannel)
     }
 
     @objc(canRemoveUserFromConversation:)
@@ -87,16 +90,18 @@ public extension ZMUser {
         return hasRoleWithAction(
             actionName: ConversationAction.removeConversationMember.name,
             conversation: conversation
-        )
+        ) || isChannelAdmin(conversation)
     }
 
     @objc(canDeleteConversation:)
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
-
+        if isChannelAdmin(conversation) {
+            return true
+        }
         return hasRoleWithAction(
-            actionName: ConversationAction.deleteConvesation.name,
+            actionName: ConversationAction.deleteConversation.name,
             conversation: conversation
         ) && conversation.creator == self
             && selfUser.hasTeam && selfUser.teamIdentifier == teamIdentifier
@@ -108,7 +113,7 @@ public extension ZMUser {
         return hasRoleWithAction(
             actionName: ConversationAction.modifyOtherConversationMember.name,
             conversation: conversation
-        )
+        ) || isChannelAdmin(conversation)
     }
 
     @objc(canModifyReadReceiptSettingsInConversation:)
@@ -117,7 +122,7 @@ public extension ZMUser {
         return hasRoleWithAction(
             actionName: ConversationAction.modifyConversationReceiptMode.name,
             conversation: conversation
-        )
+        ) || isChannelAdmin(conversation)
     }
 
     @objc(canModifyEphemeralSettingsInConversation:)
@@ -126,7 +131,7 @@ public extension ZMUser {
             return hasRoleWithAction(
                 actionName: ConversationAction.modifyConversationMessageTimer.name,
                 conversation: conversation
-            )
+            ) || isChannelAdmin(conversation)
         } else {
             guard
                 conversation.teamRemoteIdentifier == nil || !isGuest(in: conversation),
@@ -143,8 +148,16 @@ public extension ZMUser {
         return isTeamMember
     }
 
-    @objc(canModifyAccessControlSettingsInConversation:)
-    func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
+    @objc(canModifyChannelAccessLevelSettingsInConversation:)
+    func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
+        (conversation.isChannel && hasRoleWithAction(
+            actionName: ConversationAction.modifyAddPermission.name,
+            conversation: conversation
+        )) || isChannelAdmin(conversation)
+    }
+
+    @objc(canModifyGuestsAccessControlSettingsInConversation:)
+    func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group,
               conversation.teamRemoteIdentifier != nil
         else { return false }
@@ -152,7 +165,7 @@ public extension ZMUser {
         return hasRoleWithAction(
             actionName: ConversationAction.modifyConversationAccess.name,
             conversation: conversation
-        )
+        ) || isChannelAdmin(conversation)
     }
 
     @objc(canModifyTitleInConversation:)
@@ -160,6 +173,7 @@ public extension ZMUser {
         guard conversation.conversationType == .group else { return false }
 
         return hasRoleWithAction(actionName: ConversationAction.modifyConversationName.name, conversation: conversation)
+            || isChannelAdmin(conversation)
     }
 
     @objc(canLeave:)
@@ -243,5 +257,9 @@ public extension ZMUser {
               let role = role(in: conversation)
         else { return false }
         return role.actions.contains(where: { $0.name == actionName })
+    }
+
+    private func isChannelAdmin(_ conversation: ConversationLike) -> Bool {
+        conversation.isChannel && canManageTeam && conversation.teamRemoteIdentifier == team?.remoteIdentifier
     }
 }

@@ -42,7 +42,7 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel() {
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel {
             [.channel, .group]
         } else {
             [.group]
@@ -58,7 +58,9 @@ final class StartUIViewController: UIViewController {
                         self?.navigateToConversationCreation()
                     }
                 case .channel:
-                    break
+                    Task { @MainActor [weak self] in
+                        self?.navigateToChannelCreation()
+                    }
                 }
             }
         )
@@ -68,17 +70,13 @@ final class StartUIViewController: UIViewController {
         return vc
     }()
 
-    private func canCreateChannel() -> Bool {
-        DeveloperFlag.wireChannels.isOn
-            && userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole)
-    }
-
     let searchResultsViewController: SearchResultsViewController
 
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
+    let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
 
     let isFederationEnabled: Bool
 
@@ -110,6 +108,7 @@ final class StartUIViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
+        channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
@@ -123,6 +122,7 @@ final class StartUIViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
+        self.channelConversationFormFactory = channelConversationFormFactory
         self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -298,6 +298,34 @@ final class StartUIViewController: UIViewController {
     private func navigateToConversationCreation() {
         let conversationCreationController = createGroupConversationUIBuilder.build()
         navigationController?.pushViewController(conversationCreationController, animated: true)
+    }
+
+    private func navigateToChannelCreation() {
+        let vc = channelConversationFormFactory.create(userSession: userSession)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    /// Checks whether a channel can be created, conditions are:
+    /// - conversation message protocol is MLS
+    /// - conversation belongs to a team
+    /// - MLS is enabled
+    /// - API >= v8
+    /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
+
+    private var canCreateChannel: Bool {
+        guard let backendInfoApiVersion = BackendInfo.apiVersion else {
+            return false
+        }
+        guard userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) else {
+            return false
+        }
+        guard BackendInfo.isMLSEnabled else {
+            return false
+        }
+        guard backendInfoApiVersion >= .v8 else {
+            return false
+        }
+        return true
     }
 }
 

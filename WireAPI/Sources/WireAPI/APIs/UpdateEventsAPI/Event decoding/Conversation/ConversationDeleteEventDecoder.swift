@@ -34,7 +34,7 @@ struct ConversationDeleteEventDecoder {
         )
 
         let timestamp = try container.decode(
-            UTCTimeMillis.self,
+            UTCTime.self,
             forKey: .timestamp
         )
 

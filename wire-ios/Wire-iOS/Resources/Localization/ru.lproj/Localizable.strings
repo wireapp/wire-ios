@@ -48,6 +48,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // People picker/start UI
+"peoplepicker.navigation_header.title" = "Новая беседа";
 "peoplepicker.search_placeholder" = "Поиск по имени или псевдониму";
 "peoplepicker.header.top_people" = "Топ-контакты";
 "peoplepicker.button.create_conversation" = "Создать группу";
@@ -73,9 +74,6 @@
 "peoplepicker.services.add_service.error.title" = "Не удается добавить сервис";
 "peoplepicker.services.add_service.error.default" = "В данный момент сервис недоступен";
 "peoplepicker.services.add_service.error.full" = "Беседа переполнена";
-
-"peoplepicker.title.create_conversation" = "Создать группу";
-"peoplepicker.title.add_to_conversation" = "Добавить участников";
 
 "peoplepicker.no_contacts_title" = "Нет контактов.";
 
@@ -103,9 +101,14 @@
 
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
 
-"add_participants.alert.title" = "Эта группа заполнена";
+"add_participants.alert.title" = "Беседа переполнена";
 "add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %d человек.";
 "add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %1$d человек. На текущий момент в комнате есть места еще для %2$d.";
+
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "Новый канал";
+"conversation.create.channel.back" = "Назад";
+"conversation.create.channel.next" = "Вперед";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "Поиск по имени";
@@ -127,6 +130,7 @@
 "conversation_list.search_bar.placeholder" = "Поиск бесед";
 "conversation_list.search_bar.favoritesPlaceholder" = "Поиск в избранном";
 "conversation_list.search_bar.groupsPlaceholder" = "Поиск групп";
+"conversation_list.search_bar.channelsPlaceholder" = "Поиск каналов";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Поиск по беседам 1:1";
 "conversation_list.search_bar.foldersPlaceholder" = "Поиск %@";
 
@@ -135,6 +139,7 @@
 "conversation_list.filter.all_conversations.title" = "Все беседы";
 "conversation_list.filter.favorites.title" = "Избранное";
 "conversation_list.filter.groups.title" = "Группы";
+"conversation_list.filter.channels.title" = "Каналы";
 "conversation_list.filter.oneOnOneConversations.title" = "Беседы 1:1";
 "conversation_list.filter.folders.title" = "Папки";
 "conversation_list.filter_label.text" = "Отфильтровано по %@";
@@ -150,6 +155,8 @@
 // Conversation List - Empty states
 "conversation_list.empty_placeholder.all.headline" = "Добро пожаловать";
 "conversation_list.empty_placeholder.all.subheadline" = "Свяжитесь с друзьями или создайте новую группу, чтобы начать совместную работу!";
+"conversation_list.empty_placeholder.channels.subheadline" = "Начните использовать каналы, чтобы быть более продуктивным. Присоединяйтесь к публичным каналам на вкладке Обзор. Здесь вы найдете список ваших публичных и приватных каналов.";
+"conversation_list.empty_placeholder.channels.link" = "Подробнее о каналах";
 "conversation_list.empty_placeholder.favorite.subheadline" = "Отметьте свои любимые беседы, и вы найдете их здесь.";
 "conversation_list.empty_placeholder.favorite.link" = "Как помечать беседы как избранные";
 "conversation_list.empty_placeholder.group.subheadline" = "Вы еще не участвуете ни в одной групповой беседе. Начните новую!";
@@ -229,11 +236,6 @@
 "list.archived_conversations" = "АРХИВ";
 "list.archived_conversations_close" = "Закрыть архив";
 
-"list.section.groups" = "Группы";
-"list.section.contacts" = "Контакты";
-"list.section.requests" = "Запросы";
-"list.section.favorites" = "Избранное";
-
 "conversation.voiceover.value.active" = "активно";
 "conversation.voiceover.value.disabled" = "отключено";
 
@@ -290,7 +292,6 @@
 "conversation.invite_more_people.button_title" = "Добавить пользователей";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Пустая группа";
 
 "conversation.input_bar.verified" = "Верифицировано";
 "conversation.input_bar.placeholder" = "Введите сообщение";
@@ -342,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Выберите MLS для создания группы с использованием протокола Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
 "conversation.create.mls.cancel" = "Отмена";
-"conversation.create.non_federating_domains_error.title" = "Невозможно создать группу";
-"conversation.create.non_federating_domains_error.message" = "Пользователи бэкэндов %@ не могут присоединиться к одной групповой беседе.\nДля создания группы удалите затронутых участников.";
+"conversation.create.non_federating_domains_error.title" = "Разговор не может быть создан";
+"conversation.create.non_federating_domains_error.message" = "Пользователи бэкендов %@ не могут присоединиться к одной беседе.\nДля создания беседы удалите затронутых участников.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
 "conversation.create.non_federating_domains_error.learn_more" = "Подробнее";
-"conversation.create.non_federating_domains_error.abort" = "Отменить создание группы";
+"conversation.create.non_federating_domains_error.abort" = "Отменить создание беседы";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (по умолчанию)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -529,10 +530,6 @@
 
 "content.system.other_renamed_conv_to_nothing" = "%@ удалил(-а) название беседы";
 "content.system.you_renamed_conv_to_nothing" = "Вы удалили название беседы";
-"content.system.pending_message_timestamp" = "Отправка...";
-"content.system.message_sent_timestamp" = "Отправлено";
-"content.system.message_delivered_timestamp" = "Доставлено";
-"content.system.message_read_timestamp" = "Прочитано";
 "content.system.failedtosend_message.general_reason" = "Не удалось отправить сообщение из-за проблем с подключением.";
 "content.system.failedtosend_message.user_cancelled_upload_reason" = "Сообщение не отправлено после отмены отправки.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Сообщение не может быть отправлено, поскольку бэкэнд **%@** недоступен. [Узнать больше](%@)";
@@ -579,6 +576,15 @@
 
 "content.system.backends_stop_federating.self_backend" = "**Ваш бэкэнд** прекратил взаимодействие с **%@**. [Подробнее](%@)";
 "content.system.backends_stop_federating.other_backends" = "Бэкэнды **%@** и **%@** прекратили взаимодействие. [Подробнее](%@)";
+
+"content.system.channel.with_name.title" = "%@ запустил канал";
+"content.system.channel.with_name.title-you" = "%@ запустил канал";
+
+"content.system.channel.invite.title" = "Этот канал открыт для всех, кто не входит в вашу команду, даже если у них нет Wire. Поделитесь этой ссылкой, чтобы пригласить других пользователей в канал:";
+"content.system.channel.invite.button" = "Скопировать ссылку на канал";
+
+"content.system.channel.guest.joined" = "%@ присоединился к каналу";
+"content.system.channel.guest.you_joined" = "Вы присоединились к каналу";
 
 // read receipt
 
@@ -639,6 +645,7 @@
 "content.message.delete" = "Удалить";
 "content.message.save" = "Сохранить";
 "content.message.resend" = "Отправить повторно";
+"content.message.edited" = "Изменено";
 
 "content.message.delete_ellipsis" = "Удаление…";
 
@@ -852,19 +859,19 @@
 "participants.section.services" = "Сервисы (%d)";
 "participants.section.settings" = "Настройки";
 "participants.footer.add_title" = "Добавить участников";
-"participants.section.name.footer" = "К групповой беседе могут присоединиться до %1$d участников.";
+"participants.section.name.footer" = "К беседе могут присоединиться до %1$d участников.";
 "participants.section.admins.footer" = "Здесь нет администраторов.";
 "participants.section.members.footer" = "Здесь нет участников.";
 
-"profile.profile.group_admin_options.title" = "Администратор группы";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Дополнительные действия";
 "meta.menu.rename" = "Переименовать";
-"meta.menu.leave" = "Покинуть группу…";
+"meta.menu.leave" = "Покинуть беседу…";
 "meta.menu.archive" = "Архивировать";
 "meta.menu.unarchive" = "Разархивировать";
-"meta.menu.delete" = "Удалить группу…";
+"meta.menu.delete" = "Удалить беседу…";
 "meta.menu.clear_content" = "Очистить контент…";
 "meta.menu.move_to_folder" = "Переместить…";
 "meta.menu.remove_from_folder" = "Удалить из \"%@\"";
@@ -919,8 +926,8 @@
 "profile.remove_dialog_title" = "Удалить?";
 "profile.remove_dialog_message" = "%@ больше не сможет отправлять и получать сообщения в этой беседе.";
 "profile.remove_dialog_button_cancel" = "Отмена";
-"profile.remove_dialog_button_remove" = "Удалить из группы…";
-"profile.remove_dialog_button_remove_confirm" = "Удалить из группы";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Заблокировать?";
@@ -982,7 +989,7 @@
 // User Details
 "profile.details.title" = "Подробности";
 "profile.details.guest" = "Гость";
-"profile.details.group_admin" = "Администратор группы";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "внешний";
 "profile.details.federated" = "Федеративный";
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
@@ -1031,13 +1038,18 @@
 "group_details.notification_options_cell.description" = "Вы можете получать уведомления обо всем (включая аудио- и видеовызовы) или только когда кто-то упоминает вас или отвечает на одно из ваших сообщений.";
 "group_details.receipt_options_cell.title" = "Отчеты о прочтении";
 "group_details.receipt_options_cell.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
+"group_details.access_options_cell.title" = "";
 
 "group_details.message_protocol.section_tile" = "Информация о протоколе";
 "group_details.message_protocol.title" = "Протокол";
 "group_details.message_protocol.cipher_suite" = "Набор шифров";
 
-"group_details.conversation_admins_header.title" = "Администраторы группы";
-"group_details.conversation_members_header.title" = "Участники группы";
+"group_details.conversation_admins_header.title" = "Администраторы беседы";
+"group_details.conversation_members_header.title" = "Участники беседы";
+
+// Channel Access level
+"channel_access_level.public" = "Публичный";
+"channel_access_level.private" = "Приватный";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Создание ссылки, защищенной паролем";
@@ -1658,6 +1670,7 @@
 "error.user.last_identity_cant_be_deleted" = "Необходимо указать адрес электронной почты.";
 "error.user.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
 "error.user.account_limit_reached" = "Нельзя добавить более трех учетных записей.";
+"error.user.too_many_requests" = "Слишком много запросов, пожалуйста, повторите попытку позже.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Вы выбрали слишком много пользователей для звонка";
 "error.group_call.too_many_members_in_conversation" = "Звонки работают в беседах до %d человек.";
@@ -1726,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Самоудаляющиеся сообщения теперь обязательны. Новые сообщения будут самоудаляться спустя %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Генерация гостевых ссылок теперь отключена для всех администраторов групп.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Генерация гостевых ссылок теперь включена для всех администраторов групп.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "Сертификат сквозной идентификации";

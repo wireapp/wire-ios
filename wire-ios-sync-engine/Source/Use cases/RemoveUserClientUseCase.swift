@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol RemoveUserClientUseCaseProtocol {
 
-    func invoke(clientId: String, password: String) async throws
+    func invoke(clientId: String, password: String?) async throws
 
 }
 
@@ -44,7 +44,7 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     // MARK: - Public interface
 
-    func invoke(clientId: String, password: String) async throws {
+    func invoke(clientId: String, password: String?) async throws {
         let userClient = await syncContext.perform {
             UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
         }

@@ -24,7 +24,7 @@ import WireSyncEngine
 typealias MatcherConversation = Conversation & ConversationStatusProvider & TypingStatusProvider & VoiceChannelProvider
 
 typealias ConversationListCellConversation
-    = HasConversationGroupType & HasQualifiedID & MatcherConversation & StableRandomParticipantsProvider
+    = HasQualifiedID & MatcherConversation & StableRandomParticipantsProvider
 
 final class ConversationListCell: SwipeMenuCollectionCell,
     SectionListCellType {

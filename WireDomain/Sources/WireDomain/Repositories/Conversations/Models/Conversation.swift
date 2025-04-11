@@ -50,7 +50,7 @@ public struct Conversation: Equatable {
         case channel
     }
 
-    enum ChannelPermission: String {
+    public enum ChannelPermission: String {
         case admins
         case everyone
     }
