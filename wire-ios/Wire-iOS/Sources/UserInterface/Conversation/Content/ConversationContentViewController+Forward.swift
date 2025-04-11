@@ -184,7 +184,7 @@ extension ConversationContentViewController {
         coordinator.animate(alongsideTransition: nil) { _ in
             self.dataSource.resetSectionControllers()
             self.dataSource.reloadSections(newSections: self.dataSource.calculateSections())
-            self.tableView.reloadData()
+            self.dataSource.forceReload() // TODO
         }
     }
 

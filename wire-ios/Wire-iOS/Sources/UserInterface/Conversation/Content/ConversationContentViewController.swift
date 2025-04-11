@@ -253,7 +253,7 @@ final class ConversationContentViewController: UIViewController {
     @objc
     private func applicationDidBecomeActive(_ notification: Notification) {
         dataSource.resetSectionControllers()
-        tableView.reloadData()
+        dataSource.forceReload()
     }
 
     private func handleScrollToBottomTapped() {
@@ -478,10 +478,7 @@ final class ConversationContentViewController: UIViewController {
     // MARK: - Feature config changes
 
     private func updateVisibleCells() {
-        guard let visibleRows = tableView.indexPathsForVisibleRows else { return }
-        tableView.beginUpdates()
-        tableView.reloadRows(at: visibleRows, with: .none)
-        tableView.endUpdates()
+        dataSource.updateVisibleCells()
     }
 
     // MARK: - Update Timer
@@ -493,7 +490,7 @@ final class ConversationContentViewController: UIViewController {
         var timeInterval = TimeInterval()
         for indexPath in tableView.indexPathsForVisibleRows ?? [] {
             let section = dataSource.currentSections[indexPath.section]
-            for cellDescription in section.elements {
+            for cellDescription in section.tableViewCellDescriptions {
                 if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
                     timeInterval = timeInterval == .zero
                         ? refreshInterval
@@ -526,13 +523,13 @@ final class ConversationContentViewController: UIViewController {
         var indexPathsToReload = [IndexPath]()
         for indexPath in tableView.indexPathsForVisibleRows ?? [] {
             let section = dataSource.currentSections[indexPath.section]
-            let cellDescription = section.elements[indexPath.row]
+            let cellDescription = section.tableViewCellDescriptions[indexPath.row]
             if let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
                 indexPathsToReload += [indexPath]
                 continue
             }
         }
-        tableView.reloadRows(at: indexPathsToReload, with: .fade)
+        dataSource.updateCells(with: indexPathsToReload)
     }
 
 }
@@ -577,9 +574,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         let sections = dataSource.currentSections
         guard
             sections.indices.contains(indexPath.section),
-            sections[indexPath.section].elements.indices.contains(indexPath.row),
-            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
+            sections[indexPath.section].tableViewCellDescriptions.indices.contains(indexPath.row),
+            sections[indexPath.section].tableViewCellDescriptions[indexPath.row].instance.supportsActions,
+            let actionController = sections[indexPath.section].tableViewCellDescriptions[indexPath.row].actionController,
             actionController.message.canAddReaction
         else { return nil }
 
@@ -609,9 +606,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         let sections = dataSource.currentSections
         guard
             sections.indices.contains(indexPath.section),
-            sections[indexPath.section].elements.indices.contains(indexPath.row),
-            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
+            sections[indexPath.section].tableViewCellDescriptions.indices.contains(indexPath.row),
+            sections[indexPath.section].tableViewCellDescriptions[indexPath.row].instance.supportsActions,
+            let actionController = sections[indexPath.section].tableViewCellDescriptions[indexPath.row].actionController,
             actionController.canPerformAction(action: .react("❤️"))
         else { return nil }
 

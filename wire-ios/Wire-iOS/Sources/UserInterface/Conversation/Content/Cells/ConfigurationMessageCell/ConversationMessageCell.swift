@@ -276,7 +276,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
 
 /// A type erased box containing a conversation message cell description.
 
-final class AnyConversationMessageCellDescription: NSObject {
+final class AnyConversationMessageCellDescription: NSObject, @unchecked Sendable {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
     private let viewGenerator: (_ frame: CGRect) -> (any UIView & ConversationMessageCell)
     private let registrationBlock: (UITableView) -> Void

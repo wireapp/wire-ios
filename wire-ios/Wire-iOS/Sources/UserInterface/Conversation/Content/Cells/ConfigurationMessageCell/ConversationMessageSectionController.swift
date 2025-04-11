@@ -52,7 +52,7 @@ extension ZMConversationMessage {
 /// To achieve this, each section controller is assigned a cell description, that is responsible for dequeing
 /// the cells from the table or collection view and configuring them with a message.
 
-final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
+final class ConversationMessageSectionController: NSObject, ZMMessageObserver, @unchecked Sendable {
 
     /// The view descriptor of the section.
     private var cellDescriptions = [AnyConversationMessageCellDescription]()
@@ -109,6 +109,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
+    
+    var objectId: String {
+        message.objectIdentifier
+    }
 
     deinit {
         changeObservers.removeAll()
