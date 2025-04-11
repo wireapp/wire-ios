@@ -28,6 +28,7 @@ enum ConversationAction {
     case modifyOtherConversationMember
     case leaveConversation
     case deleteConversation
+    case modifyAddPermission
 
     var name: String {
         switch self {
@@ -40,6 +41,7 @@ enum ConversationAction {
         case .modifyOtherConversationMember: "modify_other_conversation_member"
         case .leaveConversation: "leave_conversation"
         case .deleteConversation: "delete_conversation"
+        case .modifyAddPermission: "modify_add_permission"
         }
     }
 }
@@ -146,8 +148,16 @@ public extension ZMUser {
         return isTeamMember
     }
 
-    @objc(canModifyAccessControlSettingsInConversation:)
-    func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
+    @objc(canModifyChannelAccessLevelSettingsInConversation:)
+    func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
+        (conversation.isChannel && hasRoleWithAction(
+            actionName: ConversationAction.modifyAddPermission.name,
+            conversation: conversation
+        )) || isChannelAdmin(conversation)
+    }
+
+    @objc(canModifyGuestsAccessControlSettingsInConversation:)
+    func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group,
               conversation.teamRemoteIdentifier != nil
         else { return false }
@@ -250,6 +260,6 @@ public extension ZMUser {
     }
 
     private func isChannelAdmin(_ conversation: ConversationLike) -> Bool {
-        conversation.isChannel && canManageTeam
+        conversation.isChannel && canManageTeam && conversation.teamRemoteIdentifier == team?.remoteIdentifier
     }
 }
