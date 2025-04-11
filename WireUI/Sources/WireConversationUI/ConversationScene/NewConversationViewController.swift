@@ -172,6 +172,7 @@ public final class NewConversationViewController<
         } else if snapshot.indexOfSection("intro") == .none {
             snapshot.insertSections(["intro"], beforeSection: snapshot.sectionIdentifiers[0])
         }
+        dataSource.defaultRowAnimation = .fade
         dataSource.apply(snapshot, animatingDifferences: true) {
             /*
             if self.isFirstApply, snapshot.numberOfSections > 1 {

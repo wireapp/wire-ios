@@ -43,7 +43,7 @@ struct SimpleTextMessageContentView: ConversationCellContentViewProtocol {
 
     @ViewBuilder
     private var reactions: some View {
-        ReactionsViewRepresentable(reactions: model.reactions)
+        ReactionsViewRepresentable(reactions: model.reactions).transition(.identity)
     }
 
 }
