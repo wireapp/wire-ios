@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "Die föderierte Domain ist derzeit nicht verfügbar. [Mehr erfahren](%@)";
 
-"add_participants.alert.title" = "Die Gruppe ist voll";
+"add_participants.alert.title" = "Die Unterhaltung ist voll";
 "add_participants.alert.message.new_conversation" = "Bis zu %d Personen können an einer Unterhaltung teilnehmen.";
 "add_participants.alert.message.existing_conversation" = "Bis zu %1$d Personen können an einer Unterhaltung teilnehmen. Jetzt ist noch Platz für %2$d weitere.";
 
@@ -343,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Wählen Sie MLS, um eine Gruppe mit dem Messaging-Layer-Security-Protokoll zu erstellen.";
 "conversation.create.mls.picker_title" = "Protokoll wählen";
 "conversation.create.mls.cancel" = "Abbrechen";
-"conversation.create.non_federating_domains_error.title" = "Gruppe kann nicht erstellt werden";
-"conversation.create.non_federating_domains_error.message" = "Personen der Backends %@ können nicht derselben Gruppenunterhaltung beitreten.\nUm die Gruppe zu erstellen, entfernen Sie die betroffenen Teilnehmer.";
+"conversation.create.non_federating_domains_error.title" = "Unterhaltung kann nicht erstellt werden";
+"conversation.create.non_federating_domains_error.message" = "Personen der Backends %@ können nicht derselben Unterhaltung beitreten.\nUm die Unterhaltung zu erstellen, entfernen Sie die betroffenen Teilnehmer.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Teilnehmerliste bearbeiten";
 "conversation.create.non_federating_domains_error.learn_more" = "Mehr erfahren";
-"conversation.create.non_federating_domains_error.abort" = "Gruppenerstellung verwerfen";
+"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (Standard)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -577,14 +577,14 @@
 "content.system.backends_stop_federating.self_backend" = "**Ihr Backend** ist nicht mehr mit **%@** verbunden. [Mehr erfahren](%@)";
 "content.system.backends_stop_federating.other_backends" = "Backends **%@** und **%@** sind nicht mehr verbunden. [Mehr erfahren](%@)";
 
-"content.system.channel.with_name.title" = "%@ started the channel";
-"content.system.channel.with_name.title-you" = "%@ started the channel";
+"content.system.channel.with_name.title" = "%@ hat den Channel erstellt";
+"content.system.channel.with_name.title-you" = "%@ haben den Channel erstellt";
 
-"content.system.channel.invite.title" = "This channel is open to anyone outside of your team, even if they don’t have Wire. Share this link to invite others to the channel:";
-"content.system.channel.invite.button" = "Copy Channel link";
+"content.system.channel.invite.title" = "Jeder kann mit dem Link dem Channel beitreten – auch ohne Wire. Teilen Sie diesen Link, um andere in den Channel einzuladen:";
+"content.system.channel.invite.button" = "Channel-Link kopieren";
 
-"content.system.channel.guest.joined" = "%@ joined the channel";
-"content.system.channel.guest.you_joined" = "You joined the channel";
+"content.system.channel.guest.joined" = "%@ ist dem Channel beigetreten";
+"content.system.channel.guest.you_joined" = "Sie sind dem Channel beigetreten";
 
 // read receipt
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Es gibt keine Admins.";
 "participants.section.members.footer" = "Es gibt keine Mitglieder.";
 
-"profile.profile.group_admin_options.title" = "Gruppen-Admin";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Weitere Aktionen";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Entfernen?";
 "profile.remove_dialog_message" = "%@ wird in dieser Unterhaltung keine Nachrichten senden oder empfangen können";
 "profile.remove_dialog_button_cancel" = "Abbrechen";
-"profile.remove_dialog_button_remove" = "Aus Gruppe entfernen…";
-"profile.remove_dialog_button_remove_confirm" = "Aus Gruppe entfernen";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Blockieren?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Details";
 "profile.details.guest" = "Gast";
-"profile.details.group_admin" = "Gruppen-Admin";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "extern";
 "profile.details.federated" = "Föderiert";
 "profile.details.blocking_reason" = "Dieser Nutzer ist aufgrund der gesetzlichen Aufbewahrung gesperrt. [MEHR ERFAHREN](%@)";
@@ -1038,18 +1038,18 @@
 "group_details.notification_options_cell.description" = "Immer benachrichtigen (einschließlich Audio- und Videoanrufe) oder nur bei Erwähnungen oder wenn jemand auf eine Ihrer Nachrichten antwortet.";
 "group_details.receipt_options_cell.title" = "Lesebestätigungen";
 "group_details.receipt_options_cell.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
-"group_details.access_options_cell.title" = "Channel access";
+"group_details.access_options_cell.title" = "Channel-Zugang";
 
 "group_details.message_protocol.section_tile" = "Details zum Protokoll";
 "group_details.message_protocol.title" = "Protokoll";
 "group_details.message_protocol.cipher_suite" = "Cipher-Suite";
 
-"group_details.conversation_admins_header.title" = "Conversation admins";
-"group_details.conversation_members_header.title" = "Conversation members";
+"group_details.conversation_admins_header.title" = "Admin";
+"group_details.conversation_members_header.title" = "Mitglieder";
 
 // Channel Access level
-"channel_access_level.public" = "Public";
-"channel_access_level.private" = "Private";
+"channel_access_level.public" = "Öffentlich";
+"channel_access_level.private" = "Privat";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Passwortgesicherten Link erstellen";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Selbstlöschende Nachrichten sind ab jetzt verbindlich. Neue Nachrichten werden nach %@ gelöscht.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Erstellen von Gäste-Links ist nun für alle Gruppen-Admins deaktiviert.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Erstellen von Gäste-Links ist nun für alle Gruppen-Admins aktiviert.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "Ende-zu-Ende-Identitätszertifikat";

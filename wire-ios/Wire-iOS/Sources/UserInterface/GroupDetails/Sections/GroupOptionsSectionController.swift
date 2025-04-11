@@ -42,10 +42,11 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             by user: UserType
         ) -> Bool {
             switch self {
-            case .channelAccess: conversation.isChannel && (user.isGroupAdmin(in: conversation) || user.canManageTeam)
+            case .channelAccess: user.canModifyChannelAccessLevelSettings(in: conversation)
             case .notifications: user.canModifyNotificationSettings(in: conversation)
-            case .guests:        user.canModifyAccessControlSettings(in: conversation)
-            case .services:      user.canModifyAccessControlSettings(in: conversation) && conversation.botCanBeAdded
+            case .guests:        user.canModifyGuestsAccessControlSettings(in: conversation)
+            case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
+                .botCanBeAdded
             case .timeout:       user.canModifyEphemeralSettings(in: conversation)
             }
         }

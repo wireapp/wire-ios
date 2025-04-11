@@ -200,7 +200,7 @@
 "contactsList.memberIcon.description" = "Mitglied";
 "contactsList.userCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
 "contactsList.pendingConnection.hint" = "Doppeltippen, um Profil zu öffnen";
-"contactsList.cancelButton.description" = "Kontaktliste schließen";
+"contactsList.cancelButton.description" = "Close new conversation overview";
 
 "servicesList.serviceCell.hint" = "Doppeltippen, um Dienstdetails zu öffnen";
 
@@ -218,12 +218,14 @@
 "conversationsList.replyStatus.value" = "Antworten";
 "conversationsList.badgeView.value" = "Neue Nachrichten: %d";
 "conversationsList.itemCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
+"conversationsList.itemCell.avatar.group.label" = "Group";
+"conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Beitreten";
 "conversationsList.joinButton.hint" = "Doppeltippen, um dem Anruf beizutreten";
 "conversationsList.connectionRequest.description" = "Ausstehende Genehmigung der Kontaktanfrage";
 "conversationsList.connectionRequest.hint" = "Doppeltippen, um Profil zu öffnen";
 
-"conversationList.startConversationButton.description" = "Gruppe erstellen oder nach Personen suchen";
+"conversationList.startConversationButton.description" = "Create a group or channel, or search for people";
 "conversationsList.filterButton.description" = "Unterhaltungen filtern";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Alle Unterhaltungen anzeigen";
