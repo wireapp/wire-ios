@@ -57,8 +57,7 @@ public final class ConversationList: NSObject {
         self.sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
         self.conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
-        
-        
+
         self.items = Self.createItems(filteringPredicate, sortDescriptors, managedObjectContext)
 
         super.init()
@@ -82,9 +81,10 @@ public final class ConversationList: NSObject {
         _ context: NSManagedObjectContext
     ) -> [ZMConversation] {
         let request = ZMConversation.sortedFetchRequest()
-        
-        // Since this is extremely likely to trigger the "participantRoles" and "connection" relationships, we make sure these gets prefetched:
-        var keyPaths =  request.relationshipKeyPathsForPrefetching
+
+        // Since this is extremely likely to trigger the "participantRoles" and "connection" relationships, we make sure
+        // these gets prefetched:
+        var keyPaths = request.relationshipKeyPathsForPrefetching
         keyPaths?.append(ZMConversationParticipantRolesKey)
         keyPaths?.append("\(ZMConversationOneOnOneUserKey).connection")
 
