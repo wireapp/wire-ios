@@ -200,7 +200,7 @@
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Appuyer deux fois pour ouvrir le profile";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.cancelButton.description" = "Close new conversation overview";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -218,12 +218,14 @@
 "conversationsList.replyStatus.value" = "Répondre";
 "conversationsList.badgeView.value" = "New messages: %d";
 "conversationsList.itemCell.hint" = "Double tap to open conversation";
+"conversationsList.itemCell.avatar.group.label" = "Group";
+"conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Rejoindre";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "Appuyer deux fois pour ouvrir le profile";
 
-"conversationList.startConversationButton.description" = "Create group or search for people";
+"conversationList.startConversationButton.description" = "Create a group or channel, or search for people";
 "conversationsList.filterButton.description" = "Filter conversations";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";

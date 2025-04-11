@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "Domena federowana jest obecnie niedostępna. [Dowiedz się więcej](%@)";
 
-"add_participants.alert.title" = "Zbyt wielu uczestników rozmowy";
+"add_participants.alert.title" = "Ta rozmowa jest przepełniona";
 "add_participants.alert.message.new_conversation" = "Do %d osób może dołączyć do rozmowy.";
 "add_participants.alert.message.existing_conversation" = "Do %1$d osób może dołączyć do rozmowy. Obecnie jest tylko miejsce dla dodatkowych %2$d osób.";
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Brak administratorów.";
 "participants.section.members.footer" = "Brak rozmówców.";
 
-"profile.profile.group_admin_options.title" = "Administrator grupy";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Więcej działań";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Usunąć?";
 "profile.remove_dialog_message" = "%@ nie będzie mógł wysyłać, ani odbierać wiadomości w tej rozmowie.";
 "profile.remove_dialog_button_cancel" = "Anuluj";
-"profile.remove_dialog_button_remove" = "Usuń z grupy…";
-"profile.remove_dialog_button_remove_confirm" = "Usuń z grupy";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Zablokować?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Szczegóły";
 "profile.details.guest" = "Gość";
-"profile.details.group_admin" = "Administrator grupy";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "zewnętrzny";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "Ten użytkownik jest zablokowany z powodu statusu prawnego. [DOWIEDZ SIĘ WIĘCEJ](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Wiadomości czasowe są teraz obowiązkowe. Nowe wiadomości zostaną usunięte po %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generowanie linków dla gości jest teraz wyłączone dla wszystkich administratorów grupy.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generowanie linków dla gości jest teraz włączone dla wszystkich administratorów grupy.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
