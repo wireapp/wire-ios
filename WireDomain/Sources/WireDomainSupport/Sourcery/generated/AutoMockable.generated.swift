@@ -51,6 +51,7 @@ import WireDomainPkg
 
 
 
+
 public class MockBackendConfigLocalStoreProtocol: BackendConfigLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -103,6 +104,33 @@ class MockBackendConfigRepositoryProtocol: BackendConfigRepositoryProtocol {
         }
 
         await mock()
+    }
+
+}
+
+public class MockCalculateSupportedProtocolsUseCaseProtocol: CalculateSupportedProtocolsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() async -> Set<WireAPI.MessageProtocol>)?
+    public var invoke_MockValue: Set<WireAPI.MessageProtocol>?
+
+    public func invoke() async -> Set<WireAPI.MessageProtocol> {
+        invoke_Invocations.append(())
+
+        if let mock = invoke_MockMethod {
+            return await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
     }
 
 }
@@ -1095,10 +1123,10 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationPermissionConversation_Invocations: [(permission: String, conversation: ZMConversation)] = []
-    public var storeConversationPermissionConversation_MockMethod: ((String, ZMConversation) async -> Void)?
+    public var storeConversationPermissionConversation_Invocations: [(permission: WireDomain.Conversation.ChannelPermission, conversation: ZMConversation)] = []
+    public var storeConversationPermissionConversation_MockMethod: ((WireDomain.Conversation.ChannelPermission, ZMConversation) async -> Void)?
 
-    public func storeConversation(permission: String, conversation: ZMConversation) async {
+    public func storeConversation(permission: WireDomain.Conversation.ChannelPermission, conversation: ZMConversation) async {
         storeConversationPermissionConversation_Invocations.append((permission: permission, conversation: conversation))
 
         guard let mock = storeConversationPermissionConversation_MockMethod else {
@@ -3320,6 +3348,21 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
         await mock(id)
     }
 
+    // MARK: - invalidateSelfClient
+
+    public var invalidateSelfClient_Invocations: [Void] = []
+    public var invalidateSelfClient_MockMethod: (() async -> Void)?
+
+    public func invalidateSelfClient() async {
+        invalidateSelfClient_Invocations.append(())
+
+        guard let mock = invalidateSelfClient_MockMethod else {
+            fatalError("no mock for `invalidateSelfClient`")
+        }
+
+        await mock()
+    }
+
     // MARK: - updateClient
 
     public var updateClientIdIsNewClientUserClientInfo_Invocations: [(id: String, isNewClient: Bool, userClientInfo: UserClientInfo)] = []
@@ -3573,6 +3616,21 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
         }
 
         await mock(id)
+    }
+
+    // MARK: - invalidateSelfClient
+
+    public var invalidateSelfClient_Invocations: [Void] = []
+    public var invalidateSelfClient_MockMethod: (() async -> Void)?
+
+    public func invalidateSelfClient() async {
+        invalidateSelfClient_Invocations.append(())
+
+        guard let mock = invalidateSelfClient_MockMethod else {
+            fatalError("no mock for `invalidateSelfClient`")
+        }
+
+        await mock()
     }
 
     // MARK: - allSelfUserClientsAreActiveMLSClients

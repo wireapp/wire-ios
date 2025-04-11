@@ -82,15 +82,10 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     private var defaultValue: Bool {
-        switch self {
-        case .useWireAuthentication:
-            return true
-        default:
-            guard let bundleKey else {
-                return false
-            }
-            return DeveloperFlagsDefault.isEnabled(for: bundleKey)
+        guard let bundleKey else {
+            return false
         }
+        return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 
     public static func clearAllFlags() {
@@ -107,6 +102,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .useWireAuthentication:
+            "WireAuthenticationEnabled"
         default:
             nil
         }

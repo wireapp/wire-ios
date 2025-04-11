@@ -18,21 +18,27 @@
 
 import Foundation
 
-extension ZMConversation {
+@objc
+public enum PrivateChannelPermission: Int16 {
+
+    /// No group type set
+
+    case unset = 0
+
+    /// A group conversation
+
+    case admins = 1
+
+    /// A channel conversation
+
+    case everyone = 2
+
+}
+
+public extension ZMConversation {
 
     /// The underlying string value of the private channel permission.
 
-    @NSManaged private var privateChannelPermissionValue: String?
-
-    /// The private conversation (aka channel) permission
-
-    public var channelPermission: String? {
-        get {
-            privateChannelPermissionValue
-        }
-        set {
-            privateChannelPermissionValue = newValue
-        }
-    }
+    @NSManaged var privateChannelPermission: PrivateChannelPermission
 
 }

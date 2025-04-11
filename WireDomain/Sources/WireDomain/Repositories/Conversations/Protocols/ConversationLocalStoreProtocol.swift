@@ -448,7 +448,7 @@ public protocol ConversationLocalStoreProtocol {
     ///     - permission: The new permission value (`admins` or `everyone`)
 
     func storeConversation(
-        permission: String,
+        permission: WireDomain.Conversation.ChannelPermission,
         conversation: ZMConversation
     ) async
 

@@ -111,7 +111,7 @@ struct ConversationEventPayloadProcessor {
         }
 
         await context.perform {
-            conversation.channelPermission = payload.data.addPermission.rawValue
+            conversation.privateChannelPermission = PrivateChannelPermission(payload.data.addPermission)
         }
 
     }
@@ -146,7 +146,7 @@ struct ConversationEventPayloadProcessor {
     // MARK: - Member leave
 
     func processPayload(
-        _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) async {
@@ -228,7 +228,7 @@ struct ConversationEventPayloadProcessor {
     // MARK: - Member join
 
     func processPayload(
-        _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>,
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
@@ -547,9 +547,9 @@ struct ConversationEventPayloadProcessor {
                 case .channel:
                     .channel
                 }
-            }
+            } ?? .none
 
-            conversation.channelPermission = payload.addPermission?.rawValue
+            conversation.privateChannelPermission = payload.addPermission.map { PrivateChannelPermission($0) } ?? .unset
 
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
@@ -1017,7 +1017,7 @@ struct ConversationEventPayloadProcessor {
     }
 
     func fetchRemovedUsers(
-        from payload: Payload.UpdateConverationMemberLeave,
+        from payload: Payload.UpdateConversationMemberLeave,
         in context: NSManagedObjectContext
     ) -> [ZMUser]? {
         if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(
@@ -1130,4 +1130,16 @@ private extension ZMConversation {
         )
     }
 
+}
+
+private extension PrivateChannelPermission {
+
+    init(_ value: Payload.ChannelPermission) {
+        switch value {
+        case .admins:
+            self = .admins
+        case .everyone:
+            self = .everyone
+        }
+    }
 }
