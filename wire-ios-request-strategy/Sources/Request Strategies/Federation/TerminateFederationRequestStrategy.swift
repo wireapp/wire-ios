@@ -106,10 +106,10 @@ extension Payload {
     }
 
     /// The list of domains that have terminated federation with each other.
-    struct ConnectionRemoved: Codable {
+    public struct ConnectionRemoved: Codable {
 
-        let domains: [String]
-        let type: String
+        public let domains: [String]
+        public let type: String
 
     }
 

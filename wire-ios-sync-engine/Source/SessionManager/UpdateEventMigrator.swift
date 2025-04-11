@@ -108,10 +108,19 @@ private extension UpdateEvent {
             
             self = .conversation(.receiptModeUpdate(event))
 
+        case .federationConnectionRemoved:
+            guard let event = Self.federationConnectionRemovedEvent(from: legacyEvent) else {
+                return nil
+            }
+            
+            self = .federation(.connectionRemoved(event))
+
         default:
             return nil
         }
     }
+
+    // MARK: - Conversation events
 
     private static func conversationDeleteEvent(from event: ZMUpdateEvent) -> ConversationDeleteEvent? {
         let decoder = EventPayloadDecoder()
@@ -361,6 +370,22 @@ private extension UpdateEvent {
             senderID: senderID,
             newReceiptMode: payload.data.readReceiptMode
         )
+    }
+
+    // MARK: - Federation events
+
+    private static func federationConnectionRemovedEvent(from event: ZMUpdateEvent) -> FederationConnectionRemovedEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.ConnectionRemoved.self,
+                from: event.payload
+            )
+        else {
+            return nil
+        }
+
+        return FederationConnectionRemovedEvent(domains: Set(payload.domains))
     }
 
 }
