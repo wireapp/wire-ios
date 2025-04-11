@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "このグループは満員です";
+"add_participants.alert.title" = "会話数が上限に達しました。";
 "add_participants.alert.message.new_conversation" = "グループ会話には %d 人まで参加することができます。";
 "add_participants.alert.message.existing_conversation" = "グループ会話には %1$d 人まで参加することができます。あと %2$d 人が参加できます。";
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "管理者がいません。";
 "participants.section.members.footer" = "There are no members.";
 
-"profile.profile.group_admin_options.title" = "グループ管理者";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "その他の操作";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "削除しますか?";
 "profile.remove_dialog_message" = "%@ は、この会話でメッセージを送受信することができません。";
 "profile.remove_dialog_button_cancel" = "キャンセル";
-"profile.remove_dialog_button_remove" = "グループから削除";
-"profile.remove_dialog_button_remove_confirm" = "グループから削除";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "ブロックしますか?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "詳細";
 "profile.details.guest" = "ゲスト";
-"profile.details.group_admin" = "グループ管理者";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "自動削除メッセージは必須です。新しいメッセージは %@ 後に自動削除されます。";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
