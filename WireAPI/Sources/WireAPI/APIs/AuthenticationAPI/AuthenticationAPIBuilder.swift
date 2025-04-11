@@ -35,7 +35,7 @@ public struct AuthenticationAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A versioned `AuthenticationAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any AuthenticationAPI {
+    public func makeAPI(for version: APIVersion) -> some AuthenticationAPI {
         switch version {
         case .v0:
             AuthenticationAPIV0(networkService: networkService)

@@ -18,10 +18,6 @@
 
 "general.loading" = "Loading…";
 
-"conversation.create.channel.title" = "New channel";
-"conversation.create.channel.subtitle" = "Conversation history and more";
-"conversation.create.group.title" = "New group";
-
 // Channel Access level
 "channel_access_level.public" = "Public";
 "channel_access_level.private" = "Private";
@@ -48,3 +44,35 @@ Do you want to change channel access to private?";
 "channel_access_level.change_level_alert.button.change" = "Change";
 "channel_access_level.change_level_alert.button.cancel" = "Cancel";
 
+
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.subtitle" = "Conversation history and more";
+"conversation.create.group.title" = "New group";
+
+// MARK: Navigation
+"conversation.create.channel.back" = "Back";
+"conversation.create.channel.next" = "Next";
+
+// MARK: - Channel name
+"conversation.creationForm.channelName.sectionTitle" = "Channel name";
+"conversation.creationForm.channelName.placeholder" = "Enter channel name";
+"conversation.creationForm.channelName.label" = "Channel name";
+
+// MARK: - Options
+"conversation.creationForm.options.sectionTitle" = "Options";
+"conversation.creationForm.options.channelAccess" = "Channel access";
+"conversation.creationForm.options.channelAccess.public" = "Public";
+"conversation.creationForm.options.channelAccess.private" = "Private";
+
+"conversation.creationForm.options.channelAccess.invitePolicy" = "Add participants";
+"conversation.creationForm.options.channelAccess.invitePolicy.adminsOnly" = "Admins";
+"conversation.creationForm.options.channelAccess.invitePolicy.adminsAndMembers" = "Admins and members";
+
+"conversation.creationForm.options.footer" = "All team members can join public channels. But, only channel admins or members can add people to a private channel. A private channel can not be changed to public later.";
+
+"conversation.creationForm.services.toggle" = "Allow services";
+"conversation.creationForm.guests.toggle" = "Allow guests";
+"conversation.creationForm.guests.description" = "Open this conversation to people outside your team or services.";
+
+"conversation.creationForm.readReceipts.toggle" = "Read receipts";
+"conversation.creationForm.readReceipts.description" = "When this is on, people can see when their messages in this conversation are read.";

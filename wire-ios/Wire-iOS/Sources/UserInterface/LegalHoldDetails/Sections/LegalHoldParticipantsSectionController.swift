@@ -40,8 +40,7 @@ protocol LegalHoldParticipantsSectionControllerDelegate: AnyObject {
 
 }
 
-typealias LegalHoldDetailsConversation = Conversation & GroupDetailsConversation & HasChannelAccessLevelPermission &
-    HasConversationGroupType
+typealias LegalHoldDetailsConversation = Conversation & GroupDetailsConversation
 
 private extension ConversationLike {
     func createViewModel() -> LegalHoldParticipantsSectionViewModel {

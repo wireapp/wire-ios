@@ -20,6 +20,13 @@
         "identifier" : "WireConversationsUITests",
         "name" : "WireConversationsUITests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireConversations",
+        "identifier" : "WireConversationsTests",
+        "name" : "WireConversationsTests"
+      }
     }
   ],
   "version" : 1

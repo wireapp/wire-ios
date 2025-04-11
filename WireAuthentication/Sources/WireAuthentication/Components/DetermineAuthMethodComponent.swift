@@ -20,6 +20,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireLogging
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
@@ -27,79 +28,52 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
-    var environmentType: BackendEnvironmentType { get }
-    var backendConfig: BackendConfig { get }
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
-    var userDefaults: UserDefaults { get }
-    var appStoreURL: URL { get }
     var existsAnotherAccount: Bool { get }
 
 }
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
-            router: dependency.router,
-            factory: self,
-            bridge: dependency.bridge,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig,
-            backendMetadata: nil,
-            existsAnotherAccount: dependency.existsAnotherAccount
-        )
-    }
+    public let networkStack: NetworkStack
 
-    @MainActor var view: DetermineAuthMethodView {
-        DetermineAuthMethodView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
-
-    public var networkService: NetworkService {
-        shared {
-            NetworkService.make(
-                backendEnvironment: .init(dependency.backendConfig),
-                minTLSVersion: dependency.minTLSVersion
-            )
-        }
+    init(
+        parent: any Scope,
+        networkStack: NetworkStack
+    ) {
+        self.networkStack = networkStack
+        super.init(parent: parent)
     }
 
     // MARK: - Children
 
-    func loginViaEmailComponent(backendMetadata: BackendMetadata) -> LoginViaEmailComponent {
-        LoginViaEmailComponent(
-            parent: self,
-            environmentType: dependency.environmentType,
-            backendConfig: dependency.backendConfig,
-            backendMetadata: backendMetadata
-        )
-    }
-
-    func loginViaSSOComponent(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOComponent {
-        LoginViaSSOComponent(
-            parent: self,
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
-        )
-    }
-
-    func switchBackendConfirmationComponent(
+    func loginViaEmailComponent(
         email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationComponent {
-        SwitchBackendConfirmationComponent(
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailComponent {
+        let networkStack = NetworkStack(
+            backendInfo: backendInfo,
+            minTLSVersion: dependency.minTLSVersion,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
+        return LoginViaEmailComponent(
             parent: self,
             email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
+            networkStack: networkStack
+        )
+    }
+
+    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: false
         )
     }
 
@@ -107,16 +81,44 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
+    // MARK: Factory
+
+    @MainActor var viewModel: DetermineAuthMethodViewModel {
+        DetermineAuthMethodViewModel(
+            factory: self,
+            router: dependency.router,
+            bridge: dependency.bridge,
+            backendInfo: networkStack.backendInfo,
+            existsAnotherAccount: dependency.existsAnotherAccount
+        )
+    }
+
+    func loginViaEmailFactory(
+        email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> any WireAuthenticationUI.LoginViaEmailFactory {
+        loginViaEmailComponent(
+            email: email,
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
+            backendInfo: backendInfo
+        )
+    }
+
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
+        noHistoryComponent(authenticationResult: authenticationResult)
+    }
+
+    // MARK: Use cases
+
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
         ValidateEmailOrSSOCodeUseCase()
     }
 
-    func determineAuthMethodUseCase(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any DetermineAuthMethodUseCaseProtocol {
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
         return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
             authenticationAPI: authenticationAPI,
@@ -124,105 +126,32 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func resolveBackendMetadataUseCase() -> any ResolveBackendMetadataUseCaseProtocol {
-        let api = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
-        return ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
-    }
-
-    func ssoLinkGenerator(
-        apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion
-    ) -> any SSOLinkGeneratorProtocol {
-        let authenticationAPI = AuthenticationAPIBuilder(networkService: networkService).makeAPI(
-            for: .init(apiVersion)
-        )
-        return SSOLinkGenerator(
-            authenticationAPI: authenticationAPI,
-            baseURL: dependency.backendConfig.endpoints.backendURL,
-            callbackScheme: dependency.ssoCallbackURLScheme,
-            defaults: dependency.userDefaults
-        )
-    }
-
     func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
         FetchBackendConfigUseCase()
     }
 
-    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
-        OpenAppStoreUseCase(url: dependency.appStoreURL)
-    }
-
-}
-
-extension DetermineAuthMethodComponent: DetermineAuthMethodView.Factory {
-
     @MainActor
-    func loginViaEmailView(
-        email: String,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata
-    ) -> LoginViaEmailView {
-        loginViaEmailComponent(backendMetadata: backendMetadata).view(
-            email: email,
-            canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
-    }
-
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
-        ).view
-    }
-
-    func switchBackendView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) -> SwitchBackendConfirmationView {
-        switchBackendConfirmationComponent(
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig
-        ).view
-    }
-
-}
-
-// TODO: [WPB-16272] remove when API version is deduplicated.
-extension WireAPI.APIVersion {
-
-    init(_ apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) {
-        switch apiVersion {
-        case .v0:
-            self = .v0
-        case .v1:
-            self = .v1
-        case .v2:
-            self = .v2
-        case .v3:
-            self = .v3
-        case .v4:
-            self = .v4
-        case .v5:
-            self = .v5
-        case .v6:
-            self = .v6
-        case .v7:
-            self = .v7
-        case .v8:
-            self = .v8
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+        let networkStack: NetworkStack = if let backendInfo {
+            NetworkStack(
+                backendInfo: backendInfo,
+                minTLSVersion: dependency.minTLSVersion,
+                preferredAPIVersion: dependency.preferredAPIVersion
+            )
+        } else {
+            self.networkStack
         }
+
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+
+        return LoginViaSSOUseCase(
+            authenticationAPI: authenticationAPI,
+            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
+            ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
+            verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
+            webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
+            createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
+        )
     }
 
 }

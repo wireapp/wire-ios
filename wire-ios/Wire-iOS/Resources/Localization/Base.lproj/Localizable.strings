@@ -75,9 +75,6 @@
 "peoplepicker.services.add_service.error.default" = "The service is unavailable at the moment";
 "peoplepicker.services.add_service.error.full" = "The conversation is full";
 
-"peoplepicker.title.create_conversation" = "Create group";
-"peoplepicker.title.add_to_conversation" = "Add participants";
-
 "peoplepicker.no_contacts_title" = "No Contacts.";
 
 "peoplepicker.no_search_results" = "No matching results. Try entering a different name.";
@@ -104,9 +101,14 @@
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "The group is full";
+"add_participants.alert.title" = "The conversation is full";
 "add_participants.alert.message.new_conversation" = "Up to %d people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.";
+
+// Channel Creation UI - Navigation
+"conversation.create.channel.title" = "New channel";
+"conversation.create.channel.back" = "Back";
+"conversation.create.channel.next" = "Next";
 
 // Contacts UI
 "contacts_ui.search_placeholder" = "Search by name";
@@ -234,11 +236,6 @@
 "list.archived_conversations" = "ARCHIVE";
 "list.archived_conversations_close" = "Close archive";
 
-"list.section.groups" = "Groups";
-"list.section.contacts" = "People";
-"list.section.requests" = "Requests";
-"list.section.favorites" = "Favorites";
-
 "conversation.voiceover.value.active" = "active";
 "conversation.voiceover.value.disabled" = "disabled";
 
@@ -295,7 +292,6 @@
 "conversation.invite_more_people.button_title" = "Add People";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Empty group conversation";
 
 "conversation.input_bar.verified" = "Verified";
 "conversation.input_bar.placeholder" = "Type a message";
@@ -347,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Cancel";
-"conversation.create.non_federating_domains_error.title" = "Group can't be created";
-"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.title" = "Conversation can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "Learn More";
-"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -863,19 +859,19 @@
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Options";
 "participants.footer.add_title" = "Add Participants";
-"participants.section.name.footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
 "participants.section.admins.footer" = "There are no admins.";
 "participants.section.members.footer" = "There are no members.";
 
-"profile.profile.group_admin_options.title" = "Group admin";
+"profile.profile.group_admin_options.title" = "Conversation admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "More actions";
 "meta.menu.rename" = "Rename";
-"meta.menu.leave" = "Leave Group…";
+"meta.menu.leave" = "Leave Conversation…";
 "meta.menu.archive" = "Archive";
 "meta.menu.unarchive" = "Unarchive";
-"meta.menu.delete" = "Delete Group…";
+"meta.menu.delete" = "Delete Conversation…";
 "meta.menu.clear_content" = "Clear Content…";
 "meta.menu.move_to_folder" = "Move to…";
 "meta.menu.remove_from_folder" = "Remove from \"%@\"";
@@ -930,8 +926,8 @@
 "profile.remove_dialog_title" = "Remove?";
 "profile.remove_dialog_message" = "%@ won’t be able to send or receive messages in this conversation.";
 "profile.remove_dialog_button_cancel" = "Cancel";
-"profile.remove_dialog_button_remove" = "Remove From Group…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Group";
+"profile.remove_dialog_button_remove" = "Remove From Conversation…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
 
 // Block dialog
 "profile.block_dialog.title" = "Block?";
@@ -993,7 +989,7 @@
 // User Details
 "profile.details.title" = "Details";
 "profile.details.guest" = "Guest";
-"profile.details.group_admin" = "Group admin";
+"profile.details.group_admin" = "Conversation admin";
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1048,8 +1044,8 @@
 "group_details.message_protocol.title" = "Protocol";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
-"group_details.conversation_admins_header.title" = "Group admins";
-"group_details.conversation_members_header.title" = "Group members";
+"group_details.conversation_admins_header.title" = "Conversation admins";
+"group_details.conversation_members_header.title" = "Conversation members";
 
 // Channel Access level
 "channel_access_level.public" = "Public";
@@ -1674,6 +1670,7 @@
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "This account is no longer authorized to log in.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
+"error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Too many people to call";
 "error.group_call.too_many_members_in_conversation" = "Calls work in conversations with up to %d people.";
@@ -1742,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";

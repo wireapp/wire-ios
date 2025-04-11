@@ -60,7 +60,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let assets: [UserAsset]?
     let deleted: Bool?
     let email: String?
-    let expiresAt: UTCTimeMillis?
+    let expiresAt: UTCTime?
     let handle: String?
     let id: UUID
     let locale: String

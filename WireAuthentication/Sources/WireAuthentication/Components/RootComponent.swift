@@ -26,8 +26,7 @@ internal import WireAuthenticationLogic
 
 class RootComponent: BootstrapComponent {
 
-    public let environmentType: BackendEnvironmentType
-    public let backendConfig: BackendConfig
+    public let backendInfo: BackendInfo
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
@@ -35,51 +34,8 @@ class RootComponent: BootstrapComponent {
     public let howToDeleteAccountURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
-    public let userDefaults: UserDefaults
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
-
-    init(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        preferredAPIVersion: APIVersion?,
-        minTLSVersion: TLSVersion,
-        howToChangeEmailURL: URL,
-        howToDeleteAccountURL: URL,
-        passwordValidator: any PasswordValidator,
-        ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults,
-        appStoreURL: URL,
-        existsAnotherAccount: Bool
-    ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
-        self.preferredAPIVersion = preferredAPIVersion
-        self.productionVersions = APIVersion.productionVersions
-        self.minTLSVersion = minTLSVersion
-        self.howToChangeEmailURL = howToChangeEmailURL
-        self.howToDeleteAccountURL = howToDeleteAccountURL
-        self.passwordValidator = passwordValidator
-        self.ssoCallbackURLScheme = ssoCallbackURLScheme
-        self.userDefaults = userDefaults
-        self.appStoreURL = appStoreURL
-        self.existsAnotherAccount = existsAnotherAccount
-    }
-
-    // MARK: - View
-
-    @MainActor var view: some View {
-        RootView(
-            viewModel: viewModel,
-            factory: self
-        )
-    }
-
-    @MainActor private var viewModel: RootViewModel {
-        shared {
-            RootViewModel(bridge: bridge)
-        }
-    }
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -87,125 +43,72 @@ class RootComponent: BootstrapComponent {
         }
     }
 
-    // MARK: - Public dependencies
-
     @MainActor public var router: any Router {
         viewModel
     }
 
+    init(
+        backendInfo: BackendInfo,
+        preferredAPIVersion: APIVersion?,
+        minTLSVersion: TLSVersion,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
+        passwordValidator: any PasswordValidator,
+        ssoCallbackURLScheme: String,
+        appStoreURL: URL,
+        existsAnotherAccount: Bool
+    ) {
+        self.backendInfo = backendInfo
+        self.preferredAPIVersion = preferredAPIVersion
+        self.productionVersions = APIVersion.productionVersions
+        self.minTLSVersion = minTLSVersion
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
+        self.passwordValidator = passwordValidator
+        self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.appStoreURL = appStoreURL
+        self.existsAnotherAccount = existsAnotherAccount
+    }
+
     // MARK: - Children
 
-    func determineAuthMethodOnPremComponent(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> DetermineAuthMethodOnPremComponent {
-        DetermineAuthMethodOnPremComponent(
-            parent: self,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
+    func determineAuthMethodComponent(backendInfo: BackendInfo) -> DetermineAuthMethodComponent {
+        let networkStack = NetworkStack(
+            backendInfo: backendInfo,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion
         )
-    }
 
-    var determineAuthMethodComponent: DetermineAuthMethodComponent {
-        DetermineAuthMethodComponent(parent: self)
-    }
-
-    @MainActor
-    func noHistoryComponent(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryComponent {
-        NoHistoryComponent(
+        return DetermineAuthMethodComponent(
             parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
-    }
-
-    func loginViaEmailOnPremComponent(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: BackendMetadata?
-    ) -> LoginViaEmailOnPremComponent {
-        LoginViaEmailOnPremComponent(
-            parent: self,
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
-        )
-    }
-
-    func loginViaSSOComponent(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOComponent {
-        LoginViaSSOComponent(
-            parent: self,
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
+            networkStack: networkStack
         )
     }
 
 }
 
-extension RootComponent: RootView.Factory {
+extension RootComponent: RootViewModel.Factory {
 
-    @MainActor
-    func determineAuthMethodView(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    ) -> DetermineAuthMethodView {
-        determineAuthMethodOnPremComponent(
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
-        ).view
+    // MARK: - Factory
+
+    @MainActor var viewModel: RootViewModel {
+        shared {
+            RootViewModel(
+                factory: self,
+                bridge: bridge,
+                backendInfo: backendInfo
+            )
+        }
     }
 
-    @MainActor
-    func determineAuthMethodView() -> DetermineAuthMethodView {
-        determineAuthMethodComponent.view
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
+        determineAuthMethodComponent(backendInfo: backendInfo)
     }
 
-    @MainActor
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView {
-        noHistoryComponent(
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
-        ).view
-    }
+    // MARK: - Use cases
 
-    @MainActor
-    func loginViaEmailOnPremView(
-        email: String?,
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig,
-        backendMetadata: WireAuthenticationAPI.BackendMetadata?
-    ) -> LoginViaEmailOnPremView {
-        loginViaEmailOnPremComponent(
-            email: email,
-            environmentType: environmentType,
-            backendConfig: backendConfig,
-            backendMetadata: backendMetadata
-        ).view
-    }
-
-    func loginViaSSOView(
-        ssoURL: URL,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) -> LoginViaSSOView {
-        loginViaSSOComponent(
-            ssoURL: ssoURL,
-            backendEnvironment: backendEnvironment
-        ).view
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: appStoreURL)
     }
 
 }

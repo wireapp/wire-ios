@@ -83,7 +83,7 @@ final class AuthenticationAPITests: XCTestCase {
             _ = try await sut.login(
                 email: "email@example.com",
                 password: "123456",
-                verificationCode: nil,
+                verificationCode: "193756",
                 label: nil
             )
         }
@@ -164,6 +164,21 @@ final class AuthenticationAPITests: XCTestCase {
 
         // Then
         await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidDomain) {
+            // When
+            try await sut.getDomainRegistration(forEmail: "email@example.com")
+        }
+    }
+
+    func testGetDomainRegistration_Response_Handling_V8_Service_Unavailable() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.serviceUnavailable, "GetDomainRegistrationErrorResponse_ServiceUnavailableV8")
+        ])
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.serviceUnavailable) {
             // When
             try await sut.getDomainRegistration(forEmail: "email@example.com")
         }

@@ -19,24 +19,20 @@
 import SwiftUI
 import WireAuthenticationAPI
 
-package protocol NoHistoryViewBuilder {
+package protocol NoHistoryFactory {
 
-    @MainActor
-    func noHistoryView(
-        authenticationResult: AuthenticationResult,
-        didDetectDomainConflict: Bool
-    ) -> NoHistoryView
+    @MainActor var viewModel: NoHistoryViewModel { get }
 
 }
 
 package struct NoHistoryView: View {
 
-    @StateObject var viewModel: NoHistoryViewModel
+    @StateObject private var viewModel: NoHistoryViewModel
 
     package init(
-        viewModel: NoHistoryViewModel
+        factory: @autoclosure @escaping () -> NoHistoryFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
@@ -100,6 +96,7 @@ package struct NoHistoryView: View {
         .setPreferredSize()
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+        .navigationBarBackButtonHidden()
     }
 
     private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
@@ -116,27 +113,4 @@ package struct NoHistoryView: View {
         }
     }
 
-}
-
-#Preview {
-    let viewModel = NoHistoryViewModel(
-        didDetectDomainConflict: false,
-        howToChangeEmailURL: URL(string: "https://wire.com")!,
-        howToDeleteAccountURL: URL(string: "https://wire.com")!,
-        onFlowCompletion: {}
-    )
-    NoHistoryView(viewModel: viewModel)
-}
-
-#Preview("With background") {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            let viewModel = NoHistoryViewModel(
-                didDetectDomainConflict: false,
-                howToChangeEmailURL: URL(string: "https://wire.com")!,
-                howToDeleteAccountURL: URL(string: "https://wire.com")!,
-                onFlowCompletion: {}
-            )
-            NoHistoryView(viewModel: viewModel)
-        }
 }

@@ -22,6 +22,7 @@
 "sidebar.conversation_filter.all.title" = "所有";
 "sidebar.conversation_filter.favorites.title" = "收藏夾";
 "sidebar.conversation_filter.groups.title" = "群组";
+"sidebar.conversation_filter.channels.title" = "频道";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "一对一对话";
 "sidebar.conversation_filter.folders.title" = "文件夹";
 "sidebar.conversation_filter.archived.title" = "归档";

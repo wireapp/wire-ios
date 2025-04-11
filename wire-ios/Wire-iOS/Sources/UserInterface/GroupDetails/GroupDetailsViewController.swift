@@ -118,12 +118,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         collectionViewController.collectionView = collectionView
         footerView.delegate = self
-        footerView.update(for: conversation)
+        footerView.update(for: conversation, user: userSession.selfUser)
 
         collectionViewController.sections = computeVisibleSections()
     }
 
-    private func setupNavigatiomItem() {
+    private func setupNavigationItem() {
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
         let titleView = TwoLineTitleView(
@@ -151,7 +151,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         super.viewWillAppear(animated)
 
         updateLegalHoldIndicator()
-        setupNavigatiomItem()
+        setupNavigationItem()
         collectionViewController.collectionView?.reloadData()
     }
 
@@ -164,7 +164,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        setupNavigatiomItem()
+        setupNavigationItem()
     }
 
     func updateLegalHoldIndicator() {
@@ -198,7 +198,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             let maxNumberWithoutTruncation = Int.ConversationParticipants.maxNumberWithoutTruncation
 
             if admins.count <= maxNumberWithoutTruncation || admins.isEmpty {
-                // Dispay the ShowAll button after the first section.
+                // Display the ShowAll button after the first section.
                 if admins.count >= maxNumberOfDisplayed, participants.count > maxNumberWithoutTruncation {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
@@ -333,7 +333,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         updateLegalHoldIndicator()
         collectionViewController.sections = computeVisibleSections()
-        footerView.update(for: conversation)
+        footerView.update(for: conversation, user: userSession.selfUser)
 
         if changeInfo.participantsChanged, !conversation.isSelfAnActiveMember {
             navigationController?.popToRootViewController(animated: true)
@@ -342,7 +342,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
 
         if changeInfo.mlsVerificationStatusChanged {
-            setupNavigatiomItem()
+            setupNavigationItem()
         }
     }
 
@@ -551,11 +551,10 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let conversation = conversation as? ZMConversation,
               let session = ZMUserSession.shared() else { return }
 
-        let permission: WireConversationsAPI.ChannelAccessLevelPermission? = conversation.accessLevelPermission.map {
-            switch $0 {
-            case .admins: .admins
-            case .everyone: .everyone
-            }
+        let permission: ChannelAccessLevelPermission? = switch conversation.privateChannelPermission {
+        case .unset: .none
+        case .admins: .admins
+        case .everyone: .everyone
         }
 
         let accessView = ChannelViewFactory.makeChannelAccessView(

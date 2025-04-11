@@ -144,10 +144,6 @@
 "conversationDetails.showParticipantsButton.hint" = "Double tap to open participant list";
 "conversationDetails.participantCell.hint" = "Dotknij dwukrotnie, aby otworzyć profil";
 
-"createConversation.backButton.description" = "Go back to contact list";
-"createConversation.hideSettings.hint" = "Double tap to hide settings";
-"createConversation.openSettings.hint" = "Double tap to open settings";
-"createConversation.searchView.description" = "Wpisz nazwę grupy";
 "createConversation.selectedUser.hint" = "Stuknij dwukrotnie, aby odznaczyć";
 "createConversation.unselectedUser.hint" = "Stuknij dwukrotnie, aby zaznaczyć";
 
@@ -204,7 +200,7 @@
 "contactsList.memberIcon.description" = "Użytkownik";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Dotknij dwukrotnie, aby otworzyć profil";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.cancelButton.description" = "Close new conversation overview";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -222,23 +218,27 @@
 "conversationsList.replyStatus.value" = "Odpowiedz";
 "conversationsList.badgeView.value" = "New messages: %d";
 "conversationsList.itemCell.hint" = "Double tap to open conversation";
+"conversationsList.itemCell.avatar.group.label" = "Group";
+"conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Dołącz";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "Dotknij dwukrotnie, aby otworzyć profil";
 
-"conversationList.startConversationButton.description" = "Create group or search for people";
+"conversationList.startConversationButton.description" = "Create a group or channel, or search for people";
 "conversationsList.filterButton.description" = "Filter conversations";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
 "conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
 "conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
+"conversationsList.filter_menu_options.channels.description" = "Show all channel conversations";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
 "conversationsList.filter_menu_options.folders.description" = "Folders";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "All conversations, selected";
 "conversationsList.filter_menu_options.favorites.selected.description" = "Favorites, selected";
 "conversationsList.filter_menu_options.groups.selected.description" = "Groups, selected";
+"conversationsList.filter_menu_options.channels.selected.description" = "Channels, selected";
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "One-to-one conversations, selected";
 "conversationsList.filter_menu_options.folders.selected.description" = "Folder, selected";
 
@@ -321,3 +321,6 @@
 "searchGifs.norResultsLabel.description" = "No Gifs found";
 "searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
 "searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";
+
+// MARK: - Channel Creation UI - Navigation
+"conversation.create.channel.back" = "Go back to new conversation overview";

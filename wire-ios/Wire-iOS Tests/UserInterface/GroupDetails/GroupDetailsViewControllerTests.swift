@@ -50,7 +50,7 @@ final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
             groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
             selfUser.membership?.setTeamRole(.partner)
             sut = GroupDetailsFooterView()
-            sut.update(for: groupConversation)
+            sut.update(for: groupConversation, user: selfUser)
 
             verifyInAllPhoneWidths(matching: sut)
         }

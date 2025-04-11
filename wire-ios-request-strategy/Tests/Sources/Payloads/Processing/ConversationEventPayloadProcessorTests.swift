@@ -1436,7 +1436,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // Then
         await syncMOC.perform {
-            XCTAssertEqual(self.groupConversation.accessLevelPermission, .admins)
+            XCTAssertEqual(self.groupConversation.privateChannelPermission, .admins)
         }
     }
 
