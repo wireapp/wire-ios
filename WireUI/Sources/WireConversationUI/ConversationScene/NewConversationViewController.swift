@@ -151,10 +151,9 @@ public final class NewConversationViewController<
 
     private func setupDataSource() {
         dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
-            let message = self.persistentContainer.viewContext.object(with: itemIdentifier) as! ConversationMessageModel
-            let m = message.conversationCellModel
-            let cell = tableView.dequeueReusableCell(withIdentifier: m.cellReuseIdentifier, for: indexPath)
-            m.configureCell(cell)
+            let model = (self.persistentContainer.viewContext.object(with: itemIdentifier) as! ConversationMessageModel).conversationCellModel
+            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
+            model.configureCell(cell)
             return cell
         }
     }

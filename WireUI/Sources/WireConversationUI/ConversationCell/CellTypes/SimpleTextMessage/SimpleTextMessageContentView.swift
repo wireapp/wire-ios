@@ -36,12 +36,14 @@ struct SimpleTextMessageContentView: ConversationCellContentViewProtocol {
                 Text(model.status)
                     .font(.caption)
             }
+            reactions
         }
         .padding()
     }
 
-    init(model: Model) {
-        self.model = model
+    @ViewBuilder
+    private var reactions: some View {
+        ReactionsViewRepresentable?()
     }
 
 }
@@ -56,3 +58,18 @@ struct SimpleTextMessageContentView: ConversationCellContentViewProtocol {
     )
     return SimpleTextMessageContentView(model: model)
 }
+
+// MARK: - Temp
+
+private struct ReactionsViewRepresentable: UIViewRepresentable {
+
+    func makeUIView(context: Context) -> UIView {
+        SimpleTextMessageContentViewReactionsFactory?() ?? UIView()
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        //
+    }
+}
+
+nonisolated(unsafe) public var SimpleTextMessageContentViewReactionsFactory: (() -> UIView)!
