@@ -583,7 +583,7 @@ public final class ZMUserSession: NSObject {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             onSelfClientInvalidated: onSelfClientInvalidated,
-            onCalling: onCalling(callEventInfo:)
+            onProcessedCallEvent: onProcessedCallEvent(callEventInfo:)
         )
 
         let syncAgent = SyncAgent(
@@ -598,12 +598,12 @@ public final class ZMUserSession: NSObject {
         syncAgent.resume()
     }
 
-    func onCalling(callEventInfo: CallEventInfo) {
+    func onProcessedCallEvent(callEventInfo: CallEventInfo) {
         let serverTimeDelta = syncContext.performAndWait {
-            syncContext.serverTimeDelta
+            syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
         }
 
-        viewContext.perform { [weak self] in
+        viewContext.perform { [weak self] in // callCenter can only be accessed on the ui context
             guard let self, let callCenter else { return }
             guard !callEventInfo.isMuted else {
                 callCenter.isMuted = true
@@ -622,7 +622,7 @@ public final class ZMUserSession: NSObject {
 
             let callEvent = CallEvent(
                 data: callEventInfo.data,
-                currentTimestamp: Date().addingTimeInterval(serverTimeDelta),
+                currentTimestamp: Date.now.addingTimeInterval(serverTimeDelta),
                 serverTimestamp: callEventInfo.eventTimestamp,
                 conversationId: conversationId,
                 userId: userId,

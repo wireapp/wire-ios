@@ -20,24 +20,13 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-public struct CallEventInfo {
-    public let data: Data
-    public let conversationID: UUID
-    public let conversationDomain: String?
-    public let userID: UUID
-    public let userDomain: String?
-    public let eventTimestamp: Date
-    public let clientID: String
-    public let isMuted: Bool
-}
-
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
 
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
     let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
-    let onCalling: (CallEventInfo) -> Void
+    let onProcessedCallEvent: (CallEventInfo) -> Void
 
     func processEvent(_ event: ConversationProteusMessageAddEvent) async throws {
         let senderID = event.senderID
@@ -104,7 +93,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             event: event,
             genericMessage: genericMessage
         ) {
-            return onCalling(callEventInfo)
+            return onProcessedCallEvent(callEventInfo)
         }
 
         await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(

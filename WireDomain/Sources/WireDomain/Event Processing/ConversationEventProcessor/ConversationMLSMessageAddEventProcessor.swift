@@ -31,7 +31,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
     let messageLocalStore: any MessageLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
     let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
-    let onCalling: (CallEventInfo) -> Void
+    let onProcessedCallEvent: (CallEventInfo) -> Void
 
     func processEvent(_ event: ConversationMLSMessageAddEvent) async throws {
         let conversationID = event.conversationID
@@ -111,7 +111,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             decryptedMessage: decryptedMessage,
             genericMessage: genericMessage
         ) {
-            return onCalling(callEventInfo)
+            return onProcessedCallEvent(callEventInfo)
         }
 
         await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(

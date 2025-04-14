@@ -124,7 +124,7 @@ public final class UserSessionComponent {
     public func clientSessionComponent(
         clientID: String,
         onSelfClientInvalidated: @escaping () async -> Void,
-        onCalling: @escaping (CallEventInfo) -> Void
+        onProcessedCallEvent: @escaping (CallEventInfo) -> Void
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
@@ -143,7 +143,7 @@ public final class UserSessionComponent {
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
             onSelfClientInvalidated: onSelfClientInvalidated,
-            onCalling: onCalling
+            onProcessedCallEvent: onProcessedCallEvent
         )
     }
 
