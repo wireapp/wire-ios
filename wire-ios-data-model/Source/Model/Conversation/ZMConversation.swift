@@ -87,4 +87,52 @@ public extension ZMConversation {
         }
         primaryKey = Self.primaryKey(from: remoteIdentifier, domain: domain)
     }
+
+    /// Move message from otherConversation and other related properties
+    func migrateMessages(from otherConversation: ZMConversation) {
+
+        func assignIfNewer(newValue: inout Date?, oldValue: Date?) {
+            if let timeStamp = oldValue, newValue?.compare(timeStamp) == .orderedAscending || newValue == nil {
+                newValue = timeStamp
+            }
+        }
+
+        mutableMessages.union(otherConversation.allMessages)
+
+        assignIfNewer(
+            newValue: &lastReadServerTimeStamp,
+            oldValue: otherConversation.lastReadServerTimeStamp
+        )
+
+        assignIfNewer(
+            newValue: &pendingLastReadServerTimestamp,
+            oldValue: otherConversation.pendingLastReadServerTimestamp
+        )
+
+        assignIfNewer(
+            newValue: &previousLastReadServerTimestamp,
+            oldValue: otherConversation.previousLastReadServerTimestamp
+        )
+
+        assignIfNewer(
+            newValue: &lastServerTimeStamp,
+            oldValue: otherConversation.lastServerTimeStamp
+        )
+
+        assignIfNewer(
+            newValue: &clearedTimeStamp,
+            oldValue: otherConversation.clearedTimeStamp
+        )
+
+        assignIfNewer(
+            newValue: &archivedChangedTimestamp,
+            oldValue: otherConversation.archivedChangedTimestamp
+        )
+
+        assignIfNewer(
+            newValue: &silencedChangedTimestamp,
+            oldValue: otherConversation.silencedChangedTimestamp
+        )
+    }
+
 }

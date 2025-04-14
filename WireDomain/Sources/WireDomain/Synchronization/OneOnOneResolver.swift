@@ -245,7 +245,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             for proteusConversation in allProteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+                mlsConversation.migrateMessages(from: proteusConversation)
             }
 
             if !allProteusConversations.isEmpty {

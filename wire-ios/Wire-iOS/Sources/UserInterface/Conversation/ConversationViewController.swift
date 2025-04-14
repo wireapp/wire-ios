@@ -523,7 +523,7 @@ final class ConversationViewController: UIViewController {
                     return
                 }
                 let mlsFeature = await userSession.makeGetMLSFeatureUseCase().invoke()
-                let resolver = OneOnOneResolver(
+                let resolver = LegacyOneOnOneResolver(
                     migrator: OneOnOneMigrator(mlsService: mlsService),
                     isMLSEnabled: mlsFeature.isEnabled
                 )
@@ -533,7 +533,10 @@ final class ConversationViewController: UIViewController {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
                 }
             } catch {
-                WireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")
+                WireLogger.conversation.warn(
+                    "resolution of proteus 1-1 conversation failed: \(error)",
+                    attributes: [.senderUserId: otherUserID.safeForLoggingDescription]
+                )
             }
         }
     }
