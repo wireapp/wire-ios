@@ -80,7 +80,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
+        WireLogger.conversation.debug("resolving 1-1 conversation", attributes: [.senderUserId: userID.safeForLoggingDescription])
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
@@ -118,7 +118,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("no common protocols found")
+        WireLogger.conversation.debug("no common protocols found", attributes: [.senderUserId: userID.safeForLoggingDescription])
 
         return try await context.perform {
             guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
@@ -170,7 +170,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
+        WireLogger.conversation.debug("should resolve to mls 1-1 conversation", attributes: [.senderUserId: userID.safeForLoggingDescription])
 
         guard let migrator else {
             throw OneOnOneResolverError.migratorNotFound
@@ -235,7 +235,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             }
         }
 
-        WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
+        WireLogger.conversation.debug("should resolve to proteus 1-1 conversation", attributes: [.senderUserId: userID.safeForLoggingDescription])
         await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
         return .noAction
     }
