@@ -347,7 +347,7 @@
 "conversation.create.non_federating_domains_error.message" = "Personen der Backends %@ können nicht derselben Unterhaltung beitreten.\nUm die Unterhaltung zu erstellen, entfernen Sie die betroffenen Teilnehmer.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Teilnehmerliste bearbeiten";
 "conversation.create.non_federating_domains_error.learn_more" = "Mehr erfahren";
-"conversation.create.non_federating_domains_error.abort" = "Discard Conversation Creation";
+"conversation.create.non_federating_domains_error.abort" = "Erstellung der Unterhaltung verwerfen?";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (Standard)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Es gibt keine Admins.";
 "participants.section.members.footer" = "Es gibt keine Mitglieder.";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "Admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Weitere Aktionen";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Entfernen?";
 "profile.remove_dialog_message" = "%@ wird in dieser Unterhaltung keine Nachrichten senden oder empfangen können";
 "profile.remove_dialog_button_cancel" = "Abbrechen";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "Aus Unterhaltung entfernen…";
+"profile.remove_dialog_button_remove_confirm" = "Aus Unterhaltung entfernen";
 
 // Block dialog
 "profile.block_dialog.title" = "Blockieren?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Details";
 "profile.details.guest" = "Gast";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "Admin";
 "profile.details.partner" = "extern";
 "profile.details.federated" = "Föderiert";
 "profile.details.blocking_reason" = "Dieser Nutzer ist aufgrund der gesetzlichen Aufbewahrung gesperrt. [MEHR ERFAHREN](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Selbstlöschende Nachrichten sind ab jetzt verbindlich. Neue Nachrichten werden nach %@ gelöscht.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Erstellen von Gäste-Links ist nun für alle Admins deaktiviert";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Erstellen von Gäste-Links ist nun für alle Admins aktiviert";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "Ende-zu-Ende-Identitätszertifikat";
