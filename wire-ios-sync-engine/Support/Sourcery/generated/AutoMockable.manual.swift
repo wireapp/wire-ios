@@ -17,11 +17,6 @@
 //
 
 import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
-#elseif os(OSX)
-import AppKit
-#endif
 
 import WireAnalytics
 
@@ -489,14 +484,14 @@ public class MockUserSession: UserSession {
     }
 
     public var underlyingChannelsFeature: Feature.Channels!
-    
+
     // MARK: - channelsFeature
 
     public var channelsFeature: Feature.Channels {
         get { return underlyingChannelsFeature }
         set(value) { underlyingChannelsFeature = value }
     }
-    
+
     public var underlyingMlsFeature: Feature.MLS!
 
     // MARK: - mlsGroupVerification
@@ -596,7 +591,6 @@ public class MockUserSession: UserSession {
     }
 
     public var underlyingSearchUsersCache: SearchUsersCache!
-
 
     // MARK: - unlockDatabase
 

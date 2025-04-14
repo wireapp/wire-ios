@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireDomainPkg
+import WireDomainPackage
 import WireSettingsUI
 import WireSyncEngine
 
