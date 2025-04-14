@@ -40,7 +40,8 @@ public struct WireConversationChannelCreationForm: View {
             // TODO: [WPB-16814] This will be used when implementing the channels history settings.
 //            channelHistorySection
             servicesSection
-            readReceiptsSection
+            // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
+//            readReceiptsSection
         }
         .onChange(of: channelName) { newValue in
             viewModel.onChannelNameUpdate(newValue)
