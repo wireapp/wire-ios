@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 public enum EnvironmentType: Equatable {
     case production
@@ -147,7 +148,10 @@ public final class BackendEnvironment: NSObject {
         do {
             let backendData = try decoder.decode(SerializedData.self, from: data)
             let pinnedKeys = backendData.pinnedKeys ?? []
-            let certificateTrust = ServerCertificateTrust(trustData: pinnedKeys)
+            let certificateTrust = ServerCertificateTrust(
+                trustData: pinnedKeys,
+                currentDateProvider: .system
+            )
             self.init(
                 title: backendData.title,
                 trustData: pinnedKeys,

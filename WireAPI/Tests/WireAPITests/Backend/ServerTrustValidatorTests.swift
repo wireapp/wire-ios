@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundationSupport
 import WireTestingPackage
 import XCTest
 
@@ -23,11 +24,23 @@ import XCTest
 
 final class ServerTrustValidatorTests: XCTestCase {
 
+    private var mockDateProvider: MockCurrentDateProviding!
+
+    override func setUp() async throws {
+        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
+    }
+
+    override func tearDown() {
+        mockDateProvider = nil
+    }
+
     func testValidate_whenNoMatchingHosts() async throws {
         let sut = ServerTrustValidator(
             pinnedKeys: [
                 try PinnedKey(key: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
-            ]
+            ],
+            currentDateProvider: mockDateProvider
         )
 
         try await sut.validate(trust: .other, host: "example.com")
@@ -38,12 +51,13 @@ final class ServerTrustValidatorTests: XCTestCase {
         let sut = ServerTrustValidator(
             pinnedKeys: [
                 try PinnedKey(key: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
-            ]
+            ],
+            currentDateProvider: mockDateProvider
         )
 
         // WHEN, THEN
         await XCTAssertThrowsErrorAsync(
-            ServerTrustValidator.Failure.evaluatingServerTrustFailed,
+            ServerTrustValidator.Failure.evaluatingServerTrustFailed(errSecCreateChainFailed),
             when: { try await sut.validate(trust: .invalid, host: "prod-nginz-https.wire.com") }
         )
     }
@@ -56,7 +70,8 @@ final class ServerTrustValidatorTests: XCTestCase {
         let sut = ServerTrustValidator(
             pinnedKeys: [
                 try PinnedKey(key: PublicKeys.wire, hosts: [.equals("example.com")])
-            ]
+            ],
+            currentDateProvider: mockDateProvider
         )
 
         // WHEN, THEN
@@ -65,5 +80,8 @@ final class ServerTrustValidatorTests: XCTestCase {
             when: { try await sut.validate(trust: .other, host: "example.com") }
         )
     }
+
+    // TODO: add two tests: one which fails due to expired cert, one that succeeds (setting mocked dates for both)
+    // last valid second: "2025-04-09T12:34:56Z"
 
 }

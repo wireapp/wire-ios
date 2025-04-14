@@ -22,7 +22,9 @@
 //
 
 import Foundation
+import WireFoundationSupport
 import XCTest
+
 @testable import WireTransport
 
 struct CertificateData: Decodable {
@@ -68,10 +70,14 @@ class BackendTrustProviderTests: XCTestCase {
     var pinnedHosts: [String]!
     var certificates: CertificateData!
     var pinnedKeys: PinnedKeysData!
+    private var mockDateProvider: MockCurrentDateProviding!
     var sut: ServerCertificateTrust!
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+
+        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
+
         // Do not run tests if setup fails
         continueAfterFailure = false
         pinnedHosts = ["prod-nginz-https.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com"]
@@ -105,7 +111,7 @@ class BackendTrustProviderTests: XCTestCase {
 
         }
 
-        sut = ServerCertificateTrust(trustData: pinnedKeys.pinnedKeys)
+        sut = ServerCertificateTrust(trustData: pinnedKeys.pinnedKeys, currentDateProvider: mockDateProvider)
         // If setup worked fine, run all tests
         continueAfterFailure = false
     }
@@ -115,13 +121,13 @@ class BackendTrustProviderTests: XCTestCase {
         certificates = nil
         pinnedKeys = nil
         sut = nil
-        super.tearDown()
+        mockDateProvider = nil
     }
 
     func testThatItVerifiesWithNoPinnedKeys() {
         // given
         let trustExpectation = expectation(description: "It should verify server trust")
-        let trustProvider = ServerCertificateTrust(trustData: [])
+        let trustProvider = ServerCertificateTrust(trustData: [], currentDateProvider: mockDateProvider)
         let trustVerificator = TestTrustVerificator(trustProvider: trustProvider) { trusted in
             if trusted {
                 trustExpectation.fulfill()
@@ -202,4 +208,6 @@ class BackendTrustProviderTests: XCTestCase {
         let host = "www.youtube.com"
         XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should NOT be trusted")
     }
+
+    // TODO: we should have tests for the certificate validity here as well
 }
