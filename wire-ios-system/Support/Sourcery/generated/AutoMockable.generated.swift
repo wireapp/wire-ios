@@ -1,6 +1,5 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -49,24 +48,6 @@ import Foundation
 
 
 
-
-public class MockCurrentDateProviding: CurrentDateProviding {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - now
-
-    public var now: Date {
-        get { return underlyingNow }
-        set(value) { underlyingNow = value }
-    }
-
-    public var underlyingNow: Date!
-
-
-}
 
 // swiftlint:enable variable_name
 // swiftlint:enable line_length

@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-// sourcery: AutoMockable
-/// Abstracts accessing the current system date in order to be mockable in unit tests.
-public protocol CurrentDateProviding {
-    var now: Date { get }
+/// Process team create event.
+///
+protocol TeamCreateEventProcessorProtocol {
+
+    /// Process a team create event.
+    ///
+    /// - Parameter event: A team create event.
+
+    func processEvent(_ event: TeamCreateEvent) async throws
+
 }
