@@ -97,7 +97,7 @@ final class ServerTrustValidatorTests: XCTestCase {
         let succeeded = try await testExpirationSucceeds(timestamp: "2025-04-10T02:00:00+02:00")
         XCTAssertFalse(succeeded)
     }
-    
+
     /// Validates on the given timestamp and returns `true` if the validation succeeds, `false` otherwise.
     /// Any other error than `.evaluatingServerTrustFailed(errSecCertificateExpired)` is thrown.
     private func testExpirationSucceeds(timestamp: String) async throws -> Bool {
