@@ -67,7 +67,7 @@ private extension UpdateEvent {
             self = .conversation(.mlsMessageAdd(event))
 
         case .conversationMLSWelcome:
-            guard let event = Self.conversationMLSWelcomEvent(from: legacyEvent) else {
+            guard let event = Self.conversationMLSWelcomeEvent(from: legacyEvent) else {
                 return nil
             }
 
@@ -163,7 +163,7 @@ private extension UpdateEvent {
         )
     }
 
-    private static func conversationMLSWelcomEvent(from event: ZMUpdateEvent) -> ConversationMLSWelcomeEvent? {
+    private static func conversationMLSWelcomeEvent(from event: ZMUpdateEvent) -> ConversationMLSWelcomeEvent? {
         let decoder = EventPayloadDecoder()
         guard
             let payload = try? decoder.decode(
