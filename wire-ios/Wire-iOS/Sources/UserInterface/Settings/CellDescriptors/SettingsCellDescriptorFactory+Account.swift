@@ -387,21 +387,25 @@ extension SettingsCellDescriptorFactory {
         }
 
         let importBackupUseCase = sessionManager.importBackupUseCase!
-        let createBackupUseCase = CreateBackupUseCase(
-            context: context,
-            userAdapterType: CreateBackupZMUserAdapter.self,
-            conversationAdapterType: CreateBackupZMConversationAdapter.self,
-            messageAdapterType: CreateBackupZMMessageAdapter.self,
-            eventProcessorHandle: EventProcessorHandle(),
-            fileArchiver: CreateBackupFileArchiver(),
-            currentDateProvider: SystemDateProvider(),
-            selfUserID: WireDomainPackage.QualifiedID(selfUser.qualifiedID!),
-            logger: WireLogger.backupExport
-        )
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
+            CreateBackupUseCase(
+                context: context,
+                userAdapterType: CreateBackupZMUserAdapter.self,
+                conversationAdapterType: CreateBackupZMConversationAdapter.self,
+                messageAdapterType: CreateBackupZMMessageAdapter.self,
+                eventProcessorHandle: EventProcessorHandle(),
+                fileArchiver: CreateBackupFileArchiver(),
+                currentDateProvider: SystemDateProvider(),
+                selfUserID: WireDomainPackage.QualifiedID(selfUser.qualifiedID!),
+                logger: WireLogger.backupExport
+            )
+        } else {
+            CreateLegacyBackupUseCase(sessionManager: sessionManager)
+        }
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            createBackupUseCase: createBackupUseCase, // TODO: add feature flag for "new backup creation"
+            createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
