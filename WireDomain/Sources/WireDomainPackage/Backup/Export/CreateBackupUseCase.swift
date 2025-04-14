@@ -58,27 +58,34 @@ public struct CreateBackupUseCase<
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> { [context, currentDateProvider, eventProcessorHandle, fileManager, fileArchiver, logger, selfUserID] in
+
+                let fileManager = fileManager()
+                let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+                    .appendingPathComponent(UUID().uuidString)
+                let outputDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+                    .appendingPathComponent(UUID().uuidString)
+
                 do {
                     let logger = logger()
                     let context = context()
                     let reportProgress: (Float) -> Void = { progressValue in
                         logger.debug("reporting overall process: \(progressValue * 100)%")
                         continuation.yield(.progress(progressValue))
-                        Thread.sleep(forTimeInterval: 1)
+                        Thread.sleep(forTimeInterval: 1) // TODO: delete this line
                     }
 
-                    // TODO: clean up temporary directories?
-                    // TODO: handle cancellation
-
                     reportProgress(0)
-
                     logger.debug("initializing MPBackupExporter")
                     let backupExporter = Self.createBackupExporter(
                         selfUserID: selfUserID,
+                        workDirectoryURL: workDirectoryURL,
+                        outputDirectoryURL: outputDirectoryURL,
                         fileManager: fileManager,
                         fileArchiver: fileArchiver,
                         currentDateProvider: currentDateProvider
                     )
+
+                    try Task.checkCancellation()
 
                     // finish processing incoming events and then stop
                     logger.debug("pausing event processing")
@@ -124,6 +131,8 @@ public struct CreateBackupUseCase<
                     continuation.finish()
 
                 } catch {
+                    try? fileManager.removeItem(at: workDirectoryURL)
+                    try? fileManager.removeItem(at: outputDirectoryURL)
                     continuation.finish(throwing: error)
                 }
             }
@@ -135,18 +144,13 @@ public struct CreateBackupUseCase<
 
     private static func createBackupExporter(
         selfUserID: QualifiedID,
-        fileManager: () -> FileManager,
+        workDirectoryURL: URL,
+        outputDirectoryURL: URL,
+        fileManager: FileManager,
         fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding
     ) -> MPBackupExporter {
-
-        let fileManager = fileManager()
-        let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent(UUID().uuidString)
-        let outputDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent(UUID().uuidString)
-
-        return MPBackupExporter(
+        MPBackupExporter(
             selfUserId: BackupQualifiedId(selfUserID),
             workDirectory: workDirectoryURL.path(),
             outputDirectory: outputDirectoryURL.path(),
@@ -196,6 +200,7 @@ public struct CreateBackupUseCase<
                 backupExporter.add(user: backupUser)
             }
             if index % 50 == 0 || index == recordCount - 1 {
+                try Task.checkCancellation()
                 reportingProgress(Float(index + 1) / Float(recordCount))
             }
         }
@@ -222,6 +227,7 @@ public struct CreateBackupUseCase<
                 backupExporter.add(conversation: backupConversation)
             }
             if index % 50 == 0 || index == recordCount - 1 {
+                try Task.checkCancellation()
                 reportingProgress(Float(index + 1) / Float(recordCount))
             }
         }
@@ -255,6 +261,7 @@ public struct CreateBackupUseCase<
                 backupExporter.add(message: backupMessage)
             }
             if index % 50 == 0 || index == recordCount - 1 {
+                try Task.checkCancellation()
                 reportingProgress(Float(index + 1) / Float(recordCount))
             }
         }
