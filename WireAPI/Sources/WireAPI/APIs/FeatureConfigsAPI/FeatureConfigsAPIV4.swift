@@ -128,8 +128,8 @@ extension FeatureConfigResponse {
     }
 
     struct MLSMigrationV4: Decodable {
-        let startTime: UTCTimeMillis?
-        let finaliseRegardlessAfter: UTCTimeMillis?
+        let startTime: UTCTime?
+        let finaliseRegardlessAfter: UTCTime?
     }
 
     struct EndToEndIdentityV4: Codable, Equatable {

@@ -16,18 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+import WireConversationsAPI
+import WireConversationsUI
+import WireSyncEngine
 
-public extension CurrentDateProviding where Self == SystemDateProvider {
+final class WireConversationChannelCreationFormViewControllerFactory {
 
-    /// Returns a new instance of `SystemDateProvider`.
-    static var system: Self { .init() }
-}
-
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: CurrentDateProviding {
-
-    public var now: Date { .now }
+    weak var delegate: ConversationCreationControllerDelegate?
 
     public init() {}
+
+    @MainActor
+    func create(
+        userSession: UserSession
+    ) -> WireConversationChannelCreationFormViewController {
+        let vc = WireConversationChannelCreationFormViewController(
+            userSession: userSession
+        )
+        vc.delegate = delegate
+        return vc
+    }
 }

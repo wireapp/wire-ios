@@ -88,6 +88,9 @@ public final class Assembly {
         keychain: keychain
     )
 
-    private lazy var serverTrustValidator = ServerTrustValidator(pinnedKeys: backendEnvironment.pinnedKeys)
+    private lazy var serverTrustValidator = ServerTrustValidator(
+        pinnedKeys: backendEnvironment.pinnedKeys,
+        currentDateProvider: .system
+    )
 
 }

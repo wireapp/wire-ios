@@ -16,18 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-public import UIKit
-public import WireConversationsAPI
-import WireConversationsUI
+import CoreData
+import Foundation
 
-public class WireConversationChannelCreationFormViewControllerFactory {
+// sourcery: AutoMockable
+public protocol DatabaseSaverProtocol {
 
-    public init() {}
+    func save() async throws
 
-    @MainActor
-    public func create(onNext: @escaping @Sendable (WireConversationChannelCreationSettings) -> Void)
-        -> UIViewController {
-        WireConversationChannelCreationFormViewController(onNext: onNext)
+}
+
+public struct DatabaseSaver: DatabaseSaverProtocol {
+
+    private let context: NSManagedObjectContext
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
     }
+
+    public func save() async throws {
+        try await context.perform {
+            try context.save()
+        }
+    }
+
 }

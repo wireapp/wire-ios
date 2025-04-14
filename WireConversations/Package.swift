@@ -70,6 +70,13 @@ let package = Package(
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
+            name: "WireConversationsTests",
+            dependencies: [
+                "WireConversationsUI",
+                .product(name: "WireFoundation", package: "WireFoundation")
+            ]
+        ),
+        .testTarget(
             name: "WireConversationsUITests",
             dependencies: [
                 "WireConversationsUIBindings",
