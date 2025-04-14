@@ -38,8 +38,8 @@ struct ConversationMLSMessageAddEventDecoder {
             forKey: .subconversation
         )
 
-        let message = try container.decode(
-            String.self, // TODO: verify these changes
+        let payload = try container.decode(
+            String.self,
             forKey: .payload
         )
 
@@ -52,7 +52,7 @@ struct ConversationMLSMessageAddEventDecoder {
             conversationID: conversationID,
             senderID: senderID,
             subconversation: subconversation,
-            message: message,
+            message: payload,
             timestamp: timestamp?.date
         )
     }
