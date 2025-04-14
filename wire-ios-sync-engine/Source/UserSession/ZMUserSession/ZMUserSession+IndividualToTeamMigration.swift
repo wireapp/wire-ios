@@ -19,7 +19,7 @@
 import Foundation
 import WireAPI
 import WireDomain
-import WireDomainPkg
+import WireDomainPackage
 
 public extension ZMUserSession {
     func createIndividualToTeamMigrationUseCase(

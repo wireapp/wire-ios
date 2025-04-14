@@ -34,4 +34,8 @@ public enum TeamEvent: Equatable, Codable {
 
     case memberUpdate(TeamMemberUpdateEvent)
 
+    /// A team was created.
+
+    case create(TeamCreateEvent)
+
 }

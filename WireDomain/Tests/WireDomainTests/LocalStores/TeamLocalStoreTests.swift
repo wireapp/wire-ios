@@ -279,6 +279,45 @@ final class TeamLocalStoreTests: XCTestCase {
         }
     }
 
+    func testCreateOrUpdateTeam_It_Creates_Team_Locally() async throws {
+
+        // Given
+
+        await context.perform { [context] in
+            let team = Team.fetch(with: Scaffolding.teamID, in: context)
+            XCTAssertNil(team)
+        }
+
+        // When
+
+        await sut.createOrUpdateTeam(
+            identifier: Scaffolding.teamID,
+            name: Scaffolding.teamName,
+            creator: Scaffolding.teamCreatorID,
+            icon: Scaffolding.logoID,
+            iconKey: Scaffolding.logoKey
+        )
+
+        // Then
+
+        try await context.perform { [context] in
+            let team = try XCTUnwrap(
+                Team.fetch(with: Scaffolding.teamID, in: context)
+            )
+
+            let creator = try XCTUnwrap(
+                ZMUser.fetch(with: Scaffolding.teamCreatorID, in: context)
+            )
+
+            XCTAssertEqual(team.remoteIdentifier, Scaffolding.teamID)
+            XCTAssertEqual(team.name, Scaffolding.teamName)
+            XCTAssertEqual(team.creator, creator)
+            XCTAssertEqual(team.pictureAssetId, Scaffolding.logoID)
+            XCTAssertEqual(team.pictureAssetKey, Scaffolding.logoKey)
+
+        }
+    }
+
     private enum Scaffolding {
         static let userID = UUID.mockID1
         static let selfUserID = UUID.mockID2
