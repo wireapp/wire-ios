@@ -272,17 +272,19 @@ private extension WireConversationChannelCreationFormViewController {
         let conversationsAPI = ConversationsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
-
-        let userLocalStore = UserLocalStore(context: context)
+        
         let messageLocalStore = MessageLocalStore(
+            context: context
+        )
+
+        let userLocalStore = UserLocalStore(
             context: context,
-            userLocalStore: userLocalStore
+            messageLocalStore: messageLocalStore
         )
 
         let store = ConversationLocalStore(
             context: context,
             mlsService: nil,
-            userLocalStore: userLocalStore,
             messageLocalStore: messageLocalStore
         )
 
