@@ -20,6 +20,7 @@ import Foundation
 import WireAPI
 import WireDataModel
 import WireDomain
+import WireFoundation
 import WireRequestStrategy
 import WireUtilities
 

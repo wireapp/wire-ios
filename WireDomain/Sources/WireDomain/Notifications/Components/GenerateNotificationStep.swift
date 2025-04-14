@@ -22,8 +22,6 @@ import WireAPI
 import WireDataModel
 
 protocol GenerateNotificationDependency: Dependency {
-    var contentHandler: (UNNotificationContent) -> Void { get }
-    var accountManager: AccountManager { get }
     var sharedUserDefaults: UserDefaults { get }
     var userID: UUID! { get }
     var messageLocalStore: any MessageLocalStoreProtocol { get }

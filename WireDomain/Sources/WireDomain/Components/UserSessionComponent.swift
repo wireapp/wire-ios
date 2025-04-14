@@ -80,7 +80,8 @@ public final class UserSessionComponent {
     )
 
     private lazy var serverTrustValidator = ServerTrustValidator(
-        pinnedKeys: backendEnvironment.pinnedKeys
+        pinnedKeys: backendEnvironment.pinnedKeys,
+        currentDateProvider: .system
     )
 
     private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(

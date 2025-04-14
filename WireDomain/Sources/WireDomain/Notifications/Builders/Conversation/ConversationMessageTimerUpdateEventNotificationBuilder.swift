@@ -127,23 +127,24 @@ struct ConversationMessageTimerUpdateEventNotificationBuilder {
         conversationName: String?,
         senderName: String?
     ) -> String? {
-        guard let conversationName, let senderName else {
-            return nil
-        }
 
-        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor? = if isGroupConversation, let conversationName {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {
                 .conversation(conversation: conversationName)
             }
-        } else {
+        } else if let senderName {
             if let teamName {
                 .senderInTeam(sender: senderName, team: teamName)
             } else {
                 .sender(sender: senderName)
             }
+        } else {
+            nil
         }
+
+        guard let format else { return nil }
 
         return NotificationTitle
             .conversationMessage(format)

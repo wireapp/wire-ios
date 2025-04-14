@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundationSupport
 import WireTestingPackage
 import XCTest
 
@@ -28,12 +29,19 @@ final class APIServiceTests: XCTestCase {
     var backendURL: URL!
     var authenticationManager: MockAuthenticationManagerProtocol!
 
+    private var mockDateProvider: MockCurrentDateProviding!
+
     override func setUp() async throws {
+        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         authenticationManager = MockAuthenticationManagerProtocol()
         let networkService = NetworkService(
             baseURL: backendURL,
-            serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: [],
+                currentDateProvider: mockDateProvider
+            )
         )
         networkService.configure(with: .mockURLSession())
         sut = APIService(
@@ -46,6 +54,7 @@ final class APIServiceTests: XCTestCase {
         backendURL = nil
         authenticationManager = nil
         sut = nil
+        mockDateProvider = nil
     }
 
     // MARK: - Execute request

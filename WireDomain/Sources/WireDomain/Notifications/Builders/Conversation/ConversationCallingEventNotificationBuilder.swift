@@ -295,23 +295,23 @@ struct ConversationCallingEventNotificationBuilder {
             caller: caller
         )
 
-        guard let conversationName, let callerName else {
-            return nil
-        }
-
-        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor? = if isGroupConversation, let conversationName {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {
                 .conversation(conversation: conversationName)
             }
-        } else {
+        } else if let callerName {
             if let teamName {
                 .senderInTeam(sender: callerName, team: teamName)
             } else {
                 .sender(sender: callerName)
             }
+        } else {
+            nil
         }
+
+        guard let format else { return nil }
 
         return NotificationTitle
             .conversationMessage(format)
@@ -325,23 +325,23 @@ struct ConversationCallingEventNotificationBuilder {
         teamName: String?
     ) -> String? {
 
-        guard let conversationName, let callerName else {
-            return nil
-        }
-
-        let format: NotificationTitle.MessageTitleDescriptor = if isGroupConversation {
+        let format: NotificationTitle.MessageTitleDescriptor? = if isGroupConversation, let conversationName {
             if let teamName {
                 .conversationInTeam(conversation: conversationName, team: teamName)
             } else {
                 .conversation(conversation: conversationName)
             }
-        } else {
+        } else if let callerName {
             if let teamName {
                 .senderInTeam(sender: callerName, team: teamName)
             } else {
                 .sender(sender: callerName)
             }
+        } else {
+            nil
         }
+
+        guard let format else { return nil }
 
         return NotificationTitle
             .conversationMessage(format)

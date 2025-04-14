@@ -28,7 +28,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     // MARK: - Properties
 
     private let logger = WireLogger.notifications
-    private var onGoingTask: Task<Void, Never>?
+    private var onGoingtask: Task<Void, Never>?
 
     public init() {
         registerProviderFactories()
@@ -42,33 +42,42 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
 
-        onGoingTask = Task {
+        if onGoingtask != nil {
+            logger.warn(
+                "onGoingtask not null: a notification is already being processed",
+                attributes: .newNSE
+            )
+        }
+
+        let notificationContentHandler: (UNNotificationContent) -> Void = { [weak self] in
+            contentHandler($0) // Finishes current notification flow by calling system built-in handler.
+            self?.onGoingtask = nil // Current notification flow was completed, nil out the task.
+        }
+
+        onGoingtask = Task {
             guard !Task.isCancelled else {
                 // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty
-                // content to
-                // the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
-                return contentHandler(.emptyNotification)
+                // content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
+                return notificationContentHandler(.emptyNotification)
             }
 
             do {
-
                 let rootComponent = try NotificationServiceExtensionFlow(
-                    contentHandler: contentHandler
+                    contentHandler: notificationContentHandler
                 )
 
                 try await rootComponent.start(request: request)
 
             } catch {
                 logError(error)
-                contentHandler(.emptyNotification)
+                notificationContentHandler(.emptyNotification)
             }
         }
     }
 
     public func serviceExtensionTimeWillExpire() {
         logger.warn("new notification service will expire", attributes: .newNSE)
-        onGoingTask?.cancel()
-        onGoingTask = nil
+        onGoingtask?.cancel()
     }
 }
 
@@ -77,58 +86,90 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
 extension NotificationServiceExtension {
     private func logError(_ error: any Error) {
         switch error {
-        case let verifyUserSessionError as VerifyUserSessionUseCase.Failure:
-            switch verifyUserSessionError {
-            case .userUnauthenticated:
-                WireLogger.notifications.error(
-                    "Not displaying notification because app is not authenticated",
-                    attributes: .newNSE
-                )
-            case .coreDataMissingSharedContainer:
-                WireLogger.notifications.error(
-                    "Core data missing shared container",
-                    attributes: .newNSE
-                )
-            case .coreDataMigrationRequired:
-                WireLogger.notifications.error(
-                    "Core data migration required",
-                    attributes: .newNSE
-                )
-            case .unableToLoadStores:
-                WireLogger.notifications.error(
-                    "Loading coreDataStack with error",
-                    attributes: .newNSE
-                )
-            }
-        case let pullEventsServiceError as PullEventsUseCase.Failure:
-            switch pullEventsServiceError {
-            case let .unableToPullPendingEvents(error):
-                logger.error(
-                    "failed to process notification: could not pull pending events: \(error.localizedDescription)",
-                    attributes: .newNSE
-                )
-            }
+        case let verifyUserSessionUseCaseError as VerifyUserSessionUseCase.Failure:
+            logVerifyUserSessionUseCaseError(verifyUserSessionUseCaseError)
+        case let pullEventsUseCaseError as PullEventsUseCase.Failure:
+            logPullEventsUseCaseError(pullEventsUseCaseError)
         case let notificationServiceError as NotificationServiceExtensionFlow.Failure:
-            switch notificationServiceError {
-            case .missingAppGroupID:
-                logger.error(
-                    "failed to process notification: missing app group id",
-                    attributes: .newNSE
-                )
-            }
-        case let verifyUserError as VerifyUserStep.Failure:
-            switch verifyUserError {
-            case .noAccountFound:
-                logger.error(
-                    "failed to process notification: no selected account found",
-                    attributes: .newNSE
-                )
-            }
+            logNotificationServiceError(notificationServiceError)
+        case let verifyUserStepError as VerifyUserStep.Failure:
+            logVerifyUserStepError(verifyUserStepError)
+        case let pullEventsStepError as PullEventsStep.Failure:
+            logPullEventsStepError(pullEventsStepError)
         default:
+            logDefaultError(error)
+        }
+    }
+
+    private func logVerifyUserSessionUseCaseError(_ error: VerifyUserSessionUseCase.Failure) {
+        switch error {
+        case .userUnauthenticated:
             logger.error(
-                "Unable to create a session: \(error.localizedDescription)",
+                "Not displaying notification because app is not authenticated",
+                attributes: .newNSE
+            )
+        case .coreDataMissingSharedContainer:
+            logger.error(
+                "Core data missing shared container",
+                attributes: .newNSE
+            )
+        case .coreDataMigrationRequired:
+            logger.error(
+                "Core data migration required",
+                attributes: .newNSE
+            )
+        case .unableToLoadStores:
+            logger.error(
+                "Loading coreDataStack with error",
                 attributes: .newNSE
             )
         }
+    }
+
+    private func logPullEventsUseCaseError(_ error: PullEventsUseCase.Failure) {
+        switch error {
+        case let .unableToPullPendingEvents(error):
+            logger.error(
+                "failed to process notification: could not pull pending events: \(error.localizedDescription)",
+                attributes: .newNSE
+            )
+        }
+    }
+
+    private func logNotificationServiceError(_ error: NotificationServiceExtensionFlow.Failure) {
+        switch error {
+        case .missingAppGroupID:
+            logger.error(
+                "failed to process notification: missing app group id",
+                attributes: .newNSE
+            )
+        }
+    }
+
+    private func logVerifyUserStepError(_ error: VerifyUserStep.Failure) {
+        switch error {
+        case .noAccountFound:
+            logger.error(
+                "failed to process notification: no selected account found",
+                attributes: .newNSE
+            )
+        }
+    }
+
+    private func logPullEventsStepError(_ error: PullEventsStep.Failure) {
+        switch error {
+        case .missingProxyCredentials:
+            logger.error(
+                "Proxy needs authentication but credentials are missing",
+                attributes: .newNSE
+            )
+        }
+    }
+
+    private func logDefaultError(_ error: any Error) {
+        logger.error(
+            "Unable to create a session: \(error.localizedDescription)",
+            attributes: .newNSE
+        )
     }
 }

@@ -17,14 +17,20 @@
 //
 
 import Foundation
+import WireFoundation
 import WireLogging
 
 public final class ServerCertificateTrust: NSObject, BackendTrustProvider {
 
     public let trustData: [TrustData]
+    private let currentDateProvider: any CurrentDateProviding
 
-    public init(trustData: [TrustData]) {
+    public init(
+        trustData: [TrustData],
+        currentDateProvider: any CurrentDateProviding
+    ) {
         self.trustData = trustData
+        self.currentDateProvider = currentDateProvider
     }
 
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
@@ -37,7 +43,7 @@ public final class ServerCertificateTrust: NSObject, BackendTrustProvider {
                 trustData.certificateKey
             }
 
-        return verifyServerTrustWithPinnedKeys(trust, pinnedKeys)
+        return verifyServerTrustWithPinnedKeys(trust, pinnedKeys, currentDateProvider.now)
     }
 
     /// Returns the public key of the leaf certificate associated with the trust object
@@ -71,10 +77,20 @@ public final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         return SecTrustCopyKey(trust)
     }
 
-    private func verifyServerTrustWithPinnedKeys(_ serverTrust: SecTrust, _ pinnedKeys: [SecKey]) -> Bool {
+    private func verifyServerTrustWithPinnedKeys(
+        _ serverTrust: SecTrust,
+        _ pinnedKeys: [SecKey],
+        _ verifyDate: Date
+    ) -> Bool {
         var someError: CFError?
         // serverTrust is the certificate coming from the backend server we make request to, so next line will
         // check that the certificate is not expired
+        let status = SecTrustSetVerifyDate(serverTrust, verifyDate as CFDate)
+        guard status == errSecSuccess else {
+            let message = someError?.localizedDescription ?? "verifyServerTrustWithPinnedKeys failed to set verify date"
+            WireLogger.backend.error(message)
+            return false
+        }
         guard SecTrustEvaluateWithError(serverTrust, &someError) else {
             WireLogger.backend.error(someError?.localizedDescription ?? "verifyServerTrustWithPinnedKeys unknown error")
             return false

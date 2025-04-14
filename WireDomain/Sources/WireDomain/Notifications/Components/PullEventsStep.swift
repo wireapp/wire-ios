@@ -37,6 +37,10 @@ protocol PullEventsStepFactory {
 /// Provides sync objects.
 final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepFactory {
 
+    enum Failure: Error {
+        case missingProxyCredentials
+    }
+
     func pullEvents() async throws {
         let selfUser = await userLocalStore.selfUserInfo()
 
@@ -46,7 +50,7 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepFacto
 
         let selfUserID = selfUser.id
 
-        let updateEventsAPI = await updateEventsAPI(
+        let updateEventsAPI = try await updateEventsAPI(
             selfClientID: selfClientID
         )
 
@@ -209,12 +213,12 @@ extension PullEventsStep {
 extension PullEventsStep {
     func updateEventsAPI(
         selfClientID: String
-    ) async -> any UpdateEventsAPI {
-        let authenticationManager = await makeAuthenticationManager(
+    ) async throws -> any UpdateEventsAPI {
+        let authenticationManager = try await makeAuthenticationManager(
             selfClientID: selfClientID
         )
 
-        let networkService = await makeNetworkService()
+        let networkService = try await makeNetworkService()
 
         let apiService = APIService(
             networkService: networkService,
@@ -249,11 +253,11 @@ extension PullEventsStep {
 
     func makeAuthenticationManager(
         selfClientID: String
-    ) async -> any AuthenticationManagerProtocol {
+    ) async throws -> any AuthenticationManagerProtocol {
         await AuthenticationManager(
             clientID: selfClientID,
             cookieStorage: dependency.cookieStorage,
-            networkService: makeNetworkService()
+            networkService: try makeNetworkService()
         )
     }
 
@@ -280,9 +284,9 @@ extension PullEventsStep {
         return backendEnvironment
     }
 
-    func makeBackendEnvironment() async -> WireAPI.BackendEnvironment {
+    func makeBackendEnvironment() async throws -> WireAPI.BackendEnvironment {
         let legacyBackendEnvironment = makeLegacyBackendEnvironment()
-        let proxySettings = await makeProxySettings()
+        let proxySettings = try await makeProxySettings()
 
         return BackendEnvironment(
             url: legacyBackendEnvironment.backendURL,
@@ -304,7 +308,7 @@ extension PullEventsStep {
         )
     }
 
-    func makeProxySettings() async -> WireAPI.ProxySettings? {
+    func makeProxySettings() async throws -> WireAPI.ProxySettings? {
         let legacyBackendEnvironment = makeLegacyBackendEnvironment()
         guard let proxy = legacyBackendEnvironment.proxy else { return nil }
 
@@ -312,29 +316,28 @@ extension PullEventsStep {
         let usernameItemID = "proxy-\(proxy.host):\(proxy.port)-username"
         let passwordItemID = "proxy-\(proxy.host):\(proxy.port)-password"
 
+        let genericPasswordKeychainItem: KeychainQueryItem = .itemClass(.genericPassword)
+        let returningDataKeychainItem: KeychainQueryItem = .returningData(true)
+
         let proxyUsername: String? = try? await keychain.fetchItem(
             query: [
-                .itemClass(.genericPassword),
+                genericPasswordKeychainItem,
                 .account(usernameItemID),
-                .returningData(true)
+                returningDataKeychainItem
             ]
         )
 
         let proxyPassword: String? = try? await keychain.fetchItem(
             query: [
-                .itemClass(.genericPassword),
+                genericPasswordKeychainItem,
                 .account(passwordItemID),
-                .returningData(true)
+                returningDataKeychainItem
             ]
         )
 
         if proxy.needsAuthentication {
             guard let proxyUsername, let proxyPassword else {
-                fatalInternal(
-                    "Proxy needs authentication but credentials are missing"
-                )
-
-                return nil
+                throw Failure.missingProxyCredentials
             }
 
             return .authenticated(
@@ -351,20 +354,21 @@ extension PullEventsStep {
         }
     }
 
-    func makeNetworkService() async -> NetworkService {
-        let backendEnvironment = await makeBackendEnvironment()
+    func makeNetworkService() async throws -> NetworkService {
+        let backendEnvironment = try await makeBackendEnvironment()
 
         let service = NetworkService(
             baseURL: backendEnvironment.url,
             serverTrustValidator: ServerTrustValidator(
-                pinnedKeys: backendEnvironment.pinnedKeys
+                pinnedKeys: backendEnvironment.pinnedKeys,
+                currentDateProvider: .system
             )
         )
 
         let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
         let config = await URLSessionConfigurationFactory(
             minTLSVersion: minTLSVersion,
-            proxySettings: makeProxySettings()
+            proxySettings: try makeProxySettings()
         )
 
         let session = URLSession(
