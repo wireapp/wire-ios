@@ -65,7 +65,7 @@ extension SecTrust {
 
 }
 
-class BackendTrustProviderTests: XCTestCase {
+final class BackendTrustProviderTests: XCTestCase {
 
     var pinnedHosts: [String]!
     var certificates: CertificateData!
@@ -209,5 +209,52 @@ class BackendTrustProviderTests: XCTestCase {
         XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should NOT be trusted")
     }
 
-    // TODO: we should have tests for the certificate validity here as well
+    func testValidate_beforeExpiration_UTC() async throws {
+        // given
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T23:59:59Z")
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
+
+        // then
+        for host in pinnedHosts {
+            XCTAssertTrue(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should be trusted")
+        }
+    }
+
+    func testValidate_beforeExpiration_localTime() async throws {
+        // given
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-10T01:59:59+02:00")
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
+
+        // then
+        for host in pinnedHosts {
+            XCTAssertTrue(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should be trusted")
+        }
+    }
+
+    func testValidate_afterExpiration_UTC() async throws {
+        // given
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-10T00:00:00Z")
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
+
+        // then
+        for host in pinnedHosts {
+            XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should not be trusted")
+        }
+    }
+
+    func testValidate_afterExpiration_localTime() async throws {
+        // given
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-10T02:00:00+02:00")
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production)
+        else { XCTFail("Failed to create trust"); return }
+
+        // then
+        for host in pinnedHosts {
+            XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: host), "\(host) should not be trusted")
+        }
+    }
+
 }
