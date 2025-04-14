@@ -37,14 +37,4 @@ public struct ConversationReceiptModeUpdateEvent: Equatable, Codable, Sendable {
 
     public let newReceiptMode: Int
 
-    public init(
-        conversationID: ConversationID,
-        senderID: UserID,
-        newReceiptMode: Int
-    ) {
-        self.conversationID = conversationID
-        self.senderID = senderID
-        self.newReceiptMode = newReceiptMode
-    }
-
 }

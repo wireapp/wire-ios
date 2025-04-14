@@ -20,15 +20,15 @@ import Foundation
 import WireTransport
 
 extension Payload {
-    public struct UpdateConversationReceiptMode: CodableEventData {
+    struct UpdateConversationReceiptMode: CodableEventData {
         enum CodingKeys: String, CodingKey {
             case readReceiptMode = "receipt_mode"
         }
 
-        public static var eventType: ZMUpdateEventType {
+        static var eventType: ZMUpdateEventType {
             .conversationReceiptModeUpdate
         }
 
-        public let readReceiptMode: Int
+        let readReceiptMode: Int
     }
 }
