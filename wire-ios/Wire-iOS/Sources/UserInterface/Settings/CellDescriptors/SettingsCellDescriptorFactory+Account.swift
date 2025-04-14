@@ -375,6 +375,12 @@ extension SettingsCellDescriptorFactory {
         let sessionManager = SessionManager.shared!
         let importBackupUseCase = sessionManager.importBackupUseCase!
 
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
+            fatalError("TODO: implement")
+        } else {
+            CreateLegacyBackupUseCase(sessionManager: sessionManager)
+        }
+
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
             // TODO: [WPB-14592] inject the new use case via `createBackupUseCase` here
