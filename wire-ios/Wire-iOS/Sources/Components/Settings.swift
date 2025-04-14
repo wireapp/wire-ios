@@ -149,8 +149,6 @@ class Settings {
         ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
         restoreLastUsedAVSSettings()
 
-        startLogging()
-
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(applicationDidEnterBackground(_:)),
@@ -201,17 +199,5 @@ class Settings {
         if level >= AVSIntensityLevel.none.rawValue, level <= AVSIntensityLevel.full.rawValue {
             defaults.setValue(NSNumber(value: level), forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue)
         }
-    }
-
-    // MARK: - Debug
-
-    private func startLogging() {
-        #if !targetEnvironment(simulator)
-            loadEnabledLogs()
-        #endif
-
-        #if !DISABLE_LOGGING
-            ZMSLog.startRecording(isInternal: Bundle.developerModeEnabled)
-        #endif
     }
 }

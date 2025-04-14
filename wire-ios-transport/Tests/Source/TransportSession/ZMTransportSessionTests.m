@@ -425,7 +425,8 @@ static XCTestCase *currentTestCase;
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
                 userAgent:self.userAgent
-                minTLSVersion:nil];
+                minTLSVersion:nil
+                selfClientID:nil];
 
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
@@ -569,7 +570,8 @@ static XCTestCase *currentTestCase;
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
                 userAgent:self.userAgent
-                minTLSVersion:nil];
+                minTLSVersion:nil
+                selfClientID: nil];
     
     self.sut.accessToken = self.validAccessToken;
     XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
@@ -794,7 +796,8 @@ static XCTestCase *currentTestCase;
                                cookieStorage:self.cookieStorage
                                initialAccessToken:nil
                                userAgent:self.userAgent
-                               minTLSVersion:nil];
+                               minTLSVersion:nil
+                               selfClientID: nil];
     
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};

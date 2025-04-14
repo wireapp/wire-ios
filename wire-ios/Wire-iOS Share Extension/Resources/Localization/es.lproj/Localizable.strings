@@ -60,7 +60,7 @@
 "share_extension.logged_out.message" = "Please choose another account.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Chat de grupo vacío";
+"share_extension.conversation.displayname.emptygroup" = "Empty conversation";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ comenzó a utilizar un dispositivo nuevo.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ comenzó a utilizar dispositivos nuevos.";
 "share_extension.meta.degraded.dialog_message" = "¿Todavía deseas enviar el mensaje?";
