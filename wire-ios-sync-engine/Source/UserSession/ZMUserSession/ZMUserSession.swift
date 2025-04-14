@@ -1091,6 +1091,11 @@ extension ZMUserSession: SyncAgentDelegate {
                 context: notificationContext
             ).post()
 
+            guard !isRecovering else {
+                // in case of recovery, we don't need more
+                return
+            }
+
             WaitingGroupTask(context: syncContext) { [weak self] in
                 guard let self else { return }
                 await fetchBackendMLSPublicKeys()
