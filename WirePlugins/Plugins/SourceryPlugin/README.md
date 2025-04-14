@@ -2,6 +2,9 @@
 
 The Sourcery Plugin is a Swift Package Manager plugin for using [`sourcery`](https://github.com/krzysztofzablocki/Sourcery). The official repository supports "command" type plugins, but not "build tool" type plugins. Therefore, we have implemented our own version that uses a binary to maintain low build times.
 
+The AutoMockable stencil is taken from commit [d2e3d8b](https://github.com/krzysztofzablocki/Sourcery/commit/d2e3d8bc4f067a04dd162c65a5f0d2970ae032f8).
+Modifications: add header, add public/package import, shorten method/property names
+
 ## Usage
 
 ### Package.swift
