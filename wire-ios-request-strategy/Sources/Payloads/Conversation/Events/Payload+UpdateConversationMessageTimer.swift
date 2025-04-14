@@ -20,15 +20,15 @@ import Foundation
 import WireTransport
 
 extension Payload {
-    public struct UpdateConversationMessageTimer: CodableEventData {
+    struct UpdateConversationMessageTimer: CodableEventData {
         enum CodingKeys: String, CodingKey {
             case messageTimer = "message_timer"
         }
 
-        public static var eventType: ZMUpdateEventType {
+        static var eventType: ZMUpdateEventType {
             .conversationMessageTimerUpdate
         }
 
-        public let messageTimer: TimeInterval?
+        let messageTimer: TimeInterval?
     }
 }

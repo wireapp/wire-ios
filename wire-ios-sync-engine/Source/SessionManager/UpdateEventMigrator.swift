@@ -73,13 +73,6 @@ private extension UpdateEvent {
 
             self = .conversation(.memberLeave(event))
 
-        case .conversationMessageTimerUpdate:
-            guard let event = Self.conversationMessageTimerUpdateEvent(from: legacyEvent) else {
-                return nil
-            }
-
-            self = .conversation(.messageTimerUpdate(event))
-
         case .conversationMessageAdd:
             guard let event = Self.conversationMLSMessageAddEvent(from: legacyEvent) else {
                 return nil
@@ -227,32 +220,6 @@ private extension UpdateEvent {
             timestamp: timestamp,
             removedUserIDs: Set(removedUserIDs),
             reason: ConversationMemberLeaveReason(reason)
-        )
-    }
-
-    private static func conversationMessageTimerUpdateEvent(from event: ZMUpdateEvent) -> ConversationMessageTimerUpdateEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>.self,
-                from: event.payload
-            ),
-            let conversationID = payload.conversationID,
-            let senderID = payload.senderID,
-            let timestamp = payload.timestamp
-        else {
-            return nil
-        }
-
-        let newTimer = payload.data.messageTimer.map {
-            Int64($0)
-        }
-
-        return ConversationMessageTimerUpdateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp,
-            newTimer: newTimer
         )
     }
 
