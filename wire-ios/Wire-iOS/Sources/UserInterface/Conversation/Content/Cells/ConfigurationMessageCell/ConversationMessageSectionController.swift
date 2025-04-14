@@ -147,6 +147,25 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver, @
             startObservingChanges(for: quotedMessage)
         }
     }
+    
+    static func == (
+        lhs: ConversationMessageSectionController,
+        rhs: ConversationMessageSectionController
+    ) -> Bool {
+        return lhs.isEqual(rhs)
+    }
+
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? ConversationMessageSectionController else { return false }
+        return objectId == other.objectId && cellDescriptions.count == other.cellDescriptions.count // TODO: actual cell descriptions ?
+    }
+
+    override var hash: Int {
+        var hasher = Hasher()
+        hasher.combine(objectId)
+        hasher.combine(cellDescriptions)
+        return hasher.finalize()
+    }
 
     private var collapseOwnMessagesEnabled: Bool {
         guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
