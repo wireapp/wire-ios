@@ -84,8 +84,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team created view"
+            "state" : "translated",
+            "value" : "Fechar visualização de equipe criada"
           }
         },
         "ru" : {
@@ -209,8 +209,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close confirmation view"
+            "state" : "translated",
+            "value" : "Fechar visualização de confirmação"
           }
         },
         "ru" : {
@@ -334,8 +334,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "Fechar visão geral da conta da equipe"
           }
         },
         "ru" : {
@@ -459,8 +459,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "Fechar visualização do nome da equipe"
           }
         },
         "ru" : {

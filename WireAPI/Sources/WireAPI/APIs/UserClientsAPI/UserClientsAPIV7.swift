@@ -61,7 +61,7 @@ private struct SelfUserClientV7: Decodable, ToAPIModelConvertible {
 
     let id: String
     let type: UserClientType
-    let activationDate: UTCTimeMillis
+    let activationDate: UTCTime
     let label: String?
     let model: String?
     let deviceClass: DeviceClass?

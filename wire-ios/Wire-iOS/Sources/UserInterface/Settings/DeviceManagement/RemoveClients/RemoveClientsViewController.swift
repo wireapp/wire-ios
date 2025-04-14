@@ -112,8 +112,12 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func removeUserClient(_ userClient: UserClient) async {
-        if let password = await presentRequestPasswordController() {
-            await removeUserClient(userClient, password: password)
+        if let user = userClient.user, user.usesCompanyLogin {
+            await removeUserClient(userClient, password: nil)
+        } else {
+            if let password = await presentRequestPasswordController() {
+                await removeUserClient(userClient, password: password)
+            }
         }
     }
 
@@ -136,7 +140,7 @@ final class RemoveClientsViewController: UIViewController,
         }
     }
 
-    private func removeUserClient(_ userClient: UserClient, password: String) async {
+    private func removeUserClient(_ userClient: UserClient, password: String?) async {
         activityIndicator.start()
         do {
             try await viewModel.removeUserClient(userClient, password: password)

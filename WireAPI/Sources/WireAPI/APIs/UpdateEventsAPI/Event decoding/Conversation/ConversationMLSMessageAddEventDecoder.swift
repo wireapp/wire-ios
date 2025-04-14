@@ -44,7 +44,7 @@ struct ConversationMLSMessageAddEventDecoder {
         )
 
         let timestamp = try container.decodeIfPresent(
-            UTCTimeMillis.self,
+            UTCTime.self,
             forKey: .timestamp
         )
 
