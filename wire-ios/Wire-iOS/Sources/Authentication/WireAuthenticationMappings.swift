@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthentication
+import WireFoundation
 import WireTransport
 
 extension WireTransport.APIVersion {
@@ -151,7 +152,7 @@ extension WireTransport.BackendEnvironment {
             }
         }
 
-        let certificateTrust = ServerCertificateTrust(trustData: trustData)
+        let certificateTrust = ServerCertificateTrust(trustData: trustData, currentDateProvider: .system)
 
         self.init(
             title: backendConfig.title,

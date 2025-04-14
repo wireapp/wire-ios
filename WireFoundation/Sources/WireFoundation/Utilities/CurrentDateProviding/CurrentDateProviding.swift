@@ -16,18 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-public extension CurrentDateProviding where Self == SystemDateProvider {
-
-    /// Returns a new instance of `SystemDateProvider`.
-    static var system: Self { .init() }
-}
-
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: CurrentDateProviding {
-
-    public var now: Date { .now }
-
-    public init() {}
+/// Abstracts accessing the current system date in order to be mockable in unit tests.
+public protocol CurrentDateProviding: Sendable {
+    var now: Date { get }
 }
