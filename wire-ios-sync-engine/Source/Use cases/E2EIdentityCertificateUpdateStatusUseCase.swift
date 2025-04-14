@@ -52,7 +52,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         mlsClientID: MLSClientID,
         context: NSManagedObjectContext,
         lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
-        comparedDate: CurrentDateProviding = SystemDateProvider()
+        comparedDate: CurrentDateProviding = .system
     ) {
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod

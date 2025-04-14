@@ -114,7 +114,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
     init(
         configuration: View.Configuration,
-        currentDateProvider: CurrentDateProviding = SystemDateProvider()
+        currentDateProvider: CurrentDateProviding
     ) {
         self.configuration = configuration
         self.currentDateProvider = currentDateProvider
@@ -131,7 +131,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
             showUnreadDot: context.isFirstUnreadMessage,
             accentColor: accentColor
         )
-        self.init(configuration: configuration)
+        self.init(configuration: configuration, currentDateProvider: .system)
     }
 
 }

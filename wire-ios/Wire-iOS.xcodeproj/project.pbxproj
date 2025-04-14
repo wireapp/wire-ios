@@ -464,8 +464,8 @@
 		015DB0F92D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Sourcery/AutoMockable.stencil,
 				Sourcery/config.yml,
-				Sourcery/LegacyAutoMockable.stencil,
 				TestPlans/AllTests.xctestplan,
 				TestPlans/GermanLocaleTests.xctestplan,
 				TestPlans/SecurityTests.xctestplan,
@@ -477,8 +477,8 @@
 		015DB0FA2D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Sourcery/AutoMockable.stencil,
 				Sourcery/config.yml,
-				Sourcery/LegacyAutoMockable.stencil,
 				TestPlans/AllTests.xctestplan,
 				TestPlans/GermanLocaleTests.xctestplan,
 				TestPlans/SecurityTests.xctestplan,
@@ -704,7 +704,6 @@
 				LinkOpeningOption/BrowserOpeningOptionTests.swift,
 				LocationDataTests.swift,
 				LocationSendViewControllerTests.swift,
-				LoggingTest.swift,
 				MarkdownTextStorageTests.swift,
 				MarkdownTextViewTests.swift,
 				MediaBarSnapshotTests.swift,

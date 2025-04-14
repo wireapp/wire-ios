@@ -16,8 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
 public import WireFoundation
+public import Foundation
+
+public class MockCurrentDateProviding: CurrentDateProviding, @unchecked Sendable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - now
+
+    public var now: Date {
+        get { return underlyingNow }
+        set(value) { underlyingNow = value }
+    }
+
+    public var underlyingNow: Date!
+
+}
 
 public actor MockKeychainProtocol: KeychainProtocol {
 
@@ -141,21 +158,5 @@ public actor MockKeychainProtocol: KeychainProtocol {
 
         try await mock(query)
     }
-
-}
-
-public final class MockCurrentDateProviding: CurrentDateProviding, @unchecked Sendable {
-
-    // MARK: - Life cycle
-
-    public init(
-        now: Date = .now
-    ) {
-        self.now = now
-    }
-
-    // MARK: - now
-
-    public var now: Date
 
 }

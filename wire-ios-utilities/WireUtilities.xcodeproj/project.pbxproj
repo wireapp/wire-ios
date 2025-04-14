@@ -71,8 +71,8 @@
 		595F726D2D43CDB600E5ECBE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Sourcery/AutoMockable.stencil,
 				Sourcery/config.yml,
-				Sourcery/LegacyAutoMockable.stencil,
 			);
 			publicHeaders = (
 				WireUtilitiesSupport.h,
