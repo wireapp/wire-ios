@@ -22,14 +22,23 @@ public struct ConversationTitleSource {
     public let accountImageSource: AccountImageSource?
     public let title: String
     public let subtitle: String?
+    public let isMLS: Bool
+    public let isVerified: Bool
+    public let isUnderLegalHold: Bool
 
     public init(
         accountImageSource: AccountImageSource?,
         title: String,
-        subtitle: String?
+        subtitle: String?,
+        isMLS: Bool,
+        isVerified: Bool,
+        isUnderLegalHold: Bool
     ) {
         self.accountImageSource = accountImageSource
         self.title = title
         self.subtitle = subtitle
+        self.isMLS = isMLS
+        self.isVerified = isVerified
+        self.isUnderLegalHold = isUnderLegalHold
     }
 }
