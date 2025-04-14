@@ -16,25 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-public enum IndividualToTeamMigrationError: Error, Sendable {
-    case userAlreadyInTeam
-    case generic(any Error)
-}
+struct TeamCreateEventProcessor: TeamCreateEventProcessorProtocol {
 
-public struct IndividualToTeamMigrationResult: Sendable {
-    public let teamID: UUID
-    public let teamName: String
+    let repository: any TeamRepositoryProtocol
 
-    public init(teamID: UUID, teamName: String) {
-        self.teamID = teamID
-        self.teamName = teamName
+    func processEvent(_ event: TeamCreateEvent) async throws {
+        let identifier = event.identifier
+        let name = event.name
+        let creator = event.creator
+        let icon = event.icon
+        let iconKey = event.iconKey
+
+        await repository.createOrUpdateTeam(
+            identifier: identifier,
+            name: name,
+            creator: creator,
+            icon: icon,
+            iconKey: iconKey
+        )
     }
-}
 
-// sourcery: AutoMockable
-/// Sends a request to the backend to migrate the user to a team.
-public protocol IndividualToTeamMigrationUseCaseProtocol: Sendable {
-    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }
