@@ -60,7 +60,7 @@
 "share_extension.logged_out.message" = "Palun vali teine konto.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Tühi grupivestlus";
+"share_extension.conversation.displayname.emptygroup" = "Empty conversation";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ hakkas kasutama uut seadet.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ hakkas kasutama uusi seadmeid.";
 "share_extension.meta.degraded.dialog_message" = "Kas tahad ikka seda sõnumit saata?";

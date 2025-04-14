@@ -60,7 +60,7 @@
 "share_extension.logged_out.message" = "Выберите другую учетную запись.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Пустая группа";
+"share_extension.conversation.displayname.emptygroup" = "Разговор без участников";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ начал(-а) использовать новые устройства.";
 "share_extension.meta.degraded.dialog_message" = "Вы все еще хотите отправить ваше сообщение?";

@@ -18,7 +18,6 @@
 
 import Foundation
 import WireFoundationSupport
-import WireSystemSupport
 import WireTesting
 import XCTest
 

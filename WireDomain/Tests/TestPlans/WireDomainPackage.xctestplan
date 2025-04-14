@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "28FE03E5-05C7-4215-A556-2675ABB60489",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireDomainPackageTests",
+        "name" : "WireDomainPackageTests"
+      }
+    }
+  ],
+  "version" : 1
+}

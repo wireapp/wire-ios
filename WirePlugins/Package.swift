@@ -20,7 +20,10 @@ let package = Package(
             name: "SourceryPlugin",
             capability: .buildTool(),
             dependencies: ["sourcery"],
-            exclude: ["./Stencils/AutoMockable.stencil"]
+            exclude: [
+                "./Stencils/AutoMockable.stencil",
+                "./Stencils/LegacyAutoMockable.stencil"
+            ]
         ),
 
         .plugin(

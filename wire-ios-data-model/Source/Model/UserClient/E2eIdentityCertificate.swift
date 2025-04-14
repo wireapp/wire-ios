@@ -58,7 +58,7 @@ public class E2eIdentityCertificate: NSObject {
         expiryDate: Date,
         certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String,
-        comparedDate: CurrentDateProviding = SystemDateProvider(),
+        comparedDate: CurrentDateProviding = .system,
         serverStoragePeriod: TimeInterval = E2eIdentityCertificateConstants.serverRetainedDays,
         randomPeriod: TimeInterval = E2eIdentityCertificateConstants.randomInterval
     ) {

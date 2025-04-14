@@ -60,7 +60,7 @@
 "share_extension.logged_out.message" = "Будь ласка, оберіть інший акаунт.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Групова розмова без учасників";
+"share_extension.conversation.displayname.emptygroup" = "Empty conversation";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ почав(-ла) використовувати новий пристрій.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ почав(-ла) використовувати нові пристрої.";
 "share_extension.meta.degraded.dialog_message" = "Усе одно надіслати ваше повідомлення?";
