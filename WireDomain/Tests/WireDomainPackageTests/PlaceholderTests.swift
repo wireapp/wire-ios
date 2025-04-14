@@ -16,26 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAPI
-import WireDomain
-import WireDomainPackage
+import Testing
+import WireDomainPackageSupport
 
-public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(
-        apiVersion: WireAPI.APIVersion
-    ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
-            return nil
-        }
+@testable import WireDomainPackage
 
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
+struct PlaceholderTests {
 
-        return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
-            context: syncContext
-        )
+    @Test
+    func testNothing() async throws {
+        #expect(true)
     }
+
 }

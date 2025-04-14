@@ -17,9 +17,10 @@
 //
 
 import WireDomain
+import WireDomainSupport
 import XCTest
+
 @testable import WireDataModelSupport
-@testable import WireDomainSupport
 @testable import WireSyncEngine
 
 final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProvider {

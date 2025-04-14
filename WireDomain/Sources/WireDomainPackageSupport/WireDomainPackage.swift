@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-// sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol: Sendable {
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
-}
+// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
+// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
