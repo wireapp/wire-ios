@@ -16,9 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<< HEAD
 WIRE_SHORT_VERSION = 3.123.0
-=======
-WIRE_SHORT_VERSION = 3.122.0
 MAJOR_VERSION = 3
->>>>>>> eec0263a9d (fix: inject date provider for certificate validation - WPB-16808 (#2877))
