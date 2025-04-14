@@ -86,6 +86,9 @@ final class ConversationTableViewDataSource: NSObject {
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
 
+    private var updateWorkItem: DispatchWorkItem?
+    private var changesPending = false
+    
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
             guard UIDevice.current.userInterfaceIdiom == .pad else { return }
@@ -355,6 +358,20 @@ final class ConversationTableViewDataSource: NSObject {
                 )
         }
         
+        let oldItems = dataSource.snapshot().itemIdentifiers
+        let newItems = snapshot.itemIdentifiers
+
+        let changes = newItems.difference(from: oldItems)
+
+        for change in changes {
+            switch change {
+            case let .remove(offset, element, _):
+                print("DS: ❌ Removed \(element) at \(offset)")
+            case let .insert(offset, element, _):
+                print("DS: ➕ Inserted \(element) at \(offset)")
+            }
+        }
+        
         dataSource.defaultRowAnimation = .fade
         dataSource.apply(snapshot, animatingDifferences: true)
     }
@@ -463,6 +480,9 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         for changeType: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
+        print("DS: NSFetchedResultsController didChange anObject at indexPath: \(String(describing: indexPath)) for changeType: \(changeType) newIndexPath: \(String(describing: newIndexPath))")
+        changesPending = true
+
         if let message = anObject as? ZMConversationMessage, changeType == .insert {
             /// VoiceOver will output the announcement string from the message
             message.postAnnouncementIfNeeded()
@@ -475,16 +495,34 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         atSectionIndex sectionIndex: Int,
         for changeType: NSFetchedResultsChangeType
     ) {
-        // no-op
+        print("DS: NSFetchedResultsController didChange sectionInfo at sectionIndex: \(sectionIndex) for changeType: \(changeType)")
+        changesPending = true
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        reloadSections(newSections: postProcessedSections(calculateSections()))
+        guard changesPending else {
+            print("DS: skip changes pending")
+            return
+        }
+        print("DS: call reload with debounce")
+        debounceTableViewReload()
+        changesPending = false
     }
 
     func reloadSections(newSections: [Section]) {
         self.currentSections = newSections
         reloadDataSource(sections: newSections)
+    }
+    
+    
+    private func debounceTableViewReload(delay: TimeInterval = 0.2) {
+        updateWorkItem?.cancel()
+        updateWorkItem = DispatchWorkItem { [weak self] in
+            print("DS: call reload AFTER debounce")
+            guard let self else { return }
+            self.reloadSections(newSections: self.postProcessedSections(calculateSections()))
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: updateWorkItem!)
     }
 
 }
