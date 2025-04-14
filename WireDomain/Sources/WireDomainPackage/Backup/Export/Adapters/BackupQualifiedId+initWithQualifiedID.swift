@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
-import WireDomainPackageSupport
+import WireAPI
+import WireBackup
 
-@testable import WireDomainPackage
+extension BackupQualifiedId {
 
-struct PlaceholderTests {
-
-    @Test
-    func testNothing() async throws {
-        #expect(true)
+    convenience init(_ qualifiedID: QualifiedID) {
+        self.init(
+            id: qualifiedID.uuid.uuidString,
+            domain: qualifiedID.domain
+        )
     }
-
 }

@@ -483,34 +483,6 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
 }
 
-class MockImportBackupFileArchiverProtocol: ImportBackupFileArchiverProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - unzipFile
-
-    var unzipFileAtTo_Invocations: [(sourceURL: URL, destinationURL: URL)] = []
-    var unzipFileAtTo_MockError: Error?
-    var unzipFileAtTo_MockMethod: ((URL, URL) throws -> Void)?
-
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
-        unzipFileAtTo_Invocations.append((sourceURL: sourceURL, destinationURL: destinationURL))
-
-        if let error = unzipFileAtTo_MockError {
-            throw error
-        }
-
-        guard let mock = unzipFileAtTo_MockMethod else {
-            fatalError("no mock for `unzipFileAtTo`")
-        }
-
-        try mock(sourceURL, destinationURL)
-    }
-
-}
-
 public class MockImportBackupStreamDecryptorProtocol: ImportBackupStreamDecryptorProtocol {
 
     // MARK: - Life cycle

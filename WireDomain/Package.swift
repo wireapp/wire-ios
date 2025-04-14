@@ -22,6 +22,7 @@ let package = Package(
             name: "WireDomainPackage",
             dependencies: [
                 "WireAPI",
+                "WireBackup",
                 "WireLogging",
                 .product(name: "WireFoundation", package: "WireFoundation")
             ]
@@ -39,6 +40,16 @@ let package = Package(
                 .product(name: "WireFoundationSupport", package: "WireFoundation")
             ]
         ),
+
+        .binaryTarget(
+            name: "WireBackup",
+            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/eaba540acd2fdb25ec07cc4254c69fb7cce8ffde/WireDomain/Frameworks/WireBackup.xcframework.zip?download=true",
+            checksum: "e482a3d22bbf1141ac67ce26a5f1640f3ff7a55873cf18dce7cb29281edb04e0"
+        )
+        // .binaryTarget(
+        //     name: "WireBackup",
+        //     path: "../../wire-android/kalium/backup/build/XCFrameworks/release/WireBackup.xcframework"
+        // )
     ]
 )
 

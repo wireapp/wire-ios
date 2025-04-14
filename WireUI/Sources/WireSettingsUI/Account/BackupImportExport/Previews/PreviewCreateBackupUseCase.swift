@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomainPackage
 
 struct PreviewCreateBackupUseCase: CreateBackupUseCaseProtocol {
 
