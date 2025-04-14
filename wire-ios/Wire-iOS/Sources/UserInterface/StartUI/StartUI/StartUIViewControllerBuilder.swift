@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireConversationsUIBindings
 import WireMainNavigationUI
 import WireSyncEngine
 
@@ -25,6 +26,8 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     let userSession: UserSession
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
+    let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
+
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     weak var delegate: StartUIDelegate?
 
@@ -32,11 +35,13 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
+        channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
+        self.channelConversationFormFactory = channelConversationFormFactory
         self.selfProfileUIBuilder = selfProfileUIBuilder
     }
 
@@ -45,6 +50,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             createGroupConversationUIBuilder: createGroupConversationUIBuilder,
+            channelConversationFormFactory: channelConversationFormFactory,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         rootViewController.delegate = delegate

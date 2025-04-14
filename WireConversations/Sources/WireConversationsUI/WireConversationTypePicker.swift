@@ -24,8 +24,8 @@ import WireFoundation
 
 package struct WireConversationTypePicker: View {
     private enum Constants {
-        static let verticalSpacing: CGFloat = 21
-        static let iconSize: CGFloat = 18
+        static let verticalSpacing: CGFloat = 12
+        static let maxIconWidth: CGFloat = 27
         static let minRowHeight: CGFloat = 60
     }
 
@@ -132,9 +132,9 @@ package struct WireConversationTypePicker: View {
     func iconView(for imageName: String) -> some View {
         Image(imageName, bundle: .resources)
             .renderingMode(.template)
-            .resizable()
-            .frame(width: Constants.iconSize, height: Constants.iconSize)
+            .aspectRatio(contentMode: .fit)
             .foregroundStyle(ColorTheme.Base.primary.color)
+            .frame(width: Constants.maxIconWidth)
     }
 
     func chevronView() -> some View {

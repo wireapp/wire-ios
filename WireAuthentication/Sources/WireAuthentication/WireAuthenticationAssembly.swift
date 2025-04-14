@@ -30,7 +30,7 @@ public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.Wi
 public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
 public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
 public typealias Endpoints = WireAuthenticationAPI.Endpoints
-public typealias ProxySettings = WireAuthenticationAPI.ProxySettings
+public typealias ProxySettings = WireAuthenticationAPI.UnresolvedProxySettings
 public typealias TrustData = WireAuthenticationAPI.TrustData
 public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
 
@@ -51,25 +51,26 @@ public struct WireAuthenticationAssembly {
         howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
-        userDefaults: UserDefaults,
         appStoreURL: URL,
         existsAnotherAccount: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
-        let rootComponent = RootComponent(
+        let backendInfo = BackendInfo(
             environmentType: environmentType,
-            backendConfig: backendConfig,
+            backendConfig: backendConfig
+        )
+        let rootComponent = RootComponent(
+            backendInfo: backendInfo,
             preferredAPIVersion: preferredAPIVersion,
             minTLSVersion: minTLSVersion,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
-            userDefaults: userDefaults,
             appStoreURL: appStoreURL,
             existsAnotherAccount: existsAnotherAccount
         )
 
-        return (view: rootComponent.view, bridge: rootComponent.bridge)
+        return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)
     }
 
 }

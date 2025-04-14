@@ -96,4 +96,27 @@ public extension Feature.Channels {
         status == .enabled
     }
 
+    func canCreateChannels(role: TeamRole) -> Bool {
+        isEnabled && config.allowedToCreateChannels.contains(role)
+    }
+
+    func canOpenChannels(role: TeamRole) -> Bool {
+        isEnabled && config.allowedToOpenChannels.contains(role)
+    }
+
+}
+
+private extension Feature.Channels.Config.ChannelsPermision {
+
+    func contains(_ role: TeamRole) -> Bool {
+        switch self {
+        case .everyone:
+            role.isOne(of: .partner, .member, .admin, .owner)
+        case .teamMembers:
+            role.isOne(of: .member, .admin, .owner)
+        case .admins:
+            role.isOne(of: .admin, .owner)
+        }
+    }
+
 }

@@ -179,7 +179,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         conversationID: String,
         conversationDomain: String,
         permission: ChannelPermission
-    ) async throws {
+    ) async throws -> ChannelPermission {
         throw ConversationsAPIError.unsupportedEndpointForAPIVersion
     }
 
@@ -322,7 +322,7 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: UTCTimeMillis?
+    var lastEventTime: UTCTime?
     var legacyAccessRole: ConversationAccessRoleLegacy?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?

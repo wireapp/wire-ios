@@ -32,7 +32,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case newInitialSync
     case useWireAuthentication
     case wireCellsAttachmentsPreviews
-    case wireChannels
 
     public var description: String {
         switch self {
@@ -65,9 +64,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireCellsAttachmentsPreviews:
             "Use the new WireCells previews for conversations attachments"
-
-        case .wireChannels:
-            "Use the new WireChannels features"
         }
     }
 
@@ -82,15 +78,10 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     private var defaultValue: Bool {
-        switch self {
-        case .useWireAuthentication:
-            return true
-        default:
-            guard let bundleKey else {
-                return false
-            }
-            return DeveloperFlagsDefault.isEnabled(for: bundleKey)
+        guard let bundleKey else {
+            return false
         }
+        return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 
     public static func clearAllFlags() {
@@ -107,6 +98,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .useWireAuthentication:
+            "WireAuthenticationEnabled"
         default:
             nil
         }

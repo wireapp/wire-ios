@@ -141,8 +141,6 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     typealias View = ConversationVideoMessageCell
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 

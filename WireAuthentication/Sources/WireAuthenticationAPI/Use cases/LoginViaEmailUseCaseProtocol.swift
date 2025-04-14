@@ -41,6 +41,6 @@ public enum LoginViaEmailUseCaseFailure: Error, Equatable {
 
 public protocol LoginViaEmailUseCaseFactory {
 
-    func loginViaEmailUseCase(apiVersion: BackendMetadata.APIVersion) -> any LoginViaEmailUseCaseProtocol
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol
 
 }

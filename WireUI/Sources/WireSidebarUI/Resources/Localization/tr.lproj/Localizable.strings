@@ -22,6 +22,7 @@
 "sidebar.conversation_filter.all.title" = "Hepsi";
 "sidebar.conversation_filter.favorites.title" = "Favoriler";
 "sidebar.conversation_filter.groups.title" = "Gruplar";
+"sidebar.conversation_filter.channels.title" = "Channels";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
 "sidebar.conversation_filter.folders.title" = "Folders";
 "sidebar.conversation_filter.archived.title" = "Arşivle";

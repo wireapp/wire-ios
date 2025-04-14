@@ -76,6 +76,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         accountImageView.source = viewModel.accountImageSource
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.hideProfileNotificationsBadge = viewModel.hideProfileNotificationsBadge
+        accountImageView.isAccessibilityElement = true
+        accountImageView.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
+            .accessibilityValue(viewModel.userSession.selfUser.name ?? "")
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -151,6 +154,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             L10n.Localizable.ConversationList.Filter.Favorites.title
         case (.expanded, .groups):
             L10n.Localizable.ConversationList.Filter.Groups.title
+        case (.expanded, .channels):
+            L10n.Localizable.ConversationList.Filter.Channels.title
         case (.expanded, .oneOnOne):
             L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
         case (.expanded, .folder):
@@ -187,7 +192,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         )!
 
         let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .oneOnOne, .folder:
+        case .favorites, .groups, .channels, .oneOnOne, .folder:
             filledFilterImage
         case .none:
             defaultFilterImage
@@ -210,6 +215,11 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             filter: .groups,
             isSelected: listContentController.listViewModel.selectedFilter == .groups
         )
+        let channelsAction = createFilterAction(
+            title: FilterMenuLocale.Channels.title,
+            filter: .channels,
+            isSelected: listContentController.listViewModel.selectedFilter == .channels
+        )
         let oneToOneConversationsAction = createFilterAction(
             title: FilterMenuLocale.OneOnOneConversations.title,
             filter: .oneOnOne,
@@ -226,6 +236,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                 allConversationsAction,
                 favoritesAction,
                 groupsAction,
+                channelsAction,
                 oneToOneConversationsAction,
                 foldersAction
             ]
@@ -319,6 +330,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         case .groups:
             return isSelected ? accessibilityLocale.Groups.Selected.description : accessibilityLocale.Groups.description
+
+        case .channels:
+            return isSelected ? accessibilityLocale.Channels.Selected.description : accessibilityLocale.Channels
+                .description
 
         case .oneOnOne:
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne

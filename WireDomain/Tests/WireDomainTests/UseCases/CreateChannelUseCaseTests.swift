@@ -228,7 +228,8 @@ final class CreateChannelUseCaseTests: XCTestCase {
         mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
             defer { apiRetryCount += 1 }
             let usersIds = Set(await context.perform { users.map(\.id) })
-            let failedUserID = usersIds.randomElement()!
+            let successfulUserID = await context.perform { participant2.remoteIdentifier }!
+            let failedUserID = await context.perform { participant1.remoteIdentifier }!
 
             if apiRetryCount == 0 {
                 // First, we try to add all MLS participants
@@ -242,10 +243,10 @@ final class CreateChannelUseCaseTests: XCTestCase {
                     domain: "federated1"
                 )])
             } else {
-                // On retry, we only try to add MLS participants that failed
+                // On retry, we only try adding MLS participants that have claimed packages.
                 XCTAssertEqual(
                     Set(usersIds),
-                    Set([failedUserID])
+                    Set([successfulUserID])
                 )
                 return
             }
@@ -282,6 +283,16 @@ final class CreateChannelUseCaseTests: XCTestCase {
             2
         ) // called twice, first try to add all MLS participants, on retry try to add only failed MLS participant
         XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 1)
+
+        // A system message should be added for the user(s) that failed.
+        try await context.perform {
+            let systemMessage = try XCTUnwrap(
+                conversation.allMessages.compactMap { $0 as? ZMSystemMessage }.first
+            )
+
+            XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants)
+            XCTAssertEqual(systemMessage.users, [participant1])
+        }
     }
 
     func testInvoke_MLS_Non_Federating_Domains_Failure_It_Retries_Once_With_Federated_Users() async throws {

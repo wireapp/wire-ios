@@ -180,7 +180,7 @@ struct ConversationV5: Decodable, ToAPIModelConvertible {
     var epochTimestamp: UTCTime? // New field
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: UTCTimeMillis?
+    var lastEventTime: UTCTime?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
     var messageTimer: TimeInterval?

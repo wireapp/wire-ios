@@ -17,6 +17,7 @@
 //
 
 public import SwiftUI
+import WireConversationsAPI
 import WireConversationsImplementation
 import WireConversationsUI
 
@@ -32,7 +33,7 @@ public final class WireConversationChannelIconFactory {
     }
 
     @MainActor
-    public func createUIKit(conversationID: String) -> UIImageView {
-        UIImageView(image: mapper.palette(for: conversationID).uiKitImage)
+    public func createUIKit(conversationID: String, isPrivateChannel: Bool) -> UIView {
+        WireConversationChannelIconUIKit(asset: mapper.palette(for: conversationID), isPrivateChannel: isPrivateChannel)
     }
 }

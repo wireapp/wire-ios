@@ -48,7 +48,7 @@ struct UserClientAddEventDecoder {
 
         let id: String
         let type: UserClientType
-        let activationDate: UTCTimeMillis
+        let activationDate: UTCTime
         let label: String?
         let model: String?
         let deviceClass: DeviceClass?
