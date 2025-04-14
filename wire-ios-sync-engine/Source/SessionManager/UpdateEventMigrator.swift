@@ -66,13 +66,6 @@ private extension UpdateEvent {
 
             self = .conversation(.memberJoin(event))
 
-        case .conversationMemberLeave:
-            guard let event = Self.conversationMemberLeaveEvent(from: legacyEvent) else {
-                return nil
-            }
-
-            self = .conversation(.memberLeave(event))
-
         case .conversationMessageAdd:
             guard let event = Self.conversationMLSMessageAddEvent(from: legacyEvent) else {
                 return nil
@@ -181,45 +174,6 @@ private extension UpdateEvent {
             senderID: senderID,
             timestamp: timestamp,
             members: memberData
-        )
-    }
-
-    private static func conversationMemberLeaveEvent(from event: ZMUpdateEvent) -> ConversationMemberLeaveEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>.self,
-                from: event.payload
-            ),
-            let conversationID = payload.conversationID,
-            let senderID = payload.senderID,
-            let timestamp = payload.timestamp,
-            let reason = payload.data.reason
-        else {
-            return nil
-        }
-
-        let localDomain = "local.com"
-        var removedUserIDs = [UserID]()
-        if let qualifiedUserIDs = payload.data.qualifiedUserIDs {
-            removedUserIDs = qualifiedUserIDs.map(QualifiedID.init)
-        } else if let userIDs = payload.data.userIDs {
-            removedUserIDs = userIDs.map { id in
-                QualifiedID(
-                    uuid: id,
-                    domain: localDomain
-                )
-            }
-        } else {
-            return nil
-        }
-
-        return ConversationMemberLeaveEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp,
-            removedUserIDs: Set(removedUserIDs),
-            reason: ConversationMemberLeaveReason(reason)
         )
     }
 
@@ -398,22 +352,6 @@ private extension WireAPI.QualifiedID {
     }
 
 }
-
-private extension ConversationMemberLeaveReason {
-
-    init(_ reason: Payload.UpdateConversationMemberLeave.Reason) {
-        switch reason {
-        case .userDeleted:
-            self = .userDeleted
-        case .left:
-            self = .userLeft
-        case .removed:
-            self = .userRemoved
-        }
-    }
-
-}
-
 private struct DecryptedMLSMessageAddEvent: EventData, Codable {
 
     static var eventType: ZMUpdateEventType {
