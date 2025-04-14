@@ -30,7 +30,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     private var sut: ResolveOneOnOneConversationsUseCase!
     private var mockSupportedProtocolService: MockSupportedProtocolsServiceInterface!
     private var mockOneOnOneResolver: MockOneOnOneResolverInterface!
-    private var mockPullSelfUserClients: MockPullSelfUserClientsProtocol!
+    private var mockPullSelfUserClients: MockPullSelfUserClientsSyncProtocol!
     private var stack: CoreDataStack!
     private let coreDataStackHelper = CoreDataStackHelper()
 
@@ -45,7 +45,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         mockSupportedProtocolService = MockSupportedProtocolsServiceInterface()
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
-        mockPullSelfUserClients = MockPullSelfUserClientsProtocol()
+        mockPullSelfUserClients = MockPullSelfUserClientsSyncProtocol()
         mockPullSelfUserClients.pullSelfClients_MockMethod = {}
 
         sut = ResolveOneOnOneConversationsUseCase(

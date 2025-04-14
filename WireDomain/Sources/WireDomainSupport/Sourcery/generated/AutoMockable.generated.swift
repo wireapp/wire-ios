@@ -2092,28 +2092,28 @@ class MockPullSelfTeamSyncProtocol: PullSelfTeamSyncProtocol {
 
 }
 
-public class MockPullSelfUserClientsProtocol: PullSelfUserClientsProtocol {
+public class MockPullSelfUserClientsSyncProtocol: PullSelfUserClientsSyncProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - pullSelfClients
+    // MARK: - pull
 
-    public var pullSelfClients_Invocations: [Void] = []
-    public var pullSelfClients_MockError: Error?
-    public var pullSelfClients_MockMethod: (() async throws -> Void)?
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
 
-    public func pullSelfClients() async throws {
-        pullSelfClients_Invocations.append(())
+    public func pull() async throws {
+        pull_Invocations.append(())
 
-        if let error = pullSelfClients_MockError {
+        if let error = pull_MockError {
             throw error
         }
 
-        guard let mock = pullSelfClients_MockMethod else {
-            fatalError("no mock for `pullSelfClients`")
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
         }
 
         try await mock()
