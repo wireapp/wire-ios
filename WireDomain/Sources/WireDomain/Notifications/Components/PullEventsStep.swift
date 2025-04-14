@@ -357,7 +357,8 @@ extension PullEventsStep {
         let service = NetworkService(
             baseURL: backendEnvironment.url,
             serverTrustValidator: ServerTrustValidator(
-                pinnedKeys: backendEnvironment.pinnedKeys
+                pinnedKeys: backendEnvironment.pinnedKeys,
+                currentDateProvider: .system
             )
         )
 
