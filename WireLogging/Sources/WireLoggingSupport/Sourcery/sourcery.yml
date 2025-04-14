@@ -1,7 +1,7 @@
 sources:
 - ${PACKAGE_ROOT_DIR}/Sources/WireLogging
 templates:
-- ${TARGET_DIR}/Sourcery/LegacyAutoMockable.stencil
+- ${TARGET_DIR}/Sourcery/AutoMockable.stencil
 output:
   ${DERIVED_SOURCES_DIR}
 args:
