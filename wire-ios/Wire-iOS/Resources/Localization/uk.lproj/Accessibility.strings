@@ -200,7 +200,7 @@
 "contactsList.memberIcon.description" = "Учасник";
 "contactsList.userCell.hint" = "Торкніться двічі, щоб відкрити розмову";
 "contactsList.pendingConnection.hint" = "Подвійний дотик для відкриття профілю";
-"contactsList.cancelButton.description" = "Close new conversation overview";
+"contactsList.cancelButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Торкніться двічі, щоб відкрити детальну інформацію про сервіс";
 
@@ -218,14 +218,12 @@
 "conversationsList.replyStatus.value" = "Відповісти";
 "conversationsList.badgeView.value" = "Нові повідомлення: %d";
 "conversationsList.itemCell.hint" = "Торкніться двічі, щоб відкрити розмову";
-"conversationsList.itemCell.avatar.group.label" = "Group";
-"conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Приєднатись";
 "conversationsList.joinButton.hint" = "Торкніться двічі, щоб приєднатися до дзвінка";
 "conversationsList.connectionRequest.description" = "Очікує схвалення запиту на підключення";
 "conversationsList.connectionRequest.hint" = "Подвійний дотик для відкриття профілю";
 
-"conversationList.startConversationButton.description" = "Create a group or channel, or search for people";
+"conversationList.startConversationButton.description" = "Create group or search for people";
 "conversationsList.filterButton.description" = "Filter conversations";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";

@@ -20,7 +20,7 @@ import UIKit
 
 extension CellConfiguration {
 
-    static func groupAdminToggle(
+    static func groupAdminToogle(
         get: @escaping () -> Bool,
         set: @escaping (Bool, UIView?) -> Void
     ) -> CellConfiguration {

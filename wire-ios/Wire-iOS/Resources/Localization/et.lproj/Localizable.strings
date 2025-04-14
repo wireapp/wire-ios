@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "Vestlus on täis";
+"add_participants.alert.title" = "Grupp on täis";
 "add_participants.alert.message.new_conversation" = "Vestlusega saab liituda kuni %d inimest.";
 "add_participants.alert.message.existing_conversation" = "Vestlusega saab liituda kuni %1$d inimest. Hetkel on siin ruumi veel %2$d inimesele.";
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Adminid puuduvad.";
 "participants.section.members.footer" = "There are no members.";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "Grupi admin";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Veel toiminguid";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Eemalda?";
 "profile.remove_dialog_message" = "%@ ei saa siin vestluses sõnumeid saata ega neid vastu võtta.";
 "profile.remove_dialog_button_cancel" = "Tühista";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "Remove From Group…";
+"profile.remove_dialog_button_remove_confirm" = "Remove From Group";
 
 // Block dialog
 "profile.block_dialog.title" = "Blokeeri?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Üksikasjad";
 "profile.details.guest" = "Külaline";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "Grupi admin";
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";

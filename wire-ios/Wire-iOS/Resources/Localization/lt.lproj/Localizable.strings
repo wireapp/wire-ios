@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "Susirašinėjimas pilnas";
+"add_participants.alert.title" = "Grupė pilna";
 "add_participants.alert.message.new_conversation" = "Susirašinėjime gali būti iki %d pašnekovų.";
 "add_participants.alert.message.existing_conversation" = "Susirašinėjime gali būti iki %1$d pašnekovų. Šiuo metu dar gali prisijungti %2$d.";
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Administratorių nėra.";
 "participants.section.members.footer" = "Narių nėra.";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "Grupės administratorius";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Daugiau veiksmų";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Šalinti?";
 "profile.remove_dialog_message" = "%@ negalės siųsti ir gauti žinučių šiame susirašinėjime.";
 "profile.remove_dialog_button_cancel" = "Atsisakyti";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "Šalinti iš grupės…";
+"profile.remove_dialog_button_remove_confirm" = "Šalinti iš grupės";
 
 // Block dialog
 "profile.block_dialog.title" = "Užblokuoti?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Išsamiau";
 "profile.details.guest" = "Svečias";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "Grupės administratorius";
 "profile.details.partner" = "išorinis";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";

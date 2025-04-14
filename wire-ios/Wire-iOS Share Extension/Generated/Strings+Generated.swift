@@ -27,8 +27,8 @@ internal enum L10n {
     }
     internal enum Conversation {
       internal enum Displayname {
-        /// Empty conversation
-        internal static let emptygroup = L10n.tr("Localizable", "share_extension.conversation.displayname.emptygroup", fallback: "Empty conversation")
+        /// Empty group conversation
+        internal static let emptygroup = L10n.tr("Localizable", "share_extension.conversation.displayname.emptygroup", fallback: "Empty group conversation")
       }
     }
     internal enum ConversationSelection {

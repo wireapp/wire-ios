@@ -190,10 +190,6 @@ extension MockTransportSession: TransportSessionType {
         }
     }
 
-    public var accessTokenHandler: ZMAccessTokenHandler {
-        ZMAccessTokenHandler()
-    }
-
     public var requestLoopDetectionCallback: ((String) -> Void)? {
         get { nil }
         set {}

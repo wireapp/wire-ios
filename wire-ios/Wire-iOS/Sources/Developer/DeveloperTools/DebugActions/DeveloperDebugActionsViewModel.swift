@@ -50,18 +50,13 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
 
     private let selfClient: UserClient?
-    private let onDismiss: (() -> Void)?
 
     private let logger = WireLogger(tag: "developer")
 
     // MARK: - Initialize
 
-    init(
-        selfClient: UserClient?,
-        onDismiss: (() -> Void)? = nil
-    ) {
+    init(selfClient: UserClient?) {
         self.selfClient = selfClient
-        self.onDismiss = onDismiss
 
         setupButtons()
     }
@@ -76,25 +71,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
             .init(title: "Delete domains in the database", action: deleteDomains),
-            .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
-            .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie)
+            .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations)
         ]
-    }
-
-    // MARK: - Clear access token & cookie
-
-    private func clearAccessTokenAndCookie() {
-        let accessTokenHandler = userSession?.transportSession.accessTokenHandler
-
-        let responseFailure = ZMTransportResponse(
-            payload: nil,
-            httpStatus: 400,
-            transportSessionError: nil,
-            apiVersion: APIVersion.v0.rawValue
-        )
-
-        accessTokenHandler?.processAccessTokenResponse(responseFailure)
-        onDismiss?()
     }
 
     // MARK: Send Logs

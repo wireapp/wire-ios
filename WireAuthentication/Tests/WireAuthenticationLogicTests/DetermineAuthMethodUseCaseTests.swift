@@ -157,7 +157,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         let authMethod = try await sut.invoke(emailOrSSOCode: email)
 
         // then
-        XCTAssertEqual(authMethod, .loginOrRegisterViaEmail(email: email))
+        XCTAssertEqual(authMethod, .loginViaEmail(email: email, didDetectDomainConflict: false))
     }
 
     func testInvoke_forwardsUnderlyingErrors() async throws {

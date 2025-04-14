@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "O domínio federado não está disponível no momento. [Saiba mais](%@)";
 
-"add_participants.alert.title" = "A conversa está cheia";
+"add_participants.alert.title" = "Chamada cheia";
 "add_participants.alert.message.new_conversation" = "Até %d pessoas podem participar de uma conversa.";
 "add_participants.alert.message.existing_conversation" = "Até %1$d pessoas podem participar de uma conversa. Atualmente, há apenas espaço para mais %2$d.";
 
@@ -343,11 +343,11 @@
 "conversation.create.mls.subtitle" = "Selecione o MLS para criar um grupo usando o protocolo de segurança de camada de Mensagem.";
 "conversation.create.mls.picker_title" = "Selecionar Protocolo";
 "conversation.create.mls.cancel" = "Cancelar";
-"conversation.create.non_federating_domains_error.title" = "A conversa não pode ser criada";
-"conversation.create.non_federating_domains_error.message" = "Pessoas de backends %@ não podem participar da mesma conversa.\nPara criar uma conversa, remova os participantes afetados.";
+"conversation.create.non_federating_domains_error.title" = "O grupo não pode ser criado";
+"conversation.create.non_federating_domains_error.message" = "Pessoas dos backends %@ não podem entrar na mesma conversa de grupo.\nPara criar o grupo, remova os participantes afetados.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Editar lista de participantes";
 "conversation.create.non_federating_domains_error.learn_more" = "Saiba Mais";
-"conversation.create.non_federating_domains_error.abort" = "Descartar Criação de Conversa";
+"conversation.create.non_federating_domains_error.abort" = "Descartar criação de grupo";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (padrão)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Não há administradores.";
 "participants.section.members.footer" = "Não há membros.";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "Administrador do Grupo";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Mais ações";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Remover?";
 "profile.remove_dialog_message" = "%@ não será capaz de enviar ou receber mensagens nesta conversa.";
 "profile.remove_dialog_button_cancel" = "Cancelar";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "Remover do grupo…";
+"profile.remove_dialog_button_remove_confirm" = "Remover do Grupo";
 
 // Block dialog
 "profile.block_dialog.title" = "Bloquear?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Detalhes";
 "profile.details.guest" = "Convidado";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "Administrador do grupo";
 "profile.details.partner" = "externo";
 "profile.details.federated" = "Federado";
 "profile.details.blocking_reason" = "Este usuário está bloqueado devido à retenção legal. [SAIBA MAIS](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "A auto-exclusão de mensagens agora é obrigatória. Novas mensagens serão excluídas automaticamente após %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "A geração de links de convidados agora está desabilitada para todos os administradores do grupo.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "A geração de links de convidados agora está habilitada para todos os administradores do grupo.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "Certificado de identidade ponto a ponto";

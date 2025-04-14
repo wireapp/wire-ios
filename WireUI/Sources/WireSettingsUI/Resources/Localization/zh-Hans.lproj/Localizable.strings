@@ -44,7 +44,7 @@
 "importBackup.overwriteConfirmation.title" = "File overwrites your history";
 "importBackup.overwriteConfirmation.message" = "The backup contents will replace the current conversation history on this device.";
 "importBackup.overwriteConfirmation.cancel" = "取消";
-"importBackup.overwriteConfirmation.proceed" = "继续";
+"importBackup.overwriteConfirmation.proceed" = "Proceed";
 
 "importBackup.alert.ok" = "好";
 "importBackup.alert.success.title" = "Success";

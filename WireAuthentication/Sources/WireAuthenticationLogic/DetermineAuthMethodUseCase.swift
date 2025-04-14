@@ -76,7 +76,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
                 return .loginOrRegisterViaEmail(email: email)
             }
         } catch AuthenticationAPIError.serviceUnavailable {
-            return .loginOrRegisterViaEmail(email: email)
+            return .loginViaEmail(email: email, didDetectDomainConflict: false)
         }
 
         switch configuration.domainRedirect {

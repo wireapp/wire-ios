@@ -335,14 +335,9 @@ static id<UserType> mockSelfUser = nil;
     return self.canModifyNotificationSettingsInConversation;
 }
 
-- (BOOL)canModifyGuestsAccessControlSettingsInConversation:(ZMConversation *)conversation
+- (BOOL)canModifyAccessControlSettingsInConversation:(ZMConversation *)conversation
 {
-    return self.canModifyGuestsAccessControlSettingsInConversation;
-}
-
-- (BOOL)canModifyChannelAccessLevelSettingsInConversation:(ZMConversation *)conversation
-{
-    return self.canModifyChannelAccessLevelSettingsInConversation;
+    return self.canModifyNotificationSettingsInConversation;
 }
 
 - (BOOL)canAddUserToConversation:(id<ConversationLike>)conversation

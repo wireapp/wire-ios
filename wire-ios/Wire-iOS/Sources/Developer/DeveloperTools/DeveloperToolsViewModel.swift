@@ -237,8 +237,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
                         selfClient: self?
-                            .selfClient,
-                        onDismiss: { self?.onDismiss {} }
+                            .selfClient
                     )))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {

@@ -60,7 +60,7 @@
 "share_extension.logged_out.message" = "別のアカウントを選択してください";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Empty conversation";
+"share_extension.conversation.displayname.emptygroup" = "誰もいないグループ";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@が新しいデバイスを使い始めました。";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@が新しいデバイスを使い始めました。";
 "share_extension.meta.degraded.dialog_message" = "まだメッセージを送信しますか？";

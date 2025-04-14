@@ -34,7 +34,6 @@ final class ConversationDetailsTests: XCTestCase {
         user.canManageTeam = false
         user.canAddUserToConversation = false
         user.isGroupAdminInConversation = false
-        user.canModifyNotificationSettingsInConversation = true
         return user
     }()
 
@@ -49,10 +48,30 @@ final class ConversationDetailsTests: XCTestCase {
         )
     }
 
+    func testAccessOptionAllowed_ForChannel_andTeamAdmin() {
+        user.canManageTeam = true
+
+        XCTAssertTrue(
+            sut.accessible(in: conversation, by: user)
+        )
+    }
+
     func testAccessOptionNotAllowed_ForChannel_Member() {
         XCTAssertFalse(
             sut.accessible(in: conversation, by: user)
         )
+    }
+
+    func testAccessOptionAllowed_ForChannel_MemberButTeamOwner() {
+        user.canManageTeam = true
+
+        XCTAssertTrue(sut.accessible(in: conversation, by: user))
+    }
+
+    func testAccessOptionAllowed_ForChannel_ChannelOwner() {
+        user.isGroupAdminInConversation = true
+
+        XCTAssertTrue(sut.accessible(in: conversation, by: user))
     }
 
     func testAddParticipants_NotShown_ForGroups_EvenUserIsTeamOwnerAndChannelPermissionEveryone() {
@@ -68,6 +87,20 @@ final class ConversationDetailsTests: XCTestCase {
         user.canAddUserToConversation = true
         user.canManageTeam = false
         conversation.isChannel = false
+        let sut = GroupDetailsFooterView()
+        sut.update(for: conversation, user: user)
+        XCTAssertFalse(sut.leftButton.isHidden)
+    }
+
+    func testAddParticipants_Shown_ForChannel_UserIsRegularMember_PermissionEveryone() {
+        conversation.privateChannelPermission = .everyone
+        let sut = GroupDetailsFooterView()
+        sut.update(for: conversation, user: user)
+        XCTAssertFalse(sut.leftButton.isHidden)
+    }
+
+    func testAddParticipants_Shown_ForChannel_UserIsTeamAdmin() {
+        user.canManageTeam = true
         let sut = GroupDetailsFooterView()
         sut.update(for: conversation, user: user)
         XCTAssertFalse(sut.leftButton.isHidden)

@@ -118,24 +118,7 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
-    func testDecodingConversationMemberLeaveEvent_Deleted() throws {
-        // Given
-        let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberDelete")
-
-        // When
-        let decodedEvent = try decoder.decode(
-            UpdateEventDecodingProxy.self,
-            from: mockEventData.jsonData
-        ).updateEvent
-
-        // Then
-        XCTAssertEqual(
-            decodedEvent,
-            .conversation(.memberLeave(Scaffolding.memberDeletedEvent))
-        )
-    }
-
-    func testDecodingConversationMemberLeaveEvent_Left() throws {
+    func testDecodingConversationMemberLeaveEvent() throws {
         // Given
         let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberLeave")
 
@@ -148,24 +131,7 @@ final class ConversationEventDecodingTests: XCTestCase {
         // Then
         XCTAssertEqual(
             decodedEvent,
-            .conversation(.memberLeave(Scaffolding.memberLeftEvent))
-        )
-    }
-
-    func testDecodingConversationMemberLeaveEvent_Removed() throws {
-        // Given
-        let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberRemove")
-
-        // When
-        let decodedEvent = try decoder.decode(
-            UpdateEventDecodingProxy.self,
-            from: mockEventData.jsonData
-        ).updateEvent
-
-        // Then
-        XCTAssertEqual(
-            decodedEvent,
-            .conversation(.memberLeave(Scaffolding.memberRemovedEvent))
+            .conversation(.memberLeave(Scaffolding.memberLeaveEvent))
         )
     }
 
@@ -459,28 +425,12 @@ final class ConversationEventDecodingTests: XCTestCase {
             ]
         )
 
-        static let memberDeletedEvent = ConversationMemberLeaveEvent(
+        static let memberLeaveEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp,
             removedUserIDs: [senderID],
             reason: .userDeleted
-        )
-
-        static let memberLeftEvent = ConversationMemberLeaveEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp,
-            removedUserIDs: [senderID],
-            reason: .userLeft
-        )
-
-        static let memberRemovedEvent = ConversationMemberLeaveEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp,
-            removedUserIDs: [senderID],
-            reason: .userRemoved
         )
 
         static let memberUpdateEvent = ConversationMemberUpdateEvent(

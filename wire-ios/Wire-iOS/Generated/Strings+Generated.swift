@@ -277,8 +277,8 @@ internal enum L10n {
     }
     internal enum ContactsList {
       internal enum CancelButton {
-        /// Close new conversation overview
-        internal static let description = L10n.tr("Accessibility", "contactsList.cancelButton.description", fallback: "Close new conversation overview")
+        /// Close contact list
+        internal static let description = L10n.tr("Accessibility", "contactsList.cancelButton.description", fallback: "Close contact list")
       }
       internal enum ExternalIcon {
         /// External
@@ -561,8 +561,8 @@ internal enum L10n {
     }
     internal enum ConversationList {
       internal enum StartConversationButton {
-        /// Create a group or channel, or search for people
-        internal static let description = L10n.tr("Accessibility", "conversationList.startConversationButton.description", fallback: "Create a group or channel, or search for people")
+        /// Create group or search for people
+        internal static let description = L10n.tr("Accessibility", "conversationList.startConversationButton.description", fallback: "Create group or search for people")
       }
     }
     internal enum ConversationSearch {
@@ -725,16 +725,6 @@ internal enum L10n {
       internal enum ItemCell {
         /// Double tap to open conversation
         internal static let hint = L10n.tr("Accessibility", "conversationsList.itemCell.hint", fallback: "Double tap to open conversation")
-        internal enum Avatar {
-          internal enum Channel {
-            /// Channel
-            internal static let label = L10n.tr("Accessibility", "conversationsList.itemCell.avatar.channel.label", fallback: "Channel")
-          }
-          internal enum Group {
-            /// Group
-            internal static let label = L10n.tr("Accessibility", "conversationsList.itemCell.avatar.group.label", fallback: "Group")
-          }
-        }
       }
       internal enum JoinButton {
         /// Join
@@ -1169,8 +1159,8 @@ internal enum L10n {
     }
     internal enum AddParticipants {
       internal enum Alert {
-        /// The conversation is full
-        internal static let title = L10n.tr("Localizable", "add_participants.alert.title", fallback: "The conversation is full")
+        /// The group is full
+        internal static let title = L10n.tr("Localizable", "add_participants.alert.title", fallback: "The group is full")
         internal enum Message {
           /// Up to %1$d people can join a conversation. Currently there is only room for %2$d more.
           internal static func existingConversation(_ p1: Int, _ p2: Int) -> String {
@@ -2481,19 +2471,19 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
         internal enum NonFederatingDomainsError {
-          /// Discard Conversation Creation
-          internal static let abort = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.abort", fallback: "Discard Conversation Creation")
+          /// Discard Group Creation
+          internal static let abort = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.abort", fallback: "Discard Group Creation")
           /// Edit Participants List
           internal static let editParticipantList = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.edit_participant_list", fallback: "Edit Participants List")
           /// Learn More
           internal static let learnMore = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.learn_more", fallback: "Learn More")
-          /// People from backends %@ can't join the same conversation.
-          /// To create the conversation, remove affected participants.
+          /// People from backends %@ can't join the same group conversation.
+          /// To create the group, remove affected participants.
           internal static func message(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "conversation.create.non_federating_domains_error.message", String(describing: p1), fallback: "People from backends %@ can't join the same conversation.\nTo create the conversation, remove affected participants.")
+            return L10n.tr("Localizable", "conversation.create.non_federating_domains_error.message", String(describing: p1), fallback: "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.")
           }
-          /// Conversation can't be created
-          internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Conversation can't be created")
+          /// Group can't be created
+          internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Group can't be created")
         }
         internal enum Options {
           /// CONVERSATION OPTIONS
@@ -3377,10 +3367,10 @@ internal enum L10n {
         internal static let genericTitle = L10n.tr("Localizable", "feature_config.alert.generic_title", fallback: "Team settings changed")
         internal enum ConversationGuestLinks {
           internal enum Message {
-            /// Generating guest links is now disabled for all conversation admins.
-            internal static let disabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.disabled", fallback: "Generating guest links is now disabled for all conversation admins.")
-            /// Generating guest links is now enabled for all conversation admins.
-            internal static let enabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.enabled", fallback: "Generating guest links is now enabled for all conversation admins.")
+            /// Generating guest links is now disabled for all group admins.
+            internal static let disabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.disabled", fallback: "Generating guest links is now disabled for all group admins.")
+            /// Generating guest links is now enabled for all group admins.
+            internal static let enabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.enabled", fallback: "Generating guest links is now enabled for all group admins.")
           }
         }
         internal enum MlsE2ei {
@@ -4661,10 +4651,10 @@ internal enum L10n {
       internal static let openConversationButtonTitle = L10n.tr("Localizable", "profile.open_conversation_button_title", fallback: "Open conversation")
       /// Cancel
       internal static let removeDialogButtonCancel = L10n.tr("Localizable", "profile.remove_dialog_button_cancel", fallback: "Cancel")
-      /// Remove From Conversation…
-      internal static let removeDialogButtonRemove = L10n.tr("Localizable", "profile.remove_dialog_button_remove", fallback: "Remove From Conversation…")
-      /// Remove From Conversation
-      internal static let removeDialogButtonRemoveConfirm = L10n.tr("Localizable", "profile.remove_dialog_button_remove_confirm", fallback: "Remove From Conversation")
+      /// Remove From Group…
+      internal static let removeDialogButtonRemove = L10n.tr("Localizable", "profile.remove_dialog_button_remove", fallback: "Remove From Group…")
+      /// Remove From Group
+      internal static let removeDialogButtonRemoveConfirm = L10n.tr("Localizable", "profile.remove_dialog_button_remove_confirm", fallback: "Remove From Group")
       /// %@ won’t be able to send or receive messages in this conversation.
       internal static func removeDialogMessage(_ p1: Any) -> String {
         return L10n.tr("Localizable", "profile.remove_dialog_message", String(describing: p1), fallback: "%@ won’t be able to send or receive messages in this conversation.")
@@ -4726,8 +4716,8 @@ internal enum L10n {
         }
         /// Federated
         internal static let federated = L10n.tr("Localizable", "profile.details.federated", fallback: "Federated")
-        /// Conversation admin
-        internal static let groupAdmin = L10n.tr("Localizable", "profile.details.group_admin", fallback: "Conversation admin")
+        /// Group admin
+        internal static let groupAdmin = L10n.tr("Localizable", "profile.details.group_admin", fallback: "Group admin")
         /// Guest
         internal static let guest = L10n.tr("Localizable", "profile.details.guest", fallback: "Guest")
         /// Get certainty about %@’s identity before connecting.
@@ -4791,8 +4781,8 @@ internal enum L10n {
       }
       internal enum Profile {
         internal enum GroupAdminOptions {
-          /// Conversation admin
-          internal static let title = L10n.tr("Localizable", "profile.profile.group_admin_options.title", fallback: "Conversation admin")
+          /// Group admin
+          internal static let title = L10n.tr("Localizable", "profile.profile.group_admin_options.title", fallback: "Group admin")
         }
       }
       internal enum ReadReceiptsDisabledMemo {

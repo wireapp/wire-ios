@@ -42,8 +42,7 @@
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
-                               minTLSVersion:(NSString *)minTLSVersion
-                                selfClientID: (NSString *)selfClientID;
+                               minTLSVersion:(NSString *)minTLSVersion;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
 

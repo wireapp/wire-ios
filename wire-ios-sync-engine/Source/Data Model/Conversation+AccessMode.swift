@@ -66,7 +66,7 @@ public extension ZMConversation {
         in userSession: ZMUserSession,
         _ completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void
     ) {
-        guard canManageGuestsAccess else {
+        guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
@@ -137,7 +137,7 @@ public extension ZMConversation {
 
     /// Deletes the existing wireless link.
     func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
-        guard canManageGuestsAccess else {
+        guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
@@ -160,10 +160,10 @@ public extension ZMConversation {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    var canManageGuestsAccess: Bool {
+    var canManageAccess: Bool {
         guard let moc = managedObjectContext else { return false }
         let selfUser = ZMUser.selfUser(in: moc)
-        return selfUser.canModifyGuestsAccessControlSettings(in: self)
+        return selfUser.canModifyAccessControlSettings(in: self)
     }
 }
 

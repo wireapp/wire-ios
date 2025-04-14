@@ -48,9 +48,7 @@ final class ConversationGroupAvatarView: UIView {
         iconContainer.addSubview(iconView)
         iconView.fitIn(view: iconContainer)
 
-        typealias Avatar = L10n.Accessibility.ConversationsList.ItemCell.Avatar
-        accessibilityLabel = conversation.isChannel ? Avatar.Channel.label : Avatar.Group.label
-        isAccessibilityElement = true
+        accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
     }
 
     private var qualifiedID: QualifiedID? = .none

@@ -200,7 +200,7 @@
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Profili açmak için iki kez dokun";
-"contactsList.cancelButton.description" = "Close new conversation overview";
+"contactsList.cancelButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -218,14 +218,12 @@
 "conversationsList.replyStatus.value" = "Cevapla";
 "conversationsList.badgeView.value" = "New messages: %d";
 "conversationsList.itemCell.hint" = "Double tap to open conversation";
-"conversationsList.itemCell.avatar.group.label" = "Group";
-"conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Katıl";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
 "conversationsList.connectionRequest.hint" = "Profili açmak için iki kez dokun";
 
-"conversationList.startConversationButton.description" = "Create a group or channel, or search for people";
+"conversationList.startConversationButton.description" = "Create group or search for people";
 "conversationsList.filterButton.description" = "Filter conversations";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";

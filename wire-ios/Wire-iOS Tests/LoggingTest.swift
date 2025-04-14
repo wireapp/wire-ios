@@ -16,23 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSystem
 import XCTest
-@testable import Wire
 
-final class DeveloperDebugActionsViewModelTests: XCTestCase {
+class LoggingTest: XCTestCase {
 
-    func testButtonsCount() throws {
+    func testThatCurrentLogIsNotEmpty() {
         // given
-        let viewModel = makeViewModel()
+        ZMSLog.clearLogs()
 
         // when
+        ZMSLog.logWithLevel(.error, message: "test", tag: "AVS")
+        ZMSLog.sync()
+
         // then
-        XCTAssertEqual(viewModel.buttons.count, 9)
+
+        // Assert that some logs have been written to the current log file, which is the file
+        // that gets attached to debug reports.
+        XCTAssertNotNil(ZMSLog.currentZipLog)
+        XCTAssertNotNil(ZMSLog.currentLogURL)
+        XCTAssertFalse(ZMSLog.currentZipLog!.isEmpty)
+        XCTAssertFalse(FileManager.default.contents(atPath: ZMSLog.currentLogURL!.path)!.isEmpty)
     }
 
-    // MARK: - Helpers
-
-    private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
-    }
 }

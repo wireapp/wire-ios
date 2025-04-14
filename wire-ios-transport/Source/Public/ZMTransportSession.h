@@ -29,7 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class UIApplication;
 @class ZMTransportRequest;
 @class ZMPersistentCookieStorage;
-@class ZMAccessTokenHandler;
 @class ZMTransportRequestScheduler;
 @protocol ZMPushChannelConsumer;
 @protocol ZMSGroupQueue;
@@ -73,7 +72,6 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
 @property (nonatomic, readonly) NSOperationQueue *workQueue;
 @property (nonatomic, assign) NSInteger maximumConcurrentRequests;
 @property (nonatomic, readonly) ZMPersistentCookieStorage *cookieStorage;
-@property (nonatomic, readonly) ZMAccessTokenHandler *accessTokenHandler;
 @property (nonatomic, readonly) id<URLSessionsDirectory, TearDownCapable> sessionsDirectory;
 @property (nonatomic, copy, nullable) void (^requestLoopDetectionCallback)(NSString*);
 @property (nonatomic, readonly) id<ReachabilityProvider, TearDownCapable> reachability;
@@ -86,8 +84,7 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
                  initialAccessToken:(nullable ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(nullable NSString *)applicationGroupIdentifier
                  applicationVersion:(nonnull NSString *)applicationVersion
-                      minTLSVersion:(nullable NSString *)minTLSVersion
-                       selfClientID: (nullable NSString *)selfClientID;
+                      minTLSVersion:(nullable NSString *)minTLSVersion;
 
 - (void)tearDown;
 

@@ -274,7 +274,7 @@ final class ParticipantsStringFormatter {
         guard
             let systemMessage = message as? ZMSystemMessage,
             systemMessage.allTeamUsersAdded,
-            (message.conversationLike as? CanManageGuestsAccessProvider)?.canManageGuestsAccess ?? false
+            (message.conversationLike as? CanManageAccessProvider)?.canManageAccess ?? false
         else { return nil }
 
         // we only collapse whole team if there are more than 10 participants

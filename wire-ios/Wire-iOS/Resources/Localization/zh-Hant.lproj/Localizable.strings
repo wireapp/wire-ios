@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "聯合域當前不可用。 [了解更多](%@)";
 
-"add_participants.alert.title" = "對話人數已達上限";
+"add_participants.alert.title" = "此群組參與者已達上限";
 "add_participants.alert.message.new_conversation" = "最多%d人可以加入對話。";
 "add_participants.alert.message.existing_conversation" = "最多%1$d人可以加入對話。當前還可加入%2$d人。";
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "沒有管理員";
 "participants.section.members.footer" = "沒有成員";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "群組管理員";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "更多動作";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "確定移除？";
 "profile.remove_dialog_message" = "%@ 將無法發送至或接收此聊天室的訊息。";
 "profile.remove_dialog_button_cancel" = "取消";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "從群組移除…";
+"profile.remove_dialog_button_remove_confirm" = "從群組移除";
 
 // Block dialog
 "profile.block_dialog.title" = "確定封鎖？";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "詳細資訊";
 "profile.details.guest" = "訪客";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "群組管理員";
 "profile.details.partner" = "外部合作者";
 "profile.details.federated" = "聯邦";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";

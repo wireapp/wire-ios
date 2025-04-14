@@ -60,7 +60,7 @@
 "share_extension.logged_out.message" = "Please choose another account.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Empty conversation";
+"share_extension.conversation.displayname.emptygroup" = "Tom gruppesamtale";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ begyndte at bruge en ny enhed.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@ begyndte at bruge nye enheder.";
 "share_extension.meta.degraded.dialog_message" = "Vil du stadig sende meddelelsen?";

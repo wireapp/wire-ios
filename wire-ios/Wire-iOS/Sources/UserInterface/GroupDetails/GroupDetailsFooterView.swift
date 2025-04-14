@@ -36,7 +36,8 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
         for conversation: GroupDetailsConversationType,
         user: any UserType
     ) {
-        let shouldShow = user.canAddUser(to: conversation)
+        let shouldShow = user.canAddUser(to: conversation) ||
+            ((user.canManageTeam || conversation.privateChannelPermission == .everyone) && conversation.isChannel)
         leftButton.isHidden = !shouldShow
         leftButton.isEnabled = conversation.freeParticipantSlots > 0
     }

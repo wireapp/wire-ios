@@ -60,7 +60,7 @@
 "share_extension.logged_out.message" = "Please choose another account.";
 
 // Conversation Degraded (security level lowered)
-"share_extension.conversation.displayname.emptygroup" = "Empty conversation";
+"share_extension.conversation.displayname.emptygroup" = "Prazen skupinski pogovor";
 "share_extension.meta.degraded.degradation_reason_message.singular" = "%@ je začel(-a) z uporabo nove naprave.";
 "share_extension.meta.degraded.degradation_reason_message.plural" = "%@je začel(-a) z uporabo novih naprav.";
 "share_extension.meta.degraded.dialog_message" = "Ali še vedno želite poslati vaše sporočilo?";

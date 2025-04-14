@@ -38,23 +38,23 @@
 "on_prem_user_login.alert.message.backend-url" = "后端 URL：";
 "on_prem_user_login.alert.button" = "好";
 
-"proxy_credentials.title" = "代理凭证";
-"proxy_credentials.message" = "此后端配置为使用以下代理服务器：%@。";
+"proxy_credentials.title" = "Proxy Credentials";
+"proxy_credentials.message" = "This backend is configured to use the following proxy server: %@.";
 "proxy_credentials.input_email.title" = "代理电子邮件或用户名";
 "proxy_credentials.input_password.title" = "密码";
 "proxy_credentials.input_password.placeholder" = "键入密码";
 
-"switch_backend_confirmation.title" = "重定向到本地后端？";
-"switch_backend_confirmation.message" = "如果继续，您将被重定向到以下本地后端进行登录：";
+"switch_backend_confirmation.title" = "Redirect to an on-premises backend?";
+"switch_backend_confirmation.message" = "If you proceed, you will be redirected to the following on-premises backend to log in:";
 "switch_backend_confirmation.backend_name" = "后端名称：";
 "switch_backend_confirmation.backend_url" = "后端 URL：";
-"switch_backend_confirmation.backend_wsurl" = "后端 websocket URL：";
-"switch_backend_confirmation.blacklist_url" = "黑名单 URL：";
-"switch_backend_confirmation.teams_url" = "团队 URL：";
-"switch_backend_confirmation.accounts_url" = "账户 URL：";
-"switch_backend_confirmation.website_url" = "网站 URL：";
+"switch_backend_confirmation.backend_wsurl" = "Backend websocket URL:";
+"switch_backend_confirmation.blacklist_url" = "Blacklist URL:";
+"switch_backend_confirmation.teams_url" = "Teams URL:";
+"switch_backend_confirmation.accounts_url" = "Accounts URL:";
+"switch_backend_confirmation.website_url" = "Website URL:";
 "switch_backend_confirmation.countly_url" = "Countly URL:";
-"switch_backend_confirmation.proceed" = "继续";
+"switch_backend_confirmation.proceed" = "Proceed";
 "switch_backend_confirmation.cancel" = "取消";
 "switch_backend_confirmation.show_details" = "Show details";
 "switch_backend.error.title.logged_in" = "无法切换服务器";
@@ -72,7 +72,7 @@
 "authentication.error.title.no_internet" = "No internet connection";
 "authentication.error.title.general" = "好像出了点问题。";
 "authentication.error.title.sso_login_failed" = "Login with SSO failed";
-"authentication.error.title.invalid_credentials" = "无效信息";
+"authentication.error.title.invalid_credentials" = "Invalid Information";
 "authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
 "authentication.error.title.account_pending_activation" = "Pending activation";
 "authentication.error.title.account_suspended" = "Unauthorized";
@@ -81,7 +81,7 @@
 "authentication.error.message.no_internet" = "您的网络好像有些问题，请稍候再试。";
 "authentication.error.message.general" = "Please retry later.";
 "authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
-"authentication.error.message.invalid_credentials" = "这些帐户凭据不正确。请验证您的详细信息并重试。";
+"authentication.error.message.invalid_credentials" = "These account credentials are incorrect. Please verify your details and try again.";
 "authentication.error.message.invalid_invalid_2FA_code" = "请输入有效的验证码。";
 "authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
 "authentication.error.message.account_suspended" = "此账户不再被授权登录";
@@ -98,5 +98,5 @@
 "obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "到App Store";
 
-"obsolete_backend.alert.title" = "不支持服务器版本";
-"obsolete_backend.alert.message" = "此应用不支持该服务器版本。请联系您的系统管理员。";
+"obsolete_backend.alert.title" = "Server version not supported";
+"obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";

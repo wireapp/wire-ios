@@ -200,7 +200,7 @@
 "contactsList.memberIcon.description" = "Membro";
 "contactsList.userCell.hint" = "Toque duas vezes para abrir a conversa";
 "contactsList.pendingConnection.hint" = "Toque duas vezes para abrir o perfil";
-"contactsList.cancelButton.description" = "Fechar visão geral da nova conversa";
+"contactsList.cancelButton.description" = "Fechar lista de contatos";
 
 "servicesList.serviceCell.hint" = "Toque duas vezes para abrir os detalhes do serviço";
 
@@ -218,14 +218,12 @@
 "conversationsList.replyStatus.value" = "Responder";
 "conversationsList.badgeView.value" = "Novas mensagens: %d";
 "conversationsList.itemCell.hint" = "Toque duas vezes para abrir a conversa";
-"conversationsList.itemCell.avatar.group.label" = "Grupo";
-"conversationsList.itemCell.avatar.channel.label" = "Canal";
 "conversationsList.joinButton.description" = "Participe";
 "conversationsList.joinButton.hint" = "Toque duas vezes para entrar na chamada";
 "conversationsList.connectionRequest.description" = "Aprovação pendente de solicitação de conexão";
 "conversationsList.connectionRequest.hint" = "Toque duas vezes para abrir o perfil";
 
-"conversationList.startConversationButton.description" = "Criar um grupo ou canal ou procurar pessoas";
+"conversationList.startConversationButton.description" = "Criar grupo ou procurar pessoas";
 "conversationsList.filterButton.description" = "Filtrar Conversas";
 
 "conversationsList.filter_menu_options.allConversations.description" = "Mostrar todas as conversas";

@@ -51,8 +51,7 @@
 @property (nonatomic, readwrite) BOOL canModifyEphemeralSettingsInConversation;
 @property (nonatomic, readwrite) BOOL canModifyReadReceiptSettingsInConversation;
 @property (nonatomic, readwrite) BOOL canModifyNotificationSettingsInConversation;
-@property (nonatomic, readwrite) BOOL canModifyGuestsAccessControlSettingsInConversation;
-@property (nonatomic, readwrite) BOOL canModifyChannelAccessLevelSettingsInConversation;
+@property (nonatomic, readwrite) BOOL canModifyAccessControlSettingsInConversation;
 @property (nonatomic, readwrite) BOOL canAddUserToConversation;
 @property (nonatomic, readwrite) BOOL canRemoveUserFromConversation;
 @property (nonatomic, readwrite) BOOL canAddServiceToConversation;

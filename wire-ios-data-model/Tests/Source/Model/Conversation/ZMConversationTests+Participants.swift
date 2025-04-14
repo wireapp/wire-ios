@@ -22,7 +22,7 @@ import WireDataModelSupport
 
 final class ConversationParticipantsTests: ZMConversationTestsBase {
 
-    func testThatSortedOtherParticipantsReturnsUsersSortedByName() {
+    func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
 
@@ -43,7 +43,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         XCTAssertEqual(sut.sortedOtherParticipants as! [ZMUser], [user2, user1])
     }
 
-    func testThatSortedServiceUsersReturnsUsersSortedByName() {
+    func testThatSortedServiceUsersReutrnsUsersSortedByName() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
 

@@ -40,7 +40,7 @@ extension ConversationViewController {
 
         button.accessibilityIdentifier = "videoCallBarButton"
         button.accessibilityTraits.insert(.startsMediaSession)
-        button.accessibilityLabel = CallActions.Label.makeAudioCall
+        button.accessibilityLabel = CallActions.Label.makeVideoCall
 
         let videoCallAction = UIAction { [weak self] _ in
             self?.callItemTapped()
@@ -54,7 +54,7 @@ extension ConversationViewController {
 
         // Enable large content viewer
         button.showsLargeContentViewer = true
-        button.largeContentTitle = CallActions.Label.makeAudioCall
+        button.largeContentTitle = CallActions.Label.makeVideoCall
         button.largeContentImage = UIImage(resource: .videoCall)
 
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))

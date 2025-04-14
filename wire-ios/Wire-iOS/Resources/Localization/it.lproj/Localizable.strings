@@ -101,7 +101,7 @@
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
-"add_participants.alert.title" = "La conversazione è piena";
+"add_participants.alert.title" = "Chiamata piena";
 "add_participants.alert.message.new_conversation" = "Un massimo di %d persone può partecipare ad una conversazione.";
 "add_participants.alert.message.existing_conversation" = "Un massimo di %1$d persone può partecipare ad una conversazione. Al momento c'è spazio solo per altri %2$d.";
 
@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Non ci sono amministratori.";
 "participants.section.members.footer" = "Non ci sono membri.";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "Amministratore del gruppo";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Altre azioni";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Rimuovere?";
 "profile.remove_dialog_message" = "%@ non sarà più in grado di inviare o ricevere messaggi in questa conversazione.";
 "profile.remove_dialog_button_cancel" = "Annulla";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "Rimuovi dal gruppo…";
+"profile.remove_dialog_button_remove_confirm" = "Rimuovi dal gruppo";
 
 // Block dialog
 "profile.block_dialog.title" = "Blocca?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Dettagli";
 "profile.details.guest" = "Ospite";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "Amministratore del gruppo";
 "profile.details.partner" = "esterno";
 "profile.details.federated" = "Federated";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Self-deleting messages are now mandatory. New messages will self-delete after %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";

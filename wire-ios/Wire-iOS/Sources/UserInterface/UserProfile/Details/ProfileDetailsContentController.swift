@@ -260,7 +260,7 @@ final class ProfileDetailsContentController: NSObject,
                 for: indexPath
             ) as! IconToggleSubtitleCell
 
-            cell.configure(with: CellConfiguration.groupAdminToggle(get: {
+            cell.configure(with: CellConfiguration.groupAdminToogle(get: {
                 groupAdminEnabled
             }, set: { _, _ in
                 self.isAdminState.toggle()
