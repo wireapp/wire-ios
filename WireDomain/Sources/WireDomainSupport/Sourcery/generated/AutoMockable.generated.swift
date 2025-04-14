@@ -2494,6 +2494,21 @@ public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
         }
     }
 
+    // MARK: - createOrUpdateTeam
+
+    public var createOrUpdateTeamIdentifierNameCreatorIconIconKey_Invocations: [(identifier: UUID, name: String, creator: UUID, icon: String, iconKey: String?)] = []
+    public var createOrUpdateTeamIdentifierNameCreatorIconIconKey_MockMethod: ((UUID, String, UUID, String, String?) async -> Void)?
+
+    public func createOrUpdateTeam(identifier: UUID, name: String, creator: UUID, icon: String, iconKey: String?) async {
+        createOrUpdateTeamIdentifierNameCreatorIconIconKey_Invocations.append((identifier: identifier, name: name, creator: creator, icon: icon, iconKey: iconKey))
+
+        guard let mock = createOrUpdateTeamIdentifierNameCreatorIconIconKey_MockMethod else {
+            fatalError("no mock for `createOrUpdateTeamIdentifierNameCreatorIconIconKey`")
+        }
+
+        await mock(identifier, name, creator, icon, iconKey)
+    }
+
 }
 
 public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
@@ -2584,6 +2599,21 @@ public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
         } else {
             fatalError("no mock for `fetchSelfLegalholdInfo`")
         }
+    }
+
+    // MARK: - createOrUpdateTeam
+
+    public var createOrUpdateTeamIdentifierNameCreatorIconIconKey_Invocations: [(identifier: UUID, name: String, creator: UUID, icon: String, iconKey: String?)] = []
+    public var createOrUpdateTeamIdentifierNameCreatorIconIconKey_MockMethod: ((UUID, String, UUID, String, String?) async -> Void)?
+
+    public func createOrUpdateTeam(identifier: UUID, name: String, creator: UUID, icon: String, iconKey: String?) async {
+        createOrUpdateTeamIdentifierNameCreatorIconIconKey_Invocations.append((identifier: identifier, name: name, creator: creator, icon: icon, iconKey: iconKey))
+
+        guard let mock = createOrUpdateTeamIdentifierNameCreatorIconIconKey_MockMethod else {
+            fatalError("no mock for `createOrUpdateTeamIdentifierNameCreatorIconIconKey`")
+        }
+
+        await mock(identifier, name, creator, icon, iconKey)
     }
 
     // MARK: - deleteMembership
