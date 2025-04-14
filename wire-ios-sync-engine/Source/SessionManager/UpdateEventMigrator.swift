@@ -59,13 +59,6 @@ private extension UpdateEvent {
 
             self = .conversation(.delete(event))
 
-        case .conversationMemberJoin:
-            guard let event = Self.conversationMemberJoinEvent(from: legacyEvent) else {
-                return nil
-            }
-
-            self = .conversation(.memberJoin(event))
-
         case .conversationMessageAdd:
             guard let event = Self.conversationMLSMessageAddEvent(from: legacyEvent) else {
                 return nil
@@ -129,51 +122,6 @@ private extension UpdateEvent {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp
-        )
-    }
-
-    private static func conversationMemberJoinEvent(from event: ZMUpdateEvent) -> ConversationMemberJoinEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>.self,
-                from: event.payload
-            ),
-            let conversationID = payload.conversationID,
-            let senderID = payload.senderID,
-            let timestamp = payload.timestamp,
-            let members = payload.data.users
-        else {
-            return nil
-        }
-
-        let memberData = members.map { member in
-            Conversation.Member(
-                qualifiedID: member.qualifiedID.map(QualifiedID.init),
-                id: member.id,
-                qualifiedTarget: member.qualifiedTarget.map(QualifiedID.init),
-                target: member.target,
-                conversationRole: member.conversationRole,
-                service: member.service.map { service in
-                    Service(
-                        id: service.id,
-                        provider: service.provider
-                    )
-                },
-                archived: member.archived,
-                archivedReference: member.archivedReference,
-                hidden: member.hidden,
-                hiddenReference: member.hiddenReference,
-                mutedStatus: member.mutedStatus,
-                mutedReference: member.mutedReference
-            )
-        }
-
-        return ConversationMemberJoinEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp,
-            members: memberData
         )
     }
 
@@ -342,16 +290,6 @@ private extension Payload.ConversationEvent {
 
 }
 
-private extension WireAPI.QualifiedID {
-
-    init(_ id: WireDataModel.QualifiedID) {
-        self.init(
-            uuid: id.uuid,
-            domain: id.domain
-        )
-    }
-
-}
 private struct DecryptedMLSMessageAddEvent: EventData, Codable {
 
     static var eventType: ZMUpdateEventType {

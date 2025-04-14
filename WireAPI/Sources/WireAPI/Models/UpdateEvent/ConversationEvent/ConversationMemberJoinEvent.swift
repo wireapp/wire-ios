@@ -38,16 +38,4 @@ public struct ConversationMemberJoinEvent: Equatable, Codable, Sendable {
 
     public let members: [Conversation.Member]
 
-    public init(
-        conversationID: ConversationID,
-        senderID: UserID,
-        timestamp: Date,
-        members: [Conversation.Member]
-    ) {
-        self.conversationID = conversationID
-        self.senderID = senderID
-        self.timestamp = timestamp
-        self.members = members
-    }
-
 }
