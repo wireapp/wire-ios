@@ -702,7 +702,6 @@
 				LinkOpeningOption/BrowserOpeningOptionTests.swift,
 				LocationDataTests.swift,
 				LocationSendViewControllerTests.swift,
-				LoggingTest.swift,
 				MarkdownTextStorageTests.swift,
 				MarkdownTextViewTests.swift,
 				MediaBarSnapshotTests.swift,

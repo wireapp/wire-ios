@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundationSupport
 import XCTest
 
 @testable import WireAPI
@@ -23,11 +24,22 @@ import XCTest
 
 final class BackendMetadataAPITests: XCTestCase {
 
+    private var mockDateProvider: MockCurrentDateProviding!
+
+    override func setUp() async throws {
+        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
+    }
+
+    override func tearDown() {
+        mockDateProvider = nil
+    }
+
     // MARK: - Get backend info
 
     func testGetBackendMetadataRequest() async throws {
         // Then
-        try await RequestSnapshotter().verifyRequest { _, networkService in
+        try await RequestSnapshotter(currentDateProvider: mockDateProvider).verifyRequest { _, networkService in
             let sut = BackendMetadataAPIBuilder(networkService: networkService).makeAPI()
             // When
             _ = try? await sut.getBackendMetadata()

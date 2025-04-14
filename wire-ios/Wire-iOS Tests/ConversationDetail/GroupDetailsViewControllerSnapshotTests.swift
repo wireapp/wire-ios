@@ -137,7 +137,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         mockSelfUser.canModifyEphemeralSettingsInConversation = true
         mockSelfUser.canModifyNotificationSettingsInConversation = true
         mockSelfUser.canModifyReadReceiptSettingsInConversation = true
-        mockSelfUser.canModifyAccessControlSettings = true
+        mockSelfUser.canModifyGuestsAccessControlSettings = true
+        mockSelfUser.canModifyChannelAccessLevelSettings = true
 
         createGroupConversation()
         mockConversation.teamType = MockTeam()
