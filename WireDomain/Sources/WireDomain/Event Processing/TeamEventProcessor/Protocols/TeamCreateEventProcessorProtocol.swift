@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-enum TeamEventType: String {
+/// Process team create event.
+///
+protocol TeamCreateEventProcessorProtocol {
 
-    case delete = "team.delete"
-    case memberLeave = "team.member-leave"
-    case memberUpdate = "team.member-update"
-    case create = "team.create"
+    /// Process a team create event.
+    ///
+    /// - Parameter event: A team create event.
+
+    func processEvent(_ event: TeamCreateEvent) async throws
 
 }

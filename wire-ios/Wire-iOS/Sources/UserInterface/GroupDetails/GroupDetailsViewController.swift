@@ -288,8 +288,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
 
             if conversation.teamRemoteIdentifier != nil,
-               user.canModifyReadReceiptSettings(in: conversation),
-               conversation.messageProtocol != .mls { // TODO: [WPB-16771] Remove when read receipts supported on MLS
+               user.canModifyReadReceiptSettings(in: conversation) {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,

@@ -16,13 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-enum TeamEventType: String {
+struct TeamCreateEventProcessor: TeamCreateEventProcessorProtocol {
 
-    case delete = "team.delete"
-    case memberLeave = "team.member-leave"
-    case memberUpdate = "team.member-update"
-    case create = "team.create"
+    let repository: any TeamRepositoryProtocol
+
+    func processEvent(_ event: TeamCreateEvent) async throws {
+        let identifier = event.identifier
+        let name = event.name
+        let creator = event.creator
+        let icon = event.icon
+        let iconKey = event.iconKey
+
+        await repository.createOrUpdateTeam(
+            identifier: identifier,
+            name: name,
+            creator: creator,
+            icon: icon,
+            iconKey: iconKey
+        )
+    }
 
 }
