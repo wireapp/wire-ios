@@ -19,7 +19,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireDomainPkg",
+            name: "WireDomainPackage",
             dependencies: [
                 "WireAPI",
                 "WireBackup",
@@ -28,15 +28,15 @@ let package = Package(
             ]
         ),
         .target(
-            name: "WireDomainPkgSupport",
-            dependencies: ["WireDomainPkg"],
+            name: "WireDomainPackageSupport",
+            dependencies: ["WireDomainPackage"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
-            name: "WireDomainPkgTests",
+            name: "WireDomainPackageTests",
             dependencies: [
-                "WireDomainPkg",
-                "WireDomainPkgSupport",
+                "WireDomainPackage",
+                "WireDomainPackageSupport",
                 .product(name: "WireFoundationSupport", package: "WireFoundation")
             ]
         ),

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPkg
-import WireDomainPkgSupport
+import WireDomainPackage
+import WireDomainPackageSupport
 import WireLogging
 import WireTestingPackage
 import XCTest

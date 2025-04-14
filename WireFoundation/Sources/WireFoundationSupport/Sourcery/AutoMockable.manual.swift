@@ -160,19 +160,3 @@ public actor MockKeychainProtocol: KeychainProtocol {
     }
 
 }
-
-public final class MockCurrentDateProviding: CurrentDateProviding, @unchecked Sendable {
-
-    // MARK: - Life cycle
-
-    public init(
-        now: Date = .now
-    ) {
-        self.now = now
-    }
-
-    // MARK: - now
-
-    public var now: Date
-
-}

@@ -24,13 +24,13 @@ public import WireLogging
 
 public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
 
-    let fileArchiver: any ExportBackupFileArchiverProtocol
+    let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
     let selfUserID: QualifiedID
     // let logger: any LoggerProtocol // TODO: [WPB-14592] fix Sendable error
 
     public init(
-        fileArchiver: any ExportBackupFileArchiverProtocol,
+        fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding,
         // TODO: [WPB-14592] inject the persistent container or any CoreData context
         // TODO: [WPB-14592] inject the self user id
@@ -57,7 +57,7 @@ public struct CreateBackupUseCase: CreateBackupUseCaseProtocol {
                         selfUserId: BackupQualifiedId(selfUserID),
                         workDirectory: "TODO-0", // TODO: [WPB-14592] pass temporary directory URL
                         outputDirectory: "TODO-1", // TODO: [WPB-14592] pass temporary directory URL
-                        fileZipper: ExportBackupFileZipper2FileZipperAdapter(
+                        fileZipper: CreateBackupFileZipper2FileZipperAdapter(
                             fileManager: .default,
                             fileArchiver: fileArchiver,
                             currentDateProvider: currentDateProvider

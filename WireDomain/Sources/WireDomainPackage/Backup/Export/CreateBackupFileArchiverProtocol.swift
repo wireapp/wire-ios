@@ -16,6 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
-// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
-// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
+public import Foundation
+
+// sourcery: AutoMockable
+public protocol CreateBackupFileArchiverProtocol: Sendable {
+
+    /// Creates a ZIP file at `destinationURL` from the file or directory at `sourceURL`.
+    func zipResources(
+        at resourceURLs: [URL],
+        into destinationURL: URL
+    ) throws
+
+}
