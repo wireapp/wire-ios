@@ -41,21 +41,21 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        
+
         if onGoingtask != nil {
             logger.warn(
                 "onGoingtask not null: a notification is already being processed",
                 attributes: .newNSE
             )
         }
-        
+
         let notificationContentHandler: (UNNotificationContent) -> Void = { [weak self] in
             contentHandler($0) // Finishes current notification flow by calling system built-in handler.
             self?.onGoingtask = nil // Current notification flow was completed, nil out the task.
         }
 
         onGoingtask = Task {
-            
+
             guard !Task.isCancelled else {
                 // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty
                 // content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
