@@ -227,6 +227,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         userID: WireDataModel.QualifiedID
     ) async {
         await context.perform {
+            guard !mlsConversation.migratedToMLS else {
+                return
+            }
 
             // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
             // conversations here.
@@ -260,6 +263,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
             /// Switch active conversation
             user.oneOnOneConversation = mlsConversation
+            mlsConversation.migratedToMLS = true
         }
     }
 

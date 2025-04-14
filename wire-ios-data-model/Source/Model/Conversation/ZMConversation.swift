@@ -38,6 +38,10 @@ public extension ZMConversation {
 
     @NSManaged var isPendingInitialFetch: Bool
 
+    /// True if conversation was ran OneOnOneMigrator and migrated to MLS from Proteus Conversation.
+
+    @NSManaged var migratedToMLS: Bool
+
     // MARK: - CoreData unique constraint
 
     internal static let domainKey: String = "domain"
