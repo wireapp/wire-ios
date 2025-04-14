@@ -67,8 +67,7 @@ final class ConversationCreationController: UIViewController {
         let sections = [
             guestsSection,
             values.shouldIncludeServices ? servicesSection : nil,
-            // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
-            values.encryptionProtocol != .mls ? receiptsSection : nil,
+            receiptsSection,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
         ].compactMap { $0 }
 
