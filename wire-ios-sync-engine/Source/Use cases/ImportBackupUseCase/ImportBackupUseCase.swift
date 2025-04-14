@@ -64,7 +64,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     }
 
                     // before we start the first operation let the user know, the progress has started
-                    continuation.yield(.progress(0.25))
+                    continuation.yield(.progress(current: 1, total: 4))
 
                     let unzippedURL = try decryptAndUnzipBackup(
                         url: url,
@@ -72,7 +72,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         accountID: account.userIdentifier
                     )
 
-                    continuation.yield(.progress(0.5))
+                    continuation.yield(.progress(current: 2, total: 4))
 
                     logger.debug("creating backup of user client")
 

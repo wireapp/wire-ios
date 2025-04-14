@@ -68,13 +68,13 @@ public struct CreateBackupUseCase<
                 do {
                     let logger = logger()
                     let context = context()
-                    let reportProgress: (Float) -> Void = { progressValue in
-                        logger.debug("reporting overall process: \(progressValue * 100)%")
-                        continuation.yield(.progress(progressValue))
+                    let reportProgress: (Int, Int) -> Void = { current, total in
+                        logger.debug("reporting overall process: \(Float(current * 100) / Float(total))%")
+                        continuation.yield(.progress(current, total))
                         Thread.sleep(forTimeInterval: 1) // TODO: delete this line
                     }
 
-                    reportProgress(0)
+                    reportProgress(0, 0)
                     logger.debug("initializing MPBackupExporter")
                     let backupExporter = Self.createBackupExporter(
                         selfUserID: selfUserID,
@@ -97,32 +97,37 @@ public struct CreateBackupUseCase<
                     let (userCount, messageCount, conversationCount) = try await context.perform {
                         try Self.fetchCounts(in: context)
                     }
-                    logger.debug("""
-                    userCount: \(userCount), messageCount: \(messageCount), conversationCount: \(conversationCount)
-                    """)
+                    let total = userCount + messageCount + conversationCount
+                    logger.debug([
+                        "userCount: \(userCount)",
+                        "messageCount: \(messageCount)",
+                        "conversationCount: \(conversationCount)",
+                        "total: \(total)"
+                    ].joined(separator: ", "))
 
                     // fetch the data and pass it into the backup exporter
-                    let userProgressOffset = Float()
-                    let userProgressMultiplier = Float(userCount) / Float(userCount + messageCount + conversationCount)
+                    let userProgressMultiplier = Float(userCount) / Float(total)
                     try await context.perform {
-                        try Self.exportUsers(from: context, using: backupExporter) { progress in
-                            reportProgress(userProgressOffset + userProgressMultiplier * progress)
+                        try Self.exportUsers(from: context, using: backupExporter) { current, total in
+                            reportProgress(Int(Float(current) * userProgressMultiplier), total)
                         }
                     }
 
-                    let conversationProgressOffset = Float(userCount)
-                    let conversationProgressMultiplier = Float(conversationCount) / Float(userCount + messageCount + conversationCount)
+                    let conversationProgressOffset = userCount
+                    let conversationProgressMultiplier = Float(conversationCount) / Float(total)
                     try await context.perform {
-                        try Self.exportConversations(from: context, using: backupExporter) { progress in
-                            reportProgress(conversationProgressOffset + conversationProgressMultiplier * progress)
+                        try Self.exportConversations(from: context, using: backupExporter) { current, total in
+                            let current = Int(Float(conversationProgressOffset + current) * conversationProgressMultiplier)
+                            reportProgress(current, total)
                         }
                     }
 
-                    let messageProgressOffset = Float(userCount + conversationCount)
-                    let messageProgressMultiplier = Float(messageCount) / Float(userCount + messageCount + conversationCount)
+                    let messageProgressOffset = userCount + conversationCount
+                    let messageProgressMultiplier = Float(messageCount) / Float(total)
                     try await context.perform {
-                        try Self.exportMessages(from: context, using: backupExporter) { progress in
-                            reportProgress(messageProgressOffset + messageProgressMultiplier * progress)
+                        try Self.exportMessages(from: context, using: backupExporter) { current, total in
+                            let current = Int(Float(messageProgressOffset + current) * messageProgressMultiplier)
+                            reportProgress(current, total)
                         }
                     }
 
@@ -182,7 +187,7 @@ public struct CreateBackupUseCase<
     private static func exportUsers(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportingProgress: (Float) -> Void
+        reportingProgress: (Int, Int) -> Void
     ) throws {
 
         let fetchRequest = UserAdapter.fetchRequest()
@@ -201,7 +206,7 @@ public struct CreateBackupUseCase<
             }
             if index % 50 == 0 || index == recordCount - 1 {
                 try Task.checkCancellation()
-                reportingProgress(Float(index + 1) / Float(recordCount))
+                reportingProgress(index + 1, recordCount)
             }
         }
 
@@ -210,7 +215,7 @@ public struct CreateBackupUseCase<
     private static func exportConversations(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportingProgress: (Float) -> Void
+        reportingProgress: (Int, Int) -> Void
     ) throws {
 
         let fetchRequest = ConversationAdapter.fetchRequest()
@@ -228,7 +233,7 @@ public struct CreateBackupUseCase<
             }
             if index % 50 == 0 || index == recordCount - 1 {
                 try Task.checkCancellation()
-                reportingProgress(Float(index + 1) / Float(recordCount))
+                reportingProgress(index + 1, recordCount)
             }
         }
 
@@ -237,7 +242,7 @@ public struct CreateBackupUseCase<
     private static func exportMessages(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportingProgress: (Float) -> Void
+        reportingProgress: (Int, Int) -> Void
     ) throws {
 
         let fetchRequest = MessageAdapter.fetchRequest()
@@ -262,7 +267,7 @@ public struct CreateBackupUseCase<
             }
             if index % 50 == 0 || index == recordCount - 1 {
                 try Task.checkCancellation()
-                reportingProgress(Float(index + 1) / Float(recordCount))
+                reportingProgress(index + 1, recordCount)
             }
         }
 

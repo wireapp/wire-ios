@@ -19,6 +19,11 @@
 public import Foundation
 
 public enum CreateBackupProgress: Sendable {
-    case progress(Float) // TODO: use two integers instead (current/total)
+
+    case progress(_ current: Int, _ total: Int)
     case done(URL)
+
+    public static func progress(current: Int, total: Int) -> Self { .progress(current, total) }
+    public static func done(url: URL) -> Self { .done(url) }
+
 }

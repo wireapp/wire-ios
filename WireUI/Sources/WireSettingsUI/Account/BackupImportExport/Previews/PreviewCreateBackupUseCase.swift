@@ -40,7 +40,7 @@ struct PreviewCreateBackupUseCase: CreateBackupUseCaseProtocol {
                             throw PreviewExportBackupError()
                         }
 
-                        continuation.yield(.progress(Float(i) / Float(steps)))
+                        continuation.yield(.progress(i, steps))
 
                         try await Task.sleep(for: .milliseconds(.random(in: 50 ... 300)))
                     }

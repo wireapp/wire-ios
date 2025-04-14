@@ -17,6 +17,10 @@
 //
 
 public enum ImportBackupProgress: Equatable, Sendable {
-    case progress(Float)
+
+    case progress(_ current: Int, _ total: Int)
     case done
+
+    public static func progress(current: Int, total: Int) -> Self { .progress(current, total) }
+
 }
