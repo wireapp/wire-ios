@@ -18,7 +18,7 @@
 
 import Foundation
 import WireCrypto
-import WireDomainPkg
+import WireDomainPackage
 import ZipArchive
 
 extension SessionManager {
