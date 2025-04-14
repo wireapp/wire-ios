@@ -316,19 +316,22 @@ extension PullEventsStep {
         let usernameItemID = "proxy-\(proxy.host):\(proxy.port)-username"
         let passwordItemID = "proxy-\(proxy.host):\(proxy.port)-password"
 
+        let genericPasswordKeychainItem: KeychainQueryItem = .itemClass(.genericPassword)
+        let returningDataKeychainItem: KeychainQueryItem = .returningData(true)
+
         let proxyUsername: String? = try? await keychain.fetchItem(
             query: [
-                .itemClass(.genericPassword),
+                genericPasswordKeychainItem,
                 .account(usernameItemID),
-                .returningData(true)
+                returningDataKeychainItem
             ]
         )
 
         let proxyPassword: String? = try? await keychain.fetchItem(
             query: [
-                .itemClass(.genericPassword),
+                genericPasswordKeychainItem,
                 .account(passwordItemID),
-                .returningData(true)
+                returningDataKeychainItem
             ]
         )
 
