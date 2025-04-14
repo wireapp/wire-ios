@@ -263,7 +263,7 @@ final class APIMigrationManagerTests: MessagingTest {
                 countlyURL: nil
             ),
             proxySettings: nil,
-            certificateTrust: ServerCertificateTrust(trustData: [])
+            certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         )
 
         let wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
