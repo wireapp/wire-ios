@@ -438,8 +438,6 @@ public final class MessageSender: MessageSenderInterface {
             retryCount += 1
 
             try await operation()
-        } catch {
-            throw error
         }
     }
 
