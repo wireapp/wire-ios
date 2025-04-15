@@ -73,17 +73,28 @@ struct ResponseParser<Success> {
         return copy
     }
 
+    /// Matches a failure response with the given `code` and optional `label`.
+    ///
+    /// If `label` is given, this method will attempt to parse a `FailureResponse` from the response data, and if this
+    /// fails or the label does not match the `FailureResponse`, the match will fail.
+
     func failure(
         code: HTTPStatusCode,
-        label: String = "",
+        label: String? = nil,
         error: some Error
     ) -> ResponseParser<Success> {
         var copy = self
         copy.parseBlocks.append { httpCode, data in
-            guard let data, httpCode == code.rawValue else { return nil }
-            let failure = try decoder.decode(FailureResponse.self, from: data)
-            guard failure.code == code.rawValue, failure.label == label else { return nil }
-            throw error
+            guard httpCode == code.rawValue else { return nil }
+
+            if let label {
+                guard let data, let failure = try? decoder.decode(FailureResponse.self, from: data),
+                      failure.label == label else { return nil }
+
+                throw error
+            } else {
+                throw error
+            }
         }
         return copy
     }
