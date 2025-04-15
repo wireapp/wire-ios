@@ -26,6 +26,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case proteusViaCoreCrypto
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
+    case skipMLSMessagesDecryption
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
@@ -46,6 +47,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .ignoreIncomingEvents:
             "Turn on to ignore incoming update events"
+
+        case .skipMLSMessagesDecryption:
+            "Turn on to skip MLS message decryption"
 
         case .debugDuplicateObjects:
             "Turn on to have actions to insert duplicate users, conversations, teams"
