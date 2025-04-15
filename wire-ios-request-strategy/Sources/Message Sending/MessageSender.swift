@@ -413,7 +413,8 @@ public final class MessageSender: MessageSenderInterface {
                 try await handleMLSStaleMessageError(
                     groupID: groupID,
                     mlsService: mlsService,
-                    operation: operation)
+                    operation: operation
+                )
             default:
                 throw error
             }
