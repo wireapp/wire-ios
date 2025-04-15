@@ -17,8 +17,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "WireCoreCrypto",
-            url: "https://github.com/wireapp/core-crypto/releases/download/v3.1.0/WireCoreCrypto.xcframework.zip",
-            checksum: "3bb569dc7041f5e062abab2fb8a1b175e850d61978deb17150bc52bfe20302d3"
+            url: "https://github.com/wireapp/core-crypto/releases/download/v3.1.1/WireCoreCrypto.xcframework.zip",
+            checksum: "fc1ec9eb58d6324ab32c34d131c7a22838e076e16461b00da3506e3be3488011"
         )
     ]
 )
