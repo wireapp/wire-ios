@@ -16,20 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency public import CellsSDK
+public import Foundation
 
-public protocol WireCellsService {
+/// Node preview data.
+/// - Parameters:
+///   - url: URL of the preview.
+///   - dimension: Max preview thumbnail dimension.
+public struct WireCellsNodePreview: Equatable, Hashable, Sendable {
+    public let url: URL
+    public let dimension: UInt
 
-    // MARK: - Create operations
-
-    func uploadFiles(_ filesUploadInfo: [WireCellsFileUploadInfo]) -> AsyncStream<WireCellsFileUploadProgress>
-
-    // MARK: - Read operations
-
-    /// List all files in the root directory.
-    func listFiles() async throws(WireCellsFileQueryError) -> [RestNode]
-
-    /// List all files in a specific directory.
-    /// - Parameter atPath: The path to the directory, from the root. Example: "/folder1/folder2"
-    func listFiles(atPath: String) async throws(WireCellsFileQueryError) -> [RestNode]
+    package init(
+        url: URL,
+        dimension: UInt
+    ) {
+        self.url = url
+        self.dimension = dimension
+    }
 }

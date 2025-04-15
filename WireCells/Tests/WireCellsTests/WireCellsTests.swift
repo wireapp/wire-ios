@@ -51,7 +51,7 @@ final class WireCellsTests: XCTestCase {
     func testUploadFile() async throws {
         let data = "Hello World!".data(using: .utf8)! // swiftlint:disable:this non_optional_string_data_conversion
         for await result in wireCellsService.uploadFiles([
-            WireCellsFileUploadInfo(data: data, uploadPath: "HelloWorld.txt")
+            WireCellsFileUploadDataInfo(data: data, uploadPath: "HelloWorld.txt")
         ]) {
             switch result {
             case .started:

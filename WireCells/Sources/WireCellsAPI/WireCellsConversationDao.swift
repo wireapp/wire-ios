@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
-public struct WireCellsFileUploadInfo: Identifiable, Sendable {
-    public let data: Data
-    /// Path that the file should be uploaded to
-    public let uploadPath: String
+public protocol WireCellsConversation: Sendable {
+    var conversationID: WireCellsConversationID { get }
+    var name: String { get }
+}
 
-    public var id: String { uploadPath }
+public protocol WireCellsConversationDao: Sendable {
 
-    ///   - Parameters:
-    ///       - data: The file data
-    ///       - uploadPath: Path that the file should be uploaded to
-    public init(data: Data, uploadPath: String) {
-        self.data = data
-        self.uploadPath = uploadPath
-    }
+    associatedtype Conversation: WireCellsConversation
+
+    func getCellName(conversationID: WireCellsConversationID) throws -> String
+    func setWireCell(conversationID: WireCellsConversationID, cellName: String) throws
+    func getAllConversations() throws -> [Conversation]
 }

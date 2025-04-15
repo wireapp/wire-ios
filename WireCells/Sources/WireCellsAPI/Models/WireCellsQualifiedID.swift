@@ -16,15 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
 
-public struct WireCellsUploadedFile: Sendable {
-    /// The path of the uploaded file on the server
-    public let path: URL
+public struct WireCellsQualifiedID: Codable, Equatable, Hashable, Identifiable, Sendable {
 
-    ///   - Parameters:
-    ///       - path: The path of the uploaded file on the server
-    public init(path: URL) {
-        self.path = path
+    package let domain: String
+    package let value: String
+
+    public var id: String {
+        return "\(domain)/\(value)"
+    }
+
+    package init(domain: String, value: String) {
+        self.domain = domain
+        self.value = value
+    }
+}
+
+extension WireCellsQualifiedID: CustomStringConvertible {
+    public var description: String {
+        return "\(domain)/\(value)"
+    }
+}
+
+extension WireCellsQualifiedID: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return "QualifiedID(domain: \(domain), value: \(value))"
     }
 }
