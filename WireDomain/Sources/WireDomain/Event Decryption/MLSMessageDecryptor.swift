@@ -79,7 +79,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         mlsGroupID: MLSGroupID,
         subconversation: String?
     ) async throws -> [MLSDecryptResult] {
-        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
 
         let subconvType = subconversation != nil ? SubgroupType(rawValue: subconversation!) : nil
 
