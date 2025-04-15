@@ -37,7 +37,8 @@ public enum NotificationCategory: String, CaseIterable {
         case .incomingCall:
             [.ignoreCall]
         case .missedCall:
-            [.callback]
+            []
+        // [.callback] TODO: [WPB-17220] Callback is currently broken - disabling this action for now
         case .incomingConnectionRequest:
             [.acceptConnectionRequest]
         }

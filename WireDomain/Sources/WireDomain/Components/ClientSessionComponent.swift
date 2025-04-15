@@ -42,6 +42,7 @@ public final class ClientSessionComponent {
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
 
+    private let onProcessedCallEvent: (CallEventInfo) -> Void
     private let onSelfClientInvalidated: () async -> Void
 
     public init(
@@ -60,7 +61,8 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        onSelfClientInvalidated: @escaping () async -> Void
+        onSelfClientInvalidated: @escaping () async -> Void,
+        onProcessedCallEvent: @escaping (CallEventInfo) -> Void
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -77,6 +79,7 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
+        self.onProcessedCallEvent = onProcessedCallEvent
         self.onSelfClientInvalidated = onSelfClientInvalidated
     }
 
@@ -430,7 +433,8 @@ public final class ClientSessionComponent {
         conversationLocalStore: conversationLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        protobufMessageProcessor: conversationProtobufMessageProcessor
+        protobufMessageProcessor: conversationProtobufMessageProcessor,
+        onProcessedCallEvent: onProcessedCallEvent
     )
 
     private lazy var conversationMLSWelcomeEventProcessor = ConversationMLSWelcomeEventProcessor(
@@ -445,7 +449,8 @@ public final class ClientSessionComponent {
         conversationLocalStore: conversationLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        protobufMessageProcessor: conversationProtobufMessageProcessor
+        protobufMessageProcessor: conversationProtobufMessageProcessor,
+        onProcessedCallEvent: onProcessedCallEvent
     )
 
     private lazy var conversationProtocolUpdateEventProcessor = ConversationProtocolUpdateEventProcessor(
