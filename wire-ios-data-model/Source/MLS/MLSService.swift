@@ -1698,6 +1698,10 @@ public final class MLSService: MLSServiceInterface {
             )
         } catch DecryptionError.wrongEpoch {
             Task.detached { [self] in
+                // ⚠️ Important:
+                // Run in detached Task to avoid deadlock:
+                // `fetchAndRepairGroupIfPossible` internally triggers quick sync via `recoverWithQuickSync()`.
+                // If this is called during an ongoing quick sync, awaiting it directly would deadlock.
                 await fetchAndRepairGroupIfPossible(with: groupID)
             }
             throw DecryptionError.wrongEpoch

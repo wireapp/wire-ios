@@ -337,7 +337,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                                 return nil
                             default:
                                 capturedError = CoreCryptoError.Mls(error)
-                                throw error
+                                throw CoreCryptoError.Mls(error)
                             }
                         } catch {
                             capturedError = error
