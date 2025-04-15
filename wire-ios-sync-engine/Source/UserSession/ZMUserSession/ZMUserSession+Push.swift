@@ -201,8 +201,9 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         case ConversationNotificationAction.connect.rawValue,
              NotificationActionIdentifier.acceptConnectionRequestIdentifier:
             acceptConnectionRequest(with: userInfo, completionHandler: completionHandler)
-        case NotificationActionIdentifier.callbackIdentifier:
-            callback(with: userInfo, completionHandler: completionHandler)
+        // TODO: [WPB-17220] new NSE - callback action is currently broken - disabling this action for now
+//        case NotificationActionIdentifier.callbackIdentifier:
+//            callback(with: userInfo, completionHandler: completionHandler)
         default:
             showContent(for: userInfo)
             completionHandler()

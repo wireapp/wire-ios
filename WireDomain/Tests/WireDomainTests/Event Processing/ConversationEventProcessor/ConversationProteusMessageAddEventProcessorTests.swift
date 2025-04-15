@@ -56,7 +56,7 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
             messageLocalStore: messageLocalStore,
             userLocalStore: userLocalStore,
             protobufMessageProcessor: protobufMessageProcessor,
-            onCalling: { self.callEventInfo = $0 }
+            onProcessedCallEvent: { self.callEventInfo = $0 }
         )
     }
 
