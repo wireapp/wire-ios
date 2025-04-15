@@ -548,6 +548,10 @@ public final class ClientSessionComponent {
         repository: teamRepository
     )
 
+    private lazy var teamCreateEventProcessor = TeamCreateEventProcessor(
+        repository: teamRepository
+    )
+
     private lazy var addPermissionEventProcessor = ConversationAddPermissionEventProcessor(
         localStore: conversationLocalStore
     )
@@ -597,7 +601,8 @@ public final class ClientSessionComponent {
         let teamEventProcessor = TeamEventProcessor(
             deleteEventProcessor: teamDeleteEventProcessor,
             memberLeaveEventProcessor: teamMemberLeaveEventProcessor,
-            memberUpdateEventProcessor: teamMemberUpdateEventProcessor
+            memberUpdateEventProcessor: teamMemberUpdateEventProcessor,
+            createEventProcessor: teamCreateEventProcessor
         )
 
         return UpdateEventProcessor(
