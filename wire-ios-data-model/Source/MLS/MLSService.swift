@@ -1329,7 +1329,7 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
+    public func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
         await launchGroupRepairTaskIfNotInProgress(for: groupID) {
             await self.fetchAndRepairGroup(with: groupID)
         }
