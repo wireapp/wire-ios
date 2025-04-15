@@ -1697,7 +1697,9 @@ public final class MLSService: MLSServiceInterface {
                 subconversationType: subconversationType
             )
         } catch DecryptionError.wrongEpoch {
-            await fetchAndRepairGroupIfPossible(with: groupID)
+            Task.detached { [self] in
+                await fetchAndRepairGroupIfPossible(with: groupID)
+            }
             throw DecryptionError.wrongEpoch
         } catch {
             throw error
