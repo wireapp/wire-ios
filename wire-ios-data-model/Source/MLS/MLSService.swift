@@ -1320,7 +1320,7 @@ public final class MLSService: MLSServiceInterface {
 
             // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
             // This ensures we're on the latest state.
-            //await syncStatus.recoverWithQuickSync()
+            await syncStatus.recoverWithQuickSync()
 
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
@@ -1676,18 +1676,17 @@ public final class MLSService: MLSServiceInterface {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
         do {
-            print("123 Decrypting Message")
-            return try await decryptionService.decrypt(//
+            return try await decryptionService.decrypt(
                 message: message,
                 for: groupID,
                 subconversationType: subconversationType
             )
         } catch DecryptionError.wrongEpoch {
-            print("123 DecryptionError.wrongEpoch -> will repair group")
-            await fetchAndRepairGroupIfPossible(with: groupID)
+            Task {
+                await fetchAndRepairGroupIfPossible(with: groupID)
+            }
             throw DecryptionError.wrongEpoch
         } catch {
-            print("123 some erro while decrypting Message")
             throw error
         }
     }

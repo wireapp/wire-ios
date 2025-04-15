@@ -17,6 +17,7 @@
 //
 
 import WireLogging
+//import WireDomain
 
 private let zmLog = ZMSLog(tag: "SyncStatus")
 
@@ -55,6 +56,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public internal(set) var isInBackground: Bool = false
     public internal(set) var needsToRestartQuickSync: Bool = false
     public internal(set) var pushChannelEstablishedDate: Date?
+//    private let incrementalSyncTaskManager = NonReentrantTaskManager()
 
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
@@ -161,17 +163,19 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     }
 
     public func performQuickSync() async {
-        await withCheckedContinuation { [weak self] continuation in
-            guard let self else {
-                continuation.resume()
-                return
-            }
+//        try? await incrementalSyncTaskManager.performIfNeeded {
+            await withCheckedContinuation { [weak self] continuation in
+                guard let self else {
+                    continuation.resume()
+                    return
+                }
 
-            // The continuation should be resumed when quick sync finishes.
-            quickSyncContinuation = continuation
-            currentSyncPhase = .fetchingMissedEvents
-            RequestAvailableNotification.notifyNewRequestsAvailable(self)
-        }
+                // The continuation should be resumed when quick sync finishes.
+                quickSyncContinuation = continuation
+                currentSyncPhase = .fetchingMissedEvents
+                RequestAvailableNotification.notifyNewRequestsAvailable(self)
+            }
+//        }
     }
 
     func notifyQuickSyncDidFinish() {

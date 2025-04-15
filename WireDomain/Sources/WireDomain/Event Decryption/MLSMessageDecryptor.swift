@@ -96,7 +96,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         }
 
         return results
-//        return []
+//        return [] 
     }
 
     private func processMLSMessageDecryptionResults(

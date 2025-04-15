@@ -109,12 +109,15 @@ actor EventProcessor: UpdateEventProcessor {
                 attributes: $0.logAttributes(source: duringQuickSync ? .pushChannel : .notificationsStream)
             )
         }
+        print("333 waiting for enqueueTask")
         try await enqueueTask {
+            print("333 enqueueTask is started")
             NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
 
             let publicKeys = try? await self.earService.fetchPublicKeys()
+            print("333 fetched PublicKeys")
 
             if duringQuickSync {
                 NotificationCenter.default.post(

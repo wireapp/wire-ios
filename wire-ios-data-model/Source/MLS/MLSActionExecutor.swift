@@ -322,7 +322,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Decryption
 
-    public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
+    public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {//
         try await performNonReentrant(groupID: groupID) {
             try await coreCrypto.perform {
                 var capturedError: Error?
