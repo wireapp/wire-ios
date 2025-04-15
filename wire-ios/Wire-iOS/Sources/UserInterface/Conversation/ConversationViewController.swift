@@ -168,7 +168,10 @@ final class ConversationViewController: UIViewController {
             source: ConversationTitleSource(
                 accountImageSource: nil,
                 title: conversation.displayNameWithFallback,
-                subtitle: Self.getConversationSubtitle(conversation)
+                subtitle: Self.getConversationSubtitle(conversation),
+                isMLS: conversation.messageProtocol == .mls,
+                isVerified: conversation.isVerified,
+                isUnderLegalHold: conversation.isUnderLegalHold
             ),
             canAnimate: !ProcessInfo.processInfo.isRunningTests
         )
@@ -464,7 +467,10 @@ final class ConversationViewController: UIViewController {
                     .updateSource(ConversationTitleSource(
                         accountImageSource: imageSource,
                         title: conversation.displayNameWithFallback,
-                        subtitle: Self.getConversationSubtitle(conversation)
+                        subtitle: Self.getConversationSubtitle(conversation),
+                        isMLS: conversation.messageProtocol == .mls,
+                        isVerified: conversation.isVerified,
+                        isUnderLegalHold: conversation.isUnderLegalHold
                     ))
             }
         } else {
@@ -472,7 +478,10 @@ final class ConversationViewController: UIViewController {
             titleView.updateSource(ConversationTitleSource(
                 accountImageSource: nil,
                 title: conversation.displayNameWithFallback,
-                subtitle: Self.getConversationSubtitle(conversation)
+                subtitle: Self.getConversationSubtitle(conversation),
+                isMLS: conversation.messageProtocol == .mls,
+                isVerified: conversation.isVerified,
+                isUnderLegalHold: conversation.isUnderLegalHold
             ))
         }
 
