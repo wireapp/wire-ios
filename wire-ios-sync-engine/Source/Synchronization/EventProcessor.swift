@@ -98,6 +98,7 @@ actor EventProcessor: UpdateEventProcessor {
 
     /// Decrypt Store and Process events during quickSync
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
+        print("123 events.count: \(events.count)")
         try await processEvents(events, duringQuickSync: true)
     }
 

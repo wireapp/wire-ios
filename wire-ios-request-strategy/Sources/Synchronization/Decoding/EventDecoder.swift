@@ -267,6 +267,7 @@ extension EventDecoder {
             return [event]
 
         case .conversationMLSMessageAdd:
+            print("123 conversationMLSMessageAdd")
             return try await decryptMlsMessage(from: event, context: syncMOC)
 
         default:

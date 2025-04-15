@@ -1320,7 +1320,7 @@ public final class MLSService: MLSServiceInterface {
 
             // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
             // This ensures we're on the latest state.
-            await syncStatus.recoverWithQuickSync()
+            //await syncStatus.recoverWithQuickSync()
 
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
@@ -1638,6 +1638,24 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Encrypt message
 
+//    public func encrypt(
+//        message: Data,
+//        for groupID: MLSGroupID
+//    ) async throws -> Data {
+//        typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
+//
+//        do {
+//            return try await encryptionService.encrypt(
+//                message: message,
+//                for: groupID
+//            )
+//        } catch DecryptionError.wrongEpoch {
+//            await fetchAndRepairGroupIfPossible(with: groupID)
+//            throw DecryptionError.wrongEpoch
+//        } catch {
+//            throw error
+//        }
+//    }
     public func encrypt(
         message: Data,
         for groupID: MLSGroupID
@@ -1658,15 +1676,18 @@ public final class MLSService: MLSServiceInterface {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
         do {
-            return try await decryptionService.decrypt(
+            print("123 Decrypting Message")
+            return try await decryptionService.decrypt(//
                 message: message,
                 for: groupID,
                 subconversationType: subconversationType
             )
         } catch DecryptionError.wrongEpoch {
+            print("123 DecryptionError.wrongEpoch -> will repair group")
             await fetchAndRepairGroupIfPossible(with: groupID)
             throw DecryptionError.wrongEpoch
         } catch {
+            print("123 some erro while decrypting Message")
             throw error
         }
     }

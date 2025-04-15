@@ -57,6 +57,13 @@ extension EventDecoder {
         }
     }
 
+//    func decryptMlsMessage(
+//        from updateEvent: ZMUpdateEvent,
+//        context: NSManagedObjectContext
+//    ) async throws -> [ZMUpdateEvent] {
+//        return []
+//    }
+
     func decryptMlsMessage(
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext

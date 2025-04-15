@@ -44,7 +44,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             )
         }
 
-        for decryptedMessage in decryptedMessages {
+        for decryptedMessage in decryptedMessages { //comment
             try await processDecryptedMessage(
                 decryptedMessage,
                 conversationID: conversationID,
