@@ -325,32 +325,26 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
         try await performNonReentrant(groupID: groupID) {
             try await coreCrypto.perform {
-                var capturedError: Error?
-                do {
-                    let result: DecryptedMessage? = try await $0.transaction { context in
-                        do {
-                            return try await context.decryptMessage(conversationId: groupID.data, payload: message)
-                        } catch let CoreCryptoError.Mls(error) {
-                            switch error {
-                            case .BufferedFutureMessage, .Other(coreCryptoCommitForMissingProposalError):
-                                // ignore error so transaction is saved and message is saved too.
-                                return nil
-                            default:
-                                capturedError = CoreCryptoError.Mls(error)
-                                throw error
-                            }
-                        } catch {
-                            capturedError = error
-                            throw error
+                let result: DecryptedMessage? = try await $0.transaction { context in
+
+                    do {
+                        return try await context.decryptMessage(conversationId: groupID.data, payload: message)
+                    } catch let CoreCryptoError.Mls(error) {
+                        switch error {
+                        case .BufferedFutureMessage, .Other(coreCryptoCommitForMissingProposalError):
+                            // ignore error so transaction is saved and message is saved too.
+                            return nil
+                        default:
+                            throw CoreCryptoError.Mls(error)
                         }
+                    } catch {
+                        throw error
                     }
-                    if let result {
-                        return result
-                    } else {
-                        throw Failure.bufferedDecryptedMessage
-                    }
-                } catch {
-                    throw capturedError ?? error
+                }
+                if let result {
+                    return result
+                } else {
+                    throw Failure.bufferedDecryptedMessage
                 }
             }
         }
