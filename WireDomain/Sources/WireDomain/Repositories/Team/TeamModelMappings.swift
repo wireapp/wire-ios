@@ -64,6 +64,8 @@ private extension WireAPI.ConversationAction {
             "leave_conversation"
         case .deleteConversation:
             "delete_conversation"
+        case .modifyAddPermission:
+            "modify_add_permission"
         }
     }
 
