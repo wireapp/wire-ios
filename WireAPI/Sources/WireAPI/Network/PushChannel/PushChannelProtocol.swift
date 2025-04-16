@@ -33,3 +33,17 @@ public protocol PushChannelProtocol: Sendable {
     func close() async
 
 }
+
+public protocol NewPushChannelProtocol: Sendable {
+
+    /// Open the push channel and start receiving update events.
+    ///
+    /// - Returns: An async stream of live update event envelopes.
+
+    func open() async throws -> AsyncThrowingStream<WebSocketMessageContext, any Error>
+
+    /// Close the push channel and stop receiving update events.
+
+    func close() async
+
+}

@@ -41,3 +41,26 @@ public struct PushChannelAPIBuilder {
     }
 
 }
+
+
+public struct PushChannelAPIBuilder {
+
+    private let pushChannelService: PushChannelService
+
+    /// Create a new builder.
+    ///
+    /// - Parameter pushChannelService: A push channel service to execute requests.
+
+    public init(pushChannelService: PushChannelService) {
+        self.pushChannelService = pushChannelService
+    }
+
+    /// Make a `PushChannelAPI`.
+    ///
+    /// - Returns: A `PushChannelAPI`.
+
+    public func makeAPI() -> any PushChannelAPI {
+        PushChannelAPIImpl(pushChannelService: pushChannelService)
+    }
+
+}

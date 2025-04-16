@@ -38,3 +38,24 @@ class PushChannelAPIImpl: PushChannelAPI {
     }
 
 }
+
+class NewPushChannelAPIImpl: PushChannelAPI {
+
+    let pushChannelService: any PushChannelServiceProtocol
+
+    init(pushChannelService: any PushChannelServiceProtocol) {
+        self.pushChannelService = pushChannelService
+    }
+
+    func createPushChannel(clientID: String) async throws -> any NewPushChannelProtocol {
+        let path = "/await"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .withQueryItem(name: "client", value: clientID)
+            .build()
+
+        return try await pushChannelService.createPushChannel(request)
+    }
+
+}

@@ -62,4 +62,8 @@ public final class PushChannel: PushChannelProtocol {
         await webSocket.close()
     }
 
+    public func write(data: Data) async throws {
+        WireLogger.pushChannel.debug("write data to push channel")
+        try await webSocket.write(data: data)
+    }
 }

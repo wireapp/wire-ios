@@ -42,6 +42,8 @@ public final class ClientSessionComponent {
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
 
+    public let asyncStreamEnabled: Bool
+
     private let onSelfClientInvalidated: () async -> Void
 
     public init(
@@ -60,6 +62,7 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
+        asyncStreamEnabled: Bool,
         onSelfClientInvalidated: @escaping () async -> Void
     ) {
         self.selfUserID = selfUserID
@@ -77,6 +80,7 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
+        self.asyncStreamEnabled = asyncStreamEnabled
         self.onSelfClientInvalidated = onSelfClientInvalidated
     }
 
@@ -321,13 +325,25 @@ public final class ClientSessionComponent {
 
     private lazy var pushChannelService = PushChannelService(
         networkService: pushChannelNetworkService,
-        authenticationManager: authenticationManager
+        authenticationManager: authenticationManager,
+        asyncStreamEnabled: asyncStreamEnabled
     )
 
     public lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
         updateEventsSync: pullPendingUpdateEventsSync,
+        decryptor: updateEventDecryptor,
+        store: updateEventsLocalStore,
+        processor: updateEventProcessor,
+        databaseSaver: databaseSaver
+    )
+
+    private lazy var newPushChannelAPI = NewPushChannel(webSocket: <#T##any WebSocketProtocol#>)
+
+    public lazy var newIncrementalSync: NewIncrementalSync(
+        selfClientID: selfClientID,
+        pushChannelAPI: pushChannelAPI,
         decryptor: updateEventDecryptor,
         store: updateEventsLocalStore,
         processor: updateEventProcessor,

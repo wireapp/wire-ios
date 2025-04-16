@@ -582,7 +582,8 @@ public final class ZMUserSession: NSObject {
 
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
-            onSelfClientInvalidated: onSelfClientInvalidated
+            onSelfClientInvalidated: onSelfClientInvalidated,
+            asyncStreamEnabled: asyncStreamEnabled
         )
 
         let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {

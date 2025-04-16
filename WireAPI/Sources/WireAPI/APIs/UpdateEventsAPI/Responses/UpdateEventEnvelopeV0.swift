@@ -30,7 +30,25 @@ public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
         UpdateEventEnvelope(
             id: id,
             events: (payload ?? []).map(\.updateEvent),
-            isTransient: transient ?? false
+            isTransient: transient ?? false,
+            deliveryTag: nil
+        )
+    }
+
+}
+
+public struct UpdateEventEnvelopeV8: Decodable, ToAPIModelConvertible {
+
+    let id: UUID
+    let payload: [UpdateEventDecodingProxy]
+    let deliveryTag: UInt64
+    
+    func toAPIModel() -> UpdateEventEnvelope {
+        UpdateEventEnvelope(
+            id: id,
+            events: payload.map(\.updateEvent),
+            isTransient: false,
+            deliveryTag: deliveryTag
         )
     }
 

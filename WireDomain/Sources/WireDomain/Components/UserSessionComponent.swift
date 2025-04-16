@@ -123,6 +123,7 @@ public final class UserSessionComponent {
 
     public func clientSessionComponent(
         clientID: String,
+        asyncStreamEnabled: Bool,
         onSelfClientInvalidated: @escaping () async -> Void
     ) -> ClientSessionComponent {
         ClientSessionComponent(
@@ -141,6 +142,7 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
+            asyncStreamEnabled: asyncStreamEnabled,
             onSelfClientInvalidated: onSelfClientInvalidated
         )
     }
