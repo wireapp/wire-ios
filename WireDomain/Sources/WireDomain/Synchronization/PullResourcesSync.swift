@@ -22,6 +22,7 @@ import WireLogging
 struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private let pullSelfUserSync: any PullSelfUserSyncProtocol
+    private let pullSelfUserClientsSync: any PullSelfUserClientsSyncProtocol
     private let pullSelfUserSettingsSync: any PullSelfUserSettingsSyncProtocol
     private let pullSelfTeamSync: any PullSelfTeamSyncProtocol
     private let pullSelfTeamRolesSync: any PullSelfTeamRolesSyncProtocol
@@ -38,6 +39,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     init(
         pullSelfUserSync: any PullSelfUserSyncProtocol,
+        pullSelfUserClientsSync: any PullSelfUserClientsSyncProtocol,
         pullSelfUserSettingsSync: any PullSelfUserSettingsSyncProtocol,
         pullSelfTeamSync: any PullSelfTeamSyncProtocol,
         pullSelfTeamRolesSync: any PullSelfTeamRolesSyncProtocol,
@@ -51,6 +53,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         pullMLSStatusSync: any PullMLSStatusSyncProtocol
     ) {
         self.pullSelfUserSync = pullSelfUserSync
+        self.pullSelfUserClientsSync = pullSelfUserClientsSync
         self.pullSelfUserSettingsSync = pullSelfUserSettingsSync
         self.pullSelfTeamSync = pullSelfTeamSync
         self.pullSelfTeamRolesSync = pullSelfTeamRolesSync
@@ -67,6 +70,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
     func pull() async throws {
         try await logger.measureTime(label: "pull resources") {
             let teamID = try await pullSelfUser()
+            try await pullSelfUserClients()
             try await pullSelfUserSettings()
 
             if let teamID {
@@ -95,6 +99,15 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
             return try await pullSelfUserSync.pull().teamID
         } catch {
             throw Failure(resourceName: "pull self user", reason: error)
+        }
+    }
+
+    private func pullSelfUserClients() async throws {
+        do {
+            logger.debug("pulling self user clients")
+            return try await pullSelfUserClientsSync.pull()
+        } catch {
+            throw Failure(resourceName: "pull self user clients", reason: error)
         }
     }
 

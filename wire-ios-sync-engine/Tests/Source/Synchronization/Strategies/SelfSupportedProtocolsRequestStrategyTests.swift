@@ -20,6 +20,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireRequestStrategySupport
 import WireSyncEngineSupport
+
 @testable import WireSyncEngine
 
 import XCTest

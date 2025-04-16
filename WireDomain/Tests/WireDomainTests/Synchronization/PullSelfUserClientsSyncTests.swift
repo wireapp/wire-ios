@@ -25,9 +25,9 @@ import XCTest
 @testable import WireAPI
 @testable import WireDomain
 
-final class PullSelfUserClientsTests: XCTestCase {
+final class PullSelfUserClientsSyncTests: XCTestCase {
 
-    private var sut: PullSelfUserClients!
+    private var sut: PullSelfUserClientsSync!
     private var userClientsAPI: MockUserClientsAPI!
     private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
     private var stack: CoreDataStack!
@@ -45,9 +45,9 @@ final class PullSelfUserClientsTests: XCTestCase {
         userClientsAPI = MockUserClientsAPI()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
 
-        sut = PullSelfUserClients(
-            userClientsAPI: userClientsAPI,
-            userClientsLocalStore: userClientsLocalStore
+        sut = PullSelfUserClientsSync(
+            api: userClientsAPI,
+            store: userClientsLocalStore
         )
     }
 
@@ -83,7 +83,7 @@ final class PullSelfUserClientsTests: XCTestCase {
 
         // When
 
-        try await sut.pullSelfClients()
+        try await sut.pull()
 
         // Then
 

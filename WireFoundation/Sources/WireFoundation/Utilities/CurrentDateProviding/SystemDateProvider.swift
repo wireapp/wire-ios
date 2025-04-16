@@ -16,27 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystem
-import XCTest
+public import Foundation
 
-class LoggingTest: XCTestCase {
+public extension CurrentDateProviding where Self == SystemDateProvider {
 
-    func testThatCurrentLogIsNotEmpty() {
-        // given
-        ZMSLog.clearLogs()
+    /// Returns a new instance of `SystemDateProvider`.
+    static var system: Self { .init() }
+}
 
-        // when
-        ZMSLog.logWithLevel(.error, message: "test", tag: "AVS")
-        ZMSLog.sync()
+/// Provides date values based on the system clock.
+public struct SystemDateProvider: CurrentDateProviding {
 
-        // then
+    public var now: Date { .now }
 
-        // Assert that some logs have been written to the current log file, which is the file
-        // that gets attached to debug reports.
-        XCTAssertNotNil(ZMSLog.currentZipLog)
-        XCTAssertNotNil(ZMSLog.currentLogURL)
-        XCTAssertFalse(ZMSLog.currentZipLog!.isEmpty)
-        XCTAssertFalse(FileManager.default.contents(atPath: ZMSLog.currentLogURL!.path)!.isEmpty)
-    }
-
+    public init() {}
 }

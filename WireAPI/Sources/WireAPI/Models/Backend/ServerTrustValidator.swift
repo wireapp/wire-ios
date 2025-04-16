@@ -18,19 +18,27 @@
 
 import Foundation
 @preconcurrency import Security
+import WireFoundation
 
 public struct ServerTrustValidator: Sendable {
 
     enum Failure: Error, Equatable {
-        case evaluatingServerTrustFailed
+        case settingVerifyDate(_ status: OSStatus)
+        case evaluatingServerTrustFailed(_ status: OSStatus)
+        case unexpected(String)
         case noPublicKeyOnServerTrust
         case noMatchingPublicKey
     }
 
     private let pinnedKeys: [PinnedKey]
+    private let currentDateProvider: any CurrentDateProviding
 
-    public init(pinnedKeys: [PinnedKey]) {
+    public init(
+        pinnedKeys: [PinnedKey],
+        currentDateProvider: any CurrentDateProviding
+    ) {
         self.pinnedKeys = pinnedKeys
+        self.currentDateProvider = currentDateProvider
     }
 
     /// Verifies the server `trust` for the given `host`.
@@ -46,7 +54,7 @@ public struct ServerTrustValidator: Sendable {
         // If no keys are pinned for `host`, we trust the server certificate
         guard !matchingKeys.isEmpty else { return }
 
-        try await Self.verifyServerCertificateTrusted(trust)
+        try await Self.verifyServerCertificateTrusted(trust, currentDateProvider.now)
 
         let publicKey = try Self.publicKeyAssociatedWithServerTrust(trust)
 
@@ -57,19 +65,40 @@ public struct ServerTrustValidator: Sendable {
 
     // MARK: - Private
 
-    private static func verifyServerCertificateTrusted(_ serverTrust: SecTrust) async throws {
-        try await withCheckedThrowingContinuation { continuation in
+    private static func verifyServerCertificateTrusted(
+        _ serverTrust: SecTrust,
+        _ verifyDate: Date
+    ) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+
             // `SecTrustEvaluateAsyncWithError` requires the completion queue to be the same as the queue on which it
             // is called.
             let queue = DispatchQueue.global()
             queue.async {
-                SecTrustEvaluateAsyncWithError(serverTrust, queue) { _, success, error in
+
+                var status = SecTrustSetVerifyDate(serverTrust, verifyDate as CFDate)
+                guard status == errSecSuccess else {
+                    return continuation.resume(throwing: Failure.settingVerifyDate(status))
+                }
+
+                status = SecTrustEvaluateAsyncWithError(serverTrust, queue) { _, success, error in
                     if success {
-                        continuation.resume()
-                    } else {
-                        print("Server trust evaluation failed: \(String(describing: error))")
-                        continuation.resume(throwing: Failure.evaluatingServerTrustFailed)
+                        return continuation.resume()
                     }
+                    guard
+                        let error = error as (any Error)? as NSError?,
+                        error.domain == NSOSStatusErrorDomain,
+                        let status = OSStatus(exactly: error.code)
+                    else {
+                        return continuation.resume(throwing: Failure.unexpected(String(reflecting: error)))
+                    }
+                    continuation.resume(throwing: Failure.evaluatingServerTrustFailed(status))
+                }
+                // The method calls the closure exactly once if the method
+                // returns errSecSuccess, and not at all otherwise.
+                // https://developer.apple.com/documentation/security/sectrustevaluateasyncwitherror(_:_:_:)#parameters
+                if status != errSecSuccess {
+                    continuation.resume(throwing: Failure.evaluatingServerTrustFailed(status))
                 }
             }
         }

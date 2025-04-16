@@ -61,6 +61,8 @@ extension EventDecoder {
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
     ) async throws -> [ZMUpdateEvent] {
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
+
         WireLogger.mls.info("decrypting mls message", attributes: updateEvent.logAttributes)
 
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {

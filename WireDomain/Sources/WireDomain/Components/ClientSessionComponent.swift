@@ -275,6 +275,11 @@ public final class ClientSessionComponent {
         store: userLocalStore
     )
 
+    private lazy var pullSelfUserClientsSync = PullSelfUserClientsSync(
+        api: userClientsAPI,
+        store: userClientsLocalStore
+    )
+
     private lazy var pullUserConnectionsSync = PullUserConnectionsSync(
         api: userConnectionsAPI,
         store: userConnectionsStore
@@ -292,6 +297,7 @@ public final class ClientSessionComponent {
     public lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
+            pullSelfUserClientsSync: pullSelfUserClientsSync,
             pullSelfUserSettingsSync: pullSelfUserSettingsSync,
             pullSelfTeamSync: pullSelfTeamSync,
             pullSelfTeamRolesSync: pullSelfTeamRolesSync,
@@ -548,6 +554,10 @@ public final class ClientSessionComponent {
         repository: teamRepository
     )
 
+    private lazy var teamCreateEventProcessor = TeamCreateEventProcessor(
+        repository: teamRepository
+    )
+
     private lazy var addPermissionEventProcessor = ConversationAddPermissionEventProcessor(
         localStore: conversationLocalStore
     )
@@ -597,7 +607,8 @@ public final class ClientSessionComponent {
         let teamEventProcessor = TeamEventProcessor(
             deleteEventProcessor: teamDeleteEventProcessor,
             memberLeaveEventProcessor: teamMemberLeaveEventProcessor,
-            memberUpdateEventProcessor: teamMemberUpdateEventProcessor
+            memberUpdateEventProcessor: teamMemberUpdateEventProcessor,
+            createEventProcessor: teamCreateEventProcessor
         )
 
         return UpdateEventProcessor(

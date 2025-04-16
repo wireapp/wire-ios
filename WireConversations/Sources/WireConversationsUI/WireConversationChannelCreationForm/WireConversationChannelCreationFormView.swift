@@ -40,7 +40,8 @@ public struct WireConversationChannelCreationForm: View {
             // TODO: [WPB-16814] This will be used when implementing the channels history settings.
 //            channelHistorySection
             servicesSection
-            readReceiptsSection
+            // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
+//            readReceiptsSection
         }
         .onChange(of: channelName) { newValue in
             viewModel.onChannelNameUpdate(newValue)
@@ -62,19 +63,30 @@ public struct WireConversationChannelCreationForm: View {
     var channelAccessSection: some View {
         Section(content: {
             // Channel access is always hard coded to private for now.
-            Picker(
-                L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
-                selection: $viewModel.channelAccess
-            ) {
-                Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.public)
-                    .tag(ViewModel.ChannelAccessOption.public)
-                Label(
-                    L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private,
-                    systemImage: "lock.fill"
-                )
-                .tag(ViewModel.ChannelAccessOption.private)
+//            Picker(
+//                L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
+//                selection: $viewModel.channelAccess
+//            ) {
+//                Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.public)
+//                    .tag(ViewModel.ChannelAccessOption.public)
+//                Label(
+//                    L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private,
+//                    systemImage: "lock.fill"
+//                )
+//                .tag(ViewModel.ChannelAccessOption.private)
+//            }
+            HStack {
+                Text(L10n.Localizable.Conversation.CreationForm.Options.channelAccess)
+
+                Spacer()
+
+                HStack(spacing: 4) {
+                    Image(systemName: "lock.fill")
+                        .foregroundColor(.gray)
+                    Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private)
+                        .foregroundColor(.gray)
+                }
             }
-            .disabled(true)
             if case .private = viewModel.channelAccess {
                 Picker(
                     L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.invitePolicy,

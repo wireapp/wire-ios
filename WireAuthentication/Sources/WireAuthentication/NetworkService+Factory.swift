@@ -18,13 +18,17 @@
 
 import Foundation
 import WireAPI
+import WireFoundation
 
 extension NetworkService {
 
     static func make(backendEnvironment: BackendEnvironment, minTLSVersion: TLSVersion) -> NetworkService {
         let service = NetworkService(
             baseURL: backendEnvironment.url,
-            serverTrustValidator: ServerTrustValidator(pinnedKeys: backendEnvironment.pinnedKeys)
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: backendEnvironment.pinnedKeys,
+                currentDateProvider: .system
+            )
         )
 
         let config = URLSessionConfigurationFactory(

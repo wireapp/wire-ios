@@ -16,18 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-public extension CurrentDateProviding where Self == SystemDateProvider {
+struct TeamCreateEventProcessor: TeamCreateEventProcessorProtocol {
 
-    /// Returns a new instance of `SystemDateProvider`.
-    static var system: Self { .init() }
-}
+    let repository: any TeamRepositoryProtocol
 
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: CurrentDateProviding {
+    func processEvent(_ event: TeamCreateEvent) async throws {
+        let identifier = event.identifier
+        let name = event.name
+        let creator = event.creator
+        let icon = event.icon
+        let iconKey = event.iconKey
 
-    public var now: Date { .now }
+        await repository.createOrUpdateTeam(
+            identifier: identifier,
+            name: name,
+            creator: creator,
+            icon: icon,
+            iconKey: iconKey
+        )
+    }
 
-    public init() {}
 }

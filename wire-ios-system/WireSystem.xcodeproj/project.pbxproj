@@ -52,8 +52,8 @@
 		5939CB8A2CEBB2BA000F6FAD /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Sourcery/generated/AutoMockable.generated.swift,
-				WireSystemSupport.h,
+				Sourcery/AutoMockable.stencil,
+				Sourcery/config.yml,
 			);
 			publicHeaders = (
 				WireSystemSupport.h,
@@ -234,6 +234,9 @@
 			);
 			dependencies = (
 				598E86E32BF4DB9B00FC5438 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5939CB872CEBB2BA000F6FAD /* Support */,
 			);
 			name = WireSystemSupport;
 			productName = Support;

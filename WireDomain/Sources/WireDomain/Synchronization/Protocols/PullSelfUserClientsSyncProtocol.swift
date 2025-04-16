@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol: Sendable {
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+/// An object to keep the local self user clients up to date
+/// with the remote self user clients.
+public protocol PullSelfUserClientsSyncProtocol {
+
+    func pull() async throws
 }
