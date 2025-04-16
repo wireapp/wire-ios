@@ -1162,7 +1162,7 @@ extension ZMUserSession: SyncAgentDelegate {
         )
     }
 
-    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
+    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
         guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }
@@ -1174,7 +1174,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
         }
 
-        return PullSelfUserClients.make(
+        return PullSelfUserClientsSync.make(
             apiService: apiService,
             apiVersion: wireAPIVersion,
             context: context
