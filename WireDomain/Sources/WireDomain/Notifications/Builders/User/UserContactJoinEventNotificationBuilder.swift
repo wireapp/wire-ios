@@ -34,10 +34,8 @@ struct UserContactJoinEventNotificationBuilder {
             return nil
         }
 
-        let name = event.name
-
         return buildUserContactJoinNotification(
-            name: name
+            name:  event.name
         )
     }
 
