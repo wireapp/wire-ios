@@ -24,8 +24,8 @@ import WireDesign
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
-        let location: LocationMessageData
-        let message: ZMConversationMessage
+        var location: LocationMessageData
+        var message: ZMConversationMessage
         var isObfuscated: Bool {
             message.isObfuscated
         }
@@ -189,9 +189,15 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLocationMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message, let locationMessageData = message.locationMessageData {
+                configuration.location = locationMessageData
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

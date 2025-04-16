@@ -40,7 +40,7 @@ enum TeamRoleIndicator {
 final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
-        let senderProvider: () -> UserType
+        let senderProvider: () -> UserType // TODO: improve on caller side
         let indicator: Indicator?
         let teamRoleIndicator: TeamRoleIndicator?
     }

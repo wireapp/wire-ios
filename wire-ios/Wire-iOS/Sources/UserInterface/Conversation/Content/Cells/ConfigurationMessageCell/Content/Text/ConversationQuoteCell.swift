@@ -328,7 +328,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationReplyCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     var topMargin: CGFloat = 8
     var bottomMargin: CGFloat = 0
@@ -336,7 +336,13 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let supportsActions = false
     let containsHighlightableContent: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let quoteMessage = message?.textMessageData?.quoteMessage {
+                configuration.quotedMessage = quoteMessage
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

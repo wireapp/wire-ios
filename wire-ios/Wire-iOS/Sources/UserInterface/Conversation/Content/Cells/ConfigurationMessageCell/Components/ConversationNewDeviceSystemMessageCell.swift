@@ -37,7 +37,7 @@ final class ConversationNewDeviceSystemMessageCell<
     struct Configuration {
         let attributedText: NSAttributedString?
         var icon: UIImage?
-        var linkTarget: LinkTarget
+        var linkTarget: LinkTarget // TODO: fix bc of potential crash
     }
 
     override init(frame: CGRect) {

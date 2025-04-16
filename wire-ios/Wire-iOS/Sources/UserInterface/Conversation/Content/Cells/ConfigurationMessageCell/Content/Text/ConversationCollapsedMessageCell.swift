@@ -23,9 +23,8 @@ import WireSyncEngine
 final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
-        let message: ZMConversationMessage
-        let user: UserType?
-        let selfUser: ZMUser
+        var message: ZMConversationMessage
+        let accentColor: UIColor
         let collapseExpandAction: () -> Void
     }
 
@@ -131,7 +130,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        let user = object.user
+        let user = object.message.senderUser
         avatar.user = user
         availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
 
@@ -147,7 +146,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     .format(
                         message: textMessageData,
                         isObfuscated: message.isObfuscated,
-                        accent: object.selfUser.accentColor?.uiColor ?? UIColor.accent()
+                        accent: object.accentColor
                     )
             }
         } else {
@@ -252,12 +251,18 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     typealias View = ConversationCollapsedMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -269,13 +274,12 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     init(
         message: ConversationMessage,
-        selfUser: ZMUser,
+        accentColor: UIColor,
         collapseExpandAction: @escaping () -> Void
     ) {
         self.configuration = View.Configuration(
             message: message,
-            user: message.senderUser,
-            selfUser: selfUser,
+            accentColor: accentColor,
             collapseExpandAction: collapseExpandAction
         )
     }

@@ -22,9 +22,9 @@ import WireDataModel
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
-        let textMessageData: TextMessageData
+        var textMessageData: TextMessageData
         let showImage: Bool
-        let message: ZMConversationMessage
+        var message: ZMConversationMessage
         var isObfuscated: Bool {
             message.isObfuscated
         }
@@ -101,9 +101,16 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkPreviewArticleCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+                configuration.textMessageData = message.textMessageData!
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

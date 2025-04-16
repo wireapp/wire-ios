@@ -130,9 +130,15 @@ final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCell
 final class ConversationPingCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationPingCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

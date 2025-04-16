@@ -23,7 +23,7 @@ import WireDesign
 final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
-        let message: ZMConversationMessage
+        var message: ZMConversationMessage
         var isObfuscated: Bool {
             message.isObfuscated
         }
@@ -124,12 +124,18 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationAudioMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
