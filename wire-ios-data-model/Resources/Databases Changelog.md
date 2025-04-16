@@ -4,6 +4,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.124.0
+
+* added `migratedToMLS` attribute on the Conversation entity
+
 ### 2.123.0
 
 * added `groupType` attribute on the Conversation entity
