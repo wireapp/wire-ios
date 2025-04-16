@@ -38,7 +38,7 @@ public extension ZMConversation {
 
     @NSManaged var isPendingInitialFetch: Bool
 
-    /// True if conversation was ran OneOnOneMigrator and migrated to MLS from Proteus Conversation.
+    /// True if this mls conversation was migrated from another proteus conversation. 
 
     @NSManaged var migratedToMLS: Bool
 
