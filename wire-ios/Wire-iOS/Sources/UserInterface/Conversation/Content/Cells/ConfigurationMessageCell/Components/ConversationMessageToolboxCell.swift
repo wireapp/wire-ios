@@ -23,7 +23,7 @@ import WireSyncEngine
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
 
     struct Configuration: Equatable {
-        let message: ZMConversationMessage
+        var message: ZMConversationMessage
         let deliveryState: ZMDeliveryState
         /// A message status is considered redundant if it does not provide additional information over a subsequent
         /// message's status. This basically means that only the last of subsequent messages of the same sender within a
@@ -115,9 +115,15 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationMessageToolboxCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

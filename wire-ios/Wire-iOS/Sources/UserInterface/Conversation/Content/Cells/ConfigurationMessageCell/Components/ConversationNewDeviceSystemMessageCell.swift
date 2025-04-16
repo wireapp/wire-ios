@@ -29,7 +29,7 @@ final class ConversationNewDeviceSystemMessageCell<
 
     var linkTarget: LinkTarget?
 
-    enum LinkTarget {
+    enum LinkTarget { // TODO: will crash
         case user(UserType)
         case conversation(ZMConversation)
     }

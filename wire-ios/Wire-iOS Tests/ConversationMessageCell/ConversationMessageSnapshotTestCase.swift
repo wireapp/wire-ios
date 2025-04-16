@@ -180,6 +180,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             useInvertedIndices: false,
             contentWidth: width,

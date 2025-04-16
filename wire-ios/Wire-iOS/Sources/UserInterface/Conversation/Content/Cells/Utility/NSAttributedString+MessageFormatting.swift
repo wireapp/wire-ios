@@ -129,14 +129,14 @@ extension NSAttributedString {
     }
 
     @objc
-    static func format(message: TextMessageData, isObfuscated: Bool) -> NSAttributedString {
+    static func format(message: TextMessageData, isObfuscated: Bool, accent: UIColor) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 
         guard !isObfuscated else {
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont(name: "RedactedScript-Regular", size: 18)!,
-                .foregroundColor: UIColor.accent(),
+                .foregroundColor: accent,
                 .paragraphStyle: paragraphStyle
             ]
             return NSAttributedString(string: plainText, attributes: attributes)

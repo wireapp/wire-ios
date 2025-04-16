@@ -23,8 +23,8 @@ import WireDesign
 final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
-        let image: ZMImageMessageData
-        let message: ZMConversationMessage
+        var image: ZMImageMessageData
+        var message: ZMConversationMessage
         var isObfuscated: Bool {
             message.isObfuscated
         }
@@ -169,9 +169,16 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationImageMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+                configuration.image = message.imageMessageData!
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

@@ -25,6 +25,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     struct Configuration {
         let message: ZMConversationMessage
         let user: UserType?
+        let selfUser: ZMUser
         let collapseExpandAction: () -> Void
     }
 
@@ -145,7 +146,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                 messageTextView.attributedText = NSAttributedString
                     .format(
                         message: textMessageData,
-                        isObfuscated: message.isObfuscated
+                        isObfuscated: message.isObfuscated,
+                        accent: object.selfUser.accentColor?.uiColor ?? UIColor.accent()
                     )
             }
         } else {
@@ -267,11 +269,13 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     init(
         message: ConversationMessage,
+        selfUser: ZMUser,
         collapseExpandAction: @escaping () -> Void
     ) {
         self.configuration = View.Configuration(
             message: message,
             user: message.senderUser,
+            selfUser: selfUser,
             collapseExpandAction: collapseExpandAction
         )
     }

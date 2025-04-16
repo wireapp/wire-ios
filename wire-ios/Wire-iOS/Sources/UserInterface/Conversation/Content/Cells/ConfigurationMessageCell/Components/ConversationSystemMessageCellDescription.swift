@@ -24,7 +24,8 @@ enum ConversationSystemMessageCellDescription {
     static func cells(
         for message: ZMConversationMessage,
         isCollapsed: Bool,
-        buttonAction: Completion?
+        buttonAction: Completion?,
+        selfUser: ZMUser? = nil
     ) -> [AnyConversationMessageCellDescription] {
 
         guard let systemMessageData = message.systemMessageData,
@@ -63,7 +64,7 @@ enum ConversationSystemMessageCellDescription {
             return []
 
         case .messageDeletedForEveryone:
-            let senderCell = ConversationSenderMessageCellDescription(sender: sender, message: message)
+            let senderCell = ConversationSenderMessageCellDescription(senderProvider: { sender }, message: message)
             return [AnyConversationMessageCellDescription(senderCell)]
 
         case .messageTimerUpdate:
@@ -163,9 +164,9 @@ enum ConversationSystemMessageCellDescription {
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
             // Only display invite user cell for team members
-            if let user = SelfUser.provider?.providedSelfUser,
-               user.isTeamMember,
-               conversation.selfCanAddUsers,
+            if let selfUser = selfUser ?? SelfUser.provider?.providedSelfUser,
+               selfUser.isTeamMember,
+               conversation.selfCanAddUsers(selfUser: selfUser as! ZMUser),
                conversation.isOpenGroup {
                 cells.append(
                     AnyConversationMessageCellDescription(
@@ -226,8 +227,8 @@ private extension ConversationLike {
         conversationType == .group && allowGuests
     }
 
-    var selfCanAddUsers: Bool {
-        guard let user = SelfUser.provider?.providedSelfUser else {
+    func selfCanAddUsers(selfUser: ZMUser?) -> Bool {
+        guard let user = selfUser ?? SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return false
         }

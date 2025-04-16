@@ -44,7 +44,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
 
-    private(set) var coreDataStack: CoreDataStack!
+    private(set) public var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
     public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {

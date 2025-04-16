@@ -81,8 +81,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// The message that is being presented.
     var message: ConversationMessage {
-        didSet { updateDelegates() }
+        didSet {
+            updateDelegates()
+        }
     }
+    
+    var selfUser: ZMUser
 
     /// The delegate for cells injected by the list adapter.
     weak var cellDelegate: ConversationMessageCellDelegate? {
@@ -117,6 +121,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     init(
         message: ConversationMessage,
         context: ConversationMessageContext,
+        selfUser: ZMUser,
         selected: Bool = false,
         userSession: UserSession,
         useInvertedIndices: Bool,
@@ -125,6 +130,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     ) {
         self.message = message
         self.context = context
+        self.selfUser = selfUser
         self.selected = selected
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
@@ -145,7 +151,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private var collapseOwnMessagesEnabled: Bool {
-        guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
+        guard let selfUserId = selfUser.remoteIdentifier else { return false }
         return PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
             .bool(forKey: .collapseOwnMessages)
     }
@@ -249,6 +255,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func addCollapsedCell() -> [AnyConversationMessageCellDescription] {
         let cellDescriptions = ConversationCollapsedMessageCellDescription(
             message: message,
+            selfUser: selfUser,
             collapseExpandAction: { [weak self] in
                 self?.handleCollapseExpand()
             }
@@ -260,7 +267,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if needToAddCollapsedCell() {
             return addCollapsedCell()
         }
-        return ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
+        return ConversationTextMessageCellDescription
+            .cells(
+                for: message,
+                searchQueries: context.searchQueries,
+                selfUser: selfUser
+            )
     }
 
     private func addLocationMessageCells() -> [AnyConversationMessageCellDescription] {
@@ -303,7 +315,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         ConversationSystemMessageCellDescription.cells(
             for: message,
             isCollapsed: isCollapsed,
-            buttonAction: buttonAction
+            buttonAction: buttonAction,
+            selfUser: selfUser
         )
     }
 
@@ -324,7 +337,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 cells += ConversationTextMessageCellDescription.cells(
                     textMessageData: data,
                     message: message,
-                    searchQueries: context.searchQueries
+                    searchQueries: context.searchQueries,
+                    selfUser: selfUser
                 )
 
             case let .button(data):
@@ -372,13 +386,17 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             let description = BurstTimestampSenderMessageCellDescription(
                 message: message,
                 context: context,
-                accentColor: userSession.selfUser.accentColor
+                accentColor: selfUser.accentColor
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
         if isSenderVisible, let sender = message.senderUser {
-            let description = ConversationSenderMessageCellDescription(sender: sender, message: message)
+            let description = ConversationSenderMessageCellDescription(
+                senderProvider: { self.message.senderUser! }, // TODO:
+                selfUser: selfUser,
+                message: message
+            )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
@@ -412,6 +430,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func updateDelegates() {
+        actionController?.message = message
         cellDescriptions.forEach { cellDescription in
             cellDescription.message = message
             cellDescription.actionController = actionController

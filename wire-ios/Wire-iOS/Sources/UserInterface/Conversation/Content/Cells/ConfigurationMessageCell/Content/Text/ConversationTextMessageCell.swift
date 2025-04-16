@@ -168,7 +168,8 @@ extension ConversationTextMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        selfUser: ZMUser
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
@@ -177,28 +178,36 @@ extension ConversationTextMessageCellDescription {
         return cells(
             textMessageData: textMessageData,
             message: message,
-            searchQueries: searchQueries
+            searchQueries: searchQueries,
+            selfUser: selfUser
         )
     }
 
     static func cells(
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        selfUser: ZMUser
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
         // Refetch the link attachments if needed
         if !Settings.disableLinkPreviews {
-            ZMUserSession.shared()?.enqueue {
-                message.refetchLinkAttachmentsIfNeeded()
-            }
+// TODO: 
+//                ZMUserSession.shared()?.enqueue {
+//                    message.refetchLinkAttachmentsIfNeeded()
+//                }
+//            }
         }
 
         // Text parsing
         let attachments = message.linkAttachments ?? []
-        var messageText = NSAttributedString.format(message: textMessageData, isObfuscated: message.isObfuscated)
+        var messageText = NSAttributedString.format(
+            message: textMessageData,
+            isObfuscated: message.isObfuscated,
+            accent: selfUser.accentColor?.uiColor ?? UIColor.accent()
+        )
 
         // Search queries
         if !searchQueries.isEmpty {

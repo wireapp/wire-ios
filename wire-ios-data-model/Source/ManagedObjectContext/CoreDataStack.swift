@@ -121,7 +121,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     public let accountContainer: URL
     public let applicationContainer: URL
 
-    let messagesContainer: PersistentContainer
+    public let messagesContainer: PersistentContainer
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
@@ -562,7 +562,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
 // MARK: -
 
-class PersistentContainer: NSPersistentContainer {
+public class PersistentContainer: NSPersistentContainer {
 
     var storeURL: URL? {
         persistentStoreDescriptions.first?.url
