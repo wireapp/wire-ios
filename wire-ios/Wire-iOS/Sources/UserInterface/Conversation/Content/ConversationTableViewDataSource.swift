@@ -27,7 +27,7 @@ extension AnyConversationMessageCellDescription: Differentiable {
     typealias DifferenceIdentifier = String
 
     var differenceIdentifier: String {
-        message!.objectIdentifier + String(describing: baseType)
+        String(describing: (message as! ZMMessage).objectID) + String(describing: baseType)
     }
 
     override var debugDescription: String {
@@ -38,6 +38,10 @@ extension AnyConversationMessageCellDescription: Differentiable {
         isConfigurationEqual(with: source)
     }
 
+}
+
+extension NSManagedObjectID: Differentiable {
+    
 }
 
 extension ZMConversationMessage {
@@ -57,7 +61,7 @@ final class ConversationTableViewDataSource: NSObject {
     private var lastFetchedObjectCount: Int = 0
 
     var registeredCells: [AnyClass] = []
-    var sectionControllers: [String: ConversationMessageSectionController] = [:]
+    var sectionControllers: [NSManagedObjectID: ConversationMessageSectionController] = [:]
 
     private(set) var hasOlderMessagesToLoad = false
     private(set) var hasNewerMessagesToLoad = false
@@ -72,7 +76,7 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    var actionControllers: [String: ConversationMessageActionController] = [:]
+    var actionControllers: [NSManagedObjectID: ConversationMessageActionController] = [:]
 
     let conversation: ZMConversation
     let tableView: UpsideDownTableView
@@ -161,15 +165,12 @@ final class ConversationTableViewDataSource: NSObject {
 
                 // Re-create cell description if the context has changed (message has been moved around or received new
                 // neighbors).
-                return (element.objectIdentifier, sectionController, context)
+                return (element.objectID, sectionController, context)
             }
 
             DispatchQueue.main.async {
                 var sections = [Section]()
                 for (messageObjectId, sectionController, context) in result {
-                    
-                    self.sectionControllers[messageObjectId] = sectionController
-                    self.actionControllers[messageObjectId] = sectionController.actionController
                     
                     if let mainThreadObject = self.messages.first(
                         where: { $0.objectID == (sectionController.message as! ZMMessage).objectID
@@ -196,7 +197,7 @@ final class ConversationTableViewDataSource: NSObject {
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
     ) -> [Section] {
-        let sectionIdentifier = sectionController.message.objectIdentifier
+        let sectionIdentifier = (sectionController.message as! ZMMessage).objectID
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
         else { return currentSections }
@@ -250,15 +251,15 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     func section(for message: ZMConversationMessage) -> Int? {
-        currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
+        currentSections.firstIndex(where: { $0.model == (message as? ZMMessage)?.objectID })
     }
     
     func getOrCreateActionController(
-        for message: ZMConversationMessage,
+        for message: ZMMessage,
         sectionController: ConversationMessageSectionController,
         selfUser: ZMUser
     ) -> ConversationMessageActionController {
-        if let cachedEntry = actionControllers[message.objectIdentifier] {
+        if let cachedEntry = actionControllers[message.objectID] {
             return cachedEntry
         }
         
@@ -285,7 +286,7 @@ final class ConversationTableViewDataSource: NSObject {
     }
     
     private func makeSectionController(
-        message: ConversationMessage,
+        message: ZMMessage,
         index: Int,
         messages: [ZMMessage],
         selfUser: ZMUser,
@@ -325,8 +326,8 @@ final class ConversationTableViewDataSource: NSObject {
         return sectionController
     }
 
-    func getOrCreateSectionController(for message: ConversationMessage, at index: Int, messages: [ZMMessage]) -> ConversationMessageSectionController {
-        if let cachedEntry = sectionControllers[message.objectIdentifier] {
+    func getOrCreateSectionController(for message: ZMMessage, at index: Int, messages: [ZMMessage]) -> ConversationMessageSectionController {
+        if let cachedEntry = sectionControllers[message.objectID] {
             cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
@@ -339,7 +340,7 @@ final class ConversationTableViewDataSource: NSObject {
             tryGetCachedActionController: true
         )
 
-        sectionControllers[message.objectIdentifier] = sectionController
+        sectionControllers[message.objectID] = sectionController
 
         return sectionController
     }
@@ -580,7 +581,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func collapse(message: ZMConversationMessage) {
-        guard let section = sectionControllers[message.objectIdentifier] else {
+        guard let message = message as? ZMMessage, let section = sectionControllers[message.objectID] else {
             return
         }
         section.collapse()
@@ -701,7 +702,7 @@ extension ConversationTableViewDataSource {
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 
-    typealias Section = ArraySection<String, AnyConversationMessageCellDescription>
+    typealias Section = ArraySection<NSManagedObjectID, AnyConversationMessageCellDescription>
 
     /// Iterates over the sections (messages) and compares two subsequent messages. Based on that some minor
     /// modifications are applied.

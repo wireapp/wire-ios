@@ -24,7 +24,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
     struct Configuration: Equatable {
         var message: ZMConversationMessage
-        let deliveryState: ZMDeliveryState
+        var deliveryState: ZMDeliveryState
         /// A message status is considered redundant if it does not provide additional information over a subsequent
         /// message's status. This basically means that only the last of subsequent messages of the same sender within a
         /// short time frame will show the status view, if the delivery state is the same.
@@ -120,7 +120,11 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     var message: ZMConversationMessage? {
         didSet {
             if let message {
-                configuration.message = message
+                configuration = View.Configuration(
+                    message: message,
+                    deliveryState: message.deliveryState,
+                    isRedundant: configuration.isRedundant
+                )
             }
         }
     }
