@@ -172,6 +172,9 @@ final class ConversationTableViewDataSource: NSObject {
                 var sections = [Section]()
                 for (messageObjectId, sectionController, context) in result {
                     
+                    self.sectionControllers[messageObjectId] = sectionController
+                    self.actionControllers[messageObjectId] = sectionController.actionController
+
                     if let mainThreadObject = self.messages.first(
                         where: { $0.objectID == (sectionController.message as! ZMMessage).objectID
                         }) {
