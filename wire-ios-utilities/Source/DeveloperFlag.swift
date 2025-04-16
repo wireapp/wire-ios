@@ -33,6 +33,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case newInitialSync
     case useWireAuthentication
     case wireCellsAttachmentsPreviews
+    case asyncStreamNotifications
 
     public var description: String {
         switch self {
@@ -68,6 +69,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireCellsAttachmentsPreviews:
             "Use the new WireCells previews for conversations attachments"
+
+        case .asyncStreamNotifications:
+            "Turn on to enable new sync with consumable notifications"
         }
     }
 
