@@ -98,7 +98,6 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         conversationTextNotificationBuilder = nil
     }
 
-
     func testGenerateNotification_MLS_Text_Message_Content_It_Invokes_Text_Notification_Builder() async throws {
 
         // Mock

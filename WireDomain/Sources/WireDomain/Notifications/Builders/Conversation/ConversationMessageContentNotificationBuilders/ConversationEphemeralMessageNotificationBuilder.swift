@@ -31,7 +31,6 @@ struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMes
         let selfUser = await context.getSelfUser()
         let selfUserID = await context.selfUserID(selfUser: selfUser)
 
-
         let isMention: Bool
         let isReply: Bool
 

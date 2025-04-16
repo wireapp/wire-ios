@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 /// The Either type represents duality, a value that can either be of a type or another.
 public enum Either<A, B> {
     case left(A)

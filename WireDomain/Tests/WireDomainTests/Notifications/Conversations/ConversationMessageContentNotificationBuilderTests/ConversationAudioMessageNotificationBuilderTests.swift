@@ -25,7 +25,6 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-
 final class ConversationAudioMessageNotificationBuilderTests: XCTestCase {
     private var sut: ConversationAudioMessageNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
