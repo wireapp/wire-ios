@@ -25,8 +25,8 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
-    private var sut: ConversationMLSMessageAddEventNotificationBuilder!
+final class ConversationVideoMessageNotificationBuilderTests: XCTestCase {
+    private var sut: ConversationVideoMessageNotificationBuilder!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
@@ -59,7 +59,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         coreDataStackHelper = nil
     }
 
-    func testGenerateMLSMessageNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
+    func testGenerateVideoMessageNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
 
         // Mock
 
@@ -68,16 +68,17 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = ConversationMLSMessageAddEventNotificationBuilder(
+        sut = ConversationVideoMessageNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
-                userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore
-            ),
-            validator: .init(conversationLocalStore: conversationLocalStore)
+                userLocalStore: userLocalStore
+            )
         )
 
-        let userNotification = await sut.buildContent(event: Scaffolding.event)
+        let userNotification = await sut.buildContent(
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
 
         try await internalTest_assertNotificationContent(
             try XCTUnwrap(userNotification),
@@ -86,7 +87,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         )
     }
 
-    func testGenerateMLSMessageNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
+    func testGenerateVideoMessageNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
 
         // Mock
 
@@ -95,17 +96,20 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = ConversationMLSMessageAddEventNotificationBuilder(
+        sut = ConversationVideoMessageNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
-                userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore
-            ),
-            validator: .init(conversationLocalStore: conversationLocalStore)
+                userLocalStore: userLocalStore
+            )
         )
 
-        let userNotification = await sut.buildContent(event: Scaffolding.event)
+        // When
+        let userNotification = await sut.buildContent(
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
 
+        // Then
         try await internalTest_assertNotificationContent(
             try XCTUnwrap(userNotification),
             isGroup: isGroup,
@@ -113,7 +117,7 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         )
     }
 
-    func testGenerateMLSMessageNotification_Is_OneOnOne_Conversation_And_Team() async throws {
+    func testGenerateVideoMessageNotification_Is_OneOnOne_Conversation_And_Team() async throws {
 
         // Mock
 
@@ -122,17 +126,18 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam)
 
-        sut = ConversationMLSMessageAddEventNotificationBuilder(
+        sut = ConversationVideoMessageNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
-                userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore
-            ),
-            validator: .init(conversationLocalStore: conversationLocalStore)
+                userLocalStore: userLocalStore
+            )
         )
-
+        
         // When
-        let userNotification = await sut.buildContent(event: Scaffolding.event)
+        let userNotification = await sut.buildContent(
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
 
         // Then
         try await internalTest_assertNotificationContent(
@@ -140,35 +145,6 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
             isGroup: isGroup,
             isTeam: isTeam
         )
-    }
-
-    func testGenerateMLSMessageNotification_It_Should_Not_Build_Notification() async throws {
-
-        // Mock
-
-        let isGroup = false
-        let isTeam = true
-
-        await setupMock(
-            isGroup: isGroup,
-            isTeam: isTeam,
-            isMessageSilenced: true
-        )
-
-        sut = ConversationMLSMessageAddEventNotificationBuilder(
-            context: .init(
-                conversationLocalStore: conversationLocalStore,
-                userLocalStore: userLocalStore,
-                messageLocalStore: messageLocalStore
-            ),
-            validator: .init(conversationLocalStore: conversationLocalStore)
-        )
-
-        // When
-        let userNotification = await sut.buildContent(event: Scaffolding.event)
-
-        // Then
-        XCTAssertNil(userNotification)
     }
 
     private func internalTest_assertNotificationContent(
@@ -196,9 +172,11 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         }
 
         // Body
-        XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName): Everything")
-
-        XCTAssert(!notificationContent.body.isEmpty)
+        if isGroup {
+            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName) shared a video")
+        } else {
+            XCTAssertEqual(notificationContent.body, "Shared a video")
+        }
 
         // Category
         XCTAssertEqual(
@@ -223,16 +201,13 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
 
     private func setupMock(
         isGroup: Bool,
-        isTeam: Bool,
-        isMessageSilenced: Bool = false
+        isTeam: Bool
     ) async {
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
 
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
-        conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
-        conversationLocalStore.lastReadServerTimestamp_MockValue = .now
         userLocalStore.fetchOrCreateUserIdDomain_MockValue = await context.perform { [self] in
             modelHelper.createUser(in: context)
         }
@@ -242,16 +217,8 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         userLocalStore.fetchSelfUser_MockValue = await context.perform { [self] in
             modelHelper.createSelfUser(in: context)
         }
-        conversationLocalStore.isConversationForcedReadOnly_MockValue = false
-        conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = isMessageSilenced
         userLocalStore.idFor_MockValue = .mockID1
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)
-        conversationLocalStore.shouldHideNotification_MockValue = false
-        messageLocalStore.fetchMessageIdConversationIDConversationDomain_MockValue = await context.perform { [self] in
-            ZMOTRMessage.fetch(withNonce: .mockID1, for: conversation, in: context)
-        }
-        messageLocalStore.isMessageMentioningSelfText_MockValue = false
-        messageLocalStore.isMessageQuotingSelfQuotedMessage_MockValue = false
         conversationLocalStore.increaseUnreadCountFor_MockMethod = { _ in }
     }
 
@@ -261,19 +228,5 @@ final class ConversationMLSMessageAddEventNotificationBuilderTests: XCTestCase {
         static let teamName = "Team1"
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
-        static let event = ConversationMLSMessageAddEvent(
-            conversationID: conversationID,
-            senderID: userID,
-            subconversation: "",
-            message: messageContent,
-            timestamp: .now,
-            decryptedMessages: [.init(
-                message: Scaffolding.base64EncodedString,
-                senderClientID: UUID.mockID1.uuidString
-            )]
-        )
-
-        static let messageContent = "foo"
-        static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }
 }

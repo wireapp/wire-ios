@@ -29,15 +29,8 @@ protocol ConversationEventNotificationBuilderProtocol {
 
 struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilderProtocol {
 
-    enum Failure: Error {
-        case failedToDecryptMLSMessage
-        case failedToDecryptProteusMessage
-    }
-
     let validator: ConversationEventNotificationBuilder.Validator
-    let conversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilder
-    let conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder
-    let conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder
+    let conversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilder
     let conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder
     let conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder
     let conversationCreateEventNotificationBuilder: ConversationCreateEventNotificationBuilder
@@ -59,59 +52,16 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
 
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
-            let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
-
-            // Decrypt the message.
-            let genericMessage = try decryptMessage(
-                decryptedMessage: decryptedMessage,
-                isProteus: false
+            
+            return try await conversationMessageAddEventNotificationBuilder.buildContent(
+                event: .left(mlsMessageEvent)
             )
-
-            // Gets its calling payload.
-            let calling = genericMessage.calling
-
-            // Builds a calling notification - if there's a call.
-            let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
-                calling: calling,
-                at: mlsMessageEvent.timestamp,
-                conversationID: mlsMessageEvent.conversationID,
-                senderID: mlsMessageEvent.senderID
-            )
-
-            if let callingNotification {
-                return callingNotification
-            } else {
-                // Else, builds the message notification.
-                return await conversationMLSMessageAddEventNotificationBuilder.buildContent(
-                    event: mlsMessageEvent
-                )
-            }
-
+            
         case let .proteusMessageAdd(proteusMessageEvent):
-            let decryptedMessage = proteusMessageEvent.message.decryptedMessage
-            let external = proteusMessageEvent.externalData?.encryptedMessage
-
-            let genericMessage = try decryptMessage(
-                decryptedMessage: decryptedMessage,
-                external: external
+            
+            return try await conversationMessageAddEventNotificationBuilder.buildContent(
+                event: .right(proteusMessageEvent)
             )
-
-            let calling = genericMessage.calling
-
-            let callingNotification = await conversationCallingEventNotificationBuilder.buildContent(
-                calling: calling,
-                at: proteusMessageEvent.timestamp,
-                conversationID: proteusMessageEvent.conversationID,
-                senderID: proteusMessageEvent.senderID
-            )
-
-            if let callingNotification {
-                return callingNotification
-            } else {
-                return await conversationProteusMessageAddEventNotificationBuilder.buildContent(
-                    event: proteusMessageEvent
-                )
-            }
 
         case let .memberLeave(memberLeaveEvent):
 
@@ -146,22 +96,6 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
         default:
             return nil
         }
-    }
-
-    private func decryptMessage(
-        decryptedMessage: String?,
-        external: String? = nil,
-        isProteus: Bool = true
-    ) throws -> GenericMessage {
-        guard let decryptedMessage,
-              let (genericMessage, _) = ProtobufMessageDecoder.getProtobufMessage(
-                  from: decryptedMessage,
-                  externalData: external
-              ) else {
-            throw isProteus ? Failure.failedToDecryptProteusMessage : Failure.failedToDecryptMLSMessage
-        }
-
-        return genericMessage
     }
 }
 

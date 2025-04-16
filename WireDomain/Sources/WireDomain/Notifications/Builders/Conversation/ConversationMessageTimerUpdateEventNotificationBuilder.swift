@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct ConversationMessageTimerUpdateEventNotificationBuilder {
+struct ConversationMessageTimerUpdateEventNotificationBuilder: ConversationMessageTimerUpdateEventNotificationBuilderProtocol {
 
     let context: Context
     let validator: Validator

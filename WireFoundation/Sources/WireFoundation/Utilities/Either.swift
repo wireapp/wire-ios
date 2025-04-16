@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// import UserNotifications
-//
-// protocol NotificationBuilder {
-//    func shouldBuildNotification() async -> Bool
-//    func buildContent() async throws -> UserNotification
-// }
+
+/// The Either type represents duality, a value that can either be of a type or another.
+public enum Either<A, B> {
+  case left(A)
+  case right(B)
+}

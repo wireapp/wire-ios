@@ -73,9 +73,7 @@ extension GenerateNotificationStep {
 
         return ConversationEventNotificationBuilder(
             validator: validator,
-            conversationCallingEventNotificationBuilder: conversationCallingEventNotificationBuilder,
-            conversationMLSMessageAddEventNotificationBuilder: conversationMLSMessageAddEventNotificationBuilder,
-            conversationProteusMessageAddEventNotificationBuilder: conversationProteusMessageAddEventNotificationBuilder,
+            conversationMessageAddEventNotificationBuilder: conversationMessageAddEventNotificationBuilder,
             conversationMemberLeaveEventNotificationBuilder: conversationMemberLeaveEventNotificationBuilder,
             conversationMemberJoinEventNotificationBuilder: conversationMemberJoinEventNotificationBuilder,
             conversationCreateEventNotificationBuilder: conversationCreateEventNotificationBuilder,
@@ -162,40 +160,113 @@ extension GenerateNotificationStep {
         )
     }
 
-    var conversationMLSMessageAddEventNotificationBuilder: ConversationMLSMessageAddEventNotificationBuilder {
+    var conversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilder {
 
-        let context = ConversationMLSMessageAddEventNotificationBuilder.Context(
-            conversationLocalStore: dependency.conversationLocalStore,
-            userLocalStore: dependency.userLocalStore,
-            messageLocalStore: dependency.messageLocalStore
-        )
-
-        let validator = ConversationMLSMessageAddEventNotificationBuilder.Validator(
+        let context = ConversationMessageAddEventNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore
         )
 
-        return ConversationMLSMessageAddEventNotificationBuilder(
+        let validator = ConversationMessageAddEventNotificationBuilder.Validator(
+            conversationLocalStore: dependency.conversationLocalStore
+        )
+
+        return ConversationMessageAddEventNotificationBuilder(
             context: context,
-            validator: validator
+            validator: validator,
+            conversationCallingEventNotificationBuilder: conversationCallingEventNotificationBuilder,
+            conversationAudioMessageNotificationBuilder: conversationAudioMessageNotificationBuilder,
+            conversationEphemeralMessageNotificationBuilder: conversationEphemeralMessageNotificationBuilder,
+            conversationFileUploadMessageNotificationBuilder: conversationFileUploadMessageNotificationBuilder,
+            conversationHiddenMessageNotificationBuilder: conversationHiddenMessageNotificationBuilder,
+            conversationImageMessageNotificationBuilder: conversationImageMessageNotificationBuilder,
+            conversationLocationMessageNotificationBuilder: conversationLocationMessageNotificationBuilder,
+            conversationPingMessageNotificationBuilder: conversationPingMessageNotificationBuilder,
+            conversationVideoMessageNotificationBuilder: conversationVideoMessageNotificationBuilder,
+            conversationTextMessageNotificationBuilder: conversationTextMessageNotificationBuilder
         )
     }
-
-    var conversationProteusMessageAddEventNotificationBuilder: ConversationProteusMessageAddEventNotificationBuilder {
-
-        let context = ConversationProteusMessageAddEventNotificationBuilder.Context(
+    
+    var conversationAudioMessageNotificationBuilder: ConversationAudioMessageNotificationBuilder {
+        let context = ConversationAudioMessageNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationAudioMessageNotificationBuilder(context: context)
+    }
+    
+    var conversationVideoMessageNotificationBuilder: ConversationVideoMessageNotificationBuilder {
+        let context = ConversationVideoMessageNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationVideoMessageNotificationBuilder(context: context)
+    }
+    
+    var conversationPingMessageNotificationBuilder: ConversationPingMessageNotificationBuilder {
+        let context = ConversationPingMessageNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationPingMessageNotificationBuilder(context: context)
+    }
+    
+    var conversationLocationMessageNotificationBuilder: ConversationLocationMessageNotificationBuilder {
+        let context = ConversationLocationMessageNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationLocationMessageNotificationBuilder(context: context)
+    }
+    
+    var conversationHiddenMessageNotificationBuilder: ConversationHiddenMessageNotificationBuilder {
+        let context = ConversationHiddenMessageNotificationBuilder.Context(
+            userLocalStore: dependency.userLocalStore,
+            conversationLocalStore: dependency.conversationLocalStore
+        )
+        
+        return ConversationHiddenMessageNotificationBuilder(context: context)
+    }
+    
+    var conversationFileUploadMessageNotificationBuilder: ConversationFileUploadMessageNotificationBuilder {
+        let context = ConversationFileUploadMessageNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationFileUploadMessageNotificationBuilder(context: context)
+    }
+    
+    var conversationImageMessageNotificationBuilder: ConversationImageMessageNotificationBuilder {
+        let context = ConversationImageMessageNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore
+        )
+        
+        return ConversationImageMessageNotificationBuilder(context: context)
+    }
+    
+    var conversationEphemeralMessageNotificationBuilder: ConversationEphemeralMessageNotificationBuilder {
+        let context = ConversationEphemeralMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore,
             messageLocalStore: dependency.messageLocalStore
         )
-
-        let validator = ConversationProteusMessageAddEventNotificationBuilder.Validator(
-            conversationLocalStore: dependency.conversationLocalStore
+        
+        return ConversationEphemeralMessageNotificationBuilder(context: context)
+    }
+    
+    var conversationTextMessageNotificationBuilder: ConversationTextMessageNotificationBuilder {
+        let context = ConversationTextMessageNotificationBuilder.Context(
+            conversationLocalStore: dependency.conversationLocalStore,
+            userLocalStore: dependency.userLocalStore,
+            messageLocalStore: dependency.messageLocalStore
         )
-
-        return ConversationProteusMessageAddEventNotificationBuilder(
-            context: context,
-            validator: validator
-        )
+        
+        return ConversationTextMessageNotificationBuilder(context: context)
     }
 
     var conversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilder {

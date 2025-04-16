@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct ConversationMemberJoinEventNotificationBuilder {
+struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilderProtocol {
 
     let context: Context
     let validator: Validator

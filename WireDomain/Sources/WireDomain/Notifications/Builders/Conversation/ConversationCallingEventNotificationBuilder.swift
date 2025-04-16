@@ -20,7 +20,7 @@ import WireAPI
 import WireDataModel
 
 /// Handles a regular push notification related to an incoming / missed call
-struct ConversationCallingEventNotificationBuilder {
+struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilderProtocol {
 
     let context: ConversationCallingEventNotificationBuilder.Context
     let validator: ConversationCallingEventNotificationBuilder.Validator

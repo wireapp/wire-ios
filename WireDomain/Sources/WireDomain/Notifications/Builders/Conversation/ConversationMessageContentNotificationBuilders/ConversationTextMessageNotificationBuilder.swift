@@ -16,29 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireAPI
 
-struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilderProtocol {
-
+struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotificationBuilderProtocol {
     let context: Context
-    let validator: Validator
-
+    
     func buildContent(
-        event: ConversationMemberLeaveEvent
+        text: Text,
+        conversationID: ConversationID,
+        senderID: UserID
     ) async -> UserNotification? {
-        let removedUserIDs = Set(event.removedUserIDs.compactMap(\.uuid))
-
-        let canBuildNotification = await validator.validate(
-            removedUserIDs: removedUserIDs
-        )
-
-        guard canBuildNotification else {
-            return nil
-        }
-
-        let conversationID = event.conversationID
-        let senderID = event.senderID
         let conversation = await context.getConversation(conversationID: conversationID)
         let sender = await context.getSender(senderID: senderID)
         let selfUser = await context.getSelfUser()
@@ -50,28 +38,21 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
             conversation: conversation
         )
 
-        return buildMemberLeaveNotification(
-            isGroupConversation: isGroupConversation,
-            teamName: teamName,
-            conversationName: conversationName,
-            senderName: senderName,
-            selfUserID: selfUserID,
-            senderID: senderID.uuid,
+        let formattedText = text.content.removingExtremeCombiningCharacters
+
+        guard !formattedText.isEmpty else {
+            return nil
+        }
+
+        let quotedMessageId = UUID(uuidString: text.quote.quotedMessageID)
+        let quotedMessage = await context.fetchMessage(
+            id: quotedMessageId,
             conversationID: conversationID
         )
-    }
 
-    // MARK: - Build notifications
+        let isMention = await context.isMessageMentionSelf(text: text)
+        let isReply = await context.isMessageQuotingSelf(message: quotedMessage)
 
-    private func buildMemberLeaveNotification(
-        isGroupConversation: Bool,
-        teamName: String?,
-        conversationName: String?,
-        senderName: String?,
-        selfUserID: UUID,
-        senderID: UUID,
-        conversationID: ConversationID
-    ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
         if let title = makeTitle(
@@ -83,25 +64,45 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
             content.title = title
         }
 
-        let body = if let senderName {
-            String.formated(key: "push.notification.body.senderRemovedYou", bundle: .module, senderName)
+        let format: NotificationBody.NewMessageBodyDescriptor = if isMention {
+            .textWithMention(content: formattedText, senderName: senderName)
+        } else if isReply {
+            .textWithReply(content: formattedText, senderName: senderName)
         } else {
-            String.localized(key: "push.notification.body.removedYou", bundle: .module)
+            .text(content: formattedText, senderName: senderName)
         }
 
-        content.body = body
+        let body = NotificationBody.singleMessage(
+            format
+        )
+
+        content.body = body.make()
         content.categoryIdentifier = makeCategory()
         content.sound = makeSound()
         content.userInfo = makeUserInfo(
             selfUserID: selfUserID,
-            senderID: senderID,
+            senderID: senderID.uuid,
             conversationID: conversationID
         )
         content.threadIdentifier = conversationID.uuid.transportString()
 
+        if isMention {
+            await context.increateUnreadSelfMentionCount(
+                for: conversation
+            )
+        }
+
+        if isReply {
+            await context.increaseUnreadSelfReplyCount(
+                for: conversation
+            )
+        }
+        
+        await context.increaseReadCount(conversation: conversation)
+
         return .text(content)
     }
-
+    
     // MARK: - Helpers
 
     private func makeTitle(
@@ -133,17 +134,13 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
             .conversationMessage(format)
             .make()
     }
-
-    private func makeSound(type: NotificationSound = .default) -> UNNotificationSound {
-        let notificationSoundName = UNNotificationSoundName(type.rawValue)
+    
+    private func makeSound() -> UNNotificationSound {
+        let soundType = NotificationSound.default
+        let notificationSoundName = UNNotificationSoundName(soundType.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
-
-    private func makeCategory() -> String {
-        let category = NotificationCategory.unmutedConversation
-        return category.rawValue
-    }
-
+    
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID,
@@ -157,27 +154,18 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
 
         return userInfo
     }
-
+    
+    private func makeCategory() -> String {
+        let category = NotificationCategory.unmutedConversation
+        return category.rawValue
+    }
 }
 
-extension ConversationMemberLeaveEventNotificationBuilder {
-    struct Validator {
-        let userLocalStore: any UserLocalStoreProtocol
-
-        func validate(
-            removedUserIDs: Set<UUID>
-        ) async -> Bool {
-
-            let selfUser = await userLocalStore.fetchSelfUser()
-            let selfUserID = await userLocalStore.id(for: selfUser)
-
-            return removedUserIDs.contains(selfUserID)
-        }
-    }
-
+extension ConversationTextMessageNotificationBuilder {
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
+        let messageLocalStore: any MessageLocalStoreProtocol
 
         func getConversation(
             conversationID: ConversationID
@@ -201,18 +189,18 @@ extension ConversationMemberLeaveEventNotificationBuilder {
             )
         }
 
-        func senderName(
-            sender: ZMUser
-        ) async -> String? {
-            await userLocalStore.name(for: sender)
-        }
-
         func isGroupConversation(conversation: ZMConversation) async -> Bool {
             await conversationLocalStore.isGroupConversation(conversation)
         }
 
         func selfUserID(selfUser: ZMUser) async -> UUID {
             await userLocalStore.id(for: selfUser)
+        }
+
+        func senderName(
+            sender: ZMUser
+        ) async -> String? {
+            await userLocalStore.name(for: sender)
         }
 
         func conversationName(
@@ -226,6 +214,56 @@ extension ConversationMemberLeaveEventNotificationBuilder {
         ) async -> String? {
             await userLocalStore.teamName(for: selfUser)
         }
+        
+        func fetchMessage(
+            id: UUID?,
+            conversationID: ConversationID
+        ) async -> ZMOTRMessage? {
+            await messageLocalStore.fetchMessage(
+                id: id,
+                conversationID: conversationID.uuid,
+                conversationDomain: conversationID.domain
+            )
+        }
 
+        func isMessageMentionSelf(
+            text: Text
+        ) async -> Bool {
+            await messageLocalStore.isMessageMentioningSelf(
+                text: text
+            )
+        }
+
+        func isMessageQuotingSelf(
+            message: ZMOTRMessage?
+        ) async -> Bool {
+            await messageLocalStore.isMessageQuotingSelf(
+                quotedMessage: message
+            )
+        }
+
+        func increateUnreadSelfMentionCount(
+            for conversation: ZMConversation
+        ) async {
+            await conversationLocalStore.increaseUnreadSelfMentionCount(
+                for: conversation
+            )
+        }
+
+        func increaseUnreadSelfReplyCount(
+            for conversation: ZMConversation
+        ) async {
+            await conversationLocalStore.increaseUnreadSelfReplyCount(
+                for: conversation
+            )
+        }
+        
+        func increaseReadCount(
+            conversation: ZMConversation
+        ) async {
+            await conversationLocalStore.increaseUnreadCount(
+                for: conversation
+            )
+        }
     }
 }

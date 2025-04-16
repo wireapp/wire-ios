@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-struct ConversationDeleteEventNotificationBuilder {
+struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotificationBuilderProtocol {
 
     let context: Context
     let validator: Validator

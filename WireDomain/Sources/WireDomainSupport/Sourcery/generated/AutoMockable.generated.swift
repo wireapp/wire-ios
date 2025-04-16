@@ -212,6 +212,136 @@ public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
 
 }
 
+class MockConversationAudioMessageNotificationBuilderProtocol: ConversationAudioMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentConversationIDSenderID_Invocations: [(conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentConversationIDSenderID_MockMethod: ((ConversationID, UserID) async -> UserNotification)?
+    var buildContentConversationIDSenderID_MockValue: UserNotification?
+
+    func buildContent(conversationID: ConversationID, senderID: UserID) async -> UserNotification {
+        buildContentConversationIDSenderID_Invocations.append((conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentConversationIDSenderID_MockMethod {
+            return await mock(conversationID, senderID)
+        } else if let mock = buildContentConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentConversationIDSenderID`")
+        }
+    }
+
+}
+
+class MockConversationCallingEventNotificationBuilderProtocol: ConversationCallingEventNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentCallingAtConversationIDSenderID_Invocations: [(calling: Calling, time: Date?, conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentCallingAtConversationIDSenderID_MockMethod: ((Calling, Date?, ConversationID, UserID) async -> UserNotification?)?
+    var buildContentCallingAtConversationIDSenderID_MockValue: UserNotification??
+
+    func buildContent(calling: Calling, at time: Date?, conversationID: ConversationID, senderID: UserID) async -> UserNotification? {
+        buildContentCallingAtConversationIDSenderID_Invocations.append((calling: calling, time: time, conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentCallingAtConversationIDSenderID_MockMethod {
+            return await mock(calling, time, conversationID, senderID)
+        } else if let mock = buildContentCallingAtConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentCallingAtConversationIDSenderID`")
+        }
+    }
+
+}
+
+class MockConversationCreateEventNotificationBuilderProtocol: ConversationCreateEventNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentEvent_Invocations: [ConversationCreateEvent] = []
+    var buildContentEvent_MockMethod: ((ConversationCreateEvent) async -> UserNotification?)?
+    var buildContentEvent_MockValue: UserNotification??
+
+    func buildContent(event: ConversationCreateEvent) async -> UserNotification? {
+        buildContentEvent_Invocations.append(event)
+
+        if let mock = buildContentEvent_MockMethod {
+            return await mock(event)
+        } else if let mock = buildContentEvent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentEvent`")
+        }
+    }
+
+}
+
+class MockConversationDeleteEventNotificationBuilderProtocol: ConversationDeleteEventNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentEvent_Invocations: [ConversationDeleteEvent] = []
+    var buildContentEvent_MockMethod: ((ConversationDeleteEvent) async -> UserNotification?)?
+    var buildContentEvent_MockValue: UserNotification??
+
+    func buildContent(event: ConversationDeleteEvent) async -> UserNotification? {
+        buildContentEvent_Invocations.append(event)
+
+        if let mock = buildContentEvent_MockMethod {
+            return await mock(event)
+        } else if let mock = buildContentEvent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentEvent`")
+        }
+    }
+
+}
+
+class MockConversationEphemeralMessageNotificationBuilderProtocol: ConversationEphemeralMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentEphemeralConversationIDSenderID_Invocations: [(ephemeral: Ephemeral, conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentEphemeralConversationIDSenderID_MockMethod: ((Ephemeral, ConversationID, UserID) async -> UserNotification?)?
+    var buildContentEphemeralConversationIDSenderID_MockValue: UserNotification??
+
+    func buildContent(ephemeral: Ephemeral, conversationID: ConversationID, senderID: UserID) async -> UserNotification? {
+        buildContentEphemeralConversationIDSenderID_Invocations.append((ephemeral: ephemeral, conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentEphemeralConversationIDSenderID_MockMethod {
+            return await mock(ephemeral, conversationID, senderID)
+        } else if let mock = buildContentEphemeralConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentEphemeralConversationIDSenderID`")
+        }
+    }
+
+}
+
 class MockConversationEventNotificationBuilderProtocol: ConversationEventNotificationBuilderProtocol {
 
     // MARK: - Life cycle
@@ -238,6 +368,84 @@ class MockConversationEventNotificationBuilderProtocol: ConversationEventNotific
             return mock
         } else {
             fatalError("no mock for `buildContentEvent`")
+        }
+    }
+
+}
+
+class MockConversationFileUploadMessageNotificationBuilderProtocol: ConversationFileUploadMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentConversationIDSenderID_Invocations: [(conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentConversationIDSenderID_MockMethod: ((ConversationID, UserID) async -> UserNotification)?
+    var buildContentConversationIDSenderID_MockValue: UserNotification?
+
+    func buildContent(conversationID: ConversationID, senderID: UserID) async -> UserNotification {
+        buildContentConversationIDSenderID_Invocations.append((conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentConversationIDSenderID_MockMethod {
+            return await mock(conversationID, senderID)
+        } else if let mock = buildContentConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentConversationIDSenderID`")
+        }
+    }
+
+}
+
+class MockConversationHiddenMessageNotificationBuilderProtocol: ConversationHiddenMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentConversationIDSenderID_Invocations: [(conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentConversationIDSenderID_MockMethod: ((ConversationID, UserID) async -> UserNotification)?
+    var buildContentConversationIDSenderID_MockValue: UserNotification?
+
+    func buildContent(conversationID: ConversationID, senderID: UserID) async -> UserNotification {
+        buildContentConversationIDSenderID_Invocations.append((conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentConversationIDSenderID_MockMethod {
+            return await mock(conversationID, senderID)
+        } else if let mock = buildContentConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentConversationIDSenderID`")
+        }
+    }
+
+}
+
+class MockConversationImageMessageNotificationBuilderProtocol: ConversationImageMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentConversationIDSenderID_Invocations: [(conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentConversationIDSenderID_MockMethod: ((ConversationID, UserID) async -> UserNotification)?
+    var buildContentConversationIDSenderID_MockValue: UserNotification?
+
+    func buildContent(conversationID: ConversationID, senderID: UserID) async -> UserNotification {
+        buildContentConversationIDSenderID_Invocations.append((conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentConversationIDSenderID_MockMethod {
+            return await mock(conversationID, senderID)
+        } else if let mock = buildContentConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentConversationIDSenderID`")
         }
     }
 
@@ -1137,6 +1345,136 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
 }
 
+class MockConversationLocationMessageNotificationBuilderProtocol: ConversationLocationMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentConversationIDSenderID_Invocations: [(conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentConversationIDSenderID_MockMethod: ((ConversationID, UserID) async -> UserNotification)?
+    var buildContentConversationIDSenderID_MockValue: UserNotification?
+
+    func buildContent(conversationID: ConversationID, senderID: UserID) async -> UserNotification {
+        buildContentConversationIDSenderID_Invocations.append((conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentConversationIDSenderID_MockMethod {
+            return await mock(conversationID, senderID)
+        } else if let mock = buildContentConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentConversationIDSenderID`")
+        }
+    }
+
+}
+
+class MockConversationMemberJoinEventNotificationBuilderProtocol: ConversationMemberJoinEventNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentEvent_Invocations: [ConversationMemberJoinEvent] = []
+    var buildContentEvent_MockMethod: ((ConversationMemberJoinEvent) async -> UserNotification?)?
+    var buildContentEvent_MockValue: UserNotification??
+
+    func buildContent(event: ConversationMemberJoinEvent) async -> UserNotification? {
+        buildContentEvent_Invocations.append(event)
+
+        if let mock = buildContentEvent_MockMethod {
+            return await mock(event)
+        } else if let mock = buildContentEvent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentEvent`")
+        }
+    }
+
+}
+
+class MockConversationMemberLeaveEventNotificationBuilderProtocol: ConversationMemberLeaveEventNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentEvent_Invocations: [ConversationMemberLeaveEvent] = []
+    var buildContentEvent_MockMethod: ((ConversationMemberLeaveEvent) async -> UserNotification?)?
+    var buildContentEvent_MockValue: UserNotification??
+
+    func buildContent(event: ConversationMemberLeaveEvent) async -> UserNotification? {
+        buildContentEvent_Invocations.append(event)
+
+        if let mock = buildContentEvent_MockMethod {
+            return await mock(event)
+        } else if let mock = buildContentEvent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentEvent`")
+        }
+    }
+
+}
+
+class MockConversationMessageTimerUpdateEventNotificationBuilderProtocol: ConversationMessageTimerUpdateEventNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentEvent_Invocations: [ConversationMessageTimerUpdateEvent] = []
+    var buildContentEvent_MockMethod: ((ConversationMessageTimerUpdateEvent) async -> UserNotification?)?
+    var buildContentEvent_MockValue: UserNotification??
+
+    func buildContent(event: ConversationMessageTimerUpdateEvent) async -> UserNotification? {
+        buildContentEvent_Invocations.append(event)
+
+        if let mock = buildContentEvent_MockMethod {
+            return await mock(event)
+        } else if let mock = buildContentEvent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentEvent`")
+        }
+    }
+
+}
+
+class MockConversationPingMessageNotificationBuilderProtocol: ConversationPingMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentConversationIDSenderID_Invocations: [(conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentConversationIDSenderID_MockMethod: ((ConversationID, UserID) async -> UserNotification)?
+    var buildContentConversationIDSenderID_MockValue: UserNotification?
+
+    func buildContent(conversationID: ConversationID, senderID: UserID) async -> UserNotification {
+        buildContentConversationIDSenderID_Invocations.append((conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentConversationIDSenderID_MockMethod {
+            return await mock(conversationID, senderID)
+        } else if let mock = buildContentConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentConversationIDSenderID`")
+        }
+    }
+
+}
+
 public class MockConversationProtobufMessageProcessorProtocol: ConversationProtobufMessageProcessorProtocol {
 
     // MARK: - Life cycle
@@ -1455,6 +1793,58 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
 }
 
+class MockConversationTextMessageNotificationBuilderProtocol: ConversationTextMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentTextConversationIDSenderID_Invocations: [(text: Text, conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentTextConversationIDSenderID_MockMethod: ((Text, ConversationID, UserID) async -> UserNotification?)?
+    var buildContentTextConversationIDSenderID_MockValue: UserNotification??
+
+    func buildContent(text: Text, conversationID: ConversationID, senderID: UserID) async -> UserNotification? {
+        buildContentTextConversationIDSenderID_Invocations.append((text: text, conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentTextConversationIDSenderID_MockMethod {
+            return await mock(text, conversationID, senderID)
+        } else if let mock = buildContentTextConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentTextConversationIDSenderID`")
+        }
+    }
+
+}
+
+class MockConversationVideoMessageNotificationBuilderProtocol: ConversationVideoMessageNotificationBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - buildContent
+
+    var buildContentConversationIDSenderID_Invocations: [(conversationID: ConversationID, senderID: UserID)] = []
+    var buildContentConversationIDSenderID_MockMethod: ((ConversationID, UserID) async -> UserNotification)?
+    var buildContentConversationIDSenderID_MockValue: UserNotification?
+
+    func buildContent(conversationID: ConversationID, senderID: UserID) async -> UserNotification {
+        buildContentConversationIDSenderID_Invocations.append((conversationID: conversationID, senderID: senderID))
+
+        if let mock = buildContentConversationIDSenderID_MockMethod {
+            return await mock(conversationID, senderID)
+        } else if let mock = buildContentConversationIDSenderID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildContentConversationIDSenderID`")
+        }
+    }
+
+}
+
 public class MockCreateChannelUseCaseProtocol: CreateChannelUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -1574,33 +1964,6 @@ class MockGenerateNotificationUseCaseProtocol: GenerateNotificationUseCaseProtoc
             return mock
         } else {
             fatalError("no mock for `invokeUpdateEvents`")
-        }
-    }
-
-}
-
-public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeUrlPassword_Invocations: [(url: URL, password: String)] = []
-    public var invokeUrlPassword_MockMethod: ((URL, String) -> AsyncThrowingStream<ImportBackupProgress, any Error>)?
-    public var invokeUrlPassword_MockValue: AsyncThrowingStream<ImportBackupProgress, any Error>?
-
-    public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
-        invokeUrlPassword_Invocations.append((url: url, password: password))
-
-        if let mock = invokeUrlPassword_MockMethod {
-            return mock(url, password)
-        } else if let mock = invokeUrlPassword_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `invokeUrlPassword`")
         }
     }
 
