@@ -1091,6 +1091,11 @@ extension ZMUserSession: SyncAgentDelegate {
                 context: notificationContext
             ).post()
 
+            guard !isRecovering else {
+                // in case of recovery, we don't need more
+                return
+            }
+
             WaitingGroupTask(context: syncContext) { [weak self] in
                 guard let self else { return }
                 await fetchBackendMLSPublicKeys()
@@ -1149,7 +1154,7 @@ extension ZMUserSession: SyncAgentDelegate {
         -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
 
-        let resolver = OneOnOneResolver(
+        let resolver = LegacyOneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
         )
