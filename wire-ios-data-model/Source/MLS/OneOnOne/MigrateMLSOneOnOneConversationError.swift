@@ -24,5 +24,6 @@ public enum MigrateMLSOneOnOneConversationError: Error {
     case failedToEstablishGroup(Error)
     case failedToActivateConversation
     case missingConversationEpoch
+    case alreadyMigrated
 
 }
