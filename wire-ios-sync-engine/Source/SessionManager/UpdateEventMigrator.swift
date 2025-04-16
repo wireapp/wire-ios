@@ -48,47 +48,64 @@ struct UpdateEventMigrator {
 
 private extension UpdateEvent {
 
-    init?(_ legacyEvent: ZMUpdateEvent) {
-        let localDomain: String? = "local.com"
-
+    init?(
+        legacyEvent: ZMUpdateEvent,
+        localDomain: String
+    ) {
         switch legacyEvent.type {
         case .conversationDelete:
-            guard let event = Self.conversationDeleteEvent(from: legacyEvent) else {
+            guard let event = Self.conversationDeleteEvent(
+                from: legacyEvent,
+                localDomain: localDomain
+            ) else {
                 return nil
             }
 
             self = .conversation(.delete(event))
 
         case .conversationMessageAdd:
-            guard let event = Self.conversationMLSMessageAddEvent(from: legacyEvent) else {
+            guard let event = Self.conversationMLSMessageAddEvent(
+                from: legacyEvent,
+                localDomain: localDomain
+            ) else {
                 return nil
             }
 
             self = .conversation(.mlsMessageAdd(event))
 
         case .conversationMLSWelcome:
-            guard let event = Self.conversationMLSWelcomeEvent(from: legacyEvent) else {
+            guard let event = Self.conversationMLSWelcomeEvent(
+                from: legacyEvent,
+                localDomain: localDomain
+            ) else {
                 return nil
             }
 
             self = .conversation(.mlsWelcome(event))
 
         case .conversationOtrMessageAdd:
-            guard let event = Self.conversationProteusMessageAddEvent(from: legacyEvent) else {
+            guard let event = Self.conversationProteusMessageAddEvent(
+                from: legacyEvent,
+                localDomain: localDomain
+            ) else {
                 return nil
             }
 
             self = .conversation(.proteusMessageAdd(event))
 
         case .federationConnectionRemoved:
-            guard let event = Self.federationConnectionRemovedEvent(from: legacyEvent) else {
+            guard let event = Self.federationConnectionRemovedEvent(
+                from: legacyEvent
+            ) else {
                 return nil
             }
             
             self = .federation(.connectionRemoved(event))
 
         case .federationDelete:
-            guard let event = Self.federationDeleteEvent(from: legacyEvent) else {
+            guard let event = Self.federationDeleteEvent(
+                from: legacyEvent
+            ) else {
                 return nil
             }
 
@@ -104,15 +121,18 @@ private extension UpdateEvent {
 
     // MARK: - Conversation events
 
-    private static func conversationDeleteEvent(from event: ZMUpdateEvent) -> ConversationDeleteEvent? {
+    private static func conversationDeleteEvent(
+        from event: ZMUpdateEvent,
+        localDomain: String
+    ) -> ConversationDeleteEvent? {
         let decoder = EventPayloadDecoder()
         guard
             let payload = try? decoder.decode(
                 Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self,
                 from: event.payload
             ),
-            let conversationID = payload.conversationID,
-            let senderID = payload.senderID,
+            let conversationID = payload.conversationID(localDomain: localDomain),
+            let senderID = payload.senderID(localDomain: localDomain),
             let timestamp = payload.timestamp
         else {
             return nil
@@ -125,15 +145,18 @@ private extension UpdateEvent {
         )
     }
 
-    private static func conversationMLSMessageAddEvent(from event: ZMUpdateEvent) -> ConversationMLSMessageAddEvent? {
+    private static func conversationMLSMessageAddEvent(
+        from event: ZMUpdateEvent,
+        localDomain: String
+    ) -> ConversationMLSMessageAddEvent? {
         let decoder = EventPayloadDecoder()
         guard
             let payload = try? decoder.decode(
                 Payload.ConversationEvent<DecryptedMLSMessageAddEvent>.self,
                 from: event.payload
             ),
-            let conversationID = payload.conversationID,
-            let senderID = payload.senderID,
+            let conversationID = payload.conversationID(localDomain: localDomain),
+            let senderID = payload.senderID(localDomain: localDomain),
             let timestamp = payload.timestamp
         else {
             return nil
@@ -163,15 +186,18 @@ private extension UpdateEvent {
         )
     }
 
-    private static func conversationMLSWelcomeEvent(from event: ZMUpdateEvent) -> ConversationMLSWelcomeEvent? {
+    private static func conversationMLSWelcomeEvent(
+        from event: ZMUpdateEvent,
+        localDomain: String
+    ) -> ConversationMLSWelcomeEvent? {
         let decoder = EventPayloadDecoder()
         guard
             let payload = try? decoder.decode(
                 Payload.ConversationEvent<MLSWelcomeEvent>.self,
                 from: event.payload
             ),
-            let conversationID = payload.conversationID,
-            let senderID = payload.senderID
+            let conversationID = payload.conversationID(localDomain: localDomain),
+            let senderID = payload.senderID(localDomain: localDomain)
         else {
             return nil
         }
@@ -183,15 +209,18 @@ private extension UpdateEvent {
         )
     }
 
-    private static func conversationProteusMessageAddEvent(from event: ZMUpdateEvent) -> ConversationProteusMessageAddEvent? {
+    private static func conversationProteusMessageAddEvent(
+        from event: ZMUpdateEvent,
+        localDomain: String
+    ) -> ConversationProteusMessageAddEvent? {
         let decoder = EventPayloadDecoder()
         guard
             let payload = try? decoder.decode(
                 Payload.ConversationEvent<DecryptedProteusMessageEvent>.self,
                 from: event.payload
             ),
-            let conversationID = payload.conversationID,
-            let senderID = payload.senderID,
+            let conversationID = payload.conversationID(localDomain: localDomain),
+            let senderID = payload.senderID(localDomain: localDomain),
             let timestamp = payload.timestamp
         else {
             return nil
@@ -258,33 +287,25 @@ private extension UpdateEvent {
 
 private extension Payload.ConversationEvent {
 
-    var conversationID: ConversationID? {
-        let localDomain: String? = "local.com"
-        guard
-            let uuid = qualifiedID?.uuid ?? id,
-            let domain = qualifiedID?.domain ?? localDomain
-        else {
+    func conversationID(localDomain: String) -> ConversationID? {
+        guard let uuid = qualifiedID?.uuid ?? id else {
             return nil
         }
 
         return ConversationID(
             uuid: uuid,
-            domain: domain
+            domain: qualifiedID?.domain ?? localDomain
         )
     }
 
-    var senderID: UserID? {
-        let localDomain: String? = "local.com"
-        guard
-            let uuid = qualifiedFrom?.uuid ?? from,
-            let domain = qualifiedFrom?.domain ?? localDomain
-        else {
+    func senderID(localDomain: String) -> UserID? {
+        guard let uuid = qualifiedFrom?.uuid ?? from else {
             return nil
         }
 
         return UserID(
             uuid: uuid,
-            domain: domain
+            domain: qualifiedFrom?.domain ?? localDomain
         )
     }
 
