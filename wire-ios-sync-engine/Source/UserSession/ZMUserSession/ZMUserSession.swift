@@ -1307,8 +1307,6 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         registerCurrentPushToken()
         renewAccessTokenIfNeeded(for: userClient)
 
-        WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)
-
         managedObjectContext.performGroupedBlock { [weak self] in
             guard
                 let context = self?.managedObjectContext,

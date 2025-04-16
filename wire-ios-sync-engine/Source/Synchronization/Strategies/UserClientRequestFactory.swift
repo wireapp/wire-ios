@@ -47,6 +47,11 @@ extension UserClientRequestFactory {
         let preKeysPayloadData = payloadForPreKeys(prekeys)
         let lastPreKeyPayloadData = payloadForLastPreKey(lastRestortPrekey)
 
+        var capabilities = ["legalhold-implicit-consent"]
+        if DeveloperFlag.asyncStreamNotifications.isOn && apiVersion >= .v8 {
+            capabilities.append("consumable-notifications")
+        }
+
         var payload: [String: Any] = [
             "type": client.type.rawValue,
             "label": client.label ?? "",
@@ -54,7 +59,7 @@ extension UserClientRequestFactory {
             "class": (client.deviceClass?.rawValue ?? DeviceClass.phone.rawValue),
             "lastkey": lastPreKeyPayloadData,
             "prekeys": preKeysPayloadData,
-
+            "capabilities": capabilities,
             "cookie": cookieLabel
         ]
 
@@ -65,7 +70,7 @@ extension UserClientRequestFactory {
         if let verificationCode = credentials?.emailVerificationCode {
             payload["verification_code"] = verificationCode
         }
-
+        
         let request = ZMTransportRequest(
             path: "/clients",
             method: .post,
@@ -122,6 +127,7 @@ extension UserClientRequestFactory {
         }
 
         let preKeysPayloadData = payloadForPreKeys(prekeys)
+        
         let payload: [String: Any] = [
             "prekeys": preKeysPayloadData
         ]
@@ -169,9 +175,17 @@ extension UserClientRequestFactory {
         guard let remoteIdentifier = client.remoteIdentifier else {
             throw UserClientRequestError.clientNotRegistered
         }
-        let payload: [String: Any] = [
-            "capabilities": ["legalhold-implicit-consent"]
+        // TODO: [WPB-17223] recheck this when this should be triggered `WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)`
+        
+        var capabilities = ["legalhold-implicit-consent"]
+        if DeveloperFlag.asyncStreamNotifications.isOn && apiVersion >= .v8 {
+            capabilities.append("consumable-notifications")
+        }
+
+        var payload: [String: Any] = [
+            "capabilities": capabilities
         ]
+
         let request = ZMTransportRequest(
             path: "/clients/\(remoteIdentifier)",
             method: .put,
