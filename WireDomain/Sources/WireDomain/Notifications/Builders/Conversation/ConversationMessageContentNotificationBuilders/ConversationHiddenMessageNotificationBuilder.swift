@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct ConversationHiddenMessageNotificationBuilder: ConversationHiddenMessageNotificationBuilderProtocol {
     let context: Context
-    
+
     func buildContent(
         conversationID: ConversationID,
         senderID: UserID
@@ -43,20 +43,20 @@ struct ConversationHiddenMessageNotificationBuilder: ConversationHiddenMessageNo
             conversationID: conversationID
         )
         content.threadIdentifier = conversationID.uuid.transportString()
-        
+
         await context.increaseReadCount(conversation: conversation)
 
         return .text(content)
     }
-    
+
     // MARK: - Helpers
-    
+
     private func makeSound() -> UNNotificationSound {
         let soundType = NotificationSound.default
         let notificationSoundName = UNNotificationSoundName(soundType.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
-    
+
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID,
@@ -70,7 +70,7 @@ struct ConversationHiddenMessageNotificationBuilder: ConversationHiddenMessageNo
 
         return userInfo
     }
-    
+
     private func makeCategory() -> String {
         let category = NotificationCategory.unmutedConversation
         return category.rawValue
@@ -81,7 +81,7 @@ extension ConversationHiddenMessageNotificationBuilder {
     struct Context {
         let userLocalStore: any UserLocalStoreProtocol
         let conversationLocalStore: any ConversationLocalStoreProtocol
-        
+
         func getConversation(
             conversationID: ConversationID
         ) async -> ZMConversation {
@@ -98,7 +98,7 @@ extension ConversationHiddenMessageNotificationBuilder {
         func selfUserID(selfUser: ZMUser) async -> UUID {
             await userLocalStore.id(for: selfUser)
         }
-        
+
         func increaseReadCount(
             conversation: ZMConversation
         ) async {

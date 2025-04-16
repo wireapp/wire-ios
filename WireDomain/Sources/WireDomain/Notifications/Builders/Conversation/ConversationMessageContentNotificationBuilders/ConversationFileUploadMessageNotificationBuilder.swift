@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct ConversationFileUploadMessageNotificationBuilder: ConversationFileUploadMessageNotificationBuilderProtocol {
     let context: Context
-    
+
     func buildContent(
         conversationID: ConversationID,
         senderID: UserID
     ) async -> UserNotification {
         let content = UNMutableNotificationContent()
-        
+
         let conversation = await context.getConversation(conversationID: conversationID)
         let sender = await context.getSender(senderID: senderID)
         let selfUser = await context.getSelfUser()
@@ -61,12 +61,12 @@ struct ConversationFileUploadMessageNotificationBuilder: ConversationFileUploadM
             conversationID: conversationID
         )
         content.threadIdentifier = conversationID.uuid.transportString()
-        
+
         await context.increaseReadCount(conversation: conversation)
 
         return .text(content)
     }
-    
+
     // MARK: - Helpers
 
     private func makeTitle(
@@ -98,13 +98,13 @@ struct ConversationFileUploadMessageNotificationBuilder: ConversationFileUploadM
             .conversationMessage(format)
             .make()
     }
-    
+
     private func makeSound() -> UNNotificationSound {
         let soundType = NotificationSound.default
         let notificationSoundName = UNNotificationSoundName(soundType.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
-    
+
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID,
@@ -118,7 +118,7 @@ struct ConversationFileUploadMessageNotificationBuilder: ConversationFileUploadM
 
         return userInfo
     }
-    
+
     private func makeCategory() -> String {
         let category = NotificationCategory.unmutedConversation
         return category.rawValue
@@ -177,7 +177,7 @@ extension ConversationFileUploadMessageNotificationBuilder {
         ) async -> String? {
             await userLocalStore.teamName(for: selfUser)
         }
-        
+
         func increaseReadCount(
             conversation: ZMConversation
         ) async {

@@ -19,6 +19,6 @@
 
 /// The Either type represents duality, a value that can either be of a type or another.
 public enum Either<A, B> {
-  case left(A)
-  case right(B)
+    case left(A)
+    case right(B)
 }

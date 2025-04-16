@@ -185,87 +185,87 @@ extension GenerateNotificationStep {
             conversationTextMessageNotificationBuilder: conversationTextMessageNotificationBuilder
         )
     }
-    
+
     var conversationAudioMessageNotificationBuilder: ConversationAudioMessageNotificationBuilder {
         let context = ConversationAudioMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore
         )
-        
+
         return ConversationAudioMessageNotificationBuilder(context: context)
     }
-    
+
     var conversationVideoMessageNotificationBuilder: ConversationVideoMessageNotificationBuilder {
         let context = ConversationVideoMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore
         )
-        
+
         return ConversationVideoMessageNotificationBuilder(context: context)
     }
-    
+
     var conversationPingMessageNotificationBuilder: ConversationPingMessageNotificationBuilder {
         let context = ConversationPingMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore
         )
-        
+
         return ConversationPingMessageNotificationBuilder(context: context)
     }
-    
+
     var conversationLocationMessageNotificationBuilder: ConversationLocationMessageNotificationBuilder {
         let context = ConversationLocationMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore
         )
-        
+
         return ConversationLocationMessageNotificationBuilder(context: context)
     }
-    
+
     var conversationHiddenMessageNotificationBuilder: ConversationHiddenMessageNotificationBuilder {
         let context = ConversationHiddenMessageNotificationBuilder.Context(
             userLocalStore: dependency.userLocalStore,
             conversationLocalStore: dependency.conversationLocalStore
         )
-        
+
         return ConversationHiddenMessageNotificationBuilder(context: context)
     }
-    
+
     var conversationFileUploadMessageNotificationBuilder: ConversationFileUploadMessageNotificationBuilder {
         let context = ConversationFileUploadMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore
         )
-        
+
         return ConversationFileUploadMessageNotificationBuilder(context: context)
     }
-    
+
     var conversationImageMessageNotificationBuilder: ConversationImageMessageNotificationBuilder {
         let context = ConversationImageMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore
         )
-        
+
         return ConversationImageMessageNotificationBuilder(context: context)
     }
-    
+
     var conversationEphemeralMessageNotificationBuilder: ConversationEphemeralMessageNotificationBuilder {
         let context = ConversationEphemeralMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore,
             messageLocalStore: dependency.messageLocalStore
         )
-        
+
         return ConversationEphemeralMessageNotificationBuilder(context: context)
     }
-    
+
     var conversationTextMessageNotificationBuilder: ConversationTextMessageNotificationBuilder {
         let context = ConversationTextMessageNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
             userLocalStore: dependency.userLocalStore,
             messageLocalStore: dependency.messageLocalStore
         )
-        
+
         return ConversationTextMessageNotificationBuilder(context: context)
     }
 

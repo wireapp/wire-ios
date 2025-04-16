@@ -132,7 +132,7 @@ final class ConversationLocationMessageNotificationBuilderTests: XCTestCase {
                 userLocalStore: userLocalStore
             )
         )
-        
+
         // When
         let userNotification = await sut.buildContent(
             conversationID: Scaffolding.conversationID,

@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMessageNotificationBuilderProtocol {
     let context: Context
-    
+
     func buildContent(
         ephemeral: Ephemeral,
         conversationID: ConversationID,
@@ -82,12 +82,12 @@ struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMes
         if isReply {
             await context.increaseUnreadSelfReplyCount(for: conversation)
         }
-        
+
         await context.increaseReadCount(conversation: conversation)
 
         return .text(content)
     }
-    
+
     // MARK: - Helpers
 
     private func makeTitle(
@@ -119,13 +119,13 @@ struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMes
             .conversationMessage(format)
             .make()
     }
-    
+
     private func makeSound() -> UNNotificationSound {
         let soundType = NotificationSound.default
         let notificationSoundName = UNNotificationSoundName(soundType.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
-    
+
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID,
@@ -139,7 +139,7 @@ struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMes
 
         return userInfo
     }
-    
+
     private func makeCategory() -> String {
         let category = NotificationCategory.unmutedConversation
         return category.rawValue
@@ -211,7 +211,7 @@ extension ConversationEphemeralMessageNotificationBuilder {
                 for: conversation
             )
         }
-        
+
         func increaseReadCount(
             conversation: ZMConversation
         ) async {

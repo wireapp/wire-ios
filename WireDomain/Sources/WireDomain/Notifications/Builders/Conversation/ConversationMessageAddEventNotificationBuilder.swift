@@ -21,7 +21,7 @@ import WireDataModel
 import WireFoundation
 
 struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilderProtocol {
-    
+
     enum Failure: Error {
         case failedToDecryptMLSMessage
         case failedToDecryptProteusMessage
@@ -29,7 +29,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
 
     let context: Context
     let validator: Validator
-    
+
     let conversationCallingEventNotificationBuilder: any ConversationCallingEventNotificationBuilderProtocol
     let conversationAudioMessageNotificationBuilder: any ConversationAudioMessageNotificationBuilderProtocol
     let conversationEphemeralMessageNotificationBuilder: any ConversationEphemeralMessageNotificationBuilderProtocol
@@ -44,34 +44,34 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
     func buildContent(
         event: Either<ConversationMLSMessageAddEvent, ConversationProteusMessageAddEvent>
     ) async throws -> UserNotification? {
-        
+
         var message: GenericMessage
         var senderID: UserID
         var conversationID: ConversationID
         var timestamp: Date?
-        
+
         switch event {
-        case .left(let mlsMessageEvent):
+        case let .left(mlsMessageEvent):
             let decryptedMessage = mlsMessageEvent.decryptedMessages.first?.message
-            
+
             message = try decryptMessage(
                 decryptedMessage: decryptedMessage,
                 isProteus: false
             )
-            
+
             senderID = mlsMessageEvent.senderID
             conversationID = mlsMessageEvent.conversationID
             timestamp = mlsMessageEvent.timestamp
-            
-        case .right(let proteusMessageEvent):
+
+        case let .right(proteusMessageEvent):
             let decryptedMessage = proteusMessageEvent.message.decryptedMessage
             let external = proteusMessageEvent.externalData?.encryptedMessage
-            
+
             message = try decryptMessage(
                 decryptedMessage: decryptedMessage,
                 external: external
             )
-            
+
             senderID = proteusMessageEvent.senderID
             conversationID = proteusMessageEvent.conversationID
             timestamp = proteusMessageEvent.timestamp
@@ -92,7 +92,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             )
         }
     }
-    
+
     private func buildMessageContentNotification(
         message: GenericMessage,
         senderID: UserID,
@@ -148,7 +148,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
         case let .composite(composite):
             let text = composite.items.compactMap(\.text).first
             guard let text else { return nil }
-            
+
             return await conversationTextMessageNotificationBuilder.buildContent(
                 text: text,
                 conversationID: conversationID,
@@ -186,7 +186,7 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
             return nil
         }
     }
-    
+
     private func decryptMessage(
         decryptedMessage: String?,
         external: String? = nil,

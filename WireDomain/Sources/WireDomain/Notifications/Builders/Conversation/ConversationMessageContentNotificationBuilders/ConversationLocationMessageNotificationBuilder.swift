@@ -20,15 +20,15 @@ import WireAPI
 import WireDataModel
 
 struct ConversationLocationMessageNotificationBuilder: ConversationLocationMessageNotificationBuilderProtocol {
-    
+
     let context: Context
-    
+
     func buildContent(
         conversationID: ConversationID,
         senderID: UserID
     ) async -> UserNotification {
         let content = UNMutableNotificationContent()
-        
+
         let conversation = await context.getConversation(conversationID: conversationID)
         let sender = await context.getSender(senderID: senderID)
         let selfUser = await context.getSelfUser()
@@ -62,12 +62,12 @@ struct ConversationLocationMessageNotificationBuilder: ConversationLocationMessa
             conversationID: conversationID
         )
         content.threadIdentifier = conversationID.uuid.transportString()
-        
+
         await context.increaseReadCount(conversation: conversation)
 
         return .text(content)
     }
-    
+
     // MARK: - Helpers
 
     private func makeTitle(
@@ -99,13 +99,13 @@ struct ConversationLocationMessageNotificationBuilder: ConversationLocationMessa
             .conversationMessage(format)
             .make()
     }
-    
+
     private func makeSound() -> UNNotificationSound {
         let soundType = NotificationSound.default
         let notificationSoundName = UNNotificationSoundName(soundType.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
-    
+
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID,
@@ -119,7 +119,7 @@ struct ConversationLocationMessageNotificationBuilder: ConversationLocationMessa
 
         return userInfo
     }
-    
+
     private func makeCategory() -> String {
         let category = NotificationCategory.unmutedConversation
         return category.rawValue
@@ -178,7 +178,7 @@ extension ConversationLocationMessageNotificationBuilder {
         ) async -> String? {
             await userLocalStore.teamName(for: selfUser)
         }
-        
+
         func increaseReadCount(
             conversation: ZMConversation
         ) async {

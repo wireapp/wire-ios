@@ -52,13 +52,13 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
 
         switch event {
         case let .mlsMessageAdd(mlsMessageEvent):
-            
+
             return try await conversationMessageAddEventNotificationBuilder.buildContent(
                 event: .left(mlsMessageEvent)
             )
-            
+
         case let .proteusMessageAdd(proteusMessageEvent):
-            
+
             return try await conversationMessageAddEventNotificationBuilder.buildContent(
                 event: .right(proteusMessageEvent)
             )

@@ -78,7 +78,7 @@ final class ConversationEphemeralMessageNotificationBuilderTests: XCTestCase {
                 messageLocalStore: messageLocalStore
             )
         )
-        
+
         var ephemeral = Ephemeral()
         var text = Text()
         text.content = "foo"
@@ -117,7 +117,7 @@ final class ConversationEphemeralMessageNotificationBuilderTests: XCTestCase {
                 messageLocalStore: messageLocalStore
             )
         )
-        
+
         var ephemeral = Ephemeral()
         var text = Text()
         text.content = "foo"
@@ -156,7 +156,7 @@ final class ConversationEphemeralMessageNotificationBuilderTests: XCTestCase {
                 messageLocalStore: messageLocalStore
             )
         )
-        
+
         var ephemeral = Ephemeral()
         var text = Text()
         text.content = "foo"

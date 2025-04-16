@@ -75,7 +75,7 @@ final class ConversationTextMessageNotificationBuilderTests: XCTestCase {
                 messageLocalStore: messageLocalStore
             )
         )
-        
+
         var text = Text()
         text.content = "foo"
 
@@ -109,7 +109,7 @@ final class ConversationTextMessageNotificationBuilderTests: XCTestCase {
                 messageLocalStore: messageLocalStore
             )
         )
-        
+
         var text = Text()
         text.content = "foo"
 
@@ -144,7 +144,7 @@ final class ConversationTextMessageNotificationBuilderTests: XCTestCase {
                 messageLocalStore: messageLocalStore
             )
         )
-        
+
         var text = Text()
         text.content = "foo"
 

@@ -41,15 +41,15 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
     private var conversationPingMessageNotificationBuilder: MockConversationPingMessageNotificationBuilderProtocol!
     private var conversationVideoMessageNotificationBuilder: MockConversationVideoMessageNotificationBuilderProtocol!
     private var conversationTextMessageNotificationBuilder: MockConversationTextMessageNotificationBuilderProtocol!
-    
+
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
-    
+
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
-    
+
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
@@ -61,14 +61,15 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         conversationCallingEventNotificationBuilder = MockConversationCallingEventNotificationBuilderProtocol()
         conversationAudioMessageNotificationBuilder = MockConversationAudioMessageNotificationBuilderProtocol()
         conversationEphemeralMessageNotificationBuilder = MockConversationEphemeralMessageNotificationBuilderProtocol()
-        conversationFileUploadMessageNotificationBuilder = MockConversationFileUploadMessageNotificationBuilderProtocol()
+        conversationFileUploadMessageNotificationBuilder =
+            MockConversationFileUploadMessageNotificationBuilderProtocol()
         conversationHiddenMessageNotificationBuilder = MockConversationHiddenMessageNotificationBuilderProtocol()
         conversationImageMessageNotificationBuilder = MockConversationImageMessageNotificationBuilderProtocol()
         conversationLocationMessageNotificationBuilder = MockConversationLocationMessageNotificationBuilderProtocol()
         conversationPingMessageNotificationBuilder = MockConversationPingMessageNotificationBuilderProtocol()
         conversationVideoMessageNotificationBuilder = MockConversationVideoMessageNotificationBuilderProtocol()
         conversationTextMessageNotificationBuilder = MockConversationTextMessageNotificationBuilderProtocol()
-        
+
         sut = ConversationMessageAddEventNotificationBuilder(
             context: .init(conversationLocalStore: conversationLocalStore),
             validator: .init(conversationLocalStore: conversationLocalStore),
@@ -84,7 +85,7 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
             conversationTextMessageNotificationBuilder: conversationTextNotificationBuilder
         )
     }
-    
+
     override func tearDown() async throws {
         stack = nil
         sut = nil
@@ -96,55 +97,57 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         coreDataStackHelper = nil
         conversationTextNotificationBuilder = nil
     }
-    
-    
+
+
     func testGenerateNotification_MLS_Text_Message_Content_It_Invokes_Text_Notification_Builder() async throws {
-        
+
         // Mock
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
         conversationCallingEventNotificationBuilder.buildContentCallingAtConversationIDSenderID_MockValue = .some(nil)
-        conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
+        conversationTextNotificationBuilder
+            .buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = false
         conversationLocalStore.shouldHideNotification_MockValue = false
-        
+
         // When
-        
+
         let userNotification = try await sut.buildContent(
             event: .left(Scaffolding.mlsTextMessageEvent)
         )
-        
+
         // Then
         XCTAssertEqual(conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_Invocations.count, 1)
     }
-    
+
     func testGenerateNotification_Proteus_Text_Message_Content_It_Invokes_Text_Notification_Builder() async throws {
-        
+
         // Mock
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
         conversationCallingEventNotificationBuilder.buildContentCallingAtConversationIDSenderID_MockValue = .some(nil)
-        conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
+        conversationTextNotificationBuilder
+            .buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.isMessageSilencedSenderIDConversation_MockValue = false
         conversationLocalStore.shouldHideNotification_MockValue = false
-        
+
         // When
-        
+
         let userNotification = try await sut.buildContent(
             event: .right(Scaffolding.proteusTextMessageEvent)
         )
-        
+
         // Then
         XCTAssertEqual(conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_Invocations.count, 1)
     }
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: Add UTs (if possible) for other message content
-    
+
     private enum Scaffolding {
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
@@ -159,7 +162,7 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
                 senderClientID: UUID.mockID1.uuidString
             )]
         )
-        
+
         static let proteusTextMessageEvent = ConversationProteusMessageAddEvent(
             conversationID: conversationID,
             senderID: userID,

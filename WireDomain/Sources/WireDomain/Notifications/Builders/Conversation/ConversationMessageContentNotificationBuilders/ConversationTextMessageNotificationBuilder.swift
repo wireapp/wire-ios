@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotificationBuilderProtocol {
     let context: Context
-    
+
     func buildContent(
         text: Text,
         conversationID: ConversationID,
@@ -97,12 +97,12 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
                 for: conversation
             )
         }
-        
+
         await context.increaseReadCount(conversation: conversation)
 
         return .text(content)
     }
-    
+
     // MARK: - Helpers
 
     private func makeTitle(
@@ -134,13 +134,13 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
             .conversationMessage(format)
             .make()
     }
-    
+
     private func makeSound() -> UNNotificationSound {
         let soundType = NotificationSound.default
         let notificationSoundName = UNNotificationSoundName(soundType.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
-    
+
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID,
@@ -154,7 +154,7 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
 
         return userInfo
     }
-    
+
     private func makeCategory() -> String {
         let category = NotificationCategory.unmutedConversation
         return category.rawValue
@@ -214,7 +214,7 @@ extension ConversationTextMessageNotificationBuilder {
         ) async -> String? {
             await userLocalStore.teamName(for: selfUser)
         }
-        
+
         func fetchMessage(
             id: UUID?,
             conversationID: ConversationID
@@ -257,7 +257,7 @@ extension ConversationTextMessageNotificationBuilder {
                 for: conversation
             )
         }
-        
+
         func increaseReadCount(
             conversation: ZMConversation
         ) async {
