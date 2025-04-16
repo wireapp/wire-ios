@@ -28,17 +28,16 @@ struct ProtobufMessageDecoder {
     ) -> (GenericMessage, GenericMessage.OneOf_Content)? {
         var genericMessage = GenericMessage(withBase64String: base64Message)
 
-        /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular
-        /// message.
-        /// See `External` section from https://github.com/wireapp/generic-message-proto
-        /// See `External messages` section from
-        /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
-        ///
+        // If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular
+        // message.
+        // See `External` section from https://github.com/wireapp/generic-message-proto
+        // See `External messages` section from
+        // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
         if let externalData,
            case let .some(.external(external)) = genericMessage?.content {
 
-            /// Content message is external, we decrypt the external payload
-            /// and turns it back into a generic non-external content message.
+            // Content message is external, we decrypt the external payload
+            // and turns it back into a generic non-external content message.
             if let decryptedGenericMessage = decryptExternalMessage(
                 externalData: externalData,
                 external: external
