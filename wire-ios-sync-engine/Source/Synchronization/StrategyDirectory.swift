@@ -141,7 +141,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             context: syncMOC
         )
         let mlsFeature = FeatureRepository(context: syncMOC).fetchMLS()
-        let oneOnOneResolver = OneOnOneResolver(
+        let oneOnOneResolver = LegacyOneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
         )
