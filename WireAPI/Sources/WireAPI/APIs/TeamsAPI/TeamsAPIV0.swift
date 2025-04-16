@@ -48,8 +48,8 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
         return try ResponseParser()
             .success(code: .ok, type: TeamResponseV0.self)
-            .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
             .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
             .parse(code: response.statusCode, data: data)
     }
 
@@ -119,8 +119,8 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
         return try ResponseParser()
             .success(code: .ok, type: TeamMemberLegalholdResponseV0.self)
-            .failure(code: .notFound, error: TeamsAPIError.invalidRequest)
             .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
+            .failure(code: .notFound, error: TeamsAPIError.invalidRequest)
             .parse(code: response.statusCode, data: data)
     }
 
