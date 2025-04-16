@@ -64,6 +64,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
+    
+    /// Client has the capability to use new asyncStream (v8+) aka `consumable-notifications`
+    @NSManaged public var asyncStreamCapable: Bool
 
     /// Clients that are trusted by self client.
     @NSManaged public var trustedClients: Set<UserClient>
@@ -421,6 +424,9 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
+        if let capabilities = payloadAsDictionary.optionalArray(forKey: "capabilities") as? [String], capabilities.contains("consumable-notifications") {
+            client.asyncStreamCapable = true
+        }
 
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
