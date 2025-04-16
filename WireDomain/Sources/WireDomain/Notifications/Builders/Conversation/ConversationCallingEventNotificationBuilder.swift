@@ -369,7 +369,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         case .missedCall:
             NotificationCategory.missedCall.rawValue
         case .unhandled:
-            fatalError()
+            fatal("no category for unhandled")
         }
     }
 
