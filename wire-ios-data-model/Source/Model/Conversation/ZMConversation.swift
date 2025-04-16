@@ -39,7 +39,10 @@ public extension ZMConversation {
     @NSManaged var isPendingInitialFetch: Bool
 
     /// True if this mls conversation was migrated from another proteus conversation.
-
+    ///
+    /// This property is only relevant for mls 1-1 conversation where 1-1 proteus conversation's messages where moved
+    /// to.
+    /// - Note: This could be removed once the MLS migration is completed.
     @NSManaged var migratedToMLS: Bool
 
     // MARK: - CoreData unique constraint
