@@ -98,7 +98,7 @@ final class ConversationTableViewDataSource: NSObject {
     var searchQueries: [String] = [] {
         didSet {
             calculateSections() { currentSections in
-                self.currentSections = self.postProcessedSections(currentSections)
+                self.currentSections = self.postProcessedSections(currentSections) // TODO: TEST
                 self.tableView.reloadData()
             }
         }
@@ -133,18 +133,9 @@ final class ConversationTableViewDataSource: NSObject {
         
         (userSession as! ZMUserSession).coreDataStack!.messagesContainer.performBackgroundTask { [weak self] backgroundContext in
             guard let self else { return }
-//            let messages: [ZMMessage] = messageIds.map {
-//                backgroundContext.object(with: $0) as! ZMMessage
-//            }
-//
-//            // Optional: You can fault in data here to avoid faults later
-//            for obj in messages {
-//                _ = obj.isFault  // touch it to fault in
-//            }
             
             let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
             fetchRequest.predicate = NSPredicate(format: "SELF IN %@", messageIds)
-//            fetchRequest.relationshipKeyPathsForPrefetching = ["relatedEntities", "anotherRelationship"]
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
 
             let messages = try! backgroundContext.fetch(fetchRequest)
@@ -547,6 +538,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        print("DS: controllerDidChangeContent")
         calculateSections() { sections in
             self.reloadSections(newSections: self.postProcessedSections(sections))
         }
@@ -554,6 +546,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
     func reloadSections(newSections: [Section]) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
+        printChanges(stagedChangeset: stagedChangeset)
         tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
     }
 
@@ -646,6 +639,7 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
+        print("DS: messageSectionController didRequestRefreshForMessage")
         reloadSections(newSections: postProcessedSections(calculateSections(updating: controller)))
     }
 
@@ -888,5 +882,46 @@ extension ZMConversationMessage {
 
     var text: String? {
         textMessageData?.messageText
+    }
+}
+
+
+func printChanges<T: Differentiable>(stagedChangeset: StagedChangeset<[T]>) {
+    for (index, changeset) in stagedChangeset.enumerated() {
+        print(
+            "DS: === Changeset \(index) sections with changes: \(changeset.sectionChangeCount), elements with changes: \(changeset.elementChangeCount) ==="
+        )
+    
+        for insertion in changeset.elementInserted {
+            print("DS: Inserted element at \(insertion)")
+        }
+
+        for deletion in changeset.elementDeleted {
+            print("DS: Deleted element at \(deletion)")
+        }
+
+        for update in changeset.elementUpdated {
+            print("DS: Updated element at \(update)")
+        }
+
+        for move in changeset.elementMoved {
+            print("DS: Moved element from \(move.source) to \(move.target)")
+        }
+        
+        for insertion in changeset.sectionInserted {
+            print("DS: Inserted section at \(insertion)")
+        }
+
+        for deletion in changeset.sectionDeleted {
+            print("DS: Deleted section at \(deletion)")
+        }
+
+        for update in changeset.sectionUpdated {
+            print("DS: Updated section at \(update)")
+        }
+
+        for move in changeset.sectionMoved {
+            print("DS: Moved section from \(move.source) to \(move.target)")
+        }
     }
 }
