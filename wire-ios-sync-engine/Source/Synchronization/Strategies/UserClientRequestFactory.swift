@@ -48,7 +48,7 @@ extension UserClientRequestFactory {
         let lastPreKeyPayloadData = payloadForLastPreKey(lastRestortPrekey)
 
         var capabilities = ["legalhold-implicit-consent"]
-        if DeveloperFlag.asyncStreamNotifications.isOn && apiVersion >= .v8 {
+        if DeveloperFlag.asyncStreamNotifications.isOn, apiVersion >= .v8 {
             capabilities.append("consumable-notifications")
         }
 
@@ -70,7 +70,7 @@ extension UserClientRequestFactory {
         if let verificationCode = credentials?.emailVerificationCode {
             payload["verification_code"] = verificationCode
         }
-        
+
         let request = ZMTransportRequest(
             path: "/clients",
             method: .post,
@@ -127,7 +127,7 @@ extension UserClientRequestFactory {
         }
 
         let preKeysPayloadData = payloadForPreKeys(prekeys)
-        
+
         let payload: [String: Any] = [
             "prekeys": preKeysPayloadData
         ]
@@ -176,9 +176,9 @@ extension UserClientRequestFactory {
             throw UserClientRequestError.clientNotRegistered
         }
         // TODO: [WPB-17223] recheck this when this should be triggered `WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)`
-        
+
         var capabilities = ["legalhold-implicit-consent"]
-        if DeveloperFlag.asyncStreamNotifications.isOn && apiVersion >= .v8 {
+        if DeveloperFlag.asyncStreamNotifications.isOn, apiVersion >= .v8 {
             capabilities.append("consumable-notifications")
         }
 

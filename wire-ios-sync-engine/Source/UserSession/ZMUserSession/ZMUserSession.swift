@@ -585,14 +585,12 @@ public final class ZMUserSession: NSObject {
             onSelfClientInvalidated: onSelfClientInvalidated
         )
 
-        let incrementalSyncProvider: IncrementalSyncProvider
-        if !asyncStreamEnabled {
-            incrementalSyncProvider = clientSessionComponent
+        let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
+            clientSessionComponent
         } else {
             // TODO: [WPB-17225] replace syncProvider here
-            incrementalSyncProvider = clientSessionComponent
+            clientSessionComponent
         }
-            
 
         let syncAgent = SyncAgent(
             lastUpdateEventIDRepository: lastEventIDRepository,
@@ -603,7 +601,7 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
         syncAgent.delegate = self
-        
+
         // TODO: [WPB-17223] remove `resume` call from here
         syncAgent.resume()
     }

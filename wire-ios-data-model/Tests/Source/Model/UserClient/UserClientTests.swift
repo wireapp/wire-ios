@@ -620,7 +620,6 @@ extension UserClientTests {
         XCTAssertTrue(newClient.asyncStreamCapable)
     }
 
-    
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient_NoExistingSelfClient() {
         // given
         let newClientPayload: [String: AnyObject] = [

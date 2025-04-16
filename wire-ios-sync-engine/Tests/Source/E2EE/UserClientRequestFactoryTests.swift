@@ -69,7 +69,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         // GIVEN
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
         DeveloperFlag.asyncStreamNotifications.enable(true, storage: .temporary())
-        
+
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
             usingProteusService: true,
@@ -80,7 +80,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     func testThatItCreatesRegistrationRequestWithLegalholdCapabitilityCorrectly() throws {
         // GIVEN
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
-        
+
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
             usingProteusService: true,
@@ -174,7 +174,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         if let emailVerificationCode = credentials?.emailVerificationCode {
             XCTAssertEqual(payload.verificationCode, emailVerificationCode)
         }
-        
+
         if apiVersion >= .v8, DeveloperFlag.asyncStreamNotifications.isOn {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent", "consumable-notifications"])
         } else {
@@ -400,7 +400,7 @@ private extension [String: Any] {
         case ed25519
         case capabilities
     }
-    
+
     var capabilities: [String]? {
         value(forKey: .capabilities)
     }
