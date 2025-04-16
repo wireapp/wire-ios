@@ -326,7 +326,9 @@ final class MessagePreviewView: UIView {
         if let textMessageData = message.textMessageData {
             contentTextView.attributedText = NSAttributedString.formatForPreview(
                 message: textMessageData,
-                inputMode: true
+                inputMode: true,
+                accentColor: ZMUserSession
+                    .shared()?.selfUser.zmAccentColor ?? .default
             )
         } else if let location = message.locationMessageData {
 

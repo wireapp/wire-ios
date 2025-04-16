@@ -24,7 +24,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         var message: ZMConversationMessage
-        let accentColor: UIColor
+        let accentColor: ZMAccentColor
         let collapseExpandAction: () -> Void
     }
 
@@ -274,7 +274,7 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     init(
         message: ConversationMessage,
-        accentColor: UIColor,
+        accentColor: ZMAccentColor,
         collapseExpandAction: @escaping () -> Void
     ) {
         self.configuration = View.Configuration(

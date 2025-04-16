@@ -206,7 +206,7 @@ extension ConversationTextMessageCellDescription {
         var messageText = NSAttributedString.format(
             message: textMessageData,
             isObfuscated: message.isObfuscated,
-            accent: selfUser.accentColor?.uiColor ?? UIColor.accent()
+            accent: selfUser.zmAccentColor ?? .default
         )
 
         // Search queries
@@ -222,7 +222,10 @@ extension ConversationTextMessageCellDescription {
 
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
-            let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
+            let quoteCell = ConversationReplyCellDescription(
+                quotedMessage: quotedMessage,
+                accentColor: selfUser.zmAccentColor ?? .default
+            )
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
 

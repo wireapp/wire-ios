@@ -158,7 +158,7 @@ extension ZMConversationMessage {
     }
 }
 
-// MARK: - popover apperance update
+// MARK: - popover appearance update
 
 extension ConversationContentViewController {
 

@@ -34,6 +34,7 @@ final class ConversationReplyContentView: UIView {
         }
 
         var quotedMessage: ZMConversationMessage?
+        let accentColor: ZMAccentColor
 
         var showDetails: Bool {
             guard let message = quotedMessage,
@@ -107,7 +108,14 @@ final class ConversationReplyContentView: UIView {
             switch quotedMessage {
             case let message? where message.isText:
                 let data = message.textMessageData!
-                return .text(NSAttributedString.formatForPreview(message: data, inputMode: false))
+                return .text(
+                    NSAttributedString
+                        .formatForPreview(
+                            message: data,
+                            inputMode: false,
+                            accentColor: accentColor
+                        )
+                )
 
             case let message? where message.isLocation:
                 let location = message.locationMessageData!
@@ -349,8 +357,12 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
     let accessibilityIdentifier: String? = "ReplyCell"
 
-    init(quotedMessage: ZMConversationMessage?) {
-        self.configuration = View.Configuration(quotedMessage: quotedMessage)
+    init(quotedMessage: ZMConversationMessage?, accentColor: ZMAccentColor) {
+        self.configuration = View
+            .Configuration(
+                quotedMessage: quotedMessage,
+                accentColor: accentColor
+            )
     }
 }
 

@@ -340,7 +340,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
                 let messageText = NSAttributedString.format(
                     message: textMessageData,
                     isObfuscated: message.isObfuscated,
-                    accent: selfUser?.accentColor?.uiColor ?? UIColor.accent()
+                    accent: selfUser?.zmAccentColor ?? .default
                 )
                 accessibilityLabel = ConversationAnnouncement.EditedMessage.description(senderName) + messageText.string
             } else {

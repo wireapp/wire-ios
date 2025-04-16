@@ -94,7 +94,7 @@ extension NSAttributedString {
     }
 
     @objc
-    static func formatForPreview(message: TextMessageData, inputMode: Bool) -> NSAttributedString {
+    static func formatForPreview(message: TextMessageData, inputMode: Bool, accentColor: ZMAccentColor) -> NSAttributedString {
         var plainText = message.messageText ?? ""
 
         // Substitute mentions with text markers
@@ -104,7 +104,12 @@ extension NSAttributedString {
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: previewStyle)
 
         // Highlight mentions using previously inserted text markers
-        markdownText.highlight(mentions: mentionTextObjects, paragraphStyle: nil)
+        markdownText
+            .highlight(
+                mentions: mentionTextObjects,
+                paragraphStyle: nil,
+                accentColor: accentColor
+            )
 
         // Remove trailing link if we show a link preview
         let links = markdownText.links()
@@ -129,7 +134,7 @@ extension NSAttributedString {
     }
 
     @objc
-    static func format(message: TextMessageData, isObfuscated: Bool, accent: UIColor) -> NSAttributedString {
+    static func format(message: TextMessageData, isObfuscated: Bool, accent: ZMAccentColor) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 
@@ -149,7 +154,7 @@ extension NSAttributedString {
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: style)
 
         // Highlight mentions using previously inserted text markers
-        markdownText.highlight(mentions: mentionTextObjects)
+        markdownText.highlight(mentions: mentionTextObjects, accentColor: accent)
 
         // Remove trailing link if we show a link preview
         if let linkPreview = message.linkPreview {

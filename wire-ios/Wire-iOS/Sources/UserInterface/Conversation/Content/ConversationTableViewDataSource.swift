@@ -735,9 +735,8 @@ extension ConversationTableViewDataSource {
             }
 
             // filter redundant status cells
-            if
-                isMessageStatus(of: previousSectionIndex, redundantTo: currentSectionIndex, in: sections),
-                messages.indices.contains(previousSectionIndex) {
+            if isMessageStatus(of: previousSectionIndex, redundantTo: currentSectionIndex, in: sections),
+               messages.indices.contains(previousSectionIndex) {
 
                 // collapse the status view's height
                 let previousMessage = messages[previousSectionIndex]
