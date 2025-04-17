@@ -163,6 +163,11 @@ extension NotificationServiceExtension {
                 "Proxy needs authentication but credentials are missing",
                 attributes: .newNSE
             )
+        case .apiVersionNotFound:
+            logger.error(
+                "API version not found",
+                attributes: .newNSE
+            )
         }
     }
 

@@ -39,6 +39,7 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
 
     enum Failure: Error {
         case missingProxyCredentials
+        case apiVersionNotFound
     }
 
     func pullEvents() async throws {
@@ -225,14 +226,14 @@ extension PullEventsStep {
             authenticationManager: authenticationManager
         )
 
-        let apiVersion = makeApiVersion()
+        let apiVersion = try makeApiVersion()
 
         return UpdateEventsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
     }
 
-    func makeApiVersion() -> WireAPI.APIVersion {
+    func makeApiVersion() throws -> WireAPI.APIVersion {
         let key = "SelectedAPIVersion"
         let sharedUserDefaults = dependency.sharedUserDefaults
 
@@ -245,7 +246,7 @@ extension PullEventsStep {
 
         guard let legacyAPIVersion,
               let apiVersion = WireAPI.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
-            return .v0
+            throw Failure.apiVersionNotFound
         }
 
         return apiVersion
