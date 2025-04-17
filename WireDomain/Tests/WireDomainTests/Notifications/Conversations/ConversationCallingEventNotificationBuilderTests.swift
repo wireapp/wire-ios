@@ -85,8 +85,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             sut = ConversationCallingEventNotificationBuilder(
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
-                    userLocalStore: userLocalStore,
-                    userDefaults: defaults
+                    userLocalStore: userLocalStore
                 ),
                 validator: .init(
                     userLocalStore: userLocalStore,
@@ -135,8 +134,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             sut = ConversationCallingEventNotificationBuilder(
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
-                    userLocalStore: userLocalStore,
-                    userDefaults: defaults
+                    userLocalStore: userLocalStore
                 ),
                 validator: .init(
                     userLocalStore: userLocalStore,
@@ -185,8 +183,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             sut = ConversationCallingEventNotificationBuilder(
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
-                    userLocalStore: userLocalStore,
-                    userDefaults: defaults
+                    userLocalStore: userLocalStore
                 ),
                 validator: .init(
                     userLocalStore: userLocalStore,
@@ -236,8 +233,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         sut = ConversationCallingEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
-                userLocalStore: userLocalStore,
-                userDefaults: defaults
+                userLocalStore: userLocalStore
             ),
             validator: .init(
                 userLocalStore: userLocalStore,
@@ -276,8 +272,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             sut = ConversationCallingEventNotificationBuilder(
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
-                    userLocalStore: userLocalStore,
-                    userDefaults: defaults
+                    userLocalStore: userLocalStore
                 ),
                 validator: .init(
                     userLocalStore: userLocalStore,
@@ -320,8 +315,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             sut = ConversationCallingEventNotificationBuilder(
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
-                    userLocalStore: userLocalStore,
-                    userDefaults: defaults
+                    userLocalStore: userLocalStore
                 ),
                 validator: .init(
                     userLocalStore: userLocalStore,
@@ -365,8 +359,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             sut = ConversationCallingEventNotificationBuilder(
                 context: .init(
                     conversationLocalStore: conversationLocalStore,
-                    userLocalStore: userLocalStore,
-                    userDefaults: defaults
+                    userLocalStore: userLocalStore
                 ),
                 validator: .init(
                     userLocalStore: userLocalStore,
@@ -417,8 +410,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         sut = ConversationCallingEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
-                userLocalStore: userLocalStore,
-                userDefaults: defaults
+                userLocalStore: userLocalStore
             ),
             validator: .init(
                 userLocalStore: userLocalStore,

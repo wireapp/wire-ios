@@ -19,7 +19,7 @@
 import WireAPI
 import WireDataModel
 
-/// Handles a regular push notification related to an incoming / missed call
+/// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
 struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilderProtocol {
 
     let context: ConversationCallingEventNotificationBuilder.Context
@@ -36,56 +36,38 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return nil
         }
 
-        // CallKit notification
-
-        let callKitState = context.callKitState(
-            callContent: callContent,
-            accountID: accountID,
-            conversationID: conversationID
-        )
-
-        let canDisplayCallKitNotification = await validator.validate(
-            callKitState: callKitState,
-            accountID: accountID,
+        let displayCallKitNotification = await validator.validateCallKitNotification(
+            conversationID: conversationID,
             senderID: senderID,
-            conversationID: conversationID
+            accountID: accountID,
+            callContent: callContent
         )
 
-        // Call notification
-
-        let callState = CallState(callContent: callContent)
-
-        let canDisplayCallNotification = await validator.validate(
-            callState: callState,
+        let displayCallNotification = await validator.validateCallNotification(
+            conversationID: conversationID,
+            senderID: senderID,
             time: time,
-            senderID: senderID,
-            conversationID: conversationID
+            callContent: callContent
         )
 
-        // First, let's try to return a CallKit notification.
-        // If not, try to return a regular call notification.
-        // Else, this is not a call, return nil.
-
-        if canDisplayCallKitNotification {
-
+        if displayCallKitNotification {
+            // First, let's try to return a CallKit notification if possible.
             return await buildCallKitNotification(
-                callKitState: callKitState,
                 callContent: callContent,
                 accountID: accountID,
                 conversationID: conversationID,
                 senderID: senderID
             )
 
-        } else if canDisplayCallNotification {
-
+        } else if displayCallNotification {
+            // If not, try to return a regular call notification.
             return await buildCallNotification(
-                callState: callState,
                 callContent: callContent,
                 senderID: senderID,
                 conversationID: conversationID
             )
         } else {
-
+            // Else, this is not a call, return nil.
             return nil
         }
 
@@ -94,7 +76,6 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
     // MARK: - Build CallKit notification
 
     private func buildCallKitNotification(
-        callKitState: CallKitState,
         callContent: CallContent,
         accountID: UUID,
         conversationID: ConversationID,
@@ -103,12 +84,12 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,
             "conversationID": conversationID.uuid.uuidString,
-            "shouldRing": context.shouldRing(callKitState: callKitState),
+            "shouldRing": callContent.isIncomingCall,
             "callerName": await makeCallKitTitle(
                 conversationID: conversationID,
                 senderID: senderID
             ) ?? "",
-            "hasVideo": context.isVideo(callContent: callContent)
+            "hasVideo": callContent.isVideo
         ]
 
         return .callKit(callKitContent)
@@ -117,12 +98,10 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
     // MARK: - Build call notifications
 
     private func buildCallNotification(
-        callState: CallState,
         callContent: CallContent,
         senderID: UserID,
         conversationID: ConversationID
     ) async -> UserNotification {
-
         let conversation = await context.getConversation(conversationID: conversationID)
         let caller = await context.getCaller(senderID: senderID)
         let selfUser = await context.getSelfUser()
@@ -133,10 +112,8 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         let teamName = await context.teamName(selfUser: selfUser)
         let isGroupConversation = await context.isGroupConversation(conversation: conversation)
 
-        switch callState {
-        case let .incomingCall(isVideo):
+        if callContent.isIncomingCall {
             return buildIncomingCallNotification(
-                callState: callState,
                 selfUserID: selfUserID,
                 senderID: senderID.uuid,
                 callerID: callerID,
@@ -146,12 +123,10 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
                 conversationName: conversationName,
                 teamName: teamName,
                 isGroupConversation: isGroupConversation,
-                isVideo: isVideo
+                isVideo: callContent.isVideo
             )
-
-        case .missedCall:
+        } else { // Missed call
             return await buildMissedCallNotification(
-                callState: callState,
                 selfUserID: selfUserID,
                 senderID: senderID.uuid,
                 callerID: callerID,
@@ -162,14 +137,10 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
                 teamName: teamName,
                 isGroupConversation: isGroupConversation
             )
-
-        case .unhandled:
-            fatalError()
         }
     }
 
     private func buildIncomingCallNotification(
-        callState: CallState,
         selfUserID: UUID,
         senderID: UUID,
         callerID: UUID?,
@@ -204,8 +175,8 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         }
 
         content.body = body
-        content.categoryIdentifier = makeCategory(callState: callState)
-        content.sound = makeSound(callState: callState)
+        content.categoryIdentifier = makeCategory(isIncomingCall: true)
+        content.sound = makeSound(isIncomingCall: true)
         content.userInfo = makeUserInfo(
             selfUserID: selfUserID,
             senderID: senderID,
@@ -218,7 +189,6 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
     }
 
     private func buildMissedCallNotification(
-        callState: CallState,
         selfUserID: UUID,
         senderID: UUID,
         callerID: UUID?,
@@ -247,8 +217,8 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         }
 
         content.body = body
-        content.categoryIdentifier = makeCategory(callState: callState)
-        content.sound = makeSound(callState: callState)
+        content.categoryIdentifier = makeCategory(isIncomingCall: false)
+        content.sound = makeSound(isIncomingCall: false)
         content.userInfo = makeUserInfo(
             selfUserID: selfUserID,
             senderID: senderID,
@@ -348,28 +318,22 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             .make()
     }
 
-    private func makeSound(callState: CallState) -> UNNotificationSound {
-        let notificationSound = switch callState {
-        case .incomingCall:
+    private func makeSound(isIncomingCall: Bool) -> UNNotificationSound {
+        let notificationSound = if isIncomingCall {
             NotificationSound.call
-        case .missedCall:
+        } else {
             NotificationSound.default
-        case .unhandled:
-            fatalError()
         }
 
         let notificationSoundName = UNNotificationSoundName(notificationSound.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
 
-    private func makeCategory(callState: CallState) -> String {
-        switch callState {
-        case .incomingCall:
+    private func makeCategory(isIncomingCall: Bool) -> String {
+        if isIncomingCall {
             NotificationCategory.incomingCall.rawValue
-        case .missedCall:
+        } else {
             NotificationCategory.missedCall.rawValue
-        case .unhandled:
-            fatal("no category for unhandled")
         }
     }
 
@@ -396,19 +360,20 @@ extension ConversationCallingEventNotificationBuilder {
             static let isAvsReady = "isAVSReady"
             static let isCallKitAvailable = "isCallKitAvailable"
             static let loadedUserSessions = "loadedUserSessions"
+            static let knownCalls = "knownCalls"
         }
 
         let userLocalStore: any UserLocalStoreProtocol
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userDefaults: UserDefaults
 
-        func validate(
-            callKitState: CallKitState,
-            accountID: UUID,
+        /// In priority, we'll try to validate a CallKit notification to show to the user
+        func validateCallKitNotification(
+            conversationID: ConversationID,
             senderID: UserID,
-            conversationID: ConversationID
+            accountID: UUID,
+            callContent: CallContent
         ) async -> Bool {
-
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.uuid,
                 domain: conversationID.domain
@@ -425,22 +390,34 @@ extension ConversationCallingEventNotificationBuilder {
             let loaderUserSessionsIDs = loadedUserSessions.compactMap(UUID.init(uuidString:))
             let isUserSessionLoaded = loaderUserSessionsIDs.contains(accountID)
 
+            let handle = "\(accountID.transportString())+\(conversationID.uuid.transportString())"
+            let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
+            let wasCallHandleReported = knownCallHandles.contains(handle)
+
+            let initiatesRinging = callContent.isIncomingCall || wasCallHandleReported
+            let terminatesRinging = (
+                callContent.isEndCall || callContent.isAnsweredElsewhere || callContent
+                    .isRejected
+            ) && wasCallHandleReported
+
+            let isValidState = initiatesRinging || terminatesRinging
+
             return !needsToBeUpdatedFromBackend
                 && !isConversationMuted
                 && !isConversationForcedReadOnly
                 && isAVSReady
                 && isCallKitReady
                 && isUserSessionLoaded
-                && callKitState != .unhandled
+                && isValidState
         }
 
-        func validate(
-            callState: CallState,
-            time: Date?,
+        /// When a CallKit notification cannot be displayed, we'll try to validate a regular call notification.
+        func validateCallNotification(
+            conversationID: ConversationID,
             senderID: UserID,
-            conversationID: ConversationID
+            time: Date?,
+            callContent: CallContent
         ) async -> Bool {
-
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.uuid,
                 domain: conversationID.domain
@@ -459,21 +436,21 @@ extension ConversationCallingEventNotificationBuilder {
             let isCallTimeOut = time != nil ? Int(Date.now.timeIntervalSince(time!)) > 30 : true
             let isCallerSelf = selfUser == caller
 
-            return callState != .unhandled
+            let isIncomingCall = callContent.isIncomingCall
+            let isEndCall = callContent.isEndCall
+            let isValidState = isIncomingCall || isEndCall
+
+            return isValidState
                 && !isCallerSelf
                 && !isConversationMuted
                 && !isCallTimeOut
         }
+
     }
 
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
-        let userDefaults: UserDefaults
-
-        private enum Constants {
-            static let knownCalls = "knownCalls"
-        }
 
         func getConversation(
             conversationID: ConversationID
@@ -521,33 +498,6 @@ extension ConversationCallingEventNotificationBuilder {
             selfUser: ZMUser
         ) async -> String? {
             await userLocalStore.teamName(for: selfUser)
-        }
-
-        func callKitState(
-            callContent: CallContent,
-            accountID: UUID,
-            conversationID: ConversationID
-        ) -> CallKitState {
-            let handle = "\(accountID.transportString())+\(conversationID.uuid.transportString())"
-            let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
-            let wasCallHandleReported = knownCallHandles.contains(handle)
-
-            return CallKitState(
-                callContent: callContent,
-                wasCallHandleReported: wasCallHandleReported
-            )
-        }
-
-        func shouldRing(
-            callKitState: CallKitState
-        ) -> Bool {
-            callKitState == .initiatesRinging
-        }
-
-        func isVideo(
-            callContent: CallContent
-        ) -> Bool {
-            callContent.properties?.isVideo ?? false
         }
 
         func callerID(

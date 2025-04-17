@@ -278,8 +278,7 @@ extension GenerateNotificationStep {
 
         let context = ConversationCallingEventNotificationBuilder.Context(
             conversationLocalStore: dependency.conversationLocalStore,
-            userLocalStore: dependency.userLocalStore,
-            userDefaults: dependency.sharedUserDefaults
+            userLocalStore: dependency.userLocalStore
         )
 
         return ConversationCallingEventNotificationBuilder(

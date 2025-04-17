@@ -20,6 +20,18 @@ import WireLogging
 import WireProtos
 
 struct CallContent: Decodable {
+
+    /// Possible values associated with the `type` decoded property
+    enum CallType {
+        static let setup = "SETUP"
+        static let groupStart = "GROUPSTART"
+        static let confStart = "CONFSTART"
+        static let groupEnd = "GROUPEND"
+        static let confEnd = "CONFEND"
+        static let cancel = "CANCEL"
+        static let reject = "REJECT"
+    }
+
     let type: String
     let properties: Properties?
     let callerUserID: String?
@@ -47,6 +59,8 @@ struct CallContent: Decodable {
     }
 }
 
+// MARK: Decoding
+
 extension CallContent {
     static func decode(from calling: Calling) -> Self? {
         let decoder = JSONDecoder()
@@ -65,5 +79,41 @@ extension CallContent {
         } catch {
             return nil
         }
+    }
+}
+
+// MARK: Call status
+
+extension CallContent {
+    var isStartCall: Bool {
+        type.isOne(of: [
+            CallType.setup,
+            CallType.groupStart,
+            CallType.confStart
+        ])
+    }
+
+    var isEndCall: Bool {
+        type.isOne(of: [
+            CallType.cancel,
+            CallType.groupEnd,
+            CallType.confEnd
+        ])
+    }
+
+    var isRejected: Bool {
+        type == CallType.reject
+    }
+
+    var isIncomingCall: Bool {
+        isStartCall && !responded
+    }
+
+    var isAnsweredElsewhere: Bool {
+        isStartCall && responded
+    }
+
+    var isVideo: Bool {
+        properties?.isVideo ?? false
     }
 }
