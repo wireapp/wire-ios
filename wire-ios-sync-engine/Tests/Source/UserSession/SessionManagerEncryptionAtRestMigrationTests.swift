@@ -21,39 +21,24 @@ import LocalAuthentication
 import WireDataModelSupport
 @testable import WireSyncEngine
 
-final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase, EARServiceDelegate, UserSessionDelegate {
-    
-    
-    func userSessionDidUnlock(_ session: WireSyncEngine.ZMUserSession) {
-    }
-    
-   
-    
-    func userDidLogout(accountId: UUID) {
-    }
-    
-    func authenticationInvalidated(_ error: NSError, accountId: UUID) {
-    }
-    
-    func clientRegistrationDidSucceed(accountId: UUID) {
-    }
-    
-    func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
-    }
-    
-    func clientCompletedInitialSync(accountId: UUID) {
-    }
-    
+final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase {
 
+    var userSessionDelegate: MockUserSessionDelegate!
     private var activityManager: MockBackgroundActivityManager!
     private var factory: BackgroundActivityFactory!
     private var setEncryptionAtRestExpectation: XCTestExpectation?
-    
+
     private var account: Account {
         coreDataStack.account
     }
 
+    private var userSession: ZMUserSession {
+        sut
+    }
+
     override func setUp() {
+        userSessionDelegate = MockUserSessionDelegate()
+
         super.setUp()
 
         activityManager = MockBackgroundActivityManager()
@@ -78,97 +63,96 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
-        
 
-        return createSut(earService: earService)
+        let session = createSut(earService: earService)
+
+        session.delegate = userSessionDelegate
+        userSessionDelegate.prepareForMigrationOnReadyMockMethod = { _, onReady in
+            try onReady(self.uiMOC)
+        }
+
+        return session
     }
 
-    
-    // MARK: - Delegate
-    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows {
-      
-    }
-    func prepareForMigration(for account: WireDataModel.Account, onReady: @escaping (NSManagedObjectContext) throws -> Void) {
-        try? onReady(uiMOC)
-        setEncryptionAtRestExpectation?.fulfill()
-    }
-//    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows {
-//    }
-    
     override func tearDown() {
         factory = nil
         activityManager = nil
+
         try? sut.setEncryptionAtRest(enabled: false, skipMigration: true)
 
         super.tearDown()
+        userSessionDelegate = nil
     }
 
     private func setEncryptionAtRest(enabled: Bool, file: StaticString = #filePath, line: UInt = #line) {
         try? sut.setEncryptionAtRest(enabled: true, skipMigration: true)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
-    
+
+    private func login() {
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            ModelHelper().createSelfClient(in: syncMOC)
+            syncMOC.saveOrRollback()
+        }
+        try userSession.viewContext.saveOrRollback()
+    }
+
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled() throws {
         // given
-        sut.delegate = self
-        syncMOC.performAndWait {
-            simulateLoggedInUser()
-            syncMOC.saveOrRollback()
-        }
-        
-        let session = try XCTUnwrap(sut)
-        XCTAssertFalse(session.encryptMessagesAtRest)
+        login()
+
+        XCTAssertFalse(userSession.encryptMessagesAtRest)
 
         let expectedText = "Hello World"
         var groupConversation: ZMConversation!
-        session.perform({
-            groupConversation = ModelHelper().createGroupConversation(in: session.managedObjectContext)
+        userSession.perform {
+            groupConversation = ModelHelper().createGroupConversation(in: self.userSession.managedObjectContext)
             try! groupConversation.appendText(content: expectedText)
-        })
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        setEncryptionAtRestExpectation = self.expectation(description: "wait for setEncryptionAtRest")
-        try session.setEncryptionAtRest(enabled: true)
+        setEncryptionAtRestExpectation = expectation(description: "wait for setEncryptionAtRest")
+        try userSession.setEncryptionAtRest(enabled: true)
         self.wait(for: [setEncryptionAtRestExpectation!])
 
         // then
-        XCTAssertTrue(session.encryptMessagesAtRest)
+        XCTAssertTrue(userSession.encryptMessagesAtRest)
 
-        try session.unlockDatabase()
+        try userSession.unlockDatabase()
         let clientMessage = groupConversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(clientMessage?.messageText, expectedText)
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
-//    func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled() throws {
-//        // given
-//        XCTAssertTrue(login())
-//        var session = try XCTUnwrap(userSession)
-//
-//        let expectedText = "Hello World"
-//
-//        try session.setEncryptionAtRest(enabled: true, skipMigration: true)
-//        XCTAssertTrue(session.encryptMessagesAtRest)
-//
-//        session.perform({
-//            let groupConversation = self.conversation(for: self.groupConversation)
-//            try! groupConversation?.appendText(content: expectedText)
-//        })
-//        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-//
-//        // when
-//        try session.setEncryptionAtRest(enabled: false)
-//        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-//
-//        // then
-//        session = try XCTUnwrap(userSession)
-//        XCTAssertFalse(session.encryptMessagesAtRest)
-//
-//        let groupConversation = self.conversation(for: self.groupConversation)
-//        let clientMessage = groupConversation?.lastMessage as? ZMClientMessage
-//        XCTAssertEqual(clientMessage?.messageText, expectedText)
-//    }
+    func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled() throws {
+        // given
+        login()
+
+        let expectedText = "Hello World"
+
+        try userSession.setEncryptionAtRest(enabled: true, skipMigration: true)
+        XCTAssertTrue(userSession.encryptMessagesAtRest)
+
+        var groupConversation: ZMConversation!
+        userSession.perform {
+            groupConversation = ModelHelper().createGroupConversation(in: self.userSession.managedObjectContext)
+            try! groupConversation.appendText(content: expectedText)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // when
+        setEncryptionAtRestExpectation = expectation(description: "wait for setEncryptionAtRest")
+        try userSession.setEncryptionAtRest(enabled: false)
+        self.wait(for: [setEncryptionAtRestExpectation!])
+
+        // then
+        XCTAssertFalse(userSession.encryptMessagesAtRest)
+
+        let clientMessage = groupConversation?.lastMessage as? ZMClientMessage
+        XCTAssertEqual(clientMessage?.messageText, expectedText)
+    }
 
 }
