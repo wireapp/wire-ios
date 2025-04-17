@@ -201,7 +201,8 @@ final class UserClientsLocalStoreTests: XCTestCase {
             model: "test",
             deviceClass: .phone,
             lastActiveDate: nil,
-            mlsPublicKeys: nil
+            mlsPublicKeys: nil,
+            capabilities: [.legalholdConsent]
         )
 
     }
