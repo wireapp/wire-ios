@@ -24,5 +24,6 @@ public enum UserClientCapability: String, Codable, Sendable {
     /// (directly or indirectly).
 
     case legalholdConsent = "legalhold-implicit-consent"
+    case consumableNotifications = "consumable-notifications"
 
 }

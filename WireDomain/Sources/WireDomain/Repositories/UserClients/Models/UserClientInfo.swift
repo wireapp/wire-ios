@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireAPI
 
 public struct UserClientInfo: Sendable {
 
@@ -28,7 +29,8 @@ public struct UserClientInfo: Sendable {
     let deviceClass: WireDataModel.DeviceClass?
     let lastActiveDate: Date?
     let mlsPublicKeys: UserClientInfo.MLSPublicKeys?
-
+    let capabilities: [UserClientCapability]
+    
     struct MLSPublicKeys {
         let ed25519: String?
         let ed448: String?
@@ -37,4 +39,8 @@ public struct UserClientInfo: Sendable {
         let p512: String?
     }
 
+//    enum Capability: String {
+//        case consumableNotifications = "consumable-notifications"
+//        case legalhodImplicitConsent = "legalhold-implicit-consent"
+//    }
 }
