@@ -24,7 +24,7 @@ public struct PushChannelAPIBuilder {
 
     private let pushChannelService: PushChannelService
     private let asyncStreamEnabled: Bool
-    
+
     /// Create a new builder.
     ///
     /// - Parameter pushChannelService: A push channel service to execute requests.

@@ -36,7 +36,7 @@ public protocol PushChannelProtocol: NewPushChannelProtocol {
 
 public extension PushChannelProtocol {
     func ackFullSync() async throws {}
-    
+
     func ack(deliveryTag: UInt64, multiple: Bool) async throws {}
 }
 
@@ -51,9 +51,8 @@ public protocol NewPushChannelProtocol: Sendable {
     /// Close the push channel and stop receiving update events.
 
     func close() async
-    
-    
+
     func ackFullSync() async throws
-    
+
     func ack(deliveryTag: UInt64, multiple: Bool) async throws
 }

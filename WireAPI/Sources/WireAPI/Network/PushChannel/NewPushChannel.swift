@@ -21,7 +21,7 @@ import WireFoundation
 import WireLogging
 
 public final class NewPushChannel: PushChannelProtocol {
-    
+
     public typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
     private let webSocket: any WebSocketProtocol
@@ -87,14 +87,13 @@ public final class NewPushChannel: PushChannelProtocol {
     }
 }
 
-
 public struct WebSocketMessageContext {
     let message: WebSocketNotification
     let channel: NewPushChannel?
 }
 
 public struct WebSocketNotification: Decodable {
-    
+
     enum NotificationType: String, Decodable {
         case event
         case notificationsMissed = "notifications-missed"
@@ -126,7 +125,7 @@ struct EventAcknowledgmentNotification: Encodable {
             case deliveryTag = "delivery_tag"
             case multiple
         }
-        
+
         var deliveryTag: UInt64
         var multiple: Bool
     }

@@ -43,11 +43,11 @@ public struct UpdateEventEnvelopeV8: Decodable, ToAPIModelConvertible {
         case payload
 //        case deliveryTag = "delivery_tag"
     }
-    
+
     let id: UUID
     let payload: [UpdateEventDecodingProxy]
- //  let deliveryTag: UInt64
-    
+    //  let deliveryTag: UInt64
+
     func toAPIModel() -> UpdateEventEnvelope {
         UpdateEventEnvelope(
             id: id,

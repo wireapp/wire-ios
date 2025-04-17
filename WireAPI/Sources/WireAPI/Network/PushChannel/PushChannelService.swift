@@ -36,7 +36,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
     private let networkService: NetworkService
     private let authenticationManager: any AuthenticationManagerProtocol
     private let asyncStreamEnabled: Bool
-    
+
     public init(
         networkService: NetworkService,
         authenticationManager: any AuthenticationManagerProtocol,

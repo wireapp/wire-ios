@@ -37,9 +37,8 @@ public struct UpdateEventEnvelope: Equatable, Codable, Sendable {
 
     public let isTransient: Bool
 
-    
     public let deliveryTag: UInt64?
-    
+
     /// Create a new `UpdateEventEnvelope`.
     ///
     /// - Parameters:
