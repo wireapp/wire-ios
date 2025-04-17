@@ -36,30 +36,6 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
     let content: CreateBackupMessageContent
 
     init?(_ record: any NSFetchRequestResult) {
-
-        if !(record is ZMSystemMessage) {
-            print("record as? ZMMessage", record as? ZMMessage)
-            print("record as? ZMOTRMessage", record as? ZMOTRMessage)
-            print("record as? ZMClientMessage", record as? ZMClientMessage)
-            print("record as? ZMAssetClientMessage", record as? ZMAssetClientMessage)
-            if let message = record as? ZMClientMessage {
-                print("message.nonce?.transportString()", message.nonce?.transportString())
-                if let id = message.nonce?.transportString() {
-                    print("message.senderUser?.qualifiedID", message.senderUser?.qualifiedID)
-                    if let senderUserID = message.senderUser?.qualifiedID {
-                        print("message.senderClientID", message.senderClientID)
-                        print("message.serverTimestamp", message.serverTimestamp)
-                        if let creationDate = message.serverTimestamp {
-                            print("message.conversation?.qualifiedID", message.conversation?.qualifiedID)
-                            if let conversationID = message.conversation?.qualifiedID {
-                                print("message.isObfuscated", message.isObfuscated)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         if let clientMessage = record as? ZMAssetClientMessage, !clientMessage.isObfuscated {
             self.init(clientMessage)
         } else if let assetClientMessage = record as? ZMAssetClientMessage, !assetClientMessage.isObfuscated {

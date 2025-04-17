@@ -26,6 +26,8 @@ import WireSystem
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
+    let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase
+
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
     let streamDecryptor: ImportBackupStreamDecryptorProtocol
@@ -39,6 +41,9 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
     func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
 
         switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
+
+        case .crossPlatform:
+            importCrossPlatformBackupUseCase.invoke(url: url, password: password)
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
             importIOSBackup(url, password)
@@ -197,6 +202,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 /// There are some external apps that users can use to transfer backup files, which can modify their attachments and
 /// change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore conversations.
 private enum BackupFileExtensions: String, CaseIterable {
+    case crossPlatform = "todo" // TODO: what is the file extension?
     case fileExtensionWithUnderscore = "ios_wbu"
     case fileExtensionWithHyphen = "ios-wbu"
 }

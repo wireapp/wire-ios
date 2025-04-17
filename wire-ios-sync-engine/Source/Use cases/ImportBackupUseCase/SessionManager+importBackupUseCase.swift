@@ -26,6 +26,7 @@ public extension SessionManager {
         activeUserSession.map { _ in
 
             ImportBackupUseCase(
+                importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(),
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
                 streamDecryptor: ImportBackupStreamDecryptor(),
