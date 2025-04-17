@@ -22,8 +22,8 @@ import Intents
 import OCMock
 import WireDataModel
 
-@testable import WireSyncEngine
 import WireMockTransport
+@testable import WireSyncEngine
 
 class MockCallKitProvider: CXProvider {
 

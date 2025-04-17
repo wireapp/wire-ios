@@ -18,9 +18,9 @@
 
 import Foundation
 
+import WireMockTransport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-import WireMockTransport
 
 final class SearchDirectoryTests: DatabaseTest {
 

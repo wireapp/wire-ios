@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMockTransport
 import XCTest
 @testable import WireSyncEngine
-import WireMockTransport
 
 class Conversation_DeletionTests: DatabaseTest {
 
