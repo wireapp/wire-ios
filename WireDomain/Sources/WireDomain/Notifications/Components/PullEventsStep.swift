@@ -174,6 +174,7 @@ extension PullEventsStep {
 }
 
 extension PullEventsStep {
+    // TODO: [WPB-17284] Encapsulate objects in NetworkStack (similar to what's done in WireAuthentication) to build the UpdateEventsAPI.
     var updateEventsAPI: any UpdateEventsAPI {
         get async throws {
             let apiService = await APIService(

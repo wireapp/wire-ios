@@ -166,6 +166,7 @@ extension ConversationCreateEventNotificationBuilder {
         }
     }
 
+    // TODO: [WPB-17284] Fetch all needed values at once from the context, avoiding back and forth operations in the moc
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol

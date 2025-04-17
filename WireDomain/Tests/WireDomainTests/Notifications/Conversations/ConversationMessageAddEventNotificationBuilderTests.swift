@@ -144,8 +144,7 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(conversationTextNotificationBuilder.buildContentTextConversationIDSenderID_Invocations.count, 1)
     }
 
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: Add UTs (if possible) for other message content
+    // TODO: [WPB-17284] Add UTs (if possible) for other message content types
 
     private enum Scaffolding {
         static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
