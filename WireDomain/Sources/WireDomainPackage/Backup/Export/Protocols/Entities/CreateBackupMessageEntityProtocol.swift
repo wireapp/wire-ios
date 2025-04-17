@@ -31,9 +31,9 @@ public protocol CreateBackupMessageEntityProtocol: CreateBackupEntityProtocol {
 
 public enum CreateBackupMessageContent {
 
-    case text(TextMessageContent)
-    case location(LocationMessageContent)
-    case asset(AssetMessageContent)
+    case text(TextContent)
+    case location(LocationContent)
+    case asset(AssetContent)
 
 }
 
@@ -41,18 +41,18 @@ public enum CreateBackupMessageContent {
 
 extension CreateBackupMessageContent {
 
-    public struct TextMessageContent {
+    public struct TextContent {
         public var text: String
     }
 
-    public struct LocationMessageContent {
+    public struct LocationContent {
         public var longitude: Float
         public var latitude: Float
         public var name: String?
         public var zoom: Int32?
     }
 
-    public struct AssetMessageContent {
+    public struct AssetContent {
         var mimeType: String
         var size: UInt64
         var name: String?
@@ -61,8 +61,47 @@ extension CreateBackupMessageContent {
         var assetID: String
         var assetToken: String?
         var assetDomain: String?
-//        encryption: EncryptionAlgorithm?
-//        metaData: AssetMetadata?
+        var encryption: EncryptionAlgorithm?
+        var metadata: Metadata?
+
+        public enum EncryptionAlgorithm {
+            case aesCBC
+            case aesGCM
+        }
+
+        public enum Metadata {
+
+            case image(ImageMetadata)
+            case video(VideoMetadata)
+            case audio(AudioMetadata)
+            case generic(GenericMetadata)
+
+        }
+    }
+
+}
+
+extension CreateBackupMessageContent.AssetContent.Metadata {
+
+    public struct ImageMetadata {
+        var width: Int32
+        var height: Int32
+        var tag: String?
+    }
+
+    public struct VideoMetadata {
+        var width: Int32?
+        var height: Int32?
+        var duration: UInt64?
+    }
+
+    public struct AudioMetadata {
+        var normalization: Data
+        var duration: UInt64
+    }
+
+    public struct GenericMetadata {
+        var name: String?
     }
 
 }
@@ -75,7 +114,7 @@ extension CreateBackupMessageContent {
         _ text: String
     ) -> Self {
         .text(
-            TextMessageContent(
+            TextContent(
                 text: text
             )
         )
@@ -88,7 +127,7 @@ extension CreateBackupMessageContent {
         zoom: Int32?
     ) -> Self {
         .location(
-            LocationMessageContent(
+            LocationContent(
                 longitude: longitude,
                 latitude: latitude,
                 name: name,
@@ -105,10 +144,12 @@ extension CreateBackupMessageContent {
         sha256: Data,
         assetID: String,
         assetToken: String?,
-        assetDomain: String?
+        assetDomain: String?,
+        encryption: AssetContent.EncryptionAlgorithm?,
+        metadata: AssetContent.Metadata?
     ) -> Self {
         .asset(
-            AssetMessageContent(
+            AssetContent(
                 mimeType: mimeType,
                 size: size,
                 name: name,
@@ -116,7 +157,9 @@ extension CreateBackupMessageContent {
                 sha256: sha256,
                 assetID: assetID,
                 assetToken: assetToken,
-                assetDomain: assetDomain
+                assetDomain: assetDomain,
+                encryption: encryption,
+                metadata: metadata
             )
         )
     }

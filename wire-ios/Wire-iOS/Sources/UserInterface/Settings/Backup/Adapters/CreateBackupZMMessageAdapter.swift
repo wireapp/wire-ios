@@ -97,6 +97,8 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
 
         let size: UInt64
         let name: String?
+        let encryption: CreateBackupMessageContent.AssetContent.EncryptionAlgorithm?
+        let metadata: CreateBackupMessageContent.AssetContent.Metadata? = nil
 
         if asset.hasOriginal, asset.uploaded.hasAssetID {
             size = asset.original.size
@@ -106,6 +108,15 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
             name = nil
         } else {
             return nil
+        }
+
+        switch (asset.uploaded.hasEncryption, asset.uploaded.encryption) {
+        case (false, _):
+            encryption = .none
+        case (true, .aesCbc):
+            encryption = .aesCBC
+        case (true, .aesGcm):
+            encryption = .aesGCM
         }
 
         self.init(
@@ -118,7 +129,9 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
                 sha256: asset.uploaded.sha256,
                 assetID: asset.uploaded.assetID,
                 assetToken: asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil,
-                assetDomain: asset.uploaded.hasAssetDomain ? asset.uploaded.assetDomain : nil
+                assetDomain: asset.uploaded.hasAssetDomain ? asset.uploaded.assetDomain : nil,
+                encryption: encryption,
+                metadata: metadata
             )
         )
 
