@@ -2079,21 +2079,6 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
         try await mock(eventData)
     }
 
-    // MARK: - commitPendingProposalsIfNeeded
-
-    var commitPendingProposalsIfNeeded_Invocations: [Void] = []
-    var commitPendingProposalsIfNeeded_MockMethod: (() async -> Void)?
-
-    func commitPendingProposalsIfNeeded() async {
-        commitPendingProposalsIfNeeded_Invocations.append(())
-
-        guard let mock = commitPendingProposalsIfNeeded_MockMethod else {
-            fatalError("no mock for `commitPendingProposalsIfNeeded`")
-        }
-
-        await mock()
-    }
-
 }
 
 public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {

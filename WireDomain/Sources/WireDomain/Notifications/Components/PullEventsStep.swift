@@ -97,6 +97,7 @@ extension PullEventsStep {
         UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
+            mlsService: nil,
             messageLocalStore: dependency.messageLocalStore
         )
     }

@@ -25,17 +25,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
-    let mlsService: (any MLSServiceInterface)? // optional because only necessary for live events
-
-    init(
-        mlsDecryptionService: any MLSDecryptionServiceInterface,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        mlsService: (any MLSServiceInterface)? = nil
-    ) {
-        self.mlsDecryptionService = mlsDecryptionService
-        self.conversationLocalStore = conversationLocalStore
-        self.mlsService = mlsService
-    }
 
     func decryptedWelcomeMessageEventData(
         from eventData: ConversationMLSWelcomeEvent
@@ -95,12 +84,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         decryptedEvent.decryptedMessages = decryptedMessages
 
         return decryptedEvent
-    }
-
-    func commitPendingProposalsIfNeeded() async {
-        // MLSService will be nil when called from push notification service.
-        // As we don't need to commit pending proposals in that case.
-        await mlsService?.commitPendingProposalsIfNeeded()
     }
 
     private func decryptMLSMessage(

@@ -30,6 +30,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
     var proteusMessageDecryptor: MockProteusMessageDecryptorProtocol!
     var mlsMessageDecryptor: MockMLSMessageDecryptorProtocol!
     var messageLocalStore: MockMessageLocalStoreProtocol!
+    var mlsService: MockMLSServiceInterface!
 
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
@@ -46,13 +47,15 @@ final class UpdateEventDecryptorTests: XCTestCase {
         proteusMessageDecryptor = MockProteusMessageDecryptorProtocol()
         mlsMessageDecryptor = MockMLSMessageDecryptorProtocol()
         messageLocalStore = MockMessageLocalStoreProtocol()
+        mlsService = MockMLSServiceInterface()
 
         sut = UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
+            mlsService: mlsService,
             messageLocalStore: messageLocalStore
         )
-        mlsMessageDecryptor.commitPendingProposalsIfNeeded_MockMethod = {}
+        mlsService.commitPendingProposalsIfNeeded_MockMethod = {}
     }
 
     override func tearDown() async throws {
@@ -62,6 +65,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         messageLocalStore = nil
         modelHelper = nil
         sut = nil
+        mlsService = nil
         try coreDataStackHelper.cleanupDirectory()
     }
 
@@ -194,7 +198,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
 
         await Task.yield()
 
-        XCTAssertEqual(mlsMessageDecryptor.commitPendingProposalsIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
     }
 
 }

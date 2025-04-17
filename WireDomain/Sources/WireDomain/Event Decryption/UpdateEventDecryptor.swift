@@ -27,10 +27,11 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
     private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
+    private let mlsService: (any MLSServiceInterface)? // optional because only necessary for live events
 
     init(
         proteusService: any ProteusServiceInterface,
-        mlsService: any MLSServiceInterface,
+        mlsService: (any MLSServiceInterface)?,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol,
@@ -45,9 +46,10 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            conversationLocalStore: conversationLocalStore,
-            mlsService: mlsService
+            conversationLocalStore: conversationLocalStore
         )
+
+        self.mlsService = mlsService
 
         self.messageLocalStore = messageLocalStore
     }
@@ -55,11 +57,13 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     init(
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
         mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
+        mlsService: (any MLSServiceInterface)?,
         messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.mlsMessageDecryptor = mlsMessageDecryptor
         self.messageLocalStore = messageLocalStore
+        self.mlsService = mlsService
     }
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
@@ -142,11 +146,17 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             Task.detached {
                 // we don't need to wait for this, as it can take a while to finish
                 // it should not block decryption
-                await mlsMessageDecryptor.commitPendingProposalsIfNeeded()
+                await commitPendingProposalsIfNeeded()
             }
         }
 
         return decryptedEvents
+    }
+
+    private func commitPendingProposalsIfNeeded() async {
+        // MLSService will be nil when called from push notification service.
+        // As we don't need to commit pending proposals in that case.
+        await mlsService?.commitPendingProposalsIfNeeded()
     }
 
     private func appendFailedToDecryptProteusMessage(
