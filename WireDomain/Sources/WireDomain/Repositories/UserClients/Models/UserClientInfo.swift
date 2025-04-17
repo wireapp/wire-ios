@@ -38,9 +38,4 @@ public struct UserClientInfo: Sendable {
         let p384: String?
         let p512: String?
     }
-
-//    enum Capability: String {
-//        case consumableNotifications = "consumable-notifications"
-//        case legalhodImplicitConsent = "legalhold-implicit-consent"
-//    }
 }
