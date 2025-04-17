@@ -23,7 +23,7 @@ import WireDataModel
 
 protocol GenerateNotificationDependency: Dependency {
     var sharedUserDefaults: UserDefaults { get }
-    var userID: UUID! { get }
+    var userID: UUID { get }
     var messageLocalStore: any MessageLocalStoreProtocol { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
     var userLocalStore: any UserLocalStoreProtocol { get }

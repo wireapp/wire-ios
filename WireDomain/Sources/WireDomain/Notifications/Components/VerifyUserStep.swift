@@ -24,7 +24,6 @@ import WireDataModel
 import WireFoundation
 
 protocol VerifyUserDependency: Dependency {
-    var userID: UUID! { get }
     var applicationIdentifier: String { get }
     var applicationContainer: URL { get }
 }
@@ -39,11 +38,30 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
         case noAccountFound
     }
 
-    public var selectedAccount: Account!
+    public var selectedAccount: Account
+    public var accountManager: AccountManager
+    public var userID: UUID
+
+    init(
+        parent: any Scope,
+        userID: UUID,
+        accountManager: AccountManager
+    ) throws {
+        self.userID = userID
+        self.accountManager = accountManager
+
+        guard let selectedAccount = accountManager.account(
+            with: userID
+        ) else {
+            throw Failure.noAccountFound
+        }
+
+        self.selectedAccount = selectedAccount
+
+        super.init(parent: parent)
+    }
 
     func verifyUserSession() async throws {
-        try setSelectedAccount()
-
         let verifyUserSessionUseCase = VerifyUserSessionUseCase(
             cookieStorage: cookieStorage,
             coreData: coreData
@@ -52,16 +70,6 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
         try await verifyUserSessionUseCase.invoke()
 
         try await pullEventsStep.pullEvents()
-    }
-
-    private func setSelectedAccount() throws {
-        guard let selectedAccount = accountManager.account(
-            with: dependency.userID
-        ) else {
-            throw Failure.noAccountFound
-        }
-
-        self.selectedAccount = selectedAccount
     }
 
     // MARK: - Children
@@ -73,19 +81,13 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
 
 extension VerifyUserStep {
 
-    public var accountManager: AccountManager {
-        AccountManager(
-            sharedDirectory: dependency.applicationContainer
-        )
-    }
-
     public var sharedUserDefaults: UserDefaults {
         UserDefaults(suiteName: dependency.applicationIdentifier)!
     }
 
     public var cookieStorage: any CookieStorageProtocol {
         makeCookieStorage(
-            userID: dependency.userID
+            userID: userID
         )
     }
 

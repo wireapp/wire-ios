@@ -22,7 +22,7 @@ import WireDataModel
 import WireFoundation
 
 protocol PullEventsDependency: Dependency {
-    var userID: UUID! { get }
+    var userID: UUID { get }
     var coreData: CoreDataStack { get }
     var cookieStorage: any CookieStorageProtocol { get }
     var applicationContainer: URL { get }

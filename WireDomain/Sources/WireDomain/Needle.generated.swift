@@ -44,7 +44,7 @@ private class ShowNotificationDependencya0b9d9633053c7a7a814Provider: ShowNotifi
     var accountManager: AccountManager {
         return verifyUserStep.accountManager
     }
-    var selectedAccount: Account! {
+    var selectedAccount: Account {
         return verifyUserStep.selectedAccount
     }
     var conversationLocalStore: any ConversationLocalStoreProtocol {
@@ -63,10 +63,20 @@ private class ShowNotificationDependencya0b9d9633053c7a7a814Provider: ShowNotifi
 private func factory7cf4b2b30a4398b50d11a9cc2ff26e57789f8e96(_ component: NeedleFoundation.Scope) -> AnyObject {
     return ShowNotificationDependencya0b9d9633053c7a7a814Provider(notificationServiceExtensionFlow: parent5(component) as! NotificationServiceExtensionFlow, pullEventsStep: parent2(component) as! PullEventsStep, verifyUserStep: parent3(component) as! VerifyUserStep)
 }
-private class VerifyUserDependency86e4082a5d4cc2c665ceProvider: VerifyUserDependency {
-    var userID: UUID! {
-        return processNotificationRequestStep.userID
+private class ProcessNotificationRequestDependency40b6d936f379fb50f3b3Provider: ProcessNotificationRequestDependency {
+    var applicationContainer: URL {
+        return notificationServiceExtensionFlow.applicationContainer
     }
+    private let notificationServiceExtensionFlow: NotificationServiceExtensionFlow
+    init(notificationServiceExtensionFlow: NotificationServiceExtensionFlow) {
+        self.notificationServiceExtensionFlow = notificationServiceExtensionFlow
+    }
+}
+/// ^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep
+private func factory57c45e6a5f7157fd1d7682b820770cde9bb5e257(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return ProcessNotificationRequestDependency40b6d936f379fb50f3b3Provider(notificationServiceExtensionFlow: parent1(component) as! NotificationServiceExtensionFlow)
+}
+private class VerifyUserDependency86e4082a5d4cc2c665ceProvider: VerifyUserDependency {
     var applicationIdentifier: String {
         return notificationServiceExtensionFlow.applicationIdentifier
     }
@@ -74,22 +84,20 @@ private class VerifyUserDependency86e4082a5d4cc2c665ceProvider: VerifyUserDepend
         return notificationServiceExtensionFlow.applicationContainer
     }
     private let notificationServiceExtensionFlow: NotificationServiceExtensionFlow
-    private let processNotificationRequestStep: ProcessNotificationRequestStep
-    init(notificationServiceExtensionFlow: NotificationServiceExtensionFlow, processNotificationRequestStep: ProcessNotificationRequestStep) {
+    init(notificationServiceExtensionFlow: NotificationServiceExtensionFlow) {
         self.notificationServiceExtensionFlow = notificationServiceExtensionFlow
-        self.processNotificationRequestStep = processNotificationRequestStep
     }
 }
 /// ^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep
-private func factory1e6574088fa77c7ec1b32a0cb5537ef6f42937db(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return VerifyUserDependency86e4082a5d4cc2c665ceProvider(notificationServiceExtensionFlow: parent2(component) as! NotificationServiceExtensionFlow, processNotificationRequestStep: parent1(component) as! ProcessNotificationRequestStep)
+private func factory1e6574088fa77c7ec1b3d4de722f9e5dfe8415c1(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return VerifyUserDependency86e4082a5d4cc2c665ceProvider(notificationServiceExtensionFlow: parent2(component) as! NotificationServiceExtensionFlow)
 }
 private class GenerateNotificationDependencye9ac54a4aea693448fe3Provider: GenerateNotificationDependency {
     var sharedUserDefaults: UserDefaults {
         return verifyUserStep.sharedUserDefaults
     }
-    var userID: UUID! {
-        return processNotificationRequestStep.userID
+    var userID: UUID {
+        return verifyUserStep.userID
     }
     var messageLocalStore: any MessageLocalStoreProtocol {
         return pullEventsStep.messageLocalStore
@@ -100,22 +108,20 @@ private class GenerateNotificationDependencye9ac54a4aea693448fe3Provider: Genera
     var userLocalStore: any UserLocalStoreProtocol {
         return pullEventsStep.userLocalStore
     }
-    private let processNotificationRequestStep: ProcessNotificationRequestStep
     private let pullEventsStep: PullEventsStep
     private let verifyUserStep: VerifyUserStep
-    init(processNotificationRequestStep: ProcessNotificationRequestStep, pullEventsStep: PullEventsStep, verifyUserStep: VerifyUserStep) {
-        self.processNotificationRequestStep = processNotificationRequestStep
+    init(pullEventsStep: PullEventsStep, verifyUserStep: VerifyUserStep) {
         self.pullEventsStep = pullEventsStep
         self.verifyUserStep = verifyUserStep
     }
 }
 /// ^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep->GenerateNotificationStep
-private func factoryce7e84dac24eba2dbd0b4698662bcd3d33005419(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return GenerateNotificationDependencye9ac54a4aea693448fe3Provider(processNotificationRequestStep: parent3(component) as! ProcessNotificationRequestStep, pullEventsStep: parent1(component) as! PullEventsStep, verifyUserStep: parent2(component) as! VerifyUserStep)
+private func factoryce7e84dac24eba2dbd0b06f68a2754112dcc40ad(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return GenerateNotificationDependencye9ac54a4aea693448fe3Provider(pullEventsStep: parent1(component) as! PullEventsStep, verifyUserStep: parent2(component) as! VerifyUserStep)
 }
 private class PullEventsDependency53707bfe7fe589fd7ad1Provider: PullEventsDependency {
-    var userID: UUID! {
-        return processNotificationRequestStep.userID
+    var userID: UUID {
+        return verifyUserStep.userID
     }
     var coreData: CoreDataStack {
         return verifyUserStep.coreData
@@ -133,17 +139,15 @@ private class PullEventsDependency53707bfe7fe589fd7ad1Provider: PullEventsDepend
         return verifyUserStep.sharedUserDefaults
     }
     private let notificationServiceExtensionFlow: NotificationServiceExtensionFlow
-    private let processNotificationRequestStep: ProcessNotificationRequestStep
     private let verifyUserStep: VerifyUserStep
-    init(notificationServiceExtensionFlow: NotificationServiceExtensionFlow, processNotificationRequestStep: ProcessNotificationRequestStep, verifyUserStep: VerifyUserStep) {
+    init(notificationServiceExtensionFlow: NotificationServiceExtensionFlow, verifyUserStep: VerifyUserStep) {
         self.notificationServiceExtensionFlow = notificationServiceExtensionFlow
-        self.processNotificationRequestStep = processNotificationRequestStep
         self.verifyUserStep = verifyUserStep
     }
 }
 /// ^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep
-private func factoryf4ab58fd6d9a40f32066d10a95ce62f6a7bfe6db(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return PullEventsDependency53707bfe7fe589fd7ad1Provider(notificationServiceExtensionFlow: parent3(component) as! NotificationServiceExtensionFlow, processNotificationRequestStep: parent2(component) as! ProcessNotificationRequestStep, verifyUserStep: parent1(component) as! VerifyUserStep)
+private func factoryf4ab58fd6d9a40f320668be8429a6bc7b371557e(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return PullEventsDependency53707bfe7fe589fd7ad1Provider(notificationServiceExtensionFlow: parent3(component) as! NotificationServiceExtensionFlow, verifyUserStep: parent1(component) as! VerifyUserStep)
 }
 
 #else
@@ -151,23 +155,23 @@ extension ShowNotificationStep: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\ShowNotificationDependency.contentHandler] = "contentHandler-(UNNotificationContent) -> Void"
         keyPathToName[\ShowNotificationDependency.accountManager] = "accountManager-AccountManager"
-        keyPathToName[\ShowNotificationDependency.selectedAccount] = "selectedAccount-Account!"
+        keyPathToName[\ShowNotificationDependency.selectedAccount] = "selectedAccount-Account"
         keyPathToName[\ShowNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
     }
 }
 extension ProcessNotificationRequestStep: NeedleFoundation.Registration {
     public func registerItems() {
+        keyPathToName[\ProcessNotificationRequestDependency.applicationContainer] = "applicationContainer-URL"
 
-        localTable["userID-UUID!"] = { [unowned self] in self.userID as Any }
     }
 }
 extension VerifyUserStep: NeedleFoundation.Registration {
     public func registerItems() {
-        keyPathToName[\VerifyUserDependency.userID] = "userID-UUID!"
         keyPathToName[\VerifyUserDependency.applicationIdentifier] = "applicationIdentifier-String"
         keyPathToName[\VerifyUserDependency.applicationContainer] = "applicationContainer-URL"
-        localTable["selectedAccount-Account!"] = { [unowned self] in self.selectedAccount as Any }
+        localTable["selectedAccount-Account"] = { [unowned self] in self.selectedAccount as Any }
         localTable["accountManager-AccountManager"] = { [unowned self] in self.accountManager as Any }
+        localTable["userID-UUID"] = { [unowned self] in self.userID as Any }
         localTable["sharedUserDefaults-UserDefaults"] = { [unowned self] in self.sharedUserDefaults as Any }
         localTable["cookieStorage-any CookieStorageProtocol"] = { [unowned self] in self.cookieStorage as Any }
         localTable["coreData-CoreDataStack"] = { [unowned self] in self.coreData as Any }
@@ -184,7 +188,7 @@ extension NotificationServiceExtensionFlow: NeedleFoundation.Registration {
 extension GenerateNotificationStep: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\GenerateNotificationDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
-        keyPathToName[\GenerateNotificationDependency.userID] = "userID-UUID!"
+        keyPathToName[\GenerateNotificationDependency.userID] = "userID-UUID"
         keyPathToName[\GenerateNotificationDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
@@ -193,7 +197,7 @@ extension GenerateNotificationStep: NeedleFoundation.Registration {
 }
 extension PullEventsStep: NeedleFoundation.Registration {
     public func registerItems() {
-        keyPathToName[\PullEventsDependency.userID] = "userID-UUID!"
+        keyPathToName[\PullEventsDependency.userID] = "userID-UUID"
         keyPathToName[\PullEventsDependency.coreData] = "coreData-CoreDataStack"
         keyPathToName[\PullEventsDependency.cookieStorage] = "cookieStorage-any CookieStorageProtocol"
         keyPathToName[\PullEventsDependency.applicationContainer] = "applicationContainer-URL"
@@ -221,11 +225,11 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 
 @inline(never) private func register1() {
     registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep->GenerateNotificationStep->ShowNotificationStep", factory7cf4b2b30a4398b50d11a9cc2ff26e57789f8e96)
-    registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep", factoryEmptyDependencyProvider)
-    registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep", factory1e6574088fa77c7ec1b32a0cb5537ef6f42937db)
+    registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep", factory57c45e6a5f7157fd1d7682b820770cde9bb5e257)
+    registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep", factory1e6574088fa77c7ec1b3d4de722f9e5dfe8415c1)
     registerProviderFactory("^->NotificationServiceExtensionFlow", factoryEmptyDependencyProvider)
-    registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep->GenerateNotificationStep", factoryce7e84dac24eba2dbd0b4698662bcd3d33005419)
-    registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep", factoryf4ab58fd6d9a40f32066d10a95ce62f6a7bfe6db)
+    registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep->GenerateNotificationStep", factoryce7e84dac24eba2dbd0b06f68a2754112dcc40ad)
+    registerProviderFactory("^->NotificationServiceExtensionFlow->ProcessNotificationRequestStep->VerifyUserStep->PullEventsStep", factoryf4ab58fd6d9a40f320668be8429a6bc7b371557e)
 }
 #endif
 
