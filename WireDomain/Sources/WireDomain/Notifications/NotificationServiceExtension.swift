@@ -65,7 +65,8 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             do {
                 try Task.checkCancellation()
             } catch {
-                // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
+                // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty
+                // content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
                 return notificationContentHandler(.emptyNotification)
             }
 
