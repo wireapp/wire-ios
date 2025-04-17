@@ -98,11 +98,11 @@ public struct CreateBackupUseCase<
                     let (userCount, messageCount, conversationCount) = try await context.perform {
                         try Self.fetchCounts(in: context)
                     }
-                    let total = userCount + messageCount + conversationCount
+                    let total = userCount + conversationCount + messageCount
                     logger.debug([
                         "userCount: \(userCount)",
-                        "messageCount: \(messageCount)",
                         "conversationCount: \(conversationCount)",
+                        "messageCount: \(messageCount)",
                         "total: \(total)"
                     ].joined(separator: ", "))
 
@@ -233,7 +233,7 @@ public struct CreateBackupUseCase<
                     id: message.id,
                     conversationId: BackupQualifiedId(message.conversationID),
                     senderUserId: BackupQualifiedId(message.senderUserID),
-                    senderClientId: message.senderClientID,
+                    senderClientId: message.senderClientID ?? "", // TODO: make optional
                     creationDate: BackupDateTime(message.creationDate),
                     content: .from(message.content),
                     webPrimaryKey: nil // TODO: remove

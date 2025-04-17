@@ -31,14 +31,18 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
     let id: String
     let conversationID: QualifiedID
     let senderUserID: QualifiedID
-    let senderClientID: String
+    let senderClientID: String?
     let creationDate: Date
     let content: CreateBackupMessageContent
 
     init?(_ record: any NSFetchRequestResult) {
+
         if !(record is ZMSystemMessage) {
             print("record as? ZMMessage", record as? ZMMessage)
-            if let message = record as? ZMMessage {
+            print("record as? ZMOTRMessage", record as? ZMOTRMessage)
+            print("record as? ZMClientMessage", record as? ZMClientMessage)
+            print("record as? ZMAssetClientMessage", record as? ZMAssetClientMessage)
+            if let message = record as? ZMClientMessage {
                 print("message.nonce?.transportString()", message.nonce?.transportString())
                 if let id = message.nonce?.transportString() {
                     print("message.senderUser?.qualifiedID", message.senderUser?.qualifiedID)
@@ -59,23 +63,41 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
             }
         }
 
+        if let clientMessage =  record as? ZMAssetClientMessage {
+            self.init(clientMessage)
+        } else if let assetClientMessage = record as? ZMAssetClientMessage {
+            self.init(assetClientMessage)
+        } else {
+            return nil
+        }
+    }
+
+    init?(_ clientMessage: ZMClientMessage) {
+        self.init(clientMessage, content: .text("TODO"))
+    }
+
+    init?(_ clientMessage: ZMAssetClientMessage) {
+        self.init(clientMessage, content: .text("TODO"))
+    }
+
+    init?(_ message: ZMMessage, content: CreateBackupMessageContent) {
+
         guard
-            let message = record as? ZMMessage,
             let id = message.nonce?.transportString(),
             let senderUserID = message.senderUser?.qualifiedID,
-            // let senderClientID = message.senderClientID,
             let creationDate = message.serverTimestamp,
             let conversationID = message.conversation?.qualifiedID,
             let content = message.content,
             !message.isObfuscated
         else {
-            return nil // TODO: prevent silent failure?
+            // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
+            return nil
         }
 
         self.id = id
         self.conversationID = QualifiedID(conversationID)
         self.senderUserID = QualifiedID(senderUserID)
-        self.senderClientID = message.senderClientID ?? "" // TODO: should be optional
+        self.senderClientID = message.senderClientID
         self.creationDate = creationDate
         self.content = content
     }
@@ -87,40 +109,77 @@ extension ZMMessage {
     fileprivate var content: CreateBackupMessageContent? {
 
         if isText, let messageText = textMessageData?.messageText {
-            .text(messageText)
+            return .text(messageText)
 
         } else if isLocation, let locationMessageData {
-            .location(
+            return .location(
                 longitude: locationMessageData.longitude,
                 latitude: locationMessageData.latitude,
                 name: locationMessageData.name,
                 zoom: locationMessageData.zoomLevel
             )
 
-//        } else if isImage {
-//            fatalError()
-//
-//        } else if isVideo {
-//            fatalError()
-//
-//        } else if isAudio {
-//            fatalError()
+        } else if let assetClientMessage = self as? ZMAssetClientMessage {
 
-        } else if isFile, let fileMessageData {
-            fatalError()
+            if let asset = assetClientMessage.underlyingMessage?.assetData {
+                let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
+                let domain = asset.uploaded.assetDomain
+                if asset.hasOriginal {
+                    return .asset(
+                        mimeType: asset.original.mimeType, // TODO: hasMimeType?
+                        size: asset.original.size,
+                        name: asset.original.name,
+                        otrKey: asset.uploaded.otrKey, // TODO: uploaded?
+                        sha256: asset.uploaded.sha256
+                    )
+                } else if asset.hasPreview {
+                    return .asset(
+                        mimeType: asset.preview.mimeType, // TODO: hasMimeType?
+                        size: asset.preview.size,
+                        name: nil,
+                        otrKey: asset.uploaded.otrKey, // TODO: uploaded?
+                        sha256: asset.uploaded.sha256
+                    )
+                } else {
+                    return nil
+                }
+            }
+
+            if isImage {
+                // TODO: delete
+                print(assetClientMessage.dataSet.count)
+                print(assetClientMessage.dataSetDebugInformation)
+                if let imageMessageData {
+                    print(imageMessageData)
+                }
+                if let fileMessageData {
+                    print(fileMessageData)
+                }
+
+
+                fatalError()
+
+//          } else if isVideo {
+//              fatalError()
+//
+//          } else if isAudio {
+//              fatalError()
+
+            } else if isFile, let fileMessageData {
+                fatalError()
             /*
-            .asset(
-                mimeType: fileMessageData.mimeType ?? "", // TODO: empty string?
-                size: fileMessageData.size,
-                name: fileMessageData.filename,
-                otrKey: <#T##Data#>,
-                sha256: <#T##Data#>
-            )
+             .asset(
+             mimeType: fileMessageData.mimeType ?? "", // TODO: empty string?
+             size: fileMessageData.size,
+             name: fileMessageData.filename,
+             otrKey: <#T##Data#>,
+             sha256: <#T##Data#>
+             )
              */
-
-        } else {
-            nil
+            }
 
         }
+
+        return nil
     }
 }

@@ -33,14 +33,14 @@ extension BackupMessageContent {
                 longitude: longitude,
                 latitude: latitude,
                 name: name,
-                zoom: zoom.map { .init(int: $0) }
+                zoom: zoom.map { KotlinInt(int: $0) }
             )
 
         case let .asset(mimeType, size, name, otrKey, sha256):
             BackupMessageContent
                 .Asset(
                     mimeType: mimeType,
-                    size: Int32(size), // TODO: prevent conversion error
+                    size: Int32(exactly: size) ?? 0,
                     name: name,
                     otrKey: KotlinByteArray(otrKey),
                     sha256: KotlinByteArray(sha256),

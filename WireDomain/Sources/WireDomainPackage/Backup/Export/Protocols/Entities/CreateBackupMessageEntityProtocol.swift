@@ -23,7 +23,7 @@ public protocol CreateBackupMessageEntityProtocol: CreateBackupEntityProtocol {
     var id: String { get }
     var conversationID: QualifiedID { get }
     var senderUserID: QualifiedID { get }
-    var senderClientID: String { get }
+    var senderClientID: String? { get }
     var creationDate: Date { get }
     var content: CreateBackupMessageContent { get }
 
