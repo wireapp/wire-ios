@@ -95,42 +95,32 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
 
         guard let asset = assetClientMessage.underlyingMessage?.assetData else { return nil }
 
-        let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
-        let domain = asset.uploaded.assetDomain
+        let size: UInt64
+        let name: String?
 
         if asset.hasOriginal, asset.uploaded.hasAssetID {
-            self.init(
-                assetClientMessage,
-                content: .asset(
-                    mimeType: asset.original.mimeType, // TODO: hasMimeType?
-                    size: asset.original.size,
-                    name: asset.original.name,
-                    otrKey: asset.uploaded.otrKey, // TODO: uploaded?
-                    sha256: asset.uploaded.sha256,
-                    assetID: asset.uploaded.assetID,
-                    assetToken: asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil,
-                    assetDomain: asset.uploaded.hasAssetDomain ? asset.uploaded.assetDomain : nil
-                )
-            )
-
+            size = asset.original.size
+            name = asset.original.name
         } else if asset.hasPreview, asset.uploaded.hasAssetID {
-            self.init(
-                assetClientMessage,
-                content: .asset(
-                    mimeType: asset.preview.mimeType, // TODO: hasMimeType?
-                    size: asset.preview.size,
-                    name: nil,
-                    otrKey: asset.uploaded.otrKey, // TODO: uploaded?
-                    sha256: asset.uploaded.sha256,
-                    assetID: asset.uploaded.assetID,
-                    assetToken: asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil,
-                    assetDomain: asset.uploaded.hasAssetDomain ? asset.uploaded.assetDomain : nil
-                )
-            )
-
+            size = asset.original.size
+            name = nil
         } else {
             return nil
         }
+
+        self.init(
+            assetClientMessage,
+            content: .asset(
+                mimeType: asset.original.mimeType, // TODO: hasMimeType?
+                size: size,
+                name: name,
+                otrKey: asset.uploaded.otrKey, // TODO: uploaded?
+                sha256: asset.uploaded.sha256,
+                assetID: asset.uploaded.assetID,
+                assetToken: asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil,
+                assetDomain: asset.uploaded.hasAssetDomain ? asset.uploaded.assetDomain : nil
+            )
+        )
 
     }
 
