@@ -75,7 +75,7 @@ public struct CreateBackupUseCase<
 
                     reportProgress(0, 0)
                     logger.debug("initializing MPBackupExporter")
-                    let backupExporter = MPBackupExporter(
+                    let exporter = MPBackupExporter(
                         selfUserId: BackupQualifiedId(selfUserID),
                         workDirectory: workDirectoryURL.path(),
                         outputDirectory: outputDirectoryURL.path(),
@@ -109,26 +109,26 @@ public struct CreateBackupUseCase<
                     // fetch the data and pass it into the backup exporter
                     let userProgressMultiplier = Float(userCount) / Float(total)
                     try await context.perform {
-                        try Self.exportUsers(from: context, using: backupExporter) { current, _ in
+                        try Self.exportUsers(from: context, using: exporter, reportProgress: { current, _ in
                             reportProgress(Int(Float(current) * userProgressMultiplier), total)
-                        }
+                        })
                     }
 
                     let conversationProgressOffset = userCount
                     try await context.perform {
-                        try Self.exportConversations(from: context, using: backupExporter) { current, _ in
+                        try Self.exportConversations(from: context, using: exporter, reportProgress: { current, _ in
                             reportProgress(conversationProgressOffset + current, total)
-                        }
+                        })
                     }
 
                     let messageProgressOffset = userCount + conversationCount
                     try await context.perform {
-                        try Self.exportMessages(from: context, using: backupExporter) { current, _ in
+                        try Self.exportMessages(from: context, using: exporter, reportProgress: { current, _ in
                             reportProgress(messageProgressOffset + current, total)
-                        }
+                        })
                     }
 
-                    let outputFileURL = try await backupExporter.finalize(password: password)
+                    let outputFileURL = try await exporter.finalize(password: password)
                     continuation.yield(.done(outputFileURL))
                     continuation.finish()
 
@@ -148,88 +148,52 @@ public struct CreateBackupUseCase<
         in context: NSManagedObjectContext
     ) throws -> (userCount: Int, messageCount: Int, conversationCount: Int) {
 
-        let userFetchRequest = UserAdapter.fetchRequest()
-        let userCount = try context.count(for: userFetchRequest)
-
-        let conversationFetchRequest = ConversationAdapter.fetchRequest()
-        let conversationCount = try context.count(for: conversationFetchRequest)
-
-        let messageFetchRequest = MessageAdapter.fetchRequest()
-        let messageCount = try context.count(for: messageFetchRequest)
+        let userCount = try context.count(for: UserAdapter.fetchRequest())
+        let conversationCount = try context.count(for: ConversationAdapter.fetchRequest())
+        let messageCount = try context.count(for: MessageAdapter.fetchRequest())
 
         return (userCount, conversationCount, messageCount)
-
     }
 
     private static func exportUsers(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportingProgress: (Int, Int) -> Void
+        reportProgress: (Int, Int) -> Void
     ) throws {
-
-        let fetchRequest = UserAdapter.fetchRequest()
-        fetchRequest.fetchBatchSize = 50
-        let records = try context.fetch(fetchRequest)
-        let recordCount = records.count
-        for (index, record) in records.enumerated() {
-            guard let user = UserAdapter(record) else { continue }
-            autoreleasepool {
-                let backupUser = BackupUser(
+        try exportRecored(context: context, entityType: UserAdapter.self, export: { user in
+            backupExporter.add(
+                user: BackupUser(
                     id: BackupQualifiedId(user.id),
                     name: user.name,
                     handle: user.handle
                 )
-                backupExporter.add(user: backupUser)
-            }
-            if index % 50 == 0 || index == recordCount - 1 {
-                try Task.checkCancellation()
-                reportingProgress(index + 1, recordCount)
-            }
-        }
-
+            )
+        }, reportProgress: reportProgress)
     }
 
     private static func exportConversations(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportingProgress: (Int, Int) -> Void
+        reportProgress: (Int, Int) -> Void
     ) throws {
-
-        let fetchRequest = ConversationAdapter.fetchRequest()
-        fetchRequest.fetchBatchSize = 50
-        let records = try context.fetch(fetchRequest)
-        let recordCount = records.count
-        for (index, record) in records.enumerated() {
-            guard let conversation = ConversationAdapter(record) else { continue }
-            autoreleasepool {
-                let backupConversation = BackupConversation(
+        try exportRecored(context: context, entityType: ConversationAdapter.self, export: { conversation in
+            backupExporter.add(
+                conversation: BackupConversation(
                     id: BackupQualifiedId(conversation.id),
                     name: conversation.name
                 )
-                backupExporter.add(conversation: backupConversation)
-            }
-            if index % 50 == 0 || index == recordCount - 1 {
-                try Task.checkCancellation()
-                reportingProgress(index + 1, recordCount)
-            }
-        }
-
+            )
+        }, reportProgress: reportProgress)
     }
 
     private static func exportMessages(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportingProgress: (Int, Int) -> Void
+        reportProgress: (Int, Int) -> Void
     ) throws {
-
-        let fetchRequest = MessageAdapter.fetchRequest()
-        fetchRequest.fetchBatchSize = 50
-        let records = try context.fetch(fetchRequest)
-        let recordCount = records.count
-        for (index, record) in records.enumerated() {
-            guard let message = MessageAdapter(record) else { continue }
-            autoreleasepool {
-                let backupMessage = BackupMessage(
+        try exportRecored(context: context, entityType: MessageAdapter.self, export: { message in
+            backupExporter.add(
+                message: BackupMessage(
                     id: message.id,
                     conversationId: BackupQualifiedId(message.conversationID),
                     senderUserId: BackupQualifiedId(message.senderUserID),
@@ -238,11 +202,30 @@ public struct CreateBackupUseCase<
                     content: .from(message.content),
                     webPrimaryKey: nil // TODO: remove
                 )
-                backupExporter.add(message: backupMessage)
-            }
+            )
+        }, reportProgress: reportProgress)
+    }
+
+    private static func exportRecored<Entity: CreateBackupEntityProtocol>(
+        context: NSManagedObjectContext,
+        entityType: Entity.Type,
+        export: (Entity) -> Void,
+        reportProgress: (Int, Int) -> Void
+    ) throws {
+
+        let fetchRequest = entityType.fetchRequest()
+        fetchRequest.fetchBatchSize = 50
+        let records = try context.fetch(fetchRequest)
+        let recordCount = records.count
+
+        for (index, record) in records.enumerated() {
+            guard let entity = entityType.init(record) else { continue }
+
+            autoreleasepool { export(entity) }
+
             if index % 50 == 0 || index == recordCount - 1 {
                 try Task.checkCancellation()
-                reportingProgress(index + 1, recordCount)
+                reportProgress(index + 1, recordCount)
             }
         }
 
