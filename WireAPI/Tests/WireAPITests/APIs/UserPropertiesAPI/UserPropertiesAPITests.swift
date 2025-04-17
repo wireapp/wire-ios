@@ -91,7 +91,7 @@ final class UserPropertiesAPITests: XCTestCase {
         // Then
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
-            let result = try await sut.areReadReceiptsEnabled
+            let result = try await sut.areTypingIndicatorsEnabled
 
             // Then
             XCTAssertEqual(
@@ -122,8 +122,7 @@ final class UserPropertiesAPITests: XCTestCase {
     func testGetLabels_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: ""
+            statusCode: .notFound
         )
 
         let sut = UserPropertiesAPIV4(apiService: apiService)
@@ -138,33 +137,31 @@ final class UserPropertiesAPITests: XCTestCase {
     func testGetUserTypingIndicatorModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: ""
+            statusCode: .notFound
         )
 
         let sut = UserPropertiesAPIV4(apiService: apiService)
 
+        // When
+        let result = try await sut.areTypingIndicatorsEnabled
+
         // Then
-        await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
-            // When
-            _ = try await sut.areTypingIndicatorsEnabled
-        }
+        XCTAssertFalse(result)
     }
 
     func testGetUserReceiptModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .notFound,
-            label: ""
+            statusCode: .notFound
         )
 
         let sut = UserPropertiesAPIV4(apiService: apiService)
 
+        // When
+        let result = try await sut.areReadReceiptsEnabled
+
         // Then
-        await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
-            // When
-            _ = try await sut.areReadReceiptsEnabled
-        }
+        XCTAssertFalse(result)
     }
 
     // MARK: - V4
@@ -172,8 +169,7 @@ final class UserPropertiesAPITests: XCTestCase {
     func testGetUserProperties_FailureResponse_InvalidKey_V4() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .badRequest,
-            label: ""
+            statusCode: .badRequest
         )
 
         let sut = UserPropertiesAPIV4(apiService: apiService)
