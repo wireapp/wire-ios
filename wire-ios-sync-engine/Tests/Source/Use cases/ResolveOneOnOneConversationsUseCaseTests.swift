@@ -30,7 +30,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     private var sut: ResolveOneOnOneConversationsUseCase!
     private var mockSupportedProtocolService: MockSupportedProtocolsServiceInterface!
     private var mockOneOnOneResolver: MockOneOnOneResolverInterface!
-    private var mockPullSelfUserClients: MockPullSelfUserClientsProtocol!
+    private var mockPullSelfUserClients: MockPullSelfUserClientsSyncProtocol!
     private var stack: CoreDataStack!
     private let coreDataStackHelper = CoreDataStackHelper()
 
@@ -45,8 +45,8 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         mockSupportedProtocolService = MockSupportedProtocolsServiceInterface()
         mockOneOnOneResolver = MockOneOnOneResolverInterface()
-        mockPullSelfUserClients = MockPullSelfUserClientsProtocol()
-        mockPullSelfUserClients.pullSelfClients_MockMethod = {}
+        mockPullSelfUserClients = MockPullSelfUserClientsSyncProtocol()
+        mockPullSelfUserClients.pull_MockMethod = {}
 
         sut = ResolveOneOnOneConversationsUseCase(
             context: syncContext,
@@ -85,7 +85,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         try await sut.invoke()
 
         // THEN
-        XCTAssertEqual(mockPullSelfUserClients.pullSelfClients_Invocations.count, 1)
+        XCTAssertEqual(mockPullSelfUserClients.pull_Invocations.count, 1)
         XCTAssertEqual(mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
     }
 

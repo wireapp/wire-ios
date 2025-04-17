@@ -19,21 +19,24 @@
 import CoreData
 import WireAPI
 
-/// Pull self clients from backend and update local state
-public struct PullSelfUserClients: PullSelfUserClientsProtocol {
-    private let userClientsAPI: any UserClientsAPI
-    private let userClientsLocalStore: any UserClientsLocalStoreProtocol
+public struct PullSelfUserClientsSync: PullSelfUserClientsSyncProtocol {
 
-    init(userClientsAPI: any UserClientsAPI, userClientsLocalStore: any UserClientsLocalStoreProtocol) {
-        self.userClientsAPI = userClientsAPI
-        self.userClientsLocalStore = userClientsLocalStore
+    private let api: any UserClientsAPI
+    private let store: any UserClientsLocalStoreProtocol
+
+    init(
+        api: any UserClientsAPI,
+        store: any UserClientsLocalStoreProtocol
+    ) {
+        self.api = api
+        self.store = store
     }
 
-    public func pullSelfClients() async throws {
-        let remoteSelfClients = try await userClientsAPI.getSelfClients()
+    public func pull() async throws {
+        let remoteSelfClients = try await api.getSelfClients()
 
         for remoteSelfClient in remoteSelfClients {
-            let localUserClient = await userClientsLocalStore.fetchOrCreateClient(
+            let localUserClient = await store.fetchOrCreateClient(
                 id: remoteSelfClient.id
             )
 
@@ -44,12 +47,12 @@ public struct PullSelfUserClients: PullSelfUserClientsProtocol {
             )
         }
 
-        let deletedSelfClientsIDs = await userClientsLocalStore.deletedSelfClients(
+        let deletedSelfClientsIDs = await store.deletedSelfClients(
             newClients: remoteSelfClients.map(\.id)
         )
 
         for deletedSelfClientID in deletedSelfClientsIDs {
-            await userClientsLocalStore.deleteClient(id: deletedSelfClientID)
+            await store.deleteClient(id: deletedSelfClientID)
         }
     }
 
@@ -58,7 +61,7 @@ public struct PullSelfUserClients: PullSelfUserClientsProtocol {
         from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws {
-        await userClientsLocalStore.updateClient(
+        await store.updateClient(
             id: id,
             isNewClient: isNewClient,
             userClientInfo: remoteClient.toDomainModel()
@@ -67,18 +70,18 @@ public struct PullSelfUserClients: PullSelfUserClientsProtocol {
 
 }
 
-public extension PullSelfUserClients {
+public extension PullSelfUserClientsSync {
 
     static func make(
         apiService: any APIServiceProtocol,
         apiVersion: WireAPI.APIVersion,
         context: NSManagedObjectContext
-    ) -> PullSelfUserClientsProtocol {
+    ) -> PullSelfUserClientsSyncProtocol {
         let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
 
         let userLocalStore = UserLocalStore(context: context)
         let userClientsLocalStore = UserClientsLocalStore(context: context, userLocalStore: userLocalStore)
 
-        return PullSelfUserClients(userClientsAPI: userClientsAPI, userClientsLocalStore: userClientsLocalStore)
+        return PullSelfUserClientsSync(api: userClientsAPI, store: userClientsLocalStore)
     }
 }

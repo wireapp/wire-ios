@@ -17,8 +17,166 @@
 //
 
 import Foundation
+import WireDataModelSupport
 
 extension ZMConversationTests {
+
+    func testMigrateMessages_OlderDatesAreDiscarded() throws {
+        // GIVEN
+        let oldestDate1 = Date()
+        let newestDate2 = oldestDate1.addingTimeInterval(60)
+
+        let helper = ModelHelper()
+        let user1 = helper.createUser(qualifiedID: .random(), in: uiMOC)
+        let conversation1 = helper.createOneOnOne(with: user1, in: uiMOC)
+
+        let messages1Count = 5
+        try helper.addTextMessages(
+            to: conversation1,
+            messagePrefix: "message1",
+            sender: user1,
+            count: messages1Count,
+            in: uiMOC
+        )
+
+        conversation1.previousLastReadServerTimestamp = oldestDate1
+        conversation1.lastReadServerTimeStamp = oldestDate1
+
+        let conversation2 = helper.createOneOnOne(with: user1, in: uiMOC)
+        conversation2.messageProtocol = .mls
+
+        let messages2Count = 10
+
+        try helper.addTextMessages(
+            to: conversation1,
+            messagePrefix: "message2",
+            sender: user1,
+            count: messages2Count,
+            in: uiMOC
+        )
+
+        conversation2.pendingLastReadServerTimestamp = newestDate2
+        conversation2.previousLastReadServerTimestamp = newestDate2
+        conversation2.lastServerTimeStamp = newestDate2
+        conversation2.clearedTimeStamp = newestDate2
+        conversation2.archivedChangedTimestamp = newestDate2
+        conversation2.silencedChangedTimestamp = newestDate2
+
+        // WHEN
+        conversation2.migrateMessages(from: conversation1)
+
+        // THEN
+        XCTAssertEqual(conversation2.allMessages.count, messages1Count + messages2Count)
+        XCTAssertEqual(conversation2.pendingLastReadServerTimestamp, newestDate2)
+        XCTAssertEqual(conversation2.previousLastReadServerTimestamp, newestDate2)
+        XCTAssertEqual(conversation2.lastServerTimeStamp, newestDate2)
+        XCTAssertEqual(conversation2.clearedTimeStamp, newestDate2)
+        XCTAssertEqual(conversation2.archivedChangedTimestamp, newestDate2)
+        XCTAssertEqual(conversation2.silencedChangedTimestamp, newestDate2)
+    }
+
+    func testMigrateMessages_NewerDatesAreApplied() throws {
+        // GIVEN
+        let newestDate1 = Date()
+        let oldestDate2 = newestDate1.addingTimeInterval(-60)
+        let messages1Count = 5
+        let messages2Count = 10
+
+        let helper = ModelHelper()
+        let user1 = helper.createUser(qualifiedID: .random(), in: uiMOC)
+
+        let conversation1 = helper.createOneOnOne(with: user1, in: uiMOC)
+        try helper.addTextMessages(
+            to: conversation1,
+            messagePrefix: "message1",
+            sender: user1,
+            count: messages1Count,
+            in: uiMOC
+        )
+
+        conversation1.pendingLastReadServerTimestamp = newestDate1
+        conversation1.previousLastReadServerTimestamp = newestDate1
+        conversation1.lastServerTimeStamp = newestDate1
+        conversation1.clearedTimeStamp = newestDate1
+        conversation1.archivedChangedTimestamp = newestDate1
+        conversation1.silencedChangedTimestamp = newestDate1
+
+        let conversation2 = helper.createOneOnOne(with: user1, in: uiMOC)
+        conversation2.messageProtocol = .mls
+        try helper.addTextMessages(
+            to: conversation1,
+            messagePrefix: "message2",
+            sender: user1,
+            count: messages2Count,
+            in: uiMOC
+        )
+
+        conversation2.pendingLastReadServerTimestamp = oldestDate2
+        conversation2.previousLastReadServerTimestamp = oldestDate2
+        conversation2.lastServerTimeStamp = oldestDate2
+        conversation2.clearedTimeStamp = oldestDate2
+        conversation2.archivedChangedTimestamp = oldestDate2
+        conversation2.silencedChangedTimestamp = oldestDate2
+
+        // WHEN
+        conversation2.migrateMessages(from: conversation1)
+
+        // THEN
+        XCTAssertEqual(conversation2.allMessages.count, messages1Count + messages2Count)
+        XCTAssertEqual(conversation2.pendingLastReadServerTimestamp, newestDate1)
+        XCTAssertEqual(conversation2.previousLastReadServerTimestamp, newestDate1)
+        XCTAssertEqual(conversation2.lastServerTimeStamp, newestDate1)
+        XCTAssertEqual(conversation2.clearedTimeStamp, newestDate1)
+        XCTAssertEqual(conversation2.archivedChangedTimestamp, newestDate1)
+        XCTAssertEqual(conversation2.silencedChangedTimestamp, newestDate1)
+    }
+
+    func testMigrateMessages_OtherConversationDatesAreAppliedIfNoDates() throws {
+        // GIVEN
+        let helper = ModelHelper()
+        let user1 = helper.createUser(qualifiedID: .random(), in: uiMOC)
+        let conversation1 = helper.createOneOnOne(with: user1, in: uiMOC)
+        let date1 = Date()
+        let messages1Count = 5
+        try helper.addTextMessages(
+            to: conversation1,
+            messagePrefix: "message1",
+            sender: user1,
+            count: messages1Count,
+            in: uiMOC
+        )
+
+        conversation1.pendingLastReadServerTimestamp = date1
+        conversation1.previousLastReadServerTimestamp = date1
+        conversation1.lastServerTimeStamp = date1
+        conversation1.clearedTimeStamp = date1
+        conversation1.archivedChangedTimestamp = date1
+        conversation1.silencedChangedTimestamp = date1
+
+        let conversation2 = helper.createOneOnOne(with: user1, in: uiMOC)
+        conversation2.messageProtocol = .mls
+        let messages2Count = 10
+        try helper.addTextMessages(
+            to: conversation1,
+            messagePrefix: "message2",
+            sender: user1,
+            count: messages2Count,
+            in: uiMOC
+        )
+
+        // WHEN
+        conversation2.migrateMessages(from: conversation1)
+
+        // THEN
+        XCTAssertEqual(conversation2.allMessages.count, messages1Count + messages2Count)
+        XCTAssertEqual(conversation2.pendingLastReadServerTimestamp, date1)
+        XCTAssertEqual(conversation2.previousLastReadServerTimestamp, date1)
+        XCTAssertEqual(conversation2.lastServerTimeStamp, date1)
+        XCTAssertEqual(conversation2.clearedTimeStamp, date1)
+        XCTAssertEqual(conversation2.archivedChangedTimestamp, date1)
+        XCTAssertEqual(conversation2.silencedChangedTimestamp, date1)
+    }
+
     func testThatClearingMessageHistorySetsLastReadServerTimeStampToLastServerTimeStamp() {
         // given
         let clearedTimeStamp = Date()

@@ -147,7 +147,9 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             ) else {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
-
+            guard !mlsConversation.migratedToMLS else {
+                throw MigrateMLSOneOnOneConversationError.alreadyMigrated
+            }
             guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
@@ -169,9 +171,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             for proteusConversation in proteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
-
-                setConversationDates(for: mlsConversation, from: proteusConversation)
+                mlsConversation.migrateMessages(from: proteusConversation)
             }
 
             if !proteusConversations.isEmpty {
@@ -184,30 +184,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             }
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
-        }
-    }
 
-    private func setConversationDates(for mlsConversation: ZMConversation, from proteusConversation: ZMConversation) {
-        if let lastReadServerTimeStamp = proteusConversation.lastReadServerTimeStamp {
-            mlsConversation.lastReadServerTimeStamp = lastReadServerTimeStamp
-        }
-        if let pendingLastReadServerTimestamp = proteusConversation.pendingLastReadServerTimestamp {
-            mlsConversation.pendingLastReadServerTimestamp = pendingLastReadServerTimestamp
-        }
-        if let previousLastReadServerTimestamp = proteusConversation.previousLastReadServerTimestamp {
-            mlsConversation.previousLastReadServerTimestamp = previousLastReadServerTimestamp
-        }
-        if let lastServerTimeStamp = proteusConversation.lastServerTimeStamp {
-            mlsConversation.lastServerTimeStamp = lastServerTimeStamp
-        }
-        if let clearedTimeStamp = proteusConversation.clearedTimeStamp {
-            mlsConversation.clearedTimeStamp = clearedTimeStamp
-        }
-        if let archivedChangedTimestamp = proteusConversation.archivedChangedTimestamp {
-            mlsConversation.archivedChangedTimestamp = archivedChangedTimestamp
-        }
-        if let silencedChangedTimestamp = proteusConversation.silencedChangedTimestamp {
-            mlsConversation.silencedChangedTimestamp = silencedChangedTimestamp
+            mlsConversation.migratedToMLS = true
         }
     }
 
