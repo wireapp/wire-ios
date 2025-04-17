@@ -21,8 +21,15 @@ import UserNotifications
 import WireDataModel
 import WireLogging
 
-/// Receives push notifications, process the pending events through the `NotificationSession` to generate a notification
-/// content based on these events.
+/// Receives and process a push notification through a flow of several steps:
+/// 1. Process push notification request (`ProcessNotificationRequestStep`)
+/// 2. Verify user session (`VerifyUserStep`)
+/// 3. Pull pending update events (`PullEventsStep`)
+/// 4. Generate notification content (`GenerateNotificationStep`)
+/// 5. Show notification to the user (`ShowNotificationStep`)
+///
+/// These sequential steps represents the NSE dependency graph (using Needle).
+
 public final class NotificationServiceExtension: NotificationServiceProtocol {
 
     // MARK: - Properties
@@ -55,9 +62,10 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         }
 
         onGoingtask = Task {
-            guard !Task.isCancelled else {
-                // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty
-                // content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
+            do {
+                try Task.checkCancellation()
+            } catch {
+                // With the "filtering" entitlement, we can tell iOS to not display a user notification by passing empty content to the content handler. See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
                 return notificationContentHandler(.emptyNotification)
             }
 
