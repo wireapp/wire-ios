@@ -69,7 +69,7 @@ public struct CreateBackupUseCase<
                     let logger = logger()
                     let context = context()
                     let reportProgress: (Int, Int) -> Void = { current, total in
-                        logger.debug("reporting overall process: \(Float(current * 100) / Float(total))%")
+                        logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
 
@@ -109,21 +109,21 @@ public struct CreateBackupUseCase<
                     // fetch the data and pass it into the backup exporter
                     let userProgressMultiplier = Float(userCount) / Float(total)
                     try await context.perform {
-                        try Self.exportUsers(from: context, using: backupExporter) { current, total in
+                        try Self.exportUsers(from: context, using: backupExporter) { current, _ in
                             reportProgress(Int(Float(current) * userProgressMultiplier), total)
                         }
                     }
 
                     let conversationProgressOffset = userCount
                     try await context.perform {
-                        try Self.exportConversations(from: context, using: backupExporter) { current, total in
+                        try Self.exportConversations(from: context, using: backupExporter) { current, _ in
                             reportProgress(conversationProgressOffset + current, total)
                         }
                     }
 
                     let messageProgressOffset = userCount + conversationCount
                     try await context.perform {
-                        try Self.exportMessages(from: context, using: backupExporter) { current, total in
+                        try Self.exportMessages(from: context, using: backupExporter) { current, _ in
                             reportProgress(messageProgressOffset + current, total)
                         }
                     }
