@@ -17,7 +17,9 @@
 //
 
 // sourcery: AutoMockable
-public protocol PullSelfUserClientsProtocol {
+/// An object to keep the local self user clients up to date
+/// with the remote self user clients.
+public protocol PullSelfUserClientsSyncProtocol {
 
-    func pullSelfClients() async throws
+    func pull() async throws
 }

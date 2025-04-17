@@ -36,7 +36,7 @@ private extension WireLogger {
     static let conversationResolver = WireLogger(tag: "conversationResolver")
 }
 
-public final class OneOnOneResolver: OneOnOneResolverInterface {
+public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Dependencies
 
@@ -68,7 +68,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                         try await self.resolveOneOnOneConversation(with: userID, in: context)
                     } catch {
                         // skip conversation migration for this user
-                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed: \(error)")
+                        WireLogger.conversation.error(
+                            "resolve 1-1 conversation failed: \(error)",
+                            attributes: [.senderUserId: userID.safeForLoggingDescription]
+                        )
                     }
                 }
             }
@@ -80,7 +83,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
+        WireLogger.conversation.debug(
+            "resolving 1-1 conversation",
+            attributes: [.senderUserId: userID.safeForLoggingDescription]
+        )
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
@@ -118,7 +124,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("no common protocols found")
+        WireLogger.conversation.debug(
+            "no common protocols found",
+            attributes: [.senderUserId: userID.safeForLoggingDescription]
+        )
 
         return try await context.perform {
             guard let user = ZMUser.fetch(with: userID, in: context) else { throw OneOnOneResolverError.userNotFound }
@@ -133,9 +142,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
             let best = conversations.candidate
             for conversation in conversations.others {
-                best.mutableMessages.union(conversation.allMessages)
+                best.migrateMessages(from: conversation)
                 best.needsToBeUpdatedFromBackend = true
             }
+
             user.oneOnOneConversation = best
 
             self.makeConversationReadOnly(
@@ -170,7 +180,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
+        WireLogger.conversation.debug(
+            "should resolve to mls 1-1 conversation",
+            attributes: [.senderUserId: userID.safeForLoggingDescription]
+        )
 
         guard let migrator else {
             throw OneOnOneResolverError.migratorNotFound
@@ -235,7 +248,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             }
         }
 
-        WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
+        WireLogger.conversation.debug(
+            "should resolve to proteus 1-1 conversation",
+            attributes: [.senderUserId: userID.safeForLoggingDescription]
+        )
         await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
         return .noAction
     }
