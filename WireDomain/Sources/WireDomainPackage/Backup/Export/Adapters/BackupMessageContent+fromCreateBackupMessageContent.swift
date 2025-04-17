@@ -23,27 +23,27 @@ extension BackupMessageContent {
     static func from(_ content: CreateBackupMessageContent) -> BackupMessageContent {
         switch content {
 
-        case .text(let text):
+        case .text(let content):
             BackupMessageContent.Text(
-                text: text
+                text: content.text
             )
 
-        case let .location(longitude, latitude, name, zoom):
+        case let .location(content):
             BackupMessageContent.Location(
-                longitude: longitude,
-                latitude: latitude,
-                name: name,
-                zoom: zoom.map { KotlinInt(int: $0) }
+                longitude: content.longitude,
+                latitude: content.latitude,
+                name: content.name,
+                zoom: content.zoom.map { KotlinInt(int: $0) }
             )
 
-        case let .asset(mimeType, size, name, otrKey, sha256):
+        case let .asset(content):
             BackupMessageContent
                 .Asset(
-                    mimeType: mimeType,
-                    size: Int32(exactly: size) ?? 0,
-                    name: name,
-                    otrKey: KotlinByteArray(otrKey),
-                    sha256: KotlinByteArray(sha256),
+                    mimeType: content.mimeType,
+                    size: Int32(exactly: content.size) ?? 0,
+                    name: content.name,
+                    otrKey: KotlinByteArray(content.otrKey),
+                    sha256: KotlinByteArray(content.sha256),
                     assetId: "", // <#T##String#>,
                     assetToken: nil, // <#T##String?#>,
                     assetDomain: nil, // <#T##String?#>,

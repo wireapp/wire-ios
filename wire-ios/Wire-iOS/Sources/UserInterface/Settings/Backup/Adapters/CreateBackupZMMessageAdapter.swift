@@ -52,10 +52,7 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
                         if let creationDate = message.serverTimestamp {
                             print("message.conversation?.qualifiedID", message.conversation?.qualifiedID)
                             if let conversationID = message.conversation?.qualifiedID {
-                                print("message.content", message.content)
-                                if let content = message.content {
-                                    print("message.isObfuscated", message.isObfuscated)
-                                }
+                                print("message.isObfuscated", message.isObfuscated)
                             }
                         }
                     }
@@ -63,9 +60,9 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
             }
         }
 
-        if let clientMessage =  record as? ZMAssetClientMessage {
+        if let clientMessage = record as? ZMAssetClientMessage, !clientMessage.isObfuscated {
             self.init(clientMessage)
-        } else if let assetClientMessage = record as? ZMAssetClientMessage {
+        } else if let assetClientMessage = record as? ZMAssetClientMessage, !assetClientMessage.isObfuscated {
             self.init(assetClientMessage)
         } else {
             return nil
@@ -73,11 +70,62 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
     }
 
     init?(_ clientMessage: ZMClientMessage) {
-        self.init(clientMessage, content: .text("TODO"))
+
+        if let messageText = clientMessage.textMessageData?.messageText {
+            self.init(clientMessage, content: .text(messageText))
+
+        } else if let locationMessageData = clientMessage.locationMessageData {
+            self.init(
+                clientMessage,
+                content: .location(
+                    longitude: locationMessageData.longitude,
+                    latitude: locationMessageData.latitude,
+                    name: locationMessageData.name,
+                    zoom: locationMessageData.zoomLevel
+                )
+            )
+
+        } else {
+            return nil
+        }
+
     }
 
-    init?(_ clientMessage: ZMAssetClientMessage) {
-        self.init(clientMessage, content: .text("TODO"))
+    init?(_ assetClientMessage: ZMAssetClientMessage) {
+
+        guard let asset = assetClientMessage.underlyingMessage?.assetData else { return nil }
+
+        let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
+        let domain = asset.uploaded.assetDomain
+
+        if asset.hasOriginal {
+            self.init(
+                assetClientMessage,
+                content: .asset(
+                    mimeType: asset.original.mimeType, // TODO: hasMimeType?
+                    size: asset.original.size,
+                    name: asset.original.name,
+                    otrKey: asset.uploaded.otrKey, // TODO: uploaded?
+                    sha256: asset.uploaded.sha256
+                )
+            )
+
+        } else if asset.hasPreview {
+            self.init(
+                assetClientMessage,
+                content: .asset(
+                    mimeType: asset.preview.mimeType, // TODO: hasMimeType?
+                    size: asset.preview.size,
+                    name: nil,
+                    otrKey: asset.uploaded.otrKey, // TODO: uploaded?
+                    sha256: asset.uploaded.sha256
+                )
+            )
+
+        } else {
+            return nil
+        }
+
     }
 
     init?(_ message: ZMMessage, content: CreateBackupMessageContent) {
@@ -86,9 +134,7 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
             let id = message.nonce?.transportString(),
             let senderUserID = message.senderUser?.qualifiedID,
             let creationDate = message.serverTimestamp,
-            let conversationID = message.conversation?.qualifiedID,
-            let content = message.content,
-            !message.isObfuscated
+            let conversationID = message.conversation?.qualifiedID
         else {
             // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
             return nil
@@ -102,84 +148,4 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
         self.content = content
     }
 
-}
-
-extension ZMMessage {
-
-    fileprivate var content: CreateBackupMessageContent? {
-
-        if isText, let messageText = textMessageData?.messageText {
-            return .text(messageText)
-
-        } else if isLocation, let locationMessageData {
-            return .location(
-                longitude: locationMessageData.longitude,
-                latitude: locationMessageData.latitude,
-                name: locationMessageData.name,
-                zoom: locationMessageData.zoomLevel
-            )
-
-        } else if let assetClientMessage = self as? ZMAssetClientMessage {
-
-            if let asset = assetClientMessage.underlyingMessage?.assetData {
-                let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
-                let domain = asset.uploaded.assetDomain
-                if asset.hasOriginal {
-                    return .asset(
-                        mimeType: asset.original.mimeType, // TODO: hasMimeType?
-                        size: asset.original.size,
-                        name: asset.original.name,
-                        otrKey: asset.uploaded.otrKey, // TODO: uploaded?
-                        sha256: asset.uploaded.sha256
-                    )
-                } else if asset.hasPreview {
-                    return .asset(
-                        mimeType: asset.preview.mimeType, // TODO: hasMimeType?
-                        size: asset.preview.size,
-                        name: nil,
-                        otrKey: asset.uploaded.otrKey, // TODO: uploaded?
-                        sha256: asset.uploaded.sha256
-                    )
-                } else {
-                    return nil
-                }
-            }
-
-            if isImage {
-                // TODO: delete
-                print(assetClientMessage.dataSet.count)
-                print(assetClientMessage.dataSetDebugInformation)
-                if let imageMessageData {
-                    print(imageMessageData)
-                }
-                if let fileMessageData {
-                    print(fileMessageData)
-                }
-
-
-                fatalError()
-
-//          } else if isVideo {
-//              fatalError()
-//
-//          } else if isAudio {
-//              fatalError()
-
-            } else if isFile, let fileMessageData {
-                fatalError()
-            /*
-             .asset(
-             mimeType: fileMessageData.mimeType ?? "", // TODO: empty string?
-             size: fileMessageData.size,
-             name: fileMessageData.filename,
-             otrKey: <#T##Data#>,
-             sha256: <#T##Data#>
-             )
-             */
-            }
-
-        }
-
-        return nil
-    }
 }
