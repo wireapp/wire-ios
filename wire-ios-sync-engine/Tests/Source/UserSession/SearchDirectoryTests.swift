@@ -20,6 +20,7 @@ import Foundation
 
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
+import WireMockTransport
 
 final class SearchDirectoryTests: DatabaseTest {
 

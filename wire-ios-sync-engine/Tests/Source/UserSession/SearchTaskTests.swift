@@ -19,7 +19,7 @@
 import XCTest
 
 import WireTransport
-
+import WireMockTransport
 @testable import WireSyncEngine
 
 final class SearchTaskTests: DatabaseTest {

@@ -757,7 +757,6 @@
 		16ED865C23E30F7E00CB1766 /* ZMUserSesson+Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSesson+Proxy.swift"; sourceTree = "<group>"; };
 		16ED865E23E3145C00CB1766 /* ZMUserSession+Clients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+Clients.swift"; sourceTree = "<group>"; };
 		16F5F16B1E4092C00062F0AE /* NSManagedObjectContext+CTCallCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+CTCallCenter.swift"; sourceTree = "<group>"; };
-		16FF47481F0CD6610044C491 /* IntegrationTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrationTest.h; sourceTree = "<group>"; };
 		16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SessionManager+Logs.swift"; sourceTree = "<group>"; };
 		259AAB0C2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastE2EIdentityUpdateDateProtocol.swift; sourceTree = "<group>"; };
 		25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Mocks.swift"; sourceTree = "<group>"; };
@@ -799,7 +798,6 @@
 		5430E9231BAA0D9F00395E05 /* WireSyncEngineLogs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireSyncEngineLogs.h; sourceTree = "<group>"; };
 		543ED0001D79E0EE00A9CDF3 /* ApplicationMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationMock.swift; sourceTree = "<group>"; };
 		544F8FF21DDCD34600D1AB04 /* UserProfileUpdateNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileUpdateNotifications.swift; sourceTree = "<group>"; };
-		545643D41C62C1A800A2129C /* ConversationTestsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConversationTestsBase.h; sourceTree = "<group>"; };
 		5458273D2541C3A9002B8F83 /* PresentationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentationDelegate.swift; sourceTree = "<group>"; };
 		5458AF831F7021B800E45977 /* PreLoginAuthenticationNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreLoginAuthenticationNotification.swift; sourceTree = "<group>"; };
 		546392711D79D5210094EC66 /* Application.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
@@ -975,7 +973,6 @@
 		A9B53AA924E12E240066FCC6 /* ZMAccountDeletedReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccountDeletedReason.swift; sourceTree = "<group>"; };
 		A9C02604266F5B4B002E542B /* ZMClientRegistrationStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMClientRegistrationStatus.swift; sourceTree = "<group>"; };
 		A9C02609266F5D1B002E542B /* ZMClientRegistrationStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMClientRegistrationStatusTests.swift; sourceTree = "<group>"; };
-		A9C02620266F630E002E542B /* UserProfileTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserProfileTests.h; sourceTree = "<group>"; };
 		AF6415A01C9C151700A535F5 /* EncryptedBase64EncondedExternalMessageTestFixture.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EncryptedBase64EncondedExternalMessageTestFixture.txt; sourceTree = "<group>"; };
 		AF6415A11C9C151700A535F5 /* ExternalMessageTextFixture.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ExternalMessageTextFixture.txt; sourceTree = "<group>"; };
 		B40964971DAD3D110098667A /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Push.strings; sourceTree = "<group>"; };
@@ -1981,11 +1978,8 @@
 		54FC8A0E192CD52800D3C016 /* Integration */ = {
 			isa = PBXGroup;
 			children = (
-				16FF47481F0CD6610044C491 /* IntegrationTest.h */,
 				3E288A6919C859210031CFCE /* NotificationObservers.h */,
 				3E288A6A19C859210031CFCE /* NotificationObservers.m */,
-				545643D41C62C1A800A2129C /* ConversationTestsBase.h */,
-				A9C02620266F630E002E542B /* UserProfileTests.h */,
 			);
 			path = Integration;
 			sourceTree = "<group>";

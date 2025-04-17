@@ -18,7 +18,7 @@
 
 import WireTransport
 import XCTest
-
+import WireMockTransport
 @testable import WireSyncEngine
 
 final class APIVersionResolverTests: ZMTBaseTest {

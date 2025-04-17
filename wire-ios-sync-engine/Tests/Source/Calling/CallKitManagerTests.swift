@@ -23,6 +23,7 @@ import OCMock
 import WireDataModel
 
 @testable import WireSyncEngine
+import WireMockTransport
 
 class MockCallKitProvider: CXProvider {
 

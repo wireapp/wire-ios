@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import WireSyncEngine
+import WireMockTransport
 
 class Conversation_DeletionTests: DatabaseTest {
 
