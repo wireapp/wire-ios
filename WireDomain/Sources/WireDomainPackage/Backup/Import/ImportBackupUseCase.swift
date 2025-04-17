@@ -17,13 +17,52 @@
 //
 
 public import Foundation
+public import WireLogging
+
+@preconcurrency import WireBackup
 
 public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    public init() {}
+    // let context: @Sendable () -> NSManagedObjectContext
+    let fileManager: @Sendable () -> FileManager = { .default }
+    let logger: @Sendable () -> any LoggerProtocol
+
+    public init(
+        logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
+    ) {
+        self.logger = logger
+    }
 
     public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
-        fatalError("TODO: implement")
+        AsyncThrowingStream { continuation in
+            let task = Task<Void, Never> {
+
+                let fileManager = fileManager()
+                let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+                    .appendingPathComponent(UUID().uuidString)
+
+                defer {
+                    try? fileManager.removeItem(at: workDirectoryURL)
+                }
+
+                do {
+                    let logger = logger()
+                    logger.debug("initializing MPBackupImporter")
+                    let importer = MPBackupImporter(
+                        pathToWorkDirectory: workDirectoryURL.path(),
+                        backupFileUnzipper: <#T##any BackupFileUnzipper#>
+                    )
+
+                    // TODO: implement
+
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
     }
 
 }

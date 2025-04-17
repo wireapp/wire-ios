@@ -202,7 +202,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 /// There are some external apps that users can use to transfer backup files, which can modify their attachments and
 /// change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore conversations.
 private enum BackupFileExtensions: String, CaseIterable {
-    case crossPlatform = "todo" // TODO: what is the file extension?
+    case crossPlatform = "wbu"
     case fileExtensionWithUnderscore = "ios_wbu"
     case fileExtensionWithHyphen = "ios-wbu"
 }

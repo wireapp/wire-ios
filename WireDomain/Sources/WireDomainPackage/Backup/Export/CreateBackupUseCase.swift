@@ -65,6 +65,11 @@ public struct CreateBackupUseCase<
                 let outputDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingPathComponent(UUID().uuidString)
 
+                defer {
+                    try? fileManager.removeItem(at: workDirectoryURL)
+                    try? fileManager.removeItem(at: outputDirectoryURL)
+                }
+
                 do {
                     let logger = logger()
                     let context = context()
@@ -107,7 +112,6 @@ public struct CreateBackupUseCase<
                     ].joined(separator: ", "))
 
                     // fetch the data and pass it into the backup exporter
-                    let userProgressMultiplier = Float(userCount) / Float(total)
                     try await context.perform {
                         try Self.exportUsers(from: context, using: exporter, reportProgress: { current in
                             reportProgress(current, total)
@@ -133,8 +137,6 @@ public struct CreateBackupUseCase<
                     continuation.finish()
 
                 } catch {
-                    try? fileManager.removeItem(at: workDirectoryURL)
-                    try? fileManager.removeItem(at: outputDirectoryURL)
                     continuation.finish(throwing: error)
                 }
             }
