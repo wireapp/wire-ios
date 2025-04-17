@@ -37,7 +37,7 @@ public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
 
 }
 
-public struct UpdateEventEnvelopeV8: Decodable, ToAPIModelConvertible {
+public struct UpdateEventEnvelopeV8: Decodable {//, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case id
         case payload
@@ -48,13 +48,6 @@ public struct UpdateEventEnvelopeV8: Decodable, ToAPIModelConvertible {
     let payload: [UpdateEventDecodingProxy]
     //  let deliveryTag: UInt64
 
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            events: payload.map(\.updateEvent),
-            isTransient: false,
-            deliveryTag: nil
-        ) // fix deliveryTag
-    }
+  
 
 }

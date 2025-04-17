@@ -188,7 +188,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusDecrypt
 
-    public enum DecryptionError: Error {
+    public enum DecryptionError: Error, LocalizedError {
 
         case failedToDecryptData(ProteusError)
         case failedToEstablishSessionFromMessage(ProteusError)
@@ -203,6 +203,15 @@ public final class ProteusService: ProteusServiceInterface {
             }
         }
 
+        public var errorDescription: String? {
+            switch self {
+            case let .failedToDecryptData(proteusError):
+                "failedToDecryptData: \(String(describing: proteusError))"
+
+            case let .failedToEstablishSessionFromMessage(proteusError):
+                "failedToEstablishSessionFromMessage: \(String(describing: proteusError))"
+            }
+        }
     }
 
     public func decrypt(

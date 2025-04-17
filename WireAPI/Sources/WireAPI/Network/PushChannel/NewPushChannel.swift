@@ -39,8 +39,8 @@ public final class NewPushChannel: PushChannelProtocol {
                 case let .data(data):
                     WireLogger.pushChannel.debug("received web socket data, decoding...")
                     let envelope = try decoder.decode(WebSocketNotification.self, from: data)
-                    if let message = envelope.data {
-                        return message.event.toAPIModel()
+                    if envelope.type == .event {
+                        return envelope.toAPIModel()
                     } else {
                         throw PushChannelError.missingEvents
                     }
@@ -111,6 +111,26 @@ public struct WebSocketNotification: Decodable {
 
     var type: NotificationType
     var data: NotificationData?
+}
+
+extension WebSocketNotification: ToAPIModelConvertible {
+    
+    func toAPIModel() -> UpdateEventEnvelope {
+        guard let event = data?.event  else {
+            assertionFailure("don't call toAPIModel() when type is `notificationsMissed`")
+            return UpdateEventEnvelope(
+                id: UUID(),
+                events: [],
+                isTransient: false
+            )
+        }
+        return UpdateEventEnvelope(
+            id: event.id,
+            events: event.payload.map(\.updateEvent),
+            isTransient: false,
+            deliveryTag: data?.deliveryTag
+        )
+    }
 }
 
 enum AcknowledgmentType: String, Encodable {

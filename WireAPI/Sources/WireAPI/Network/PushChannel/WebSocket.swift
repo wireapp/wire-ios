@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public actor WebSocket: WebSocketProtocol {
 
@@ -44,6 +45,7 @@ public actor WebSocket: WebSocketProtocol {
                             let message = try await connection.receive()
                             continuation.yield(message)
                         } catch {
+                            WireLogger.webSocket.error(String(String(describing: error)))
                             continuation.finish(throwing: error)
                             isAlive = false
                         }
@@ -72,6 +74,7 @@ public actor WebSocket: WebSocketProtocol {
                             yieldNextMessage()
 
                         case let .failure(error):
+                            WireLogger.webSocket.error(String(String(describing: error)))
                             continuation.finish(throwing: error)
                         }
                     }

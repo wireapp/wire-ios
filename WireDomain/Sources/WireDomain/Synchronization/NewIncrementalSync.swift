@@ -89,6 +89,10 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                         try await store.persistEventEnvelope(envelope, index: index)
 
                         if let deliveryTag = envelope.deliveryTag {
+                            logger.debug(
+                                "ack event envelope",
+                                attributes: [.eventEnvelopeID: envelope.id]
+                            )
                             try await pushChannel.ack(deliveryTag: deliveryTag, multiple: false)
                         }
                     } catch {
@@ -150,51 +154,5 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
         return IncrementalSync.Token(task: task, closePushChannel: {
             await pushChannel.close()
         })
-    }
-
-    private func processStoredEvents() async throws -> Set<UUID> {
-        let batchSize: UInt = 500
-        var processedEnvelopeIDs = Set<UUID>()
-
-        while true {
-            // If we need to abort, do it before processing the next batch.
-            try Task.checkCancellation()
-
-            let envelopes = try await store.fetchStoredEventEnvelopes(limit: batchSize)
-
-            guard !envelopes.isEmpty else {
-                break
-            }
-
-            logger.debug("fetched \(envelopes.count) stored envelopes for processing")
-
-            for envelope in envelopes {
-                for event in envelope.events {
-                    do {
-                        logger.debug(
-                            "processing pending event: \(event.name)",
-                            attributes: [.eventEnvelopeID: envelope.id]
-                        )
-                        try await processor.processEvent(event)
-                    } catch {
-                        logger.error(
-                            "failed to process stored event, dropping: \(error)",
-                            attributes: [.eventEnvelopeID: envelope.id]
-                        )
-                    }
-                }
-            }
-
-            processedEnvelopeIDs.formUnion(envelopes.map(\.id))
-            try await store.deleteNextPendingEvents(limit: batchSize)
-
-            do {
-                try await databaseSaver.save()
-            } catch {
-                logger.error("failed to save database: \(String(describing: error))")
-            }
-        }
-
-        return processedEnvelopeIDs
     }
 }
