@@ -69,6 +69,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
         session.delegate = userSessionDelegate
         userSessionDelegate.prepareForMigrationOnReadyMockMethod = { _, onReady in
             try onReady(self.uiMOC)
+            self.setEncryptionAtRestExpectation?.fulfill()
         }
 
         return session
@@ -116,7 +117,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
         // when
         setEncryptionAtRestExpectation = expectation(description: "wait for setEncryptionAtRest")
         try userSession.setEncryptionAtRest(enabled: true)
-        self.wait(for: [setEncryptionAtRestExpectation!])
+        self.wait(for: [setEncryptionAtRestExpectation!], timeout: 0.5)
 
         // then
         XCTAssertTrue(userSession.encryptMessagesAtRest)
@@ -146,7 +147,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
         // when
         setEncryptionAtRestExpectation = expectation(description: "wait for setEncryptionAtRest")
         try userSession.setEncryptionAtRest(enabled: false)
-        self.wait(for: [setEncryptionAtRestExpectation!])
+        self.wait(for: [setEncryptionAtRestExpectation!], timeout: 0.5)
 
         // then
         XCTAssertFalse(userSession.encryptMessagesAtRest)
