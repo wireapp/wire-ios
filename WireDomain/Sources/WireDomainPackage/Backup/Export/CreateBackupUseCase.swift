@@ -109,21 +109,21 @@ public struct CreateBackupUseCase<
                     // fetch the data and pass it into the backup exporter
                     let userProgressMultiplier = Float(userCount) / Float(total)
                     try await context.perform {
-                        try Self.exportUsers(from: context, using: exporter, reportProgress: { current, _ in
-                            reportProgress(Int(Float(current) * userProgressMultiplier), total)
+                        try Self.exportUsers(from: context, using: exporter, reportProgress: { current in
+                            reportProgress(current, total)
                         })
                     }
 
                     let conversationProgressOffset = userCount
                     try await context.perform {
-                        try Self.exportConversations(from: context, using: exporter, reportProgress: { current, _ in
+                        try Self.exportConversations(from: context, using: exporter, reportProgress: { current in
                             reportProgress(conversationProgressOffset + current, total)
                         })
                     }
 
                     let messageProgressOffset = userCount + conversationCount
                     try await context.perform {
-                        try Self.exportMessages(from: context, using: exporter, reportProgress: { current, _ in
+                        try Self.exportMessages(from: context, using: exporter, reportProgress: { current in
                             reportProgress(messageProgressOffset + current, total)
                         })
                     }
@@ -158,7 +158,7 @@ public struct CreateBackupUseCase<
     private static func exportUsers(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportProgress: (Int, Int) -> Void
+        reportProgress: (Int) -> Void
     ) throws {
         try exportRecored(context: context, entityType: UserAdapter.self, export: { user in
             backupExporter.add(
@@ -174,7 +174,7 @@ public struct CreateBackupUseCase<
     private static func exportConversations(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportProgress: (Int, Int) -> Void
+        reportProgress: (Int) -> Void
     ) throws {
         try exportRecored(context: context, entityType: ConversationAdapter.self, export: { conversation in
             backupExporter.add(
@@ -189,7 +189,7 @@ public struct CreateBackupUseCase<
     private static func exportMessages(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
-        reportProgress: (Int, Int) -> Void
+        reportProgress: (Int) -> Void
     ) throws {
         try exportRecored(context: context, entityType: MessageAdapter.self, export: { message in
             backupExporter.add(
@@ -210,7 +210,7 @@ public struct CreateBackupUseCase<
         context: NSManagedObjectContext,
         entityType: Entity.Type,
         export: (Entity) -> Void,
-        reportProgress: (Int, Int) -> Void
+        reportProgress: (Int) -> Void
     ) throws {
 
         let fetchRequest = entityType.fetchRequest()
@@ -225,7 +225,7 @@ public struct CreateBackupUseCase<
 
             if index % 50 == 0 || index == recordCount - 1 {
                 try Task.checkCancellation()
-                reportProgress(index + 1, recordCount)
+                reportProgress(index + 1)
             }
         }
 
