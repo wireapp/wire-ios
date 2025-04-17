@@ -81,7 +81,7 @@ extension CallContent {
                 "Error decoding the notification calling payload: \(error.localizedDescription)",
                 attributes: .newNSE
             )
-            
+
             return nil
         }
     }
