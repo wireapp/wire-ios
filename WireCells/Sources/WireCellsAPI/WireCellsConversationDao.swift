@@ -18,16 +18,32 @@
 
 import Foundation
 
-public protocol WireCellsConversation: Sendable {
-    var conversationID: WireCellsConversationID { get }
-    var name: String { get }
+public struct WireCellsConversation {
+    public var id: WireCellsAPI.WireCellsConversationID
+    public var cellName: String
+
+    public init?(id: WireCellsAPI.WireCellsConversationID, cellName: String?) {
+        guard let cellName else { return nil }
+
+        self.id = id
+        self.cellName = cellName
+    }
 }
 
-public protocol WireCellsConversationDao: Sendable {
+public enum WireCellsConversationDaoError: Error {
+    case cellNameNotFound
+    case conversationNotFound
+    case genericError(any Error)
+    case storageFailure
+}
 
-    associatedtype Conversation: WireCellsConversation
+// sourcery: AutoMockable
+public protocol WireCellsConversationDao {
 
-    func getCellName(conversationID: WireCellsConversationID) throws -> String
-    func setWireCell(conversationID: WireCellsConversationID, cellName: String) throws
-    func getAllConversations() throws -> [Conversation]
+    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsConversationDaoError) -> String
+    func setWireCell(
+        conversationID: WireCellsConversationID,
+        cellName: String
+    ) async throws(WireCellsConversationDaoError)
+    func getAllConversations() async throws(WireCellsConversationDaoError) -> [WireCellsConversation]
 }

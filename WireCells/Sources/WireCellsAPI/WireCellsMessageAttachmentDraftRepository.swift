@@ -19,27 +19,12 @@
 import CellsSDK
 import Foundation
 
-public enum MessageAttachmentDraftRepositoryAddError: Error, Sendable {
-    case genericError(any Error)
-}
-
-public enum MessageAttachmentDraftRepositoryGetError: Error, Sendable {
+public enum MessageAttachmentDraftRepositoryError: Error, Sendable {
     case genericError(any Error)
     case notFound
 }
 
-public enum MessageAttachmentDraftRepositoryGetAllError: Error, Sendable {
-    case genericError(any Error)
-}
-
-public enum MessageAttachmentDraftRepositoryUpdateStatusError: Error, Sendable {
-    case genericError(any Error)
-}
-
-public enum MessageAttachmentDraftRepositoryRemoveError: Error, Sendable {
-    case genericError(any Error)
-}
-
+// sourcery: AutoMockable
 public protocol WireCellsMessageAttachmentDraftRepository {
 
     @discardableResult
@@ -50,18 +35,22 @@ public protocol WireCellsMessageAttachmentDraftRepository {
         dataPath: String,
         metadata: WireCellsAssetMetadata?,
         uploadStatus: WireCellsAttachmentUploadStatus
-    ) async throws(MessageAttachmentDraftRepositoryAddError) -> WireCellsAttachmentDraft
+    ) async throws(MessageAttachmentDraftRepositoryError) -> WireCellsMessageAttachmentDraft
 
-    func get(draftID: WireCellsAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryGetError) -> WireCellsAttachmentDraft
+    func get(draftID: WireCellsMessageAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryError)
+        -> WireCellsMessageAttachmentDraft
 
-    func getAll(conversationID: WireCellsConversationID) async throws(MessageAttachmentDraftRepositoryGetAllError) -> [WireCellsAttachmentDraft]
+    func getAll(conversationID: WireCellsConversationID) async throws(MessageAttachmentDraftRepositoryError)
+        -> [WireCellsMessageAttachmentDraft]
 
+    func observe(conversationID: WireCellsConversationID) -> AsyncStream<[WireCellsMessageAttachmentDraft]>
 
-    func observe(conversationID: WireCellsConversationID) -> AnyAsyncSequence<[WireCellsAttachmentDraft], Never>
+    func updateStatus(
+        draftID: WireCellsMessageAttachmentDraftID,
+        status: WireCellsAttachmentUploadStatus
+    ) async throws(MessageAttachmentDraftRepositoryError)
 
-    func updateStatus(draftID: WireCellsAttachmentDraftID, status: WireCellsAttachmentUploadStatus) async throws(MessageAttachmentDraftRepositoryUpdateStatusError)
-
-    func remove(draftID: WireCellsAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryRemoveError)
+    func remove(draftID: WireCellsMessageAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryError)
 
     func removeAttachmentDrafts(conversationID: WireCellsConversationID) async
 }

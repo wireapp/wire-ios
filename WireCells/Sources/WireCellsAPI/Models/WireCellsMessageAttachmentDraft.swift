@@ -18,9 +18,9 @@
 
 public import Foundation
 
-public struct WireCellsMessageAttachmentDraftEntityID: Codable, Equatable, Hashable, Identifiable, Sendable {
-    public let uuid: UUID
-    public let versionID: String
+public struct WireCellsMessageAttachmentDraftID: Equatable, Hashable, Identifiable, Sendable {
+    package let uuid: UUID
+    package let versionID: String
 
     public var id: String {
         "\(uuid.uuidString)/\(versionID)"
@@ -32,55 +32,61 @@ public struct WireCellsMessageAttachmentDraftEntityID: Codable, Equatable, Hasha
     }
 }
 
-extension WireCellsMessageAttachmentDraftEntityID: CustomStringConvertible {
+extension WireCellsMessageAttachmentDraftID: CustomStringConvertible {
     public var description: String {
         "\(uuid.uuidString)/\(versionID)"
     }
 }
 
-extension WireCellsMessageAttachmentDraftEntityID: CustomDebugStringConvertible {
+extension WireCellsMessageAttachmentDraftID: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "WireCellsMessageAttachmentDraftEntityID(uuid: \(uuid), versionID: \(versionID))"
+        "WireCellsMessageAttachmentDraftID(uuid: \(uuid), versionID: \(versionID))"
     }
 }
 
-public struct WireCellsMessageAttachmentDraftEntity: Equatable, Hashable, Sendable {
-    public let id: WireCellsMessageAttachmentDraftEntityID
-    public let conversationId: WireCellsConversationID
-    public let mimeType: String
+public struct WireCellsMessageAttachmentDraft: Sendable, Hashable, Identifiable {
+    public let id: WireCellsMessageAttachmentDraftID
     public let fileName: String
+    public let remoteFilePath: String
+    public let localFilePath: String
     public let fileSize: UInt64
-    public let dataPath: String
-    public let nodePath: String
-    public let uploadStatus: String
-    public let assetHeight: UInt64?
+    public let uploadStatus: WireCellsAttachmentUploadStatus
+    public let mimeType: String
     public let assetWidth: UInt64?
+    public let assetHeight: UInt64?
     public let assetDuration: UInt64?
 
-    package init(
+    public init(
         uuid: UUID,
-        versionId: String,
-        conversationId: WireCellsConversationID,
-        mimeType: String,
+        versionID: String,
         fileName: String,
+        remoteFilePath: String,
+        localFilePath: String,
         fileSize: UInt64,
-        dataPath: String,
-        nodePath: String,
-        uploadStatus: String,
-        assetHeight: UInt64?,
+        uploadStatus: WireCellsAttachmentUploadStatus,
+        mimeType: String,
         assetWidth: UInt64?,
+        assetHeight: UInt64?,
         assetDuration: UInt64?
     ) {
-        self.id = WireCellsMessageAttachmentDraftEntityID(uuid: uuid, versionID: versionId)
-        self.conversationId = conversationId
-        self.mimeType = mimeType
+        self.id = WireCellsMessageAttachmentDraftID(
+            uuid: uuid,
+            versionID: versionID
+        )
         self.fileName = fileName
+        self.remoteFilePath = remoteFilePath
+        self.localFilePath = localFilePath
         self.fileSize = fileSize
-        self.dataPath = dataPath
-        self.nodePath = nodePath
         self.uploadStatus = uploadStatus
-        self.assetHeight = assetHeight
+        self.mimeType = mimeType
         self.assetWidth = assetWidth
+        self.assetHeight = assetHeight
         self.assetDuration = assetDuration
     }
+}
+
+public enum WireCellsAttachmentUploadStatus: String, Sendable, Hashable {
+    case uploading
+    case uploaded
+    case failed
 }

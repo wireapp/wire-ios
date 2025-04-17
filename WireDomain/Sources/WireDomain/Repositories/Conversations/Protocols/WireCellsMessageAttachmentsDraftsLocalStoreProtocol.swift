@@ -16,30 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import WireCellsAPI
+import WireDataModel
 
-public struct WireCellsQualifiedID: Codable, Equatable, Hashable, Identifiable, Sendable {
-
-    package let domain: String
-    package let value: String
-
-    public var id: String {
-        return "\(domain)/\(value)"
-    }
-
-    package init(domain: String, value: String) {
-        self.domain = domain
-        self.value = value
-    }
-}
-
-extension WireCellsQualifiedID: CustomStringConvertible {
-    public var description: String {
-        return "\(domain)/\(value)"
-    }
-}
-
-extension WireCellsQualifiedID: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        return "QualifiedID(domain: \(domain), value: \(value))"
-    }
-}
+// sourcery: AutoMockable
+public protocol WireCellsMessageAttachmentsDraftsLocalStoreProtocol {}

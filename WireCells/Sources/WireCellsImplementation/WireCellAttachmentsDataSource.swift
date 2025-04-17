@@ -22,17 +22,9 @@ import WireCellsAPI
 package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftRepository {
 
     private let messageAttachmentDao: any WireCellsMessageAttachmentDraftDao
-    // This queue is used to synchronize access to the database.
-    // And ensure all database operations are performed on the same queue.
-    private let dispatchQueue: DispatchQueue
 
-
-    init(
-        messageAttachmentDao: any WireCellsMessageAttachmentDraftDao,
-        dispatchQueue: DispatchQueue
-    ) {
+    init(messageAttachmentDao: any WireCellsMessageAttachmentDraftDao) {
         self.messageAttachmentDao = messageAttachmentDao
-        self.dispatchQueue = dispatchQueue
     }
 
     @discardableResult
@@ -43,165 +35,96 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         dataPath: String,
         metadata: WireCellsAssetMetadata?,
         uploadStatus: WireCellsAttachmentUploadStatus
-    ) async throws(MessageAttachmentDraftRepositoryAddError) -> WireCellsAttachmentDraft {
+    ) async throws(MessageAttachmentDraftRepositoryError) -> WireCellsMessageAttachmentDraft {
         do {
-            return try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [messageAttachmentDao] in
-                    do {
-                        let entity = try messageAttachmentDao.addAttachment(
-                            uuid: node.id.uuid,
-                            versionID: node.id.versionID,
-                            conversationID: conversationID.qualifiedID,
-                            mimeType: mimeType,
-                            fileName: (node.path as NSString).lastPathComponent,
-                            fileSize: node.size ?? 0,
-                            dataPath: dataPath,
-                            nodePath: node.path,
-                            status: uploadStatus.rawValue,
-                            assetWidth: metadata?.width,
-                            assetHeight: metadata?.height,
-                            assetDuration: metadata?.durationMs
-                        )
-                        continuation.resume(returning: entity.toModel())
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
+            return try await messageAttachmentDao.addAttachment(
+                uuid: node.id.uuid,
+                versionID: node.id.versionID,
+                conversationID: conversationID,
+                mimeType: mimeType,
+                fileName: (node.path as NSString).lastPathComponent,
+                fileSize: node.size ?? 0,
+                dataPath: dataPath,
+                nodePath: node.path,
+                status: uploadStatus.rawValue,
+                assetWidth: metadata?.width,
+                assetHeight: metadata?.height,
+                assetDuration: metadata?.durationMs
+            )
         } catch {
-            if let error = error as? MessageAttachmentDraftRepositoryAddError {
-                throw error
-            } else {
-                throw MessageAttachmentDraftRepositoryAddError.genericError(error)
-            }
+            throw .genericError(error)
         }
     }
 
-    func observe(conversationID: WireCellsConversationID) -> AnyAsyncSequence<[WireCellsAttachmentDraft], Never> {
-        let mappedSequence = messageAttachmentDao.observeAttachments(
-            conversationID: conversationID.qualifiedID
-        ).map { entityList in
-            entityList.map { $0.toModel() }
-        }
-        return AnyAsyncSequence(mappedSequence)
+    func observe(conversationID: WireCellsConversationID)
+        -> AsyncStream<[WireCellsMessageAttachmentDraft]> {
+        messageAttachmentDao.observeAttachments(
+            conversationID: conversationID
+        )
     }
 
-    func updateStatus(draftID: WireCellsAttachmentDraftID, status: WireCellsAttachmentUploadStatus) async throws(MessageAttachmentDraftRepositoryUpdateStatusError) {
-
+    func updateStatus(
+        draftID: WireCellsMessageAttachmentDraftID,
+        status: WireCellsAttachmentUploadStatus
+    ) async throws(MessageAttachmentDraftRepositoryError) {
         do {
-            try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [messageAttachmentDao] in
-                    do {
-                        try messageAttachmentDao.updateUploadStatus(draftID: draftID, status: status.rawValue)
-                        continuation.resume()
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
+            try await messageAttachmentDao.updateUploadStatus(draftID: draftID, status: status.rawValue)
         } catch {
-            if let error = error as? MessageAttachmentDraftRepositoryUpdateStatusError {
-                throw error
-            } else {
-                throw MessageAttachmentDraftRepositoryUpdateStatusError.genericError(error)
-            }
+            throw .genericError(error)
         }
     }
 
-    func remove(draftID: WireCellsAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryRemoveError) -> Void {
+    func remove(draftID: WireCellsMessageAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryError) {
         do {
-            try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [messageAttachmentDao] in
-                    do {
-                        try messageAttachmentDao.deleteAttachment(draftID: draftID)
-                        continuation.resume()
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
+            try await messageAttachmentDao.deleteAttachment(draftID: draftID)
         } catch {
-            if let error = error as? MessageAttachmentDraftRepositoryRemoveError {
-                throw error
-            } else {
-                throw MessageAttachmentDraftRepositoryRemoveError.genericError(error)
-            }
+            throw .genericError(error)
         }
     }
 
     func removeAttachmentDrafts(conversationID: WireCellsConversationID) async {
         do {
-            try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [messageAttachmentDao] in
-                    do {
-                        try messageAttachmentDao.deleteAttachments(
-                            conversationID: conversationID.qualifiedID
-                        )
-                        continuation.resume()
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
+            try await messageAttachmentDao.deleteAttachments(
+                conversationID: conversationID
+            )
         } catch {
             // Optionally log error
         }
     }
 
-    func get(draftID: WireCellsAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryGetError) -> WireCellsAttachmentDraft {
+    func get(draftID: WireCellsMessageAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryError)
+        -> WireCellsMessageAttachmentDraft {
         do {
-            return try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [messageAttachmentDao] in
-                    do {
-                        if let entity = try messageAttachmentDao.getAttachment(draftID: draftID) {
-                            continuation.resume(returning: entity.toModel())
-                        } else {
-                            continuation.resume(throwing: MessageAttachmentDraftRepositoryGetError.notFound)
-                        }
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
-        } catch {
-            if let error = error as? MessageAttachmentDraftRepositoryGetError {
-                throw error
+            if let attachment = try await messageAttachmentDao.getAttachment(draftID: draftID) {
+                return attachment
             } else {
-                throw MessageAttachmentDraftRepositoryGetError.genericError(error)
+                throw MessageAttachmentDraftRepositoryError.notFound
             }
+        } catch let error as MessageAttachmentDraftRepositoryError {
+            throw error
+        } catch {
+            throw .genericError(error)
         }
     }
 
-    func getAll(conversationID: WireCellsConversationID) async throws(MessageAttachmentDraftRepositoryGetAllError) -> [WireCellsAttachmentDraft] {
+    func getAll(conversationID: WireCellsConversationID) async throws(MessageAttachmentDraftRepositoryError)
+        -> [WireCellsMessageAttachmentDraft] {
         do {
-            return try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [messageAttachmentDao] in
-                    do {
-                        let entities = try messageAttachmentDao.getAttachments(
-                            conversationID: conversationID.qualifiedID
-                        )
-                        continuation.resume(returning: entities.map { $0.toModel() })
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
+            return try await messageAttachmentDao.getAttachments(
+                conversationID: conversationID
+            )
         } catch {
-            if let error = error as? MessageAttachmentDraftRepositoryGetAllError {
-                throw error
-            } else {
-                throw MessageAttachmentDraftRepositoryGetAllError.genericError(error)
-            }
+            throw .genericError(error)
         }
     }
 }
 
-//fileprivate func withCheckedThrowingContinuation<T, Failure: Error>(
+// fileprivate func withCheckedThrowingContinuation<T, Failure: Error>(
 //    dispatchQueue: DispatchQueue,
 //    isolation: isolated (any Actor)? = #isolation,
 //    function: String = #function,
 //    _ body: @escaping @Sendable () throws(Failure) -> T
-//) async throws -> sending T {
+// ) async throws -> sending T {
 //    try await withCheckedThrowingContinuation(isolation: isolation, function: function) { continuation in
 //        dispatchQueue.async {
 //            do {
@@ -211,22 +134,4 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
 //            }
 //        }
 //    }
-//}
-
-extension WireCellsMessageAttachmentDraftEntity {
-    func toModel() -> WireCellsAttachmentDraft {
-        return WireCellsAttachmentDraft(
-            uuid: id.uuid,
-            versionID: id.versionID,
-            fileName: fileName,
-            remoteFilePath: nodePath,
-            localFilePath: dataPath,
-            fileSize: fileSize,
-            uploadStatus: WireCellsAttachmentUploadStatus(rawValue: uploadStatus) ?? .uploading,
-            mimeType: mimeType,
-            assetWidth: assetWidth,
-            assetHeight: assetHeight,
-            assetDuration: assetDuration
-        )
-    }
-}
+// }

@@ -27,16 +27,16 @@ public struct AnyAsyncSequence<Element, Failure: Error>: AsyncSequence {
     public typealias AsyncIterator = AnyAsyncIterator<Element, Failure>
 
     private let _makeAsyncIterator: () -> AsyncIterator
-    
+
     public init<S: AsyncSequence>(_ base: S) where S.Element == Element {
         var baseIterator = base.makeAsyncIterator()
-        _makeAsyncIterator = {
+        self._makeAsyncIterator = {
             AnyAsyncIterator {
                 try? await baseIterator.next()
             }
         }
     }
-    
+
     public func makeAsyncIterator() -> AsyncIterator {
         _makeAsyncIterator()
     }
@@ -48,7 +48,7 @@ public struct AnyAsyncIterator<Element, Failure: Error>: AsyncIteratorProtocol {
     public init(_ next: @escaping () async -> Element?) {
         self._next = next
     }
-    
+
     public func next() async throws(Failure) -> Element? {
         try await _next()
     }

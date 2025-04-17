@@ -16,24 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public import Foundation
 
+public enum WireCellsMessageAttachmentDraftDaoError: Error {
+    case genericError(any Error)
+}
+
+// sourcery: AutoMockable
 public protocol WireCellsMessageAttachmentDraftDao: Sendable {
-    func getAttachment(draftID: WireCellsAttachmentDraftID) throws -> WireCellsMessageAttachmentDraftEntity?
+    func getAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(WireCellsMessageAttachmentDraftDaoError)
+        -> WireCellsMessageAttachmentDraft?
 
-    func getAttachments(conversationID: WireCellsQualifiedID) throws -> [WireCellsMessageAttachmentDraftEntity]
+    func getAttachments(conversationID: WireCellsConversationID) async throws(WireCellsMessageAttachmentDraftDaoError)
+        -> [WireCellsMessageAttachmentDraft]
 
-    func deleteAttachment(draftID: WireCellsAttachmentDraftID) throws
+    func deleteAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(
+        WireCellsMessageAttachmentDraftDaoError
+    )
 
-    func deleteAttachments(conversationID: WireCellsQualifiedID) throws
+    func deleteAttachments(conversationID: WireCellsConversationID) async throws(
+        WireCellsMessageAttachmentDraftDaoError
+    )
 
-    func observeAttachments(conversationID: WireCellsQualifiedID) -> AsyncStream<[WireCellsMessageAttachmentDraftEntity]>
+    func observeAttachments(conversationID: WireCellsConversationID)
+        -> AsyncStream<[WireCellsMessageAttachmentDraft]>
 
     func addAttachment(
         uuid: UUID,
         versionID: String,
-        conversationID: WireCellsQualifiedID,
+        conversationID: WireCellsConversationID,
         mimeType: String,
         fileName: String,
         fileSize: Int64,
@@ -43,7 +54,10 @@ public protocol WireCellsMessageAttachmentDraftDao: Sendable {
         assetWidth: Int?,
         assetHeight: Int?,
         assetDuration: Int64?
-    ) throws -> WireCellsMessageAttachmentDraftEntity
+    ) async throws(WireCellsMessageAttachmentDraftDaoError) -> WireCellsMessageAttachmentDraft
 
-    func updateUploadStatus(draftID: WireCellsAttachmentDraftID, status: String) throws
+    func updateUploadStatus(
+        draftID: WireCellsMessageAttachmentDraftID,
+        status: String
+    ) async throws(WireCellsMessageAttachmentDraftDaoError)
 }

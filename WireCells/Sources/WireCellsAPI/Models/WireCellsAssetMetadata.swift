@@ -25,28 +25,28 @@ public enum WireCellsAssetMetadata: Equatable, Hashable, Sendable {
 
     public var width: Int? {
         switch self {
-        case .image(let width, _), .video(let width?, _, _):
-            return width
+        case let .image(width, _), let .video(width?, _, _):
+            width
         case .video, .audio:
-            return nil
+            nil
         }
     }
 
     public var height: Int? {
         switch self {
-        case .image(_, let height), .video(_, let height?, _):
-            return height
+        case let .image(_, height), let .video(_, height?, _):
+            height
         case .video, .audio:
-            return nil
+            nil
         }
     }
 
     public var durationMs: Int64? {
         switch self {
         case .image:
-            return nil
-        case .video(_, _, let durationMs), .audio(let durationMs, _):
-            return durationMs
+            nil
+        case let .video(_, _, durationMs), let .audio(durationMs, _):
+            durationMs
         }
     }
 }

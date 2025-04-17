@@ -87,6 +87,11 @@ public extension ZMConversation {
     /// combination of domain and remoteIdentifier
     @NSManaged internal private(set) var primaryKey: String
 
+    // MARK: - WireCells
+
+    @NSManaged var cellName: String?
+    @NSManaged var wireCellsMessageAttachmentDrafts: Set<WireCellsMessageAttachmentDraftEntity>
+
     private func updatePrimaryKey(remoteIdentifier: ConversationID?, domain: String?) {
         guard entity.attributesByName["primaryKey"] != nil else {
             // trying to access primaryKey property from older model - tests

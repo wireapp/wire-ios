@@ -16,82 +16,44 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireCellsAPI
 
 final class WireCellConversationDataSource: WireCellsCellConversationRepository {
     private let conversationDao: any WireCellsConversationDao
-    // This queue is used to synchronize access to the database.
-    // And ensure all database operations are performed on the same queue.
-    private let dispatchQueue: DispatchQueue
 
-    init(
-        conversationDao: any WireCellsConversationDao,
-        dispatchQueue: DispatchQueue
-    ) {
+    init(conversationDao: any WireCellsConversationDao) {
         self.conversationDao = conversationDao
     }
 
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsCellConversationRepositoryError) -> String {
+    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsCellConversationRepositoryError)
+        -> String {
         do {
-            return try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [conversationDao] in
-                    do {
-                        let cellName = try conversationDao.getCellName(conversationID: conversationID)
-                        continuation.resume(returning: cellName)
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
+            return try await conversationDao.getCellName(conversationID: conversationID)
+        } catch WireCellsConversationDaoError.cellNameNotFound {
+            throw WireCellsCellConversationRepositoryError.cellNameNotFound
         } catch {
             throw WireCellsCellConversationRepositoryError.genericError(error)
         }
     }
 
-    func setWireCell(conversationID: WireCellsConversationID, cellName: String) async throws(WireCellsCellConversationRepositoryError) {
+    func setWireCell(
+        conversationID: WireCellsConversationID,
+        cellName: String
+    ) async throws(WireCellsCellConversationRepositoryError) {
         do {
-            return try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [conversationDao] in
-                    do {
-                        try conversationDao.setWireCell(
-                            conversationID: conversationID,
-                            cellName: cellName
-                        )
-                        continuation.resume(returning: ())
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
+            try await conversationDao.setWireCell(
+                conversationID: conversationID,
+                cellName: cellName
+            )
         } catch {
             throw WireCellsCellConversationRepositoryError.genericError(error)
         }
     }
 
-    func getConversationNames() async throws(WireCellsCellConversationRepositoryError) -> [(String, String)] {
+    func getConversationNames() async throws(WireCellsCellConversationRepositoryError) -> [WireCellsConversation] {
         do {
-            return try await withCheckedThrowingContinuation { continuation in
-                dispatchQueue.async { [conversationDao] in
-                    do {
-                        guard let conversations = try await conversationDao.getAllConversations().first else {
-                            continuation.resume(returning: [])
-                            return
-                        }
-
-                        let names = conversations.compactMap { conv in
-                            if let name = conv.name {
-                                return (conv.id.description, name)
-                            }
-                            return nil
-                        }
-                        continuation.resume(returning: names)
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
+            return try await conversationDao.getAllConversations()
         } catch {
             throw WireCellsCellConversationRepositoryError.genericError(error)
         }

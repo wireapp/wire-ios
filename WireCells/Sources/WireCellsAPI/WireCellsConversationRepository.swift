@@ -17,13 +17,19 @@
 //
 
 public enum WireCellsCellConversationRepositoryError: Error {
+    case cellNameNotFound
     case genericError(any Error)
 }
 
+// sourcery: AutoMockable
 public protocol WireCellsCellConversationRepository {
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsCellConversationRepositoryError) -> String
+    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsCellConversationRepositoryError)
+        -> String
 
-    func setWireCell(conversationID: WireCellsConversationID, cellName: String) async throws(WireCellsCellConversationRepositoryError)
+    func setWireCell(
+        conversationID: WireCellsConversationID,
+        cellName: String
+    ) async throws(WireCellsCellConversationRepositoryError)
 
-    func getConversationNames() async throws(WireCellsCellConversationRepositoryError) -> [(String, String)]
+    func getConversationNames() async throws(WireCellsCellConversationRepositoryError) -> [WireCellsConversation]
 }

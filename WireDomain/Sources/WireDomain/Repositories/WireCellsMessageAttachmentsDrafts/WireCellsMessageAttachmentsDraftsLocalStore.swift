@@ -16,31 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+@preconcurrency import CoreData
+import WireDataModel
+import WireLogging
 
-public struct WireCellsConversationID: Codable, Equatable, Hashable, Identifiable, Sendable {
+public final class WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmentsDraftsLocalStoreProtocol,
+    Sendable {
 
-    public let domain: String
-    public let uuid: UUID
+    // MARK: - Properties
 
-    public var id: String {
-        "\(domain)/\(uuid.uuidString)"
-    }
+    let context: NSManagedObjectContext
 
-    public init(domain: String, uuid: UUID) {
-        self.domain = domain
-        self.uuid = uuid
-    }
-}
-
-extension WireCellsConversationID: CustomStringConvertible {
-    public var description: String {
-        "\(domain)/\(uuid.uuidString)"
-    }
-}
-
-extension WireCellsConversationID: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        "ConversationID(domain: \(domain), uuid: \(uuid.uuidString))"
+    public init(context: NSManagedObjectContext) {
+        self.context = context
     }
 }
