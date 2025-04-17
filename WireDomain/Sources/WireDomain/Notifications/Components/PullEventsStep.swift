@@ -25,6 +25,8 @@ protocol PullEventsDependency: Dependency {
     var userID: UUID { get }
     var coreData: CoreDataStack { get }
     var cookieStorage: any CookieStorageProtocol { get }
+    var messageLocalStore: any MessageLocalStoreProtocol { get }
+    var userLocalStore: any UserLocalStoreProtocol { get }
     var applicationContainer: URL { get }
     var applicationIdentifier: String { get }
     var sharedUserDefaults: UserDefaults { get }
@@ -42,26 +44,23 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
         case apiVersionNotFound
     }
 
+    private var selfUserID: UUID
+    private var selfClientID: String
+
+    init(
+        parent: any Scope,
+        selfUserID: UUID,
+        selfClientID: String
+    ) {
+        self.selfUserID = selfUserID
+        self.selfClientID = selfClientID
+        super.init(parent: parent)
+    }
+
     func pullEvents() async throws {
-        let selfUser = await userLocalStore.selfUserInfo()
-
-        guard let selfClientID = selfUser.clientId else {
-            return
-        }
-
-        let selfUserID = selfUser.id
-
-        let updateEventsAPI = try await updateEventsAPI(
-            selfClientID: selfClientID
-        )
-
-        let updateEventDecryptor = updateEventDecryptor(
-            selfUserID: selfUserID
-        )
-
-        let pendingEventsSync = PullPendingUpdateEventsSync(
+        let pendingEventsSync = await PullPendingUpdateEventsSync(
             selfClientID: selfClientID,
-            api: updateEventsAPI,
+            api: try updateEventsAPI,
             store: updateEventsLocalStore,
             decryptor: updateEventDecryptor
         )
@@ -90,43 +89,19 @@ extension PullEventsStep {
         ConversationLocalStore(
             context: dependency.coreData.syncContext,
             mlsService: nil,
-            messageLocalStore: messageLocalStore
+            messageLocalStore: dependency.messageLocalStore
         )
     }
 
-    public var messageLocalStore: any MessageLocalStoreProtocol {
-        MessageLocalStore(
-            context: dependency.coreData.syncContext
-        )
-    }
-
-    public var userLocalStore: any UserLocalStoreProtocol {
-        UserLocalStore(
-            context: dependency.coreData.syncContext,
-            messageLocalStore: messageLocalStore
-        )
-    }
-
-    private func updateEventDecryptor(
-        selfUserID: UUID
-    ) -> any UpdateEventDecryptorProtocol {
-        let proteusMessageDecryptor = proteusMessageDecryptor(
-            selfUserID: selfUserID
-        )
-        let mlsMessageDecryptor = mlsMessageDecryptor(
-            selfUserID: selfUserID
-        )
-
-        return UpdateEventDecryptor(
+    var updateEventDecryptor: any UpdateEventDecryptorProtocol {
+        UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
-            messageLocalStore: messageLocalStore
+            messageLocalStore: dependency.messageLocalStore
         )
     }
 
-    private func coreCryptoProvider(
-        selfUserID: UUID
-    ) -> any CoreCryptoProviderProtocol {
+    var coreCryptoProvider: any CoreCryptoProviderProtocol {
         CoreCryptoProvider(
             selfUserID: selfUserID,
             sharedContainerURL: dependency.applicationContainer,
@@ -137,29 +112,23 @@ extension PullEventsStep {
         )
     }
 
-    private func proteusMessageDecryptor(
-        selfUserID: UUID
-    ) -> any ProteusMessageDecryptorProtocol {
+    var proteusMessageDecryptor: any ProteusMessageDecryptorProtocol {
         let coreData = dependency.coreData
-        let coreCryptoProvider = coreCryptoProvider(
-            selfUserID: selfUserID
-        )
-
         let userClientsLocalStore = UserClientsLocalStore(context: coreData.syncContext)
         let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
 
         return ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
-            userLocalStore: userLocalStore
+            userLocalStore: dependency.userLocalStore
         )
     }
 
-    private var featureRepository: any FeatureRepositoryInterface {
+    var featureRepository: any FeatureRepositoryInterface {
         FeatureRepository(context: dependency.coreData.syncContext)
     }
 
-    private var updateEventsLocalStore: any UpdateEventsLocalStoreProtocol {
+    var updateEventsLocalStore: any UpdateEventsLocalStoreProtocol {
         UpdateEventsLocalStore(
             context: dependency.coreData.eventContext,
             userID: dependency.userID,
@@ -167,23 +136,16 @@ extension PullEventsStep {
         )
     }
 
-    private var userClientsLocalStore: any UserClientsLocalStoreProtocol {
+    var userClientsLocalStore: any UserClientsLocalStoreProtocol {
         UserClientsLocalStore(
             context: dependency.coreData.syncContext
         )
     }
 
-    private func mlsMessageDecryptor(
-        selfUserID: UUID
-    ) -> any MLSMessageDecryptorProtocol {
-        let coreData = dependency.coreData
-        let coreCryptoProvider = coreCryptoProvider(
-            selfUserID: selfUserID
-        )
-
+    var mlsMessageDecryptor: any MLSMessageDecryptorProtocol {
         let commitSender = CommitSender(
             coreCryptoProvider: coreCryptoProvider,
-            notificationContext: coreData.syncContext.notificationContext
+            notificationContext: dependency.coreData.syncContext.notificationContext
         )
 
         let mlsActionExecutor = MLSActionExecutor(
@@ -193,7 +155,7 @@ extension PullEventsStep {
         )
 
         let mlsDecryptionService = MLSDecryptionService(
-            context: coreData.syncContext,
+            context: dependency.coreData.syncContext,
             mlsActionExecutor: mlsActionExecutor
         )
 
@@ -203,7 +165,7 @@ extension PullEventsStep {
         )
     }
 
-    private var accountContainer: URL {
+    var accountContainer: URL {
         CoreDataStack.accountDataFolder(
             accountIdentifier: dependency.userID,
             applicationContainer: dependency.applicationContainer
@@ -212,57 +174,51 @@ extension PullEventsStep {
 }
 
 extension PullEventsStep {
-    func updateEventsAPI(
-        selfClientID: String
-    ) async throws -> any UpdateEventsAPI {
-        let authenticationManager = try await makeAuthenticationManager(
-            selfClientID: selfClientID
-        )
+    var updateEventsAPI: any UpdateEventsAPI {
+        get async throws {
+            let apiService = await APIService(
+                networkService: try networkService,
+                authenticationManager: try authenticationManager
+            )
 
-        let networkService = try await makeNetworkService()
-
-        let apiService = APIService(
-            networkService: networkService,
-            authenticationManager: authenticationManager
-        )
-
-        let apiVersion = try makeApiVersion()
-
-        return UpdateEventsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-    }
-
-    func makeApiVersion() throws -> WireAPI.APIVersion {
-        let key = "SelectedAPIVersion"
-        let sharedUserDefaults = dependency.sharedUserDefaults
-
-        guard sharedUserDefaults.object(forKey: key) != nil else {
-            fatal("API version not found")
+            return UpdateEventsAPIBuilder(
+                apiService: apiService
+            ).makeAPI(for: try apiVersion)
         }
+    }
 
-        let storedValue = sharedUserDefaults.integer(forKey: key)
-        let legacyAPIVersion = APIVersion(rawValue: Int32(storedValue))
+    var apiVersion: WireAPI.APIVersion {
+        get throws {
+            let key = "SelectedAPIVersion"
+            let sharedUserDefaults = dependency.sharedUserDefaults
 
-        guard let legacyAPIVersion,
-              let apiVersion = WireAPI.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
-            throw Failure.apiVersionNotFound
+            guard sharedUserDefaults.object(forKey: key) != nil else {
+                fatal("API version not found")
+            }
+
+            let storedValue = sharedUserDefaults.integer(forKey: key)
+            let legacyAPIVersion = APIVersion(rawValue: Int32(storedValue))
+
+            guard let legacyAPIVersion,
+                  let apiVersion = WireAPI.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
+                throw Failure.apiVersionNotFound
+            }
+
+            return apiVersion
         }
-
-        return apiVersion
     }
 
-    func makeAuthenticationManager(
-        selfClientID: String
-    ) async throws -> any AuthenticationManagerProtocol {
-        await AuthenticationManager(
-            clientID: selfClientID,
-            cookieStorage: dependency.cookieStorage,
-            networkService: try makeNetworkService()
-        )
+    var authenticationManager: any AuthenticationManagerProtocol {
+        get async throws {
+            await AuthenticationManager(
+                clientID: selfClientID,
+                cookieStorage: dependency.cookieStorage,
+                networkService: try networkService
+            )
+        }
     }
 
-    func makeLegacyBackendEnvironment() -> WireDataModel.BackendEnvironment {
+    var legacyBackendEnvironment: WireDataModel.BackendEnvironment {
         let sharedUserDefaults = dependency.sharedUserDefaults
         let backendEnvironmentTypeOverride = sharedUserDefaults.string(forKey: "BackendEnvironmentTypeOverrideKey")
 
@@ -285,101 +241,103 @@ extension PullEventsStep {
         return backendEnvironment
     }
 
-    func makeBackendEnvironment() async throws -> WireAPI.BackendEnvironment {
-        let legacyBackendEnvironment = makeLegacyBackendEnvironment()
-        let proxySettings = try await makeProxySettings()
-
-        return BackendEnvironment(
-            url: legacyBackendEnvironment.backendURL,
-            webSocketURL: legacyBackendEnvironment.backendWSURL,
-            pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
-                PinnedKey(
-                    key: trustData.certificateKey,
-                    hosts: trustData.hosts.map { host in
-                        switch host.rule {
-                        case .equals:
-                            .equals(host.value)
-                        case .endsWith:
-                            .endsWith(host.value)
+    var backendEnvironment: WireAPI.BackendEnvironment {
+        get async throws {
+            BackendEnvironment(
+                url: legacyBackendEnvironment.backendURL,
+                webSocketURL: legacyBackendEnvironment.backendWSURL,
+                pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
+                    PinnedKey(
+                        key: trustData.certificateKey,
+                        hosts: trustData.hosts.map { host in
+                            switch host.rule {
+                            case .equals:
+                                .equals(host.value)
+                            case .endsWith:
+                                .endsWith(host.value)
+                            }
                         }
-                    }
-                )
-            },
-            proxySettings: proxySettings
-        )
-    }
-
-    func makeProxySettings() async throws -> WireAPI.ProxySettings? {
-        let legacyBackendEnvironment = makeLegacyBackendEnvironment()
-        guard let proxy = legacyBackendEnvironment.proxy else { return nil }
-
-        let keychain = WireFoundation.Keychain()
-        let usernameItemID = "proxy-\(proxy.host):\(proxy.port)-username"
-        let passwordItemID = "proxy-\(proxy.host):\(proxy.port)-password"
-
-        let genericPasswordKeychainItem: KeychainQueryItem = .itemClass(.genericPassword)
-        let returningDataKeychainItem: KeychainQueryItem = .returningData(true)
-
-        let proxyUsername: String? = try? await keychain.fetchItem(
-            query: [
-                genericPasswordKeychainItem,
-                .account(usernameItemID),
-                returningDataKeychainItem
-            ]
-        )
-
-        let proxyPassword: String? = try? await keychain.fetchItem(
-            query: [
-                genericPasswordKeychainItem,
-                .account(passwordItemID),
-                returningDataKeychainItem
-            ]
-        )
-
-        if proxy.needsAuthentication {
-            guard let proxyUsername, let proxyPassword else {
-                throw Failure.missingProxyCredentials
-            }
-
-            return .authenticated(
-                host: proxy.host,
-                port: proxy.port,
-                username: proxyUsername,
-                password: proxyPassword
-            )
-        } else {
-            return .unauthenticated(
-                host: proxy.host,
-                port: proxy.port
+                    )
+                },
+                proxySettings: try await proxySettings
             )
         }
     }
 
-    func makeNetworkService() async throws -> NetworkService {
-        let backendEnvironment = try await makeBackendEnvironment()
+    var proxySettings: WireAPI.ProxySettings? {
+        get async throws {
+            guard let proxy = legacyBackendEnvironment.proxy else { return nil }
 
-        let service = NetworkService(
-            baseURL: backendEnvironment.url,
-            serverTrustValidator: ServerTrustValidator(
-                pinnedKeys: backendEnvironment.pinnedKeys,
-                currentDateProvider: .system
+            let keychain = WireFoundation.Keychain()
+            let usernameItemID = "proxy-\(proxy.host):\(proxy.port)-username"
+            let passwordItemID = "proxy-\(proxy.host):\(proxy.port)-password"
+
+            let genericPasswordKeychainItem: KeychainQueryItem = .itemClass(.genericPassword)
+            let returningDataKeychainItem: KeychainQueryItem = .returningData(true)
+
+            let proxyUsername: String? = try? await keychain.fetchItem(
+                query: [
+                    genericPasswordKeychainItem,
+                    .account(usernameItemID),
+                    returningDataKeychainItem
+                ]
             )
-        )
 
-        let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
-        let config = await URLSessionConfigurationFactory(
-            minTLSVersion: minTLSVersion,
-            proxySettings: try makeProxySettings()
-        )
+            let proxyPassword: String? = try? await keychain.fetchItem(
+                query: [
+                    genericPasswordKeychainItem,
+                    .account(passwordItemID),
+                    returningDataKeychainItem
+                ]
+            )
 
-        let session = URLSession(
-            configuration: config.makeRESTAPISessionConfiguration(),
-            delegate: service,
-            delegateQueue: nil
-        )
-        service.configure(with: session)
+            if proxy.needsAuthentication {
+                guard let proxyUsername, let proxyPassword else {
+                    throw Failure.missingProxyCredentials
+                }
 
-        return service
+                return .authenticated(
+                    host: proxy.host,
+                    port: proxy.port,
+                    username: proxyUsername,
+                    password: proxyPassword
+                )
+            } else {
+                return .unauthenticated(
+                    host: proxy.host,
+                    port: proxy.port
+                )
+            }
+        }
+    }
+
+    var networkService: NetworkService {
+        get async throws {
+            let backendEnvironment = try await backendEnvironment
+
+            let service = NetworkService(
+                baseURL: backendEnvironment.url,
+                serverTrustValidator: ServerTrustValidator(
+                    pinnedKeys: backendEnvironment.pinnedKeys,
+                    currentDateProvider: .system
+                )
+            )
+
+            let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
+            let config = await URLSessionConfigurationFactory(
+                minTLSVersion: minTLSVersion,
+                proxySettings: try proxySettings
+            )
+
+            let session = URLSession(
+                configuration: config.makeRESTAPISessionConfiguration(),
+                delegate: service,
+                delegateQueue: nil
+            )
+            service.configure(with: session)
+
+            return service
+        }
     }
 
     var minTLSVersion: String? {

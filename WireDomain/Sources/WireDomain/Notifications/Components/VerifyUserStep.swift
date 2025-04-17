@@ -36,6 +36,7 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
 
     enum Failure: Error {
         case noAccountFound
+        case missingSelfClientID
     }
 
     public var selectedAccount: Account
@@ -69,13 +70,29 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
 
         try await verifyUserSessionUseCase.invoke()
 
-        try await pullEventsStep.pullEvents()
+        let selfUser = await userLocalStore.selfUserInfo()
+
+        guard let selfClientID = selfUser.clientId else {
+            throw Failure.missingSelfClientID
+        }
+
+        try await pullEventsStep(
+            selfUserID: selfUser.id,
+            selfClientID: selfClientID
+        ).pullEvents()
     }
 
     // MARK: - Children
 
-    var pullEventsStep: PullEventsStep {
-        PullEventsStep(parent: self)
+    func pullEventsStep(
+        selfUserID: UUID,
+        selfClientID: String
+    ) -> PullEventsStep {
+        PullEventsStep(
+            parent: self,
+            selfUserID: selfUserID,
+            selfClientID: selfClientID
+        )
     }
 }
 
@@ -98,6 +115,19 @@ extension VerifyUserStep {
                 applicationIdentifier: dependency.applicationIdentifier
             )
         }
+    }
+
+    public var userLocalStore: any UserLocalStoreProtocol {
+        UserLocalStore(
+            context: coreData.syncContext,
+            messageLocalStore: messageLocalStore
+        )
+    }
+
+    public var messageLocalStore: any MessageLocalStoreProtocol {
+        MessageLocalStore(
+            context: coreData.syncContext
+        )
     }
 
     func makeCoreData(

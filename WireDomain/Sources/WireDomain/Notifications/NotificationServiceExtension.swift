@@ -127,9 +127,9 @@ extension NotificationServiceExtension {
                 "Core data migration required",
                 attributes: .newNSE
             )
-        case .unableToLoadStores:
+        case let .unableToLoadStores(loadStoresError):
             logger.error(
-                "Loading coreDataStack with error",
+                "Loading coreDataStack with error: \(loadStoresError.localizedDescription)",
                 attributes: .newNSE
             )
         }
@@ -139,7 +139,7 @@ extension NotificationServiceExtension {
         switch error {
         case let .unableToPullPendingEvents(error):
             logger.error(
-                "failed to process notification: could not pull pending events: \(error.localizedDescription)",
+                "Could not pull pending events: \(error.localizedDescription)",
                 attributes: .newNSE
             )
         }
@@ -149,7 +149,7 @@ extension NotificationServiceExtension {
         switch error {
         case .missingAppGroupID:
             logger.error(
-                "failed to process notification: missing app group id",
+                "Missing app group ID",
                 attributes: .newNSE
             )
         }
@@ -159,7 +159,12 @@ extension NotificationServiceExtension {
         switch error {
         case .noAccountFound:
             logger.error(
-                "failed to process notification: no selected account found",
+                "No selected account found",
+                attributes: .newNSE
+            )
+        case .missingSelfClientID:
+            logger.error(
+                "Self client ID is missing",
                 attributes: .newNSE
             )
         }

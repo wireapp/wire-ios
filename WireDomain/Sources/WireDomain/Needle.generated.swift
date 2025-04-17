@@ -100,13 +100,13 @@ private class GenerateNotificationDependencye9ac54a4aea693448fe3Provider: Genera
         return verifyUserStep.userID
     }
     var messageLocalStore: any MessageLocalStoreProtocol {
-        return pullEventsStep.messageLocalStore
+        return verifyUserStep.messageLocalStore
     }
     var conversationLocalStore: any ConversationLocalStoreProtocol {
         return pullEventsStep.conversationLocalStore
     }
     var userLocalStore: any UserLocalStoreProtocol {
-        return pullEventsStep.userLocalStore
+        return verifyUserStep.userLocalStore
     }
     private let pullEventsStep: PullEventsStep
     private let verifyUserStep: VerifyUserStep
@@ -128,6 +128,12 @@ private class PullEventsDependency53707bfe7fe589fd7ad1Provider: PullEventsDepend
     }
     var cookieStorage: any CookieStorageProtocol {
         return verifyUserStep.cookieStorage
+    }
+    var messageLocalStore: any MessageLocalStoreProtocol {
+        return verifyUserStep.messageLocalStore
+    }
+    var userLocalStore: any UserLocalStoreProtocol {
+        return verifyUserStep.userLocalStore
     }
     var applicationContainer: URL {
         return notificationServiceExtensionFlow.applicationContainer
@@ -175,6 +181,8 @@ extension VerifyUserStep: NeedleFoundation.Registration {
         localTable["sharedUserDefaults-UserDefaults"] = { [unowned self] in self.sharedUserDefaults as Any }
         localTable["cookieStorage-any CookieStorageProtocol"] = { [unowned self] in self.cookieStorage as Any }
         localTable["coreData-CoreDataStack"] = { [unowned self] in self.coreData as Any }
+        localTable["userLocalStore-any UserLocalStoreProtocol"] = { [unowned self] in self.userLocalStore as Any }
+        localTable["messageLocalStore-any MessageLocalStoreProtocol"] = { [unowned self] in self.messageLocalStore as Any }
     }
 }
 extension NotificationServiceExtensionFlow: NeedleFoundation.Registration {
@@ -200,12 +208,12 @@ extension PullEventsStep: NeedleFoundation.Registration {
         keyPathToName[\PullEventsDependency.userID] = "userID-UUID"
         keyPathToName[\PullEventsDependency.coreData] = "coreData-CoreDataStack"
         keyPathToName[\PullEventsDependency.cookieStorage] = "cookieStorage-any CookieStorageProtocol"
+        keyPathToName[\PullEventsDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
+        keyPathToName[\PullEventsDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
         keyPathToName[\PullEventsDependency.applicationContainer] = "applicationContainer-URL"
         keyPathToName[\PullEventsDependency.applicationIdentifier] = "applicationIdentifier-String"
         keyPathToName[\PullEventsDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
         localTable["conversationLocalStore-any ConversationLocalStoreProtocol"] = { [unowned self] in self.conversationLocalStore as Any }
-        localTable["messageLocalStore-any MessageLocalStoreProtocol"] = { [unowned self] in self.messageLocalStore as Any }
-        localTable["userLocalStore-any UserLocalStoreProtocol"] = { [unowned self] in self.userLocalStore as Any }
     }
 }
 
