@@ -39,16 +39,18 @@ class PushChannelAPIImpl: PushChannelAPI {
 
 }
 
-class NewPushChannelAPIImpl: PushChannelAPI {
+class NewPushChannelAPIImpl: PushChannelAPI, VersionedAPI {
 
     let pushChannelService: any PushChannelServiceProtocol
+    let apiVersion: APIVersion
 
-    init(pushChannelService: any PushChannelServiceProtocol) {
+    init(pushChannelService: any PushChannelServiceProtocol, apiVersion: APIVersion) {
         self.pushChannelService = pushChannelService
+        self.apiVersion = apiVersion
     }
 
-    func createPushChannel(clientID: String) async throws -> any NewPushChannelProtocol {
-        let path = "/await"
+    func createPushChannel(clientID: String) async throws -> any PushChannelProtocol {
+        let path = "\(pathPrefix)/events"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)

@@ -582,21 +582,14 @@ public final class ZMUserSession: NSObject {
 
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
-            onSelfClientInvalidated: onSelfClientInvalidated,
-            asyncStreamEnabled: asyncStreamEnabled
+            asyncStreamEnabled: asyncStreamEnabled,
+            onSelfClientInvalidated: onSelfClientInvalidated
         )
-
-        let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
-            clientSessionComponent
-        } else {
-            // TODO: [WPB-17225] replace syncProvider here
-            clientSessionComponent
-        }
 
         let syncAgent = SyncAgent(
             lastUpdateEventIDRepository: lastEventIDRepository,
             initialSyncProvider: clientSessionComponent,
-            incrementalSyncProvider: incrementalSyncProvider,
+            incrementalSyncProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent

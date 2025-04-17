@@ -21,9 +21,6 @@ import WireFoundation
 import WireLogging
 
 public final class NewPushChannel: PushChannelProtocol {
-    enum Failure: Error {
-        case missingDeliveryTag
-    }
     
     public typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
@@ -64,24 +61,19 @@ public final class NewPushChannel: PushChannelProtocol {
         }.toStream()
     }
 
-    func ack(_ notification: WebSocketNotification, multiple: Bool = false) async throws {
-        switch notification.type {
-        case .event:
-            if let deliveryTag = notification.data?.deliveryTag {
-                let acknowledgement = EventAcknowledgmentNotification(
-                    deliveryTag: deliveryTag,
-                    multiple: multiple
-                )
-                let data = try JSONEncoder().encode(acknowledgement)
-                try await write(data: data)
-            } else {
-                throw Failure.missingDeliveryTag
-            }
-        case .notificationsMissed:
-            let acknowledgement = FullSyncAcknowledgmentNotification()
-            let data = try JSONEncoder().encode(acknowledgement)
-            try await write(data: data)
-        }
+    public func ack(deliveryTag: UInt64, multiple: Bool = false) async throws {
+        let acknowledgement = EventAcknowledgmentNotification(
+            deliveryTag: deliveryTag,
+            multiple: multiple
+        )
+        let data = try JSONEncoder().encode(acknowledgement)
+        try await write(data: data)
+    }
+
+    public func ackFullSync() async throws {
+        let acknowledgement = FullSyncAcknowledgmentNotification()
+        let data = try JSONEncoder().encode(acknowledgement)
+        try await write(data: data)
     }
 
     public func close() async {
@@ -102,12 +94,18 @@ public struct WebSocketMessageContext {
 }
 
 public struct WebSocketNotification: Decodable {
+    
     enum NotificationType: String, Decodable {
         case event
         case notificationsMissed = "notifications-missed"
     }
 
     struct NotificationData: Decodable {
+        enum CodingKeys: String, CodingKey {
+            case deliveryTag = "delivery_tag"
+            case event
+        }
+
         var deliveryTag: UInt64
         var event: UpdateEventEnvelopeV8
     }
@@ -124,6 +122,11 @@ enum AcknowledgmentType: String, Encodable {
 struct EventAcknowledgmentNotification: Encodable {
 
     struct AcknowledgmentData: Encodable {
+        enum CodingKeys: String, CodingKey {
+            case deliveryTag = "delivery_tag"
+            case multiple
+        }
+        
         var deliveryTag: UInt64
         var multiple: Bool
     }

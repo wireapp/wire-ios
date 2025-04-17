@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 /// Make a direct connection to a server to receive update events.
-public protocol PushChannelProtocol: Sendable {
+public protocol PushChannelProtocol: NewPushChannelProtocol {
 
     /// Open the push channel and start receiving update events.
     ///
@@ -34,16 +34,26 @@ public protocol PushChannelProtocol: Sendable {
 
 }
 
+public extension PushChannelProtocol {
+    func ackFullSync() async throws {}
+    
+    func ack(deliveryTag: UInt64, multiple: Bool) async throws {}
+}
+
 public protocol NewPushChannelProtocol: Sendable {
 
     /// Open the push channel and start receiving update events.
     ///
     /// - Returns: An async stream of live update event envelopes.
 
-    func open() async throws -> AsyncThrowingStream<WebSocketMessageContext, any Error>
+    func open() async throws -> AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
     /// Close the push channel and stop receiving update events.
 
     func close() async
-
+    
+    
+    func ackFullSync() async throws
+    
+    func ack(deliveryTag: UInt64, multiple: Bool) async throws
 }

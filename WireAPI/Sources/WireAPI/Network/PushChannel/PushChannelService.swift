@@ -27,8 +27,6 @@ public protocol PushChannelServiceProtocol {
     /// - Returns: A push channel.
 
     func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol
-
-    func createPushChannel(_ request: URLRequest) async throws -> any NewPushChannelProtocol
 }
 
 /// A service for creating push channel connections to a specific backend.
@@ -54,15 +52,10 @@ public final class PushChannelService: PushChannelServiceProtocol {
         let accessToken = try await authenticationManager.getValidAccessToken()
         request.setAccessToken(accessToken)
         let webSocket = try networkService.executeWebSocketRequest(request)
-        return PushChannel(webSocket: webSocket)
+        if asyncStreamEnabled {
+            return NewPushChannel(webSocket: webSocket)
+        } else {
+            return PushChannel(webSocket: webSocket)
+        }
     }
-    
-    public func createPushChannel(_ request: URLRequest) async throws -> any NewPushChannelProtocol {
-        var request = request
-        let accessToken = try await authenticationManager.getValidAccessToken()
-        request.setAccessToken(accessToken)
-        let webSocket = try networkService.executeWebSocketRequest(request)
-        return NewPushChannel(webSocket: webSocket)
-    }
-
 }

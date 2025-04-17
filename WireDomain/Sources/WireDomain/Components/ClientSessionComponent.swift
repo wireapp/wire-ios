@@ -114,8 +114,9 @@ public final class ClientSessionComponent {
     ).makeAPI(for: apiVersion)
 
     private lazy var pushChannelAPI = PushChannelAPIBuilder(
-        pushChannelService: pushChannelService
-    ).makeAPI()
+        pushChannelService: pushChannelService,
+        asyncStreamEnabled: asyncStreamEnabled
+    ).makeAPI(for: apiVersion)
 
     private lazy var selfUserAPI = SelfUserAPIBuilder(
         apiService: apiService
@@ -339,9 +340,7 @@ public final class ClientSessionComponent {
         databaseSaver: databaseSaver
     )
 
-    private lazy var newPushChannelAPI = NewPushChannel(webSocket: <#T##any WebSocketProtocol#>)
-
-    public lazy var newIncrementalSync: NewIncrementalSync(
+    public lazy var newIncrementalSync = NewIncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
         decryptor: updateEventDecryptor,

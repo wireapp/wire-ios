@@ -21,7 +21,10 @@ import WireAPI
 import WireLogging
 
 public struct NewIncrementalSync: IncrementalSyncProtocol {
-
+    enum Failure: Error {
+        case needsInitialSync
+    }
+    
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelAPI
     private let decryptor: any UpdateEventDecryptorProtocol
@@ -50,16 +53,16 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
         logger.debug("performing incremental sync")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
-        logger.debug("opening push channel")
+        logger.debug("opening new push channel")
         let liveEventStream = try await pushChannel.open()
 
-        let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver] in
+        let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel] in
             logger.debug("handling live event stream")
 
             do {
                 for try await var envelope in liveEventStream {
                     logger.debug("received live event envelope")
-
+                    
                     do {
                         // Decrypt.
                         logger.debug(
@@ -74,7 +77,7 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                         )
                         continue
                     }
-
+                    
                     let index: Int64
                     do {
                         // Store.
@@ -84,6 +87,10 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                         )
                         index = try await store.indexOfLastEventEnvelope() + 1
                         try await store.persistEventEnvelope(envelope, index: index)
+                        
+                        if let deliveryTag = envelope.deliveryTag {
+                            try await pushChannel.ack(deliveryTag: deliveryTag, multiple: false)
+                        }
                     } catch {
                         logger.error(
                             "failed to store live event envelope: \(String(describing: error))",
@@ -91,7 +98,7 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                         )
                         continue
                     }
-
+                    
                     // Process.
                     for event in envelope.events {
                         do {
@@ -107,7 +114,7 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                             )
                         }
                     }
-
+                    
                     do {
                         // Delete.
                         logger.debug(
@@ -121,15 +128,18 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                             attributes: [.eventEnvelopeID: envelope.id]
                         )
                     }
-
+                    
                     do {
                         // Save.
                         try await databaseSaver.save()
                     } catch {
                         logger.error("failed to save database: \(String(describing: error))")
                     }
-
+                    
                 }
+            } catch PushChannelError.missingEvents {
+                // TODO: do slow sync (initial sync)
+//                throw Failure.needsInitialSync
             } catch {
                 logger.warn("live event stream encountered error: \(String(describing: error))")
             }
