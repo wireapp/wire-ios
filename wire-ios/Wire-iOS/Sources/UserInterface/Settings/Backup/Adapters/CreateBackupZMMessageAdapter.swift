@@ -98,7 +98,7 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
         let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
         let domain = asset.uploaded.assetDomain
 
-        if asset.hasOriginal {
+        if asset.hasOriginal, asset.uploaded.hasAssetID {
             self.init(
                 assetClientMessage,
                 content: .asset(
@@ -106,11 +106,14 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
                     size: asset.original.size,
                     name: asset.original.name,
                     otrKey: asset.uploaded.otrKey, // TODO: uploaded?
-                    sha256: asset.uploaded.sha256
+                    sha256: asset.uploaded.sha256,
+                    assetID: asset.uploaded.assetID,
+                    assetToken: asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil,
+                    assetDomain: asset.uploaded.hasAssetDomain ? asset.uploaded.assetDomain : nil
                 )
             )
 
-        } else if asset.hasPreview {
+        } else if asset.hasPreview, asset.uploaded.hasAssetID {
             self.init(
                 assetClientMessage,
                 content: .asset(
@@ -118,7 +121,10 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
                     size: asset.preview.size,
                     name: nil,
                     otrKey: asset.uploaded.otrKey, // TODO: uploaded?
-                    sha256: asset.uploaded.sha256
+                    sha256: asset.uploaded.sha256,
+                    assetID: asset.uploaded.assetID,
+                    assetToken: asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil,
+                    assetDomain: asset.uploaded.hasAssetDomain ? asset.uploaded.assetDomain : nil
                 )
             )
 

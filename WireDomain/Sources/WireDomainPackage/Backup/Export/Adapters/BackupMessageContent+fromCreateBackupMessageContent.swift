@@ -37,19 +37,18 @@ extension BackupMessageContent {
             )
 
         case let .asset(content):
-            BackupMessageContent
-                .Asset(
-                    mimeType: content.mimeType,
-                    size: Int32(exactly: content.size) ?? 0,
-                    name: content.name,
-                    otrKey: KotlinByteArray(content.otrKey),
-                    sha256: KotlinByteArray(content.sha256),
-                    assetId: "", // <#T##String#>,
-                    assetToken: nil, // <#T##String?#>,
-                    assetDomain: nil, // <#T##String?#>,
-                    encryption: nil, // <#T##AssetEncryptionAlgorithm?#>,
-                    metaData: nil, // <#T##AssetAssetMetadata?#>
-                )
+            BackupMessageContent.Asset(
+                mimeType: content.mimeType,
+                size: Int32(exactly: content.size) ?? 0,
+                name: content.name,
+                otrKey: KotlinByteArray(content.otrKey),
+                sha256: KotlinByteArray(content.sha256),
+                assetId: content.assetID,
+                assetToken: content.assetToken,
+                assetDomain: content.assetDomain,
+                encryption: nil, // T##AssetEncryptionAlgorithm?,
+                metaData: nil, // <#T##AssetAssetMetadata?#>
+            )
 
         }
     }

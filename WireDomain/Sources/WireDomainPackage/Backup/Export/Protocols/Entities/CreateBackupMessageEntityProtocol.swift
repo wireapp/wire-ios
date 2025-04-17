@@ -58,9 +58,9 @@ extension CreateBackupMessageContent {
         var name: String?
         var otrKey: Data
         var sha256: Data
-//        assetID: String
-//        assetToken: String?
-//        assetDomain: String?
+        var assetID: String
+        var assetToken: String?
+        var assetDomain: String?
 //        encryption: EncryptionAlgorithm?
 //        metaData: AssetMetadata?
     }
@@ -102,7 +102,10 @@ extension CreateBackupMessageContent {
         size: UInt64,
         name: String?,
         otrKey: Data,
-        sha256: Data
+        sha256: Data,
+        assetID: String,
+        assetToken: String?,
+        assetDomain: String?
     ) -> Self {
         .asset(
             AssetMessageContent(
@@ -110,7 +113,10 @@ extension CreateBackupMessageContent {
                 size: size,
                 name: name,
                 otrKey: otrKey,
-                sha256: sha256
+                sha256: sha256,
+                assetID: assetID,
+                assetToken: assetToken,
+                assetDomain: assetDomain
             )
         )
     }
