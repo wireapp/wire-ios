@@ -77,6 +77,11 @@ extension CallContent {
         do {
             return try decoder.decode(Self.self, from: data)
         } catch {
+            WireLogger.notifications.error(
+                "Error decoding the notification calling payload: \(error.localizedDescription)",
+                attributes: .newNSE
+            )
+            
             return nil
         }
     }
