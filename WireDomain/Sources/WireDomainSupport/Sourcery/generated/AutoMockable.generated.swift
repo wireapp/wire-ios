@@ -2424,24 +2424,24 @@ class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol
 
     // MARK: - invoke
 
-    var invoke_Invocations: [Void] = []
-    var invoke_MockError: Error?
-    var invoke_MockMethod: (() async throws -> NotificationPayload)?
-    var invoke_MockValue: NotificationPayload?
+    var invokeRequest_Invocations: [UNNotificationRequest] = []
+    var invokeRequest_MockError: Error?
+    var invokeRequest_MockMethod: ((UNNotificationRequest) async throws -> NotificationPayload)?
+    var invokeRequest_MockValue: NotificationPayload?
 
-    func invoke() async throws -> NotificationPayload {
-        invoke_Invocations.append(())
+    func invoke(request: UNNotificationRequest) async throws -> NotificationPayload {
+        invokeRequest_Invocations.append(request)
 
-        if let error = invoke_MockError {
+        if let error = invokeRequest_MockError {
             throw error
         }
 
-        if let mock = invoke_MockMethod {
-            return try await mock()
-        } else if let mock = invoke_MockValue {
+        if let mock = invokeRequest_MockMethod {
+            return try await mock(request)
+        } else if let mock = invokeRequest_MockValue {
             return mock
         } else {
-            fatalError("no mock for `invoke`")
+            fatalError("no mock for `invokeRequest`")
         }
     }
 

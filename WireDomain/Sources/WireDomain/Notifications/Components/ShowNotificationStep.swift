@@ -28,13 +28,13 @@ protocol ShowNotificationDependency: Dependency {
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
 }
 
-protocol ShowNotificationStepFactory {
+protocol ShowNotificationStepProtocol {
     func showNotifications(
         _ notifications: [UserNotification]
     ) async throws
 }
 
-final class ShowNotificationStep: Component<ShowNotificationDependency>, ShowNotificationStepFactory {
+final class ShowNotificationStep: Component<ShowNotificationDependency>, ShowNotificationStepProtocol {
 
     func showNotifications(
         _ notifications: [UserNotification]

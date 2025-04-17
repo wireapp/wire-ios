@@ -20,17 +20,16 @@ import UserNotifications
 
 // sourcery: AutoMockable
 protocol ProcessNotificationUseCaseProtocol {
-    func invoke() async throws -> NotificationPayload
+    func invoke(
+        request: UNNotificationRequest
+    ) async throws -> NotificationPayload
 }
 
 struct ProcessNotificationRequestUseCase: ProcessNotificationUseCaseProtocol {
-    private let request: UNNotificationRequest
 
-    init(request: UNNotificationRequest) {
-        self.request = request
-    }
-
-    func invoke() async throws -> NotificationPayload {
+    func invoke(
+        request: UNNotificationRequest
+    ) async throws -> NotificationPayload {
         let userInfo = request.content.userInfo
         let data = try JSONSerialization.data(
             withJSONObject: userInfo

@@ -29,13 +29,13 @@ protocol GenerateNotificationDependency: Dependency {
     var userLocalStore: any UserLocalStoreProtocol { get }
 }
 
-protocol GenerateNotificationStepFactory {
+protocol GenerateNotificationStepProtocol {
     func generateNotification(
         eventsStream: AsyncStream<[UpdateEvent]>
     ) async throws
 }
 
-final class GenerateNotificationStep: Component<GenerateNotificationDependency>, GenerateNotificationStepFactory {
+final class GenerateNotificationStep: Component<GenerateNotificationDependency>, GenerateNotificationStepProtocol {
 
     func generateNotification(
         eventsStream: AsyncStream<[UpdateEvent]>
@@ -57,7 +57,7 @@ final class GenerateNotificationStep: Component<GenerateNotificationDependency>,
 
     // MARK: - Children
 
-    var showNotificationStep: any ShowNotificationStepFactory {
+    var showNotificationStep: ShowNotificationStep {
         ShowNotificationStep(parent: self)
     }
 

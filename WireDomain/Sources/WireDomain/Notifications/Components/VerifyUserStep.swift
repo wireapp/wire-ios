@@ -29,11 +29,11 @@ protocol VerifyUserDependency: Dependency {
     var applicationContainer: URL { get }
 }
 
-protocol VerifyUserStepFactory {
+protocol VerifyUserStepProtocol {
     func verifyUserSession() async throws
 }
 
-final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFactory {
+final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProtocol {
 
     enum Failure: Error {
         case noAccountFound
@@ -66,7 +66,7 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepFacto
 
     // MARK: - Children
 
-    var pullEventsStep: any PullEventsStepFactory {
+    var pullEventsStep: PullEventsStep {
         PullEventsStep(parent: self)
     }
 }

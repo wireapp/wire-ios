@@ -56,7 +56,7 @@ final class NotificationServiceExtensionFlow: BootstrapComponent {
 
     // MARK: - Children
 
-    var processNotificationRequestStep: any ProcessNotificationRequestStepFactory {
+    var processNotificationRequestStep: ProcessNotificationRequestStep {
         ProcessNotificationRequestStep(parent: self)
     }
 }

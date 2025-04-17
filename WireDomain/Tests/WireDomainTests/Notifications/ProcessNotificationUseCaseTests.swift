@@ -24,6 +24,16 @@ final class ProcessNotificationUseCaseTests: XCTestCase {
     private var sut: ProcessNotificationRequestUseCase!
 
     override func setUp() async throws {
+        sut = ProcessNotificationRequestUseCase()
+    }
+
+    override func tearDown() async throws {
+        sut = nil
+    }
+
+    func testStartsSync_It_Processes_Notification_Request() async throws {
+
+        // Mock
         let notificationContent = UNMutableNotificationContent()
         notificationContent.userInfo = [
             "data": [
@@ -40,19 +50,8 @@ final class ProcessNotificationUseCaseTests: XCTestCase {
             trigger: nil
         )
 
-        sut = ProcessNotificationRequestUseCase(
-            request: request
-        )
-    }
-
-    override func tearDown() async throws {
-        sut = nil
-    }
-
-    func testStartsSync_It_Processes_Notification_Request() async throws {
-
         // When
-        let payload = try await sut.invoke()
+        let payload = try await sut.invoke(request: request)
 
         // Then
         XCTAssertEqual(payload.userID, .mockID1)

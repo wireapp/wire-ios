@@ -30,12 +30,12 @@ protocol PullEventsDependency: Dependency {
     var sharedUserDefaults: UserDefaults { get }
 }
 
-protocol PullEventsStepFactory {
+protocol PullEventsStepProtocol {
     func pullEvents() async throws
 }
 
 /// Provides sync objects.
-final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepFactory {
+final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProtocol {
 
     enum Failure: Error {
         case missingProxyCredentials
@@ -78,7 +78,7 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepFacto
 
     // MARK: - Children
 
-    var generateNotificationStep: any GenerateNotificationStepFactory {
+    var generateNotificationStep: GenerateNotificationStep {
         GenerateNotificationStep(parent: self)
     }
 
