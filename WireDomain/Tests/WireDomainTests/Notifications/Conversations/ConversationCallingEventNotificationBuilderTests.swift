@@ -386,7 +386,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     }
 
-    func testGenerateCallNotification_Should_Build_Notification_Returns_False() async {
+    func testGenerateCallNotification_IsOneOnOne_Team_Should_Build_Notification_Returns_False() async {
         // Mock
 
         let isGroup = false
