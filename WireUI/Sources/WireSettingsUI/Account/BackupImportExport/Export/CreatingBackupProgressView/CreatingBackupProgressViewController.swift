@@ -36,7 +36,11 @@ final class CreatingBackupProgressViewController: UIViewController {
         didSet {
             guard isViewLoaded else { return }
             progressView.progress = progressValue
-            progressLabel.text = "\(Int(progressValue * 100))%"
+            if progressValue.isFinite {
+                progressLabel.text = "\(Int(progressValue * 100))%"
+            } else {
+                progressLabel.text = "0%"
+            }
         }
     }
 

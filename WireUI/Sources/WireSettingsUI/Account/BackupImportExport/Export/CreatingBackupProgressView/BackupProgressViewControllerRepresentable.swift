@@ -20,10 +20,10 @@ import SwiftUI
 
 struct BackupProgressViewControllerRepresentable: UIViewControllerRepresentable {
 
-    var progressDescription = ""
-    var progressValue = Float()
-    var backupURL: URL?
-    var completedAction: (_ completed: Bool) -> Void = { _ in }
+    let progressDescription: String
+    let progressValue: Float
+    let backupURL: URL?
+    let completedAction: (_ completed: Bool) -> Void
 
     func makeUIViewController(context: Context) -> CreatingBackupProgressViewController {
         let viewController = CreatingBackupProgressViewController()
