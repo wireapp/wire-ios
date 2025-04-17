@@ -71,18 +71,19 @@ public struct CreateBackupUseCase<
                     let reportProgress: (Int, Int) -> Void = { current, total in
                         logger.debug("reporting overall process: \(Float(current * 100) / Float(total))%")
                         continuation.yield(.progress(current, total))
-                        Thread.sleep(forTimeInterval: 1) // TODO: delete this line
                     }
 
                     reportProgress(0, 0)
                     logger.debug("initializing MPBackupExporter")
-                    let backupExporter = Self.createBackupExporter(
-                        selfUserID: selfUserID,
-                        workDirectoryURL: workDirectoryURL,
-                        outputDirectoryURL: outputDirectoryURL,
-                        fileManager: fileManager,
-                        fileArchiver: fileArchiver,
-                        currentDateProvider: currentDateProvider
+                    let backupExporter = MPBackupExporter(
+                        selfUserId: BackupQualifiedId(selfUserID),
+                        workDirectory: workDirectoryURL.path(),
+                        outputDirectory: outputDirectoryURL.path(),
+                        fileZipper: CreateBackupFileZipper2FileZipperAdapter(
+                            fileManager: fileManager,
+                            fileArchiver: fileArchiver,
+                            currentDateProvider: currentDateProvider
+                        )
                     )
 
                     try Task.checkCancellation()
@@ -114,20 +115,16 @@ public struct CreateBackupUseCase<
                     }
 
                     let conversationProgressOffset = userCount
-                    let conversationProgressMultiplier = Float(conversationCount) / Float(total)
                     try await context.perform {
                         try Self.exportConversations(from: context, using: backupExporter) { current, total in
-                            let current = Int(Float(conversationProgressOffset + current) * conversationProgressMultiplier)
-                            reportProgress(current, total)
+                            reportProgress(conversationProgressOffset + current, total)
                         }
                     }
 
                     let messageProgressOffset = userCount + conversationCount
-                    let messageProgressMultiplier = Float(messageCount) / Float(total)
                     try await context.perform {
                         try Self.exportMessages(from: context, using: backupExporter) { current, total in
-                            let current = Int(Float(messageProgressOffset + current) * messageProgressMultiplier)
-                            reportProgress(current, total)
+                            reportProgress(messageProgressOffset + current, total)
                         }
                     }
 
@@ -145,26 +142,6 @@ public struct CreateBackupUseCase<
                 task.cancel()
             }
         }
-    }
-
-    private static func createBackupExporter(
-        selfUserID: QualifiedID,
-        workDirectoryURL: URL,
-        outputDirectoryURL: URL,
-        fileManager: FileManager,
-        fileArchiver: any CreateBackupFileArchiverProtocol,
-        currentDateProvider: any CurrentDateProviding
-    ) -> MPBackupExporter {
-        MPBackupExporter(
-            selfUserId: BackupQualifiedId(selfUserID),
-            workDirectory: workDirectoryURL.path(),
-            outputDirectory: outputDirectoryURL.path(),
-            fileZipper: CreateBackupFileZipper2FileZipperAdapter(
-                fileManager: fileManager,
-                fileArchiver: fileArchiver,
-                currentDateProvider: currentDateProvider
-            )
-        )
     }
 
     private static func fetchCounts(
@@ -250,9 +227,7 @@ public struct CreateBackupUseCase<
         let records = try context.fetch(fetchRequest)
         let recordCount = records.count
         for (index, record) in records.enumerated() {
-            guard let message = MessageAdapter(record) else {
-                continue
-            }
+            guard let message = MessageAdapter(record) else { continue }
             autoreleasepool {
                 let backupMessage = BackupMessage(
                     id: message.id,
