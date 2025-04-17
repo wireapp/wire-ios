@@ -18,12 +18,19 @@
 
 import Foundation
 import WireAPI
+import WireDomain
+import WireLogging
 import WireTransport
 
 struct UpdateEventMigrator {
 
+    private let context: NSManagedObjectContext
+    private let store: any UpdateEventsLocalStoreProtocol
+    private let localDomain: String
+    private let apiVersion: WireTransport.APIVersion
+
     var isMigrationNeeded: Bool {
-        let newSyncIsAvailable = true
+        let newSyncIsAvailable = apiVersion >= .v8
         let hasLegacyEvents = true
         let didAlreadyMigrate = false
 
@@ -31,17 +38,124 @@ struct UpdateEventMigrator {
             assertionFailure("update events migrated but some still remain")
         }
 
-        return newSyncIsAvailable &&
-               !didAlreadyMigrate &&
-               hasLegacyEvents
+        return newSyncIsAvailable && !didAlreadyMigrate && hasLegacyEvents
     }
 
     func migrateLegacyUpdateEvents() async throws {
-        // fetch legacy events
-        // map them
-        // store them
-        // delete legacy events
-        // save event database
+        WireLogger.sync.debug("migrating legacy update events...")
+
+        // Store new events starting at this index.
+        var currentIndex = try await store.indexOfLastEventEnvelope() + 1
+
+        while let legacyStoredEvents = await fetchLegacyStoredEvents() {
+            WireLogger.sync.debug("found \(legacyStoredEvents.count) legacy events to migrate...")
+
+            for legacyStoredEvent in legacyStoredEvents {
+                // Get the ZMUpdateEvent.
+                guard let legacyUpdateEvent = await extractLegacyEvent(
+                    from: legacyStoredEvent,
+                    privateKeys: nil // TODO: inject keys if needed
+                ) else {
+                    await context.perform {
+                        WireLogger.sync.error("failed to migrate legacy event with id: \(legacyStoredEvent.uuidString ?? "unknown")")
+                    }
+
+                    await deleteLegacyEvent(legacyStoredEvent)
+                    continue
+                }
+
+                // Map it to the new event model.
+                guard let newUpdateEvent = UpdateEvent(
+                    legacyEvent: legacyUpdateEvent,
+                    localDomain: localDomain
+                ) else {
+                    WireLogger.sync.warn("legacy event does not need mapping, skipping...")
+                    await deleteLegacyEvent(legacyStoredEvent)
+                    continue
+                }
+
+                guard let eventID = legacyUpdateEvent.uuid else {
+                    WireLogger.sync.warn("legacy event is missing id, skipping...")
+                    await deleteLegacyEvent(legacyStoredEvent)
+                    continue
+                }
+
+                // Wrap it in an envelope.
+                let newUpdateEventEnvelope = UpdateEventEnvelope(
+                    id: eventID,
+                    events: [newUpdateEvent],
+                    isTransient: legacyUpdateEvent.isTransient
+                )
+
+                WireLogger.sync.debug(
+                    "storing new event",
+                    attributes: [.eventId: eventID]
+                )
+
+                // TODO: don't perist inside this method.
+                // Store the new event.
+                try await store.persistEventEnvelope(
+                    newUpdateEventEnvelope,
+                    index: currentIndex
+                )
+
+                // Store the next event at this index.
+                currentIndex += 1
+
+                // We no longer need the legacy event.
+                await deleteLegacyEvent(legacyStoredEvent)
+            }
+        }
+
+        WireLogger.sync.debug("no more legacy events to migrate...")
+        try await saveDatabaseChanges()
+        WireLogger.sync.debug("legacy event migration complete")
+    }
+
+    private func fetchLegacyStoredEvents() async -> [StoredUpdateEvent]? {
+        await context.perform { [context] in
+            let legacyStoredEvents = StoredUpdateEvent.nextEvents(
+                context,
+                batchSize: 500,
+                callEventsOnly: false
+            )
+
+            guard !legacyStoredEvents.isEmpty else {
+                return nil
+            }
+
+            return legacyStoredEvents
+        }
+    }
+
+    private func extractLegacyEvent(
+        from storedEvent: StoredUpdateEvent,
+        privateKeys: EARPrivateKeys?
+    ) async -> ZMUpdateEvent? {
+        await context.perform {
+            switch StoredUpdateEvent.extractUpdateEvent(
+                from: storedEvent,
+                privateKeys: nil // TODO: inject keys if needed
+            ) {
+            case let .success(legacyEvent):
+                return legacyEvent
+
+            case .failure:
+                return nil
+            }
+        }
+    }
+
+    private func deleteLegacyEvent(_ event: StoredUpdateEvent) async {
+        await context.perform { [context] in
+            context.delete(event)
+        }
+    }
+
+    private func saveDatabaseChanges() async throws {
+        try await context.perform { [context] in
+            try context.save()
+        }
     }
 
 }

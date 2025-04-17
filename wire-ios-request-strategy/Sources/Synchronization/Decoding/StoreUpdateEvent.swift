@@ -34,7 +34,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     @NSManaged var eventHash: Int64
 
-    @NSManaged var uuidString: String?
+    @NSManaged public var uuidString: String?
 
     @NSManaged var debugInformation: String?
 
@@ -180,7 +180,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     /// Returns stored events sorted by and up until (including) the defined `stopIndex`
     /// Returns a maximum of `batchSize` events at a time
 
-    static func nextEvents(
+    public static func nextEvents(
         _ context: NSManagedObjectContext,
         batchSize: Int,
         callEventsOnly: Bool
@@ -255,7 +255,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     }
 
-    private static func extractUpdateEvent(
+    public static func extractUpdateEvent(
         from storedEvent: StoredUpdateEvent,
         privateKeys: EARPrivateKeys?
     ) -> Result<ZMUpdateEvent, ExtractionFailure> {
@@ -295,7 +295,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         }
     }
 
-    enum ExtractionFailure: Error {
+    public enum ExtractionFailure: Error {
 
         case temporary
         case permanent
