@@ -4069,19 +4069,14 @@ class MockUserEventNotificationBuilderProtocol: UserEventNotificationBuilderProt
     // MARK: - buildContent
 
     var buildContentEvent_Invocations: [UserEvent] = []
-    var buildContentEvent_MockError: Error?
-    var buildContentEvent_MockMethod: ((UserEvent) async throws -> UserNotification?)?
+    var buildContentEvent_MockMethod: ((UserEvent) async -> UserNotification?)?
     var buildContentEvent_MockValue: UserNotification??
 
-    func buildContent(event: UserEvent) async throws -> UserNotification? {
+    func buildContent(event: UserEvent) async -> UserNotification? {
         buildContentEvent_Invocations.append(event)
 
-        if let error = buildContentEvent_MockError {
-            throw error
-        }
-
         if let mock = buildContentEvent_MockMethod {
-            return try await mock(event)
+            return await mock(event)
         } else if let mock = buildContentEvent_MockValue {
             return mock
         } else {

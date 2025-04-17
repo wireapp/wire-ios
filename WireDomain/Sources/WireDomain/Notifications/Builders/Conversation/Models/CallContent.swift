@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import WireProtos
 
 struct CallContent: Decodable {
@@ -51,6 +52,11 @@ extension CallContent {
         let decoder = JSONDecoder()
 
         guard let data = calling.content.data(using: .utf8) else {
+            WireLogger.notifications.info(
+                "No calling payload found - this is not a call",
+                attributes: .newNSE
+            )
+
             return nil
         }
 

@@ -54,17 +54,26 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
     ) async -> UserNotification? {
         switch event {
         case let .conversation(conversationEvent):
-            try? await conversationEventBuilder.buildContent(
-                event: conversationEvent
-            )
+            do {
+                return try await conversationEventBuilder.buildContent(
+                    event: conversationEvent
+                )
+            } catch {
+                WireLogger.notifications.error(
+                    "An error occured when building the conversation notification content \(error) ",
+                    attributes: .newNSE
+                )
+
+                return nil
+            }
 
         case let .user(userEvent):
-            try? await userEventBuilder.buildContent(
+            return await userEventBuilder.buildContent(
                 event: userEvent
             )
 
         default:
-            nil
+            return nil
         }
     }
 }

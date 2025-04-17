@@ -24,7 +24,7 @@ import WireDataModel
 protocol UserEventNotificationBuilderProtocol {
     func buildContent(
         event: UserEvent
-    ) async throws -> UserNotification?
+    ) async -> UserNotification?
 }
 
 struct UserEventNotificationBuilder: UserEventNotificationBuilderProtocol {
@@ -35,7 +35,7 @@ struct UserEventNotificationBuilder: UserEventNotificationBuilderProtocol {
 
     func buildContent(
         event: UserEvent
-    ) async throws -> UserNotification? {
+    ) async -> UserNotification? {
         let canDisplayNotification = await validator.validate()
 
         guard canDisplayNotification else {
