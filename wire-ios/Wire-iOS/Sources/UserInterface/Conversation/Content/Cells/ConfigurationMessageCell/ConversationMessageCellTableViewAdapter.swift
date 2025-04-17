@@ -142,7 +142,9 @@ final class ConversationMessageCellTableViewAdapter<
     @objc
     private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.state == .recognized else { return }
-
+        
+        print("DS: onDoubleTap: cellDescription: \(String(describing: cellDescription)), actionController: \(String(describing: cellDescription?.actionController))")
+        
         if cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }

@@ -22,10 +22,15 @@ import WireSyncEngine
 
 final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
+    struct Configuration: Equatable {
         var message: ZMConversationMessage
         let accentColor: ZMAccentColor
         let collapseExpandAction: () -> Void
+        
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            return lhs.message == rhs.message &&
+            lhs.accentColor == rhs.accentColor
+        }
     }
 
     var isSelected: Bool = false

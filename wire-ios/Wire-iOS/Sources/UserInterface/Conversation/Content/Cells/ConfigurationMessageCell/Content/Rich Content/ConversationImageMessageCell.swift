@@ -22,12 +22,19 @@ import WireDesign
 
 final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
+    struct Configuration: Equatable {
         var image: ZMImageMessageData
         var message: ZMConversationMessage
         var isObfuscated: Bool {
             message.isObfuscated
         }
+        
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            return lhs.message == rhs.message &&
+            lhs.image.imageDataIdentifier == rhs.image.imageDataIdentifier &&
+            lhs.isObfuscated == rhs.isObfuscated
+        }
+
     }
 
     private var containerView = UIView()

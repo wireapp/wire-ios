@@ -23,12 +23,19 @@ import WireDesign
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
+    struct Configuration: Equatable {
         var location: LocationMessageData
         var message: ZMConversationMessage
         var isObfuscated: Bool {
             message.isObfuscated
         }
+        
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            return lhs.message == rhs.message &&
+            lhs.message == rhs.message &&
+            lhs.isObfuscated == rhs.isObfuscated
+        }
+
     }
 
     private var lastConfiguration: Configuration?

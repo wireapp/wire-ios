@@ -21,13 +21,21 @@ import WireDataModel
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
+    struct Configuration: Equatable {
         var textMessageData: TextMessageData
         let showImage: Bool
         var message: ZMConversationMessage
         var isObfuscated: Bool {
             message.isObfuscated
         }
+        
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            return lhs.message == rhs.message &&
+            lhs.showImage == rhs.showImage &&
+            lhs.isObfuscated == rhs.isObfuscated &&
+            lhs.textMessageData.messageText == rhs.textMessageData.messageText
+        }
+
     }
 
     private let articleView = ArticleView(withImagePlaceholder: true)

@@ -27,7 +27,7 @@ final class ConversationReplyContentView: UIView {
     typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
     let numberOfLinesLimit: Int = 4
 
-    struct Configuration {
+    struct Configuration: Equatable {
         enum Content {
             case text(NSAttributedString)
             case imagePreview(thumbnail: PreviewableImageResource, isVideo: Bool)
@@ -35,6 +35,11 @@ final class ConversationReplyContentView: UIView {
 
         var quotedMessage: ZMConversationMessage?
         let accentColor: ZMAccentColor
+        
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            return lhs.accentColor == rhs.accentColor &&
+            lhs.quotedMessage == rhs.quotedMessage
+        }
 
         var showDetails: Bool {
             guard let message = quotedMessage,
@@ -334,6 +339,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 }
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
+    
     typealias View = ConversationReplyCell
 
     var configuration: View.Configuration

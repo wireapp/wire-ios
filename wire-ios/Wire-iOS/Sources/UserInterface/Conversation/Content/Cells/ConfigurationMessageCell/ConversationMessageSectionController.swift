@@ -83,6 +83,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     var message: ConversationMessage {
         didSet {
             updateDelegates()
+            changeObservers.removeAll()
+            startObservingChanges(for: message)
         }
     }
     
@@ -435,6 +437,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescription.message = message
             cellDescription.actionController = actionController
             cellDescription.delegate = cellDelegate
+            let pointer = Unmanaged.passUnretained(cellDescription.instance as AnyObject).toOpaque()
+            print(
+                "DS: cellDescription: \(cellDescription.instance):\(pointer) has now action controller: \(String(describing: actionController))"
+            )
         }
     }
 
@@ -557,7 +563,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     // MARK: - Changes
 
     private func startObservingChanges(for message: ZMConversationMessage) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         let observer = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
         changeObservers.append(observer)

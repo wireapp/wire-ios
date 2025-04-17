@@ -22,11 +22,17 @@ import WireDesign
 
 final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
+    struct Configuration: Equatable {
         var message: ZMConversationMessage
         var isObfuscated: Bool {
             message.isObfuscated
         }
+        
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            return lhs.message == rhs.message &&
+            lhs.isObfuscated == rhs.isObfuscated
+        }
+
     }
 
     private var containerView = RoundedView()

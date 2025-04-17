@@ -23,9 +23,14 @@ import WireDesign
 
 final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
 
-    struct Configuration {
+    struct Configuration: Equatable {
         var attachment: LinkAttachment
         var thumbnailResource: WireImageResource?
+                
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            return lhs.attachment == rhs.attachment &&
+            lhs.thumbnailResource?.cacheIdentifier == rhs.thumbnailResource?.cacheIdentifier
+        }
     }
 
     lazy var attachmentView: MediaPreviewView = {
