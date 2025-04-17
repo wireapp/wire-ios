@@ -60,22 +60,6 @@ public final class Assembly {
         return service
     }()
 
-    private lazy var pushChannelService: some PushChannelServiceProtocol = PushChannelService(
-        networkService: pushChannelNetworkService,
-        authenticationManager: authenticationManager
-    )
-
-    private lazy var pushChannelNetworkService: NetworkService = {
-        let service = NetworkService(
-            baseURL: backendEnvironment.webSocketURL,
-            serverTrustValidator: serverTrustValidator
-        )
-        let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
-        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
-        service.configure(with: session)
-        return service
-    }()
-
     public lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
         clientID: clientID,
         cookieStorage: cookieStorage,
