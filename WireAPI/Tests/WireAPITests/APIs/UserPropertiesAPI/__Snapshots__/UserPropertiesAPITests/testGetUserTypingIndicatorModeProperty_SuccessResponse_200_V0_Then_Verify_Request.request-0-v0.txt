@@ -1,2 +1,2 @@
 curl \
-	"/properties/WIRE_RECEIPT_MODE"
+	"/properties/WIRE_TYPING_INDICATOR_MODE"
