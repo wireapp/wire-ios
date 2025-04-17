@@ -87,6 +87,8 @@ final class ConversationTableViewDataSource: NSObject {
 
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
+    
+    let debouncer = LeadingTrailingDebouncer<UUID>(cooldownTime: 0.3)
 
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
@@ -441,22 +443,37 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
+    var loadingMessages = false
+    
     private func loadOlderMessages() {
+        guard !loadingMessages else {
+            print("DS: loadOlderMessages: guarded bc of loadingMessages")
+            return
+        }
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
               let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
 
         let newLimit = currentLimit + ConversationTableViewDataSource.defaultBatchSize
+        loadingMessages = true
+        print("DS: loadOlderMessages: setting loadingMessages ON")
 
-        loadMessages(offset: currentOffset, limit: newLimit) { }
+        loadMessages(offset: currentOffset, limit: newLimit) {
+            print("DS: loadOlderMessages: releasing loadingMessages")
+            self.loadingMessages = false
+        }
     }
 
     func loadNewerMessages() {
+        guard !loadingMessages else { return }
+
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
               let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
 
         let newOffset = max(0, currentOffset - ConversationTableViewDataSource.defaultBatchSize)
 
-        loadMessages(offset: newOffset, limit: currentLimit)
+        loadMessages(offset: newOffset, limit: currentLimit) {
+            self.loadingMessages = false
+        }
     }
 
     func indexOfMessage(_ message: ZMConversationMessage) -> Int {
@@ -561,8 +578,10 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         print("DS: controllerDidChangeContent")
-        calculateSections() { sections in
-            self.reloadSections(newSections: sections)
+        debouncer.call(id: nil) { [weak self] in
+            self?.calculateSections() { sections in
+                self?.reloadSections(newSections: sections)
+            }
         }
     }
 
@@ -667,7 +686,10 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         print(
             "DS: messageSectionController didRequestRefreshForMessage nonce: \(String(describing: (message as! ZMMessage).nonce)), text: \(String(describing: message.text))"
         )
-        reloadSections(newSections: calculateSections(updating: controller))
+        debouncer.call(id: message.nonce!) { [weak self] in
+            guard let self else { return }
+            self.reloadSections(newSections: self.calculateSections(updating: controller))
+        }
     }
 
 }
@@ -986,5 +1008,87 @@ class ThreadSafeDictionary<Key: Hashable, Value> {
         queue.async {
             self.dictionary.removeAll()
         }
+    }
+}
+
+//final class LeadingDebouncer {
+//    private var isCooldown = false
+//    private var cooldownTime: TimeInterval
+//    private let queue: DispatchQueue
+//
+//    init(cooldownTime: TimeInterval, queue: DispatchQueue = .main) {
+//        self.cooldownTime = cooldownTime
+//        self.queue = queue
+//    }
+//
+//    func call(_ block: @escaping () -> Void) {
+//        guard !isCooldown else { return }
+//
+//        isCooldown = true
+//        block()
+//
+//        queue.asyncAfter(deadline: .now() + cooldownTime) { [weak self] in
+//            self?.isCooldown = false
+//        }
+//    }
+//}
+
+final class LeadingTrailingDebouncer<ID: Hashable> {
+    private struct DebounceState {
+        var isCooldown = false
+        var pendingCall: (() -> Void)? = nil
+    }
+
+    private let cooldownTime: TimeInterval
+    private let queue: DispatchQueue
+    private var states: [AnyHashable: DebounceState] = [:]
+
+    // Unique key for `nil` ID
+    private let nilKey = UUID()
+
+    init(cooldownTime: TimeInterval, queue: DispatchQueue = .main) {
+        self.cooldownTime = cooldownTime
+        self.queue = queue
+    }
+
+    func call(id: ID?, block: @escaping () -> Void) {
+        let key: AnyHashable = id.map { AnyHashable($0) } ?? AnyHashable(nilKey)
+
+        if states[key] == nil {
+            states[key] = DebounceState()
+        }
+
+        var state = states[key]!
+
+        if !state.isCooldown {
+            // LEADING: run immediately
+            block()
+            state.isCooldown = true
+
+            queue.asyncAfter(deadline: .now() + cooldownTime) { [weak self] in
+                guard let self = self else { return }
+
+                var updatedState = self.states[key] ?? DebounceState()
+                updatedState.isCooldown = false
+
+                if let trailing = updatedState.pendingCall {
+                    trailing()
+                    updatedState.pendingCall = nil
+                    updatedState.isCooldown = true
+
+                    self.queue.asyncAfter(deadline: .now() + self.cooldownTime) {
+                        self.states[key]?.isCooldown = false
+                        self.states[key]?.pendingCall = nil
+                    }
+                }
+
+                self.states[key] = updatedState
+            }
+        } else {
+            // Store for TRAILING
+            state.pendingCall = block
+        }
+
+        states[key] = state
     }
 }
