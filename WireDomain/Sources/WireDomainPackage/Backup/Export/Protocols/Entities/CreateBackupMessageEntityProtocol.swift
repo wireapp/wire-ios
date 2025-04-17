@@ -96,8 +96,8 @@ extension CreateBackupMessageContent.AssetContent.Metadata {
     }
 
     public struct AudioMetadata {
-        var normalization: Data
-        var duration: UInt64
+        var normalization: Data?
+        var duration: UInt64?
     }
 
     public struct GenericMetadata {
@@ -160,6 +160,60 @@ extension CreateBackupMessageContent {
                 assetDomain: assetDomain,
                 encryption: encryption,
                 metadata: metadata
+            )
+        )
+    }
+
+}
+
+extension CreateBackupMessageContent.AssetContent.Metadata {
+
+    public static func image(
+        width: Int32,
+        height: Int32,
+        tag: String?
+    ) -> Self {
+        .image(
+            ImageMetadata(
+                width: width,
+                height: height,
+                tag: tag
+            )
+        )
+    }
+
+    public static func video(
+        width: Int32?,
+        height: Int32?,
+        duration: UInt64?
+    ) -> Self {
+        .video(
+            VideoMetadata(
+                width: width,
+                height: height,
+                duration: duration
+            )
+        )
+    }
+
+    public static func audio(
+        normalization: Data,
+        duration: UInt64
+    ) -> Self {
+        .audio(
+            AudioMetadata(
+                normalization: normalization,
+                duration: duration
+            )
+        )
+    }
+
+    public static func generic(
+        name: String?
+    ) -> Self {
+        .generic(
+            GenericMetadata(
+                name: name
             )
         )
     }

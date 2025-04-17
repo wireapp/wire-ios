@@ -46,8 +46,8 @@ extension BackupMessageContent {
                 assetId: content.assetID,
                 assetToken: content.assetToken,
                 assetDomain: content.assetDomain,
-                encryption: nil, // T##AssetEncryptionAlgorithm?,
-                metaData: nil, // <#T##AssetAssetMetadata?#>
+                encryption: content.encryption.map { .from($0) },
+                metaData: content.metadata.map { .from($0) }
             )
 
         }
