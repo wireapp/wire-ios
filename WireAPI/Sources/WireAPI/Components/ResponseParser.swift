@@ -30,14 +30,14 @@ struct ResponseParser<Success> {
         case noParseResult
     }
 
-    private typealias ParseBlock = (Int, Data?) throws -> Success?
+    private typealias ParseBlock = (Data?) throws -> Success?
 
     private let decoder: JSONDecoder
-    private var parseBlocks: [ParseBlock]
+    private var parseBlocks: [Int: [ParseBlock]]
 
     init(decoder: JSONDecoder = .init()) {
         self.decoder = decoder
-        self.parseBlocks = []
+        self.parseBlocks = [:]
     }
 
     /// Success with output data
@@ -48,13 +48,11 @@ struct ResponseParser<Success> {
     ) -> ResponseParser<Success> where Payload.APIModel == Success {
         precondition(200 ..< 300 ~= code.rawValue, "Requires a valid success code: 2xx")
 
-        var copy = self
-        copy.parseBlocks.append { actualCode, data in
-            guard actualCode == code.rawValue, let data else { return nil }
+        return addParseBlock(code: code) { data in
+            guard let data else { return nil }
             let payload = try decoder.decode(Payload.self, from: data)
             return payload.toAPIModel()
         }
-        return copy
     }
 
     /// Success with no output
@@ -62,31 +60,25 @@ struct ResponseParser<Success> {
     func success(code: HTTPStatusCode) -> ResponseParser<Success> where Success == Void {
         precondition(200 ..< 300 ~= code.rawValue, "Requires a valid success code: 2xx")
 
-        var copy = self
-        copy.parseBlocks.append { actualCode, data in
-            guard
-                actualCode == code.rawValue,
-                data == nil || data?.isEmpty == true
+        return addParseBlock(code: code) { data in
+            guard data == nil || data?.isEmpty == true
             else { return nil }
             return ()
         }
-        return copy
     }
 
     /// Matches a failure response with the given `code` and optional `label`.
     ///
     /// If `label` is given, this method will attempt to parse a `FailureResponse` from the response data, and if this
-    /// fails or the label does not match the `FailureResponse`, the match will fail.
+    /// fails or the label does not match the `FailureResponse`, the match will fail. If this method is called multiple
+    /// times with the same `code`, calls with the `label` set will be prioritized.
 
     func failure(
         code: HTTPStatusCode,
         label: String? = nil,
         error: some Error
     ) -> ResponseParser<Success> {
-        var copy = self
-        copy.parseBlocks.append { httpCode, data in
-            guard httpCode == code.rawValue else { return nil }
-
+        addParseBlock(code: code, prioritize: label != nil) { data in
             if let label {
                 guard let data, let failure = try? decoder.decode(FailureResponse.self, from: data),
                       failure.label == label else { return nil }
@@ -96,20 +88,17 @@ struct ResponseParser<Success> {
                 throw error
             }
         }
-        return copy
     }
 
     func failure<DecodableError: Decodable & Error>(
         code: HTTPStatusCode,
         decodableError: DecodableError.Type
     ) -> ResponseParser<Success> {
-        var copy = self
-        copy.parseBlocks.append { httpCode, data in
-            guard let data, httpCode == code.rawValue else { return nil }
+        addParseBlock(code: code) { data in
+            guard let data else { return nil }
             let failure = try decoder.decode(DecodableError.self, from: data)
             throw failure
         }
-        return copy
     }
 
     func parse(_ response: HTTPResponse) throws -> Success {
@@ -127,8 +116,10 @@ struct ResponseParser<Success> {
     }
 
     func parse(code: Int, data: Data?) throws -> Success {
+        let parseBlocks = parseBlocks[code] ?? []
+
         for matcher in parseBlocks {
-            if let success = try matcher(code, data) {
+            if let success = try matcher(data) {
                 return success
             }
         }
@@ -139,6 +130,26 @@ struct ResponseParser<Success> {
         } else {
             throw ParsingError.noParseResult
         }
+    }
+
+    // MARK: Private helps
+
+    private func addParseBlock(
+        code: HTTPStatusCode,
+        prioritize: Bool = false,
+        block: @escaping ParseBlock
+    ) -> ResponseParser<Success> {
+        var blocks = parseBlocks[code.rawValue] ?? []
+
+        if prioritize {
+            blocks.insert(block, at: 0)
+        } else {
+            blocks.append(block)
+        }
+
+        var copy = self
+        copy.parseBlocks[code.rawValue] = blocks
+        return copy
     }
 
 }
