@@ -21,11 +21,34 @@ import LocalAuthentication
 import WireDataModelSupport
 @testable import WireSyncEngine
 
-final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase {
+final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase, EARServiceDelegate, UserSessionDelegate {
+    
+    
+    func userSessionDidUnlock(_ session: WireSyncEngine.ZMUserSession) {
+    }
+    
+   
+    
+    func userDidLogout(accountId: UUID) {
+    }
+    
+    func authenticationInvalidated(_ error: NSError, accountId: UUID) {
+    }
+    
+    func clientRegistrationDidSucceed(accountId: UUID) {
+    }
+    
+    func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
+    }
+    
+    func clientCompletedInitialSync(accountId: UUID) {
+    }
+    
 
     private var activityManager: MockBackgroundActivityManager!
     private var factory: BackgroundActivityFactory!
-
+    private var setEncryptionAtRestExpectation: XCTestExpectation?
+    
     private var account: Account {
         coreDataStack.account
     }
@@ -36,6 +59,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
         activityManager = MockBackgroundActivityManager()
         factory = BackgroundActivityFactory.shared
         factory.activityManager = activityManager
+        setEncryptionAtRestExpectation = nil
     }
 
     /// This workaround is needed because all tests here are based on assumptions
@@ -54,10 +78,23 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
+        
 
         return createSut(earService: earService)
     }
 
+    
+    // MARK: - Delegate
+    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows {
+      
+    }
+    func prepareForMigration(for account: WireDataModel.Account, onReady: @escaping (NSManagedObjectContext) throws -> Void) {
+        try? onReady(uiMOC)
+        setEncryptionAtRestExpectation?.fulfill()
+    }
+//    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows {
+//    }
+    
     override func tearDown() {
         factory = nil
         activityManager = nil
@@ -74,25 +111,27 @@ final class SessionManagerEncryptionAtRestMigrationTests: ZMUserSessionTestsBase
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled() throws {
         // given
+        sut.delegate = self
         syncMOC.performAndWait {
             simulateLoggedInUser()
             syncMOC.saveOrRollback()
         }
         
-        var session = try XCTUnwrap(sut)
+        let session = try XCTUnwrap(sut)
         XCTAssertFalse(session.encryptMessagesAtRest)
 
         let expectedText = "Hello World"
         var groupConversation: ZMConversation!
         session.perform({
-            let groupConversation = ModelHelper().createGroupConversation(in: session.managedObjectContext)
+            groupConversation = ModelHelper().createGroupConversation(in: session.managedObjectContext)
             try! groupConversation.appendText(content: expectedText)
         })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
+        setEncryptionAtRestExpectation = self.expectation(description: "wait for setEncryptionAtRest")
         try session.setEncryptionAtRest(enabled: true)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        self.wait(for: [setEncryptionAtRestExpectation!])
 
         // then
         XCTAssertTrue(session.encryptMessagesAtRest)
