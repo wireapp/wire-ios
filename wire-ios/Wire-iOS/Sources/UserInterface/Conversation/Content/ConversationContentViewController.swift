@@ -252,8 +252,8 @@ final class ConversationContentViewController: UIViewController {
 
     @objc
     private func applicationDidBecomeActive(_ notification: Notification) {
-        dataSource.resetSectionControllers()
-        tableView.reloadData()
+        print("DS: applicationDidBecomeActive: calling resetSectionControllers")
+        dataSource.resetSectionControllers() // TODO: TEST reloding
     }
 
     private func handleScrollToBottomTapped() {

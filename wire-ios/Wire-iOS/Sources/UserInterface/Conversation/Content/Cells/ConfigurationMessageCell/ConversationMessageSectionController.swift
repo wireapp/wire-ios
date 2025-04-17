@@ -273,7 +273,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             .cells(
                 for: message,
                 searchQueries: context.searchQueries,
-                selfUser: selfUser
+                selfUser: selfUser,
+                userSession: userSession
             )
     }
 
@@ -318,7 +319,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             for: message,
             isCollapsed: isCollapsed,
             buttonAction: buttonAction,
-            selfUser: selfUser
+            selfUser: selfUser,
+            accentColor: (selfUser.accentColor ?? .default).uiColor
         )
     }
 
@@ -340,7 +342,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     textMessageData: data,
                     message: message,
                     searchQueries: context.searchQueries,
-                    selfUser: selfUser
+                    selfUser: selfUser,
+                    userSession: userSession
                 )
 
             case let .button(data):
@@ -438,9 +441,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescription.actionController = actionController
             cellDescription.delegate = cellDelegate
             let pointer = Unmanaged.passUnretained(cellDescription.instance as AnyObject).toOpaque()
-            print(
-                "DS: cellDescription: \(cellDescription.instance):\(pointer) has now action controller: \(String(describing: actionController))"
-            )
+//            print(
+//                "DS: cellDescription: \(cellDescription.instance):\(pointer) has now action controller: \(String(describing: actionController))"
+//            )
         }
     }
 

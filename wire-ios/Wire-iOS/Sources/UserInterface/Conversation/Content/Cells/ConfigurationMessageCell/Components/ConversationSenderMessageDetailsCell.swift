@@ -48,11 +48,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - Properties
 
     weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage? {
-        didSet {
-            print("DS: update message")
-        }
-    }
+    weak var message: ZMConversationMessage? // TODO: check if needed to call on just toucn screen on scroll
     weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false

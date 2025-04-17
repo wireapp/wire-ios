@@ -25,7 +25,8 @@ enum ConversationSystemMessageCellDescription {
         for message: ZMConversationMessage,
         isCollapsed: Bool,
         buttonAction: Completion?,
-        selfUser: ZMUser? = nil
+        selfUser: ZMUser? = nil,
+        accentColor: UIColor
     ) -> [AnyConversationMessageCellDescription] {
 
         guard let systemMessageData = message.systemMessageData,
@@ -104,7 +105,8 @@ enum ConversationSystemMessageCellDescription {
             let decryptionCell = ConversationCannotDecryptSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData,
-                sender: sender
+                sender: sender,
+                accentColor: accentColor
             )
             return [AnyConversationMessageCellDescription(decryptionCell)]
 

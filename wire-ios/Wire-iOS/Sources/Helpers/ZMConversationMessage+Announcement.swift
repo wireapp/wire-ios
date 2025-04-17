@@ -51,7 +51,10 @@ extension ZMConversationMessage {
         } else if isFile {
             return ConversationAnnouncement.File.description(filename ?? "", senderName)
         } else if isSystem, let cellDescription = ConversationSystemMessageCellDescription.cells(
-            for: self, isCollapsed: true, buttonAction: nil
+            for: self,
+            isCollapsed: true,
+            buttonAction: nil,
+            accentColor: ZMAccentColor.default.accentColor.uiColor
         ).first {
             return cellDescription.cellAccessibilityLabel
         }

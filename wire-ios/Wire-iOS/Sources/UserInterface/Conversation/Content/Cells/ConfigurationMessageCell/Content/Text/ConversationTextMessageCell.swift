@@ -169,7 +169,8 @@ extension ConversationTextMessageCellDescription {
     static func cells(
         for message: ZMConversationMessage,
         searchQueries: [String],
-        selfUser: ZMUser
+        selfUser: ZMUser,
+        userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
@@ -179,7 +180,8 @@ extension ConversationTextMessageCellDescription {
             textMessageData: textMessageData,
             message: message,
             searchQueries: searchQueries,
-            selfUser: selfUser
+            selfUser: selfUser,
+            userSession: userSession
         )
     }
 
@@ -187,18 +189,22 @@ extension ConversationTextMessageCellDescription {
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
         searchQueries: [String],
-        selfUser: ZMUser
+        selfUser: ZMUser,
+        userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
         // Refetch the link attachments if needed
         if !Settings.disableLinkPreviews {
-// TODO: 
-//                ZMUserSession.shared()?.enqueue {
-//                    message.refetchLinkAttachmentsIfNeeded()
-//                }
-//            }
+            let id = (message as! ZMMessage).objectID
+            userSession.enqueue {
+                let message = ZMMessage.existingObject(
+                    with: id,
+                    inUserSession: userSession.contextProvider
+                )
+                message?.refetchLinkAttachmentsIfNeeded()
+            }
         }
 
         // Text parsing

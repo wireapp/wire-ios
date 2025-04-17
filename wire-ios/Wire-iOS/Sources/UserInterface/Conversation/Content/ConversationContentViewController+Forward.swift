@@ -182,11 +182,8 @@ extension ConversationContentViewController {
         // TODO: [WPB-16431] this is to update the cells on iPad when sidebar
         // is hidden or shown. This is a quick fix for now. To improve later
         coordinator.animate(alongsideTransition: nil) { _ in
+            print("DS: viewWillTransition: calling resetSectionControllers")
             self.dataSource.resetSectionControllers()
-            self.dataSource.calculateSections() { sections in
-                self.dataSource.reloadSections(newSections: sections)
-                self.tableView.reloadData()
-            }
         }
     }
 

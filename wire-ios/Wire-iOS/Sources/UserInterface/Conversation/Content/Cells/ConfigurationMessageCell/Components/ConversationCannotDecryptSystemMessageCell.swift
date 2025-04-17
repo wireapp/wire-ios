@@ -27,6 +27,7 @@ final class ConversationCannotDecryptSystemMessageCell:
         let icon: UIImage?
         let attributedText: NSAttributedString?
         let showLine: Bool
+        let accentColor: UIColor
     }
 
     var lastConfiguration: Configuration?
