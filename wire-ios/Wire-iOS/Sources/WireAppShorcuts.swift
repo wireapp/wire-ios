@@ -22,10 +22,10 @@ import WireUtilities
 struct WireAppShorcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         if DeveloperFlag.enablePerformBackupAction.isOn {
-            return [AppShortcut(intent: PerformBackupIntent(), phrases: ["Backup data with \(.applicationName)"])]
+            [AppShortcut(intent: PerformBackupIntent(), phrases: ["Backup data with \(.applicationName)"])]
         } else {
-            return []
+            []
         }
-        
+
     }
 }

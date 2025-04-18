@@ -69,7 +69,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireCellsAttachmentsPreviews:
             "Use the new WireCells previews for conversations attachments"
-            
+
         case .enablePerformBackupAction:
             "Expose perform Backup Intent"
         }
@@ -106,8 +106,10 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
-        case .enablePerformBackupAction:
-            "EnablePerformBackupAction"
+        case .useWireAuthentication:
+            "WireAuthenticationEnabled"
+        default:
+            nil
         }
     }
 
