@@ -29,8 +29,7 @@ final class PushTokenTests: XCTestCase {
         sut = PushToken(
             deviceToken: Data([0x01, 0x02, 0x03]),
             appIdentifier: "some",
-            transportType: "some",
-            tokenType: .standard
+            transportType: "some"
         )
 
         super.setUp()
@@ -52,7 +51,7 @@ final class PushTokenTests: XCTestCase {
         let mockPushToken = MockOldPushToken(
             deviceToken: Data([0x01, 0x02, 0x03]),
             appIdentifier: "com.wire.zclient",
-            transportType: "APNS_VOIP"
+            transportType: "APNS"
         )
 
         guard let pushTokenData = try? JSONEncoder().encode(mockPushToken) else {
@@ -68,37 +67,7 @@ final class PushTokenTests: XCTestCase {
         let expectedPushToken = PushToken(
             deviceToken: Data([0x01, 0x02, 0x03]),
             appIdentifier: "com.wire.zclient",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
-        )
-
-        XCTAssertEqual(decodedPushToken, expectedPushToken)
-    }
-
-    func testThatItDecodesPushTokenWithVoipTokenType() throws {
-        // given
-        let mockPushToken = PushToken(
-            deviceToken: Data([0x01, 0x02, 0x03]),
-            appIdentifier: "com.wire.zclient",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
-        )
-
-        guard let pushTokenData = try? JSONEncoder().encode(mockPushToken) else {
-            return XCTFail("The push token data cannot be encoded.")
-        }
-
-        // when
-        guard let decodedPushToken = try? JSONDecoder().decode(PushToken.self, from: pushTokenData) else {
-            return XCTFail("The push token data cannot be decoded.")
-        }
-
-        // then
-        let expectedPushToken = PushToken(
-            deviceToken: Data([0x01, 0x02, 0x03]),
-            appIdentifier: "com.wire.zclient",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
+            transportType: "APNS"
         )
 
         XCTAssertEqual(decodedPushToken, expectedPushToken)
@@ -109,8 +78,7 @@ final class PushTokenTests: XCTestCase {
         let mockPushToken = PushToken(
             deviceToken: Data([0x01, 0x02, 0x03]),
             appIdentifier: "com.wire.zclient",
-            transportType: "APNS",
-            tokenType: .standard
+            transportType: "APNS"
         )
 
         guard let pushTokenData = try? JSONEncoder().encode(mockPushToken) else {
@@ -126,8 +94,7 @@ final class PushTokenTests: XCTestCase {
         let expectedPushToken = PushToken(
             deviceToken: Data([0x01, 0x02, 0x03]),
             appIdentifier: "com.wire.zclient",
-            transportType: "APNS",
-            tokenType: .standard
+            transportType: "APNS"
         )
 
         XCTAssertEqual(decodedPushToken, expectedPushToken)
