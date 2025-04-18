@@ -27,7 +27,6 @@ import XCTest
 final class MessageLocalStoreTests: XCTestCase {
 
     private var sut: MessageLocalStore!
-    private var userLocalStore: MockUserLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -37,14 +36,12 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        userLocalStore = MockUserLocalStoreProtocol()
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
 
         sut = MessageLocalStore(
-            context: context,
-            userLocalStore: userLocalStore
+            context: context
         )
     }
 
@@ -54,7 +51,6 @@ final class MessageLocalStoreTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
-        userLocalStore = nil
     }
 
     // MARK: - Tests
@@ -66,6 +62,8 @@ final class MessageLocalStoreTests: XCTestCase {
             let conversation = modelHelper.createGroupConversation(
                 in: context
             )
+
+            conversation.isForcedReadOnly = false
 
             let selfUser = modelHelper.createSelfUser(
                 id: .mockID1,
@@ -79,9 +77,6 @@ final class MessageLocalStoreTests: XCTestCase {
 
             return (clientMessage, conversation, selfUser, user)
         }
-
-        userLocalStore.fetchSelfUser_MockValue = selfUser
-        userLocalStore.fetchUserIdDomain_MockValue = user
 
         // Given a regular message to add to a conversation
         let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
@@ -123,29 +118,27 @@ final class MessageLocalStoreTests: XCTestCase {
         // Mock
 
         let user = await context.perform { [self] in
-            modelHelper.createUser(id: Scaffolding.userID, in: context)
+            modelHelper.createSelfUser(in: context)
+            return modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
 
-        userLocalStore.fetchOrCreateUserIdDomain_MockValue = user
-        userLocalStore.fetchUserIdDomain_MockValue = user
-        userLocalStore.fetchSelfUser_MockValue = user
-        userLocalStore.fetchOrCreateUsersUserIDs_MockValue = Set([user])
+        let conversation = await makeConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain,
+            creator: user
+        )
 
         for messageType in Scaffolding.allSystemMessageTypes {
-            let conversationID = UUID()
-            let conversationDomain = Scaffolding.domain1
-            let conversation = await makeConversation(
-                id: conversationID,
-                domain: conversationDomain,
-                creator: user
-            )
+            await context.perform {
+                conversation.removeAllMessages(conversation.allMessages)
+            }
 
             // When
 
             await sut.addSystemMessage(
                 messageType: messageType,
-                conversationID: conversationID,
-                conversationDomain: conversationDomain
+                conversationID: Scaffolding.conversationID,
+                conversationDomain: Scaffolding.domain1
             )
 
             // Then
@@ -172,6 +165,7 @@ final class MessageLocalStoreTests: XCTestCase {
 
         XCTAssertEqual(lastMessagesTypes.count, expectedResults.messagesCount)
         XCTAssertEqual(lastMessagesTypes, expectedResults.zmMessages)
+
     }
 
     private func makeConversation(
@@ -181,8 +175,8 @@ final class MessageLocalStoreTests: XCTestCase {
     ) async -> ZMConversation {
         await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
-                id: id,
-                domain: domain,
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain1,
                 in: context
             )
             conversation.creator = creator
@@ -258,7 +252,7 @@ final class MessageLocalStoreTests: XCTestCase {
             .newConversationCreated(date: date),
             .participantsRemoved(
                 participants: [(id: userID, domain: domain1)],
-                sender: (id: otherUserID, domain: domain1),
+                sender: (id: userID, domain: domain1),
                 date: date
             ),
             .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date),

@@ -19,6 +19,7 @@
 import Foundation
 import UserNotifications
 import WireCommonComponents
+import WireDomain
 import WireLogging
 import WireUtilities
 
@@ -26,9 +27,11 @@ final class NotificationService: UNNotificationServiceExtension {
 
     // MARK: - Properties
 
-    let legacyService = LegacyNotificationService()
+    let notificationService: NotificationServiceProtocol
 
     override init() {
+        let isNewSyncOn = DeveloperFlag.newInitialSync.isOn
+        self.notificationService = isNewSyncOn ? NotificationServiceExtension() : LegacyNotificationService()
         super.init()
         WireAnalytics.setup()
     }
@@ -41,13 +44,13 @@ final class NotificationService: UNNotificationServiceExtension {
     ) {
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
-        legacyService.didReceive(
+        notificationService.didReceive(
             request,
             withContentHandler: contentHandler
         )
     }
 
     override func serviceExtensionTimeWillExpire() {
-        legacyService.serviceExtensionTimeWillExpire()
+        notificationService.serviceExtensionTimeWillExpire()
     }
 }

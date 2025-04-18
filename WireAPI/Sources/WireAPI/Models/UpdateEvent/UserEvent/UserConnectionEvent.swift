@@ -25,14 +25,14 @@ public struct UserConnectionEvent: Equatable, Codable, Sendable {
 
     /// The name of the other user.
 
-    public let userName: String
+    public let userName: String?
 
     /// The connection to the other user.
 
     public let connection: Connection
 
     public init(
-        userName: String,
+        userName: String?,
         connection: Connection
     ) {
         self.userName = userName

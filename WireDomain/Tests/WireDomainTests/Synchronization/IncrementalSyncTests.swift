@@ -63,7 +63,7 @@ final class IncrementalSyncTests: XCTestCase {
     func test_perform_pendingEventsExist() async throws {
         // Mock
         // Pending events are pulled.
-        updateEventsSync.pull_MockMethod = {}
+        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
 
         // Some pending events.
         var storedEnvelopes = [
