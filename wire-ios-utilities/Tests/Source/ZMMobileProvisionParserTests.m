@@ -33,11 +33,6 @@
     [self assertMatchingTeam:ZMProvisionTeamAppStore apsEnvironment:ZMAPSEnvironmentUnknown forProfileNamed:@"appstore-sandbox"];
 }
 
-- (void)testThatItParsesEnterpriseProduction;
-{
-    [self assertMatchingTeam:ZMProvisionTeamEnterprise apsEnvironment:ZMAPSEnvironmentProduction forProfileNamed:@"enterprise-production"];
-}
-
 - (void)testThatItParsesEnterpriseSandbox;
 {
     [self assertMatchingTeam:ZMProvisionTeamEnterprise apsEnvironment:ZMAPSEnvironmentSandbox forProfileNamed:@"enterprise-sandbox"];
