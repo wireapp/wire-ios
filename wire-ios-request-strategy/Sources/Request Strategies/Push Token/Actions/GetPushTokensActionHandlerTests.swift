@@ -81,6 +81,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         let payload = Payload(tokens: [
             token(clientID: "clientA", data: Data([0x01, 0x01, 0x01]), type: "APNS"),
             token(clientID: "clientB", data: Data([0x02, 0x02, 0x02]), type: "APNS_SANDBOX"),
+            token(clientID: "clientA", data: Data([0x03, 0x03, 0x03]), type: "APNS_SANDBOX"),
             token(clientID: "clientA", data: Data([0x05, 0x05, 0x05]), type: "GCM")
         ])
 
