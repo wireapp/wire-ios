@@ -87,12 +87,16 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         _ registry: PKPushRegistry,
         didInvalidatePushTokenFor type: PKPushType
     ) {
-       // do nothing
+        // do nothing
     }
-    
-    public func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType) async {
+
+    public func pushRegistry(
+        _ registry: PKPushRegistry,
+        didReceiveIncomingPushWith payload: PKPushPayload,
+        for type: PKPushType
+    ) async {
         Self.logger.debug("did receive incoming push")
-        
+
         // We're only interested in voIP tokens.
         guard type == .voIP else { return }
 

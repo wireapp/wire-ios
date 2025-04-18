@@ -995,26 +995,25 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     func withSession(
         for account: Account,
-        notifyAboutMigration: Bool = false) async -> ZMUserSession? {
-            
-            WireLogger.sessionManager.debug("Request to load session for \(account)")
-            if let session = self.backgroundUserSessions[account.userIdentifier] {
-                WireLogger.sessionManager.debug("Session for \(account) is already loaded")
-                return session
-            } else {
-                return await withCheckedContinuation { continuation in
-                    self.setupUserSession(account: account) { userSession in
-                        if let userSession {
-                            continuation.resume(returning: userSession)
-                        } else {
-                            continuation.resume(returning: nil)
-                        }
+        notifyAboutMigration: Bool = false
+    ) async -> ZMUserSession? {
+
+        WireLogger.sessionManager.debug("Request to load session for \(account)")
+        if let session = backgroundUserSessions[account.userIdentifier] {
+            WireLogger.sessionManager.debug("Session for \(account) is already loaded")
+            return session
+        } else {
+            return await withCheckedContinuation { continuation in
+                self.setupUserSession(account: account) { userSession in
+                    if let userSession {
+                        continuation.resume(returning: userSession)
+                    } else {
+                        continuation.resume(returning: nil)
                     }
                 }
             }
         }
-    
-    
+    }
 
     public func retryStart() {
         delegate?.sessionManagerAsksToRetryStart()
