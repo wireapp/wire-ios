@@ -65,11 +65,11 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
         }
 
         let format: NotificationBody.NewMessageBodyDescriptor = if isMention {
-            .textWithMention(content: formattedText, senderName: senderName)
+            .textWithMention(content: formattedText, senderName: isGroupConversation ? senderName : nil)
         } else if isReply {
-            .textWithReply(content: formattedText, senderName: senderName)
+            .textWithReply(content: formattedText, senderName: isGroupConversation ? senderName : nil)
         } else {
-            .text(content: formattedText, senderName: senderName)
+            .text(content: formattedText, senderName: isGroupConversation ? senderName : nil)
         }
 
         let body = NotificationBody.singleMessage(

@@ -188,7 +188,11 @@ final class ConversationTextMessageNotificationBuilderTests: XCTestCase {
         }
 
         // Body
-        XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName): foo")
+        if isGroup {
+            XCTAssertEqual(notificationContent.body, "\(Scaffolding.senderName): foo")
+        } else {
+            XCTAssertEqual(notificationContent.body, "foo")
+        }
 
         // Category
         XCTAssertEqual(
