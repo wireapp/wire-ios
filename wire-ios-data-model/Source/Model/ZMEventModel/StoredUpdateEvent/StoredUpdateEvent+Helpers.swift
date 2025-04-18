@@ -20,35 +20,7 @@ import CoreData
 import Foundation
 import WireLogging
 
-@objc(StoredUpdateEvent)
-public final class StoredUpdateEvent: NSManagedObject {
-
-    private static let entityName = "StoredUpdateEvent"
-    private static let SortIndexKey = "sortIndex"
-
-    /// The key under which the event payload is encrypted by the public key.
-
-    static let encryptedPayloadKey = "encryptedPayload"
-
-    // MARK: - Properties
-
-    @NSManaged var eventHash: Int64
-
-    @NSManaged public var uuidString: String?
-
-    @NSManaged var debugInformation: String?
-
-    @NSManaged var isTransient: Bool
-
-    @NSManaged var payload: NSDictionary?
-
-    @NSManaged var isEncrypted: Bool
-
-    @NSManaged var isCallEvent: Bool
-
-    @NSManaged var source: Int16
-
-    @NSManaged var sortIndex: Int64
+extension StoredUpdateEvent {
 
     // MARK: - Creation
 
@@ -403,6 +375,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         case serializationError
 
     }
+
 
 }
 
