@@ -316,7 +316,7 @@ extension ZMConversation {
     /// when the last read timetamp changes or a message is inserted / deleted.
 
     @objc
-    func calculateLastUnreadMessages() {
+    public func calculateLastUnreadMessages() {
         // We only calculate unread message on the sync MOC
         guard let managedObjectContext, managedObjectContext.zm_isSyncContext else { return }
 
