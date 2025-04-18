@@ -33,6 +33,7 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
     let conversationEventBuilder: any ConversationEventNotificationBuilderProtocol
     let userEventBuilder: any UserEventNotificationBuilderProtocol
+    let eventID: UUID
 
     /// Processes the events stream.
     func invoke(updateEvents: AsyncStream<[UpdateEvent]>) async throws -> [UserNotification] {
@@ -59,9 +60,12 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                     event: conversationEvent
                 )
             } catch {
+                var attributes = LogAttributes.newNSE
+                attributes[.eventId] = eventID.safeForLoggingDescription
+
                 WireLogger.notifications.error(
-                    "An error occured when building the conversation notification content \(error) ",
-                    attributes: .newNSE
+                    "An error occured when building the conversation notification content \(error)",
+                    attributes: attributes
                 )
 
                 return nil

@@ -99,6 +99,9 @@ private class GenerateNotificationDependencye9ac54a4aea693448fe3Provider: Genera
     var userID: UUID {
         return verifyUserStep.userID
     }
+    var eventID: UUID {
+        return verifyUserStep.eventID
+    }
     var messageLocalStore: any MessageLocalStoreProtocol {
         return verifyUserStep.messageLocalStore
     }
@@ -178,6 +181,7 @@ extension VerifyUserStep: NeedleFoundation.Registration {
         localTable["selectedAccount-Account"] = { [unowned self] in self.selectedAccount as Any }
         localTable["accountManager-AccountManager"] = { [unowned self] in self.accountManager as Any }
         localTable["userID-UUID"] = { [unowned self] in self.userID as Any }
+        localTable["eventID-UUID"] = { [unowned self] in self.eventID as Any }
         localTable["sharedUserDefaults-UserDefaults"] = { [unowned self] in self.sharedUserDefaults as Any }
         localTable["cookieStorage-any CookieStorageProtocol"] = { [unowned self] in self.cookieStorage as Any }
         localTable["coreData-CoreDataStack"] = { [unowned self] in self.coreData as Any }
@@ -197,6 +201,7 @@ extension GenerateNotificationStep: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\GenerateNotificationDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
         keyPathToName[\GenerateNotificationDependency.userID] = "userID-UUID"
+        keyPathToName[\GenerateNotificationDependency.eventID] = "eventID-UUID"
         keyPathToName[\GenerateNotificationDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"

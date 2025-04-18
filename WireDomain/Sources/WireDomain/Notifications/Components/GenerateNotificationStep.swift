@@ -24,6 +24,7 @@ import WireDataModel
 protocol GenerateNotificationDependency: Dependency {
     var sharedUserDefaults: UserDefaults { get }
     var userID: UUID { get }
+    var eventID: UUID { get }
     var messageLocalStore: any MessageLocalStoreProtocol { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
     var userLocalStore: any UserLocalStoreProtocol { get }
@@ -43,7 +44,8 @@ final class GenerateNotificationStep: Component<GenerateNotificationDependency>,
 
         let generateNotificationUseCase = GenerateNotificationUseCase(
             conversationEventBuilder: conversationEventNotificationBuilder,
-            userEventBuilder: userEventNotificationBuilder
+            userEventBuilder: userEventNotificationBuilder,
+            eventID: dependency.eventID
         )
 
         let userNotifications = try await generateNotificationUseCase.invoke(

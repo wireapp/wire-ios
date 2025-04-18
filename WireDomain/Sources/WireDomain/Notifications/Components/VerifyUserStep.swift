@@ -42,14 +42,17 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
     public var selectedAccount: Account
     public var accountManager: AccountManager
     public var userID: UUID
+    public var eventID: UUID
 
     init(
         parent: any Scope,
         userID: UUID,
+        eventID: UUID,
         accountManager: AccountManager
     ) throws {
         self.userID = userID
         self.accountManager = accountManager
+        self.eventID = eventID
 
         guard let selectedAccount = accountManager.account(
             with: userID

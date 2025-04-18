@@ -40,11 +40,15 @@ final class ProcessNotificationRequestStep: Component<ProcessNotificationRequest
         let payload = try await processNotificationUseCase.invoke(request: request)
 
         try await verifyUserStep(
-            userID: payload.userID
+            userID: payload.userID,
+            eventID: payload.eventID
         ).verifyUserSession()
     }
 
-    func verifyUserStep(userID: UUID) throws -> VerifyUserStep {
+    func verifyUserStep(
+        userID: UUID,
+        eventID: UUID
+    ) throws -> VerifyUserStep {
         let accountManager = AccountManager(
             sharedDirectory: dependency.applicationContainer
         )
@@ -52,6 +56,7 @@ final class ProcessNotificationRequestStep: Component<ProcessNotificationRequest
         return try VerifyUserStep(
             parent: self,
             userID: userID,
+            eventID: eventID,
             accountManager: accountManager
         )
     }
