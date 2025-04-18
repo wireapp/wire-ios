@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 extension ZMConversationMessage {
 
@@ -54,7 +55,8 @@ extension ZMConversationMessage {
             for: self,
             isCollapsed: true,
             buttonAction: nil,
-            accentColor: ZMAccentColor.default.accentColor.uiColor
+            accentColor: ZMAccentColor.default.accentColor.uiColor,
+            userSession: ZMUserSession.shared()!
         ).first {
             return cellDescription.cellAccessibilityLabel
         }

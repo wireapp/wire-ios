@@ -320,7 +320,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             isCollapsed: isCollapsed,
             buttonAction: buttonAction,
             selfUser: selfUser,
-            accentColor: (selfUser.accentColor ?? .default).uiColor
+            accentColor: (selfUser.accentColor ?? .default).uiColor,
+            userSession: userSession
         )
     }
 

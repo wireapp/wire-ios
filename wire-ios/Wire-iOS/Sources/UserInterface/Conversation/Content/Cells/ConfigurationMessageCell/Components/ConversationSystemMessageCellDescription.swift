@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 enum ConversationSystemMessageCellDescription {
 
@@ -26,7 +27,8 @@ enum ConversationSystemMessageCellDescription {
         isCollapsed: Bool,
         buttonAction: Completion?,
         selfUser: ZMUser? = nil,
-        accentColor: UIColor
+        accentColor: UIColor,
+        userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
 
         guard let systemMessageData = message.systemMessageData,
@@ -114,7 +116,13 @@ enum ConversationSystemMessageCellDescription {
             let newClientCell = ConversationNewDeviceSystemMessageCellDescription(
                 message: message,
                 systemMessageData: systemMessageData,
-                conversation: conversation as! ZMConversation
+                conversation: conversation as! ZMConversation,
+                onUserTap: { userID in
+                    showUser(id: userID, userSession: userSession)
+                },
+                onConversationTap: { conversationID in
+                    showConversation(id: conversationID, userSession: userSession)
+                }
             )
             return [AnyConversationMessageCellDescription(newClientCell)]
 
@@ -123,7 +131,10 @@ enum ConversationSystemMessageCellDescription {
             let ignoredClientCell = ConversationIgnoredDeviceSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData,
-                user: user
+                user: user,
+                onUserTap: { userID in
+                    showUser(id: userID, userSession: userSession)
+                }
             )
             return [AnyConversationMessageCellDescription(ignoredClientCell)]
 
@@ -221,6 +232,28 @@ enum ConversationSystemMessageCellDescription {
         }
 
         return []
+    }
+    
+    private static func showUser(
+        id: NSManagedObjectID,
+        userSession: UserSession
+    ) {
+        guard let zClientViewController = ZClientViewController.shared,
+              let user = ZMUser.existingObject(with: id, inUserSession: userSession.contextProvider) else {
+            return
+        }
+        zClientViewController.openClientListScreen(for: user)
+    }
+    
+    private static func showConversation(
+        id: NSManagedObjectID,
+        userSession: UserSession
+    ) {
+        guard let zClientViewController = ZClientViewController.shared,
+              let conversation = ZMConversation.existingObject(with: id, inUserSession: userSession.contextProvider) else {
+            return
+        }
+        zClientViewController.openDetailScreen(for: conversation)
     }
 }
 
