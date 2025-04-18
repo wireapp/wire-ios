@@ -24,30 +24,24 @@ import WireTransport
 
 struct UpdateEventMigrator {
 
-    private let dao: UpdateEventMigratorDAO
+    private let dao: any UpdateEventMigratorDAOProtocol
     private let localDomain: String
     private let apiVersion: WireTransport.APIVersion
 
     init(
-        context: NSManagedObjectContext,
+        dao: any UpdateEventMigratorDAOProtocol,
         localDomain: String,
         apiVersion: WireTransport.APIVersion
     ) {
-        dao = UpdateEventMigratorDAO(context: context)
+        self.dao = dao
         self.localDomain = localDomain
         self.apiVersion = apiVersion
     }
 
-    var isMigrationNeeded: Bool {
+    func isMigrationNeeded() async throws -> Bool {
         let newSyncIsAvailable = apiVersion >= .v8
-        let hasLegacyEvents = true
-        let didAlreadyMigrate = false
-
-        if didAlreadyMigrate && hasLegacyEvents {
-            assertionFailure("update events migrated but some still remain")
-        }
-
-        return newSyncIsAvailable && !didAlreadyMigrate && hasLegacyEvents
+        let hasLegacyEvents = try await dao.existsLegacyEvent()
+        return newSyncIsAvailable && hasLegacyEvents
     }
 
     func migrateLegacyUpdateEvents() async throws {
@@ -100,10 +94,7 @@ struct UpdateEventMigrator {
 
         WireLogger.sync.debug("no more legacy events to migrate...")
         WireLogger.sync.debug("deleting all legacy events...")
-        try await dao.deleteAllLegacyEvents()
-
-        WireLogger.sync.debug("saving database changes...")
-        try await dao.save()
+        try await dao.deleteAllLegacyEventsAndSave()
 
         WireLogger.sync.debug("legacy event migration complete")
     }

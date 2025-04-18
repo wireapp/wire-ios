@@ -16,16 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@preconcurrency import CoreData
 import Foundation
 import WireAPI
 
-struct UpdateEventMigratorDAO {
+// sourcery: AutoMockable
+protocol UpdateEventMigratorDAOProtocol {
+
+    func existsLegacyEvent() async throws -> Bool
+    func indexOfLastEventEnvelope() async throws -> Int64
+    func nextBatchOfLegacyEvents(privateKeys: EARPrivateKeys?) async -> [ZMUpdateEvent]?
+    func insertEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws
+    func deleteAllLegacyEventsAndSave() async throws
+
+}
+
+struct UpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
 
     private let context: NSManagedObjectContext
     private let encoder = JSONEncoder()
 
     init(context: NSManagedObjectContext) {
         self.context = context
+    }
+
+    func existsLegacyEvent() async throws -> Bool {
+        try await context.perform {
+            let request = StoredUpdateEvent.fetchRequest()
+            return try context.count(for: request) > 0
+        }
+    }
+
+    func indexOfLastEventEnvelope() async throws -> Int64 {
+        try await context.perform {
+            let request = StoredUpdateEventEnvelope.lastObjectFetchRequest
+            let lastEnvelope = try context.fetch(request).first
+            return lastEnvelope?.sortIndex ?? 0
+        }
     }
 
     func nextBatchOfLegacyEvents(privateKeys: EARPrivateKeys?) async -> [ZMUpdateEvent]? {
@@ -56,22 +83,6 @@ struct UpdateEventMigratorDAO {
         }
     }
 
-    func deleteAllLegacyEvents() async throws {
-        try await context.perform {
-            let fetchRequest = StoredUpdateEvent.fetchRequest()
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            try context.execute(deleteRequest)
-        }
-    }
-
-    func indexOfLastEventEnvelope() async throws -> Int64 {
-        try await context.perform {
-            let request = StoredUpdateEventEnvelope.lastObjectFetchRequest
-            let lastEnvelope = try context.fetch(request).first
-            return lastEnvelope?.sortIndex ?? 0
-        }
-    }
-
     func insertEventEnvelope(
         _ eventEnvelope: UpdateEventEnvelope,
         index: Int64
@@ -85,8 +96,11 @@ struct UpdateEventMigratorDAO {
         }
     }
 
-    func save() async throws {
+    func deleteAllLegacyEventsAndSave() async throws {
         try await context.perform {
+            let fetchRequest = StoredUpdateEvent.fetchRequest()
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            try context.execute(deleteRequest)
             try context.save()
         }
     }

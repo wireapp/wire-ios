@@ -25,6 +25,7 @@
 
 
 import WireAnalytics
+import WireAPI
 
 @testable import WireSyncEngine
 
@@ -1193,6 +1194,95 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
         } else {
             fatalError("no mock for `calculateSupportedProtocols`")
         }
+    }
+
+}
+
+class MockUpdateEventMigratorDAOProtocol: UpdateEventMigratorDAOProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - indexOfLastEventEnvelope
+
+    var indexOfLastEventEnvelope_Invocations: [Void] = []
+    var indexOfLastEventEnvelope_MockError: Error?
+    var indexOfLastEventEnvelope_MockMethod: (() async throws -> Int64)?
+    var indexOfLastEventEnvelope_MockValue: Int64?
+
+    func indexOfLastEventEnvelope() async throws -> Int64 {
+        indexOfLastEventEnvelope_Invocations.append(())
+
+        if let error = indexOfLastEventEnvelope_MockError {
+            throw error
+        }
+
+        if let mock = indexOfLastEventEnvelope_MockMethod {
+            return try await mock()
+        } else if let mock = indexOfLastEventEnvelope_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `indexOfLastEventEnvelope`")
+        }
+    }
+
+    // MARK: - nextBatchOfLegacyEvents
+
+    var nextBatchOfLegacyEventsPrivateKeys_Invocations: [EARPrivateKeys?] = []
+    var nextBatchOfLegacyEventsPrivateKeys_MockMethod: ((EARPrivateKeys?) async -> [ZMUpdateEvent]?)?
+    var nextBatchOfLegacyEventsPrivateKeys_MockValue: [ZMUpdateEvent]??
+
+    func nextBatchOfLegacyEvents(privateKeys: EARPrivateKeys?) async -> [ZMUpdateEvent]? {
+        nextBatchOfLegacyEventsPrivateKeys_Invocations.append(privateKeys)
+
+        if let mock = nextBatchOfLegacyEventsPrivateKeys_MockMethod {
+            return await mock(privateKeys)
+        } else if let mock = nextBatchOfLegacyEventsPrivateKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `nextBatchOfLegacyEventsPrivateKeys`")
+        }
+    }
+
+    // MARK: - insertEventEnvelope
+
+    var insertEventEnvelopeIndex_Invocations: [(eventEnvelope: UpdateEventEnvelope, index: Int64)] = []
+    var insertEventEnvelopeIndex_MockError: Error?
+    var insertEventEnvelopeIndex_MockMethod: ((UpdateEventEnvelope, Int64) async throws -> Void)?
+
+    func insertEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws {
+        insertEventEnvelopeIndex_Invocations.append((eventEnvelope: eventEnvelope, index: index))
+
+        if let error = insertEventEnvelopeIndex_MockError {
+            throw error
+        }
+
+        guard let mock = insertEventEnvelopeIndex_MockMethod else {
+            fatalError("no mock for `insertEventEnvelopeIndex`")
+        }
+
+        try await mock(eventEnvelope, index)
+    }
+
+    // MARK: - deleteAllLegacyEventsAndSave
+
+    var deleteAllLegacyEventsAndSave_Invocations: [Void] = []
+    var deleteAllLegacyEventsAndSave_MockError: Error?
+    var deleteAllLegacyEventsAndSave_MockMethod: (() async throws -> Void)?
+
+    func deleteAllLegacyEventsAndSave() async throws {
+        deleteAllLegacyEventsAndSave_Invocations.append(())
+
+        if let error = deleteAllLegacyEventsAndSave_MockError {
+            throw error
+        }
+
+        guard let mock = deleteAllLegacyEventsAndSave_MockMethod else {
+            fatalError("no mock for `deleteAllLegacyEventsAndSave`")
+        }
+
+        try await mock()
     }
 
 }
