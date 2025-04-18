@@ -40,7 +40,7 @@ enum TeamRoleIndicator {
 final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
-        let senderProvider: () -> UserType // TODO: improve on caller side
+        var sender: UserType
         let indicator: Indicator?
         let teamRoleIndicator: TeamRoleIndicator?
     }
@@ -116,7 +116,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - configure
 
     func configure(with object: Configuration, animated: Bool) {
-        let user = object.senderProvider()
+        let user = object.sender
         avatar.user = user
         availabilityIndicatorView.availability = user.availability.mapToAccountImageAvailability()
 
@@ -177,7 +177,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     }
 
     private func configureAuthorLabel(object: Configuration) {
-        let sender = object.senderProvider()
+        let sender = object.sender
         let textColor: UIColor = sender.isServiceUser ? SemanticColors.Label.textDefault : sender.accentColor
         let attributedString = NSMutableAttributedString(
             string: sender.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
@@ -279,9 +279,16 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     typealias View = ConversationSenderMessageDetailsCell
     typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let sender = message?.senderUser {
+                configuration.sender = sender
+            }
+        }
+    }
+    
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -296,12 +303,11 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     ///   - message: The given message
     ///   - timestamp: The given timestamp of the message
     init(
-        senderProvider: @escaping () -> UserType,
+        sender: UserType,
         selfUser: ZMUser? = nil,
         message: ZMConversationMessage
     ) {
         self.message = message
-        let sender = senderProvider()
         let teamRoleIndicator = if let selfUser {
             sender.teamRoleIndicator(selfUser: selfUser)
         } else {
@@ -313,7 +319,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
             .none
         }
         self.configuration = View.Configuration(
-            senderProvider: senderProvider,
+            sender: sender,
             indicator: indicator,
             teamRoleIndicator: teamRoleIndicator
         )

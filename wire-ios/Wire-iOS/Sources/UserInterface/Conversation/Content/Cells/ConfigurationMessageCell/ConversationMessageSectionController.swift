@@ -398,7 +398,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         if isSenderVisible, let sender = message.senderUser {
             let description = ConversationSenderMessageCellDescription(
-                senderProvider: { self.message.senderUser! }, // TODO:
+                sender: sender,
                 selfUser: selfUser,
                 message: message
             )
