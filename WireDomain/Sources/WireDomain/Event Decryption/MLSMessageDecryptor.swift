@@ -24,10 +24,26 @@ import WireLogging
 struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface
-    let mlsService: any MLSServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
-    func decryptedEventData(
+    func decryptedWelcomeMessageEventData(
+        from eventData: ConversationMLSWelcomeEvent
+    ) async throws {
+        let welcomeMessage = eventData.welcomeMessage
+        let conversationID = eventData.conversationID
+
+        let groupID = try await mlsDecryptionService.processWelcomeMessage(
+            welcomeMessage: welcomeMessage
+        )
+
+        await conversationLocalStore.createMLSConversation(
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain,
+            mlsGroupID: groupID
+        )
+    }
+
+    func decryptedMessageAddEventData(
         from eventData: ConversationMLSMessageAddEvent
     ) async throws -> ConversationMLSMessageAddEvent {
         let conversationID = eventData.conversationID
@@ -68,10 +84,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         decryptedEvent.decryptedMessages = decryptedMessages
 
         return decryptedEvent
-    }
-
-    func commitPendingProposalsIfNeeded() async {
-        await mlsService.commitPendingProposalsIfNeeded()
     }
 
     private func decryptMLSMessage(

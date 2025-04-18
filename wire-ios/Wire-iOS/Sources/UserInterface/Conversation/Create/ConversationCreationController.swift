@@ -426,16 +426,13 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             apiService: apiService
         ).makeAPI(for: apiVersion)
 
-        let userLocalStore = UserLocalStore(context: context)
         let messageLocalStore = MessageLocalStore(
-            context: context,
-            userLocalStore: userLocalStore
+            context: context
         )
 
         let store = ConversationLocalStore(
             context: context,
             mlsService: nil,
-            userLocalStore: userLocalStore,
             messageLocalStore: messageLocalStore
         )
 

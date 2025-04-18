@@ -28,16 +28,19 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
+    private let messageLocalStore: any MessageLocalStoreProtocol
     private let userDefaults: UserDefaults
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
+        messageLocalStore: any MessageLocalStoreProtocol,
         userDefaults: UserDefaults = .standard
     ) {
         self.context = context
         self.userDefaults = userDefaults
+        self.messageLocalStore = messageLocalStore
     }
 
     public func fetchSelfUser() async -> ZMUser {
@@ -143,6 +146,30 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         )
     }
 
+    public func name(
+        for user: ZMUser
+    ) async -> String? {
+        await context.perform {
+            user.name
+        }
+    }
+
+    public func teamName(
+        for user: ZMUser
+    ) async -> String? {
+        await context.perform {
+            user.teamName
+        }
+    }
+
+    public func id(
+        for user: ZMUser
+    ) async -> UUID {
+        await context.perform {
+            user.remoteIdentifier
+        }
+    }
+
     public func addSelfLegalHoldRequest(
         userID: UUID,
         clientID: String,
@@ -209,6 +236,80 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             }
 
             ZMUser.selfUser(in: context).analyticsIdentifier = analyticsID
+        }
+    }
+
+    public func removeUserFromAllConversations(
+        id: UUID,
+        domain: String?,
+        date: Date
+    ) async throws {
+        let user = await context.perform { [context] in
+            ZMUser.fetchOrCreate(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
+
+        let allGroupConversations = await context.perform {
+            // swiftformat:disable:next redundantProperty
+            let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
+                guard $0.conversation?.conversationType == .group else {
+                    return nil
+                }
+
+                return $0.conversation
+            }
+
+            return allGroupConversations
+        }
+
+        for conversation in allGroupConversations {
+            let (userTeam, isTeamMember, conversationTeam, conversationID, conversationDomain) = await context.perform {
+                (
+                    user.team,
+                    user.isTeamMember,
+                    conversation.team,
+                    conversation.remoteIdentifier as UUID,
+                    conversation.domain
+                )
+            }
+
+            if isTeamMember, conversationTeam == userTeam {
+
+                let systemMessageType: SystemMessageType = .teamMemberRemoved(
+                    member: (id, domain),
+                    date: date
+                )
+
+                await messageLocalStore.addSystemMessage(
+                    messageType: systemMessageType,
+                    conversationID: conversationID,
+                    conversationDomain: conversationDomain
+                )
+
+            } else {
+
+                let systemMessageType: SystemMessageType = .participantsRemoved(
+                    participants: [(id, domain)],
+                    sender: (id, domain),
+                    date: date
+                )
+
+                await messageLocalStore.addSystemMessage(
+                    messageType: systemMessageType,
+                    conversationID: conversationID,
+                    conversationDomain: conversationDomain
+                )
+            }
+
+            await context.perform {
+                conversation.removeParticipantAndUpdateConversationState(
+                    user: user,
+                    initiatingUser: user
+                )
+            }
         }
     }
 
@@ -286,6 +387,23 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             user.supportedProtocols = userUpdateInfo.supportedProtocols ?? [.proteus]
 
             user.isPendingMetadataRefresh = false
+        }
+    }
+
+    public func selfUserInfo() async -> (id: UUID, clientId: String?) {
+        let selfUser = await fetchSelfUser()
+
+        return await context.perform {
+            (
+                id: selfUser.remoteIdentifier,
+                clientId: selfUser.selfClient()?.remoteIdentifier
+            )
+        }
+    }
+
+    public func fetchSelfUserAvailability() async -> Availability {
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context).availability
         }
     }
 
