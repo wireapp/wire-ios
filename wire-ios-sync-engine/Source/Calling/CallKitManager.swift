@@ -80,7 +80,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     private var callStateObserverToken: Any?
     private var missedCallObserverToken: Any?
 
-    private let callRegister = CallKitCallRegister()
+    let callRegister = CallKitCallRegister()
     private var connectedCallConversation: ZMConversation?
 
     private let logger = WireLogger(tag: "call-kit")
