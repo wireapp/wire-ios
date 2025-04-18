@@ -67,6 +67,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         _ event: ZMUpdateEvent,
         context: NSManagedObjectContext,
         index: Int64,
+        isCallEvent: Bool,
         publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
         guard let eventId = event.uuid?.transportString(),
@@ -85,6 +86,7 @@ public final class StoredUpdateEvent: NSManagedObject {
             eventId: eventId,
             eventHash: eventHash,
             index: index,
+            isCallEvent: isCallEvent,
             context: context
         ) else {
             WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
@@ -104,6 +106,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         eventId: String,
         eventHash: Int,
         index: Int64,
+        isCallEvent: Bool,
         context: NSManagedObjectContext
     ) -> StoredUpdateEvent? {
         let storedEvent = StoredUpdateEvent.insertNewObject(context)
@@ -113,7 +116,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent?.source = Int16(event.source.rawValue)
         storedEvent?.sortIndex = index
         storedEvent?.uuidString = eventId
-        storedEvent?.isCallEvent = event.isCallEvent
+        storedEvent?.isCallEvent = isCallEvent
         storedEvent?.payload = event.payload as NSDictionary
         storedEvent?.eventHash = Int64(eventHash)
         storedEvent?.isEncrypted = false
@@ -207,7 +210,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         return result.first?.sortIndex ?? 0
     }
 
-    static func nextEventBatch(
+    public static func nextEventBatch(
         size: Int,
         privateKeys: EARPrivateKeys?,
         context: NSManagedObjectContext,
@@ -248,10 +251,10 @@ public final class StoredUpdateEvent: NSManagedObject {
         return result
     }
 
-    struct EventBatch {
+    public struct EventBatch {
 
-        var eventsToProcess = [ZMUpdateEvent]()
-        var eventsToDelete = [StoredUpdateEvent]()
+        public var eventsToProcess = [ZMUpdateEvent]()
+        public var eventsToDelete = [StoredUpdateEvent]()
 
     }
 
@@ -401,4 +404,22 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     }
 
+}
+
+/// Computes an hash to compare UpdateEvent and StoredUpdateEvent
+public enum EventHasher {
+
+    static func hash(eventId: String, payload: [AnyHashable: Any]) -> Int? {
+        guard let payloadData = try? NSKeyedArchiver.archivedData(
+            withRootObject: payload as NSDictionary,
+            requiringSecureCoding: true
+        ) else {
+            return nil
+        }
+        var hasher = Hasher()
+        hasher.combine(payloadData)
+        hasher.combine(eventId)
+        return hasher.finalize()
+
+    }
 }
