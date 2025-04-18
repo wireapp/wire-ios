@@ -33,6 +33,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case newInitialSync
     case useWireAuthentication
     case wireCellsAttachmentsPreviews
+    case enablePerformBackupAction
 
     public var description: String {
         switch self {
@@ -68,6 +69,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .wireCellsAttachmentsPreviews:
             "Use the new WireCells previews for conversations attachments"
+            
+        case .enablePerformBackupAction:
+            "Expose perform Backup Intent"
         }
     }
 
@@ -102,10 +106,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
-        case .useWireAuthentication:
-            "WireAuthenticationEnabled"
-        default:
-            nil
+        case .enablePerformBackupAction:
+            "EnablePerformBackupAction"
         }
     }
 

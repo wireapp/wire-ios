@@ -179,6 +179,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         WireLogger.appDelegate
             .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
         WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
+    
         return true
     }
 
