@@ -6,7 +6,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ### 2.125.0
 
-* added `asyncStreamCapable attribute on the UserClient entity
+* added `asyncStreamCapable` attribute on the UserClient entity
 
 ### 2.124.0
 
