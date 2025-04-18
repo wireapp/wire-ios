@@ -99,6 +99,18 @@
       location = "group:Gemfile.lock">
    </FileRef>
    <FileRef
+      location = "group:crowdin.yml">
+   </FileRef>
+   <FileRef
+      location = "group:Jenkinsfile">
+   </FileRef>
+   <FileRef
+      location = "group:WireAVS">
+   </FileRef>
+   <FileRef
+      location = "group:WireCoreCrypto">
+   </FileRef>
+   <FileRef
       location = "group:setup.sh">
    </FileRef>
    <Group
@@ -119,9 +131,6 @@
       </FileRef>
    </Group>
    <FileRef
-      location = "group:wire-avs.json">
-   </FileRef>
-   <FileRef
       location = "group:scripts">
    </FileRef>
    <Group
@@ -139,9 +148,6 @@
    </Group>
    <FileRef
       location = "group:wire-ios/Wire-iOS.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:WireAuthentication/WireAuthentication.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:WireUI">
@@ -168,13 +174,13 @@
       location = "group:WireDomain/WireDomain Project.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireDomain">
-   </FileRef>
-   <FileRef
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-mocktransport/WireMockTransport.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-protos/WireProtos.xcodeproj">
@@ -205,6 +211,21 @@
    </FileRef>
    <FileRef
       location = "group:WireAPI">
+   </FileRef>
+   <FileRef
+      location = "group:WireAuthentication">
+   </FileRef>
+   <FileRef
+      location = "group:WireCells">
+   </FileRef>
+   <FileRef
+      location = "group:WireConversations">
+   </FileRef>
+   <FileRef
+      location = "container:WireDebug">
+   </FileRef>
+   <FileRef
+      location = "group:WireDomain">
    </FileRef>
    <FileRef
       location = "group:WireFoundation">

@@ -1,0 +1,6 @@
+{
+  "backend_url": "https://example.com",
+  "domain_redirect": "none",
+  "due_to_existing_account": false,
+  "sso_code": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+}

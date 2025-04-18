@@ -1,7 +1,0 @@
-# ``WireAuthenticationAPI``
-
-## Overview
-
-## Topics
-
-### Group

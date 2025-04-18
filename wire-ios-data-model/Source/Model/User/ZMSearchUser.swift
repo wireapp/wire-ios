@@ -388,8 +388,12 @@ public class ZMSearchUser: NSObject, UserType {
         user?.canModifyNotificationSettings(in: conversation) == true
     }
 
-    public func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
-        user?.canModifyAccessControlSettings(in: conversation) == true
+    public func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool {
+        user?.canModifyGuestsAccessControlSettings(in: conversation) == true
+    }
+
+    public func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
+        user?.canModifyChannelAccessLevelSettings(in: conversation) == true
     }
 
     public func canLeave(_ conversation: ZMConversation) -> Bool {

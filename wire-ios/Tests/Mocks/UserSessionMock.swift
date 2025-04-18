@@ -29,6 +29,8 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
+    var isTornDown = false
+
     var userProfile: UserProfile
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
@@ -366,6 +368,8 @@ final class UserSessionMock: UserSession {
     }
 
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)
+
+    var channelsFeature: Feature.Channels = .init(status: .disabled)
 
     var mlsFeature: Feature.MLS = .init(
         status: .enabled,

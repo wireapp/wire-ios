@@ -1,6 +1,6 @@
 Feature: Upgrade
 
-  @flows @06
+  @flows @TC-8585
   Scenario Outline: I want to update from previous version to the current one (team acc)
     Given The device is reset before and after the test
     And All other versions of Wire are uninstalled

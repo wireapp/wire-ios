@@ -27,6 +27,8 @@ public protocol UserSession: AnyObject {
 
     // MARK: - Mixed properties and methods
 
+    var isTornDown: Bool { get }
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 
@@ -215,6 +217,8 @@ public protocol UserSession: AnyObject {
     var e2eiFeature: Feature.E2EI { get }
 
     var mlsFeature: Feature.MLS { get }
+
+    var channelsFeature: Feature.Channels { get }
 
     func fetchAllClients()
 

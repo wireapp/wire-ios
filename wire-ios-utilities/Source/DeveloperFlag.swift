@@ -26,9 +26,13 @@ public enum DeveloperFlag: String, CaseIterable {
     case proteusViaCoreCrypto
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
+    case skipMLSMessagesDecryption
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
+    case newInitialSync
+    case useWireAuthentication
+    case wireCellsAttachmentsPreviews
 
     public var description: String {
         switch self {
@@ -44,6 +48,9 @@ public enum DeveloperFlag: String, CaseIterable {
         case .ignoreIncomingEvents:
             "Turn on to ignore incoming update events"
 
+        case .skipMLSMessagesDecryption:
+            "Turn on to skip MLS message decryption"
+
         case .debugDuplicateObjects:
             "Turn on to have actions to insert duplicate users, conversations, teams"
 
@@ -52,6 +59,15 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .forceCRLExpiryAfterOneMinute:
             "Turn on to force CRLs to expire after 1 minute"
+
+        case .newInitialSync:
+            "Use the new and improved 'Initial Sync™' (formerly slow sync)"
+
+        case .useWireAuthentication:
+            "Use the new WireAuthentication feature module"
+
+        case .wireCellsAttachmentsPreviews:
+            "Use the new WireCells previews for conversations attachments"
         }
     }
 
@@ -80,16 +96,16 @@ public enum DeveloperFlag: String, CaseIterable {
 
     var bundleKey: String? {
         switch self {
-        case .showCreateMLSGroupToggle:
-            nil
         case .proteusViaCoreCrypto:
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
-        case .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
-            nil
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .useWireAuthentication:
+            "WireAuthenticationEnabled"
+        default:
+            nil
         }
     }
 

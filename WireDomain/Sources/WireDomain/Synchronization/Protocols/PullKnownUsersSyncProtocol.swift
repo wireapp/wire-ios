@@ -16,7 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
+/// An object to keep the local users up to date
+/// with the remote users.
 protocol PullKnownUsersSyncProtocol {
+
+    /// Fetch all locally known users from remote, then update
+    /// them locally.
 
     func pull() async throws
 

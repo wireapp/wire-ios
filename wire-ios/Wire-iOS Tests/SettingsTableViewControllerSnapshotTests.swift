@@ -90,15 +90,18 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
+    @MainActor
     func testForSettingGroup() throws {
         let group = settingsCellDescriptorFactory.settingsGroup(
             isPublicDomain: true,
             userSession: userSession,
-            useTypeIntrinsicSizeTableView: true
+            useTypeIntrinsicSizeTableView: true,
+            mainCoordinator: MockMainCoordinator()
         )
         try verify(group: group)
     }
 
+    @MainActor
     private func testForAccountGroup(
         federated: Bool,
         disabledEditing: Bool = false,
@@ -117,18 +120,22 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         try verify(group: group, file: file, testName: testName, line: line)
     }
 
+    @MainActor
     func testForAccountGroup_Federated() throws {
         try testForAccountGroup(federated: true)
     }
 
+    @MainActor
     func testForAccountGroup_NotFederated() throws {
         try testForAccountGroup(federated: false)
     }
 
+    @MainActor
     func testForAccountGroupWithDisabledEditing_Federated() throws {
         try testForAccountGroup(federated: true, disabledEditing: true)
     }
 
+    @MainActor
     func testForAccountGroupWithDisabledEditing_NotFederated() throws {
         try testForAccountGroup(federated: false, disabledEditing: true)
     }
@@ -160,7 +167,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         snapshotHelper.verify(
             matching: sut,
-            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height)
+            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: 1400)
         )
     }
 
@@ -227,7 +234,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - advanced
 
     func testForAdvancedGroup() throws {
-        let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
+        let group = settingsCellDescriptorFactory.advancedGroup(
+            userSession: userSession,
+            mainCoordinator: MockMainCoordinator()
+        )
         try verify(group: group)
     }
 

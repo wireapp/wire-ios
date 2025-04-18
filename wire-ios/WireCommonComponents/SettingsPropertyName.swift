@@ -40,6 +40,7 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case disableSendButton = "DisableSendButton"
 
     case disableLinkPreviews = "DisableLinkPreviews"
+    case collapseOwnMessages = "CollapseOwnMessages"
 
     // Profile
     case profileName = "ProfileName"

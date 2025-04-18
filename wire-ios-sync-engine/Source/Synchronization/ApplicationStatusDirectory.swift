@@ -108,12 +108,4 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         }
     }
 
-    public func requestResyncResources() {
-        syncStatus.resyncResources()
-    }
-
-    public func requestQuickSync() {
-        syncStatus.forceQuickSync()
-    }
-
 }

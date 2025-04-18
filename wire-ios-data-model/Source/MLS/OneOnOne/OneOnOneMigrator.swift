@@ -147,7 +147,9 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             ) else {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
-
+            guard !mlsConversation.migratedToMLS else {
+                throw MigrateMLSOneOnOneConversationError.alreadyMigrated
+            }
             guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
@@ -155,29 +157,35 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
             // 1-1 conversations here.
             let source = OneOnOneSource(context: context)
-            let proteusConversations = try source.fetchOneOnOnes(
-                user: otherUser,
-                types: [.fake, .proteus, .proteusPending]
-            )
+            var proteusConversations: [ZMConversation] = []
+            // NOTE: querying for all types at once triggers a table scan which is very expensive
+            for type in [OneOnOneType.fake, OneOnOneType.proteus, OneOnOneType.proteusPending] {
+                let conversations = try source.fetchOneOnOnes(
+                    user: otherUser,
+                    types: [type]
+                )
+                proteusConversations.append(contentsOf: conversations)
+            }
 
             // Move local messages from all proteus conversations
             for proteusConversation in proteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+                mlsConversation.migrateMessages(from: proteusConversation)
             }
 
-            // insert system message that we moved from proteus to MLS
-            let sender = ZMUser.selfUser(in: context)
-            mlsConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
-
             if !proteusConversations.isEmpty {
+                // insert system message that we moved from proteus to MLS
+                let sender = ZMUser.selfUser(in: context)
+                mlsConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
+
                 // update just to be sure
                 mlsConversation.needsToBeUpdatedFromBackend = true
             }
-
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
+
+            mlsConversation.migratedToMLS = true
         }
     }
 

@@ -22,6 +22,7 @@
 #import <WireImages/ZMImageDownsampleOperation.h>
 
 @protocol ZMAssetsPreprocessorDelegate;
+@protocol ZMImageOwner;
 
 
 @protocol ZMAssetsPreprocessor <NSObject>

@@ -21,20 +21,47 @@ import WireDataModel
 import WireLogging
 import WireSyncEngine
 
+struct ConversationResult {
+    var id: String
+    var groupID: MLSGroupID?
+    var name: String
+
+    var description: String {
+        id
+    }
+}
+
+enum MLSGroupSearchItem: Identifiable {
+    var id: String {
+        switch self {
+        case .result:
+            "result"
+        }
+    }
+
+    case result([ConversationResult], String)
+}
+
 final class DeveloperDebugActionsViewModel: ObservableObject {
 
     @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
+    @Published var mlsGroupSearchItem: MLSGroupSearchItem?
 
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
 
     private let selfClient: UserClient?
+    private let onDismiss: (() -> Void)?
 
     private let logger = WireLogger(tag: "developer")
 
     // MARK: - Initialize
 
-    init(selfClient: UserClient?) {
+    init(
+        selfClient: UserClient?,
+        onDismiss: (() -> Void)? = nil
+    ) {
         self.selfClient = selfClient
+        self.onDismiss = onDismiss
 
         setupButtons()
     }
@@ -42,14 +69,32 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private func setupButtons() {
         buttons = [
             .init(title: "Send debug logs", action: sendDebugLogs),
-            .init(title: "Perform quick sync", action: performQuickSync),
-            .init(title: "Resync resources", action: resyncResources),
-            .init(title: "Break next quick sync", action: breakNextQuickSync),
+            .init(title: "Trigger incremental sync", action: triggerIncrementalSync),
+            .init(title: "Trigger resources sync", action: triggerResourcesSync),
+            .init(title: "Break next incremental sync", action: breakNextIncrementalSync),
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
-            .init(title: "Delete domains in the database", action: deleteDomains)
+            .init(title: "Delete domains in the database", action: deleteDomains),
+            .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
+            .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie)
         ]
+    }
+
+    // MARK: - Clear access token & cookie
+
+    private func clearAccessTokenAndCookie() {
+        let accessTokenHandler = userSession?.transportSession.accessTokenHandler
+
+        let responseFailure = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
+
+        accessTokenHandler?.processAccessTokenResponse(responseFailure)
+        onDismiss?()
     }
 
     // MARK: Send Logs
@@ -81,22 +126,18 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     // MARK: Quick Sync
 
-    private func breakNextQuickSync() {
+    private func breakNextIncrementalSync() {
         userSession?.setBogusLastEventID()
     }
 
-    private func performQuickSync() {
-        guard let userSession else { return }
-
-        Task {
-            await userSession.syncStatus.performQuickSync()
-        }
+    private func triggerIncrementalSync() {
+        userSession?.triggerIncrementalSync()
     }
 
     // MARK: Resync resources
 
-    private func resyncResources() {
-        DebugActions.triggerResyncResources()
+    private func triggerResourcesSync() {
+        userSession?.triggerResourcesSync()
     }
 
     // MARK: Proteus to MLS migration
@@ -202,6 +243,51 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 logger.error("failed to delete domains: \(error.localizedDescription)")
             }
         }
+    }
+
+    // MARK: Find conversation
+
+    private func showSearchMLSConversations() {
+        mlsGroupSearchItem = .result([], "")
+    }
+
+    @MainActor
+    func findConversations(with mlsGroupID: String?) async {
+        guard let strippedMLSGroupID = mlsGroupID?.replacingOccurrences(of: "*", with: "") else {
+            showConversationInfo(results: [], term: "")
+            return
+        }
+
+        guard let syncContext = userSession?.syncContext else {
+            showConversationInfo(results: [], term: strippedMLSGroupID)
+            return
+        }
+
+        let results = try? await syncContext.perform {
+            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+            fetchRequest.fetchBatchSize = 50
+            // as we have a string and MLSGroupID is data we can't fetch with a predicate
+            let conversations = try syncContext.fetch(fetchRequest)
+
+            var matchedConversationInfos = [ConversationResult]()
+            for conversation in conversations
+                where conversation.mlsGroupID?.description.starts(with: strippedMLSGroupID) == true {
+                matchedConversationInfos.append(
+                    ConversationResult(
+                        id: conversation.remoteIdentifier.uuidString,
+                        groupID: conversation.mlsGroupID,
+                        name: conversation.name ?? "-"
+                    )
+                )
+            }
+            return matchedConversationInfos
+        }
+        showConversationInfo(results: results ?? [], term: strippedMLSGroupID)
+    }
+
+    @MainActor
+    private func showConversationInfo(results: [ConversationResult], term: String) {
+        mlsGroupSearchItem = .result(results, term)
     }
 
 }

@@ -284,13 +284,13 @@ public protocol ConversationLocalStoreProtocol {
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)?
 
     /// Commits pending proposals for a given conversation.
-    /// - Parameter conversation: The conversation to update the `date` flag for.
     /// - Parameter date: The date to update.
+    /// - Parameter conversation: The conversation to update the `date` flag for.
     /// - Parameter commitDelay: The commit delay.
 
-    func commitPendingProposals(
-        conversation: ZMConversation,
+    func updateCommitPendingProposal(
         date: Date,
+        for conversation: ZMConversation,
         commitDelay: UInt64
     ) async
 
@@ -394,5 +394,14 @@ public protocol ConversationLocalStoreProtocol {
     func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
+
+    /// Stores the private conversation (aka channel) permission locally.
+    /// - Parameters
+    ///     - permission: The new permission value (`admins` or `everyone`)
+
+    func storeConversation(
+        permission: WireDomain.Conversation.ChannelPermission,
+        conversation: ZMConversation
+    ) async
 
 }

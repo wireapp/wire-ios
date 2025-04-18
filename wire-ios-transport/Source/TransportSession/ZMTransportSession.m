@@ -27,7 +27,6 @@
 #import "ZMTransportCodec.h"
 #import "ZMTransportRequest+Internal.h"
 #import "ZMPersistentCookieStorage.h"
-#import "ZMPushChannelConnection.h"
 #import "ZMTaskIdentifierMap.h"
 #import "ZMReachability.h"
 #import "Collections+ZMTSafeTypes.h"
@@ -83,6 +82,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
 
 @property (nonatomic) NSString *minTLSVersion;
+@property (nonatomic) NSString *selfClientID;
 
 @end
 
@@ -101,6 +101,7 @@ static NSInteger const DefaultMaximumRequests = 6;
           applicationGroupIdentifier:nil
                   applicationVersion:@"1.0"
                        minTLSVersion:nil
+                        selfClientID:nil
     ];
 }
 
@@ -113,6 +114,7 @@ static NSInteger const DefaultMaximumRequests = 6;
          applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
                  applicationVersion:(NSString *)appliationVersion
                       minTLSVersion:(NSString * _Nullable)minTLSVersion
+                       selfClientID: (nullable NSString *)selfClientID
 {
     NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
@@ -171,7 +173,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                                 cookieStorage:cookieStorage
                            initialAccessToken:initialAccessToken
                                     userAgent:userAgent
-                                minTLSVersion:minTLSVersion];
+                                minTLSVersion:minTLSVersion
+                                 selfClientID:selfClientID];
 }
 
 - (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
@@ -187,6 +190,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
                                minTLSVersion:(NSString * _Nullable)minTLSVersion
+                                selfClientID: (nullable NSString *)selfClientID
 {
     self = [super init];
     if (self) {
@@ -194,6 +198,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         self.baseURL = environment.backendURL;
         self.websocketURL = environment.backendWSURL;
         self.numberOfRequestsInProgress = [[ZMAtomicInteger alloc] initWithInteger:0];
+        self.selfClientID = selfClientID;
         
         self.workQueue = queue;
         _workGroup = group;
@@ -613,7 +618,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)sendAccessTokenRequest;
 {
-    [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.sessionsDirectory.foregroundSession];
+    [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.sessionsDirectory.foregroundSession clientID:_selfClientID];
 }
 
 - (BOOL)accessTokenIsAboutToExpire {

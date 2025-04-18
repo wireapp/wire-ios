@@ -1,0 +1,102 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"authentication.identity.input.body" = "只需输入您的电子邮件地址即可开始！";
+"authentication.identity.input.field.placeholder" = "电子邮件或 SSO 代码";
+"authentication.identity.input.field.title" = "电子邮件或 SSO 代码";
+"authentication.identity.input.submit" = "继续";
+
+"cloud_user_login.title" = "键入密码来登录";
+"cloud_user_login.input_email.title" = "电邮箱地址";
+"cloud_user_login.input_email.placeholder" = "输入电子邮箱";
+"cloud_user_login.input_password.title" = "密码";
+"cloud_user_login.input_password.placeholder" = "键入密码";
+"cloud_user_login.submit" = "继续";
+"cloud_user_login.forgot_password" = "忘记密码？";
+"create_personal_account.title" = "还没有 Wire 账户？";
+"create_personal_account.button" = "创建个人账户";
+
+"on_prem_user_login.title" = "欢迎来到 %@ 的 Wire 企业版！";
+"on_prem_user_login.message" = "键入密码来登录";
+"on_prem_user_login.alert.title" = "本地后端";
+"on_prem_user_login.alert.message.backend-name" = "后端名称：";
+"on_prem_user_login.alert.message.backend-url" = "后端 URL：";
+"on_prem_user_login.alert.button" = "好";
+
+"proxy_credentials.title" = "代理凭证";
+"proxy_credentials.message" = "此后端配置为使用以下代理服务器：%@。";
+"proxy_credentials.input_email.title" = "代理电子邮件或用户名";
+"proxy_credentials.input_password.title" = "密码";
+"proxy_credentials.input_password.placeholder" = "键入密码";
+
+"switch_backend_confirmation.title" = "重定向到本地后端？";
+"switch_backend_confirmation.message" = "如果继续，您将被重定向到以下本地后端进行登录：";
+"switch_backend_confirmation.backend_name" = "后端名称：";
+"switch_backend_confirmation.backend_url" = "后端 URL：";
+"switch_backend_confirmation.backend_wsurl" = "后端 websocket URL：";
+"switch_backend_confirmation.blacklist_url" = "黑名单 URL：";
+"switch_backend_confirmation.teams_url" = "团队 URL：";
+"switch_backend_confirmation.accounts_url" = "账户 URL：";
+"switch_backend_confirmation.website_url" = "网站 URL：";
+"switch_backend_confirmation.countly_url" = "Countly URL:";
+"switch_backend_confirmation.proceed" = "继续";
+"switch_backend_confirmation.cancel" = "取消";
+"switch_backend_confirmation.show_details" = "Show details";
+"switch_backend.error.title.logged_in" = "无法切换服务器";
+"switch_backend.error.message.logged_in" = "您已经登录。若要切换到这个服务器，请登出所有账户并重试。";
+
+"verification_code.title" = "您有新邮件";
+"verification_code.message" = "输入我们发送到 %@ 的验证码";
+"verification_code.confirm" = "确认";
+"verification_code.resend_code" = "Resend Code";
+
+"authentication.no_history.title" = "这是您第一次在此设备使用Wire。";
+"authentication.no_history.message" = "基于隐私考虑，您的历史聊天记录将不会被显示。";
+"authentication.no_history.confirm" = "好";
+
+"authentication.error.title.no_internet" = "No internet connection";
+"authentication.error.title.general" = "好像出了点问题。";
+"authentication.error.title.sso_login_failed" = "Login with SSO failed";
+"authentication.error.title.invalid_credentials" = "无效信息";
+"authentication.error.title.invalid_invalid_2FA_code" = "Invalid verification code";
+"authentication.error.title.account_pending_activation" = "Pending activation";
+"authentication.error.title.account_suspended" = "Unauthorized";
+"authentication.error.title.incorrect_sso_code" = "Invalid SSO code";
+
+"authentication.error.message.no_internet" = "您的网络好像有些问题，请稍候再试。";
+"authentication.error.message.general" = "Please retry later.";
+"authentication.error.message.sso_login_failed" = "Please contact your team administrator for details.";
+"authentication.error.message.invalid_credentials" = "这些帐户凭据不正确。请验证您的详细信息并重试。";
+"authentication.error.message.invalid_invalid_2FA_code" = "请输入有效的验证码。";
+"authentication.error.message.account_pending_activation" = "Please accept the invitation to your team first and follow the steps to create your account.";
+"authentication.error.message.account_suspended" = "此账户不再被授权登录";
+"authentication.error.message.incorrect_sso_code" = "请验证您的公司SSO访问代码并重试。";
+
+"authentication.error.confirm" = "好";
+
+"authentication.error.title.email_already_in_use" = "Email claimed by an on-premises backend";
+"authentication.error.message.email_already_in_use" = "This email's domain belongs to an on-premises backend. Please change your email in the account settings or delete your account. If you are part of a team please contact your team admin.";
+"authentication.error.how_to_change_email" = "How to change email address";
+"authentication.error.how_to_delete_account" = "How to delete a private account";
+
+"obsolete_client.alert.title" = "必要更新";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
+"obsolete_client.alert.ok_button" = "到App Store";
+
+"obsolete_backend.alert.title" = "不支持服务器版本";
+"obsolete_backend.alert.message" = "此应用不支持该服务器版本。请联系您的系统管理员。";

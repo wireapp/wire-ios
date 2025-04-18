@@ -39,4 +39,11 @@ public struct AccessToken: Equatable, Sendable {
 
     public let expirationDate: Date
 
+    public init(userID: UUID, token: String, type: String, expirationDate: Date) {
+        self.userID = userID
+        self.token = token
+        self.type = type
+        self.expirationDate = expirationDate
+    }
+
 }

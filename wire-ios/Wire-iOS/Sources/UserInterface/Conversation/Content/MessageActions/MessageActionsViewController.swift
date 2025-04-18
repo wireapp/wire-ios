@@ -93,6 +93,9 @@ final class MessageActionsViewController: UIAlertController {
         if let image = action.icon?.makeImage(size: .small, color: SemanticColors.Icon.foregroundDefaultBlack) {
             newAction.setValue(image, forKey: "image")
         }
+        if let image = action.image {
+            newAction.setValue(image.withTintColor(SemanticColors.Icon.foregroundDefaultBlack), forKey: "image")
+        }
         newAction.setValue(CATextLayerAlignmentMode.right, forKey: "titleTextAlignment")
         addAction(newAction)
     }

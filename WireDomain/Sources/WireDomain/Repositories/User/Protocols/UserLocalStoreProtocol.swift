@@ -93,6 +93,10 @@ public protocol UserLocalStoreProtocol {
         isReadReceiptsEnabledChangedRemotely: Bool
     ) async
 
+    /// Persist the supported protocols for the self user.
+
+    func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async
+
     /// Fetches users qualified IDs locally.
     /// - returns: A list of qualified IDs.
 
@@ -132,4 +136,8 @@ public protocol UserLocalStoreProtocol {
     /// - returns: A list of users' qualified IDs.
 
     func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+
+    /// Fetch the self user Supported Protocols
+
+    func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol>
 }

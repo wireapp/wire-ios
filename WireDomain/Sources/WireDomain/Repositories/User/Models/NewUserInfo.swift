@@ -26,7 +26,7 @@ public struct NewUserInfo: Equatable, Sendable {
     let accentID: Int
     let previewAssetKey: String?
     let completeAssetKey: String?
-    let deleted: Bool?
+    let isDeleted: Bool
     let email: String?
     let expiresAt: Date?
     let serviceID: UUID?

@@ -138,7 +138,7 @@ private extension UIView {
     }
 }
 
-private var stateKey = 0
+@MainActor private var stateKey = 0
 
 // MARK: - Previews
 

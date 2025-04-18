@@ -78,8 +78,12 @@ class E2eIAPIV6: E2eIAPIV5 {
     }
 }
 
-final class E2eIAPIV7: E2eIAPIV6 {
+class E2eIAPIV7: E2eIAPIV6 {
     override var apiVersion: APIVersion { .v7 }
+}
+
+final class E2eIAPIV8: E2eIAPIV7 {
+    override var apiVersion: APIVersion { .v8 }
 }
 
 private enum Constant {

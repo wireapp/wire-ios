@@ -46,7 +46,9 @@ extension ZMConversationMessage {
             return ConversationAnnouncement.Video.description(senderName)
         } else if isFile {
             return ConversationAnnouncement.File.description(filename ?? "", senderName)
-        } else if isSystem, let cellDescription = ConversationSystemMessageCellDescription.cells(for: self).first {
+        } else if isSystem, let cellDescription = ConversationSystemMessageCellDescription.cells(
+            for: self, isCollapsed: true, buttonAction: nil
+        ).first {
             return cellDescription.cellAccessibilityLabel
         }
         return nil

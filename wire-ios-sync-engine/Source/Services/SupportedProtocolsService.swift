@@ -61,6 +61,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         let remoteProtocols = remotelySupportedProtocols()
         let migrationState = currentMigrationState()
         let allClientsMLSReady = allSelfUserClientsAreActiveMLSClients()
+        let currentSelfUserSupportedProtocols = selfUserSupportedProtocols()
 
         logger
             .debug(
@@ -72,6 +73,11 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         // All clients are proteus ready so we support it if the backend does.
         if remoteProtocols.contains(.proteus) {
             result.insert(.proteus)
+        }
+
+        // SelfUser supports mls (other client) at the moment, so we should not remove it
+        if currentSelfUserSupportedProtocols.contains(.mls) {
+            result.insert(.mls)
         }
 
         // All clients are mls ready so we support it if the backend does.
@@ -157,6 +163,9 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         selfUserProvider.fetchSelfUser().clients.all(\.isActiveMLSClient)
     }
 
+    private func selfUserSupportedProtocols() -> Set<MessageProtocol> {
+        selfUserProvider.fetchSelfUser().supportedProtocols
+    }
 }
 
 // MARK: -

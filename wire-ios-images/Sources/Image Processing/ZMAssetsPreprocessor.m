@@ -22,7 +22,7 @@
 #import "ZMImageLoadOperation.h"
 #import "ZMImageOwner.h"
 #import "ZMImageDownsampleOperation.h"
-
+#import <WireImages/WireImages-Swift.h>
 
 @implementation ZMAssetsPreprocessor
 

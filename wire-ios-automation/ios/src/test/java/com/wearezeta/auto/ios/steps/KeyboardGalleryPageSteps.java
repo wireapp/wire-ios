@@ -35,6 +35,11 @@ public class KeyboardGalleryPageSteps {
         getKeyboardGalleryPage().tapFullScreenButton();
     }
 
+
+    @When("^I tap on OK button for the image$")
+    public void ITapOkButton() {
+        getKeyboardGalleryPage().tapOkButton();
+    }
     @When("^I (do not )?see first item from Keyboard Gallery$")
     public void iSeeFirstItemGallery(String shouldNot) {
         if (shouldNot == null) {

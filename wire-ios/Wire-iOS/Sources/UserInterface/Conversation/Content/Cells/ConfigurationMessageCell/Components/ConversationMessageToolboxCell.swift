@@ -25,20 +25,27 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     struct Configuration: Equatable {
         let message: ZMConversationMessage
         let deliveryState: ZMDeliveryState
+        /// A message status is considered redundant if it does not provide additional information over a subsequent
+        /// message's status. This basically means that only the last of subsequent messages of the same sender within a
+        /// short time frame will show the status view, if the delivery state is the same.
+        /// Self-deleting messages still show the status, because it contains a countdown label.
+        let isRedundant: Bool
 
         static func == (
             lhs: ConversationMessageToolboxCell.Configuration,
             rhs: ConversationMessageToolboxCell.Configuration
         ) -> Bool {
             lhs.deliveryState == rhs.deliveryState &&
-                lhs.message == rhs.message
+                lhs.message == rhs.message &&
+                lhs.isRedundant == rhs.isRedundant
         }
     }
 
-    let toolboxView = MessageToolboxView()
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
+    let toolboxView = MessageToolboxView()
     var observerToken: Any?
     var isSelected: Bool = false
 
@@ -73,6 +80,10 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
     func configure(with object: Configuration, animated: Bool) {
         toolboxView.configureForMessage(object.message, animated: animated)
+        if object.isRedundant {
+            toolboxView.setAllContentHidden()
+        }
+
     }
 
     func messageToolboxDidRequestOpeningDetails(
@@ -85,7 +96,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
             for: message,
             preferredDisplayMode: preferredDisplayMode
         )
-
     }
 
     private func perform(action: MessageAction, sender: UIView? = nil) {
@@ -104,24 +114,25 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
 
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationMessageToolboxCell
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 2
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage) {
+    init(message: ZMConversationMessage, isRedundant: Bool) {
         self.message = message
-        self.configuration = View.Configuration(message: message, deliveryState: message.deliveryState)
+        self.configuration = View.Configuration(
+            message: message,
+            deliveryState: message.deliveryState,
+            isRedundant: isRedundant
+        )
     }
 
 }

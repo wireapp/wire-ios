@@ -29,16 +29,6 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
         let conversation = event.conversation
         let timestamp = event.timestamp
 
-        let existingConversation = await repository.fetchConversation(
-            id: conversationID.uuid,
-            domain: conversationID.domain
-        )
-
-        guard existingConversation == nil else {
-            WireLogger.eventProcessing.warn("Conversation already exists, aborting...")
-            return
-        }
-
         await repository.storeConversation(
             conversation.toDomainModel(),
             timestamp: timestamp

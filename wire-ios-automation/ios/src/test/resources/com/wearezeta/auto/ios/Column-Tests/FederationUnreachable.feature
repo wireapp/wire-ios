@@ -208,7 +208,7 @@ Feature: Federation Offline
     And I select search result item <Member3> on Group Add People page
     And I tap Add Participants button on Group Add People page
     Then I see 5 participants avatars on Group Details page
-    When I tap X button on Group Details page
+    When I close Group Details
 #  	I want to see an error system message when I add a user to a group conversation who's backend is unreachable
     Then I see "<Member3> could not be added to the group" system message in the conversation view
 
@@ -237,7 +237,7 @@ Feature: Federation Offline
     And I tap Remove From Group… conversation action button
     And I tap Remove From Group conversation action button
     Then I do not see participant name <TeamOwnerColumnOffline> on Group Details page
-    When I tap X button on Group Details page
+    When I close Group Details
     Then I see "You removed <TeamOwnerColumnOffline>" system message in the conversation view
 
     Examples:

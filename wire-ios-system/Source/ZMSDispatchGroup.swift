@@ -19,7 +19,7 @@
 import Foundation
 
 @objc(ZMSDispatchGroup) @objcMembers
-public final class ZMSDispatchGroup: NSObject {
+public final class ZMSDispatchGroup: NSObject, Sendable {
 
     let label: String
 

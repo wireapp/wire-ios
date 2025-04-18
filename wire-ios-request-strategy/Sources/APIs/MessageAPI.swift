@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
 public protocol MessageAPI {
@@ -151,7 +152,7 @@ func mapResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     }
 }
 
-func mapSuccessResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
+private func mapSuccessResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     guard
         let value = T(response, decoder: .defaultDecoder)
     else {
@@ -367,9 +368,25 @@ class MessageAPIV5: MessageAPIV4 {
         }
 
         let response = await httpClient.send(request)
-        let payload: Payload.MLSMessageSendingStatus = try mapResponse(response)
+
+        let payload: Payload.MLSMessageSendingStatus
+        if response.result == .success {
+            payload = try mapSuccessResponse(response)
+        } else {
+            throw customMapFailureResponse(response)
+        }
 
         return (payload, response)
+    }
+
+    private func customMapFailureResponse(_ response: ZMTransportResponse) -> Error {
+        if let error = SendMLSMessageFailure(from: response) {
+            error
+        } else {
+            // This will return a NetworkError
+            // (i.e. federation error will be caughted on MessageSender)
+            mapFailureResponse(response)
+        }
     }
 }
 
@@ -379,6 +396,10 @@ class MessageAPIV6: MessageAPIV5 {
     }
 }
 
-final class MessageAPIV7: MessageAPIV6 {
+class MessageAPIV7: MessageAPIV6 {
     override var apiVersion: APIVersion { .v7 }
+}
+
+final class MessageAPIV8: MessageAPIV7 {
+    override var apiVersion: APIVersion { .v8 }
 }

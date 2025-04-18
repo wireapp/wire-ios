@@ -114,7 +114,7 @@ extension ZMUserSession: UserSession {
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: notificationContext)
 
-        processEvents()
+        processLegacyEvents()
     }
 
     public func deleteAppLockPasscode() throws {

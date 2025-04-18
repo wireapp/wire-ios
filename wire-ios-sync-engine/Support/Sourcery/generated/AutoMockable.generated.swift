@@ -1,6 +1,5 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -28,6 +27,7 @@
 import WireAnalytics
 
 @testable import WireSyncEngine
+
 
 
 
@@ -386,21 +386,6 @@ public class MockImportBackupAppStateUpdaterProtocol: ImportBackupAppStateUpdate
     public init() {}
 
 
-    // MARK: - reportImportProgress
-
-    public var reportImportProgressProgress_Invocations: [Float] = []
-    public var reportImportProgressProgress_MockMethod: ((Float) -> Void)?
-
-    public func reportImportProgress(progress: Float) {
-        reportImportProgressProgress_Invocations.append(progress)
-
-        guard let mock = reportImportProgressProgress_MockMethod else {
-            fatalError("no mock for `reportImportProgressProgress`")
-        }
-
-        mock(progress)
-    }
-
     // MARK: - reportMigrationNeeded
 
     public var reportMigrationNeeded_Invocations: [Void] = []
@@ -555,35 +540,6 @@ public class MockImportBackupStreamDecryptorProtocol: ImportBackupStreamDecrypto
 
 }
 
-public class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeUrlPassword_Invocations: [(url: URL, password: String)] = []
-    public var invokeUrlPassword_MockError: Error?
-    public var invokeUrlPassword_MockMethod: ((URL, String) async throws -> Void)?
-
-    public func invoke(url: URL, password: String) async throws {
-        invokeUrlPassword_Invocations.append((url: url, password: password))
-
-        if let error = invokeUrlPassword_MockError {
-            throw error
-        }
-
-        guard let mock = invokeUrlPassword_MockMethod else {
-            fatalError("no mock for `invokeUrlPassword`")
-        }
-
-        try await mock(url, password)
-    }
-
-}
-
 public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateEnrollmentRequiredProtocol {
 
     // MARK: - Life cycle
@@ -706,11 +662,11 @@ public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtoco
 
     // MARK: - invoke
 
-    public var invokeClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var invokeClientIdPassword_Invocations: [(clientId: String, password: String?)] = []
     public var invokeClientIdPassword_MockError: Error?
-    public var invokeClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    public var invokeClientIdPassword_MockMethod: ((String, String?) async throws -> Void)?
 
-    public func invoke(clientId: String, password: String) async throws {
+    public func invoke(clientId: String, password: String?) async throws {
         invokeClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
         if let error = invokeClientIdPassword_MockError {
@@ -863,33 +819,6 @@ public class MockSelfClientCertificateProviderProtocol: SelfClientCertificatePro
             fatalError("no mock for `getCertificate`")
         }
     }
-
-}
-
-public class MockServerConnection: ServerConnection {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - isMobileConnection
-
-    public var isMobileConnection: Bool {
-        get { return underlyingIsMobileConnection }
-        set(value) { underlyingIsMobileConnection = value }
-    }
-
-    public var underlyingIsMobileConnection: Bool!
-
-    // MARK: - isOffline
-
-    public var isOffline: Bool {
-        get { return underlyingIsOffline }
-        set(value) { underlyingIsOffline = value }
-    }
-
-    public var underlyingIsOffline: Bool!
-
 
 }
 

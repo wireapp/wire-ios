@@ -86,7 +86,7 @@ public extension ZMUserSession {
 
         let conversation = userInfo.conversation(in: managedObjectContext)
 
-        managedObjectContext.perform {
+        managedObjectContext.performAndWait {
             conversation?.voiceChannel?.leave(userSession: self, completion: nil)
             BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             completionHandler()

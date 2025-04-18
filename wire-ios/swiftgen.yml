@@ -7,10 +7,10 @@ output_dir: Wire-iOS/Generated/
 
 strings:
   inputs:
-    - Resources/Base.lproj/Accessibility.strings
-    - Resources/Base.lproj/InfoPlist.strings
-    - Resources/Base.lproj/Localizable.strings
-    - Resources/Base.lproj/Localizable.stringsdict
+    - Resources/Localization/Base.lproj/Accessibility.strings
+    - Resources/Localization/Base.lproj/InfoPlist.strings
+    - Resources/Localization/Base.lproj/Localizable.strings
+    - Resources/Localization/Base.lproj/Localizable.stringsdict
   filter: 
   outputs:
     - templateName: structured-swift5

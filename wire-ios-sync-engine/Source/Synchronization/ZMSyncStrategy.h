@@ -27,7 +27,6 @@
 @class CoreDataStack;
 
 @protocol ZMTransportData;
-@protocol ZMSyncStateDelegate;
 @protocol ApplicationStateOwner;
 @protocol ZMApplication;
 @protocol EventProcessingTrackerProtocol;

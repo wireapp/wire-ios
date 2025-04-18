@@ -1,2 +1,2 @@
 curl \
-	"/v5/self/"
+	"/v5/self"

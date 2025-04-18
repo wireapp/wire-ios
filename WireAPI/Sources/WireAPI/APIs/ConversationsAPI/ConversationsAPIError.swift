@@ -43,6 +43,9 @@ public enum ConversationsAPIError: Error {
     /// Conversation not found
     case conversationNotFound
 
+    /// Team not found
+    case teamNotFound
+
     /// Conversation code not found
     case conversationCodeNotFound
 
@@ -51,5 +54,41 @@ public enum ConversationsAPIError: Error {
 
     /// Invalid conversation id
     case invalidConversationID
+
+    /// Non empty member list
+    case nonEmptyMemberList
+
+    /// Missing legalhold consent
+    case missingLegalHoldConsent
+
+    /// Operation denied
+    case operationDenied
+
+    /// Requesting user is not a team member
+    case noTeamMember
+
+    /// Not connected
+    case notConnected
+
+    /// Unsupported conversation group type for API endpoint
+    case unsupportedChannelCreationForAPIEndpoint
+
+    /// Non federating backends
+    case nonFederatingBackends([String])
+
+    /// Unreachable backends
+    case unreachableBackends
+
+    /// Insufficient authorizations
+    case insufficienAuthorization
+
+    /// Insufficient permissions
+    case insufficientPermissions
+
+    /// Invalid operation
+    case invalidOperation
+
+    /// Permission unchanged
+    case permissionsUnchanged
 
 }

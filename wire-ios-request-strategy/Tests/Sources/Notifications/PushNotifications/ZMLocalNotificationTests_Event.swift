@@ -129,6 +129,23 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         }
     }
 
+    func testThatItDoesNotCreatesConversationCreateNotification_WhenSenderIsSelf() {
+        syncMOC.performGroupedAndWait {
+            // "push.notification.conversation.create" = "%1$@ created a group conversation with you"
+
+            // when
+            let note = self.noteWithPayload(
+                nil,
+                from: self.selfUser,
+                in: self.groupConversation,
+                type: self.EventConversationCreate
+            )
+
+            // then
+            XCTAssertNil(note)
+        }
+    }
+
     func testThatItCreatesConversationCreateNotification_NoUsername() {
         syncMOC.performGroupedAndWait {
             // "push.notification.conversation.create.nousername" = "Someone created a group conversation with you"

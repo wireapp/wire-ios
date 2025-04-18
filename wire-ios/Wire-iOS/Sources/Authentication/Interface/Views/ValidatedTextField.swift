@@ -138,7 +138,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         self.textFieldValidator = TextFieldValidator()
         self.kind = kind
 
-        var textFieldAttributes: Attributes = if setNewColors == false {
+        let textFieldAttributes: Attributes = if setNewColors == false {
             AccessoryTextField.Attributes(
                 textFont: ValidatedTextField.enteredTextFont,
                 textColor: UIColor.Team.textColor,

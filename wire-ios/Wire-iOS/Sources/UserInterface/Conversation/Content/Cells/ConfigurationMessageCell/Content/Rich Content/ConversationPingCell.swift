@@ -20,9 +20,10 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCellDescription>, ConversationMessageCell {
 
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
+
     var animationBlock: AnimationBlock?
     var isAnimationRunning = false
     var configuration: Configuration?
@@ -128,19 +129,13 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
 
 final class ConversationPingCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationPingCell
-    let configuration: ConversationPingCell.Configuration
+
+    let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool {
-        get { false }
-        set { /* pings doesn't support the ephemeral timer */ }
-    }
-
-    var topMargin: Float = 0
-    let isFullWidth: Bool = true
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 

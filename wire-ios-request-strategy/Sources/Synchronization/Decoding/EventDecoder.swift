@@ -198,6 +198,15 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
     ) async -> [ZMUpdateEvent] {
+
+        func storeLastEventId() async {
+            if let eventUUID = event.uuid, !event.isTransient {
+                await syncMOC.perform {
+                    self.lastEventIDRepository.storeLastEventID(eventUUID)
+                }
+            }
+        }
+
         do {
             let decryptedEvents = try await decryptEvent(
                 event: event,
@@ -205,26 +214,17 @@ extension EventDecoder {
                 proteusService: proteusService
             )
 
-            // MLS message decryption operations, even successful, could result in empty decrypted events.
-            // Adding a condition to skip the guard for that specific usecase.
-            guard !decryptedEvents.isEmpty || event.type == .conversationMLSMessageAdd else {
-                return []
-            }
-
-            await eventMOC.perform {
-                self.storeUpdateEvents(
-                    decryptedEvents,
-                    startingAtIndex: index,
-                    publicKeys: publicKeys
-                )
-            }
-
-            await syncMOC.perform {
-                if let eventUUID = event.uuid, !event.isTransient {
-                    self.lastEventIDRepository.storeLastEventID(eventUUID)
+            if !decryptedEvents.isEmpty {
+                await eventMOC.perform {
+                    self.storeUpdateEvents(
+                        decryptedEvents,
+                        startingAtIndex: index,
+                        publicKeys: publicKeys
+                    )
                 }
             }
 
+            await storeLastEventId()
             return decryptedEvents
 
         } catch let error as Failure {
@@ -235,12 +235,14 @@ extension EventDecoder {
                 )
             }
 
+            await storeLastEventId()
             return []
         } catch {
             WireLogger.mls.warn(
                 "failed to decrypt mls message: \(String(describing: error))"
             )
 
+            await storeLastEventId()
             return []
         }
     }

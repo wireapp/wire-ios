@@ -21,6 +21,7 @@ import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
+import WireConversationsUIBindings
 import WireDesign
 import WireFoundation
 import WireLogging
@@ -93,6 +94,8 @@ final class ZClientViewController: UIViewController {
         mediaPlaybackManager: mediaPlaybackManager
     )
 
+    private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
+
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
         isPublicDomain: userSession.selfUser.domain?.domainType == .publicDomain,
         userSession: userSession,
@@ -125,6 +128,7 @@ final class ZClientViewController: UIViewController {
         userSession: userSession,
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         createGroupConversationUIBuilder: createGroupConversationBuilder,
+        channelConversationFormFactory: channelConversationFormFactory,
         selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
 
@@ -218,7 +222,6 @@ final class ZClientViewController: UIViewController {
                 }
             }
 
-        setupAppearance()
         createLegalHoldDisclosureController()
     }
 
@@ -310,7 +313,9 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
         connectBuilder.delegate = self
+
         createGroupConversationBuilder.delegate = mainCoordinator
+        channelConversationFormFactory.delegate = mainCoordinator
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -503,14 +508,6 @@ final class ZClientViewController: UIViewController {
             // selectListItemWhenNoPreviousItemSelected()
             return false
         }
-    }
-
-    private func setupAppearance() {
-
-        let labelColor: UIColor
-        labelColor = .label
-
-        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = labelColor
     }
 
     // MARK: - Setup methods

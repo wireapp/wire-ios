@@ -63,7 +63,7 @@ Feature: MLS Col1
     And I select search result item <Member2> on Group Add People page
     And I tap Done keyboard button
     Then I see participant names <TeamOwner>,<Member2>,<TeamOwner2> on Group Details page
-    When I tap X button on Group Details page
+    When I close Group Details
     Then I see "You added <Member2>" system message in the conversation view
 #    C1312730	I want to create MLS conversation and remove users on federated backend
     When I open group conversation details
@@ -72,7 +72,7 @@ Feature: MLS Col1
     And I tap Remove From Group… conversation action button
     And I tap Remove From Group conversation action button
     Then I do not see participant name <Member2> on Group Details page
-    When I tap X button on Group Details page
+    When I close Group Details
     Then I see "You removed <Member2>" system message in the conversation view
 
     Examples:
@@ -148,7 +148,7 @@ Feature: MLS Col1
     And I select search result item <Member2> on Group Add People page
     And I tap Done keyboard button
     Then I see participant names <TeamOwner>,<Member2>,<TeamOwner2> on Group Details page
-    When I tap X button on Group Details page
+    When I close Group Details
     Then I see "You added <Member2>" system message in the conversation view
         # I want to send and receive messages in the MLS conversation
     When User <Member2> sends 1 default message to conversation <GroupName>
@@ -169,7 +169,7 @@ Feature: MLS Col1
     And I tap Remove From Group… conversation action button
     And I tap Remove From Group conversation action button
     Then I do not see participant name <Member2> on Group Details page
-    When I tap X button on Group Details page
+    When I close Group Details
     Then I see "You removed <Member2>" system message in the conversation view
 
     Examples:
@@ -294,7 +294,7 @@ Feature: MLS Col1
     And I select search result item <Member2> on Group Add People page
     And I tap Done keyboard button
     Then I see participant names <TeamOwner>,<Member2>,<TeamOwner2> on Group Details page
-    When I tap X button on Group Details page
+    When I close Group Details
     Then I see "You added <Member2>" system message in the conversation view
     #C1312734 I want to remove users from a MLS group conversation as a group admin
     #C1312758	I want to be able to remove a user to MLS conversation after I have been promoted to Admin
@@ -304,7 +304,7 @@ Feature: MLS Col1
     And I tap Remove From Group… conversation action button
     And I tap Remove From Group conversation action button
     Then I do not see participant name <Member2> on Group Details page
-    When I tap X button on Group Details page
+    When I close Group Details
     Then I see "You removed <Member2>" system message in the conversation view
 
     Examples:

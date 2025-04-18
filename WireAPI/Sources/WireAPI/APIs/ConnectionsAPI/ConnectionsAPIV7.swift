@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class ConnectionsAPIV7: ConnectionsAPIV6 {
+class ConnectionsAPIV7: ConnectionsAPIV6 {
     override var apiVersion: APIVersion { .v7 }
 }

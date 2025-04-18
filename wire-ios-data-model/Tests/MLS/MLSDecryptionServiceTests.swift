@@ -92,6 +92,32 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
     }
 
+    func test_Decrypt_IgnoreOtherMissingCommitProposalError() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let message = Data.random().base64EncodedString()
+
+        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+            throw CoreCryptoError
+                .Mls(
+                    MlsError
+                        .Other(
+                            "Incoming message is a commit for which we have not yet received all the proposals. Buffering until all proposals have arrived."
+                        )
+                )
+        }
+
+        // When
+        let results = try await sut.decrypt(
+            message: message,
+            for: groupID,
+            subconversationType: nil
+        )
+
+        // Then
+        XCTAssertTrue(results.isEmpty)
+    }
+
     func test_Decrypt_ReturnsEmptyResult_WhenCoreCryptoReturnsNil() async throws {
 
         // Given
@@ -204,6 +230,36 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
         XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
+
+        XCTAssertEqual(
+            mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count,
+            1
+        )
+    }
+
+    func test_Decrypt_ReturnsAnEmptyMessageForBufferedDecryptedMessageError() async throws {
+        // Given
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+        let messageData = Data.random()
+        let sender = MLSClientID.random()
+
+        mockSubconversationGroupIDRepository
+            .fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+
+        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+            throw MLSActionExecutor.Failure.bufferedDecryptedMessage
+        }
+
+        // When
+        let results = try await sut.decrypt(
+            message: messageData.base64EncodedString(),
+            for: parentGroupID,
+            subconversationType: .conference
+        )
+
+        // Then
+        XCTAssertEqual(results, [])
 
         XCTAssertEqual(
             mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count,

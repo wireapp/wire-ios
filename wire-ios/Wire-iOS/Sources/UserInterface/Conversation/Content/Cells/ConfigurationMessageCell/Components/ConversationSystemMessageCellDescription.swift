@@ -23,8 +23,8 @@ enum ConversationSystemMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
-        isCollapsed: Bool = true,
-        buttonAction: Completion? = nil
+        isCollapsed: Bool,
+        buttonAction: Completion?
     ) -> [AnyConversationMessageCellDescription] {
 
         guard let systemMessageData = message.systemMessageData,
@@ -49,7 +49,6 @@ enum ConversationSystemMessageCellDescription {
                 sender: sender,
                 newName: newName
             )
-
             return [AnyConversationMessageCellDescription(renamedCell)]
 
         case .missedCall:
@@ -57,7 +56,6 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 data: systemMessageData
             )
-
             return [AnyConversationMessageCellDescription(missedCallCell)]
 
         case .performedCall:
@@ -65,12 +63,7 @@ enum ConversationSystemMessageCellDescription {
             return []
 
         case .messageDeletedForEveryone:
-            let senderCell = ConversationSenderMessageCellDescription(
-                sender: sender,
-                message: message,
-                timestamp: nil
-            )
-
+            let senderCell = ConversationSenderMessageCellDescription(sender: sender, message: message)
             return [AnyConversationMessageCellDescription(senderCell)]
 
         case .messageTimerUpdate:
@@ -84,7 +77,6 @@ enum ConversationSystemMessageCellDescription {
                 timer: timer,
                 sender: sender
             )
-
             return [AnyConversationMessageCellDescription(timerCell)]
 
         case .conversationIsSecure:
@@ -105,7 +97,6 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData,
                 sender: sender
             )
-
             return [AnyConversationMessageCellDescription(sessionResetCell)]
 
         case .decryptionFailed, .decryptionFailedResolved, .decryptionFailed_RemoteIdentityChanged:
@@ -114,7 +105,6 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData,
                 sender: sender
             )
-
             return [AnyConversationMessageCellDescription(decryptionCell)]
 
         case .newClient:
@@ -123,7 +113,6 @@ enum ConversationSystemMessageCellDescription {
                 systemMessageData: systemMessageData,
                 conversation: conversation as! ZMConversation
             )
-
             return [AnyConversationMessageCellDescription(newClientCell)]
 
         case .ignoredClient:
@@ -133,7 +122,6 @@ enum ConversationSystemMessageCellDescription {
                 data: systemMessageData,
                 user: user
             )
-
             return [AnyConversationMessageCellDescription(ignoredClientCell)]
 
         case .potentialGap:
@@ -141,7 +129,6 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 data: systemMessageData
             )
-
             return [AnyConversationMessageCellDescription(missingMessagesCell)]
 
         case .participantsAdded, .participantsRemoved, .teamMemberLeave:
@@ -149,7 +136,6 @@ enum ConversationSystemMessageCellDescription {
                 message: message,
                 data: systemMessageData
             )
-
             return [AnyConversationMessageCellDescription(participantsChangedCell)]
 
         case .readReceiptsEnabled,
@@ -159,7 +145,6 @@ enum ConversationSystemMessageCellDescription {
                 sender: sender,
                 systemMessageType: systemMessageData.systemMessageType
             )
-
             return [AnyConversationMessageCellDescription(cell)]
 
         case .legalHoldEnabled, .legalHoldDisabled:
@@ -167,7 +152,6 @@ enum ConversationSystemMessageCellDescription {
                 systemMessageType: systemMessageData.systemMessageType,
                 conversation: conversation as! ZMConversation
             )
-
             return [AnyConversationMessageCellDescription(cell)]
 
         case .newConversation:
@@ -183,7 +167,11 @@ enum ConversationSystemMessageCellDescription {
                user.isTeamMember,
                conversation.selfCanAddUsers,
                conversation.isOpenGroup {
-                cells.append(AnyConversationMessageCellDescription(GuestsAllowedCellDescription()))
+                cells.append(
+                    AnyConversationMessageCellDescription(
+                        GuestsAllowedCellDescription(isChannel: conversation.isChannel)
+                    )
+                )
             }
             if conversation.isOpenGroup {
                 let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()
@@ -200,7 +188,6 @@ enum ConversationSystemMessageCellDescription {
                     isCollapsed: isCollapsed,
                     buttonAction: buttonAction
                 )
-
                 return [AnyConversationMessageCellDescription(cellDescription)]
             }
 

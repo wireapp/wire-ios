@@ -62,14 +62,10 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
     // MARK: - Tests
 
     func testPersistEventEnvelope_It_Stores_Envelope_Locally() async throws {
-        // Given
-
-        let envelopeData = try JSONEncoder().encode(Scaffolding.envelope1)
-
         // When
 
         try await sut.persistEventEnvelope(
-            envelopeData,
+            Scaffolding.envelope1,
             index: 1
         )
 
@@ -90,7 +86,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then it returns no envelopes.
 
@@ -105,11 +101,11 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then it returns the one and only envelope.
-
-        let fetchedEnvelope1 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[0])
+        try XCTAssertCount(fetchedEnvelopes, count: 1)
+        let fetchedEnvelope1 = fetchedEnvelopes[0]
 
         XCTAssertEqual(fetchedEnvelope1, Scaffolding.envelope3)
     }
@@ -127,26 +123,17 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then the first 3 envelopes were returned.
+        try XCTAssertCount(fetchedEnvelopes, count: 3)
 
-        guard fetchedEnvelopes.count == 3 else {
-            XCTFail("expected 3 envelopes, got \(fetchedEnvelopes.count)")
-            return
-        }
-
-        let fetchedEnvelope1 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[0])
-        let fetchedEnvelope2 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[1])
-        let fetchedEnvelope3 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[2])
-
-        XCTAssertEqual(fetchedEnvelope1, Scaffolding.envelope3)
-        XCTAssertEqual(fetchedEnvelope2, Scaffolding.envelope4)
-        XCTAssertEqual(fetchedEnvelope3, Scaffolding.envelope1)
+        XCTAssertEqual(fetchedEnvelopes[0], Scaffolding.envelope3)
+        XCTAssertEqual(fetchedEnvelopes[1], Scaffolding.envelope4)
+        XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total_Number_Of_Envelopes(
-    ) async throws {
+    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total() async throws {
         // Given there are stored envelopes.
 
         try await insertStoredEventEnvelopes([
@@ -195,6 +182,28 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             let decoder = JSONDecoder()
             let decodedEnvelope = try decoder.decode(UpdateEventEnvelope.self, from: envelope.data)
             XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
+        }
+    }
+
+    func testDeleteEventEnvelope_It_Deletes_The_Stored_Envelope() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
+
+        // When it deletes the first one
+        try await sut.deleteEventEnvelope(atIndex: 0)
+
+        // Then the first envelope (index 0) was deleted and indices 1 and 2 remain.
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let result = try context.fetch(request)
+            XCTAssertEqual(result.count, 2)
+
+            let indicesOfStoredEnvelopes = result.map(\.sortIndex)
+            XCTAssertEqual(indicesOfStoredEnvelopes, [1, 2])
         }
     }
 

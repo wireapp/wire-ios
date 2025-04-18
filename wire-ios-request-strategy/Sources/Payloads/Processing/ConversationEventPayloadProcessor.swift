@@ -82,17 +82,6 @@ struct ConversationEventPayloadProcessor {
             WireLogger.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
             return
         }
-        guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
-            Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
-            WireLogger.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
-            return
-        }
-        guard await context.perform({
-            ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context) == nil
-        }) else {
-            WireLogger.eventProcessing.warn("Conversation already exists, aborting...")
-            return
-        }
 
         await updateOrCreateConversation(
             from: payload.data,
@@ -100,6 +89,31 @@ struct ConversationEventPayloadProcessor {
             source: .eventStream,
             in: context
         )
+    }
+
+    // MARK: - Conversation permission update
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationPermission>,
+        in context: NSManagedObjectContext
+    ) async {
+        let conversation = await context.perform {
+            fetchOrCreateConversation(
+                from: payload,
+                in: context
+            )
+        }
+
+        guard let conversation else {
+            WireLogger.eventProcessing
+                .error("Conversation permission update missing conversation in event, aborting...")
+            return
+        }
+
+        await context.perform {
+            conversation.privateChannelPermission = PrivateChannelPermission(payload.data.addPermission)
+        }
+
     }
 
     // MARK: - Conversation deletion
@@ -132,7 +146,7 @@ struct ConversationEventPayloadProcessor {
     // MARK: - Member leave
 
     func processPayload(
-        _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) async {
@@ -214,7 +228,7 @@ struct ConversationEventPayloadProcessor {
     // MARK: - Member join
 
     func processPayload(
-        _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>,
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>,
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
@@ -526,9 +540,20 @@ struct ConversationEventPayloadProcessor {
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
             conversation.isPendingInitialFetch = false
+            conversation.groupType = payload.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            } ?? .none
+
+            conversation.privateChannelPermission = payload.addPermission.map { PrivateChannelPermission($0) } ?? .unset
+
             updateAttributes(from: payload, for: conversation, context: context)
             updateMetadata(from: payload, for: conversation, context: context)
-            updateMembers(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, shouldRemoveParticipants: false, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             updateConversationStatus(from: payload, for: conversation)
 
@@ -780,6 +805,7 @@ struct ConversationEventPayloadProcessor {
     func updateMembers(
         from payload: Payload.Conversation,
         for conversation: ZMConversation,
+        shouldRemoveParticipants: Bool = true,
         context: NSManagedObjectContext
     ) {
         guard let members = payload.members else {
@@ -798,7 +824,11 @@ struct ConversationEventPayloadProcessor {
             in: context
         )?.1
 
-        conversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
+        conversation.updateMembers(
+            otherMembers,
+            selfUserRole: selfUserRole,
+            shouldRemoveParticipants: shouldRemoveParticipants
+        )
     }
 
     func updateConversationTimestamps(
@@ -905,7 +935,7 @@ struct ConversationEventPayloadProcessor {
             case .mixed:
                 break // no update, ignore
             case .mls:
-                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                conversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
                 conversation.messageProtocol = newMessageProtocol
             }
 
@@ -987,7 +1017,7 @@ struct ConversationEventPayloadProcessor {
     }
 
     func fetchRemovedUsers(
-        from payload: Payload.UpdateConverationMemberLeave,
+        from payload: Payload.UpdateConversationMemberLeave,
         in context: NSManagedObjectContext
     ) -> [ZMUser]? {
         if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(
@@ -1100,4 +1130,16 @@ private extension ZMConversation {
         )
     }
 
+}
+
+private extension PrivateChannelPermission {
+
+    init(_ value: Payload.ChannelPermission) {
+        switch value {
+        case .admins:
+            self = .admins
+        case .everyone:
+            self = .everyone
+        }
+    }
 }

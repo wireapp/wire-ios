@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum Availability: CaseIterable {
+public enum Availability: CaseIterable, Hashable, Sendable {
     case available
     case busy
     case away

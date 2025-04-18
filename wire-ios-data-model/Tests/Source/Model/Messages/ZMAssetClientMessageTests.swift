@@ -61,7 +61,7 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
         message = try conversation.appendImage(from: imageData, nonce: messageNonce) as? ZMAssetClientMessage
 
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
-        let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")!
+        let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
 
         let keys = ZMImageAssetEncryptionKeys(
             otrKey: Data.randomEncryptionKey(),
@@ -912,7 +912,7 @@ extension ZMAssetClientMessageTests {
             size: CGSize(width: CGFloat(300 * mult), height: CGFloat(100 * mult)),
             length: UInt(100 * mult),
             mimeType: "image/jpeg"
-        )!
+        )
     }
 
     func createV2AssetClientMessageWithSampleImageAndEncryptionKeys(

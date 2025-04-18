@@ -55,6 +55,8 @@ public struct TeamsAPIBuilder {
             TeamsAPIV6(apiService: apiService)
         case .v7:
             TeamsAPIV7(apiService: apiService)
+        case .v8:
+            TeamsAPIV8(apiService: apiService)
         }
     }
 }

@@ -81,7 +81,7 @@ extension ConversationLocalStore {
             case .mixed:
                 break /// no update, ignore
             case .mls:
-                localConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                localConversation.appendMLSMigrationFinalizedSystemMessageIfNeeded(sender: sender, at: .now)
                 localConversation.messageProtocol = newMessageProtocol
             }
 

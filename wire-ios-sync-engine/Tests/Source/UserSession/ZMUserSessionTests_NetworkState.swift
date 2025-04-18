@@ -47,6 +47,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
+            backendEnvironment: backendEnvironment,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             appVersion: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
@@ -61,7 +63,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            userId: userId
+            userId: userId,
+            minTLSVersion: nil
         )
         let testSession = builder.build()
         testSession.setup(

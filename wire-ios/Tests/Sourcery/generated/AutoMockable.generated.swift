@@ -1,6 +1,5 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -28,9 +27,11 @@
 import CoreLocation
 import WireDataModel
 import WireSyncEngine
+import WireAccountImageUI
 
 @testable import Wire
 @testable import WireCommonComponents
+
 
 
 
@@ -189,44 +190,6 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
         }
 
         mock(appStateCalculator, appState, completion)
-    }
-
-}
-
-class MockBackupSource: BackupSource {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - backupActiveAccount
-
-    var backupActiveAccountPasswordCompletion_Invocations: [(password: String, completion: (Result<URL, Error>) -> Void)] = []
-    var backupActiveAccountPasswordCompletion_MockMethod: ((String, @escaping (Result<URL, Error>) -> Void) -> Void)?
-
-    func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
-        backupActiveAccountPasswordCompletion_Invocations.append((password: password, completion: completion))
-
-        guard let mock = backupActiveAccountPasswordCompletion_MockMethod else {
-            fatalError("no mock for `backupActiveAccountPasswordCompletion`")
-        }
-
-        mock(password, completion)
-    }
-
-    // MARK: - clearPreviousBackups
-
-    var clearPreviousBackups_Invocations: [Void] = []
-    var clearPreviousBackups_MockMethod: (() -> Void)?
-
-    func clearPreviousBackups() {
-        clearPreviousBackups_Invocations.append(())
-
-        guard let mock = clearPreviousBackups_MockMethod else {
-            fatalError("no mock for `clearPreviousBackups`")
-        }
-
-        mock()
     }
 
 }
@@ -778,6 +741,58 @@ public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
             return mock
         } else {
             fatalError("no mock for `metadataForFileAt`")
+        }
+    }
+
+}
+
+class MockGetParticipantImageSourceRepositoryProtocol: GetParticipantImageSourceRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeUser_Invocations: [UserType] = []
+    var invokeUser_MockMethod: ((UserType) async -> UIImage?)?
+    var invokeUser_MockValue: UIImage??
+
+    func invoke(user: UserType) async -> UIImage? {
+        invokeUser_Invocations.append(user)
+
+        if let mock = invokeUser_MockMethod {
+            return await mock(user)
+        } else if let mock = invokeUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUser`")
+        }
+    }
+
+}
+
+class MockGetParticipantImageSourceUseCaseProtocol: GetParticipantImageSourceUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeUser_Invocations: [UserType] = []
+    var invokeUser_MockMethod: ((UserType) async -> WireAccountImageUI.AccountImageSource?)?
+    var invokeUser_MockValue: WireAccountImageUI.AccountImageSource??
+
+    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
+        invokeUser_Invocations.append(user)
+
+        if let mock = invokeUser_MockMethod {
+            return await mock(user)
+        } else if let mock = invokeUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUser`")
         }
     }
 

@@ -51,6 +51,8 @@ public protocol ConversationLike: AnyObject {
 
     var areServicesPresent: Bool { get }
     var domain: String? { get }
+    var isChannel: Bool { get }
+    var privateChannelPermission: PrivateChannelPermission { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another

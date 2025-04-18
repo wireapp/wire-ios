@@ -21,11 +21,12 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class CustomMessageView: UIView {
+final class CustomMessageView: UIView, UITextViewDelegate {
     var isSelected: Bool = false
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var messageLabel = WebLinkTextView()
     var messageText: String? {
@@ -51,24 +52,27 @@ final class CustomMessageView: UIView {
         }
 
         super.init(frame: frame)
-        addSubview(messageLabel)
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            messageLabel.topAnchor.constraint(equalTo: topAnchor),
-            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
 
         messageLabel.font = FontSpec(.small, .light).font
         messageLabel.textColor = SemanticColors.Label.textDefault
+
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(messageLabel)
+        createConstraints()
     }
-}
 
-// MARK: - UITextViewDelegate
+    private func createConstraints() {
+        let margins = conversationHorizontalMargins
 
-extension CustomMessageView: UITextViewDelegate {
+        NSLayoutConstraint.activate([
+            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            messageLabel.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: margins.right),
+            bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor)
+        ])
+    }
+
+    // MARK: - UITextViewDelegate
 
     func textView(
         _ textView: UITextView,

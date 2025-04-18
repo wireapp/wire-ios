@@ -86,6 +86,8 @@ extension UIViewController {
                 message = L10n.Localizable.Error.User.accountSuspended
             case .accountLimitReached:
                 message = L10n.Localizable.Error.User.accountLimitReached
+            case .tooManyRequests:
+                message = L10n.Localizable.Error.User.tooManyRequests
             case .unknownError:
                 message = L10n.Localizable.Error.User.unkownError
             default:

@@ -20,10 +20,12 @@ import UIKit
 import WireDataModel
 
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
+
     var isSelected: Bool = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var errorMessage: String? {
         didSet {
@@ -99,10 +101,6 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         let hasError: Bool
     }
 
-    convenience init() {
-        self.init(frame: .zero)
-    }
-
     override init(frame: CGRect) {
         super.init(frame: .zero)
 
@@ -133,15 +131,17 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
         let errorLabelTopConstraint = errorLabel.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 0)
 
+        let margins = conversationHorizontalMargins
+
         NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: topAnchor),
-            button.leadingAnchor.constraint(equalTo: leadingAnchor),
-            button.trailingAnchor.constraint(equalTo: trailingAnchor),
+            button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: margins.right),
 
             errorLabelTopConstraint,
-            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            errorLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
+            errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -margins.right),
+            bottomAnchor.constraint(equalTo: errorLabel.bottomAnchor)
         ])
 
         self.errorLabelTopConstraint = errorLabelTopConstraint
@@ -151,13 +151,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
-    var topMargin: Float = .ConversationButtonMessageCell.verticalInset
-
-    var isFullWidth: Bool = false
-
     var supportsActions: Bool = false
-
-    var showEphemeralTimer: Bool = false
 
     var containsHighlightableContent: Bool = false
 
@@ -167,7 +161,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var actionController: ConversationMessageActionController?
 
-    var configuration: View.Configuration
+    let configuration: View.Configuration
 
     var accessibilityIdentifier: String? = "PollCell"
 

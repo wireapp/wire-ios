@@ -40,6 +40,8 @@ extension Payload {
             case mlsGroupID = "group_id"
             case epoch
             case epochTimestamp = "epoch_timestamp"
+            case groupType = "group_conv_type"
+            case addPermission = "add_permission"
         }
 
         static var eventType: ZMUpdateEventType {
@@ -65,6 +67,8 @@ extension Payload {
         var mlsGroupID: String?
         var epoch: UInt?
         var epochTimestamp: Date?
+        var groupType: ConversationGroupType?
+        var addPermission: ChannelPermission?
 
         init(
             qualifiedID: QualifiedID? = nil,
@@ -85,7 +89,9 @@ extension Payload {
             messageProtocol: String? = nil,
             mlsGroupID: String? = nil,
             epoch: UInt? = nil,
-            epochTimestamp: Date? = nil
+            epochTimestamp: Date? = nil,
+            groupType: ConversationGroupType? = nil,
+            addPermission: ChannelPermission? = nil
         ) {
             self.qualifiedID = qualifiedID
             self.id = id
@@ -106,6 +112,8 @@ extension Payload {
             self.mlsGroupID = mlsGroupID
             self.epoch = epoch
             self.epochTimestamp = epochTimestamp
+            self.groupType = groupType
+            self.addPermission = addPermission
         }
 
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
@@ -131,7 +139,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7:
+            case .v3, .v4, .v5, .v6, .v7, .v8:
 
                 // v3 replaces the field "access_role_v2" with "access_role".
                 // However, since the format of update events does not depend on versioning,
@@ -151,9 +159,17 @@ extension Payload {
             case .v0, .v1, .v2, .v3, .v4:
                 self.cipherSuite = nil
                 self.epochTimestamp = nil
-            case .v5, .v6, .v7:
+            case .v5, .v6, .v7, .v8:
                 self.cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
                 self.epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
+            }
+
+            switch apiVersion {
+            case .v8:
+                self.groupType = try container.decodeIfPresent(ConversationGroupType.self, forKey: .groupType)
+                self.addPermission = try container.decodeIfPresent(ChannelPermission.self, forKey: .addPermission)
+            default:
+                break
             }
         }
 
@@ -180,13 +196,21 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6, .v7:
+            case .v3, .v4, .v5, .v6, .v7, .v8:
                 if legacyAccessRole == nil {
                     try container.encodeIfPresent(accessRoles, forKey: .accessRole)
                 } else {
                     try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                     try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
                 }
+            }
+
+            switch apiVersion {
+            case .v8:
+                try container.encodeIfPresent(groupType, forKey: .groupType)
+                try container.encodeIfPresent(addPermission, forKey: .addPermission)
+            default:
+                break
             }
         }
     }

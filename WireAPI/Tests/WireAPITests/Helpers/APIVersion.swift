@@ -19,9 +19,17 @@
 import enum WireAPI.APIVersion
 
 extension APIVersion {
+
     var andNextVersions: [APIVersion] {
         let apiVersions = APIVersion.allCases
         let currentVersion = Int(rawValue)
         return Array(apiVersions.suffix(from: currentVersion))
     }
+
+    static func allCasesUpTo(_ end: APIVersion) -> [APIVersion] {
+        Set(APIVersion.allCases)
+            .subtracting(end.andNextVersions)
+            .sorted()
+    }
+
 }

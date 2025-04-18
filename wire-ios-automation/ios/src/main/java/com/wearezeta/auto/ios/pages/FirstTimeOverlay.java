@@ -1,5 +1,6 @@
 package com.wearezeta.auto.ios.pages;
 
+import com.wearezeta.auto.common.misc.Timedelta;
 import io.appium.java_client.pagefactory.iOSXCUITFindBy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,7 +10,7 @@ public class FirstTimeOverlay extends IOSPage {
     @iOSXCUITFindBy(iOSNsPredicate = "label == 'It’s the first time you’re using Wire on this device.'")
     private WebElement heading;
 
-    @iOSXCUITFindBy(accessibility = "ignore_backup")
+    @iOSXCUITFindBy(accessibility = "OK")
     private WebElement oKButton;
 
     @iOSXCUITFindBy(accessibility = "restore_backup")
@@ -32,6 +33,8 @@ public class FirstTimeOverlay extends IOSPage {
     }
 
     public void accept() {
+        Timedelta.ofSeconds(1).sleep();
+        waitUntilElementClickable(oKButton);
         oKButton.click();
     }
 

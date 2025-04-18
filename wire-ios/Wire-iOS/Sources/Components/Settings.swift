@@ -68,6 +68,7 @@ enum SettingKey: String, CaseIterable {
     case browserOpeningRawValue = "BrowserOpeningRawValue"
     case callingConstantBitRate = "CallingConstantBitRate"
     case disableLinkPreviews = "DisableLinkPreviews"
+    case collapseOwnMessages = "CollapseOwnMessages"
 }
 
 /// Model object for locally stored (not in SE or AVS) user app settings
@@ -148,8 +149,6 @@ class Settings {
         ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
         restoreLastUsedAVSSettings()
 
-        startLogging()
-
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(applicationDidEnterBackground(_:)),
@@ -200,17 +199,5 @@ class Settings {
         if level >= AVSIntensityLevel.none.rawValue, level <= AVSIntensityLevel.full.rawValue {
             defaults.setValue(NSNumber(value: level), forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue)
         }
-    }
-
-    // MARK: - Debug
-
-    private func startLogging() {
-        #if !targetEnvironment(simulator)
-            loadEnabledLogs()
-        #endif
-
-        #if !DISABLE_LOGGING
-            ZMSLog.startRecording(isInternal: Bundle.developerModeEnabled)
-        #endif
     }
 }

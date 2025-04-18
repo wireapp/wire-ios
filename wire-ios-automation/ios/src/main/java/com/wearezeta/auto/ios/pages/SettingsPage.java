@@ -37,6 +37,9 @@ public class SettingsPage extends IOSPage {
     @iOSXCUITFindBy(iOSNsPredicate = "type == 'XCUIElementTypeStaticText' AND label == 'Back Up Conversations'")
     private WebElement backUpConversationsItem;
 
+    @iOSXCUITFindBy(iOSNsPredicate = "name == \"Back up or Restore\" AND label == \"Back up or Restore\" AND value == \"Back up or Restore\"")
+    private WebElement backupRestoreItem;
+
     @iOSXCUITFindBy(iOSNsPredicate = "type == 'XCUIElementTypeStaticText' AND label == 'Options'")
     private WebElement optionsItem;
 
@@ -76,8 +79,14 @@ public class SettingsPage extends IOSPage {
     @iOSXCUITFindBy(accessibility = "Purple")
     private WebElement colorPurple;
 
+    @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeSwitch[`name == \"Lock With Passcode\"`]")
+    private WebElement lockWithPasscodeToggle;
+
     @iOSXCUITFindBy(accessibility = "DomainFieldDisabled")
     private WebElement nonEditableDomainLabel;
+
+    @iOSXCUITFindBy(accessibility = "PasscodeField")
+    private WebElement lockPasscodeField;
 
     @iOSXCUITFindBy(accessibility = "TeamFieldDisabled")
     private WebElement nonEditableTeamLabel;
@@ -96,6 +105,9 @@ public class SettingsPage extends IOSPage {
 
     @iOSXCUITFindBy(accessibility = "Report Misuse")
     private WebElement reportMisuse;
+
+    @iOSXCUITFindBy(accessibility = "createPasscodeButton")
+    private WebElement lockPasscodeButton;
 
     @iOSXCUITFindBy(iOSNsPredicate = "type == 'XCUIElementTypeTable' AND visible == 1")
     private WebElement predicateOptionsRoot;
@@ -464,10 +476,28 @@ public class SettingsPage extends IOSPage {
         advanced.click();
     }
 
+    public void OnLockWithPasscodeToggle() {
+        lockWithPasscodeToggle.click();
+    }
+
     public void tapAccountBackButton() {
+        waitUntilElementClickable(accountBackButton);
         accountBackButton.click();
     }
     public void tapSettingsBackButton() {
         settingsBackButton.click();
+    }
+    public void inputLockPasscode(String passcode) {
+        lockPasscodeField.click();
+        lockPasscodeField.clear();
+        lockPasscodeField.sendKeys(passcode);
+    }
+    public void tapLockPasscodeButton() {
+        lockPasscodeButton.click();
+    }
+
+    public void openBackupRestore() {
+        scrollToItem(backupRestoreItem);
+        backupRestoreItem.click();
     }
 }

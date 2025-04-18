@@ -116,6 +116,13 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
+    public func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.supportedProtocols = supportedProtocols
+        }
+    }
+
     public func isSelfUser(
         id: UUID,
         domain: String?
@@ -212,7 +219,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         )
 
         await context.perform {
-            guard userInfo.deleted == false else {
+            guard !userInfo.isDeleted else {
                 return persistedUser.markAccountAsDeleted(at: Date())
             }
 
@@ -279,6 +286,12 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             user.supportedProtocols = userUpdateInfo.supportedProtocols ?? [.proteus]
 
             user.isPendingMetadataRefresh = false
+        }
+    }
+
+    public func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol> {
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context).supportedProtocols
         }
     }
 }

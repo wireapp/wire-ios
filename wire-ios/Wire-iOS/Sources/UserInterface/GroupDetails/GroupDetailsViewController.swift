@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
+import WireConversationsAPI
+import WireConversationsUIBindings
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
@@ -115,12 +118,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         collectionViewController.collectionView = collectionView
         footerView.delegate = self
-        footerView.update(for: conversation)
+        footerView.update(for: conversation, user: userSession.selfUser)
 
         collectionViewController.sections = computeVisibleSections()
     }
 
-    private func setupNavigatiomItem() {
+    private func setupNavigationItem() {
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
         let titleView = TwoLineTitleView(
@@ -148,7 +151,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         super.viewWillAppear(animated)
 
         updateLegalHoldIndicator()
-        setupNavigatiomItem()
+        setupNavigationItem()
         collectionViewController.collectionView?.reloadData()
     }
 
@@ -161,7 +164,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        setupNavigatiomItem()
+        setupNavigationItem()
     }
 
     func updateLegalHoldIndicator() {
@@ -195,7 +198,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             let maxNumberWithoutTruncation = Int.ConversationParticipants.maxNumberWithoutTruncation
 
             if admins.count <= maxNumberWithoutTruncation || admins.isEmpty {
-                // Dispay the ShowAll button after the first section.
+                // Display the ShowAll button after the first section.
                 if admins.count >= maxNumberOfDisplayed, participants.count > maxNumberWithoutTruncation {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
@@ -285,7 +288,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
 
             if conversation.teamRemoteIdentifier != nil,
-               user.canModifyReadReceiptSettings(in: conversation) {
+               user.canModifyReadReceiptSettings(in: conversation),
+               conversation.messageProtocol != .mls { // TODO: [WPB-16771] Remove when read receipts supported on MLS
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
@@ -330,7 +334,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         updateLegalHoldIndicator()
         collectionViewController.sections = computeVisibleSections()
-        footerView.update(for: conversation)
+        footerView.update(for: conversation, user: userSession.selfUser)
 
         if changeInfo.participantsChanged, !conversation.isSelfAnActiveMember {
             navigationController?.popToRootViewController(animated: true)
@@ -339,7 +343,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
 
         if changeInfo.mlsVerificationStatusChanged {
-            setupNavigatiomItem()
+            setupNavigationItem()
         }
     }
 
@@ -542,6 +546,29 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let userSession = ZMUserSession.shared() else { return }
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
+    }
+
+    func presentAccessOptions(animated: Bool) {
+        guard let conversation = conversation as? ZMConversation,
+              let session = ZMUserSession.shared() else { return }
+
+        let permission: ChannelAccessLevelPermission? = switch conversation.privateChannelPermission {
+        case .unset: .none
+        case .admins: .admins
+        case .everyone: .everyone
+        }
+
+        let accessView = ChannelViewFactory.makeChannelAccessView(
+            permission: permission,
+            accentColor: session.selfUser.accentColor.color,
+            repository: ChannelAccessRepository(
+                conversationID: conversation.remoteIdentifier.uuidString,
+                conversationDomain: conversation.domain ?? "",
+                session: session
+            )
+        )
+
+        navigationController?.pushViewController(accessView, animated: animated)
     }
 }
 

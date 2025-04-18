@@ -186,6 +186,8 @@ extension ConversationContentViewController {
                UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
+        case .collapse:
+            dataSource.collapse(message: message)
         }
     }
 
@@ -291,7 +293,7 @@ extension ConversationContentViewController: SignatureObserver {
     }
 
     private func presentDigitalSignatureErrorAlert(errorType: SignatureStatus.ErrorYpe) {
-        var message: String? = switch errorType {
+        let message: String? = switch errorType {
         case .noConsentURL:
             L10n.Localizable.DigitalSignature.Alert.Error.noConsentUrl
         case .retrieveFailed:

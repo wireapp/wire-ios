@@ -218,9 +218,18 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             // Message arrive in an unmerged group, it has been buffered and will be consumed later.
             case .UnmergedPendingGroup: return []
 
-            default:
+            // Incoming message is a commit for which we have not yet received all the proposals. Buffering until all
+            // proposals have arrived.
+            // Clients do not need to take any action in response to this message. This error simply indicates that the
+            // commit has been buffered, and will be automatically unbuffered when possible.
+            case .Other(coreCryptoCommitForMissingProposalError): return []
+
+            case .Other, .ConversationAlreadyExists, .MessageEpochTooOld, .OrphanWelcome:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
+        } catch MLSActionExecutor.Failure.bufferedDecryptedMessage {
+            // [WPB-16231] fix CC transaction is not saved
+            return []
         } catch {
             WireLogger.mls
                 .error(

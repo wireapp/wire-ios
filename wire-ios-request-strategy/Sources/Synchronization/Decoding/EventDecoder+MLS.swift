@@ -61,10 +61,15 @@ extension EventDecoder {
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
     ) async throws -> [ZMUpdateEvent] {
-        WireLogger.mls.info("decrypting mls message")
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
+
+        WireLogger.mls.info("decrypting mls message", attributes: updateEvent.logAttributes)
 
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
-            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
+            WireLogger.mls.critical(
+                "failed to decrypt mls message: mlsDecyptionService is missing",
+                attributes: updateEvent.logAttributes
+            )
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
@@ -79,14 +84,18 @@ extension EventDecoder {
             conversation = ZMConversation.fetch(with: payload.id, domain: payload.qualifiedID?.domain, in: context)
 
             guard let conversation else {
-                WireLogger.mls.error("failed to decrypt mls message: conversation not found in db")
+                WireLogger.mls.error(
+                    "failed to decrypt mls message: conversation not found in db",
+                    attributes: updateEvent.logAttributes
+                )
                 return nil
             }
 
             guard conversation.mlsStatus == .ready else {
                 WireLogger.mls
                     .warn(
-                        "failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))"
+                        "failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))",
+                        attributes: updateEvent.logAttributes
                     )
                 return nil
             }
@@ -105,7 +114,10 @@ extension EventDecoder {
         )
 
         if results.isEmpty {
-            WireLogger.mls.info("successfully decrypted mls message but no result was returned")
+            WireLogger.mls.info(
+                "successfully decrypted mls message but no result was returned",
+                attributes: updateEvent.logAttributes
+            )
             return []
         }
 
@@ -123,14 +135,18 @@ extension EventDecoder {
 
             case let .proposal(commitDelay):
                 let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
-                let mlsService = await context.perform {
+                await context.perform {
                     conversation?.commitPendingProposalDate = scheduledDate
-                    return context.mlsService
                 }
+            }
+        }
 
-                if let mlsService, updateEvent.source == .webSocket {
-                    mlsService.commitPendingProposalsIfNeeded()
-                }
+        if let mlsService = await context.perform({ context.mlsService }),
+           updateEvent.source == .webSocket {
+            Task.detached { [mlsService] in
+                // we don't need to wait for this, as it can take a while to finish
+                // it should not block decryption
+                await mlsService.commitPendingProposalsIfNeeded()
             }
         }
 

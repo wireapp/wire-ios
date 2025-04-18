@@ -39,7 +39,7 @@ Feature: Non Fully Connected Graphs
     And I tap Add People button on Group Details page
     And I select search result item <TeamOwnerColumn1> on Group Add People page
     And I tap Add Participants button on Group Add People page
-    And I tap X button on Group Details page
+    And I close Group Details
     Then I see "<TeamOwnerColumn1> could not be added to the group" system message in the conversation view
 # C1305776	I should not be able to add a external user to a group with column 1 users on column 3
     When I navigate back to conversations list
@@ -48,7 +48,7 @@ Feature: Non Fully Connected Graphs
     And I tap Add People button on Group Details page
     And I select search result item <TeamOwnerExternal> on Group Add People page
     And I tap Add Participants button on Group Add People page
-    And I tap X button on Group Details page
+    And I close Group Details
 #  C1305779	I want to see a system message when I try to add external user to a group with users from column 1 as a column 3 user
     Then I see "<TeamOwnerExternal> could not be added to the group" system message in the conversation view
 
@@ -90,7 +90,7 @@ Feature: Non Fully Connected Graphs
     And I tap Add People button on Group Details page
     And I select search result item <TeamOwnerColumn1> on Group Add People page
     And I tap Add Participants button on Group Add People page
-    And I tap X button on Group Details page
+    And I close Group Details
     Then I see "You added <TeamOwnerColumn1>" system message in the conversation view
 #    I want to add a external user to a conversation that previously had a column 1 user participating
     When I navigate back to conversations list
@@ -100,7 +100,7 @@ Feature: Non Fully Connected Graphs
     And I tap Add People button on Group Details page
     And I select search result item <TeamOwnerExternal> on Group Add People page
     And I tap Add Participants button on Group Add People page
-    And I tap X button on Group Details page
+    And I close Group Details
     Then I see "You added <TeamOwnerExternal>" system message in the conversation view
 
     Examples:

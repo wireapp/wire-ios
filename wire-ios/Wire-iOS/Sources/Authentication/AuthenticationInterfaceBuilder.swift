@@ -17,7 +17,11 @@
 //
 
 import UIKit
+import WireAPI
+import WireAuthentication
+import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -34,6 +38,10 @@ final class AuthenticationInterfaceBuilder {
 
     var backendEnvironment: BackendEnvironmentProvider {
         backendEnvironmentProvider()
+    }
+
+    private var environment: WireTransport.BackendEnvironment {
+        BackendEnvironment.shared
     }
 
     // MARK: - Initialization
@@ -60,8 +68,37 @@ final class AuthenticationInterfaceBuilder {
     /// - returns: The view controller to use for this step, or `nil` if the interface builder
     /// does not support this step.
 
-    func makeViewController(for step: AuthenticationFlowStep) -> AuthenticationStepViewController? {
+    @MainActor
+    func makeViewController(
+        for step: AuthenticationFlowStep,
+        authenticationCoordinator: AuthenticationCoordinator?
+    ) -> AuthenticationStepViewController? {
         switch step {
+        case .wireAuthenticationModule:
+            let assembly = WireAuthenticationAssembly()
+            let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
+            let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
+                WireAPI.APIVersion(rawValue: UInt($0.rawValue))
+            }
+            let (rootView, bridge) = assembly.assemble(
+                environmentType: BackendEnvironmentType(environment.environmentType.value),
+                backendConfig: BackendConfig(environment),
+                minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+                preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
+                accountsURL: environment.accountsURL,
+                howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
+                howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
+                passwordValidator: AuthenticationPasswordValidator(),
+                ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
+                appStoreURL: WireURLs.shared.appOnItunes,
+                existsAnotherAccount: numberOfAccounts > 0
+            )
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
+
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
             landingViewController.configure(with: featureProvider)
@@ -96,8 +133,16 @@ final class AuthenticationInterfaceBuilder {
         case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
-        case .createCredentials:
-            return makeCredentialsViewController(for: .registration)
+        case let .createCredentials(user):
+            let prefilledCredentials = AuthenticationPrefilledCredentials(
+                credentials: LoginCredentials(
+                    emailAddress: user.unverifiedEmail,
+                    hasPassword: false,
+                    usesCompanyLogin: false
+                ),
+                isExpired: false
+            )
+            return makeCredentialsViewController(for: .registration(prefilledCredentials))
 
         case .clientManagement:
             let manageClientsInvitation = ClientUnregisterInvitationStepDescription()
@@ -113,7 +158,7 @@ final class AuthenticationInterfaceBuilder {
             return RemoveClientStepViewController(clients: clients)
 
         case let .noHistory(_, context):
-            let backupStep = BackupRestoreStepDescription(context: context)
+            let backupStep = NoHistoryHintStepDescription(context: context)
             return makeViewController(for: backupStep)
 
         case let .enterEmailVerificationCode(email, _, _):

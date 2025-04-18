@@ -64,6 +64,14 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
         }
     }
 
+    public func selfTeamID() async -> UUID? {
+        let selfUser = await userLocalStore.fetchSelfUser()
+
+        return await context.perform {
+            selfUser.teamIdentifier
+        }
+    }
+
     public func userMembership(
         user: ZMUser
     ) async -> Member? {
@@ -227,6 +235,41 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
                 clientId: selfUser.selfClient()?.remoteIdentifier
             )
         }
+    }
+
+    public func createOrUpdateTeam(
+        identifier: UUID,
+        name: String,
+        creator: UUID,
+        icon: String,
+        iconKey: String?
+    ) async {
+        await context.perform { [context] in
+            let team = Team.fetchOrCreate(
+                with: identifier,
+                in: context
+            )
+
+            let selfUser = ZMUser.selfUser(in: context)
+
+            _ = Member.getOrUpdateMember(
+                for: selfUser,
+                in: team,
+                context: context
+            )
+
+            team.name = name
+            team.creator = ZMUser.fetchOrCreate(
+                with: creator,
+                domain: nil,
+                in: context
+            )
+
+            team.pictureAssetId = icon
+            team.pictureAssetKey = iconKey
+
+        }
+
     }
 
 }

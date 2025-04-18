@@ -19,9 +19,6 @@
 import Foundation
 import WireAPI
 
-/// An object to keep the local conversations up to date
-/// with the remote conversations.
-
 struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
 
     private let localDomain: String
@@ -43,9 +40,6 @@ struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
         self.api = api
         self.store = store
     }
-
-    /// Fetch all conversations from remote, then create and update
-    /// them locally.
 
     func pull() async throws {
         var conversationIDs = [QualifiedID]()

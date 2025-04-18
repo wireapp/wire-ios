@@ -24,7 +24,7 @@ import WireSyncEngine
 
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationNewDeviceSystemMessageCell
+    typealias View = ConversationNewDeviceSystemMessageCell<ConversationNewDeviceSystemMessageCellDescription>
     typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration
@@ -33,11 +33,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil
@@ -155,7 +150,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         )
         let attributedText = attributedSenderNames
 
-        var linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
+        let linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
             .user(user)
         } else {
             .conversation(conversation)

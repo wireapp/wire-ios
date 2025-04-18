@@ -46,6 +46,7 @@ public class BottomNavigationBarPage extends IOSPage {
     }
 
     public void tapSettingsButton() {
+        waitUntilElementClickable(settingsButton);
         settingsButton.click();
     }
 }

@@ -24,12 +24,12 @@ public enum SecurityFlags {
     case forceConstantBitRateCalls
     case customBackend
     case cameraRoll
-    case backup
     case maxNumberAccounts
     case fileSharing
     case locationSharing
     case forceCallKitDisabled
     case clipboard
+    case collapseOwnMessages
 
     /// Whether encryption at rest is enabled and can't be disabled.
 
@@ -51,8 +51,6 @@ public enum SecurityFlags {
             "CustomBackendEnabled"
         case .cameraRoll:
             "CameraRollEnabled"
-        case .backup:
-            "BackupEnabled"
         case .forceEncryptionAtRest:
             "ForceEncryptionAtRestEnabled"
         case .fileSharing:
@@ -65,6 +63,8 @@ public enum SecurityFlags {
             "MinTLSVersion"
         case .clipboard:
             "ClipboardEnabled"
+        case .collapseOwnMessages:
+            "CollapseOwnMessages"
         }
     }
 

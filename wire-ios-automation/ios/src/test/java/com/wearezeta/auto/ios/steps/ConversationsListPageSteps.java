@@ -45,7 +45,7 @@ public class ConversationsListPageSteps {
     public void IOpenRecentConversation(String name) {
         name = context.getUsersManager()
                 .replaceAliasesOccurrences(name, FindBy.NAME_ALIAS);
-        getConversationsListPage().tapConversationItemRecentList(name);
+        getConversationsListPage().openConversationCalled(name);
     }
 
     @When("I long tap conversation '(.*)' in conversation list")

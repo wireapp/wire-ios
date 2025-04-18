@@ -18,12 +18,20 @@
 
 import Foundation
 
-struct URLSessionConfigurationFactory {
+public struct URLSessionConfigurationFactory {
 
     let minTLSVersion: TLSVersion
     let proxySettings: ProxySettings?
 
-    func makeRESTAPISessionConfiguration() -> URLSessionConfiguration {
+    public init(
+        minTLSVersion: TLSVersion,
+        proxySettings: ProxySettings?
+    ) {
+        self.minTLSVersion = minTLSVersion
+        self.proxySettings = proxySettings
+    }
+
+    public func makeRESTAPISessionConfiguration() -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.ephemeral
 
         // If no data is transmitted for this amount of time for a request, it will time out.
@@ -51,7 +59,7 @@ struct URLSessionConfigurationFactory {
         return configuration
     }
 
-    func makeWebSocketSessionConfiguration() -> URLSessionConfiguration {
+    public func makeWebSocketSessionConfiguration() -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
 

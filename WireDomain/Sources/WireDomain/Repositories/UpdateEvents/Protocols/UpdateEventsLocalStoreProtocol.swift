@@ -17,9 +17,10 @@
 //
 
 import Foundation
+import WireAPI
 
 // sourcery: AutoMockable
-protocol UpdateEventsLocalStoreProtocol {
+public protocol UpdateEventsLocalStoreProtocol {
 
     /// Get last event ID.
     /// - returns: The last event ID.
@@ -38,21 +39,21 @@ protocol UpdateEventsLocalStoreProtocol {
 
     /// Persists an event envelope locally.
     /// - Parameters:
-    ///     - data: The event envelope payload data.
+    ///     - eventEnvelope: The event envelope to persist.
     ///     - index: The event envelope index.
 
     func persistEventEnvelope(
-        _ data: Data,
+        _ eventEnvelope: UpdateEventEnvelope,
         index: Int64
     ) async throws
 
-    /// Fetches stored event envelope payloads.
+    /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
-    /// - returns: A list of event payloads.
+    /// - returns: A list of event envelopes.
 
-    func fetchStoredEventEnvelopePayloads(
+    func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [Data]
+    ) async throws -> [UpdateEventEnvelope]
 
     /// Deletes next pending events locally.
     /// - parameter limit: A fetch limit.
@@ -60,4 +61,12 @@ protocol UpdateEventsLocalStoreProtocol {
     func deleteNextPendingEvents(
         limit: UInt
     ) async throws
+
+    /// Delete the event envelope with the given index.
+    /// - parameter index: The index of the envelope to delete
+
+    func deleteEventEnvelope(
+        atIndex index: Int64
+    ) async throws
+
 }

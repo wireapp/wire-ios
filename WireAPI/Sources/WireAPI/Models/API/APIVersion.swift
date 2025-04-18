@@ -22,7 +22,7 @@ import Foundation
 
 /// A type representing all the versions of the Wire api.
 
-public enum APIVersion: UInt, CaseIterable, Comparable {
+public enum APIVersion: UInt, CaseIterable, Comparable, Sendable {
 
     case v0
     case v1
@@ -32,6 +32,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable {
     case v5
     case v6
     case v7
+    case v8
 
     /// API versions considered production ready by the client.
     ///
@@ -43,7 +44,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    public static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6]
+    public static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7, .v8]
 
     /// API versions currently under development and not suitable for production
     /// environments.

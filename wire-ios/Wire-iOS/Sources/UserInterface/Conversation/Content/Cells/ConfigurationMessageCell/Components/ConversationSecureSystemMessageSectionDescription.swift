@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationSecureSystemMessageSectionDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationSecureSystemMessageSectionDescription>
     typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration
@@ -32,11 +32,6 @@ final class ConversationSecureSystemMessageSectionDescription: ConversationMessa
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

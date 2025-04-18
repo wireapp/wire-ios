@@ -32,7 +32,7 @@ public class SinglePendingUserIncomingConnectionProfilePageSteps {
 
     @When("^I tap Connect inbox-style button on Single user Pending incoming connection profile page$")
     public void ITapConnectInboxStyleButton()  {
-        getPage().tapConnectInboxStyleButton();
+        getPage().tapConnect();
     }
 
     @When("^I tap Ignore inbox-style button on Single user Pending incoming connection profile page$")

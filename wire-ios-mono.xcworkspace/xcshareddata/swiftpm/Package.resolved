@@ -11,6 +11,33 @@
         }
       },
       {
+        "package": "aws-crt-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-crt-swift",
+        "state": {
+          "branch": null,
+          "revision": "5a65eb60edbd080a8a79af813a5bb6e5ff387550",
+          "version": "0.43.0"
+        }
+      },
+      {
+        "package": "aws-sdk-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "13fd05c74d7d1c421707ef5b738a5b18d5fa347a",
+          "version": "1.2.17"
+        }
+      },
+      {
+        "package": "CellsSDK",
+        "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "4741bcb266e9a805a403c758e56f2a3cad7f66a3",
+          "version": "0.1.1-alpha09"
+        }
+      },
+      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
@@ -114,8 +141,17 @@
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
-          "revision": "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
-          "version": "1.11.2"
+          "revision": "fec2ff791b27fd9b9ceab9072025dea56409cca1",
+          "version": "1.11.3"
+        }
+      },
+      {
+        "package": "smithy-swift",
+        "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
+        "state": {
+          "branch": null,
+          "revision": "edfc55c48a3d8c17720780872d94c17449241d88",
+          "version": "0.115.0"
         }
       },
       {
@@ -179,6 +215,15 @@
           "branch": null,
           "revision": "0687f71944021d616d34d922343dcef086855920",
           "version": "600.0.1"
+        }
+      },
+      {
+        "package": "swiftui-introspect",
+        "repositoryURL": "https://github.com/siteline/swiftui-introspect",
+        "state": {
+          "branch": null,
+          "revision": "807f73ce09a9b9723f12385e592b4e0aaebd3336",
+          "version": "1.3.0"
         }
       }
     ]

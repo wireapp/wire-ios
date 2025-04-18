@@ -13,6 +13,9 @@ public class FileChooseDialogPage extends IOSPage {
     @iOSXCUITFindBy(accessibility = "DOC.itemCollectionMenuButton.Ellipsis")
     private WebElement ellipsisButton;
 
+    @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeStaticText[`name == \"Recents\"`]")
+    private WebElement header;
+
     @iOSXCUITFindBy(accessibility = "BackButton")
     private WebElement iPadBrowserButton;
 
@@ -56,6 +59,7 @@ public class FileChooseDialogPage extends IOSPage {
     }
 
     public void tapFileContaining(String name) {
+        waitUntilElementVisible(header);
         By locator = MobileBy.iOSNsPredicateString(String.format(predicateStringFileByName, name));
         isLocatorDisplayed(locator);
         getDriver().findElement(locator).click();

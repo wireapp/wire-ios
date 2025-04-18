@@ -58,6 +58,7 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
     ) {
         var action = action
 
+        let message = response.payloadMessage() ?? ""
         switch (response.httpStatus, response.payloadLabel()) {
         case (201, _):
             guard
@@ -81,49 +82,49 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
             action.succeed(with: updateEvents)
 
         case (400, "mls-welcome-mismatch"):
-            action.fail(with: .mlsWelcomeMismatch)
+            action.fail(with: .mlsWelcomeMismatch(message: message))
 
         case (400, "mls-group-conversation-mismatch"):
-            action.fail(with: .mlsGroupConversationMismatch)
+            action.fail(with: .mlsGroupConversationMismatch(message: message))
 
         case (400, "mls-client-sender-user-mismatch"):
-            action.fail(with: .mlsClientSenderUserMismatch)
+            action.fail(with: .mlsClientSenderUserMismatch(message: message))
 
         case (400, "mls-self-removal-not-allowed"):
-            action.fail(with: .mlsSelfRemovalNotAllowed)
+            action.fail(with: .mlsSelfRemovalNotAllowed(message: message))
 
         case (400, "mls-commit-missing-references"):
-            action.fail(with: .mlsCommitMissingReferences)
+            action.fail(with: .mlsCommitMissingReferences(message: message))
 
         case (400, "mls-protocol-error"):
-            action.fail(with: .mlsProtocolError)
+            action.fail(with: .mlsProtocolError(message: message))
 
         case (400, _):
-            action.fail(with: .invalidRequestBody)
+            action.fail(with: .invalidRequestBody(message: message))
 
         case (403, "missing-legalhold-consent"):
-            action.fail(with: .missingLegalHoldConsent)
+            action.fail(with: .missingLegalHoldConsent(message: message))
 
         case (403, "mls-missing-sender-client"):
-            action.fail(with: .mlsMissingSenderClient)
+            action.fail(with: .mlsMissingSenderClient(message: message))
 
         case (403, "legalhold-not-enabled"):
-            action.fail(with: .legalHoldNotEnabled)
+            action.fail(with: .legalHoldNotEnabled(message: message))
 
         case (403, "access-denied"):
-            action.fail(with: .accessDenied)
+            action.fail(with: .accessDenied(message: message))
 
         case (404, "mls-proposal-not-found"):
-            action.fail(with: .mlsProposalNotFound)
+            action.fail(with: .mlsProposalNotFound(message: message))
 
         case (404, "mls-key-package-ref-not-found"):
-            action.fail(with: .mlsKeyPackageRefNotFound)
+            action.fail(with: .mlsKeyPackageRefNotFound(message: message))
 
         case (404, "no-conversation"):
-            action.fail(with: .noConversation)
+            action.fail(with: .noConversation(message: message))
 
         case (404, "no-conversation-member"):
-            action.fail(with: .noConversationMember)
+            action.fail(with: .noConversationMember(message: message))
 
         case (409, "mls-stale-message"):
             action.fail(with: .mlsStaleMessage)
@@ -146,10 +147,10 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
             action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
 
         case (422, "mls-unsupported-proposal"):
-            action.fail(with: .mlsUnsupportedProposal)
+            action.fail(with: .mlsUnsupportedProposal(message: message))
 
         case (422, "mls-unsupported-message"):
-            action.fail(with: .mlsUnsupportedMessage)
+            action.fail(with: .mlsUnsupportedMessage(message: message))
 
         case (533, _):
             guard

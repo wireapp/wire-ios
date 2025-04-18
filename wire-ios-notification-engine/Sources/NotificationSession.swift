@@ -168,6 +168,10 @@ public final class NotificationSession {
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
+        let selfClientID = coreDataStack.syncContext.performAndWait {
+            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
+        }
+
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: credentials?.username,
@@ -177,7 +181,8 @@ public final class NotificationSession {
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
-            minTLSVersion: minTLSVersion
+            minTLSVersion: minTLSVersion,
+            selfClientID: selfClientID
         )
 
         try self.init(
@@ -349,8 +354,8 @@ public final class NotificationSession {
             }
 
             let selfClient = ZMUser(context: self.coreDataStack.syncContext).selfClient()
-            if let clientId = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
-                WireLogger.authentication.addTag(.selfClientId, value: clientId)
+            if let clientID = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
+                WireLogger.authentication.setClientID(clientID)
             }
 
             self.fetchEvents(fromPushChannelPayload: payload)

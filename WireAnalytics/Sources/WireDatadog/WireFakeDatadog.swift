@@ -21,8 +21,8 @@ public import WireLogging
 
 public final class WireDatadog {
 
-    public var userIdentifier: String {
-        ""
+    public var userIdentifier: String? {
+        nil
     }
 
     public init(

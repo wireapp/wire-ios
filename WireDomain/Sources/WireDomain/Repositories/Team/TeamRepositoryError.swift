@@ -22,6 +22,10 @@ import Foundation
 
 enum TeamRepositoryError: Error {
 
+    /// The self user does not belong to any team.
+
+    case selfUserIsNotATeamMember
+
     /// Failed to fetch data from the server.
 
     case failedToFetchRemotely(Error)

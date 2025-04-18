@@ -260,7 +260,7 @@ final class ProfileDetailsContentController: NSObject,
                 for: indexPath
             ) as! IconToggleSubtitleCell
 
-            cell.configure(with: CellConfiguration.groupAdminToogle(get: {
+            cell.configure(with: CellConfiguration.groupAdminToggle(get: {
                 groupAdminEnabled
             }, set: { _, _ in
                 self.isAdminState.toggle()
@@ -297,7 +297,7 @@ final class ProfileDetailsContentController: NSObject,
                 style: .default,
                 reuseIdentifier: messageProtocolCellID
             )
-            cell.propertyName = "Message protocol"
+            cell.propertyName = L10n.Localizable.GroupDetails.MessageProtocol.title
             cell.propertyValue = messageProtocol.rawValue
             return cell
         }

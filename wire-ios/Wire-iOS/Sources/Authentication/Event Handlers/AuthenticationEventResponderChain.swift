@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 import WireDataModel
 import WireSystem
 
@@ -48,6 +49,7 @@ final class AuthenticationEventResponderChain {
     /// The supported event types.
 
     enum EventType {
+        case wireAuthenticationModuleComplete(AuthenticationResult)
         case flowStart(NSError?, Int)
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
@@ -80,6 +82,7 @@ final class AuthenticationEventResponderChain {
     // MARK: - Configuration
 
     var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
+    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<AuthenticationResult>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []
@@ -112,6 +115,9 @@ final class AuthenticationEventResponderChain {
             AuthenticationStartAddAccountEventHandler(featureProvider: featureProvider),
             to: &flowStartHandlers
         )
+
+        // wire authentication module handlers
+        registerHandler(WireAuthenticationModuleCompletionHandler(), to: &wireAuthenticationModuleHandlers)
 
         // clientRegistrationErrorHandlers
         registerHandler(AuthenticationClientLimitErrorHandler(), to: &clientRegistrationErrorHandlers)
@@ -187,6 +193,8 @@ final class AuthenticationEventResponderChain {
         }
 
         switch eventType {
+        case let .wireAuthenticationModuleComplete(result):
+            handleEvent(with: wireAuthenticationModuleHandlers, context: result)
         case let .flowStart(error, numberOfAccounts):
             handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
         case let .backupReady(existingAccount):

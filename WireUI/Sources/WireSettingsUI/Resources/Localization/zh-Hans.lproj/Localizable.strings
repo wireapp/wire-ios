@@ -1,0 +1,67 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"backup.export.action" = "立即备份";
+"backup.export.description" = "创建备份以保存您的对话历史记录。如果您丢失了计算机或更换了新计算机，您可以使用该备份来恢复历史记录。备份文件不受 Wire 端到端加密保护，因此请将其存储在安全的地方。";
+
+"backup.import.action" = "从备份还原";
+"backup.import.description" = "此设备上的现有历史记录将被保留，并将由新备份补全。您可以从所有设备和不同平台恢复历史记录，但不能从其他账户恢复。";
+
+"exportBackup.title" = "设置密码";
+"exportBackup.description" = "The backup will be compressed. If you use a password, Wire also encrypts the backup file. Make sure to store the password in a secure place.";
+"exportBackup.button" = "立即备份";
+"exportBackup.setBackupPassword.title" = "Password (OPTIONAL)";
+"exportBackup.setBackupPassword.placeholder" = "键入密码";
+"exportBackup.setBackupPassword.rules" = "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+
+"exportBackup.cancel.title" = "取消";
+"exportBackup.errorAlert.title" = "好像出了点问题。";
+"exportBackup.errorAlert.message" = "The backup could not be created. Please try again or contact Wire support.";
+"exportBackup.errorAlert.ok" = "好";
+
+"exportBackup.creatingBackup.title" = "Creating Backup";
+"exportBackup.creatingBackup.saving" = "Saving conversation history…";
+"exportBackup.creatingBackup.success" = "Backup successfully created.";
+"exportBackup.creatingBackup.saveButton.title" = "Save File";
+
+"importBackup.cancel.title" = "取消";
+
+"importBackup.overwriteConfirmation.title" = "File overwrites your history";
+"importBackup.overwriteConfirmation.message" = "The backup contents will replace the current conversation history on this device.";
+"importBackup.overwriteConfirmation.cancel" = "取消";
+"importBackup.overwriteConfirmation.proceed" = "继续";
+
+"importBackup.alert.ok" = "好";
+"importBackup.alert.success.title" = "Success";
+"importBackup.alert.success.message" = "Your history is restored.";
+"importBackup.alert.genericError.title" = "好像出了点问题。";
+"importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";
+"importBackup.alert.incompatibleBackupError.title" = "Incompatible backup";
+"importBackup.alert.incompatibleBackupError.message" = "This backup was created by a newer or outdated version of Wire and cannot be restored here.";
+"importBackup.alert.wrongFileError.title" = "Wrong backup file";
+"importBackup.alert.wrongFileError.message" = "You can't restore history from a different account.";
+
+"importBackup.enterPassword.title" = "键入密码";
+"importBackup.enterPassword.description" = "This backup is password protected.";
+"importBackup.enterPassword.textField.title" = "密码";
+"importBackup.enterPassword.textField.placeholder" = "键入密码";
+"importBackup.enterPassword.wrongPassword" = "Wrong password. Please verify your input and try again";
+"importBackup.enterPassword.button.title" = "继续";
+
+"importBackup.restoringHistory.title" = "Restoring history…";
+"importBackup.restoringHistory.message" = "Loading conversations…";

@@ -56,7 +56,9 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     var canOpenConnection: Bool {
-        keepOpen && websocketURL != nil && consumer != nil
+        // This is a legacy push channel, so don't open it if we should use the new one.
+        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        return keepOpen && websocketURL != nil && consumer != nil
     }
 
     var websocketURL: URL? {
@@ -89,7 +91,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
         WireLogger.backend
             .debug(
-                "reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)"
+                "reachability did change. May be reachable: \(reachability.mayBeReachable)"
             )
 
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable

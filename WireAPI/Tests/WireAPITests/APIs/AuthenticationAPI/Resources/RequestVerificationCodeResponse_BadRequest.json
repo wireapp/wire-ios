@@ -1,0 +1,5 @@
+{
+  "code": 400,
+  "label": "bad-request",
+  "message": "Error in $.email: Invalid email. Expected '<local>@<domain>'."
+}

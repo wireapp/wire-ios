@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import SafariServices
+import WireMainNavigationUI
 import WireSettingsUI
 import WireSyncEngine
 
@@ -115,10 +116,12 @@ struct SettingsCellDescriptorFactory {
         )
     }
 
+    @MainActor
     func settingsGroup(
         isPublicDomain: Bool,
         userSession: UserSession,
-        useTypeIntrinsicSizeTableView: Bool
+        useTypeIntrinsicSizeTableView: Bool,
+        mainCoordinator: some MainCoordinatorProtocol
     ) -> any SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
@@ -128,7 +131,7 @@ struct SettingsCellDescriptorFactory {
             ),
             devicesCell(),
             optionsGroup,
-            advancedGroup(userSession: userSession),
+            advancedGroup(userSession: userSession, mainCoordinator: mainCoordinator),
             helpSection(),
             aboutSection()
         ]

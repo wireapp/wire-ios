@@ -128,18 +128,26 @@ public extension ZMConversation {
         }
     }
 
-    func updateMembers(_ usersAndRoles: [(ZMUser, Role?)], selfUserRole: Role?) {
+    func updateMembers(
+        _ usersAndRoles: [(ZMUser, Role?)],
+        selfUserRole: Role?,
+        shouldRemoveParticipants: Bool = true
+    ) {
         guard let context = managedObjectContext else {
             return
         }
 
-        let allParticipants = Set(usersAndRoles.map(\.0))
-        let removedParticipants = localParticipantsExcludingSelf.subtracting(allParticipants)
         addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        removeParticipantsAndUpdateConversationState(
-            users: removedParticipants,
-            initiatingUser: ZMUser.selfUser(in: context)
-        )
+
+        if shouldRemoveParticipants {
+            let allParticipants = Set(usersAndRoles.map(\.0))
+            let removedParticipants = localParticipantsExcludingSelf.subtracting(allParticipants)
+
+            removeParticipantsAndUpdateConversationState(
+                users: removedParticipants,
+                initiatingUser: ZMUser.selfUser(in: context)
+            )
+        }
 
         let selfUser = ZMUser.selfUser(in: context)
         if let role = selfUserRole {

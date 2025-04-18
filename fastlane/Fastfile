@@ -51,7 +51,7 @@ platform :ios do
 
     before_all do |lane|
         ensure_xcode_version
-        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -63,7 +63,7 @@ platform :ios do
     end
 
     after_all do |lane|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks].include?(lane)
+        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
     end
 
     desc "Test frameworks given folders"
@@ -101,6 +101,18 @@ platform :ios do
             UI.test_failure!("Failing running tests #{e.to_s}")
         end
     end
+
+    desc "Run UITests"
+    lane :run_uitests do |options|
+        schemes = ["WireUITests"]
+        options[:testplan] = "UITests"
+        begin
+            run_tests_frameworks(schemes, options)
+        rescue => e
+            UI.test_failure!("Failing running tests #{e.to_s}")
+        end
+    end
+
 
     desc "Test one framework only"
     lane :select_framework do |options|
@@ -157,27 +169,27 @@ platform :ios do
         options[:build_type] = "Development"
         options[:skip_release_builds] = true
         options[:upload_testflight] = false
-        options[:upload_app_center] = false
         options[:upload_dsyms_to_datadog] = false
-        options[:upload_dsyms_to_app_center] = false
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         save_app_name('Development')
         build_and_upload_app(options)
     end
 
-    desc "Build & Upload Development build"
+    desc "Build & Upload Edge build"
     lane :development do |options|
         options[:build_type] = "Development"
-        options[:upload_app_center] = true
+        options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
+        options[:extra_distribution_groups] = ["Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
-        save_app_name('Development')
+        save_app_name('Edge')
         build_and_upload_app(options)
+        `export TEMP='BUILD_INSTALL_LINK=#{ENV['EDGE_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
-    desc "Build & Upload Playground build"
+    desc "Build & Upload Testflight Playground build"
     lane :playground do |options|
         options[:build_type] = "Playground"
         options[:upload_testflight] = true
@@ -206,9 +218,7 @@ platform :ios do
     desc "Build & Upload Public AppStore build"
     lane :appstore_public do |options|
         options[:build_type] = "AppStore"
-        options[:upload_dsyms_to_app_center] = true
         options[:upload_app_store] = true
-        options[:upload_app_center] = true
         options[:countly_api_key] = ENV['COUNTLY_PRODUCTION_KEY']
         save_app_name('Public AppStore Production')
         build_and_upload_app(options)
@@ -219,9 +229,7 @@ platform :ios do
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN1"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
-        options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_RESTRICTED']
         options[:upload_app_store] = true
-        options[:upload_app_center] = true
         options[:produce_debug_builds] = true
         save_app_name('Column 1 Restricted')
         build_and_upload_app(options)
@@ -232,9 +240,7 @@ platform :ios do
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN2"
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_RESTRICTED']
-        options[:app_center_app_name] = ENV['C2_APP_CENTER_APP_NAME_RESTRICTED']
         options[:upload_app_store] = true
-        options[:upload_app_center] = true
         options[:produce_debug_builds] = true
         save_app_name('Column 2 Restricted')
         build_and_upload_app(options)
@@ -245,9 +251,7 @@ platform :ios do
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN3"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
-        options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_RESTRICTED']
         options[:upload_app_store] = true
-        options[:upload_app_center] = true
         options[:produce_debug_builds] = true
         save_app_name('Column 3 Restricted')
         build_and_upload_app(options)
@@ -258,9 +262,7 @@ platform :ios do
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-COLUMN1"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_PRODUCTION']
-        options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_PRODUCTION']
         options[:upload_app_store] = true
-        options[:upload_app_center] = true
         save_app_name('Column 1 Production')
         build_and_upload_app(options)
     end
@@ -270,9 +272,7 @@ platform :ios do
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-COLUMN2"
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_PRODUCTION']
-        options[:app_center_app_name] = ENV['C2_APP_CENTER_APP_NAME_PRODUCTION']
         options[:upload_app_store] = true
-        options[:upload_app_center] = true
         save_app_name('Column 2 Production')
         build_and_upload_app(options)
     end
@@ -282,9 +282,7 @@ platform :ios do
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-COLUMN3"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_PRODUCTION']
-        options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_PRODUCTION']
         options[:upload_app_store] = true
-        options[:upload_app_center] = true
         save_app_name('Column 3 Production')
         build_and_upload_app(options)
     end
@@ -353,14 +351,10 @@ platform :ios do
         if options[:upload_testflight] || false
             upload_testflight(options)
         end
-        if options[:upload_app_center] || false
-            upload_app_center(options)
-        end
+        sha256(options)
         upload_s3(options)
         save_changelog_to_env(options)
-        if options[:upload_dsyms_to_app_center] || false
-            upload_dsyms_to_app_center_for_appstore_build(options)
-        end
+       
         if options[:upload_dsyms_to_datadog] || false
             upload_dsyms_to_datadog(options)
         end
@@ -653,41 +647,19 @@ platform :ios do
         changelog
     end
 
-    # "Upload for internal use"
-    def upload_app_center(options)
+    # "Calculate sha256 ipa"
+    def sha256(options)
         build = Build.new(options: options)
        
-        changelog = changelog(build)
-
-        app_name = options[:app_center_app_name]
-        if app_name.nil? 
-            app_name = build.app_center_app_name
-        end
-
         # Calculate SHA-256 for the local IPA file
         ipa_path = "../#{build.artifact_path(with_filename: true)}.ipa"
         sha256 = `shasum -a 256 #{ipa_path} | awk '{print $1}'`.strip
         UI.message("SHA-256 of IPA is: #{sha256}")
 
-        appcenter_upload(
-          api_token: ENV["APPCENTER_API_TOKEN"],
-          owner_name: ENV["APPCENTER_OWNER_NAME"],
-          app_name: app_name,
-          file: "#{build.artifact_path(with_filename: true)}.ipa",
-          release_notes: changelog,
-          notify_testers: true,
-          mandatory_update: false,
-          dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
-        )
-
-        appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
-        install_url = appcenter_build_info['install_url']
-
         # Export SHA-256 and INSTALL_LINK to .post_build/.env file
         export_env_path = "./.post_build/.env"
         FileUtils.mkdir_p("./.post_build")
 
-        sh "export TEMP='BUILD_INSTALL_LINK=#{install_url}' && echo $TEMP >> #{export_env_path}"
         sh "export TEMP='BUILD_SHA256=#{sha256}' && echo $TEMP >> #{export_env_path}"
     end
 
@@ -719,24 +691,6 @@ platform :ios do
         build = Build.new(options: options)
         changelog = changelog(build)
         `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog)}' && echo $TEMP >> ./.post_build/.env`
-    end
-
-    # Upload dSYMs for AppStore crash tracking
-    def upload_dsyms_to_app_center_for_appstore_build(options)
-        build = Build.new(options: options)
-
-        if !build.appstore_build
-            UI.user_error! "This step is only relevant for AppStore builds"
-        end
-
-        appcenter_upload(
-          api_token: ENV["APPCENTER_API_TOKEN"],
-          owner_name: ENV["APPCENTER_OWNER_NAME"],
-          app_name: build.app_center_app_name,
-          dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip",
-          upload_dsym_only: true,
-          notify_testers: true
-        )
     end
 
     # Upload dsyms to Datadog
@@ -843,7 +797,7 @@ class Build
     def export_method
         if debug_build
             "development"
-        elsif appstore_build || beta_build || rc_build || playground_build
+        elsif appstore_build || beta_build || rc_build || playground_build || development_build
             "app-store"
         else 
             "ad-hoc"
@@ -851,7 +805,7 @@ class Build
     end
 
     def should_sigh_adhoc
-        !appstore_build && !rc_build && !beta_build && !playground_build
+        !appstore_build && !rc_build && !beta_build && !playground_build && !development_build
     end
 
     # Paths
@@ -949,24 +903,16 @@ class Build
     end
 
     def iconset_name
-        if playground_build
-            "Development"
+        if debug_build
+            "Development" # yellow
+        elsif development_build
+            "Edge"
+        elsif playground_build
+            "Development" # yellow
         elsif rc_build
             "Release"
         else
             @build_type
-        end
-    end
-
-    def app_center_app_name
-        if playground_build
-            "Wire-iOS-Playground"
-        elsif development_build
-            "Wire-iOS-Development"
-        elsif appstore_build
-            "Wire-iOS-App-Store"
-        elsif beta_build
-            "Wire-iOS-Beta"
         end
     end
 end

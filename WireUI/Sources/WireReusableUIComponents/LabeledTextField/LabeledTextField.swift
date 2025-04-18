@@ -22,6 +22,7 @@ import WireFoundation
 
 public struct LabeledTextField: View {
     @Environment(\.isEnabled) private var isEnabled
+    @ScaledMetric private var fieldHeight: CGFloat = 48
 
     private let isMandatory: Bool
     private let placeholder: String?
@@ -60,19 +61,20 @@ public struct LabeledTextField: View {
                     .wireTextStyle(.body1)
                     .focused($isFocused)
                     .foregroundStyle(labelColor)
-                    .padding(.vertical, 12)
+                    .frame(height: fieldHeight)
                 if !string.isEmpty, isEnabled {
                     Button(action: {
                         string = ""
                     }, label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.black)
+                            .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
                             .frame(width: 16, height: 16)
-                            .padding(19)
+                            .padding(16)
                     })
                 }
             }
             .padding(.leading, 16)
+            .frame(height: fieldHeight)
             .background {
                 if #available(iOS 17.0, *) {
                     RoundedRectangle(cornerRadius: 12)

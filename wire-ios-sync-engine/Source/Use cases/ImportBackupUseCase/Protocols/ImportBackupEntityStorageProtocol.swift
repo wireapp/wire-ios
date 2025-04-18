@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol ImportBackupEntityStorageProtocol {
+public protocol ImportBackupEntityStorageProtocol: Sendable {
 
     var importsDirectory: URL { get }
 

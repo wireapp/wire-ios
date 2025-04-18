@@ -128,30 +128,35 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         forKeys keys: Set<String>,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
-        guard let message = managedObject as? AssetMessage else {
-            fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))")
+        guard let message = managedObject as? ZMAssetClientMessage else {
+            WireLogger.assets.error("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))")
+            return nil
         }
         guard let asset = message.assets.first(where: { !$0.isUploaded }) else { return nil }
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: jacob are we sure we only have one upload per message active?
 
-        return requestForUploadingAsset(asset, for: managedObject as! ZMAssetClientMessage, apiVersion: apiVersion)
+        return requestForUploadingAsset(asset, for: message, apiVersion: apiVersion)
     }
 
     private func requestForUploadingAsset(
         _ asset: AssetType,
         for message: ZMAssetClientMessage,
         apiVersion: APIVersion
-    ) -> ZMUpstreamRequest {
-        guard let data = asset.encrypted else { fatal("Encrypted data not available") }
+    ) -> ZMUpstreamRequest? {
+        guard let data = asset.encrypted else {
+            WireLogger.assets.warn("Encrypted data not available")
+            return nil
+        }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init)
-        else { fatal("Trying to send message that doesn't have a conversation") }
+        else {
+            WireLogger.assets.warn("Trying to send message that doesn't have a conversation")
+            return nil
+        }
 
         WireLogger.assets.debug(
             "sending request for asset",
             attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
         )
-        var request: ZMTransportRequest? = if shouldUseBackgroundSession {
+        let request: ZMTransportRequest? = if shouldUseBackgroundSession {
             requestFactory.backgroundUpstreamRequestForAsset(
                 message: message,
                 withData: data,
@@ -169,7 +174,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         }
 
         guard let request else {
-            fatal("Could not create asset request")
+            return nil
         }
 
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in

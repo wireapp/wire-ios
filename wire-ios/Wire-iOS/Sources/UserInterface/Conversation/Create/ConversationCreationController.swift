@@ -17,9 +17,11 @@
 //
 
 import UIKit
+import WireAPI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomain
 import WireLogging
 import WireSyncEngine
 
@@ -31,6 +33,11 @@ protocol ConversationCreationControllerDelegate: AnyObject {
         didCreateConversation conversation: ZMConversation
     )
 
+    @MainActor
+    func conversationCreationController(
+        _ controller: WireConversationChannelCreationFormViewController,
+        didCreateConversation conversation: ZMConversation
+    )
 }
 
 final class ConversationCreationController: UIViewController {
@@ -60,7 +67,8 @@ final class ConversationCreationController: UIViewController {
         let sections = [
             guestsSection,
             values.shouldIncludeServices ? servicesSection : nil,
-            receiptsSection,
+            // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
+            values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
         ].compactMap { $0 }
 
@@ -297,48 +305,152 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             guard let userSession = userSession as? ZMUserSession else { return }
 
             addParticipantsViewController.setLoadingView(isVisible: true)
-            let service = ConversationService(context: userSession.viewContext)
 
             let users = values.participants
                 .union([userSession.selfUser])
                 .materialize(in: userSession.viewContext)
 
-            let messageProtocol: MessageProtocol = values.encryptionProtocol == .mls ? .mls : .proteus
+            // Switching to sync context
+            let syncedUsers = userSession.syncContext.performAndWait {
+                let objectIDs = users.map(\.objectID)
 
-            service.createGroupConversation(
-                name: values.name,
-                users: Set(users),
-                allowGuests: values.allowGuests,
-                allowServices: values.shouldIncludeServices ? values.allowServices : false,
-                enableReceipts: values.enableReceipts,
-                messageProtocol: messageProtocol
-            ) { [weak self] result in
-                guard let self else {
-                    assertionFailure("expect ConversationCreationController not to be <nil>")
-                    return
-                }
-
-                addParticipantsViewController.setLoadingView(isVisible: false)
-
-                switch result {
-                case let .success(conversation):
-                    delegate?.conversationCreationController(
-                        self,
-                        didCreateConversation: conversation
-                    )
-
-                case .failure(.networkError(.missingLegalholdConsent)):
-                    showMissingLegalholdConsentAlert()
-
-                case let .failure(.networkError(.nonFederatingDomains(domains))):
-                    showNonFederatingDomainsAlert(domains: domains)
-
-                case let .failure(error):
-                    WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
-                    showGenericErrorAlert()
+                return objectIDs.compactMap {
+                    try? userSession.syncContext.existingObject(with: $0) as? ZMUser
                 }
             }
+
+            let team = userSession.syncContext.performAndWait {
+                let selfUser = ZMUser.selfUser(in: userSession.syncContext)
+                return selfUser.teamIdentifier
+            }
+
+            Task { @MainActor in
+                await createGroupConversation(
+                    teamID: team,
+                    session: userSession,
+                    users: syncedUsers
+                )
+
+                addParticipantsViewController.setLoadingView(isVisible: false)
+            }
         }
+    }
+
+    private func createGroupConversation(
+        teamID: UUID?,
+        session: ZMUserSession,
+        users: [ZMUser]
+    ) async {
+        guard let backendInfoApiVersion = BackendInfo.apiVersion,
+              let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+              let apiService = session.apiService else { return }
+
+        let context = session.syncContext
+
+        let groupConversationUseCase = makeCreateGroupConversationUseCase(
+            apiService: apiService,
+            apiVersion: apiVersion,
+            context: context
+        )
+
+        let accessMode: [WireAPI.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
+        let accessRoles = ConversationAccessRoleV2.from(
+            allowGuests: values.allowGuests,
+            allowServices: values.shouldIncludeServices ? values.allowServices : false
+        ).compactMap {
+            WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
+        }
+
+        let conversationMessageProtocol: WireAPI.ConversationMessageProtocol = switch values.encryptionProtocol {
+        case .mls:
+            .mls
+        case .proteus:
+            .proteus
+        case .mixed:
+            .mixed
+        }
+
+        do {
+            let conversation = try await groupConversationUseCase.invoke(
+                teamID: teamID,
+                messageProtocol: conversationMessageProtocol,
+                name: values.name,
+                users: Set(users),
+                accessMode: Set(accessMode),
+                accessRoles: Set(accessRoles),
+                enableReceipts: values.enableReceipts,
+                isMLSEnabled: BackendInfo.isMLSEnabled
+            )
+
+            // Switching back to UI context
+            let syncedConversation = try session.viewContext.performAndWait {
+                try session.viewContext.existingObject(with: conversation.objectID) as? ZMConversation
+            }
+
+            guard let syncedConversation else { return }
+
+            delegate?.conversationCreationController(
+                self,
+                didCreateConversation: syncedConversation
+            )
+
+        } catch let error as CreateGroupConversationUseCase.Failure {
+
+            switch error {
+            case .missingLegalholdConsent:
+                showMissingLegalholdConsentAlert()
+
+            case let .nonFederatingDomains(domains):
+                showNonFederatingDomainsAlert(domains: Set(domains))
+
+            default:
+                WireLogger.conversation.error(
+                    "failed to create conversation: \(String(describing: error))"
+                )
+                showGenericErrorAlert()
+            }
+        } catch {
+            WireLogger.conversation.error(
+                "failed to create conversation: \(String(describing: error))"
+            )
+            showGenericErrorAlert()
+        }
+    }
+
+    private func makeCreateGroupConversationUseCase(
+        apiService: any APIServiceProtocol,
+        apiVersion: WireAPI.APIVersion,
+        context: NSManagedObjectContext
+    ) -> any CreateGroupConversationUseCaseProtocol {
+        let conversationsAPI = ConversationsAPIBuilder(
+            apiService: apiService
+        ).makeAPI(for: apiVersion)
+
+        let userLocalStore = UserLocalStore(context: context)
+        let messageLocalStore = MessageLocalStore(
+            context: context,
+            userLocalStore: userLocalStore
+        )
+
+        let store = ConversationLocalStore(
+            context: context,
+            mlsService: nil,
+            userLocalStore: userLocalStore,
+            messageLocalStore: messageLocalStore
+        )
+
+        let mlsService = context.performAndWait {
+            context.mlsService
+        }
+
+        return CreateGroupConversationUseCase(
+            api: conversationsAPI,
+            store: store,
+            mlsService: mlsService,
+            context: context,
+            isFederationEnabled: BackendInfo.isFederationEnabled,
+            isMLSEnabled: BackendInfo.isMLSEnabled
+        )
     }
 
     private func showGenericErrorAlert() {
@@ -443,7 +555,7 @@ extension ConversationCreationController {
 
     func presentEncryptionProtocolPicker(
         sender: UIView,
-        _ completion: @escaping (MessageProtocol) -> Void
+        _ completion: @escaping (WireDataModel.MessageProtocol) -> Void
     ) {
         let alertController = encryptionProtocolPicker { type in
             completion(type)
@@ -456,7 +568,7 @@ extension ConversationCreationController {
         present(alertController, animated: true)
     }
 
-    func encryptionProtocolPicker(_ completion: @escaping (MessageProtocol) -> Void)
+    func encryptionProtocolPicker(_ completion: @escaping (WireDataModel.MessageProtocol) -> Void)
         -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 

@@ -19,9 +19,13 @@
 import UIKit
 import WireDataModel
 
-final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationNewDeviceSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
-    static let userClientURL: URL = .init(string: "settings://user-client")!
+    static var userClientURL: URL {
+        URL(string: "settings://user-client")!
+    }
 
     var linkTarget: LinkTarget?
 
@@ -57,11 +61,7 @@ final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, C
         linkTarget = object.linkTarget
     }
 
-}
-
-// MARK: - UITextViewDelegate
-
-extension ConversationNewDeviceSystemMessageCell {
+    // MARK: - UITextViewDelegate
 
     override func textView(
         _ textView: UITextView,

@@ -174,7 +174,9 @@ extension URLAction {
                     throw CompanyLoginError.invalidCookie
                 }
 
-                let userInfo = UserInfo(identifier: userID, cookieData: cookieData)
+                let cookies = HTTPCookie.cookies(from: cookieString, for: url)
+
+                let userInfo = UserInfo(identifier: userID, cookieData: cookieData, cookies: cookies)
                 self = .companyLoginSuccess(userInfo: userInfo)
 
             case URL.Path.failure:

@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
 
-    typealias View = ConversationStartedSystemMessageCell
+    typealias View = ConversationStartedSystemMessageCell<ConversationStartedSystemMessageCellDescription>
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
@@ -32,11 +32,9 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
+    var topMargin: CGFloat = 16
+    var bottomMargin: CGFloat = -8
 
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

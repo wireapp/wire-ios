@@ -29,7 +29,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let mlsService: any MLSServiceInterface
+    let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -40,7 +40,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface,
+        mlsService: (any MLSServiceInterface)?,
         userLocalStore: any UserLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
     ) {
@@ -221,6 +221,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 user: user,
                 role: role
             )
+        }
+    }
+
+    public func storeConversation(
+        permission: Conversation.ChannelPermission,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.privateChannelPermission = PrivateChannelPermission(permission)
         }
     }
 
@@ -498,9 +507,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func commitPendingProposals(
-        conversation: ZMConversation,
+    public func updateCommitPendingProposal(
         date: Date,
+        for conversation: ZMConversation,
         commitDelay: UInt64
     ) async {
         let scheduledDate = date + TimeInterval(commitDelay)
@@ -508,8 +517,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.commitPendingProposalDate = scheduledDate
         }
-
-        mlsService.commitPendingProposalsIfNeeded()
     }
 
     public func updateSecurityLevelAfterReceivingMessage(
@@ -706,7 +713,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func wipeMLSGroup(groupID: MLSGroupID) async throws {
-        try await mlsService.wipeGroup(groupID)
+        try await mlsService?.wipeGroup(groupID)
     }
 
     public func storeConversation(
@@ -912,12 +919,24 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.remoteIdentifier = id
             localConversation.isPendingMetadataRefresh = false
             localConversation.isPendingInitialFetch = false
+            localConversation.groupType = conversation.groupType.map { groupType in
+                switch groupType {
+                case .group:
+                    .group
+                case .channel:
+                    .channel
+                }
+            } ?? .none
+
+            localConversation.privateChannelPermission = conversation
+                .addPermission.map { PrivateChannelPermission($0) } ?? .unset
 
             commonUpdate(
                 from: conversation,
                 for: localConversation,
                 serverTimestamp: serverTimestamp,
-                isFederationEnabled: isFederationEnabled
+                isFederationEnabled: isFederationEnabled,
+                shouldRemoveParticipants: false
             )
 
             updateConversationStatus(
@@ -1067,7 +1086,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         from conversation: Conversation,
         for localConversation: ZMConversation,
         serverTimestamp: Date,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        shouldRemoveParticipants: Bool = true
     ) {
         updateAttributes(
             from: conversation,
@@ -1082,7 +1102,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         updateMembers(
             from: conversation,
-            for: localConversation
+            for: localConversation,
+            shouldRemoveParticipants: shouldRemoveParticipants
         )
 
         updateConversationTimestamps(
@@ -1119,4 +1140,18 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+}
+
+// MARK: - Private helpers
+
+private extension PrivateChannelPermission {
+
+    init(_ value: Conversation.ChannelPermission) {
+        switch value {
+        case .admins:
+            self = .admins
+        case .everyone:
+            self = .everyone
+        }
+    }
 }

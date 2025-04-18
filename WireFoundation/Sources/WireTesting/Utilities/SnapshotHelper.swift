@@ -116,7 +116,16 @@ public struct SnapshotHelper {
     ///   - line: The invoking line numer.
     ///   - createView: A closure that provides the view to test.
 
+    /// Verify a SwiftUI view.
+    ///
+    /// - Parameters:
+    ///   - testName: The name of the reference image.
+    ///   - file: The invoking file name.
+    ///   - line: The invoking line numer.
+    ///   - createView: A closure that provides the view to test.
+
     public func verify<View: SwiftUI.View>(
+        record recording: Bool? = nil,
         testName: String = #function,
         file: StaticString = #filePath,
         line: UInt = #line,
@@ -124,10 +133,43 @@ public struct SnapshotHelper {
     ) {
         verify(
             matching: createView(),
+            record: recording,
             testName: testName,
             file: file,
             line: line
         )
+    }
+
+    public func verifyLightAndDark<View: SwiftUI.View>(
+        matching value: View,
+        named name: String? = nil,
+        record recording: Bool? = nil,
+        testName: String = #function,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+
+        let name = name ?? ""
+
+        withUserInterfaceStyle(.light)
+            .verify(
+                matching: value,
+                named: name + "light",
+                record: recording,
+                testName: testName,
+                file: file,
+                line: line
+            )
+
+        withUserInterfaceStyle(.dark)
+            .verify(
+                matching: value,
+                named: name + "dark",
+                record: recording,
+                testName: testName,
+                file: file,
+                line: line
+            )
     }
 
     /// Verify a SwiftUI view.
@@ -141,6 +183,7 @@ public struct SnapshotHelper {
     public func verify<View: SwiftUI.View>(
         matching value: View,
         named name: String? = nil,
+        record recording: Bool? = nil,
         testName: String = #function,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -165,6 +208,53 @@ public struct SnapshotHelper {
 
             XCTAssertNil(failure, file: file, line: line)
         }
+    }
+
+    /// Verifies a `UIViewController` in both Light and Dark Mode
+    ///
+    /// - Parameters:
+    ///   - value: The `UIViewController` to test.
+    ///   - size: An optional `CGSize` to specify a custom size for the snapshot. Defaults to `nil`.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - recording: A `Bool` indicating whether to record a new reference snapshot. Defaults to `false`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - safeArea: safeArea of the snapshot. Defaults to `zero`
+    ///   - line: The invoking line number.
+
+    public func verifyLightAndDark(
+        matching value: UIViewController,
+        size: CGSize? = nil,
+        named name: String? = nil,
+        record recording: Bool = false,
+        file: StaticString = #filePath,
+        testName: String = #function,
+        safeArea: UIEdgeInsets = .zero,
+        line: UInt = #line
+    ) {
+        let name = name ?? ""
+        withUserInterfaceStyle(.light)
+            .verify(
+                matching: value,
+                size: size,
+                named: name + "light",
+                record: recording,
+                file: file,
+                testName: testName,
+                safeArea: safeArea,
+                line: line
+            )
+        withUserInterfaceStyle(.dark)
+            .verify(
+                matching: value,
+                size: size,
+                named: name + "dark",
+                record: recording,
+                file: file,
+                testName: testName,
+                safeArea: safeArea,
+                line: line
+            )
     }
 
     /// Verifies a `UIViewController`.
@@ -224,6 +314,7 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIView,
         named name: String? = nil,
+        record: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -235,6 +326,7 @@ public struct SnapshotHelper {
                 of: value,
                 as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
                 named: name,
+                record: record,
                 snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
@@ -343,6 +435,7 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIImage,
         named name: String? = nil,
+        record recording: Bool = false,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -354,6 +447,7 @@ public struct SnapshotHelper {
                 of: value,
                 as: .image,
                 named: name,
+                record: recording,
                 snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,

@@ -89,9 +89,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     /// The object to use to start and control the company login flow.
     let companyLoginController = CompanyLoginController(withDefaultEnvironment: ())
 
-    /// The object to use to restore backups.
-    let backupRestoreController: BackupRestoreController
-
     // MARK: - Internal State
 
     private var loginObservers: [Any] = []
@@ -128,13 +125,11 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         self.stateController = AuthenticationStateController()
         self.interfaceBuilder = AuthenticationInterfaceBuilder(featureProvider: featureProvider)
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
-        self.backupRestoreController = BackupRestoreController(target: presenter)
         super.init()
         updateLoginObservers()
         self.unauthenticatedSessionObserver = sessionManager
             .addUnauthenticatedSessionManagerCreatedSessionObserver(self)
         companyLoginController?.delegate = self
-        backupRestoreController.delegate = self
         presenter.delegate = self
         stateController.delegate = self
         eventResponderChain.configure(delegate: self)
@@ -171,8 +166,9 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
 // MARK: - State Management
 
-extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
+extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControllerDelegate {
 
+    @MainActor
     func stateDidChange(
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
@@ -181,7 +177,10 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             return
         }
 
-        guard let stepViewController = interfaceBuilder.makeViewController(for: newState) else {
+        guard let stepViewController = interfaceBuilder.makeViewController(
+            for: newState,
+            authenticationCoordinator: self
+        ) else {
             fatalError("Step \(newState) requires user interface, but the interface builder does not support it.")
         }
 
@@ -296,6 +295,46 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 unauthenticatedSession.continueAfterBackupImportStep()
 
+            case let .completeWireAuthenticationLogin(result):
+                // Make sure we use the same backend from the authentication flow.
+                let backendEnvironment = BackendEnvironment(
+                    type: result.backendEnvironment.environmentType,
+                    backendConfig: result.backendEnvironment.config
+                )
+
+                BackendEnvironment.shared = backendEnvironment
+                SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
+
+                // Make sure we persist and backend info gathered during authentication.
+                let backendMetadata = result.backendEnvironment.metadata
+                BackendInfo.apiVersion = APIVersion(backendMetadata.apiVersion)
+                BackendInfo.domain = backendMetadata.domain
+                BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
+
+                if let emailCredentials = result.emailCredentials {
+                    // Set credentials so we can register a new client via registration status.
+                    unauthenticatedSession.authenticationStatus.loginCredentials = UserCredentials(
+                        email: emailCredentials.email,
+                        password: emailCredentials.password,
+                        emailVerificationCode: emailCredentials.verificationCode
+                    )
+                }
+
+                let userInfo = UserInfo(
+                    identifier: result.userID,
+                    cookieData: HTTPCookie.extractData(from: result.cookies)!,
+                    cookies: result.cookies
+                )
+
+                if case let .authenticated(_, _, username, password) = result.backendEnvironment.proxySettings {
+                    sessionManager.saveProxyCredentials(
+                        username: username,
+                        password: password
+                    )
+                }
+
+                unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)
+
             case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
 
@@ -371,9 +410,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case let .startLoginFlow(request, credentials):
                 startLoginFlow(request: request, proxyCredentials: credentials)
-
-            case .startBackupFlow:
-                backupRestoreController.startBackupFlow()
 
             case let .signOut(warn):
                 signOut(warn: warn)

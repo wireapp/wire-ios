@@ -175,10 +175,31 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .text(TextItem(
                         title: "MLS public key",
                         value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
-                    ))
+                    )),
+                    .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount()))
+
                 ]
             ))
         }
+    }
+
+    private func oneOnOneMLSConversationsCount() -> String {
+        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+            return "-"
+        }
+        let allOneOnOneRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+        allOneOnOneRequest.predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
+        let allOneOnOneCount = context.countOrAssert(request: allOneOnOneRequest)
+
+        let mlsOneOnOneRequest = ZMConversation.fetchRequest()
+        mlsOneOnOneRequest.predicate = NSPredicate(
+            format: "%K = YES && %K != nil",
+            #keyPath(ZMConversation.migratedToMLS),
+            #keyPath(ZMConversation.oneOnOneUser)
+        )
+        let mlsOneOnOneCount = context.countOrAssert(request: mlsOneOnOneRequest)
+
+        return "\(mlsOneOnOneCount)/\(allOneOnOneCount)"
     }
 
     private func setupPushToken() {
@@ -237,7 +258,8 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
                         selfClient: self?
-                            .selfClient
+                            .selfClient,
+                        onDismiss: { self?.onDismiss {} }
                     )))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {

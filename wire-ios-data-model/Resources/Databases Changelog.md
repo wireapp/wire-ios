@@ -4,6 +4,20 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.124.0
+
+* added `migratedToMLS` attribute on the Conversation entity
+
+### 2.123.0
+
+* added `groupType` attribute on the Conversation entity
+* added `privateChannelPermission` attribute on the Conversation entity
+
+### 2.122.0
+
+* Remove `ToDeleted` entity from 2.120.0
+* Cleanup `needsToUploadSignalingKeys`, `apsVerificationKey`, `apsDecryptionKey` from `UserClient`
+
 ### 2.121.0
 
 Removed `pushToken` attribute from `UserClient`.

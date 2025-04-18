@@ -1,6 +1,5 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -29,6 +28,7 @@ import WireCoreCrypto
 import Combine
 
 @testable import WireRequestStrategy
+
 
 
 
@@ -1233,16 +1233,16 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
     public init() {}
 
 
-    // MARK: - waitForQuickSyncToFinish
+    // MARK: - waitForDecryptionOfEventsToFinish
 
-    public var waitForQuickSyncToFinish_Invocations: [Void] = []
-    public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
+    public var waitForDecryptionOfEventsToFinish_Invocations: [Void] = []
+    public var waitForDecryptionOfEventsToFinish_MockMethod: (() async -> Void)?
 
-    public func waitForQuickSyncToFinish() async {
-        waitForQuickSyncToFinish_Invocations.append(())
+    public func waitForDecryptionOfEventsToFinish() async {
+        waitForDecryptionOfEventsToFinish_Invocations.append(())
 
-        guard let mock = waitForQuickSyncToFinish_MockMethod else {
-            fatalError("no mock for `waitForQuickSyncToFinish`")
+        guard let mock = waitForDecryptionOfEventsToFinish_MockMethod else {
+            fatalError("no mock for `waitForDecryptionOfEventsToFinish`")
         }
 
         await mock()
@@ -1336,11 +1336,11 @@ public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - deleteUserClient
 
-    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String?)] = []
     public var deleteUserClientClientIdPassword_MockError: Error?
-    public var deleteUserClientClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    public var deleteUserClientClientIdPassword_MockMethod: ((String, String?) async throws -> Void)?
 
-    public func deleteUserClient(clientId: String, password: String) async throws {
+    public func deleteUserClient(clientId: String, password: String?) async throws {
         deleteUserClientClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
         if let error = deleteUserClientClientIdPassword_MockError {

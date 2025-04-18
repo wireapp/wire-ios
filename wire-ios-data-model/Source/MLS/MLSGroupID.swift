@@ -52,6 +52,6 @@ extension MLSGroupID: CustomStringConvertible {
 extension MLSGroupID: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
-        data.readableHash
+        description.redactedAndTruncated()
     }
 }

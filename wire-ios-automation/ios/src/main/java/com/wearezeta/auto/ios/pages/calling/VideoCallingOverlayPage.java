@@ -322,6 +322,12 @@ public class VideoCallingOverlayPage extends IOSPage {
         return waitUntilElementVisible(nameUnclassifiedDomainLabel);
     }
 
+    public void tapActiveMuteButton() {
+        activeMuteButton.click();
+    }
+    public void tapInactiveMuteButton() {
+        inactiveMuteButton.click();
+    }
     public boolean isUnclassifiedLabelInvisibleOnCallingOverlay() {
         return waitUntilElementInvisible(nameUnclassifiedDomainLabel);
     }
@@ -341,6 +347,13 @@ public class VideoCallingOverlayPage extends IOSPage {
     public void tapOKButton() {
         waitUntilElementVisible(okButton);
         okButton.click();
+    }
+    public void tapSwitchOffCameraButton() {
+        switchOffCameraButton.click();
+    }
+
+    public void tapSwitchOnCameraButton() {
+        switchONCameraButton.click();
     }
 
     public void swipeUpParticipantsList(){

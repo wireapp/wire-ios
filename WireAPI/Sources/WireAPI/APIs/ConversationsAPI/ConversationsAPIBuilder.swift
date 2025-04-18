@@ -53,6 +53,8 @@ public struct ConversationsAPIBuilder {
             ConversationsAPIV6(apiService: apiService)
         case .v7:
             ConversationsAPIV7(apiService: apiService)
+        case .v8:
+            ConversationsAPIV8(apiService: apiService)
         }
     }
 

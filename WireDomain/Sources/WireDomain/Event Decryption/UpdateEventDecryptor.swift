@@ -34,13 +34,13 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageRepository: any MessageRepositoryProtocol,
-        userRepository: any UserRepositoryProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsLocalStore: userClientsLocalStore,
-            userRepository: userRepository
+            userLocalStore: userLocalStore
         )
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
@@ -69,6 +69,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         ]
 
         var decryptedEvents = [UpdateEvent]()
+        var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
             switch event {
@@ -105,6 +106,8 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     attributes: logAttributes
                 )
 
+                shouldCommitPendingProposals = true
+
                 do {
                     let decryptedEventData = try await mlsMessageDecryptor.decryptedEventData(from: eventData)
                     decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
@@ -119,6 +122,14 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             default:
                 // No decryption needed.
                 decryptedEvents.append(event)
+            }
+        }
+
+        if shouldCommitPendingProposals {
+            Task.detached {
+                // we don't need to wait for this, as it can take a while to finish
+                // it should not block decryption
+                await mlsMessageDecryptor.commitPendingProposalsIfNeeded()
             }
         }
 

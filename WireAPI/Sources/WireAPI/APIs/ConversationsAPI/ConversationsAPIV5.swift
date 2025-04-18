@@ -71,6 +71,61 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.usersNotConnected)
             .parse(code: response.statusCode, data: data)
     }
+
+    override func createGroupConversation(
+        parameters: CreateGroupConversationParameters
+    ) async throws -> Conversation {
+        guard parameters.groupType != .channel else {
+            throw ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint
+        }
+
+        let input = CreateGroupConversationParametersV0(from: parameters)
+        let body = try JSONEncoder.defaultEncoder.encode(input)
+        let path = "\(pathPrefix)\(basePath)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        do {
+            return try ResponseParser()
+                .success(code: .ok, type: ConversationV5.self)
+                .success(code: .created, type: ConversationV5.self)
+                .failure(code: .badRequest, label: "mls-not-enabled", error: ConversationsAPIError.mlsNotEnabled)
+                .failure(
+                    code: .badRequest,
+                    label: "non-empty-member-list",
+                    error: ConversationsAPIError.nonEmptyMemberList
+                )
+                .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+                .failure(
+                    code: .forbidden,
+                    label: "missing-legalhold-consent",
+                    error: ConversationsAPIError.missingLegalHoldConsent
+                )
+                .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
+                .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
+                .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)
+                .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+                .failure(code: .conflict, decodableError: NonFederatingBackendErrorResponseV4.self)
+                .failure(code: .unreachable, error: ConversationsAPIError.unreachableBackends)
+                .parse(code: response.statusCode, data: data)
+        } catch {
+            if let nonFederatingDomains = error as? NonFederatingBackendErrorResponseV4 {
+                throw ConversationsAPIError.nonFederatingBackends(
+                    nonFederatingDomains.nonFederatingBackends
+                )
+            } else {
+                throw error
+            }
+        }
+    }
 }
 
 // MARK: Decodables
@@ -95,9 +150,7 @@ private struct QualifiedConversationListV5: Decodable, ToAPIModelConvertible {
     }
 }
 
-// MARK: -
-
-private struct ConversationV5: Decodable, ToAPIModelConvertible {
+struct ConversationV5: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
         case accessRoles = "access_role"
@@ -127,7 +180,7 @@ private struct ConversationV5: Decodable, ToAPIModelConvertible {
     var epochTimestamp: UTCTime? // New field
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: UTCTimeMillis?
+    var lastEventTime: UTCTime?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
     var messageTimer: TimeInterval?

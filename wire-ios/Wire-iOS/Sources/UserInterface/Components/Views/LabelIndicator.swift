@@ -77,7 +77,7 @@ final class LabelIndicator: UIView {
     }
 
     private func setupViews() {
-        var accessibilityString = switch context {
+        let accessibilityString = switch context {
         case .guest:
             "guest"
         case .groupRole:

@@ -41,6 +41,92 @@ class ConversationsAPIV3: ConversationsAPIV2 {
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
             .parse(code: response.statusCode, data: data)
     }
+
+    override func createGroupConversation(
+        parameters: CreateGroupConversationParameters
+    ) async throws -> Conversation {
+        guard parameters.groupType != .channel else {
+            throw ConversationsAPIError.unsupportedChannelCreationForAPIEndpoint
+        }
+
+        let input = CreateGroupConversationParametersV3(from: parameters)
+        let body = try JSONEncoder.defaultEncoder.encode(input)
+        let path = "\(pathPrefix)\(basePath)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ConversationV3.self)
+            .success(code: .created, type: ConversationV3.self)
+            .failure(
+                code: .badRequest,
+                label: "mls-not-enabled",
+                error: ConversationsAPIError.mlsNotEnabled
+            ) // Introduced in v3
+            .failure(code: .badRequest, label: "non-empty-member-list", error: ConversationsAPIError.nonEmptyMemberList)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
+            .failure(
+                code: .forbidden,
+                label: "missing-legalhold-consent",
+                error: ConversationsAPIError.missingLegalHoldConsent
+            )
+            .failure(code: .forbidden, label: "operation-denied", error: ConversationsAPIError.operationDenied)
+            .failure(code: .forbidden, label: "no-team-member", error: ConversationsAPIError.noTeamMember)
+            .failure(code: .forbidden, label: "not-connected", error: ConversationsAPIError.notConnected)
+            .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
+            .parse(code: response.statusCode, data: data)
+    }
+}
+
+// MARK: - Encodables
+
+struct CreateGroupConversationParametersV3: Encodable {
+    let users: [UUID]?
+    let qualifiedUsers: [QualifiedID]?
+    let access: [String]?
+    let accessRoles: [String]?
+    let name: String?
+    let team: CreateGroupConversationTeamInfoV0?
+    let messageTimer: TimeInterval?
+    let readReceiptMode: Int?
+    let conversationRole: String?
+    let messageProtocol: String
+
+    enum CodingKeys: String, CodingKey {
+        case users
+        case qualifiedUsers = "qualified_users"
+        case access
+        // Changed: replace "access_role_v2" with "access_role".
+        case accessRoles = "access_role"
+        case name
+        case team
+        case messageTimer = "message_timer"
+        case readReceiptMode = "receipt_mode"
+        case conversationRole = "conversation_role"
+        case messageProtocol = "protocol"
+    }
+
+    init(from parameters: CreateGroupConversationParameters) {
+        self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs : nil
+        self.access = parameters.accessMode.map(\.rawValue)
+        self.accessRoles = parameters.accessRoles.map(\.rawValue)
+        self.name = parameters.name
+        self.team = parameters.teamID.map { .init(teamID: $0) }
+        self.messageTimer = nil
+        self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
+        self.conversationRole = "wire_member"
+        self.messageProtocol = parameters.messageProtocol.rawValue
+    }
+
 }
 
 // MARK: Decodables
@@ -67,7 +153,7 @@ private struct QualifiedConversationListV3: Decodable, ToAPIModelConvertible {
 
 // MARK: -
 
-private struct ConversationV3: Decodable, ToAPIModelConvertible {
+struct ConversationV3: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case access
         // Changed: replace "access_role_v2" with "access_role".
@@ -94,7 +180,7 @@ private struct ConversationV3: Decodable, ToAPIModelConvertible {
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
-    var lastEventTime: UTCTimeMillis?
+    var lastEventTime: UTCTime?
     var members: QualifiedConversationMembers?
     var messageProtocol: ConversationMessageProtocol?
     var messageTimer: TimeInterval?

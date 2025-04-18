@@ -48,11 +48,12 @@ final class TeamRepositoryTests: XCTestCase {
         teamLocalStore = MockTeamLocalStoreProtocol()
 
         sut = TeamRepository(
-            selfTeamID: Scaffolding.selfTeamID,
             userRepository: userRespository,
             teamLocalStore: teamLocalStore,
             teamsAPI: teamsAPI
         )
+
+        teamLocalStore.selfTeamID_MockValue = Scaffolding.selfTeamID
     }
 
     override func tearDown() async throws {
@@ -270,6 +271,26 @@ final class TeamRepositoryTests: XCTestCase {
                 membershipID: Scaffolding.membershipID
             )
         }
+    }
+
+    func testCreateOrUpdateTeam_It_Invokes_Local_Store_And_User_Repo_Methods() async throws {
+        // Mock
+
+        teamLocalStore.createOrUpdateTeamIdentifierNameCreatorIconIconKey_MockMethod = { _, _, _, _, _ in }
+
+        // When
+
+        await sut.createOrUpdateTeam(
+            identifier: Scaffolding.teamID,
+            name: Scaffolding.teamName,
+            creator: Scaffolding.teamCreatorID,
+            icon: Scaffolding.logoID,
+            iconKey: Scaffolding.logoKey
+        )
+
+        // Then
+
+        XCTAssertEqual(teamLocalStore.createOrUpdateTeamIdentifierNameCreatorIconIconKey_Invocations.count, 1)
     }
 
     private enum Scaffolding {

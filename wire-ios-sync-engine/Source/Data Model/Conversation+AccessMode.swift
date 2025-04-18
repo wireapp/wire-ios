@@ -66,7 +66,7 @@ public extension ZMConversation {
         in userSession: ZMUserSession,
         _ completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void
     ) {
-        guard canManageAccess else {
+        guard canManageGuestsAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
@@ -137,7 +137,7 @@ public extension ZMConversation {
 
     /// Deletes the existing wireless link.
     func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
-        guard canManageAccess else {
+        guard canManageGuestsAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
@@ -160,10 +160,10 @@ public extension ZMConversation {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    var canManageAccess: Bool {
+    var canManageGuestsAccess: Bool {
         guard let moc = managedObjectContext else { return false }
         let selfUser = ZMUser.selfUser(in: moc)
-        return selfUser.canModifyAccessControlSettings(in: self)
+        return selfUser.canModifyGuestsAccessControlSettings(in: self)
     }
 }
 
@@ -233,7 +233,7 @@ enum WirelessRequestFactory {
 
         switch apiVersion {
 
-        case .v3, .v4, .v5, .v6, .v7:
+        case .v3, .v4, .v5, .v6, .v7, .v8:
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else {
                 fatal("no domain associated with conversation, can't make the request")

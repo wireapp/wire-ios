@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 public protocol PasswordValidator {
 
-    func validate(_ password: String) -> Bool
+    func isPasswordValid(_ password: String) -> Bool
 
     var localizedRulesDescription: String? { get }
 

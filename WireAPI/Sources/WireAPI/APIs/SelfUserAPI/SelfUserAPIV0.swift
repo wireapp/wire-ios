@@ -31,7 +31,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     }
 
     var resourcePath: String {
-        "\(pathPrefix)/self/"
+        "\(pathPrefix)/self"
     }
 
     func getSelfUser() async throws -> SelfUser {
@@ -60,7 +60,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let assets: [UserAsset]?
     let deleted: Bool?
     let email: String?
-    let expiresAt: UTCTimeMillis?
+    let expiresAt: UTCTime?
     let handle: String?
     let id: UUID
     let locale: String

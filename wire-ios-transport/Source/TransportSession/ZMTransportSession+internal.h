@@ -19,7 +19,6 @@
 @import WireSystem;
 
 #import <WireTransport/ZMTransportSession.h>
-#import "ZMPushChannelConnection.h"
 #import "ZMTransportRequestScheduler.h"
 #import "ZMAccessTokenHandler.h"
 #import "ZMURLSession.h"
@@ -43,7 +42,8 @@
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
-                               minTLSVersion:(NSString *)minTLSVersion;
+                               minTLSVersion:(NSString *)minTLSVersion
+                                selfClientID: (NSString *)selfClientID;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
 

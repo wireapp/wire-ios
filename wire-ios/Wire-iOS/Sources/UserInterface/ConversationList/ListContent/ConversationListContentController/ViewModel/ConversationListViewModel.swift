@@ -55,6 +55,9 @@ final class ConversationListViewModel: NSObject {
             /// group conversations
             case groups
 
+            /// channel conversations
+            case channels
+
             /// favorites
             case favorites
 
@@ -67,25 +70,6 @@ final class ConversationListViewModel: NSObject {
 
             var identifier: SectionIdentifier {
                 switch self {
-                case let .folder(label: label):
-                    label.remoteIdentifier?.transportString() ?? "folder"
-                default:
-                    canonicalName
-                }
-            }
-
-            var obfuscatedName: String {
-                switch self {
-                case .folder:
-                    "user-defined-folder"
-
-                default:
-                    canonicalName
-                }
-            }
-
-            var canonicalName: String {
-                switch self {
                 case .contactRequests:
                     "contactRequests"
                 case .conversations:
@@ -94,27 +78,12 @@ final class ConversationListViewModel: NSObject {
                     "contacts"
                 case .groups:
                     "groups"
+                case .channels:
+                    "channels"
                 case .favorites:
                     "favorites"
                 case let .folder(label: label):
-                    label.name ?? "folder"
-                }
-            }
-
-            var localizedName: String? {
-                switch self {
-                case .conversations:
-                    nil
-                case .contactRequests:
-                    L10n.Localizable.List.Section.requests
-                case .contacts:
-                    L10n.Localizable.List.Section.contacts
-                case .groups:
-                    L10n.Localizable.List.Section.groups
-                case .favorites:
-                    L10n.Localizable.List.Section.favorites
-                case let .folder(label: label):
-                    label.name
+                    label.remoteIdentifier?.transportString() ?? "folder"
                 }
             }
 
@@ -130,6 +99,8 @@ final class ConversationListViewModel: NSObject {
                 case (.contacts, .contacts):
                     true
                 case (.groups, .groups):
+                    true
+                case (.channels, .channels):
                     true
                 case (.favorites, .favorites):
                     true
@@ -242,32 +213,16 @@ final class ConversationListViewModel: NSObject {
             .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak userSession] _ in
-                guard let userSession else { return }
+                guard let userSession, !userSession.isTornDown else { return }
 
                 userSession.conversationDirectory.refetchAllLists(in: userSession.contextProvider.viewContext)
             }.store(in: &tokens)
-    }
-
-    func sectionHeaderTitle(sectionIndex: Int) -> String? {
-        kind(of: sectionIndex)?.localizedName
     }
 
     private func kind(of sectionIndex: Int) -> Section.Kind? {
         guard sections.indices.contains(sectionIndex) else { return nil }
 
         return sections[sectionIndex].kind
-    }
-
-    /// Section's canonical name
-    ///
-    /// - Parameter sectionIndex: section index of the collection view
-    /// - Returns: canonical name
-    func sectionCanonicalName(of sectionIndex: Int) -> String? {
-        kind(of: sectionIndex)?.canonicalName
-    }
-
-    func obfuscatedSectionName(of sectionIndex: Int) -> String? {
-        kind(of: sectionIndex)?.obfuscatedName
     }
 
     var sectionCount: Int {
@@ -327,6 +282,8 @@ final class ConversationListViewModel: NSObject {
             conversationListType = .contacts
         case .groups:
             conversationListType = .groups
+        case .channels:
+            conversationListType = .channels
         case .favorites:
             conversationListType = .favorites
         case let .folder(label: label):
@@ -358,6 +315,8 @@ final class ConversationListViewModel: NSObject {
         let kinds: [Section.Kind] = switch selectedFilter {
         case .groups:
             [.groups]
+        case .channels:
+            [.channels]
         case .favorites:
             [.favorites]
         case .oneOnOne:
@@ -499,6 +458,8 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             .contactRequests
         case .groups:
             .groups
+        case .channels:
+            .channels
         case .favorites:
             .favorites
         case let .folder(label):
