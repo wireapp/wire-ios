@@ -39,7 +39,7 @@ extension ZMConversationMessage {
                 message: textMessageData,
                 isObfuscated: isObfuscated,
                 accent: .default
-            ) // TODO:
+            )
             return "\(ConversationAnnouncement.Text.description(senderName)), \(messageText.string)"
         } else if isImage {
             return ConversationAnnouncement.Picture.description(senderName)

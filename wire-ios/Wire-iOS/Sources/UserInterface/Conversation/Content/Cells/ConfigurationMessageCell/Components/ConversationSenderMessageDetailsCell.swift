@@ -48,7 +48,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - Properties
 
     weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage? // TODO: check if needed to call on just toucn screen on scroll
+    weak var message: ZMConversationMessage?
     weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
@@ -304,15 +304,11 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     ///   - timestamp: The given timestamp of the message
     init(
         sender: UserType,
-        selfUser: (any UserType)? = nil,
+        selfUser: any UserType,
         message: ZMConversationMessage
     ) {
         self.message = message
-        let teamRoleIndicator = if let selfUser {
-            sender.teamRoleIndicator(selfUser: selfUser)
-        } else {
-            sender.teamRoleIndicator()
-        }
+        let teamRoleIndicator = sender.teamRoleIndicator(selfUser: selfUser)
         let indicator: Indicator? = if message.isDeletion {
             .deleted
         } else {
@@ -357,25 +353,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 }
 
 private extension UserType {
-    func teamRoleIndicator(with provider: SelfUserProvider? = SelfUser.provider) -> TeamRoleIndicator? {
-        if isServiceUser {
-            .service
-
-        } else if isExternalPartner {
-            .externalPartner
-
-        } else if isFederated {
-            .federated
-
-        } else if !isTeamMember,
-                  let selfUser = provider?.providedSelfUser,
-                  selfUser.isTeamMember {
-            .guest
-        } else {
-            nil
-        }
-    }
-
     
     func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
         if isServiceUser {

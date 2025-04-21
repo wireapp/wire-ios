@@ -19,9 +19,12 @@
 import DifferenceKit
 import WireDataModel
 import WireSyncEngine
+import WireFoundation
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
+extension UUID: Differentiable {}
+
 extension AnyConversationMessageCellDescription: Differentiable {
 
     typealias DifferenceIdentifier = String
@@ -38,9 +41,6 @@ extension AnyConversationMessageCellDescription: Differentiable {
         isConfigurationEqual(with: source)
     }
 
-}
-
-extension UUID: Differentiable {
 }
 
 extension ZMConversationMessage {
@@ -136,15 +136,17 @@ final class ConversationTableViewDataSource: NSObject {
         let messageIds = messages.map { $0.objectID }
         let selfUserOnMainThread = userSession.selfUser
         let selfUserObjectID = selfUserOnMainThread.objectId
-        
+        let firstUnreadMessageNonce = firstUnreadMessage?.nonce
         let runId = UUID().uuidString
         
+        // Dispatching to background thread to offload sections calculation
         userSession.performBackgroundTask { [weak self] backgroundContext in
             guard let self else { return }
             
             Self.backgroundTasksCount += 1
             print("DS: \(runId): dispatched background task: \(Self.backgroundTasksCount)")
             
+            // Re-fetching messages in background thread
             let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
             fetchRequest.predicate = NSPredicate(format: "SELF IN %@", messageIds)
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
@@ -156,11 +158,12 @@ final class ConversationTableViewDataSource: NSObject {
                 context: backgroundContext
             ) ?? selfUserOnMainThread
             
+            // Go through messages and calculate sections
             let result = messages.enumerated().map { offset, element in
                 let context = self.context(
                     for: element,
                     at: offset,
-                    firstUnreadMessage: nil, // TODO: self.firstUnreadMessage,
+                    firstUnreadMessageNonce: firstUnreadMessageNonce,
                     searchQueries: self.searchQueries,
                     messages: messages
                 )
@@ -176,20 +179,23 @@ final class ConversationTableViewDataSource: NSObject {
                     )
                 }
 
-                // Re-create cell description if the context has changed (message has been moved around or received new
-                // neighbors).
+                // Re-create cell description if the context has changed (message has been moved around
+                // or received new neighbours).
                 return (element.nonce!, sectionController, context)
             }
 
             print("DS: \(runId): finished background task and return to Main: \(Self.backgroundTasksCount)")
+            
+            // Return back to main thread
             DispatchQueue.main.async {
                 var sections = [Section]()
                 for (messageObjectId, sectionController, context) in result {
                     
-                    self.sectionControllers
-                        .set(value: sectionController, for: messageObjectId)
+                    // saving calculations result in local cache
+                    self.sectionControllers.set(value: sectionController, for: messageObjectId)
                     self.actionControllers.set(value: sectionController.actionController, for: messageObjectId)
 
+                    // Re-set messages from Main thread to section controller to not have crash with later interactions with data
                     if let mainThreadObject = self.messages.first(
                         where: { $0.objectID == (sectionController.message as! ZMMessage).objectID
                         }) {
@@ -244,7 +250,7 @@ final class ConversationTableViewDataSource: NSObject {
         let context = context(
             for: sectionController.message,
             at: section,
-            firstUnreadMessage: firstUnreadMessage,
+            firstUnreadMessageNonce: firstUnreadMessage?.nonce,
             searchQueries: searchQueries,
             messages: messages
         )
@@ -324,7 +330,7 @@ final class ConversationTableViewDataSource: NSObject {
         let context = context(
             for: message,
             at: index,
-            firstUnreadMessage: firstUnreadMessage,
+            firstUnreadMessageNonce: firstUnreadMessage?.nonce,
             searchQueries: searchQueries,
             messages: messages
         )
@@ -440,9 +446,8 @@ final class ConversationTableViewDataSource: NSObject {
 
         print("DS: loadMessages: calling calculateSections")
         calculateSections(forceRecalculate: forceRecalculate) { sections in
-            self.reloadSections(newSections: sections)
-//            self.currentSections = sections
-//            self.tableView.reloadData()
+            self.currentSections = sections
+            self.tableView.reloadData()
             completion?()
         }
     }
@@ -627,8 +632,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func collapse(message: ZMConversationMessage) {
-        guard let message = message as? ZMMessage,
-              let section = sectionControllers.get(for: message.nonce!) else {
+        guard let section = sectionControllers.get(for: message.nonce!) else {
             return
         }
         section.collapse()
@@ -721,7 +725,7 @@ extension ConversationTableViewDataSource {
     func context(
         for message: ZMConversationMessage,
         at index: Int,
-        firstUnreadMessage: ZMConversationMessage?,
+        firstUnreadMessageNonce: UUID?,
         searchQueries: [String],
         messages: [ZMMessage]
     ) -> ConversationMessageContext {
@@ -741,7 +745,7 @@ extension ConversationTableViewDataSource {
             isSameSenderAsPrevious: isPreviousSenderSame(forMessage: message, at: index, messages: messages),
             isTimestampInSameMinuteAsPreviousMessage: isTimestampInSameMinuteAsPreviousMessage,
             isFirstMessageOfTheDay: isFirstMessageOfTheDay(for: message, at: index, messages: messages),
-            isFirstUnreadMessage: message.isEqual(firstUnreadMessage),
+            isFirstUnreadMessage: message.nonce == firstUnreadMessageNonce,
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
             previousMessageIsKnock: previousMessage?.isKnock == true
@@ -763,7 +767,6 @@ extension ConversationTableViewDataSource {
     /// between the messages is reduced.
     /// - If a message's status does not provide relevant info over a subsequent message's status, it is hidden.
     private func postProcessedSections(_ sections: [Section]) -> [Section] {
-//        return sections // TODO
         
         var sections = sections
 
@@ -976,123 +979,5 @@ func printChanges<T: Differentiable>(stagedChangeset: StagedChangeset<[T]>) {
         for move in changeset.sectionMoved {
             print("DS: Moved section from \(move.source) to \(move.target)")
         }
-    }
-}
-
-
-class ThreadSafeDictionary<Key: Hashable, Value> {
-    private var dictionary = [Key: Value]()
-    private let queue = DispatchQueue(label: "com.example.dictionaryQueue")
-
-    func set(value: Value?, for key: Key) {
-        queue.async {
-            self.dictionary[key] = value
-        }
-    }
-
-    func get(for key: Key) -> Value? {
-        return queue.sync {
-            return self.dictionary[key]
-        }
-    }
-
-    func remove(for key: Key) {
-        queue.async {
-            self.dictionary.removeValue(forKey: key)
-        }
-    }
-
-    func allItems() -> [Key: Value] {
-        return queue.sync {
-            return self.dictionary
-        }
-    }
-    
-    func reset() {
-        queue.async {
-            self.dictionary.removeAll()
-        }
-    }
-}
-
-//final class LeadingDebouncer {
-//    private var isCooldown = false
-//    private var cooldownTime: TimeInterval
-//    private let queue: DispatchQueue
-//
-//    init(cooldownTime: TimeInterval, queue: DispatchQueue = .main) {
-//        self.cooldownTime = cooldownTime
-//        self.queue = queue
-//    }
-//
-//    func call(_ block: @escaping () -> Void) {
-//        guard !isCooldown else { return }
-//
-//        isCooldown = true
-//        block()
-//
-//        queue.asyncAfter(deadline: .now() + cooldownTime) { [weak self] in
-//            self?.isCooldown = false
-//        }
-//    }
-//}
-
-final class LeadingTrailingDebouncer<ID: Hashable> {
-    private struct DebounceState {
-        var isCooldown = false
-        var pendingCall: (() -> Void)? = nil
-    }
-
-    private let cooldownTime: TimeInterval
-    private let queue: DispatchQueue
-    private var states: [AnyHashable: DebounceState] = [:]
-
-    // Unique key for `nil` ID
-    private let nilKey = UUID()
-
-    init(cooldownTime: TimeInterval, queue: DispatchQueue = .main) {
-        self.cooldownTime = cooldownTime
-        self.queue = queue
-    }
-
-    func call(id: ID?, block: @escaping () -> Void) {
-        let key: AnyHashable = id.map { AnyHashable($0) } ?? AnyHashable(nilKey)
-
-        if states[key] == nil {
-            states[key] = DebounceState()
-        }
-
-        var state = states[key]!
-
-        if !state.isCooldown {
-            // LEADING: run immediately
-            block()
-            state.isCooldown = true
-
-            queue.asyncAfter(deadline: .now() + cooldownTime) { [weak self] in
-                guard let self = self else { return }
-
-                var updatedState = self.states[key] ?? DebounceState()
-                updatedState.isCooldown = false
-
-                if let trailing = updatedState.pendingCall {
-                    trailing()
-                    updatedState.pendingCall = nil
-                    updatedState.isCooldown = true
-
-                    self.queue.asyncAfter(deadline: .now() + self.cooldownTime) {
-                        self.states[key]?.isCooldown = false
-                        self.states[key]?.pendingCall = nil
-                    }
-                }
-
-                self.states[key] = updatedState
-            }
-        } else {
-            // Store for TRAILING
-            state.pendingCall = block
-        }
-
-        states[key] = state
     }
 }

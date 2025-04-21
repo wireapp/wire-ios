@@ -67,7 +67,11 @@ enum ConversationSystemMessageCellDescription {
             return []
 
         case .messageDeletedForEveryone:
-            let senderCell = ConversationSenderMessageCellDescription(sender: sender, message: message)
+            let senderCell = ConversationSenderMessageCellDescription(
+                sender: sender,
+                selfUser: selfUser,
+                message: message
+            )
             return [AnyConversationMessageCellDescription(senderCell)]
 
         case .messageTimerUpdate:
@@ -170,10 +174,7 @@ enum ConversationSystemMessageCellDescription {
 
         case .newConversation:
             var cells: [AnyConversationMessageCellDescription] = []
-            let startedConversationCell = ConversationStartedSystemMessageCellDescription(
-                message: message,
-                data: systemMessageData
-            )
+            let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
             // Only display invite user cell for team members

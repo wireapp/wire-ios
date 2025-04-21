@@ -25,6 +25,7 @@ public typealias Conversation = ConversationLike & SwiftConversationLike
 @objc
 public protocol ConversationLike: AnyObject {
     
+    // Any as type eraser to hide NSManagedObjectID behind it
     var objectId: Any { get }
     
     var conversationType: ZMConversationType { get }

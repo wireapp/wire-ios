@@ -26,9 +26,15 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.selectedUsers = Self.makeModel(message: message).selectedUsers
+            }
+        }
+    }
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -40,27 +46,35 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
     let accessibilityIdentifier: String? = nil
     var conversationObserverToken: Any?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
+    init(message: ZMConversationMessage) {
+        self.configuration = Self.makeConfiguration(message: message)
+        self.actionController = nil
+
+        super.init()
+
+        accessibilityLabel = configuration.message.string
+    }
+    
+    private static func makeModel(message: ZMConversationMessage) -> ParticipantsCellViewModel {
         let color = LabelColors.textDefault
         let iconColor = IconColors.backgroundDefault
-        let model = ParticipantsCellViewModel(
+        return ParticipantsCellViewModel(
             font: .mediumFont,
             largeFont: .largeSemiboldFont,
             textColor: color,
             iconColor: iconColor,
             message: message
         )
-
-        self.actionController = nil
-        self.configuration = View.Configuration(
+    }
+    
+    private static func makeConfiguration(message: ZMConversationMessage) -> View.Configuration {
+        let model = makeModel(message: message)
+        return View.Configuration(
             title: model.attributedHeading(),
             message: model.attributedTitle() ?? NSAttributedString(string: ""),
             selectedUsers: model.selectedUsers,
             icon: model.image()
         )
-        super.init()
-
-        accessibilityLabel = configuration.message.string
     }
 
 }

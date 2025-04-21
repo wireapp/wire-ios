@@ -29,7 +29,7 @@ final class ConversationNewDeviceSystemMessageCell<
 
     var linkTarget: LinkTarget?
 
-    enum LinkTarget { // TODO: will crash
+    enum LinkTarget {
         case user(_ id: Any, (_ id: Any) -> Void)
         case conversation(_ id: Any, (_ id: Any) -> Void)
     }
@@ -37,7 +37,7 @@ final class ConversationNewDeviceSystemMessageCell<
     struct Configuration {
         let attributedText: NSAttributedString?
         var icon: UIImage?
-        var linkTarget: LinkTarget // TODO: fix bc of potential crash
+        var linkTarget: LinkTarget
     }
 
     override init(frame: CGRect) {

@@ -59,7 +59,7 @@ extension ZMUser: UserType {
     }
 
     public var accentColor: AccentColor? {
-        get { .init(rawValue: accentColorValue) } // TODO: not optional?
+        get { .init(rawValue: accentColorValue) }
         set { accentColorValue = newValue?.rawValue ?? AccentColor.default.rawValue }
     }
 
