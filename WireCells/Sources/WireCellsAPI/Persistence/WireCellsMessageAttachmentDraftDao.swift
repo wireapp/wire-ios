@@ -19,11 +19,22 @@
 public import Foundation
 
 public enum WireCellsMessageAttachmentDraftDaoError: Error {
+    case attachmentNotFound
+    case failedToDeleteAttachments
+    case failedToCreateRequest
     case genericError(any Error)
 }
 
+public protocol FetchedResultsControllerObserver<T>: Actor where T: Sendable {
+    associatedtype T
+    func observe() -> AsyncStream<T>
+}
+
 // sourcery: AutoMockable
-public protocol WireCellsMessageAttachmentDraftDao: Sendable {
+public protocol WireCellsMessageAttachmentDraftDao {
+
+    associatedtype DraftsObserver: FetchedResultsControllerObserver<[WireCellsMessageAttachmentDraft]>
+
     func getAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(WireCellsMessageAttachmentDraftDaoError)
         -> WireCellsMessageAttachmentDraft?
 
@@ -38,8 +49,7 @@ public protocol WireCellsMessageAttachmentDraftDao: Sendable {
         WireCellsMessageAttachmentDraftDaoError
     )
 
-    func observeAttachments(conversationID: WireCellsConversationID)
-        -> AsyncStream<[WireCellsMessageAttachmentDraft]>
+    func observeAttachments(conversationID: WireCellsConversationID) async throws  -> DraftsObserver
 
     func addAttachment(
         uuid: UUID,
@@ -47,13 +57,13 @@ public protocol WireCellsMessageAttachmentDraftDao: Sendable {
         conversationID: WireCellsConversationID,
         mimeType: String,
         fileName: String,
-        fileSize: Int64,
+        fileSize: UInt64,
         dataPath: String,
         nodePath: String,
-        status: String,
-        assetWidth: Int?,
-        assetHeight: Int?,
-        assetDuration: Int64?
+        uploadStatus: String,
+        assetWidth: UInt64?,
+        assetHeight: UInt64?,
+        assetDuration: UInt64?
     ) async throws(WireCellsMessageAttachmentDraftDaoError) -> WireCellsMessageAttachmentDraft
 
     func updateUploadStatus(

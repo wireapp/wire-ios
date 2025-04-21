@@ -19,8 +19,8 @@
 public import Foundation
 
 public struct WireCellsMessageAttachmentDraftID: Equatable, Hashable, Identifiable, Sendable {
-    package let uuid: UUID
-    package let versionID: String
+    public let uuid: UUID
+    public let versionID: String
 
     public var id: String {
         "\(uuid.uuidString)/\(versionID)"

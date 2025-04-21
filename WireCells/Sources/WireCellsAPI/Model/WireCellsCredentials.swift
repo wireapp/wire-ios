@@ -18,19 +18,14 @@
 
 public import Foundation
 
-/// Node preview data.
-/// - Parameters:
-///   - url: URL of the preview.
-///   - dimension: Max preview thumbnail dimension.
-public struct WireCellsNodePreview: Equatable, Hashable, Sendable {
-    public let url: URL
-    public let dimension: UInt
+public struct WireCellsCredentials: Equatable, Hashable, Sendable {
+    public let serverUrl: URL
+    public let accessToken: String
+    public let gatewaySecret: String
 
-    package init(
-        url: URL,
-        dimension: UInt
-    ) {
-        self.url = url
-        self.dimension = dimension
+    package init(serverUrl: URL, accessToken: String, gatewaySecret: String) {
+        self.serverUrl = serverUrl
+        self.accessToken = accessToken
+        self.gatewaySecret = gatewaySecret
     }
 }

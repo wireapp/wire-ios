@@ -18,29 +18,19 @@
 
 public import Foundation
 
-public struct WireCellsConversationID: Codable, Equatable, Hashable, Identifiable, Sendable {
+/// Node preview data.
+/// - Parameters:
+///   - url: URL of the preview.
+///   - dimension: Max preview thumbnail dimension.
+public struct WireCellsNodePreview: Equatable, Hashable, Sendable {
+    public let url: URL
+    public let dimension: Int
 
-    public let domain: String
-    public let uuid: UUID
-
-    public var id: String {
-        "\(domain)/\(uuid.uuidString)"
-    }
-
-    public init(domain: String, uuid: UUID) {
-        self.domain = domain
-        self.uuid = uuid
-    }
-}
-
-extension WireCellsConversationID: CustomStringConvertible {
-    public var description: String {
-        "\(domain)/\(uuid.uuidString)"
-    }
-}
-
-extension WireCellsConversationID: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        "ConversationID(domain: \(domain), uuid: \(uuid.uuidString))"
+    package init(
+        url: URL,
+        dimension: Int
+    ) {
+        self.url = url
+        self.dimension = dimension
     }
 }

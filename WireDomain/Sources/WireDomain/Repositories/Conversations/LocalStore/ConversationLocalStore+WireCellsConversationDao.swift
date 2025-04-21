@@ -82,15 +82,12 @@ extension ConversationLocalStore: WireCellsConversationDao {
                 let conversations = try context.fetch(fetchRequest)
 
                 return conversations.compactMap { (conversation: ZMConversation) -> WireCellsConversation? in
-                    guard let domain = conversation.domain else {
-                        return nil
-                    }
+                    // Conversations without a domain, cellName, or display name are filtered out
                     return WireCellsConversation(
-                        id: WireCellsAPI.WireCellsConversationID(
-                            domain: domain,
-                            uuid: conversation.remoteIdentifier
-                        ),
-                        cellName: conversation.cellName
+                        uuid: conversation.remoteIdentifier,
+                        domain: conversation.domain,
+                        cellName: conversation.cellName,
+                        name: conversation.displayName
                     )
                 }
             }

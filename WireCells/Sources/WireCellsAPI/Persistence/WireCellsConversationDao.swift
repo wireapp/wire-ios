@@ -16,17 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public struct WireCellsConversation {
     public var id: WireCellsAPI.WireCellsConversationID
     public var cellName: String
+    public var name: String
 
-    public init?(id: WireCellsAPI.WireCellsConversationID, cellName: String?) {
+    public init?(
+        uuid: UUID,
+        domain: String?,
+        cellName: String?,
+        name: String?
+    ) {
+        guard let domain else { return nil }
         guard let cellName else { return nil }
+        guard let name else { return nil }
 
-        self.id = id
+        self.id = WireCellsConversationID(
+            domain: domain,
+            uuid: uuid
+        )
         self.cellName = cellName
+        self.name = name
     }
 }
 

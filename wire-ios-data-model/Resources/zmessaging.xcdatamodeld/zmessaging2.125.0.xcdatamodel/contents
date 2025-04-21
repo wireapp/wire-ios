@@ -130,10 +130,6 @@
         </uniquenessConstraints>
     </entity>
     <entity name="Feature" representedClassName=".Feature" syncable="YES">
-        <attribute name="attribute" optional="YES"/>
-        <attribute name="attribute1" optional="YES"/>
-        <attribute name="attribute2" optional="YES"/>
-        <attribute name="attribute3" optional="YES"/>
         <attribute name="configData" optional="YES" attributeType="Binary"/>
         <attribute name="hasInitialDefault" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>

@@ -19,14 +19,14 @@
 public import Foundation
 
 public struct WireCellsNodeID: Codable, Equatable, Hashable, Identifiable, Sendable {
-    package let uuid: UUID
-    package let versionID: String
+    public let uuid: UUID
+    public let versionID: UUID
 
     public var id: String {
-        uuid.uuidString + versionID
+        uuid.uuidString + versionID.uuidString
     }
 
-    package init(uuid: UUID, versionID: String) {
+    package init(uuid: UUID, versionID: UUID) {
         self.uuid = uuid
         self.versionID = versionID
     }
@@ -44,8 +44,8 @@ public struct WireCellsCellNode: Equatable, Identifiable, Sendable {
     public let id: WireCellsNodeID
 
     public let path: String
-    public let modified: Int64?
-    public let size: Int64?
+    public let modified: UInt64?
+    public let size: UInt64?
     public let eTag: String?
     public let type: String?
     public let isRecycled: Bool
@@ -54,16 +54,16 @@ public struct WireCellsCellNode: Equatable, Identifiable, Sendable {
     public let contentHash: String?
     public let mimeType: String?
     public let previews: [WireCellsNodePreview]
-    public let ownerUserId: String?
-    public let conversationId: WireCellsConversationID?
-    public let publicLinkId: WireCellsPublicLinkID?
+    public let ownerUserID: String?
+    public let conversationID: WireCellsConversationID?
+    public let publicLinkID: WireCellsPublicLinkID?
 
     package init(
         uuid: UUID,
-        versionID: String,
+        versionID: UUID,
         path: String,
-        modified: Int64? = nil,
-        size: Int64? = nil,
+        modified: UInt64? = nil,
+        size: UInt64? = nil,
         eTag: String? = nil,
         type: String? = nil,
         isRecycled: Bool = false,
@@ -72,9 +72,9 @@ public struct WireCellsCellNode: Equatable, Identifiable, Sendable {
         contentHash: String? = nil,
         mimeType: String? = nil,
         previews: [WireCellsNodePreview] = [],
-        ownerUserId: String? = nil,
-        conversationId: WireCellsConversationID? = nil,
-        publicLinkId: WireCellsPublicLinkID? = nil
+        ownerUserID: String? = nil,
+        conversationID: WireCellsConversationID? = nil,
+        publicLinkID: WireCellsPublicLinkID? = nil
     ) {
         self.id = WireCellsNodeID(uuid: uuid, versionID: versionID)
         self.path = path
@@ -88,8 +88,8 @@ public struct WireCellsCellNode: Equatable, Identifiable, Sendable {
         self.contentHash = contentHash
         self.mimeType = mimeType
         self.previews = previews
-        self.ownerUserId = ownerUserId
-        self.conversationId = conversationId
-        self.publicLinkId = publicLinkId
+        self.ownerUserID = ownerUserID
+        self.conversationID = conversationID
+        self.publicLinkID = publicLinkID
     }
 }

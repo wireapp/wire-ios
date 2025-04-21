@@ -16,18 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import CoreData
-import WireDataModel
-import WireLogging
+public import Foundation
 
-public final class WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmentsDraftsLocalStoreProtocol,
-    Sendable {
+public struct WireCellsPublicLink: Equatable, Hashable, Sendable {
+    public let uuid: UUID
+    public let url: URL
 
-    // MARK: - Properties
-
-    let context: NSManagedObjectContext
-
-    public init(context: NSManagedObjectContext) {
-        self.context = context
+    package init(uuid: UUID, url: URL) {
+        self.uuid = uuid
+        self.url = url
     }
 }
