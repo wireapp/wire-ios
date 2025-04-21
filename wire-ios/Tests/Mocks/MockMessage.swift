@@ -370,7 +370,6 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     var causedSecurityLevelDegradation: Bool = false
     var needsReadConfirmation: Bool = false
-    let objectIdentifier: String = UUID().uuidString
     var linkAttachments: [LinkAttachment]?
     var needsLinkAttachmentsUpdate: Bool = false
     var isSilenced: Bool = false

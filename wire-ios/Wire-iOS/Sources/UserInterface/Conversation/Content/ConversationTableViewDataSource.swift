@@ -87,6 +87,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
+    private let getUserByIdUseCase: GetUserByIdUseCaseProtocol
     
     let debouncer = LeadingTrailingDebouncer<UUID>(cooldownTime: 0.3)
 
@@ -133,12 +134,12 @@ final class ConversationTableViewDataSource: NSObject {
         completion: @escaping ([Section]) -> Void
     ) {
         let messageIds = messages.map { $0.objectID }
-        let selfUserOnMainThread = userSession.selfUser as! ZMUser
-        let selfUserObjectID = selfUserOnMainThread.objectID
+        let selfUserOnMainThread = userSession.selfUser
+        let selfUserObjectID = selfUserOnMainThread.objectId
         
         let runId = UUID().uuidString
         
-        (userSession as! ZMUserSession).coreDataStack!.messagesContainer.performBackgroundTask { [weak self] backgroundContext in
+        userSession.performBackgroundTask { [weak self] backgroundContext in
             guard let self else { return }
             
             Self.backgroundTasksCount += 1
@@ -150,8 +151,10 @@ final class ConversationTableViewDataSource: NSObject {
 
             let messages = try! backgroundContext.fetch(fetchRequest)
             
-            let selfUserOnBackgroundThread = backgroundContext.object(with: selfUserObjectID) as! ZMUser
-            _ = selfUserOnBackgroundThread.isFault
+            let selfUserOnBackgroundThread = self.getUserByIdUseCase.getUserById(
+                id: selfUserObjectID,
+                context: backgroundContext
+            ) ?? selfUserOnMainThread
             
             let result = messages.enumerated().map { offset, element in
                 let context = self.context(
@@ -263,14 +266,15 @@ final class ConversationTableViewDataSource: NSObject {
         tableView: UpsideDownTableView,
         actionResponder: MessageActionResponder,
         cellDelegate: ConversationMessageCellDelegate,
-        userSession: UserSession
+        userSession: UserSession,
+        getUserByIdUseCase: GetUserByIdUseCaseProtocol
     ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
         self.conversation = conversation
         self.tableView = tableView
         self.userSession = userSession
-
+        self.getUserByIdUseCase = getUserByIdUseCase
         super.init()
 
         tableView.dataSource = self
@@ -283,7 +287,7 @@ final class ConversationTableViewDataSource: NSObject {
     func getOrCreateActionController(
         for message: ZMMessage,
         sectionController: ConversationMessageSectionController,
-        selfUser: ZMUser
+        selfUser: any UserType
     ) -> ConversationMessageActionController {
         if let cachedEntry = actionControllers.get(for: message.nonce!) {
             return cachedEntry
@@ -299,7 +303,7 @@ final class ConversationTableViewDataSource: NSObject {
     func makeActionController(
         for message: ZMConversationMessage,
         sectionController: ConversationMessageSectionController,
-        selfUser: ZMUser
+        selfUser: any UserType
     ) -> ConversationMessageActionController {
         ConversationMessageActionController(
             responder: messageActionResponder,
@@ -315,7 +319,7 @@ final class ConversationTableViewDataSource: NSObject {
         message: ZMMessage,
         index: Int,
         messages: [ZMMessage],
-        selfUser: ZMUser
+        selfUser: any UserType
     ) -> ConversationMessageSectionController {
         let context = context(
             for: message,

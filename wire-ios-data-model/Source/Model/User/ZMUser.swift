@@ -311,6 +311,10 @@ public extension ZMUser {
             updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
         }
     }
+    
+    var objectId: Any {
+        return objectID
+    }
 
     /// combination of domain and remoteIdentifier
     @NSManaged private var primaryKey: String

@@ -23,6 +23,8 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// The identifier which uniquely idenitifies the user in its domain
     var remoteIdentifier: UUID! { get }
+    
+    var objectId: Any { get }
 
     /// The domain which the user originates from
     var domain: String? { get }

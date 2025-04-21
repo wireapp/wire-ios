@@ -169,7 +169,7 @@ extension ConversationTextMessageCellDescription {
     static func cells(
         for message: ZMConversationMessage,
         searchQueries: [String],
-        selfUser: ZMUser,
+        selfUser: any UserType,
         userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
@@ -189,15 +189,14 @@ extension ConversationTextMessageCellDescription {
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
         searchQueries: [String],
-        selfUser: ZMUser,
+        selfUser: any UserType,
         userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
         // Refetch the link attachments if needed
-        if !Settings.disableLinkPreviews {
-            let id = (message as! ZMMessage).objectID
+        if !Settings.disableLinkPreviews, let id = (message as? ZMMessage)?.objectID {
             userSession.enqueue {
                 let message = ZMMessage.existingObject(
                     with: id,

@@ -30,8 +30,8 @@ final class ConversationNewDeviceSystemMessageCell<
     var linkTarget: LinkTarget?
 
     enum LinkTarget { // TODO: will crash
-        case user(NSManagedObjectID, (NSManagedObjectID) -> Void)
-        case conversation(NSManagedObjectID, (NSManagedObjectID) -> Void)
+        case user(_ id: Any, (_ id: Any) -> Void)
+        case conversation(_ id: Any, (_ id: Any) -> Void)
     }
 
     struct Configuration {

@@ -23,6 +23,8 @@ import WireRequestStrategy
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: rename to MockConversation after objc MockConversation is retired
 class SwiftMockConversation: NSObject, Conversation {
+    
+    var objectId: Any = UUID()
 
     var isMLSConversationDegraded: Bool = false
     var isProteusConversationDegraded: Bool = false

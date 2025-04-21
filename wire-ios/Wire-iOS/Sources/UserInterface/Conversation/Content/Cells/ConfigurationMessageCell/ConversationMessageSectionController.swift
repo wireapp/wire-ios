@@ -88,7 +88,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
     }
     
-    var selfUser: ZMUser
+    var selfUser: any UserType
 
     /// The delegate for cells injected by the list adapter.
     weak var cellDelegate: ConversationMessageCellDelegate? {
@@ -123,7 +123,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     init(
         message: ConversationMessage,
         context: ConversationMessageContext,
-        selfUser: ZMUser,
+        selfUser: any UserType,
         selected: Bool = false,
         userSession: UserSession,
         useInvertedIndices: Bool,
@@ -320,7 +320,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             isCollapsed: isCollapsed,
             buttonAction: buttonAction,
             selfUser: selfUser,
-            accentColor: (selfUser.accentColor ?? .default).uiColor,
+            accentColor: (selfUser.zmAccentColor ?? .default).accentColor.uiColor,
             userSession: userSession
         )
     }
@@ -441,7 +441,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescription.message = message
             cellDescription.actionController = actionController
             cellDescription.delegate = cellDelegate
-            let pointer = Unmanaged.passUnretained(cellDescription.instance as AnyObject).toOpaque()
+//            let pointer = Unmanaged.passUnretained(cellDescription.instance as AnyObject).toOpaque()
 //            print(
 //                "DS: cellDescription: \(cellDescription.instance):\(pointer) has now action controller: \(String(describing: actionController))"
 //            )

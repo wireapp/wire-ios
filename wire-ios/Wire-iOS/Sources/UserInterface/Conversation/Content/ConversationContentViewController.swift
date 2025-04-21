@@ -89,7 +89,8 @@ final class ConversationContentViewController: UIViewController {
         tableView: tableView,
         actionResponder: self,
         cellDelegate: self,
-        userSession: userSession
+        userSession: userSession,
+        getUserByIdUseCase: GetUserByIdUseCase()
     )
 
     /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has

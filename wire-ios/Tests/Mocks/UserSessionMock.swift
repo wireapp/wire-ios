@@ -418,6 +418,13 @@ final class UserSessionMock: UserSession {
     var contextProvider: any ContextProvider {
         coreDataStack ?? MockContextProvider()
     }
+    
+    var performBackgroundTaskReturnValue: NSManagedObjectContext?
+    func performBackgroundTask(
+        _ block: @escaping (NSManagedObjectContext) -> Void
+    ) {
+        block(performBackgroundTaskReturnValue ?? viewContext)
+    }
 
 }
 

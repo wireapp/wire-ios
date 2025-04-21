@@ -304,7 +304,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     ///   - timestamp: The given timestamp of the message
     init(
         sender: UserType,
-        selfUser: ZMUser? = nil,
+        selfUser: (any UserType)? = nil,
         message: ZMConversationMessage
     ) {
         self.message = message
@@ -330,7 +330,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     // MARK: - Accessibility
 
-    private func setupAccessibility(_ sender: UserType, selfUser: ZMUser?) {
+    private func setupAccessibility(_ sender: UserType, selfUser: (any UserType)?
+) {
         guard let message, let senderName = sender.name else {
             accessibilityLabel = nil
             return
@@ -376,7 +377,7 @@ private extension UserType {
     }
 
     
-    func teamRoleIndicator(selfUser: ZMUser) -> TeamRoleIndicator? {
+    func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
         if isServiceUser {
             .service
 

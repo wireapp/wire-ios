@@ -41,9 +41,9 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     init(
         message: ZMConversationMessage,
         systemMessageData: ZMSystemMessageData,
-        conversation: ZMConversation,
-        onUserTap: @escaping (_ userID: NSManagedObjectID) -> Void,
-        onConversationTap: @escaping (_ conversationID: NSManagedObjectID) -> Void
+        conversation: ConversationLike,
+        onUserTap: @escaping (_ userID: Any) -> Void,
+        onConversationTap: @escaping (_ conversationID: Any) -> Void
     ) {
         self.configuration = ConversationNewDeviceSystemMessageCellDescription.configuration(
             for: systemMessageData,
@@ -69,9 +69,9 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
 
     private static func configuration(
         for systemMessage: ZMSystemMessageData,
-        in conversation: ZMConversation,
-        onUserTap: @escaping (_ userID: NSManagedObjectID) -> Void,
-        onConversationTap: @escaping (_ conversationID: NSManagedObjectID) -> Void
+        in conversation: ConversationLike,
+        onUserTap: @escaping (_ userID: Any) -> Void,
+        onConversationTap: @escaping (_ conversationID: Any) -> Void
     ) -> View.Configuration {
 
         let textAttributes = TextAttributes(
@@ -120,7 +120,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         _ selfUser: UserType,
         clients: [UserClientType],
         link: URL,
-        onUserTap: @escaping (_ userID: NSManagedObjectID) -> Void
+        onUserTap: @escaping (_ userID: Any) -> Void
     ) -> View.Configuration {
         let string = L10n.Localizable.Content.System.selfUserNewClient(link.absoluteString)
         let attributedText = NSMutableAttributedString.markdown(from: string, style: .systemMessage)
@@ -129,17 +129,17 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         return View.Configuration(
             attributedText: attributedText,
             icon: isSelfClient ? nil : verifiedIcon,
-            linkTarget: .user((selfUser as! ZMUser).objectID, onUserTap)
+            linkTarget: .user(selfUser.objectId, onUserTap)
         )
     }
 
     private static func configureForOtherUsers(
         _ users: [UserType],
-        conversation: ZMConversation,
+        conversation: ConversationLike,
         clients: [UserClientType],
         attributes: TextAttributes,
-        onUserTap: @escaping (_ userID: NSManagedObjectID) -> Void,
-        onConversationTap: @escaping (_ conversationID: NSManagedObjectID) -> Void
+        onUserTap: @escaping (_ userID: Any) -> Void,
+        onConversationTap: @escaping (_ conversationID: Any) -> Void
     ) -> View.Configuration {
 
         let displayNamesOfOthers = users.filter { !$0.isSelfUser }.compactMap(\.name)
@@ -171,18 +171,18 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         let attributedText = attributedSenderNames
 
         let linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
-            .user((user as! ZMUser).objectID, onUserTap)
+            .user(user.objectId, onUserTap)
         } else {
-            .conversation(conversation.objectID, onConversationTap)
+            .conversation(conversation.objectId, onConversationTap)
         }
 
         return View.Configuration(attributedText: attributedText, icon: verifiedIcon, linkTarget: linkTarget)
     }
 
     private static func configureForAddedUsers(
-        in conversation: ZMConversation,
+        in conversation: ConversationLike,
         attributes: TextAttributes,
-        onConversationTap: @escaping (_ conversationID: NSManagedObjectID) -> Void
+        onConversationTap: @escaping (_ conversationID: Any) -> Void
     ) -> View
         .Configuration {
         let attributedNewUsers = NSAttributedString(
@@ -199,7 +199,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         return View.Configuration(
             attributedText: attributedText,
             icon: verifiedIcon,
-            linkTarget: .conversation(conversation.objectID, onConversationTap)
+            linkTarget: .conversation(conversation.objectId, onConversationTap)
         )
     }
 

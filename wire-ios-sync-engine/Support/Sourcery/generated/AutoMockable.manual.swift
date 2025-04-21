@@ -1295,5 +1295,11 @@ public class MockUserSession: UserSession {
             fatalError("no mock for `e2eIdentityUpdateCertificateUpdateStatus`")
         }
     }
+    
+    public func performBackgroundTask(
+        _ block: @escaping (NSManagedObjectContext) -> Void
+    ) {
+        block(contextProvider.viewContext)
+    }
 
 }

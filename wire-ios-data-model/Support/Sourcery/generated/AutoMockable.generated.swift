@@ -325,6 +325,15 @@ public class MockConversationLike: ConversationLike {
 
     public init() {}
 
+    // MARK: - objectId
+
+    public var objectId: Any {
+        get { return underlyingObjectId }
+        set(value) { underlyingObjectId = value }
+    }
+
+    public var underlyingObjectId: Any!
+
     // MARK: - conversationType
 
     public var conversationType: ZMConversationType {

@@ -55,6 +55,7 @@ extension ZMConversationMessage {
             for: self,
             isCollapsed: true,
             buttonAction: nil,
+            selfUser: ZMUserSession.shared()!.selfUser,
             accentColor: ZMAccentColor.default.accentColor.uiColor,
             userSession: ZMUserSession.shared()!
         ).first {

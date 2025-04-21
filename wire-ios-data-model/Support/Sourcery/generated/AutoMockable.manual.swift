@@ -210,15 +210,6 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
 
     public var underlyingReplies: Set<ZMMessage>!
 
-    // MARK: - objectIdentifier
-
-    public var objectIdentifier: String {
-        get { return underlyingObjectIdentifier }
-        set(value) { underlyingObjectIdentifier = value }
-    }
-
-    public var underlyingObjectIdentifier: String!
-
     // MARK: - linkAttachments
 
     public var linkAttachments: [LinkAttachment]?
