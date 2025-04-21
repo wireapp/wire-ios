@@ -43,15 +43,6 @@ extension AnyConversationMessageCellDescription: Differentiable {
 
 }
 
-extension ZMConversationMessage {
-
-    var isSentFromThisDevice: Bool {
-        guard let sender = senderUser else { return false }
-        return sender.isSelfUser && deliveryState == .pending
-    }
-
-}
-
 final class ConversationTableViewDataSource: NSObject {
 
     static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
@@ -70,8 +61,10 @@ final class ConversationTableViewDataSource: NSObject {
 
     func resetSectionControllers() {
         sectionControllers.reset()
-        calculateSections() { sections in
-            self.reloadSections(newSections: sections)
+        calculateSections() { [weak self] sections in
+            guard let self else { return }
+            self.currentSections = sections
+            self.tableView.reloadData()
         }
     }
 
@@ -99,8 +92,8 @@ final class ConversationTableViewDataSource: NSObject {
 
     var searchQueries: [String] = [] {
         didSet {
-            calculateSections() { sections in
-                self.reloadSections(newSections: sections) // TODO: TEST
+            calculateSections() { [weak self] sections in
+                self?.reloadSections(newSections: sections) // TODO: TEST
             }
         }
     }
@@ -439,8 +432,8 @@ final class ConversationTableViewDataSource: NSObject {
         let newLimit = currentLimit + ConversationTableViewDataSource.defaultBatchSize
         loadingMessages = true
 
-        loadMessages(offset: currentOffset, limit: newLimit) {
-            self.loadingMessages = false
+        loadMessages(offset: currentOffset, limit: newLimit) { [weak self] in
+            self?.loadingMessages = false
         }
     }
 
@@ -452,8 +445,8 @@ final class ConversationTableViewDataSource: NSObject {
 
         let newOffset = max(0, currentOffset - ConversationTableViewDataSource.defaultBatchSize)
 
-        loadMessages(offset: newOffset, limit: currentLimit) {
-            self.loadingMessages = false
+        loadMessages(offset: newOffset, limit: currentLimit) { [weak self] in
+            self?.loadingMessages = false
         }
     }
 
@@ -906,6 +899,11 @@ extension ZMConversationMessage {
     }
 }
 
+extension ZMConversationMessage {
 
+    var isSentFromThisDevice: Bool {
+        guard let sender = senderUser else { return false }
+        return sender.isSelfUser && deliveryState == .pending
     }
+
 }
