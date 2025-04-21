@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireCellsAPI
 
@@ -27,19 +26,23 @@ final class WireCellsCredentialsProvider {
         let apiUrl = serverConfig.links.api
 
         if apiUrl.hasSuffix("imai.wire.link") {
-            return CellsCredentials(
-                serverUrl: "https://service.zeta.pydiocells.com",
-                accessToken: "fybwjf05cs4bex54ufvmnktttttov1pw:\(userId)",
+            return WireCellsCredentials(
+                serverUrl: URL(string: "https://service.zeta.pydiocells.com")!,
+                accessToken: "fybwjf05cs4bex54ufvmnktttttov1pw:\(userID)",
                 gatewaySecret: "gatewaysecret"
             )
         } else if apiUrl.hasSuffix("fulu.wire.link") {
-            return CellsCredentials(
-                serverUrl: "https://shares.fulu.wire.link",
-                accessToken: "rnFZ9M3L27j2rxR3h8mvNs3X4ZKk2427ZH5gBnTt:\(userId)",
+            return WireCellsCredentials(
+                serverUrl: URL(string: "https://shares.fulu.wire.link")!,
+                accessToken: "rnFZ9M3L27j2rxR3h8mvNs3X4ZKk2427ZH5gBnTt:\(userID)",
                 gatewaySecret: "gatewaysecret"
             )
         } else {
-            return CellsCredentials(serverUrl: "", accessToken: "", gatewaySecret: "")
+            return WireCellsCredentials(
+                serverUrl: URL(string: "https://service.zeta.pydiocells.com")!,
+                accessToken: "",
+                gatewaySecret: ""
+            )
         }
     }
 }

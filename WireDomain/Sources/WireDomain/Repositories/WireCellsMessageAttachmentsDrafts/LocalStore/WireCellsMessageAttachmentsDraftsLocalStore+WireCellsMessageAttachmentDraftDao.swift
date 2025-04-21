@@ -85,7 +85,8 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
     ) {
         do {
             return try await context.perform { [context] in
-                guard let fetchRequest = Self.attachmentsFetchRequest(for: conversationID) as? NSFetchRequest<any NSFetchRequestResult> else {
+                guard let fetchRequest = Self
+                    .attachmentsFetchRequest(for: conversationID) as? NSFetchRequest<any NSFetchRequestResult> else {
                     throw WireCellsMessageAttachmentDraftDaoError.failedToCreateRequest
                 }
 
@@ -103,7 +104,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
         }
     }
 
-    /// Observes the attachment list for a conversation.
+    // Observes the attachment list for a conversation.
     // Emits the current attachment list for `conversationID` and every time it
     // changes thereafter.  When the caller drops the `AsyncStream`, the delegate
     // is released automatically.
@@ -129,8 +130,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
         let initialValues = try await context.perform {
             try fetchedResultsController.performFetch()
             if let start = fetchedResultsController.fetchedObjects {
-                let mappedEntities = start.map { $0.toModel() }
-                return mappedEntities
+                return start.map { $0.toModel() }
             }
             return []
         }
@@ -156,7 +156,10 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
         assetDuration: UInt64?
     ) async throws(WireCellsMessageAttachmentDraftDaoError) -> WireCellsMessageAttachmentDraft {
         do {
-            let conversation = await conversationStore.fetchConversation(id: conversationID.uuid, domain: conversationID.domain)
+            let conversation = await conversationStore.fetchConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
             return try await context.perform { [context] in
                 let entity = WireCellsMessageAttachmentDraftEntity()
                 entity.uuid = uuid
@@ -203,9 +206,11 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
         }
     }
 
-    private static func attachmentFetchRequest(for draftID: WireCellsMessageAttachmentDraftID) -> NSFetchRequest<WireCellsMessageAttachmentDraftEntity>? {
+    private static func attachmentFetchRequest(for draftID: WireCellsMessageAttachmentDraftID)
+        -> NSFetchRequest<WireCellsMessageAttachmentDraftEntity>? {
         guard let fetchRequest =
-                WireCellsMessageAttachmentDraftEntity.fetchRequest() as? NSFetchRequest<WireCellsMessageAttachmentDraftEntity> else {
+            WireCellsMessageAttachmentDraftEntity
+                .fetchRequest() as? NSFetchRequest<WireCellsMessageAttachmentDraftEntity> else {
             return nil
         }
 
@@ -220,9 +225,11 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
         return fetchRequest
     }
 
-    private static func attachmentsFetchRequest(for conversationID: WireCellsConversationID) -> NSFetchRequest<WireCellsMessageAttachmentDraftEntity>? {
+    private static func attachmentsFetchRequest(for conversationID: WireCellsConversationID)
+        -> NSFetchRequest<WireCellsMessageAttachmentDraftEntity>? {
         guard let fetchRequest =
-                WireCellsMessageAttachmentDraftEntity.fetchRequest() as? NSFetchRequest<WireCellsMessageAttachmentDraftEntity> else {
+            WireCellsMessageAttachmentDraftEntity
+                .fetchRequest() as? NSFetchRequest<WireCellsMessageAttachmentDraftEntity> else {
             return nil
         }
 
@@ -239,12 +246,10 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
     }
 }
 
-
-
 // MARK: - FRC → AsyncStream bridge
+
 private final class FRCDelegate<Entity: NSManagedObject>:
-    NSObject, NSFetchedResultsControllerDelegate
-{
+    NSObject, NSFetchedResultsControllerDelegate {
     private let onChange: ([Entity]) -> Void
     init(onChange: @escaping ([Entity]) -> Void) { self.onChange = onChange }
 

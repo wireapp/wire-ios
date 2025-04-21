@@ -57,8 +57,8 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
     ) async throws -> [WireCellsCellNode] {
         let response = try await (
             path == nil
-            ? cellsApi.getFiles(query: query, limit: limit, offset: offset)
-            : cellsApi.getFilesForPath(path: path!, limit: limit, offset: offset)
+                ? cellsApi.getFiles(query: query, limit: limit, offset: offset)
+                : cellsApi.getFilesForPath(path: path!, limit: limit, offset: offset)
         )
         return response.nodes.map { $0.toModel() }
     }
@@ -117,11 +117,11 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
     }
 
     package func createPublicLink(nodeUUID: UUID, fileName: String) async throws -> WireCellsPublicLink {
-        return try await cellsApi.createPublicLink(uuid: nodeUUID, fileName: fileName)
+        try await cellsApi.createPublicLink(uuid: nodeUUID, fileName: fileName)
     }
 
     package func getPublicLink(linkUUID: UUID) async throws -> URL {
-        return try await cellsApi.getPublicLink(uuid: linkUUID)
+        try await cellsApi.getPublicLink(uuid: linkUUID)
     }
 
     package func deletePublicLink(linkUUID: UUID) async throws {

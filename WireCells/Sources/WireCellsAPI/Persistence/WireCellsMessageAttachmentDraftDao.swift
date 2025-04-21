@@ -49,7 +49,7 @@ public protocol WireCellsMessageAttachmentDraftDao {
         WireCellsMessageAttachmentDraftDaoError
     )
 
-    func observeAttachments(conversationID: WireCellsConversationID) async throws  -> DraftsObserver
+    func observeAttachments(conversationID: WireCellsConversationID) async throws -> DraftsObserver
 
     func addAttachment(
         uuid: UUID,

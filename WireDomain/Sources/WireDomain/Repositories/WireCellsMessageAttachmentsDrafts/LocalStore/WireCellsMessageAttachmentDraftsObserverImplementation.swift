@@ -20,7 +20,8 @@ import Foundation
 import WireCellsAPI
 import WireDataModel
 
-public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObject, NSFetchedResultsControllerDelegate, FetchedResultsControllerObserver {
+public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObject, NSFetchedResultsControllerDelegate,
+    FetchedResultsControllerObserver {
 
     private var currentValues: [WireCellsAPI.WireCellsMessageAttachmentDraft] = []
     private var continuations: [UUID: AsyncStream<[WireCellsAPI.WireCellsMessageAttachmentDraft]>.Continuation] = [:]
@@ -40,7 +41,7 @@ public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObj
         send(newValues: initialValues)
     }
 
-    nonisolated public func controllerDidChangeContent(
+    public nonisolated func controllerDidChangeContent(
         _ controller: NSFetchedResultsController<NSFetchRequestResult>
     ) {
         guard let entities = controller.fetchedObjects as? [WireCellsMessageAttachmentDraftEntity] else { return }
@@ -60,8 +61,9 @@ public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObj
     }
 
     // MARK: - Private methods
+
     private func send(newValues: [WireCellsMessageAttachmentDraft]) {
-        self.currentValues = newValues.map { $0 }
+        currentValues = newValues.map { $0 }
         for continuation in continuations.values {
             continuation.yield(currentValues)
         }

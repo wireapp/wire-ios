@@ -74,7 +74,11 @@ final class WireCellsCellsApiImpl: WireCellsCellsAPI, Sendable {
 
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
         let parameters = RestPromoteParameters(publish: true)
-        _ = try await NodeServiceAPI.promoteVersion(uuid: uuid.uuidString, versionId: versionID.uuidString, parameters: parameters)
+        _ = try await NodeServiceAPI.promoteVersion(
+            uuid: uuid.uuidString,
+            versionId: versionID.uuidString,
+            parameters: parameters
+        )
     }
 
     func cancelDraft(uuid: UUID, versionID: UUID) async throws {

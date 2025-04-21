@@ -76,7 +76,7 @@ package struct WireCellsCellNodeDTO: Equatable, Hashable, Sendable {
 
 package extension WireCellsCellNodeDTO {
     func toModel() -> WireCellsCellNode {
-        let node: WireCellsCellNode = WireCellsCellNode(
+        WireCellsCellNode(
             uuid: uuid,
             versionID: versionId,
             path: path,
@@ -94,7 +94,6 @@ package extension WireCellsCellNodeDTO {
             conversationID: conversationId.flatMap(WireCellsConversationID.init(string:)),
             publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:))
         )
-        return node
     }
 }
 
@@ -124,7 +123,8 @@ package extension WireCellsCellNode {
 package extension RestNode {
     func toDto() -> WireCellsCellNodeDTO? {
         guard let uuid = UUID(uuidString: uuid) else { return nil }
-        // `versionMeta` is optional in the API response. Need to check with Charles if it can actually be nil, and when.
+        // `versionMeta` is optional in the API response. Need to check with Charles if it can actually be nil, and
+        // when.
         // What should we do in that case?
         guard let versionMeta, let versionID = UUID(uuidString: versionMeta.versionId) else { return nil }
         return WireCellsCellNodeDTO(

@@ -24,6 +24,7 @@ import WireLogging
 public final class WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmentsDraftsLocalStoreProtocol {
 
     // MARK: - Properties
+
     let context: NSManagedObjectContext
     let conversationStore: ConversationLocalStoreProtocol
 

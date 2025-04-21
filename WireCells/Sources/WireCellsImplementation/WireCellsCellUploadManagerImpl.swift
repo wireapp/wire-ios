@@ -62,12 +62,11 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
     func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsCellNode {
         let result = try await repository.preCheck(nodePath: destNodePath)
 
-        let resolvedPath: String
-        switch result {
-        case .fileExists(let nextPath):
-            resolvedPath = nextPath
+        let resolvedPath: String = switch result {
+        case let .fileExists(nextPath):
+            nextPath
         case .success:
-            resolvedPath = destNodePath
+            destNodePath
         }
 
         let node = WireCellsCellNode(
@@ -108,7 +107,11 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
                                     uploaded: uploaded,
                                     total: node.size ?? 1
                                 )
-                                continuation.yield(WireCellsCellUploadEvent.uploadProgress(Float(uploaded) / Float(node.size ?? 1)))
+                                continuation
+                                    .yield(
+                                        WireCellsCellUploadEvent
+                                            .uploadProgress(Float(uploaded) / Float(node.size ?? 1))
+                                    )
                             }
                         }
                     )
