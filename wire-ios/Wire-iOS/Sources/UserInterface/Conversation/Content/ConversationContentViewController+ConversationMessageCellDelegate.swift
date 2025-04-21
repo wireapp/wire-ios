@@ -125,7 +125,6 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
     }
 
     func conversationMessageShouldUpdate() {
-        print("DS: conversationMessageShouldUpdate: calling loadMessages")
         dataSource.loadMessages(forceRecalculate: true)
     }
 

@@ -441,10 +441,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescription.message = message
             cellDescription.actionController = actionController
             cellDescription.delegate = cellDelegate
-//            let pointer = Unmanaged.passUnretained(cellDescription.instance as AnyObject).toOpaque()
-//            print(
-//                "DS: cellDescription: \(cellDescription.instance):\(pointer) has now action controller: \(String(describing: actionController))"
-//            )
         }
     }
 

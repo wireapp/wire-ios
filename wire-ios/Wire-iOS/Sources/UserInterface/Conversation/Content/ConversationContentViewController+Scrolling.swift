@@ -27,7 +27,6 @@ extension ConversationContentViewController {
             if message.hasBeenDeleted {
                 presentAlert(message: L10n.Localizable.Conversation.Alert.messageDeleted)
             } else {
-                print("DS: scroll(to message: calling loadMessages")
                 dataSource.loadMessages(near: message) { index in
 
                     guard message.conversationLike === self.conversation else {
@@ -46,7 +45,6 @@ extension ConversationContentViewController {
                 }
             }
         } else {
-            print("DS: scroll(to message: calling loadMessages")
             dataSource.loadMessages()
         }
 
@@ -61,8 +59,6 @@ extension ConversationContentViewController {
         guard !isScrolledToBottom else {
             return
         }
-
-        print("DS: scrollToBottomIfNeeded: calling loadMessages")
 
         dataSource.loadMessages()
 

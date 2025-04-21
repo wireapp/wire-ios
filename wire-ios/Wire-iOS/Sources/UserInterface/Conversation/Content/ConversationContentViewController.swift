@@ -253,7 +253,6 @@ final class ConversationContentViewController: UIViewController {
 
     @objc
     private func applicationDidBecomeActive(_ notification: Notification) {
-        print("DS: applicationDidBecomeActive: calling resetSectionControllers")
         dataSource.resetSectionControllers() // TODO: TEST reloding
     }
 

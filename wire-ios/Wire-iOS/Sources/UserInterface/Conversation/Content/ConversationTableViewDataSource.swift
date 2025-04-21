@@ -70,7 +70,6 @@ final class ConversationTableViewDataSource: NSObject {
 
     func resetSectionControllers() {
         sectionControllers.reset()
-        print("DS: resetSectionControllers: calling calculateSections")
         calculateSections() { sections in
             self.reloadSections(newSections: sections)
         }
@@ -94,14 +93,12 @@ final class ConversationTableViewDataSource: NSObject {
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
             guard UIDevice.current.userInterfaceIdiom == .pad else { return }
-            print("DS: contentWidth changed: calling resetSectionControllers")
             resetSectionControllers() // TODO: TEST
         }
     }
 
     var searchQueries: [String] = [] {
         didSet {
-            print("DS: searchQueries didSet: calling calculateSections")
             calculateSections() { sections in
                 self.reloadSections(newSections: sections) // TODO: TEST
             }
@@ -122,8 +119,6 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     private(set) var currentSections: [Section] = []
-    
-    static var backgroundTasksCount = 0
 
     /// calculate cell sections
     ///
@@ -142,9 +137,6 @@ final class ConversationTableViewDataSource: NSObject {
         // Dispatching to background thread to offload sections calculation
         userSession.performBackgroundTask { [weak self] backgroundContext in
             guard let self else { return }
-            
-            Self.backgroundTasksCount += 1
-            print("DS: \(runId): dispatched background task: \(Self.backgroundTasksCount)")
             
             // Re-fetching messages in background thread
             let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
@@ -183,8 +175,6 @@ final class ConversationTableViewDataSource: NSObject {
                 // or received new neighbours).
                 return (element.nonce!, sectionController, context)
             }
-
-            print("DS: \(runId): finished background task and return to Main: \(Self.backgroundTasksCount)")
             
             // Return back to main thread
             DispatchQueue.main.async {
@@ -201,23 +191,17 @@ final class ConversationTableViewDataSource: NSObject {
                         }) {
                         sectionController.message = mainThreadObject
                     } else {
-                        fatalError("DS: can't find message with objectId: \(messageObjectId)")
+                        fatalError("Can't find message with objectId: \(messageObjectId)")
                     }
                     sectionController.selfUser = selfUserOnMainThread
                     
                     if sectionController.context != context || forceRecalculate {
-                        let message = sectionController.message
-                        print(
-                            "DS: recreating cell descriptions for message: \(String(describing: message.text))"
-                        )
                         sectionController.recreateCellDescriptions(in: context)
                     }
                                         
                     sections.append(ArraySection(model: messageObjectId, elements: sectionController.tableViewCellDescriptions))
                 }
                 
-                Self.backgroundTasksCount -= 1
-                print("DS: \(runId): main thread aprt: \(Self.backgroundTasksCount) left")
                 completion(self.postProcessedSections(sections))
             }
         }
@@ -227,10 +211,6 @@ final class ConversationTableViewDataSource: NSObject {
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
     ) -> [Section] {
-        print(
-            "DS: calculateSections updating sectionController: \(String(describing: sectionController.message.text))"
-        )
-
         let sectionIdentifier = sectionController.message.nonce!
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
@@ -350,10 +330,6 @@ final class ConversationTableViewDataSource: NSObject {
             sectionController: sectionController,
             selfUser: selfUser)
         
-//        print(
-//            "DS: sectionController: \(sectionController) has now action controller: \(String(describing: sectionController.actionController))"
-//        )
-        
         return sectionController
     }
 
@@ -444,7 +420,6 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
 
-        print("DS: loadMessages: calling calculateSections")
         calculateSections(forceRecalculate: forceRecalculate) { sections in
             self.currentSections = sections
             self.tableView.reloadData()
@@ -456,7 +431,6 @@ final class ConversationTableViewDataSource: NSObject {
     
     private func loadOlderMessages() {
         guard !loadingMessages else {
-            print("DS: loadOlderMessages: guarded bc of loadingMessages")
             return
         }
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
@@ -464,10 +438,8 @@ final class ConversationTableViewDataSource: NSObject {
 
         let newLimit = currentLimit + ConversationTableViewDataSource.defaultBatchSize
         loadingMessages = true
-        print("DS: loadOlderMessages: setting loadingMessages ON")
 
         loadMessages(offset: currentOffset, limit: newLimit) {
-            print("DS: loadOlderMessages: releasing loadingMessages")
             self.loadingMessages = false
         }
     }
@@ -586,7 +558,6 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        print("DS: controllerDidChangeContent")
         debouncer.call(id: nil) { [weak self] in
             self?.calculateSections() { sections in
                 self?.reloadSections(newSections: sections)
@@ -596,7 +567,6 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
     func reloadSections(newSections: [Section]) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
-        printChanges(stagedChangeset: stagedChangeset)
         tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
     }
 
@@ -611,14 +581,12 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     func select(indexPath: IndexPath) {
         let sectionController = sectionController(at: indexPath.section)
         sectionController.didSelect()
-        print("DS: select message: calling calculateSections")
         reloadSections(newSections: calculateSections(updating: sectionController))
     }
 
     func deselect(indexPath: IndexPath) {
         let sectionController = sectionController(at: indexPath.section)
         sectionController.didDeselect()
-        print("DS: deselect message: calling calculateSections")
         reloadSections(newSections: calculateSections(updating: sectionController))
     }
 
@@ -691,9 +659,6 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
-        print(
-            "DS: messageSectionController didRequestRefreshForMessage nonce: \(String(describing: (message as! ZMMessage).nonce)), text: \(String(describing: message.text))"
-        )
         debouncer.call(id: message.nonce!) { [weak self] in
             guard let self else { return }
             self.reloadSections(newSections: self.calculateSections(updating: controller))
@@ -942,42 +907,5 @@ extension ZMConversationMessage {
 }
 
 
-func printChanges<T: Differentiable>(stagedChangeset: StagedChangeset<[T]>) {
-    for (index, changeset) in stagedChangeset.enumerated() {
-        print(
-            "DS: === Changeset \(index) sections with changes: \(changeset.sectionChangeCount), elements with changes: \(changeset.elementChangeCount) ==="
-        )
-    
-        for insertion in changeset.elementInserted {
-            print("DS: Inserted element at \(insertion)")
-        }
-
-        for deletion in changeset.elementDeleted {
-            print("DS: Deleted element at \(deletion)")
-        }
-
-        for update in changeset.elementUpdated {
-            print("DS: Updated element at \(update)")
-        }
-
-        for move in changeset.elementMoved {
-            print("DS: Moved element from \(move.source) to \(move.target)")
-        }
-        
-        for insertion in changeset.sectionInserted {
-            print("DS: Inserted section at \(insertion)")
-        }
-
-        for deletion in changeset.sectionDeleted {
-            print("DS: Deleted section at \(deletion)")
-        }
-
-        for update in changeset.sectionUpdated {
-            print("DS: Updated section at \(update)")
-        }
-
-        for move in changeset.sectionMoved {
-            print("DS: Moved section from \(move.source) to \(move.target)")
-        }
     }
 }
