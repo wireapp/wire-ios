@@ -26,10 +26,10 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     struct Configuration: Equatable {
         var attachment: LinkAttachment
         var thumbnailResource: WireImageResource?
-                
+
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
-            return lhs.attachment == rhs.attachment &&
-            lhs.thumbnailResource?.cacheIdentifier == rhs.thumbnailResource?.cacheIdentifier
+            lhs.attachment == rhs.attachment &&
+                lhs.thumbnailResource?.cacheIdentifier == rhs.thumbnailResource?.cacheIdentifier
         }
     }
 
@@ -162,7 +162,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
             }
         }
     }
-    
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

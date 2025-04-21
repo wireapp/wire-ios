@@ -66,6 +66,7 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

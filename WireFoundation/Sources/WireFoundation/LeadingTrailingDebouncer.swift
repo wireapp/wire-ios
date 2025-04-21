@@ -19,10 +19,10 @@
 public import Foundation
 
 public final class LeadingTrailingDebouncer<ID: Hashable> {
-    
+
     private struct DebounceState {
         var isCooldown = false
-        var pendingCall: (() -> Void)? = nil
+        var pendingCall: (() -> Void)?
     }
 
     private let cooldownTime: TimeInterval
@@ -38,7 +38,7 @@ public final class LeadingTrailingDebouncer<ID: Hashable> {
     }
 
     public func call(id: ID?, block: @escaping () -> Void) {
-        
+
         let key: AnyHashable = id.map { AnyHashable($0) } ?? AnyHashable(nilKey)
 
         if states[key] == nil {
@@ -55,7 +55,7 @@ public final class LeadingTrailingDebouncer<ID: Hashable> {
             queue.asyncAfter(deadline: .now() + cooldownTime) { [weak self] in
                 guard let self else { return }
 
-                var updatedState = self.states[key] ?? DebounceState()
+                var updatedState = states[key] ?? DebounceState()
                 updatedState.isCooldown = false
 
                 if let trailing = updatedState.pendingCall {
@@ -63,13 +63,13 @@ public final class LeadingTrailingDebouncer<ID: Hashable> {
                     updatedState.pendingCall = nil
                     updatedState.isCooldown = true
 
-                    self.queue.asyncAfter(deadline: .now() + self.cooldownTime) {
+                    queue.asyncAfter(deadline: .now() + cooldownTime) {
                         self.states[key]?.isCooldown = false
                         self.states[key]?.pendingCall = nil
                     }
                 }
 
-                self.states[key] = updatedState
+                states[key] = updatedState
             }
         } else {
             // Store for TRAILING

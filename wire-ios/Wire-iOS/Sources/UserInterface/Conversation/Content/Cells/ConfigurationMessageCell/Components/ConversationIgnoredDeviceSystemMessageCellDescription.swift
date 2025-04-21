@@ -39,7 +39,7 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
         message: ZMConversationMessage,
         data: ZMSystemMessageData,
         user: UserType,
-        onUserTap: @escaping ( _ userID: Any) -> Void
+        onUserTap: @escaping (_ userID: Any) -> Void
     ) {
 
         let title = ConversationIgnoredDeviceSystemMessageCellDescription.makeAttributedString(

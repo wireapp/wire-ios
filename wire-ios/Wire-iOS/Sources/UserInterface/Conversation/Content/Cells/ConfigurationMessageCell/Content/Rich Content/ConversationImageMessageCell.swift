@@ -28,11 +28,11 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
         var isObfuscated: Bool {
             message.isObfuscated
         }
-        
+
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
-            return lhs.message == rhs.message &&
-            lhs.image.imageDataIdentifier == rhs.image.imageDataIdentifier &&
-            lhs.isObfuscated == rhs.isObfuscated
+            lhs.message == rhs.message &&
+                lhs.image.imageDataIdentifier == rhs.image.imageDataIdentifier &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
 
     }
@@ -186,6 +186,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

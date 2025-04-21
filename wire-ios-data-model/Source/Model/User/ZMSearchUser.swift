@@ -103,6 +103,7 @@ public class ZMSearchUser: NSObject, UserType {
     public var objectId: Any {
         user?.objectId ?? remoteIdentifier!
     }
+
     fileprivate weak var contextProvider: ContextProvider?
     private let searchUsersCache: SearchUsersCache?
 

@@ -24,10 +24,10 @@ public typealias Conversation = ConversationLike & SwiftConversationLike
 // sourcery: AutoMockable
 @objc
 public protocol ConversationLike: AnyObject {
-    
+
     // Any as type eraser to hide NSManagedObjectID behind it
     var objectId: Any { get }
-    
+
     var conversationType: ZMConversationType { get }
     var isSelfAnActiveMember: Bool { get }
     var teamRemoteIdentifier: UUID? { get }
@@ -74,11 +74,11 @@ public protocol SwiftConversationLike {
 }
 
 extension ZMConversation: ConversationLike {
-    
+
     public var objectId: Any {
         objectID
     }
-    
+
     public var localParticipantsCount: Int {
         localParticipants.count
     }

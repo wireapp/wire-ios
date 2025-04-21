@@ -26,10 +26,10 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         var message: ZMConversationMessage
         let accentColor: ZMAccentColor
         let collapseExpandAction: () -> Void
-        
+
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
-            return lhs.message == rhs.message &&
-            lhs.accentColor == rhs.accentColor
+            lhs.message == rhs.message &&
+                lhs.accentColor == rhs.accentColor
         }
     }
 
@@ -268,6 +268,7 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

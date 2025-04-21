@@ -376,7 +376,7 @@ extension ZMUserSession: UserSession {
             isFederationUsageAllowed: isFederationUsageAllowed
         )
     }
-    
+
     public func performBackgroundTask(
         _ block: @escaping (NSManagedObjectContext) -> Void
     ) {

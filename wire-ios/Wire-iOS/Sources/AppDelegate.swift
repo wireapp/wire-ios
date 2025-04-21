@@ -171,7 +171,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         _ = NSAttributedString.paragraphStyle
         _ = HorizontalMargins.windowWidth
-        
+
         setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage

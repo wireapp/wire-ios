@@ -128,6 +128,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

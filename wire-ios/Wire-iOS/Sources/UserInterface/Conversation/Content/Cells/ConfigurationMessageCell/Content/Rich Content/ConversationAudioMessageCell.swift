@@ -27,10 +27,10 @@ final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
         var isObfuscated: Bool {
             message.isObfuscated
         }
-        
+
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
-            return lhs.message == rhs.message &&
-            lhs.isObfuscated == rhs.isObfuscated
+            lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
 
     }
@@ -142,6 +142,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

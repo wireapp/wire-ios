@@ -18,8 +18,8 @@
 
 import DifferenceKit
 import WireDataModel
-import WireSyncEngine
 import WireFoundation
+import WireSyncEngine
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -51,7 +51,7 @@ final class ConversationTableViewDataSource: NSObject {
     private var lastFetchedObjectCount: Int = 0
 
     var registeredCells: [AnyClass] = []
-    
+
     var sectionControllers = ThreadSafeDictionary<UUID, ConversationMessageSectionController>()
 
     private(set) var hasOlderMessagesToLoad = false
@@ -61,10 +61,10 @@ final class ConversationTableViewDataSource: NSObject {
 
     func resetSectionControllers() {
         sectionControllers.reset()
-        calculateSections() { [weak self] sections in
+        calculateSections { [weak self] sections in
             guard let self else { return }
-            self.currentSections = sections
-            self.tableView.reloadData()
+            currentSections = sections
+            tableView.reloadData()
         }
     }
 
@@ -80,7 +80,7 @@ final class ConversationTableViewDataSource: NSObject {
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
     private let getUserByIdUseCase: GetUserByIdUseCaseProtocol
-    
+
     let debouncer = LeadingTrailingDebouncer<UUID>(cooldownTime: 0.3)
 
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
@@ -92,8 +92,8 @@ final class ConversationTableViewDataSource: NSObject {
 
     var searchQueries: [String] = [] {
         didSet {
-            calculateSections() { [weak self] sections in
-                self?.reloadSections(newSections: sections) // TODO: TEST
+            calculateSections { [weak self] sections in
+                self?.reloadSections(newSections: sections)
             }
         }
     }
@@ -121,28 +121,31 @@ final class ConversationTableViewDataSource: NSObject {
         forceRecalculate: Bool = false,
         completion: @escaping ([Section]) -> Void
     ) {
-        let messageIds = messages.map { $0.objectID }
+        let messageIds = messages.map(\.objectID)
         let selfUserOnMainThread = userSession.selfUser
         let selfUserObjectID = selfUserOnMainThread.objectId
         let firstUnreadMessageNonce = firstUnreadMessage?.nonce
         let runId = UUID().uuidString
-        
+
         // Dispatching to background thread to offload sections calculation
         userSession.performBackgroundTask { [weak self] backgroundContext in
             guard let self else { return }
-            
+
             // Re-fetching messages in background thread
             let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
             fetchRequest.predicate = NSPredicate(format: "SELF IN %@", messageIds)
-            fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
+            fetchRequest.sortDescriptors = [NSSortDescriptor(
+                key: #keyPath(ZMMessage.serverTimestamp),
+                ascending: false
+            )]
 
             let messages = try! backgroundContext.fetch(fetchRequest)
-            
-            let selfUserOnBackgroundThread = self.getUserByIdUseCase.getUserById(
+
+            let selfUserOnBackgroundThread = getUserByIdUseCase.getUserById(
                 id: selfUserObjectID,
                 context: backgroundContext
             ) ?? selfUserOnMainThread
-            
+
             // Go through messages and calculate sections
             let result = messages.enumerated().map { offset, element in
                 let context = self.context(
@@ -152,8 +155,9 @@ final class ConversationTableViewDataSource: NSObject {
                     searchQueries: self.searchQueries,
                     messages: messages
                 )
-                
-                let sectionController = if let cachedSectionController = self.sectionControllers.get(for: element.nonce!) {
+
+                let sectionController = if let cachedSectionController = self.sectionControllers
+                    .get(for: element.nonce!) {
                     cachedSectionController
                 } else {
                     self.makeSectionController(
@@ -168,37 +172,42 @@ final class ConversationTableViewDataSource: NSObject {
                 // or received new neighbours).
                 return (element.nonce!, sectionController, context)
             }
-            
+
             // Return back to main thread
             DispatchQueue.main.async {
                 var sections = [Section]()
                 for (messageObjectId, sectionController, context) in result {
-                    
+
                     // saving calculations result in local cache
                     self.sectionControllers.set(value: sectionController, for: messageObjectId)
                     self.actionControllers.set(value: sectionController.actionController, for: messageObjectId)
 
-                    // Re-set messages from Main thread to section controller to not have crash with later interactions with data
+                    // Re-set messages from Main thread to section controller to not have crash with later interactions
+                    // with data
                     if let mainThreadObject = self.messages.first(
                         where: { $0.objectID == (sectionController.message as! ZMMessage).objectID
-                        }) {
+                        }
+                    ) {
                         sectionController.message = mainThreadObject
                     } else {
                         fatalError("Can't find message with objectId: \(messageObjectId)")
                     }
                     sectionController.selfUser = selfUserOnMainThread
-                    
+
                     if sectionController.context != context || forceRecalculate {
                         sectionController.recreateCellDescriptions(in: context)
                     }
-                                        
-                    sections.append(ArraySection(model: messageObjectId, elements: sectionController.tableViewCellDescriptions))
+
+                    sections.append(ArraySection(
+                        model: messageObjectId,
+                        elements: sectionController.tableViewCellDescriptions
+                    ))
                 }
-                
+
                 completion(self.postProcessedSections(sections))
             }
         }
-        
+
     }
 
     func calculateSections(
@@ -227,7 +236,7 @@ final class ConversationTableViewDataSource: NSObject {
             searchQueries: searchQueries,
             messages: messages
         )
-        
+
         sectionController.recreateCellDescriptions(in: context)
 
         var updatedSections = currentSections
@@ -262,7 +271,7 @@ final class ConversationTableViewDataSource: NSObject {
     func section(for message: ZMConversationMessage) -> Int? {
         currentSections.firstIndex(where: { $0.model == message.nonce })
     }
-    
+
     func getOrCreateActionController(
         for message: ZMMessage,
         sectionController: ConversationMessageSectionController,
@@ -271,14 +280,14 @@ final class ConversationTableViewDataSource: NSObject {
         if let cachedEntry = actionControllers.get(for: message.nonce!) {
             return cachedEntry
         }
-        
+
         return makeActionController(
             for: message,
             sectionController: sectionController,
             selfUser: selfUser
         )
     }
-    
+
     func makeActionController(
         for message: ZMConversationMessage,
         sectionController: ConversationMessageSectionController,
@@ -293,7 +302,7 @@ final class ConversationTableViewDataSource: NSObject {
             selfUserId: selfUser.remoteIdentifier
         )
     }
-    
+
     private func makeSectionController(
         message: ZMMessage,
         index: Int,
@@ -321,12 +330,17 @@ final class ConversationTableViewDataSource: NSObject {
         sectionController.actionController = getOrCreateActionController(
             for: message,
             sectionController: sectionController,
-            selfUser: selfUser)
-        
+            selfUser: selfUser
+        )
+
         return sectionController
     }
 
-    func getOrCreateSectionController(for message: ZMMessage, at index: Int, messages: [ZMMessage]) -> ConversationMessageSectionController {
+    func getOrCreateSectionController(
+        for message: ZMMessage,
+        at index: Int,
+        messages: [ZMMessage]
+    ) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers.get(for: message.nonce!) {
             cachedEntry.contentWidth = contentWidth
             return cachedEntry
@@ -379,7 +393,7 @@ final class ConversationTableViewDataSource: NSObject {
 
         loadMessages(offset: offset, limit: limit, forceRecalculate: forceRecalculate) { [weak self] in
             guard let self else { return }
-            let indexPath = self.topIndexPath(for: message)
+            let indexPath = topIndexPath(for: message)
             completion?(indexPath)
         }
     }
@@ -413,15 +427,15 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
 
-        calculateSections(forceRecalculate: forceRecalculate) { sections in
-            self.currentSections = sections
-            self.tableView.reloadData()
+        calculateSections(forceRecalculate: forceRecalculate) { [weak self] sections in
+            self?.currentSections = sections
+            self?.tableView.reloadData()
             completion?()
         }
     }
 
     var loadingMessages = false
-    
+
     private func loadOlderMessages() {
         guard !loadingMessages else {
             return
@@ -552,7 +566,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         debouncer.call(id: nil) { [weak self] in
-            self?.calculateSections() { sections in
+            self?.calculateSections { sections in
                 self?.reloadSections(newSections: sections)
             }
         }
@@ -654,7 +668,7 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
     ) {
         debouncer.call(id: message.nonce!) { [weak self] in
             guard let self else { return }
-            self.reloadSections(newSections: self.calculateSections(updating: controller))
+            reloadSections(newSections: calculateSections(updating: controller))
         }
     }
 
@@ -668,7 +682,11 @@ extension ConversationTableViewDataSource {
         return messages[previousIndex]
     }
 
-    func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int, messages: [ZMMessage]) -> Bool {
+    func isPreviousSenderSame(
+        forMessage message: ZMConversationMessage?,
+        at index: Int,
+        messages: [ZMMessage]
+    ) -> Bool {
         guard let message,
               Message.isNormal(message),
               !Message.isKnock(message) else { return false }
@@ -710,7 +728,11 @@ extension ConversationTableViewDataSource {
         )
     }
 
-    private func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int, messages: [ZMConversationMessage]) -> Bool {
+    private func isFirstMessageOfTheDay(
+        for message: ZMConversationMessage,
+        at index: Int,
+        messages: [ZMConversationMessage]
+    ) -> Bool {
         guard let previous = messageBeforeMessage(at: index, messages: messages)?.serverTimestamp,
               let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
@@ -725,7 +747,7 @@ extension ConversationTableViewDataSource {
     /// between the messages is reduced.
     /// - If a message's status does not provide relevant info over a subsequent message's status, it is hidden.
     private func postProcessedSections(_ sections: [Section]) -> [Section] {
-        
+
         var sections = sections
 
         // find subsequent messages and collapse space if needed

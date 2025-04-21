@@ -34,9 +34,9 @@ final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCell
         var message: ZMConversationMessage?
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
-            return lhs.message == rhs.message &&
-            lhs.pingColor == rhs.pingColor &&
-            lhs.pingText == rhs.pingText
+            lhs.message == rhs.message &&
+                lhs.pingColor == rhs.pingColor &&
+                lhs.pingText == rhs.pingText
         }
 
     }
@@ -146,6 +146,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

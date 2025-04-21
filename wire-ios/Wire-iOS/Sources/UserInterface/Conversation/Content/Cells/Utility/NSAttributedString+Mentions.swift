@@ -82,9 +82,9 @@ extension NSMutableAttributedString {
     ) -> NSAttributedString {
         let color: UIColor
         let backgroundColor: UIColor
-        
+
         color = accentColor.accentColor.uiColor
-        
+
         if user.isSelfUser {
             backgroundColor =
                 .lowAccentColorForUsernameMention(accentColor: accentColor)

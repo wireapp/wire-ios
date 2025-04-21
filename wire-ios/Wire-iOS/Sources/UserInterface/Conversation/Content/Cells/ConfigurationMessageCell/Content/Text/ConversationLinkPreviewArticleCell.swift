@@ -28,12 +28,12 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
         var isObfuscated: Bool {
             message.isObfuscated
         }
-        
+
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
-            return lhs.message == rhs.message &&
-            lhs.showImage == rhs.showImage &&
-            lhs.isObfuscated == rhs.isObfuscated &&
-            lhs.textMessageData.messageText == rhs.textMessageData.messageText
+            lhs.message == rhs.message &&
+                lhs.showImage == rhs.showImage &&
+                lhs.isObfuscated == rhs.isObfuscated &&
+                lhs.textMessageData.messageText == rhs.textMessageData.messageText
         }
 
     }
@@ -119,6 +119,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

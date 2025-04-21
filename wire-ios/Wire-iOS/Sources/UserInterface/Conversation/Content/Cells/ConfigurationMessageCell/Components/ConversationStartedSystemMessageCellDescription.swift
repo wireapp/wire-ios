@@ -35,6 +35,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -54,7 +55,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
 
         accessibilityLabel = configuration.message.string
     }
-    
+
     private static func makeModel(message: ZMConversationMessage) -> ParticipantsCellViewModel {
         let color = LabelColors.textDefault
         let iconColor = IconColors.backgroundDefault
@@ -66,7 +67,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
             message: message
         )
     }
-    
+
     private static func makeConfiguration(message: ZMConversationMessage) -> View.Configuration {
         let model = makeModel(message: message)
         return View.Configuration(

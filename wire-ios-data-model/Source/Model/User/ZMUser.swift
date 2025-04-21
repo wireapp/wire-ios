@@ -311,9 +311,9 @@ public extension ZMUser {
             updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
         }
     }
-    
+
     var objectId: Any {
-        return objectID
+        objectID
     }
 
     /// combination of domain and remoteIdentifier

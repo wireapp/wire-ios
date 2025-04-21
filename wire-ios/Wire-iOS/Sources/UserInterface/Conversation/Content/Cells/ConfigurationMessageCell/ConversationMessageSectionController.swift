@@ -87,7 +87,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             startObservingChanges(for: message)
         }
     }
-    
+
     var selfUser: any UserType
 
     /// The delegate for cells injected by the list adapter.

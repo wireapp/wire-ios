@@ -29,11 +29,11 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         var isObfuscated: Bool {
             message.isObfuscated
         }
-        
+
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
-            return lhs.message == rhs.message &&
             lhs.message == rhs.message &&
-            lhs.isObfuscated == rhs.isObfuscated
+                lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
 
     }
@@ -205,6 +205,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
             }
         }
     }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

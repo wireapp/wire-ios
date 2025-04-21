@@ -288,7 +288,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
             }
         }
     }
-    
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -326,8 +326,10 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     // MARK: - Accessibility
 
-    private func setupAccessibility(_ sender: UserType, selfUser: (any UserType)?
-) {
+    private func setupAccessibility(
+        _ sender: UserType,
+        selfUser: (any UserType)?
+    ) {
         guard let message, let senderName = sender.name else {
             accessibilityLabel = nil
             return
@@ -353,7 +355,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 }
 
 private extension UserType {
-    
+
     func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
         if isServiceUser {
             .service

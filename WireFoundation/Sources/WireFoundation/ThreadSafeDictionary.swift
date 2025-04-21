@@ -19,9 +19,9 @@
 import Foundation
 
 public class ThreadSafeDictionary<Key: Hashable, Value> {
-    
+
     public init() {}
-    
+
     private var dictionary = [Key: Value]()
     private let queue = DispatchQueue(label: "com.example.dictionaryQueue")
 
@@ -32,8 +32,8 @@ public class ThreadSafeDictionary<Key: Hashable, Value> {
     }
 
     public func get(for key: Key) -> Value? {
-        return queue.sync {
-            return self.dictionary[key]
+        queue.sync {
+            self.dictionary[key]
         }
     }
 
@@ -44,11 +44,11 @@ public class ThreadSafeDictionary<Key: Hashable, Value> {
     }
 
     public func allItems() -> [Key: Value] {
-        return queue.sync {
-            return self.dictionary
+        queue.sync {
+            self.dictionary
         }
     }
-    
+
     public func reset() {
         queue.async {
             self.dictionary.removeAll()

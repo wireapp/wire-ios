@@ -94,7 +94,11 @@ extension NSAttributedString {
     }
 
     @objc
-    static func formatForPreview(message: TextMessageData, inputMode: Bool, accentColor: ZMAccentColor) -> NSAttributedString {
+    static func formatForPreview(
+        message: TextMessageData,
+        inputMode: Bool,
+        accentColor: ZMAccentColor
+    ) -> NSAttributedString {
         var plainText = message.messageText ?? ""
 
         // Substitute mentions with text markers

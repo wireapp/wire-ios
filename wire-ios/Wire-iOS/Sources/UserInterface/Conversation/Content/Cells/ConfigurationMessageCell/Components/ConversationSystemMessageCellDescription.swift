@@ -233,26 +233,29 @@ enum ConversationSystemMessageCellDescription {
 
         return []
     }
-    
+
     private static func showUser(
         id: Any,
         userSession: UserSession
     ) {
         guard let managedId = id as? NSManagedObjectID,
-            let zClientViewController = ZClientViewController.shared,
+              let zClientViewController = ZClientViewController.shared,
               let user = ZMUser.existingObject(with: managedId, inUserSession: userSession.contextProvider) else {
             return
         }
         zClientViewController.openClientListScreen(for: user)
     }
-    
+
     private static func showConversation(
         id: Any,
         userSession: UserSession
     ) {
         guard let managedId = id as? NSManagedObjectID,
               let zClientViewController = ZClientViewController.shared,
-              let conversation = ZMConversation.existingObject(with: managedId, inUserSession: userSession.contextProvider) else {
+              let conversation = ZMConversation.existingObject(
+                  with: managedId,
+                  inUserSession: userSession.contextProvider
+              ) else {
             return
         }
         zClientViewController.openDetailScreen(for: conversation)
