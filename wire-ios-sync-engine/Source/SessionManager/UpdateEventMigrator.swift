@@ -26,22 +26,17 @@ struct UpdateEventMigrator {
 
     private let dao: any UpdateEventMigratorDAOProtocol
     private let localDomain: String
-    private let apiVersion: WireTransport.APIVersion
 
     init(
         dao: any UpdateEventMigratorDAOProtocol,
-        localDomain: String,
-        apiVersion: WireTransport.APIVersion
+        localDomain: String
     ) {
         self.dao = dao
         self.localDomain = localDomain
-        self.apiVersion = apiVersion
     }
 
     func isMigrationNeeded() async throws -> Bool {
-        let newSyncIsAvailable = apiVersion >= .v8
-        let hasLegacyEvents = try await dao.existsLegacyEvent()
-        return newSyncIsAvailable && hasLegacyEvents
+        try await dao.existsLegacyEvent()
     }
 
     func migrateLegacyUpdateEvents() async throws {
@@ -50,7 +45,7 @@ struct UpdateEventMigrator {
         // Store new events starting at this index.
         var currentIndex = try await dao.indexOfLastEventEnvelope() + 1
 
-        // TODO: pass in private keys
+        // TODO: [WPB-17302] pass in private keys
         while let legacyEvents = await dao.nextBatchOfLegacyEvents(privateKeys: nil) {
             WireLogger.sync.debug("found \(legacyEvents.count) legacy events to migrate...")
 
@@ -90,12 +85,13 @@ struct UpdateEventMigrator {
                 // Store the next event at this index.
                 currentIndex += 1
             }
+
+            WireLogger.sync.debug("deleting batch of legacy events...")
+            await dao.deleteNextBatchOfLegacyEvents()
         }
 
-        WireLogger.sync.debug("no more legacy events to migrate...")
-        WireLogger.sync.debug("deleting all legacy events...")
-        try await dao.deleteAllLegacyEventsAndSave()
-
+        WireLogger.sync.debug("no more legacy events to migrate, saving...")
+        try await dao.save()
         WireLogger.sync.debug("legacy event migration complete")
     }
 

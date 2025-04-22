@@ -27,7 +27,8 @@ protocol UpdateEventMigratorDAOProtocol {
     func indexOfLastEventEnvelope() async throws -> Int64
     func nextBatchOfLegacyEvents(privateKeys: EARPrivateKeys?) async -> [ZMUpdateEvent]?
     func insertEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws
-    func deleteAllLegacyEventsAndSave() async throws
+    func deleteNextBatchOfLegacyEvents() async
+    func save() async throws
 
 }
 
@@ -96,13 +97,135 @@ struct UpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
         }
     }
 
-    func deleteAllLegacyEventsAndSave() async throws {
+    func deleteNextBatchOfLegacyEvents() async {
+        await context.perform {
+            StoredUpdateEvent.nextEvents(
+                context,
+                batchSize: 500,
+                callEventsOnly: false
+            ).forEach {
+                context.delete($0)
+            }
+        }
+    }
+
+    func save() async throws {
         try await context.perform {
-            let fetchRequest = StoredUpdateEvent.fetchRequest()
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            try context.execute(deleteRequest)
             try context.save()
         }
+    }
+
+}
+
+@available(iOS 17, *)
+actor UpdateEventMigratorDAO2: UpdateEventMigratorDAOProtocol {
+
+    nonisolated
+    private let contextExecutor: ContextExecutor
+
+    nonisolated var unownedExecutor: UnownedSerialExecutor {
+        contextExecutor.asUnownedSerialExecutor()
+    }
+
+    private var context: NSManagedObjectContext {
+        contextExecutor.context
+    }
+
+    private let encoder = JSONEncoder()
+
+    init(container: NSPersistentContainer) {
+        self.init(context: container.newBackgroundContext())
+    }
+
+    init(context: NSManagedObjectContext) {
+        contextExecutor = ContextExecutor(context: context)
+    }
+
+    func existsLegacyEvent() async throws -> Bool {
+        let request = StoredUpdateEvent.fetchRequest()
+        let count = try context.count(for: request)
+        return count > 0
+    }
+
+    func nextBatchOfLegacyEvents(privateKeys: EARPrivateKeys?) async -> [ZMUpdateEvent]? {
+        let legacyEvents = StoredUpdateEvent.nextEvents(
+            context,
+            batchSize: 500,
+            callEventsOnly: false
+        )
+        .compactMap {
+            switch StoredUpdateEvent.extractUpdateEvent(
+                from: $0,
+                privateKeys: privateKeys
+            ) {
+            case let .success(legacyEvent):
+                return legacyEvent
+
+            case .failure:
+                return nil
+            }
+        }
+
+        guard !legacyEvents.isEmpty else {
+            return nil
+        }
+
+        return legacyEvents
+    }
+
+    func indexOfLastEventEnvelope() async throws -> Int64 {
+        let request = StoredUpdateEventEnvelope.lastObjectFetchRequest
+        let lastEnvelope = try context.fetch(request).first
+        return lastEnvelope?.sortIndex ?? 0
+    }
+
+    func insertEventEnvelope(
+        _ eventEnvelope: UpdateEventEnvelope,
+        index: Int64
+    ) async throws {
+        StoredUpdateEventEnvelope.insertNewObject(
+            data: try encoder.encode(eventEnvelope),
+            sortIndex: index,
+            in: context
+        )
+    }
+
+    func deleteNextBatchOfLegacyEvents() async {
+        StoredUpdateEvent.nextEvents(
+            context,
+            batchSize: 500,
+            callEventsOnly: false
+        ).forEach {
+            context.delete($0)
+        }
+    }
+
+    func save() async throws {
+        try context.save()
+    }
+
+}
+
+@available(iOS 17, *)
+final class ContextExecutor: SerialExecutor {
+
+    let context: NSManagedObjectContext
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    func enqueue(_ job: consuming ExecutorJob) {
+        let unownedJob = UnownedJob(job)
+        let unownedExecutor = asUnownedSerialExecutor()
+
+        context.perform {
+            unownedJob.runSynchronously(on: unownedExecutor)
+        }
+    }
+
+    func asUnownedSerialExecutor() -> UnownedSerialExecutor {
+        UnownedSerialExecutor(ordinary: self)
     }
 
 }
