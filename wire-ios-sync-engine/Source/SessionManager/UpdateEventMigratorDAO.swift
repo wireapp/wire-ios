@@ -118,7 +118,7 @@ struct UpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
 }
 
 @available(iOS 17, *)
-actor UpdateEventMigratorDAO2: UpdateEventMigratorDAOProtocol {
+actor ActorBasedUpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
 
     nonisolated
     private let contextExecutor: ContextExecutor
@@ -143,8 +143,7 @@ actor UpdateEventMigratorDAO2: UpdateEventMigratorDAOProtocol {
 
     func existsLegacyEvent() async throws -> Bool {
         let request = StoredUpdateEvent.fetchRequest()
-        let count = try context.count(for: request)
-        return count > 0
+        return try context.count(for: request) > 0
     }
 
     func nextBatchOfLegacyEvents(privateKeys: EARPrivateKeys?) async -> [ZMUpdateEvent]? {

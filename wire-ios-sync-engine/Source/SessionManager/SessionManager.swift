@@ -1113,7 +1113,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
-            UpdateEventMigratorDAO2(context: coreDataStack.eventContext)
+            ActorBasedUpdateEventMigratorDAO(context: coreDataStack.eventContext)
         } else {
             UpdateEventMigratorDAO(context: coreDataStack.eventContext)
         }
