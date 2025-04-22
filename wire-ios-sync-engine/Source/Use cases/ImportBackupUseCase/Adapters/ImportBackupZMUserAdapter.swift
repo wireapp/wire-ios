@@ -24,7 +24,6 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
     typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
-        // this fetch request is used for checking if a user exists
         let fetchRequest = ZMUser.fetchRequest()
         fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
         return fetchRequest

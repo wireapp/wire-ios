@@ -18,7 +18,12 @@
 
 public import CoreData
 
-public protocol ImportBackupEntityProtocol: CreateBackupEntityProtocol {
+public protocol ImportBackupEntityProtocol {
+
+    // this fetch request is used for checking if a user exists
+    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult>
+
+    init?(_ record: any NSFetchRequestResult)
 
     init(context: NSManagedObjectContext)
 
