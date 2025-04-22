@@ -28,7 +28,10 @@ final class MessageRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         localStore = MockMessageLocalStoreProtocol()
-        sut = MessageRepository(localStore: localStore)
+
+        sut = MessageRepository(
+            localStore: localStore
+        )
     }
 
     override func tearDown() async throws {

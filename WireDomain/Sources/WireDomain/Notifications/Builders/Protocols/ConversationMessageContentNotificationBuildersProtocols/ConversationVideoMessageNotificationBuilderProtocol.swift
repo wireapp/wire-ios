@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "NSError+ZMUserSession.h"
-#import "NSError+ZMUserSessionInternal.h"
+import WireAPI
+import WireDataModel
 
-@interface UserProfileTests : IntegrationTest
-
-@end
+// sourcery: AutoMockable
+protocol ConversationVideoMessageNotificationBuilderProtocol {
+    func buildContent(
+        conversationID: ConversationID,
+        senderID: UserID
+    ) async -> UserNotification
+}

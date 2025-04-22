@@ -176,8 +176,11 @@ final class DeveloperToolsViewModel: ObservableObject {
                         title: "MLS public key",
                         value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
                     )),
-                    .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount()))
-
+                    .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
+                    .text(TextItem(
+                        title: "Async Stream Enabled",
+                        value: selfClient?.asyncStreamCapable == true ? "Yes" : "No"
+                    ))
                 ]
             ))
         }

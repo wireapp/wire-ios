@@ -552,12 +552,12 @@ public final class ZMUserSession: NSObject {
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
-                setUpSyncAgent(clientID: selfClientID)
+                setUpSyncAgent(clientID: selfClientID, asyncStreamEnabled: selfUserClient.asyncStreamCapable)
             }
         }
     }
 
-    private func setUpSyncAgent(clientID: String) {
+    private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) {
         let onSelfClientInvalidated: () async -> Void = { [self] in
             await syncContext.perform { [self] in
                 syncContext.tearDownCryptoStack()
@@ -582,19 +582,65 @@ public final class ZMUserSession: NSObject {
 
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
-            onSelfClientInvalidated: onSelfClientInvalidated
+            onSelfClientInvalidated: onSelfClientInvalidated,
+            onProcessedCallEvent: onProcessedCallEvent(callEventInfo:)
         )
+
+        let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
+            clientSessionComponent
+        } else {
+            // TODO: [WPB-17225] replace syncProvider here
+            clientSessionComponent
+        }
 
         let syncAgent = SyncAgent(
             lastUpdateEventIDRepository: lastEventIDRepository,
             initialSyncProvider: clientSessionComponent,
-            incrementalSyncProvider: clientSessionComponent,
+            incrementalSyncProvider: incrementalSyncProvider,
             legacySyncStatus: applicationStatusDirectory.syncStatus
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
         syncAgent.delegate = self
+
+        // TODO: [WPB-17223] remove `resume` call from here
         syncAgent.resume()
+    }
+
+    func onProcessedCallEvent(callEventInfo: CallEventInfo) {
+        let serverTimeDelta = syncContext.performAndWait {
+            syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
+        }
+
+        viewContext.perform { [weak self] in // callCenter can only be accessed on the ui context
+            guard let self, let callCenter else { return }
+            guard !callEventInfo.isMuted else {
+                callCenter.isMuted = true
+                return
+            }
+
+            let conversationId = AVSIdentifier(
+                identifier: callEventInfo.conversationID,
+                domain: callEventInfo.conversationDomain
+            )
+
+            let userId = AVSIdentifier(
+                identifier: callEventInfo.userID,
+                domain: callEventInfo.userDomain
+            )
+
+            let callEvent = CallEvent(
+                data: callEventInfo.data,
+                currentTimestamp: Date.now.addingTimeInterval(serverTimeDelta),
+                serverTimestamp: callEventInfo.eventTimestamp,
+                conversationId: conversationId,
+                userId: userId,
+                clientId: callEventInfo.clientID
+            )
+
+            callCenter.processCallEvent(callEvent)
+        }
+
     }
 
     // MARK: - Deinitalize
@@ -1307,8 +1353,6 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         registerCurrentPushToken()
         renewAccessTokenIfNeeded(for: userClient)
 
-        WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)
-
         managedObjectContext.performGroupedBlock { [weak self] in
             guard
                 let context = self?.managedObjectContext,
@@ -1326,7 +1370,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
-            setUpSyncAgent(clientID: selfClientID)
+            setUpSyncAgent(clientID: selfClientID, asyncStreamEnabled: userClient.asyncStreamCapable)
         }
     }
 

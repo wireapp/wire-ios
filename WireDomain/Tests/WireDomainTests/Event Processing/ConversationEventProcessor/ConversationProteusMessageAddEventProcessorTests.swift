@@ -35,6 +35,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
 
+    private var callEventInfo: CallEventInfo?
+
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
@@ -53,7 +55,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
             conversationLocalStore: conversationLocalStore,
             messageLocalStore: messageLocalStore,
             userLocalStore: userLocalStore,
-            protobufMessageProcessor: protobufMessageProcessor
+            protobufMessageProcessor: protobufMessageProcessor,
+            onProcessedCallEvent: { self.callEventInfo = $0 }
         )
     }
 
@@ -109,6 +112,7 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
                 .count,
             1
         )
+        XCTAssertNil(callEventInfo)
 
         let processProtobufMessageInvocation = try XCTUnwrap(
             protobufMessageProcessor
@@ -165,6 +169,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
             1
         )
 
+        XCTAssertNil(callEventInfo)
+
         let processProtobufMessageInvocation = try XCTUnwrap(
             protobufMessageProcessor
                 .processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
@@ -180,6 +186,24 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         default:
             XCTFail("Should be external message.")
         }
+    }
+
+    func testProcessEvent_Message_Has_Calling_It_Invokes_Handler_With_Call_Event_Info() async throws {
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        messageLocalStore.canAddMessageConversationSenderID_MockValue = true
+
+        // When
+
+        try await sut.processEvent(Scaffolding.callingMessageEvent)
+
+        // Then
+
+        XCTAssertNotNil(callEventInfo) // There's a call, we got the call info.
     }
 
     enum Scaffolding {
@@ -209,6 +233,34 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
             messageSenderClientID: UUID.mockID1.uuidString,
             messageRecipientClientID: UUID.mockID2.uuidString
         )
+
+        static let callingMessageEvent = ConversationProteusMessageAddEvent(
+            conversationID: ConversationID(uuid: .mockID1, domain: domain),
+            senderID: UserID(uuid: .mockID1, domain: domain),
+            timestamp: .now,
+            message: .init(encryptedMessage: "", decryptedMessage: text!),
+            // Message has calling
+            messageSenderClientID: UUID.mockID1.uuidString,
+            messageRecipientClientID: UUID.mockID2.uuidString
+        )
+
+        private static let message = GenericMessage(
+            content: Calling(content: content, conversationId: .random())
+        )
+
+        private static let text = try? message.serializedData().base64String()
+
+        private static let content: String = {
+            let json = [
+                "src_userid": UUID.mockID1.uuidString,
+                "src_clientid": "clientID",
+                "resp": false,
+                "type": ""
+            ] as [String: Any]
+
+            let data = try! JSONSerialization.data(withJSONObject: json, options: [])
+            return String(decoding: data, as: UTF8.self)
+        }()
 
     }
 }
