@@ -34,7 +34,7 @@ extension MPBackupImporter {
 
         switch peekResult {
         case let result as BackupPeekResult.Success:
-            return (result.version, result.isEncrypted)
+            return (result.version, result.isEncrypted) // TODO: this is always `false`. bug exporting or bug in library?
         case is BackupPeekResult.FailureUnknownFormat:
             throw PeekResultError.unknownFormat
         case let error as BackupPeekResult.FailureUnsupportedVersion:
