@@ -75,34 +75,52 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     try Task.checkCancellation()
 
                     let pager = try await importer.importBackup(from: url, using: password)
-                    let total = pager.totalPagesCount
+                    let total = Int(exactly: pager.totalPagesCount) ?? 0
 
                     while pager.usersPager.hasMorePages() {
                         let users = pager.usersPager.nextPage()
-                        for u in 0 ..< users.size {
-                            guard let user = users.get(index: u) else { continue }
+                        for current in 0 ..< users.size {
+                            guard let user = users.get(index: current) else { continue }
 
                             fatalError("TODO")
+
+                            if current % 50 == 0 || current == users.size - 1 {
+                                try Task.checkCancellation()
+                                reportProgress(Int(exactly: current) ?? 0, total)
+                            }
                         }
                     }
 
                     while pager.conversationsPager.hasMorePages() {
                         let conversations = pager.conversationsPager.nextPage()
-                        for c in 0 ..< conversations.size {
-                            guard let conversation = conversations.get(index: c) else { continue }
+                        for current in 0 ..< conversations.size {
+                            guard let conversation = conversations.get(index: current) else { continue }
 
                             fatalError("TODO")
+
+                            if current % 50 == 0 || current == conversations.size - 1 {
+                                try Task.checkCancellation()
+                                reportProgress(Int(exactly: current) ?? 0, total)
+                            }
                         }
                     }
 
                     while pager.messagesPager.hasMorePages() {
                         let messages = pager.messagesPager.nextPage()
-                        for m in 0 ..< messages.size {
-                            guard let message = messages.get(index: m) else { continue }
+                        for current in 0 ..< messages.size {
+                            guard let message = messages.get(index: current) else { continue }
 
                             fatalError("TODO")
+
+                            if current % 50 == 0 || current == messages.size - 1 {
+                                try Task.checkCancellation()
+                                reportProgress(Int(exactly: current) ?? 0, total)
+                            }
                         }
                     }
+
+                    continuation.yield(.done)
+                    continuation.finish()
 
                 } catch {
                     continuation.finish(throwing: error)
