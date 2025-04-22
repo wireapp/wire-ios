@@ -128,7 +128,8 @@ final class MLSMessageDecryptorTests: XCTestCase {
                 senderID: aliceID,
                 subconversation: nil,
                 message: content,
-                timestamp: timestamp
+                timestamp: timestamp,
+                decryptedMessages: []
             )
         }
 
