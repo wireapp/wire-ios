@@ -26,7 +26,9 @@ import WireSystem
 
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase
+    let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
+        ZMUser
+    >
 
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
@@ -226,4 +228,12 @@ private extension UserClient {
         }
         return userClient
     }
+}
+
+// MARK: -
+
+extension ZMUser: ImportBackupUserEntityProtocol {
+//    public var id: QualifiedID {
+//        get { qualifiedID }
+//    }
 }

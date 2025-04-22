@@ -16,29 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import CoreData
 public import Foundation
 public import WireLogging
 
 @preconcurrency import WireBackup
 
-public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
+public struct ImportBackupUseCase<
+    UserEntity: ImportBackupUserEntityProtocol
+//    ConversationAdapter: CreateBackupConversationEntityProtocol,
+//    MessageAdapter: CreateBackupMessageEntityProtocol
+>: ImportBackupUseCaseProtocol {
 
-    // let context: @Sendable () -> NSManagedObjectContext
+    let context: @Sendable () -> NSManagedObjectContext
     let fileManager: @Sendable () -> FileManager = { .default }
     let fileArchiver: any ImportBackupFileArchiverProtocol
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
+        context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext,
         fileArchiver: any ImportBackupFileArchiverProtocol,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.context = context
         self.fileArchiver = fileArchiver
         self.logger = logger
     }
 
     public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [fileArchiver] in
+            let task = Task<Void, Never> { [context, fileArchiver] in
 
                 let fileManager = fileManager()
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
@@ -50,6 +57,7 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
                 do {
                     let logger = logger()
+                    let context = context()
                     let reportProgress: (Int, Int) -> Void = { current, total in
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
@@ -82,7 +90,10 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         for current in 0 ..< users.size {
                             guard let user = users.get(index: current) else { continue }
 
-                            // fatalError("TODO")
+                            let userEntity = UserEntity(context: context)
+//                            userEntity.id = QualifiedID(user.id) // TODO: fix
+                            userEntity.name = user.name
+                            userEntity.handle = user.handle
                             logger.error("TODO: import user \(user)")
 
                             if current % 50 == 0 || current == users.size - 1 {
@@ -97,7 +108,9 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         for current in 0 ..< conversations.size {
                             guard let conversation = conversations.get(index: current) else { continue }
 
-                            // fatalError("TODO")
+                            fatalError("TODO")
+                            conversation.id
+                            conversation.name
                             logger.error("TODO: import conversation \(conversation)")
 
                             if current % 50 == 0 || current == conversations.size - 1 {
@@ -112,7 +125,13 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         for current in 0 ..< messages.size {
                             guard let message = messages.get(index: current) else { continue }
 
-                            // fatalError("TODO")
+                            fatalError("TODO")
+                            message.id
+                            message.conversationId
+                            message.content
+                            message.creationDate
+                            message.senderClientId
+                            message.senderUserId
                             logger.error("TODO: import message \(message)")
 
                             if current % 50 == 0 || current == messages.size - 1 {
@@ -121,6 +140,8 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                             }
                         }
                     }
+
+                    try context.save()
 
                     continuation.yield(.done)
                     continuation.finish()
