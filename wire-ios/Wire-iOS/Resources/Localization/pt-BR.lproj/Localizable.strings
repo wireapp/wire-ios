@@ -863,7 +863,7 @@
 "participants.section.admins.footer" = "Não há administradores.";
 "participants.section.members.footer" = "Não há membros.";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "Administrador(a) da conversa";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Mais ações";
@@ -926,8 +926,8 @@
 "profile.remove_dialog_title" = "Remover?";
 "profile.remove_dialog_message" = "%@ não será capaz de enviar ou receber mensagens nesta conversa.";
 "profile.remove_dialog_button_cancel" = "Cancelar";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "Remover da conversa…";
+"profile.remove_dialog_button_remove_confirm" = "Remover da conversa";
 
 // Block dialog
 "profile.block_dialog.title" = "Bloquear?";
@@ -989,7 +989,7 @@
 // User Details
 "profile.details.title" = "Detalhes";
 "profile.details.guest" = "Convidado";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "Administrador(a) da conversa";
 "profile.details.partner" = "externo";
 "profile.details.federated" = "Federado";
 "profile.details.blocking_reason" = "Este usuário está bloqueado devido à retenção legal. [SAIBA MAIS](%@)";
@@ -1739,8 +1739,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "A auto-exclusão de mensagens agora é obrigatória. Novas mensagens serão excluídas automaticamente após %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Gerar links de convidados agora está desabilitado para todos os administradores da conversa.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Gerar links para convidados agora está habilitado para todos os administradores da conversa.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "Certificado de identidade ponto a ponto";
