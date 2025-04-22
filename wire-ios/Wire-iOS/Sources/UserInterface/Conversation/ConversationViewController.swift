@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireConversationsUI
 import WireConversationUI
 import WireDesign
 import WireLogging

@@ -2325,6 +2325,93 @@ class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
 
 }
 
+public class MockCoreDataStackProtocol: CoreDataStackProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - storesExists
+
+    public var storesExists: Bool {
+        get { return underlyingStoresExists }
+        set(value) { underlyingStoresExists = value }
+    }
+
+    public var underlyingStoresExists: Bool!
+
+    // MARK: - needsMigration
+
+    public var needsMigration: Bool {
+        get { return underlyingNeedsMigration }
+        set(value) { underlyingNeedsMigration = value }
+    }
+
+    public var underlyingNeedsMigration: Bool!
+
+    // MARK: - account
+
+    public var account: Account {
+        get { return underlyingAccount }
+        set(value) { underlyingAccount = value }
+    }
+
+    public var underlyingAccount: Account!
+
+    // MARK: - viewContext
+
+    public var viewContext: NSManagedObjectContext {
+        get { return underlyingViewContext }
+        set(value) { underlyingViewContext = value }
+    }
+
+    public var underlyingViewContext: NSManagedObjectContext!
+
+    // MARK: - syncContext
+
+    public var syncContext: NSManagedObjectContext {
+        get { return underlyingSyncContext }
+        set(value) { underlyingSyncContext = value }
+    }
+
+    public var underlyingSyncContext: NSManagedObjectContext!
+
+    // MARK: - searchContext
+
+    public var searchContext: NSManagedObjectContext {
+        get { return underlyingSearchContext }
+        set(value) { underlyingSearchContext = value }
+    }
+
+    public var underlyingSearchContext: NSManagedObjectContext!
+
+    // MARK: - eventContext
+
+    public var eventContext: NSManagedObjectContext {
+        get { return underlyingEventContext }
+        set(value) { underlyingEventContext = value }
+    }
+
+    public var underlyingEventContext: NSManagedObjectContext!
+
+
+    // MARK: - loadStores
+
+    public var loadStoresCompletionHandler_Invocations: [(Error?) -> Void] = []
+    public var loadStoresCompletionHandler_MockMethod: ((@escaping (Error?) -> Void) -> Void)?
+
+    public func loadStores(completionHandler: @escaping (Error?) -> Void) {
+        loadStoresCompletionHandler_Invocations.append(completionHandler)
+
+        guard let mock = loadStoresCompletionHandler_MockMethod else {
+            fatalError("no mock for `loadStoresCompletionHandler`")
+        }
+
+        mock(completionHandler)
+    }
+
+}
+
 public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
 
     // MARK: - Life cycle

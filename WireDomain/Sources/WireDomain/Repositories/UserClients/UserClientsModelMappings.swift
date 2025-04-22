@@ -35,7 +35,7 @@ extension WireAPI.SelfUserClient {
                 p256: mlsPublicKeys?.p256,
                 p384: mlsPublicKeys?.p384,
                 p512: mlsPublicKeys?.p512
-            )
+            ), capabilities: capabilities
         )
     }
 

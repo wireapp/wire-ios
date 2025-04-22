@@ -1030,7 +1030,7 @@ extension WireCallCenterV3 {
         updateMLSConferenceIfNeededForMissedCall(conversationID: conversationId)
     }
 
-    /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it
+    /// Handles incoming calling messages, and transmist them to AVS when it is ready to process events, or adds it
     /// to the `bufferedEvents`.
     /// - parameter callEvent: calling event to process.
     func processCallEvent(_ callEvent: CallEvent) {

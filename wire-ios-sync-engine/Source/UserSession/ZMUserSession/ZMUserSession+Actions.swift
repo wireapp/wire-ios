@@ -93,6 +93,16 @@ public extension ZMUserSession {
         }
     }
 
+    func callback(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
+        guard let conversation = userInfo.conversation(in: managedObjectContext) else {
+            return
+        }
+
+        _ = conversation.voiceChannel?.join(video: false, userSession: self)
+        showConversation(conversation)
+        completionHandler()
+    }
+
     func muteConversation(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
         guard let activity = BackgroundActivityFactory.shared
             .startBackgroundActivity(name: "Mute Conversation Action Handler") else {
