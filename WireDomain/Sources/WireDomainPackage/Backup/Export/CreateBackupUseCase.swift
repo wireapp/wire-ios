@@ -68,10 +68,7 @@ public struct CreateBackupUseCase<
                 let outputDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingPathComponent(UUID().uuidString)
 
-                defer {
-                    try? fileManager.removeItem(at: workDirectoryURL)
-                    try? fileManager.removeItem(at: outputDirectoryURL)
-                }
+                defer { try? fileManager.removeItem(at: workDirectoryURL) }
 
                 do {
                     let logger = logger()
