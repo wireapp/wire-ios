@@ -29,7 +29,8 @@ final class UpdateEventDecryptorTests: XCTestCase {
     var sut: UpdateEventDecryptor!
     var proteusMessageDecryptor: MockProteusMessageDecryptorProtocol!
     var mlsMessageDecryptor: MockMLSMessageDecryptorProtocol!
-    var messageRepository: MockMessageRepositoryProtocol!
+    var messageLocalStore: MockMessageLocalStoreProtocol!
+    var mlsService: MockMLSServiceInterface!
 
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
@@ -45,23 +46,26 @@ final class UpdateEventDecryptorTests: XCTestCase {
         try await insertScaffoldingData()
         proteusMessageDecryptor = MockProteusMessageDecryptorProtocol()
         mlsMessageDecryptor = MockMLSMessageDecryptorProtocol()
-        messageRepository = MockMessageRepositoryProtocol()
+        messageLocalStore = MockMessageLocalStoreProtocol()
+        mlsService = MockMLSServiceInterface()
 
         sut = UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
-            messageRepository: messageRepository
+            mlsService: mlsService,
+            messageLocalStore: messageLocalStore
         )
-        mlsMessageDecryptor.commitPendingProposalsIfNeeded_MockMethod = {}
+        mlsService.commitPendingProposalsIfNeeded_MockMethod = {}
     }
 
     override func tearDown() async throws {
         stack = nil
         proteusMessageDecryptor = nil
         mlsMessageDecryptor = nil
-        messageRepository = nil
+        messageLocalStore = nil
         modelHelper = nil
         sut = nil
+        mlsService = nil
         try coreDataStackHelper.cleanupDirectory()
     }
 
@@ -178,7 +182,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         )
 
         // Mock
-        mlsMessageDecryptor.decryptedEventDataFrom_MockMethod = { $0 }
+        mlsMessageDecryptor.decryptedMessageAddEventDataFrom_MockMethod = { $0 }
 
         // When
         let events = try await sut.decryptEvents(in: envelope)
@@ -194,7 +198,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
 
         await Task.yield()
 
-        XCTAssertEqual(mlsMessageDecryptor.commitPendingProposalsIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
     }
 
 }

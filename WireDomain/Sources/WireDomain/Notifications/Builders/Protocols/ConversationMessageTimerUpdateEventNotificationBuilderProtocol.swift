@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "IntegrationTest.h"
+import WireAPI
+import WireDataModel
 
-@interface APNSTestsBase: IntegrationTest
-
-- (NSDictionary *)noticePayloadForLastEvent;
-- (NSDictionary *)noticePayloadWithIdentifier:(NSUUID *)uuid;
-
-@end
+// sourcery: AutoMockable
+protocol ConversationMessageTimerUpdateEventNotificationBuilderProtocol {
+    func buildContent(
+        event: ConversationMessageTimerUpdateEvent
+    ) async -> UserNotification?
+}

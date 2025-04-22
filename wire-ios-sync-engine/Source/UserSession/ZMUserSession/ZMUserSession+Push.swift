@@ -18,6 +18,7 @@
 
 import Foundation
 import UserNotifications
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireTransport
@@ -184,11 +185,12 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         WireLogger.notifications.info("handling notification response with action id (\(actionIdentifier))")
 
         switch actionIdentifier {
-        case CallNotificationAction.ignore.rawValue:
+        case CallNotificationAction.ignore.rawValue, NotificationActionIdentifier.ignoreCallIdentifier:
             ignoreCall(with: userInfo, completionHandler: completionHandler)
         case CallNotificationAction.accept.rawValue:
             acceptCall(with: userInfo, completionHandler: completionHandler)
-        case ConversationNotificationAction.mute.rawValue:
+        case ConversationNotificationAction.mute.rawValue,
+             NotificationActionIdentifier.muteConversationIdentifier:
             muteConversation(with: userInfo, completionHandler: completionHandler)
         case ConversationNotificationAction.like.rawValue:
             likeMessage(with: userInfo, completionHandler: completionHandler)
@@ -196,12 +198,17 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
             if let textInput = userText {
                 reply(with: userInfo, message: textInput, completionHandler: completionHandler)
             }
-        case ConversationNotificationAction.connect.rawValue:
+        case ConversationNotificationAction.connect.rawValue,
+             NotificationActionIdentifier.acceptConnectionRequestIdentifier:
             acceptConnectionRequest(with: userInfo, completionHandler: completionHandler)
+        // TODO: [WPB-17220] new NSE - callback action is currently broken - disabling this action for now
+//        case NotificationActionIdentifier.callbackIdentifier:
+//            callback(with: userInfo, completionHandler: completionHandler)
         default:
             showContent(for: userInfo)
             completionHandler()
         }
+
     }
 
 }
