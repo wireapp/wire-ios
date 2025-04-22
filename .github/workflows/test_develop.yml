@@ -14,7 +14,7 @@ jobs:
   trigger_tests:
     strategy:
       matrix:
-        branch: [develop, release/cycle-3.120, release/cycle-3.121, release/cycle-3.122]  # List other branches here
+        branch: [develop, release/cycle-3.120, release/cycle-3.121, release/cycle-3.122, release/cycle-3.123]  # List other branches here
       fail-fast: false # avoid to fail one job
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
