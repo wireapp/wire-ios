@@ -1407,7 +1407,7 @@
 // Landing screen
 
 "landing.header" = "Wire。请登录或创建个人账户。";
-"landing.welcome_message" = "尝试为您的企业或组织创建专业版或企业版帐户？";
+"landing.welcome_message" = "尝试为您的企业或组织创建专业版或企业版账户？";
 "landing.welcome_submessage" = "遗憾的是，这在应用程序中是不可能的——创建了你的团队后，你可以在这里登录";
 "landing.create_account.title" = "创建 Wire 个人账户";
 "landing.create_account.infotitle" = "与朋友和家人聊天？";
@@ -2005,7 +2005,7 @@
 // Wipe database
 
 "wipe_database.title_label" = "忘记了应用锁密码？";
-"wipe_database.info_label" = "仅当您使用应用锁密码时，才能访问此设备上存储的数据。如果您忘记了密码，可以重置此设备。请输入您的 Wire 帐户密码以重置此设备并重新登录。通过重置您的设备，";
+"wipe_database.info_label" = "仅当您使用应用锁密码时，才能访问此设备上存储的数据。如果您忘记了密码，可以重置此设备。请输入您的 Wire 账户密码以重置此设备并重新登录。通过重置您的设备，";
 "wipe_database.info_label.highlighted" = "该账户的所有本地数据和消息将被永久删除。";
 
 "wipe_database.button.title" = "重置设备";
@@ -2052,11 +2052,11 @@
 "proxy-credentials.password.placeholder" = "密码";
 
 "landing.alert.create-new-account.not-supported.title" = "不支持";
-"landing.alert.create-new-account.not-supported.message" = "您无法在具有代理支持的内部部署后端创建个人帐户。";
+"landing.alert.create-new-account.not-supported.message" = "您无法在具有代理支持的内部部署后端创建个人账户。";
 "landing.alert.sso.not-supported.title" = "不支持";
 "landing.alert.sso.not-supported.message" = "您无法通过具有代理支持的内部部署后端上的 SSO 登录。";
 "credentials.general-error.alert.title" = "无效信息";
-"credentials.general-error.alert.message" = "这些帐户凭据不正确。请验证您的详细信息并重试。";
+"credentials.general-error.alert.message" = "这些账户凭据不正确。请验证您的详细信息并重试。";
 "add-email-password-step.cta-button.title" = "确认";
 
 // MARK: - Sketch Colors
@@ -2093,7 +2093,7 @@
 "device.details.section.e2ei.show_certificate_details" = "显示证书详情";
 "device.details.section.e2ei.get_certificate" = "获取证书";
 "device.details.section.e2ei.update_certificate" = "更新证书";
-"device.details.section.e2ei.status.title" = "Status";
+"device.details.section.e2ei.status.title" = "状态";
 "device.details.section.e2ei.status.not_activated" = "未激活";
 "device.details.section.e2ei.status.valid" = "有效";
 "device.details.section.e2ei.status.revoked" = "已撤销";

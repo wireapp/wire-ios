@@ -2731,8 +2731,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "I understand that this migration from Personal to Team is permanent and cannot be undone."
+            "state" : "translated",
+            "value" : "我理解，从个人到团队的迁移是永久性的，并且无法撤消。"
           }
         },
         "zh-Hant" : {
@@ -2856,8 +2856,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Accept our [Terms & Conditions](%@) and [Privacy Policy](%@)."
+            "state" : "translated",
+            "value" : "接受我们的[条款和条件](%@)和[隐私政策](%@)。"
           }
         },
         "zh-Hant" : {
@@ -2981,8 +2981,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Confirmation"
+            "state" : "translated",
+            "value" : "确认"
           }
         },
         "zh-Hant" : {
@@ -3106,8 +3106,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Ok"
+            "state" : "translated",
+            "value" : "确定"
           }
         },
         "zh-Hant" : {
@@ -3231,8 +3231,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "You've created or joined a team with this email address on another device."
+            "state" : "translated",
+            "value" : "您已在另一台设备上使用此电子邮件地址创建或加入了团队。"
           }
         },
         "zh-Hant" : {
@@ -3356,8 +3356,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Already part of a team"
+            "state" : "translated",
+            "value" : "已经是团队的一员"
           }
         },
         "zh-Hant" : {
@@ -3481,8 +3481,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Try Again"
+            "state" : "translated",
+            "value" : "再试一次"
           }
         },
         "zh-Hant" : {
@@ -3606,8 +3606,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Wire could not complete your team creation due to an unknown error."
+            "state" : "translated",
+            "value" : "由于未知错误，Wire 无法完成您的团队创建。"
           }
         },
         "zh-Hant" : {
@@ -3731,8 +3731,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team not created"
+            "state" : "translated",
+            "value" : "未创建团队"
           }
         },
         "zh-Hant" : {
@@ -3980,8 +3980,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+            "state" : "translated",
+            "value" : "将您的个人账户转变为团队账户，以从协作中获得更多收益。"
           }
         },
         "zh-Hant" : {
@@ -4104,8 +4104,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "关闭团队账户概览"
           }
         },
         "zh-Hant" : {
@@ -4229,8 +4229,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Admin Console**: Invite team members and manage settings."
+            "state" : "translated",
+            "value" : "**管理员控制台**：邀请团队成员并管理设置。"
           }
         },
         "zh-Hant" : {
@@ -4354,8 +4354,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+            "state" : "translated",
+            "value" : "**轻松协作**：与访客和外部各方沟通。"
           }
         },
         "zh-Hant" : {
@@ -4479,8 +4479,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+            "state" : "translated",
+            "value" : "**升级到企业版**：获取附加功能和高级支持。"
           }
         },
         "zh-Hant" : {
@@ -4604,8 +4604,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+            "state" : "translated",
+            "value" : "**大型会议**：最多可容纳 150 名参与者的视频会议。"
           }
         },
         "zh-Hant" : {
@@ -4729,8 +4729,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+            "state" : "translated",
+            "value" : "**可用状态**：让您的团队知道您是否有空、忙碌或离开。"
           }
         },
         "zh-Hant" : {
@@ -4854,8 +4854,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Account"
+            "state" : "translated",
+            "value" : "团队账户"
           }
         },
         "zh-Hant" : {
@@ -4979,8 +4979,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Learn more about Wire's plans"
+            "state" : "translated",
+            "value" : "进一步了解 Wire 的计划"
           }
         },
         "zh-Hant" : {
@@ -5104,8 +5104,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Step %d of %d"
+            "state" : "translated",
+            "value" : "第 %d 步，共 %d 步"
           }
         },
         "zh-Hant" : {
@@ -5229,8 +5229,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Select a name for your team. You can change it at any time."
+            "state" : "translated",
+            "value" : "为您的团队选择一个名称。您可以随时更改。"
           }
         },
         "zh-Hant" : {
@@ -5353,8 +5353,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "关闭团队名称视图"
           }
         },
         "zh-Hant" : {
@@ -5478,8 +5478,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Your Team"
+            "state" : "translated",
+            "value" : "您的团队"
           }
         },
         "zh-Hant" : {
@@ -5603,8 +5603,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team name"
+            "state" : "translated",
+            "value" : "团队名称"
           }
         },
         "zh-Hant" : {
@@ -5728,8 +5728,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Team Name"
+            "state" : "translated",
+            "value" : "团队名称"
           }
         },
         "zh-Hant" : {

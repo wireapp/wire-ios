@@ -20,7 +20,7 @@ import Foundation
 
 /// An event concerning teams.
 
-public enum TeamEvent: Equatable, Codable {
+public enum TeamEvent: Equatable, Codable, Sendable {
 
     /// The self team was deleted.
 
