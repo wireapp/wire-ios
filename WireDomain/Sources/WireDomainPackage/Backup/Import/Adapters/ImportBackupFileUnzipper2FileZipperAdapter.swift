@@ -22,45 +22,26 @@ import WireFoundation
 
 final class ImportBackupFileArchiverToBackupFileUnzipper: BackupFileUnzipper {
 
-//    let fileManager: FileManager
+    let fileManager: FileManager
     let fileArchiver: any ImportBackupFileArchiverProtocol
-//    let currentDateProvider: any CurrentDateProviding
 
     init(
-//        fileManager: FileManager,
-        fileArchiver: any ImportBackupFileArchiverProtocol,
-//        currentDateProvider: any CurrentDateProviding
+        fileManager: FileManager,
+        fileArchiver: any ImportBackupFileArchiverProtocol
     ) {
-//        self.fileManager = fileManager
+        self.fileManager = fileManager
         self.fileArchiver = fileArchiver
-//        self.currentDateProvider = currentDateProvider
     }
 
-    func unzipBackup(zipPath: String) -> String {
-        fatalError()
-    }
+    func unzipBackup(zipPath: String) -> String { // TODO: add throws
 
-//    func zip(entries: [String]) throws -> String {
-//
-//        let targetURLs = entries.map { entry in
-//            URL(filePath: entry, directoryHint: .notDirectory)
-//        }
-//
-//        // create temporary directory for the destination file
-//        let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-//            .appending(path: "destination", directoryHint: .isDirectory)
-//        try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
-//
-//        // generate a filename
-//        let iso8601Date = Date.ISO8601FormatStyle().format(currentDateProvider.now)
-//        let filename = iso8601Date + "_backup.zip"
-//        let destinationURL = destinationDirectory.appendingPathComponent(filename, isDirectory: false)
-//
-//        // call zip library
-//        try fileArchiver.zipResources(at: targetURLs, into: destinationURL)
-//
-//        return destinationURL.path()
-//
-//    }
+        let archiveURL = URL(filePath: zipPath, directoryHint: .notDirectory)
+        let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appending(path: "destination", directoryHint: .isDirectory)
+        try! fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true) // TODO: throw error
+
+        try! fileArchiver.unzipFile(at: archiveURL, to: destinationDirectory) // TODO: throw error
+        return destinationDirectory.path()
+    }
 
 }

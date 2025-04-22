@@ -17,6 +17,7 @@
 //
 
 import WireDomainPackage
+import WireLogging
 
 public extension SessionManager {
 
@@ -26,7 +27,10 @@ public extension SessionManager {
         activeUserSession.map { _ in
 
             ImportBackupUseCase(
-                importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(),
+                importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
+                    fileArchiver: ImportBackupFileArchiver(),
+                    logger: WireLogger.backupImport
+                ),
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
                 streamDecryptor: ImportBackupStreamDecryptor(),

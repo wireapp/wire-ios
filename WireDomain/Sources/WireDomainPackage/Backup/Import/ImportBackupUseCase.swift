@@ -50,15 +50,30 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
                 do {
                     let logger = logger()
+                    let reportProgress: (Int, Int) -> Void = { current, total in
+                        logger.debug("reporting overall process: \(current)/\(total)")
+                        continuation.yield(.progress(current, total))
+                    }
+
+                    reportProgress(0, 0)
                     logger.debug("initializing MPBackupImporter")
                     let importer = MPBackupImporter(
                         pathToWorkDirectory: workDirectoryURL.path(),
                         backupFileUnzipper: ImportBackupFileArchiverToBackupFileUnzipper(
+                            fileManager: fileManager,
                             fileArchiver: fileArchiver
                         )
                     )
 
+                    try Task.checkCancellation()
+
+                    let peekResult = try await importer.peek(into: url)
+                    if password.isEmpty, peekResult.isEncrypted {
+                        throw ImportBackupError.passwordRequired
+                    }
+
                     // TODO: implement
+                    fatalError("TODO")
 
                 } catch {
                     continuation.finish(throwing: error)
