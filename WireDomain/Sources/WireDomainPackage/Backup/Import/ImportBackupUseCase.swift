@@ -25,17 +25,20 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     // let context: @Sendable () -> NSManagedObjectContext
     let fileManager: @Sendable () -> FileManager = { .default }
+    let fileArchiver: any ImportBackupFileArchiverProtocol
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
+        fileArchiver: any ImportBackupFileArchiverProtocol,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.fileArchiver = fileArchiver
         self.logger = logger
     }
 
     public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> {
+            let task = Task<Void, Never> { [fileArchiver] in
 
                 let fileManager = fileManager()
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
@@ -50,7 +53,9 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                     logger.debug("initializing MPBackupImporter")
                     let importer = MPBackupImporter(
                         pathToWorkDirectory: workDirectoryURL.path(),
-                        backupFileUnzipper: <#T##any BackupFileUnzipper#>
+                        backupFileUnzipper: ImportBackupFileArchiverToBackupFileUnzipper(
+                            fileArchiver: fileArchiver
+                        )
                     )
 
                     // TODO: implement
