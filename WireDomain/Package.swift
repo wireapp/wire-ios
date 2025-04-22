@@ -46,8 +46,8 @@ let package = Package(
 
         .binaryTarget(
             name: "WireBackup",
-            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/949125cecbac0c0e59bda9d33162786240d21bb2/WireDomain/Frameworks/WireBackup.xcframework.zip?download=true",
-            checksum: "1d90f0689e49b4637808f013526597671534d0b7c2e62818d26dd2d1004d9012"
+            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/16aeff5783fbd8d66d914bd6a8de3d60d2b3c7f5/WireDomain/Frameworks/WireBackup.xcframework.zip?download=true",
+            checksum: "ac0896ea966ffdf9199ed99410345db11e82ef76b9ee5f87a237ebc5c1fca9df"
         )
         // .binaryTarget(
         //     name: "WireBackup",
