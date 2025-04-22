@@ -28,7 +28,7 @@ public extension SessionManager {
 
             ImportBackupUseCase(
                 importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
-                    context: userSession.managedObjectContext.zm_sync,
+                    context: userSession.managedObjectContext.performAndWait { userSession.managedObjectContext.zm_sync },
                     fileArchiver: ImportBackupFileArchiver(),
                     logger: WireLogger.backupImport
                 ),

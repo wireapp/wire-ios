@@ -18,7 +18,7 @@
 
 public import CoreData
 
-public protocol ImportBackupEntityProtocol {
+public protocol ImportBackupEntityProtocol: CreateBackupEntityProtocol {
 
     init(context: NSManagedObjectContext)
 

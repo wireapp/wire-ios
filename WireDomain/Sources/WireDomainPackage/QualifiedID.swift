@@ -20,7 +20,7 @@ public import Foundation
 
 /// Fully qualified identifier in a federated environment.
 
-public struct QualifiedID: Sendable {
+public struct QualifiedID: Hashable, Sendable {
 
     public var uuid: UUID
     public var domain: String

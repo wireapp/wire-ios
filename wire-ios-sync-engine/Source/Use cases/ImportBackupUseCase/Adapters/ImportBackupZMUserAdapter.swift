@@ -21,12 +21,21 @@ import WireDomainPackage
 
 struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
 
+    typealias QualifiedID = WireDomainPackage.QualifiedID
+
+    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
+        // this fetch request is used for checking if a user exists
+        let fetchRequest = ZMUser.fetchRequest()
+        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
+        return fetchRequest
+    }
+
     var user: ZMUser
 
-    var id: WireDomainPackage.QualifiedID {
+    var id: QualifiedID {
         get {
             let qualifiedID = user.qualifiedID ?? .init(uuid: user.remoteIdentifier, domain: user.domain ?? "")
-            return WireDomainPackage.QualifiedID(qualifiedID)
+            return QualifiedID(qualifiedID)
         }
         nonmutating set {
             user.remoteIdentifier = newValue.uuid
@@ -46,6 +55,12 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
 
     init(context: NSManagedObjectContext) {
         user = ZMUser(context: context)
+        user.needsToBeUpdatedFromBackend = true
+    }
+
+    init?(_ record: any NSFetchRequestResult) {
+        guard let user = record as? ZMUser else { return nil }
+        self.user = user
     }
 
 }

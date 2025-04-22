@@ -87,7 +87,7 @@ public struct ImportBackupUseCase<
 
                     try await context.perform {
 
-                        // TODO: lazy fetch request
+                        let storedUsers = try context.fetch(UserEntity.fetchRequest()).compactMap(UserEntity.init)
 
                         while pager.usersPager.hasMorePages() {
                             let users = pager.usersPager.nextPage()
@@ -96,11 +96,12 @@ public struct ImportBackupUseCase<
                                     continue
                                 }
 
-                                let userEntity = UserEntity(context: context)
-                                userEntity.id = userID
-                                userEntity.name = user.name
-                                userEntity.handle = user.handle
-                                logger.error("TODO: import user \(user)")
+                                if !storedUsers.contains(where: { $0.id == userID }) {
+                                    let userEntity = UserEntity(context: context)
+                                    userEntity.id = userID
+                                    userEntity.name = user.name
+                                    userEntity.handle = user.handle
+                                }
 
                                 if current % 50 == 0 || current == users.size - 1 {
                                     try Task.checkCancellation()
@@ -111,10 +112,15 @@ public struct ImportBackupUseCase<
                     }
 
                     try await context.perform {
+
+                        // let storedConversations = try context.fetch(ConversationEntity.fetchRequest()).compactMap(ConversationEntity.init)
+
                         while pager.conversationsPager.hasMorePages() {
                             let conversations = pager.conversationsPager.nextPage()
                             for current in 0 ..< conversations.size {
                                 guard let conversation = conversations.get(index: current) else { continue }
+
+                                // if !storedConversations.contains(where: { $0.id == }) {
 
                                 fatalError("TODO")
                                 conversation.id
@@ -130,10 +136,15 @@ public struct ImportBackupUseCase<
                     }
 
                     try await context.perform {
+
+                        // let storedMessages = try context.fetch(MessageEntity.fetchRequest()).compactMap(MessageEntity.init)
+
                         while pager.messagesPager.hasMorePages() {
                             let messages = pager.messagesPager.nextPage()
                             for current in 0 ..< messages.size {
                                 guard let message = messages.get(index: current) else { continue }
+
+                                // if !storedMessages.contains(where: { $0.id == }) {
 
                                 fatalError("TODO")
                                 message.id
