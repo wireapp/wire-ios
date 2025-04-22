@@ -34,7 +34,7 @@ extension MPBackupImporter {
 
         switch peekResult {
         case let result as BackupPeekResult.Success:
-            return (result.version, result.isEncrypted) // TODO: this is always `false`. bug exporting or bug in library?
+            return (result.version, result.isEncrypted) // TODO: `isEncrypted` is always `false`. bug exporting or bug in library?
         case is BackupPeekResult.FailureUnknownFormat:
             throw PeekResultError.unknownFormat
         case let error as BackupPeekResult.FailureUnsupportedVersion:
@@ -43,10 +43,54 @@ extension MPBackupImporter {
             throw PeekResultError.unexpectedPeekResultType
         }
     }
+
+    func importBackup(
+        from backupFile: URL,
+        using password: String
+    ) async throws -> BackupImportPager {
+
+        let result = await asyncResult(
+            for: importFile(
+                multiplatformBackupFilePath: backupFile.path(),
+                passphrase: password
+            )
+        )
+
+        let importResult: BackupImportResult
+        switch result {
+        case .failure(let error):
+            throw error
+        case .success(let result):
+            importResult = result
+        }
+
+        switch importResult {
+        case is BackupImportResult.FailureMissingOrWrongPassphrase:
+            throw ImportResultError.incorrectPassword
+        case is BackupImportResult.FailureParsingFailure:
+            throw ImportResultError.parsingFailed
+        case let error as BackupImportResult.FailureUnzippingError:
+            throw ImportResultError.unzippingFailed(error.message)
+        case let success as BackupImportResult.Success:
+            return success.pager
+        case let error as BackupImportResult.FailureUnknownError:
+            throw ImportResultError.unknown(error.message)
+        default:
+            throw ImportResultError.unexpectedImportResultType
+        }
+    }
 }
 
 enum PeekResultError: Error {
     case unknownFormat
     case unsupportedVersion(_ backupVersion: String)
     case unexpectedPeekResultType
+}
+
+enum ImportResultError: Error {
+    case incorrectPassword
+    case parsingFailed
+    case unzippingFailed(_ description: String)
+    case unknown(_ description: String)
+    case unexpectedImportResultType
 }

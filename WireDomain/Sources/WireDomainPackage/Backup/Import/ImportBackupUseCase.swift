@@ -74,8 +74,35 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
                     try Task.checkCancellation()
 
-                    // TODO: implement
-                    fatalError("TODO")
+                    let pager = try await importer.importBackup(from: url, using: password)
+                    let total = pager.totalPagesCount
+
+                    while pager.usersPager.hasMorePages() {
+                        let users = pager.usersPager.nextPage()
+                        for u in 0 ..< users.size {
+                            guard let user = users.get(index: u) else { continue }
+
+                            fatalError("TODO")
+                        }
+                    }
+
+                    while pager.conversationsPager.hasMorePages() {
+                        let conversations = pager.conversationsPager.nextPage()
+                        for c in 0 ..< conversations.size {
+                            guard let conversation = conversations.get(index: c) else { continue }
+
+                            fatalError("TODO")
+                        }
+                    }
+
+                    while pager.messagesPager.hasMorePages() {
+                        let messages = pager.messagesPager.nextPage()
+                        for m in 0 ..< messages.size {
+                            guard let message = messages.get(index: m) else { continue }
+
+                            fatalError("TODO")
+                        }
+                    }
 
                 } catch {
                     continuation.finish(throwing: error)
