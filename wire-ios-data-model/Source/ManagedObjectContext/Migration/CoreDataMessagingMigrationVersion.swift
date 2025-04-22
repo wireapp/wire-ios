@@ -29,6 +29,8 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
     // MARK: -
 
     // Note: add new versions here in first position!
+    case v125 = "zmessaging2.125.0"
+    case v124 = "zmessaging2.124.0"
     case v123 = "zmessaging2.123.0"
     case v122 = "zmessaging2.122.0"
     case v121 = "zmessaging2.121.0"
@@ -76,12 +78,10 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
     var nextVersion: Self? {
         switch self {
-        case .v123:
+        case .v125:
             nil
-        case .v122:
-            .v123
-        case .v120, .v121:
-            .v122
+        case .v120, .v121, .v122, .v123, .v124:
+            .v125
         case .v119:
             .v120 // destination version runs custom migration actions
         case .v116, .v117, .v118:

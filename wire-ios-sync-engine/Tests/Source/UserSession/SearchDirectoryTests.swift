@@ -18,6 +18,7 @@
 
 import Foundation
 
+import WireMockTransport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 

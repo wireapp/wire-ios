@@ -20,7 +20,7 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class OneOnOneResolverTests: XCTestCase {
+final class LegacyOneOnOneResolverTests: XCTestCase {
 
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -306,8 +306,8 @@ final class OneOnOneResolverTests: XCTestCase {
 
     // MARK: Helpers
 
-    private func makeResolver() -> OneOnOneResolver {
-        OneOnOneResolver(
+    private func makeResolver() -> LegacyOneOnOneResolver {
+        LegacyOneOnOneResolver(
             protocolSelector: mockProtocolSelector,
             migrator: mockMigrator,
             isMLSEnabled: mockRepository.fetchMLS_MockValue?.isEnabled ?? false

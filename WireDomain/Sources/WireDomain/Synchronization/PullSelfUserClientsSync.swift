@@ -79,8 +79,14 @@ public extension PullSelfUserClientsSync {
     ) -> PullSelfUserClientsSyncProtocol {
         let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
 
-        let userLocalStore = UserLocalStore(context: context)
-        let userClientsLocalStore = UserClientsLocalStore(context: context, userLocalStore: userLocalStore)
+        let messageLocalStore = MessageLocalStore(context: context)
+
+        let userLocalStore = UserLocalStore(
+            context: context,
+            messageLocalStore: messageLocalStore
+        )
+
+        let userClientsLocalStore = UserClientsLocalStore(context: context)
 
         return PullSelfUserClientsSync(api: userClientsAPI, store: userClientsLocalStore)
     }

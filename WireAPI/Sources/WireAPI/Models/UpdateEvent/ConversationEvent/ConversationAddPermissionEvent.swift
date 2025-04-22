@@ -27,6 +27,10 @@ public struct ConversationAddPermissionEvent: Equatable, Codable, Sendable {
 
     public let conversationID: ConversationID
 
+    /// The id of the user set the permission.
+
+    public let senderID: UserID
+
     /// The new permission value (`everyone` or `admins`)
 
     public let addPermission: ChannelPermission
