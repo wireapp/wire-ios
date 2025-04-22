@@ -1100,8 +1100,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             fatalError("local domain and/or api version unknown")
         }
 
-//        return completion()
-
         // New sync is only available if the client supports v8.
         guard apiVersion >= .v8 else {
             return completion()
