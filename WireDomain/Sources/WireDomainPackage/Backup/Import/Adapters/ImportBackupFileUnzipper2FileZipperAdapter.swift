@@ -37,7 +37,7 @@ final class ImportBackupFileArchiverToBackupFileUnzipper: BackupFileUnzipper {
 
         let archiveURL = URL(filePath: zipPath, directoryHint: .notDirectory)
         let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-            .appending(path: "destination", directoryHint: .isDirectory)
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
         try! fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true) // TODO: throw error
 
         try! fileArchiver.unzipFile(at: archiveURL, to: destinationDirectory) // TODO: throw error

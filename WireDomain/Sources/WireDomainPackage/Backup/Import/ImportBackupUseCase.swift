@@ -82,7 +82,8 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         for current in 0 ..< users.size {
                             guard let user = users.get(index: current) else { continue }
 
-                            fatalError("TODO")
+                            // fatalError("TODO")
+                            logger.error("TODO: import user \(user)")
 
                             if current % 50 == 0 || current == users.size - 1 {
                                 try Task.checkCancellation()
@@ -96,7 +97,8 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         for current in 0 ..< conversations.size {
                             guard let conversation = conversations.get(index: current) else { continue }
 
-                            fatalError("TODO")
+                            // fatalError("TODO")
+                            logger.error("TODO: import conversation \(conversation)")
 
                             if current % 50 == 0 || current == conversations.size - 1 {
                                 try Task.checkCancellation()
@@ -110,7 +112,8 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         for current in 0 ..< messages.size {
                             guard let message = messages.get(index: current) else { continue }
 
-                            fatalError("TODO")
+                            // fatalError("TODO")
+                            logger.error("TODO: import message \(message)")
 
                             if current % 50 == 0 || current == messages.size - 1 {
                                 try Task.checkCancellation()
