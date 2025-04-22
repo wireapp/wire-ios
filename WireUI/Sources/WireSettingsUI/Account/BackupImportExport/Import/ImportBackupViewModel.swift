@@ -38,7 +38,7 @@ final class ImportBackupViewModel: ObservableObject {
     @Published var isImportConfirmationPresented = false
     @Published var isAlertPresented = false
 
-    @Published private(set) var importProgress = Float()
+    @Published private(set) var importProgress = (current: 0, total: 0)
 
     private var importTask: Task<Void, Never>?
 
@@ -120,11 +120,11 @@ final class ImportBackupViewModel: ObservableObject {
         importTask = Task {
             do {
                 backupPassword = password
-                state = .importingBackup(progress: 0)
+                state = .importingBackup(current: 0, total: 0)
                 for try await update in importBackupUseCase.invoke(url: url, password: password) {
                     switch update {
                     case let .progress(current, total):
-                        state = .importingBackup(progress: Float(current) / Float(total))
+                        state = .importingBackup(current: current, total: total)
                     case .done:
                         alertContent = .init(
                             title: Strings.Alert.Success.title,
@@ -180,13 +180,13 @@ final class ImportBackupViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        importProgress = switch state {
-        case let .importingBackup(progress):
-            progress
+        switch state {
+        case let .importingBackup(current, total):
+            importProgress = (current, total)
         case .success:
-            1
+            importProgress = (1, 1)
         default:
-            0
+            importProgress = (0, 0)
         }
 
         let isImportProgressPresented = switch state {
