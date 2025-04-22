@@ -1049,7 +1049,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             onFailure: { [weak self] error in
                 self?.delegate?.sessionManagerDidFailToLoadDatabase(error: error)
                 onCompletion(nil)
-                
+
             },
             onCompletion: { [weak self] coreDataStack in
                 guard let self else {

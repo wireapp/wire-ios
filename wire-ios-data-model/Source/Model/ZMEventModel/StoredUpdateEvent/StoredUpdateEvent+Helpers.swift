@@ -20,7 +20,7 @@ import CoreData
 import Foundation
 import WireLogging
 
-extension StoredUpdateEvent {
+public extension StoredUpdateEvent {
 
     // MARK: - Creation
 
@@ -35,7 +35,7 @@ extension StoredUpdateEvent {
     ///
     /// - Returns: storedEvent which will be persisted in a database
 
-    public static func encryptAndCreate(
+    static func encryptAndCreate(
         _ event: ZMUpdateEvent,
         context: NSManagedObjectContext,
         index: Int64,
@@ -73,7 +73,7 @@ extension StoredUpdateEvent {
         return storedEvent
     }
 
-    static func create(
+    internal static func create(
         from event: ZMUpdateEvent,
         eventId: String,
         eventHash: Int,
@@ -143,7 +143,7 @@ extension StoredUpdateEvent {
         storedEvent.isEncrypted = true
     }
 
-    static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
+    internal static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
         NSEntityDescription.insertNewObject(
             forEntityName: entityName,
             into: context
@@ -155,7 +155,7 @@ extension StoredUpdateEvent {
     /// Returns stored events sorted by and up until (including) the defined `stopIndex`
     /// Returns a maximum of `batchSize` events at a time
 
-    public static func nextEvents(
+    static func nextEvents(
         _ context: NSManagedObjectContext,
         batchSize: Int,
         callEventsOnly: Bool
@@ -174,7 +174,7 @@ extension StoredUpdateEvent {
 
     /// Returns the highest index of all stored events
 
-    public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
+    static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
         let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
         fetchRequest.fetchBatchSize = 1
@@ -182,7 +182,7 @@ extension StoredUpdateEvent {
         return result.first?.sortIndex ?? 0
     }
 
-    public static func nextEventBatch(
+    static func nextEventBatch(
         size: Int,
         privateKeys: EARPrivateKeys?,
         context: NSManagedObjectContext,
@@ -195,7 +195,7 @@ extension StoredUpdateEvent {
         )
     }
 
-    static func eventsFromStoredEvents(
+    internal static func eventsFromStoredEvents(
         _ storedEvents: [StoredUpdateEvent],
         privateKeys: EARPrivateKeys?
     ) -> EventBatch {
@@ -223,14 +223,14 @@ extension StoredUpdateEvent {
         return result
     }
 
-    public struct EventBatch {
+    struct EventBatch {
 
         public var eventsToProcess = [ZMUpdateEvent]()
         public var eventsToDelete = [StoredUpdateEvent]()
 
     }
 
-    public static func extractUpdateEvent(
+    static func extractUpdateEvent(
         from storedEvent: StoredUpdateEvent,
         privateKeys: EARPrivateKeys?
     ) -> Result<ZMUpdateEvent, ExtractionFailure> {
@@ -270,7 +270,7 @@ extension StoredUpdateEvent {
         }
     }
 
-    public enum ExtractionFailure: Error {
+    enum ExtractionFailure: Error {
 
         case temporary
         case permanent
@@ -367,7 +367,7 @@ extension StoredUpdateEvent {
         return decryptedPayload
     }
 
-    enum DecryptionFailure: Error {
+    internal enum DecryptionFailure: Error {
 
         case payloadMissing
         case privateKeyUnavailable
@@ -375,7 +375,6 @@ extension StoredUpdateEvent {
         case serializationError
 
     }
-
 
 }
 

@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension StoredUpdateEventEnvelope {
-    
+public extension StoredUpdateEventEnvelope {
+
     /// Insert a new object.
     ///
     /// - Parameters:
@@ -30,7 +30,7 @@ extension StoredUpdateEventEnvelope {
     /// - Returns: The newly inserted object.
 
     @discardableResult
-    public static func insertNewObject(
+    static func insertNewObject(
         data: Data,
         sortIndex: Int64,
         in context: NSManagedObjectContext
@@ -43,7 +43,7 @@ extension StoredUpdateEventEnvelope {
 
     /// A fetch request to get the last (highest sort index) object.
 
-    public static var lastObjectFetchRequest: NSFetchRequest<StoredUpdateEventEnvelope> {
+    static var lastObjectFetchRequest: NSFetchRequest<StoredUpdateEventEnvelope> {
         let request = sortedFetchRequest(asending: false)
         request.fetchLimit = 1
         return request
@@ -54,7 +54,7 @@ extension StoredUpdateEventEnvelope {
     /// - Parameter asending: Whether the results are returned in ascending order.
     /// - Returns: A fetch request sorted by the `sortIndex`.
 
-    public static func sortedFetchRequest(asending: Bool) -> NSFetchRequest<StoredUpdateEventEnvelope> {
+    static func sortedFetchRequest(asending: Bool) -> NSFetchRequest<StoredUpdateEventEnvelope> {
         let request = NSFetchRequest<StoredUpdateEventEnvelope>(entityName: entityName)
         request.sortDescriptors = [
             NSSortDescriptor(
@@ -70,7 +70,7 @@ extension StoredUpdateEventEnvelope {
     /// - Parameter sortIndex: The sort index of the desired envelope.
     /// - Returns: A fetch request for a single event envelope.
 
-    public static func fetchRequest(sortIndex: Int64) -> NSFetchRequest<StoredUpdateEventEnvelope> {
+    static func fetchRequest(sortIndex: Int64) -> NSFetchRequest<StoredUpdateEventEnvelope> {
         let request = NSFetchRequest<StoredUpdateEventEnvelope>(entityName: entityName)
         request.predicate = NSPredicate(format: "\(#keyPath(StoredUpdateEventEnvelope.sortIndex)) == \(sortIndex)")
         request.fetchLimit = 1

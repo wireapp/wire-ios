@@ -150,7 +150,7 @@ private extension UpdateEvent {
             ) else {
                 return nil
             }
-            
+
             self = .federation(.connectionRemoved(event))
 
         case .federationDelete:
@@ -306,7 +306,8 @@ private extension UpdateEvent {
 
     // MARK: - Federation events
 
-    private static func federationConnectionRemovedEvent(from event: ZMUpdateEvent) -> FederationConnectionRemovedEvent? {
+    private static func federationConnectionRemovedEvent(from event: ZMUpdateEvent)
+        -> FederationConnectionRemovedEvent? {
         let decoder = EventPayloadDecoder()
         guard
             let payload = try? decoder.decode(
@@ -383,7 +384,7 @@ private struct MLSWelcomeEvent: EventData, Codable {
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        message = try container.decode(String.self)
+        self.message = try container.decode(String.self)
     }
 
     func encode(to encoder: any Encoder) throws {

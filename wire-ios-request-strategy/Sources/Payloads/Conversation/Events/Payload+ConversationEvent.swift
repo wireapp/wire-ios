@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension Payload {
-    public struct ConversationEvent<T: CodableEventData>: Codable {
+public extension Payload {
+    struct ConversationEvent<T: CodableEventData>: Codable {
 
         public let id: UUID?
         public let data: T

@@ -66,7 +66,7 @@ public struct JournalStore {
 
     // MARK: - Private helpers
 
-    private func entryExists<T: JournalEntry>(for type: T.Type) -> Bool {
+    private func entryExists(for type: (some JournalEntry).Type) -> Bool {
         let fileURL = fileURL(for: type)
         return FileManager.default.fileExists(atPath: fileURL.path)
     }

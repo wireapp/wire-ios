@@ -69,10 +69,10 @@ struct UpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
                     privateKeys: privateKeys
                 ) {
                 case let .success(legacyEvent):
-                    return legacyEvent
+                    legacyEvent
 
                 case .failure:
-                    return nil
+                    nil
                 }
             }
 
@@ -120,8 +120,8 @@ struct UpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
 @available(iOS 17, *)
 actor ActorBasedUpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
 
-    nonisolated
-    private let contextExecutor: ContextExecutor
+    private nonisolated
+    let contextExecutor: ContextExecutor
 
     nonisolated var unownedExecutor: UnownedSerialExecutor {
         contextExecutor.asUnownedSerialExecutor()
@@ -138,7 +138,7 @@ actor ActorBasedUpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
     }
 
     init(context: NSManagedObjectContext) {
-        contextExecutor = ContextExecutor(context: context)
+        self.contextExecutor = ContextExecutor(context: context)
     }
 
     func existsLegacyEvent() async throws -> Bool {
@@ -158,10 +158,10 @@ actor ActorBasedUpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
                 privateKeys: privateKeys
             ) {
             case let .success(legacyEvent):
-                return legacyEvent
+                legacyEvent
 
             case .failure:
-                return nil
+                nil
             }
         }
 
@@ -214,7 +214,7 @@ final class ContextExecutor: SerialExecutor {
         self.context = context
     }
 
-    func enqueue(_ job: consuming ExecutorJob) {
+    func enqueue(_ job: ExecutorJob) {
         let unownedJob = UnownedJob(job)
         let unownedExecutor = asUnownedSerialExecutor()
 

@@ -27,7 +27,7 @@ class JournalStoreTests {
     let directoryURL: URL
 
     init() {
-        directoryURL = FileManager.default.temporaryDirectory.appending(
+        self.directoryURL = FileManager.default.temporaryDirectory.appending(
             path: UUID().uuidString
         )
     }

@@ -175,7 +175,7 @@ final class SyncAgent: NSObject {
     // MARK: - Private helpers
 
     private func isSyncV2Enabled() throws -> Bool {
-        return try journal.fetchEntry(SyncV2JournalEntry.self).isSyncV2Enabled
+        try journal.fetchEntry(SyncV2JournalEntry.self).isSyncV2Enabled
     }
 
     private func markInitialSyncComplete() throws {
