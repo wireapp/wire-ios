@@ -72,6 +72,8 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         throw ImportBackupError.passwordRequired
                     }
 
+                    try Task.checkCancellation()
+
                     // TODO: implement
                     fatalError("TODO")
 

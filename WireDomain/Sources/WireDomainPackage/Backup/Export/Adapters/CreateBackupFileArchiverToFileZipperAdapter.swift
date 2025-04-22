@@ -20,20 +20,17 @@ import Foundation
 import WireBackup
 import WireFoundation
 
-final class CreateBackupFileZipper2FileZipperAdapter: FileZipper { // TODO: rename CreateBackupFileArchiverToFileZipperAdapter
+final class CreateBackupFileArchiverToFileZipperAdapter: FileZipper {
 
     let fileManager: FileManager
     let fileArchiver: any CreateBackupFileArchiverProtocol
-    let currentDateProvider: any CurrentDateProviding
 
     init(
         fileManager: FileManager,
-        fileArchiver: any CreateBackupFileArchiverProtocol,
-        currentDateProvider: any CurrentDateProviding
+        fileArchiver: any CreateBackupFileArchiverProtocol
     ) {
         self.fileManager = fileManager
         self.fileArchiver = fileArchiver
-        self.currentDateProvider = currentDateProvider
     }
 
     func zip(entries: [String]) throws -> String {
@@ -44,15 +41,11 @@ final class CreateBackupFileZipper2FileZipperAdapter: FileZipper { // TODO: rena
 
         // create temporary directory for the destination file
         let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-            .appending(path: "destination", directoryHint: .isDirectory)
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
         try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
 
-        // generate a filename
-        let iso8601Date = Date.ISO8601FormatStyle().format(currentDateProvider.now)
-        let filename = iso8601Date + "_backup.zip"
-        let destinationURL = destinationDirectory.appendingPathComponent(filename, isDirectory: false)
-
         // call zip library
+        let destinationURL = destinationDirectory.appendingPathComponent("backup.zip", isDirectory: false)
         try fileArchiver.zipResources(at: targetURLs, into: destinationURL)
 
         return destinationURL.path()

@@ -32,6 +32,7 @@ public struct CreateBackupUseCase<
     let eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol
     let fileManager: @Sendable () -> FileManager = { .default }
     let selfUserID: QualifiedID
+    let selfUserHandle: String?
     let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
     let logger: @Sendable () -> any LoggerProtocol
@@ -45,6 +46,7 @@ public struct CreateBackupUseCase<
         fileArchiver: any CreateBackupFileArchiverProtocol,
         currentDateProvider: any CurrentDateProviding,
         selfUserID: QualifiedID,
+        selfUserHandle: String?,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
         self.context = context
@@ -52,12 +54,13 @@ public struct CreateBackupUseCase<
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
         self.selfUserID = selfUserID
+        self.selfUserHandle = selfUserHandle
         self.logger = logger
     }
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [context, currentDateProvider, eventProcessorHandle, fileManager, fileArchiver, logger, selfUserID] in
+            let task = Task<Void, Never> { [context, currentDateProvider, eventProcessorHandle, fileManager, fileArchiver, logger, selfUserID, selfUserHandle] in
 
                 let fileManager = fileManager()
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
@@ -84,10 +87,9 @@ public struct CreateBackupUseCase<
                         selfUserId: BackupQualifiedId(selfUserID),
                         workDirectory: workDirectoryURL.path(),
                         outputDirectory: outputDirectoryURL.path(),
-                        fileZipper: CreateBackupFileZipper2FileZipperAdapter(
+                        fileZipper: CreateBackupFileArchiverToFileZipperAdapter(
                             fileManager: fileManager,
-                            fileArchiver: fileArchiver,
-                            currentDateProvider: currentDateProvider
+                            fileArchiver: fileArchiver
                         )
                     )
 
@@ -132,8 +134,17 @@ public struct CreateBackupUseCase<
                         })
                     }
 
+                    // create the file
                     let outputFileURL = try await exporter.finalize(password: password)
-                    continuation.yield(.done(outputFileURL))
+                    // rename
+                    let iso8601Date = Date.ISO8601FormatStyle(timeSeparator: .omitted).format(currentDateProvider.now)
+                    let filename = "Wire-" + (selfUserHandle.map { "\($0)-" } ?? "") + "Backup_" + iso8601Date + ".wbu"
+                    let finalPath = outputFileURL
+                        .deletingLastPathComponent()
+                        .appending(path: filename, directoryHint: .notDirectory)
+                    try fileManager.moveItem(at: outputFileURL, to: finalPath)
+
+                    continuation.yield(.done(finalPath))
                     continuation.finish()
 
                 } catch {
