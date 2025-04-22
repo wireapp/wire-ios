@@ -29,6 +29,8 @@ import WireUtilities
 final class SyncAgent: NSObject {
 
     weak var delegate: SyncAgentDelegate?
+
+    private let journal: JournalStore
     private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
     private let initialSyncProvider: any InitialSyncProvider
     private let incrementalSyncProvider: any IncrementalSyncProvider
@@ -44,11 +46,13 @@ final class SyncAgent: NSObject {
     // MARK: - Life cycle
 
     init(
+        journal: JournalStore,
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
         legacySyncStatus: any SyncStatusProtocol
     ) {
+        self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider
@@ -101,12 +105,13 @@ final class SyncAgent: NSObject {
     /// Perform an initial sync.
 
     func performInitialSync() async throws {
-        if DeveloperFlag.newInitialSync.isOn {
+        if try isSyncV2Enabled() {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new initial sync")
                 try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: false)
                 WireLogger.sync.debug("did finish new initial sync")
+                try markInitialSyncComplete()
                 delegate?.syncAgentDidFinishInitialSync(self)
             } catch {
                 WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
@@ -123,7 +128,7 @@ final class SyncAgent: NSObject {
     /// Perform a resource sync.
 
     func performResourceSync() async throws {
-        if DeveloperFlag.newInitialSync.isOn {
+        if try isSyncV2Enabled() {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new resource sync")
@@ -145,7 +150,7 @@ final class SyncAgent: NSObject {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        if DeveloperFlag.newInitialSync.isOn {
+        if try isSyncV2Enabled() {
             guard incrementalSyncToken == nil else {
                 WireLogger.sync.info("incremental sync already running...")
                 return
@@ -165,6 +170,18 @@ final class SyncAgent: NSObject {
         } else {
             await legacySyncStatus.performQuickSync()
         }
+    }
+
+    // MARK: - Private helpers
+
+    private func isSyncV2Enabled() throws -> Bool {
+        return try journal.fetchEntry(SyncV2JournalEntry.self).isSyncV2Enabled
+    }
+
+    private func markInitialSyncComplete() throws {
+        var entry = try journal.fetchEntry(SyncV2JournalEntry.self)
+        entry.isInitialSyncRequired = false
+        try journal.storeEntry(entry)
     }
 
 }

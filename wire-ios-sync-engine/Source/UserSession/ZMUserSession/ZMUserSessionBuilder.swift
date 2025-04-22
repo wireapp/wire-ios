@@ -54,6 +54,7 @@ struct ZMUserSessionBuilder {
     private var userId: UUID?
     private var minTLSVersion: String?
     private var apiVersion: WireAPI.APIVersion?
+    private var journal: JournalStore?
 
     // MARK: - Initialize
 
@@ -86,7 +87,8 @@ struct ZMUserSessionBuilder {
             let transportSession,
             let userId,
             let wireAPIBackendEnvironment,
-            let apiVersion
+            let apiVersion,
+            let journal
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
@@ -116,7 +118,8 @@ struct ZMUserSessionBuilder {
             dependencies: dependencies,
             backendEnvironment: wireAPIBackendEnvironment,
             minTLSVersion: .minVersionFrom(minTLSVersion),
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            journal: journal
         )
     }
 
@@ -141,7 +144,8 @@ struct ZMUserSessionBuilder {
         sharedUserDefaults: UserDefaults,
         transportSession: any TransportSessionType,
         userId: UUID,
-        minTLSVersion: String?
+        minTLSVersion: String?,
+        journal: JournalStore
     ) {
         // reused dependencies
 
@@ -246,6 +250,7 @@ struct ZMUserSessionBuilder {
         self.userId = userId
         self.minTLSVersion = minTLSVersion
         self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
+        self.journal = journal
     }
 
     // MARK: UserSesssionDependencies
