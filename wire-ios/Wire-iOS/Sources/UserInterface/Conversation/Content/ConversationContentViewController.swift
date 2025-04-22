@@ -253,7 +253,7 @@ final class ConversationContentViewController: UIViewController {
 
     @objc
     private func applicationDidBecomeActive(_ notification: Notification) {
-        dataSource.resetSectionControllers() // TODO: TEST reloding
+        dataSource.resetSectionControllers()
     }
 
     private func handleScrollToBottomTapped() {

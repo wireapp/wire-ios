@@ -88,8 +88,8 @@ extension UIColor {
         }
     }
 
-    class func lowAccentColorForUsernameMention(accentColor: ZMAccentColor) -> UIColor {
-        switch accentColor.accentColor {
+    class func lowAccentColorForUsernameMention(accentColor: AccentColor) -> UIColor {
+        switch accentColor {
         case .blue:
             SemanticColors.View.backgroundBlueUsernameMention
         case .red:

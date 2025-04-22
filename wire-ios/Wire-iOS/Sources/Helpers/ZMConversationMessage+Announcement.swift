@@ -38,7 +38,7 @@ extension ZMConversationMessage {
             let messageText = NSAttributedString.format(
                 message: textMessageData,
                 isObfuscated: isObfuscated,
-                accent: .default
+                accentColor: .default
             )
             return "\(ConversationAnnouncement.Text.description(senderName)), \(messageText.string)"
         } else if isImage {

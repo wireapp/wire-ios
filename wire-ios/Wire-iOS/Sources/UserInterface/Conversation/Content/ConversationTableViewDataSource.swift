@@ -86,7 +86,7 @@ final class ConversationTableViewDataSource: NSObject {
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
             guard UIDevice.current.userInterfaceIdiom == .pad else { return }
-            resetSectionControllers() // TODO: TEST
+            resetSectionControllers()
         }
     }
 

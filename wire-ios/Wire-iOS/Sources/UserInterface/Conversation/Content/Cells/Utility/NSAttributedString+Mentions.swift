@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 import WireReusableUIComponents
 
 private let log = ZMSLog(tag: "Mentions")
@@ -77,19 +78,14 @@ extension NSMutableAttributedString {
         for user: UserType,
         name: String,
         link: URL,
-        accentColor: ZMAccentColor,
+        accentColor: AccentColor,
         suggestedAttributes: [NSAttributedString.Key: Any] = [:]
     ) -> NSAttributedString {
-        let color: UIColor
-        let backgroundColor: UIColor
-
-        color = accentColor.accentColor.uiColor
-
-        if user.isSelfUser {
-            backgroundColor =
-                .lowAccentColorForUsernameMention(accentColor: accentColor)
+        let color: UIColor = accentColor.uiColor
+        let backgroundColor: UIColor = if user.isSelfUser {
+            .lowAccentColorForUsernameMention(accentColor: accentColor)
         } else {
-            backgroundColor = .clear
+            .clear
         }
 
         let suggestedFont = suggestedAttributes[.font] as? UIFont ?? UIFont.normalMediumFont
@@ -129,7 +125,7 @@ extension NSMutableAttributedString {
     func highlight(
         mentions: [TextMarker<Mention>],
         paragraphStyle: NSParagraphStyle? = NSAttributedString.paragraphStyle,
-        accentColor: ZMAccentColor
+        accentColor: AccentColor
     ) {
 
         mentions.forEach { textObject in

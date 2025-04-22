@@ -18,13 +18,14 @@
 
 import WireAccountImageUI
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 
 final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration: Equatable {
         var message: ZMConversationMessage
-        let accentColor: ZMAccentColor
+        let accentColor: AccentColor
         let collapseExpandAction: () -> Void
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
@@ -151,7 +152,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     .format(
                         message: textMessageData,
                         isObfuscated: message.isObfuscated,
-                        accent: object.accentColor
+                        accentColor: object.accentColor
                     )
             }
         } else {
@@ -280,7 +281,7 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     init(
         message: ConversationMessage,
-        accentColor: ZMAccentColor,
+        accentColor: AccentColor,
         collapseExpandAction: @escaping () -> Void
     ) {
         self.configuration = View.Configuration(

@@ -257,7 +257,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func addCollapsedCell() -> [AnyConversationMessageCellDescription] {
         let cellDescriptions = ConversationCollapsedMessageCellDescription(
             message: message,
-            accentColor: selfUser.zmAccentColor ?? .default,
+            accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
             collapseExpandAction: { [weak self] in
                 self?.handleCollapseExpand()
             }

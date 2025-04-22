@@ -21,6 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
@@ -34,7 +35,7 @@ final class ConversationReplyContentView: UIView {
         }
 
         var quotedMessage: ZMConversationMessage?
-        let accentColor: ZMAccentColor
+        let accentColor: AccentColor
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
@@ -364,7 +365,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
     let accessibilityIdentifier: String? = "ReplyCell"
 
-    init(quotedMessage: ZMConversationMessage?, accentColor: ZMAccentColor) {
+    init(quotedMessage: ZMConversationMessage?, accentColor: AccentColor) {
         self.configuration = View
             .Configuration(
                 quotedMessage: quotedMessage,
