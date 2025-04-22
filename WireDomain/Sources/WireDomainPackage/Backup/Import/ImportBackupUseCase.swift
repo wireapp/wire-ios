@@ -23,9 +23,9 @@ public import WireLogging
 @preconcurrency import WireBackup
 
 public struct ImportBackupUseCase<
-    UserEntity: ImportBackupUserEntityProtocol
-//    ConversationAdapter: CreateBackupConversationEntityProtocol,
-//    MessageAdapter: CreateBackupMessageEntityProtocol
+    UserAdapter: ImportBackupUserEntityProtocol,
+    ConversationAdapter: ImportBackupConversationEntityProtocol,
+    MessageAdapter: ImportBackupMessageEntityProtocol
 >: ImportBackupUseCaseProtocol {
 
     let context: @Sendable () -> NSManagedObjectContext
@@ -54,6 +54,8 @@ public struct ImportBackupUseCase<
                 defer {
                     try? fileManager.removeItem(at: workDirectoryURL)
                 }
+
+                // TODO: disable event processing
 
                 do {
                     let logger = logger()
@@ -87,7 +89,8 @@ public struct ImportBackupUseCase<
 
                     try await context.perform {
 
-                        let storedUsers = try context.fetch(UserEntity.fetchRequest()).compactMap(UserEntity.init)
+                        let storedUsers = try context.fetch(UserAdapter.fetchRequest())
+                            .compactMap(UserAdapter.init)
 
                         while pager.usersPager.hasMorePages() {
                             let users = pager.usersPager.nextPage()
@@ -97,7 +100,7 @@ public struct ImportBackupUseCase<
                                 }
 
                                 if !storedUsers.contains(where: { $0.id == userID }) {
-                                    let userEntity = UserEntity(context: context)
+                                    let userEntity = UserAdapter(context: context)
                                     userEntity.id = userID
                                     userEntity.name = user.name
                                     userEntity.handle = user.handle
@@ -113,19 +116,22 @@ public struct ImportBackupUseCase<
 
                     try await context.perform {
 
-                        // let storedConversations = try context.fetch(ConversationEntity.fetchRequest()).compactMap(ConversationEntity.init)
+                        let storedConversations = try context.fetch(ConversationAdapter.fetchRequest())
+                            .compactMap(ConversationAdapter.init)
 
                         while pager.conversationsPager.hasMorePages() {
                             let conversations = pager.conversationsPager.nextPage()
                             for current in 0 ..< conversations.size {
-                                guard let conversation = conversations.get(index: current) else { continue }
+                                guard
+                                    let conversation = conversations.get(index: current),
+                                    let conversationID = QualifiedID(conversation.id)
+                                else { continue }
 
-                                // if !storedConversations.contains(where: { $0.id == }) {
-
-                                fatalError("TODO")
-                                conversation.id
-                                conversation.name
-                                logger.error("TODO: import conversation \(conversation)")
+                                if !storedConversations.contains(where: { $0.id == conversationID }) {
+                                    let conversationEntity = ConversationAdapter(context: context)
+                                    conversationEntity.id = conversationID
+                                    conversationEntity.name = conversation.name
+                                }
 
                                 if current % 50 == 0 || current == conversations.size - 1 {
                                     try Task.checkCancellation()
@@ -137,7 +143,8 @@ public struct ImportBackupUseCase<
 
                     try await context.perform {
 
-                        // let storedMessages = try context.fetch(MessageEntity.fetchRequest()).compactMap(MessageEntity.init)
+                        let storedMessages = try context.fetch(MessageAdapter.fetchRequest())
+                            .compactMap(MessageAdapter.init)
 
                         while pager.messagesPager.hasMorePages() {
                             let messages = pager.messagesPager.nextPage()
@@ -164,6 +171,8 @@ public struct ImportBackupUseCase<
                     }
 
                     try context.save()
+
+                    // TODO: trigger sync
 
                     continuation.yield(.done)
                     continuation.finish()

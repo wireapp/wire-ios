@@ -16,15 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
+public protocol ImportBackupConversationEntityProtocol: ImportBackupEntityProtocol {
 
-public protocol ImportBackupEntityProtocol {
-
-    /// This fetch request is used for checking if an entity already exists in the local storage.
-    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult>
-
-    init?(_ record: any NSFetchRequestResult)
-
-    init(context: NSManagedObjectContext)
+    var id: QualifiedID { get nonmutating set }
+    var name: String { get nonmutating set }
 
 }

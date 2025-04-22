@@ -27,7 +27,9 @@ import WireSystem
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
-        ImportBackupZMUserAdapter
+        ImportBackupZMUserAdapter,
+        ImportBackupZMConversationAdapter,
+        ImportBackupZMMessageAdapter
     >
 
     let userSession: @Sendable () -> UserSession?
