@@ -24,10 +24,11 @@ public extension SessionManager {
     var importBackupUseCase: ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
-        activeUserSession.map { _ in
+        activeUserSession.map { userSession in
 
             ImportBackupUseCase(
                 importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
+                    context: userSession.managedObjectContext.zm_sync,
                     fileArchiver: ImportBackupFileArchiver(),
                     logger: WireLogger.backupImport
                 ),

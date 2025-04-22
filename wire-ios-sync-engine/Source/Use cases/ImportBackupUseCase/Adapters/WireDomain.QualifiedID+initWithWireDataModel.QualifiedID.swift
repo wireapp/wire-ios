@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ImportBackupUserEntityProtocol: ImportBackupEntityProtocol {
+import WireDataModel
+import WireDomainPackage
 
-    var id: QualifiedID { get nonmutating set }
-    var name: String { get nonmutating set }
-    var handle: String { get nonmutating set }
+extension WireDomainPackage.QualifiedID {
+
+    init (_ qualifiedID: WireDataModel.QualifiedID) {
+        self.init(
+            uuid: qualifiedID.uuid,
+            domain: qualifiedID.domain
+        )
+    }
 
 }

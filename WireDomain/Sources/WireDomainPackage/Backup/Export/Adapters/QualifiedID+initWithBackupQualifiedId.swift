@@ -16,10 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ImportBackupUserEntityProtocol: ImportBackupEntityProtocol {
+import WireAPI
+import WireBackup
 
-    var id: QualifiedID { get nonmutating set }
-    var name: String { get nonmutating set }
-    var handle: String { get nonmutating set }
+extension QualifiedID {
 
+    init?(_ qualifiedID: BackupQualifiedId) {
+        guard let uuid = UUID(uuidString: qualifiedID.id) else { return nil }
+
+        self.init(
+            uuid: uuid,
+            domain: qualifiedID.domain
+        )
+    }
 }

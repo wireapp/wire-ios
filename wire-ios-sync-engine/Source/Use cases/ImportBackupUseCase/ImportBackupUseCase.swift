@@ -27,7 +27,7 @@ import WireSystem
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
-        ZMUser
+        ImportBackupZMUserAdapter
     >
 
     let userSession: @Sendable () -> UserSession?
@@ -228,12 +228,4 @@ private extension UserClient {
         }
         return userClient
     }
-}
-
-// MARK: -
-
-extension ZMUser: ImportBackupUserEntityProtocol {
-//    public var id: QualifiedID {
-//        get { qualifiedID }
-//    }
 }
