@@ -127,11 +127,11 @@ final class UserPropertiesAPITests: XCTestCase {
 
         let sut = UserPropertiesAPIV4(apiService: apiService)
 
+        // When
+        let result = try await sut.getLabels()
+
         // Then
-        await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
-            // When
-            _ = try await sut.getLabels()
-        }
+        XCTAssertEqual(result, [])
     }
 
     func testGetUserTypingIndicatorModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
