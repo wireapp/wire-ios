@@ -452,9 +452,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         clientMessage.unarchiveIfNeeded(conversation)
         clientMessage.updateCategoryCache()
         clientMessage.markAsSent()
-        // Re-calculates unread messages after insertion of the message.
-        // https://wearezeta.atlassian.net/browse/WPB-16349
-        conversation.calculateLastUnreadMessages()
     }
 
     private func createSystemMessages(
