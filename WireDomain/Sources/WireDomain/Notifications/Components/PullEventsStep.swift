@@ -131,7 +131,8 @@ extension PullEventsStep {
 
     var updateEventsLocalStore: any UpdateEventsLocalStoreProtocol {
         UpdateEventsLocalStore(
-            context: dependency.coreData.eventContext,
+            eventContext: dependency.coreData.eventContext,
+            syncContext: dependency.coreData.syncContext,
             userID: dependency.userID,
             sharedUserDefaults: dependency.sharedUserDefaults
         )
