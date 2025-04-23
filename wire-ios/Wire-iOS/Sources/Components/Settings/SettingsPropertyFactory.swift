@@ -70,8 +70,6 @@ final class SettingsPropertyFactory {
         SettingsPropertyName.disableSendButton: .sendButtonDisabled,
         SettingsPropertyName.mapsOpeningOption: .mapsOpeningRawValue,
         SettingsPropertyName.browserOpeningOption: .browserOpeningRawValue,
-        SettingsPropertyName.tweetOpeningOption: .twitterOpeningRawValue,
-        SettingsPropertyName.callingProtocolStrategy: .callingProtocolStrategy,
         SettingsPropertyName.enableBatchCollections: .enableBatchCollections,
         SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate,
         SettingsPropertyName.collapseOwnMessages: .collapseOwnMessages

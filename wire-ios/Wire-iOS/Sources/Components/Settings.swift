@@ -40,7 +40,6 @@ extension Notification.Name {
 enum SettingKey: String, CaseIterable {
     case disableMarkdown = "UserDefaultDisableMarkdown"
     case chatHeadsDisabled = "ZDevOptionChatHeadsDisabled"
-    case voIPNotificationsOnly = "VoIPNotificationsOnly"
     case lastViewedConversation = "LastViewedConversation"
     case colorScheme = "ColorScheme"
     case lastViewedScreen = "LastViewedScreen"
@@ -59,11 +58,9 @@ enum SettingKey: String, CaseIterable {
     case disableCallKit = "UserDefaultDisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
     case enableBatchCollections = "UserDefaultEnableBatchCollections"
-    case callingProtocolStrategy = "CallingProtocolStrategy"
 
     // MARK: Link opening options
 
-    case twitterOpeningRawValue = "TwitterOpeningRawValue"
     case mapsOpeningRawValue = "MapsOpeningRawValue"
     case browserOpeningRawValue = "BrowserOpeningRawValue"
     case callingConstantBitRate = "CallingConstantBitRate"
