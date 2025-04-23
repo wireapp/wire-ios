@@ -1915,9 +1915,9 @@ public final class MLSService: MLSServiceInterface {
         } catch CoreCryptoError.Mls(.MessageRejected(reason: let reason)) {
             switch RecoveryStrategy(from: reason) {
             case .retryAfterQuickSync:
-                logger.warn("failed to send commit, syncing then retrying operation...")
+                logger.warn("failed to send commit, syncing then retrying operation...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
             	try await mlsSyncDelegate?.recoverWithIncrementalSync()
-                logger.info("sync finished, retying operation...")
+                logger.info("sync finished, retrying operation...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
 
                 guard retryCount <= maxRetryAttempts else {
                     throw MLSRetryError.retryLimitReached
@@ -1929,12 +1929,12 @@ public final class MLSService: MLSServiceInterface {
                 try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
                 
             case .retryAfterRepairingGroup:
-                logger.warn("failed to send commit, repairing group then retrying operation...")
+                logger.warn("failed to send commit, repairing group then retrying operation...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
                 await fetchAndRepairGroup(with: groupID)
-                logger.info("repair finished, retrying operation...")
+                logger.info("repair finished, retrying operation...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
                 try await operation()
             case .giveUp:
-                logger.warn("failed to send commit, giving up...")
+                logger.warn("failed to send commit, giving up...", attributes: [.mlsGroupID: groupID.safeForLoggingDescription])
                 throw MLSRetryError.nonRecoverableError(reason)
             }
         }
