@@ -24,7 +24,7 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
     typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
-        let fetchRequest = ZMUser.fetchRequest()
+        let fetchRequest = ZMUser.fetchRequest() // TODO: what about the self user?
         fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
         return fetchRequest
     }
@@ -38,6 +38,7 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
             domain: id.domain,
             in: context
         )
+        user.needsToBeUpdatedFromBackend = true
         return ImportBackupZMUserAdapter(user: user)
     }
 

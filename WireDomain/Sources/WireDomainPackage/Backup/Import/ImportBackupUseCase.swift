@@ -129,7 +129,7 @@ public struct ImportBackupUseCase<
                                     let conversationID = QualifiedID(conversation.id)
                                 else { continue }
 
-                                if !storedConversations.contains(where: { $0.id == conversationID }) {
+                                if !storedConversations.contains(where: { $0.id == conversationID }) { // TODO: what if it is in the db but marked as deleted?
                                     let conversation = ConversationAdapter.fetchOrCreate(
                                         id: conversationID,
                                         context: context
@@ -147,6 +147,7 @@ public struct ImportBackupUseCase<
 
                     try await context.perform {
 
+                        /*
                         let storedMessages = try context.fetch(MessageAdapter.fetchRequest())
                             .compactMap(MessageAdapter.init)
 
@@ -172,9 +173,10 @@ public struct ImportBackupUseCase<
                                 }
                             }
                         }
-                    }
+                         */
 
-                    try context.save()
+                        try context.save()
+                    }
 
                     // TODO: trigger sync
 

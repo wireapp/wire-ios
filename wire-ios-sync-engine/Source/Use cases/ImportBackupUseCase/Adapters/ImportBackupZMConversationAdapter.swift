@@ -38,6 +38,7 @@ struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol
             domain: id.domain,
             in: context
         )
+        conversation.needsToBeUpdatedFromBackend = true
         return ImportBackupZMConversationAdapter(conversation: conversation)
     }
 
