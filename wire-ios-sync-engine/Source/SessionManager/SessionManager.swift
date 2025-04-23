@@ -1058,12 +1058,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
 
                 let journal = try! JournalStore(
-                    directoryURL: CoreDataStack.accountDataFolder(
+                    rootURL: CoreDataStack.accountDataFolder(
                         accountIdentifier: account.userIdentifier,
                         applicationContainer: sharedContainerURL
-                    ).appending(
-                        path: "journal",
-                        directoryHint: .isDirectory
                     )
                 )
 

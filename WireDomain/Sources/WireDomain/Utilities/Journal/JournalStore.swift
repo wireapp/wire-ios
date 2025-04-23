@@ -28,9 +28,21 @@ public struct JournalStore {
     private let encoder = JSONEncoder()
 
     // MARK: - Init
+    
+    /// Create a new journal rooted at the given URL.
+    ///
+    /// Invoking this initialize will create a subdirectory `journal`
+    /// if it doesn't already exists.
+    ///
+    /// - Parameter rootURL: The root directory containing the journal
+    ///   directory.
 
-    public init(directoryURL: URL) throws {
-        self.directoryURL = directoryURL
+    public init(rootURL: URL) throws {
+        directoryURL = rootURL.appending(
+            path: "journal",
+            directoryHint: .isDirectory
+        )
+
         try FileManager.default.createDirectory(
             at: directoryURL,
             withIntermediateDirectories: true
