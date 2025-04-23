@@ -1135,7 +1135,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 try journal.storeEntry(journalEntry)
 
             } catch {
-                WireLogger.sync.error("failed to migrate update events: \(error)")
+                WireLogger.sync.critical("failed to migrate update events: \(error)")
             }
 
             completion()
