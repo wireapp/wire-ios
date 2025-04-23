@@ -19,25 +19,19 @@
 import WireDataModel
 import WireDomainPackage
 
-struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol { // TODO: try to replace by repository (WireDomain)
+struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
 
     typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
-        let fetchRequest = ZMUser.fetchRequest() // TODO: what about the self user?
-        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
-        return fetchRequest
+        ZMUser.fetchRequest() // TODO: what about the self user?
     }
 
-    static func fetchOrCreate(
+    static func create(
         id: QualifiedID,
         context: NSManagedObjectContext
     ) -> ImportBackupZMUserAdapter {
-        let user = ZMUser.fetchOrCreate(
-            with: id.uuid,
-            domain: id.domain,
-            in: context
-        )
+        let user = ZMUser.fetchOrCreate(with: id.uuid, domain: id.domain, in: context)
         user.needsToBeUpdatedFromBackend = true
         return ImportBackupZMUserAdapter(user: user)
     }
@@ -47,14 +41,8 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol { // TODO: try 
     var user: ZMUser
 
     var id: QualifiedID {
-        get {
-            let qualifiedID = user.qualifiedID ?? .init(uuid: user.remoteIdentifier, domain: user.domain ?? "")
-            return QualifiedID(qualifiedID)
-        }
-        nonmutating set {
-            user.remoteIdentifier = newValue.uuid
-            user.domain = newValue.domain
-        }
+        let qualifiedID = user.qualifiedID ?? .init(uuid: user.remoteIdentifier, domain: user.domain ?? "")
+        return QualifiedID(qualifiedID)
     }
 
     var name: String {

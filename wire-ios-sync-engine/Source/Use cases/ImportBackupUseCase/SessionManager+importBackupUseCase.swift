@@ -31,21 +31,10 @@ public extension SessionManager {
                 userSession.managedObjectContext.zm_sync!
             }
 
-            let messageLocalStore = MessageLocalStore( // TODO: create or use existing?
-                context: syncContext
-            )
-            let userLocalStore = UserLocalStore(
-                context: syncContext,
-                messageLocalStore: messageLocalStore
-            )
-
             return ImportBackupUseCase(
                 importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
-                    userLocalStorage: ImportBackupUserLocalStoreAdapter(
-                        userLocalStore: userLocalStore
-                    ),
                     conversationLocalStorage: ImportBackupConversationLocalStoreAdapter(),
-                    context: userSession.managedObjectContext.performAndWait { userSession.managedObjectContext.zm_sync },
+                    context: syncContext,
                     fileArchiver: ImportBackupFileArchiver(),
                     syncTrigger: {
                         syncContext.performGroupedBlock {

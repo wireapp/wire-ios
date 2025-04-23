@@ -27,7 +27,6 @@ import WireSystem
 struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
-        ImportBackupUserLocalStoreAdapter,
         ImportBackupConversationLocalStoreAdapter,
         ImportBackupZMUserAdapter,
         ImportBackupZMConversationAdapter,

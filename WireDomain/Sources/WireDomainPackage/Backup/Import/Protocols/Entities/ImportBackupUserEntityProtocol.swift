@@ -20,7 +20,7 @@ public import CoreData
 
 public protocol ImportBackupUserEntityProtocol: ImportBackupEntityProtocol {
 
-    static func fetchOrCreate(
+    static func create(
         id: QualifiedID,
         context: NSManagedObjectContext
     ) -> Self

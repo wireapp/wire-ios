@@ -23,14 +23,12 @@ public import WireLogging
 @preconcurrency import WireBackup
 
 public struct ImportBackupUseCase<
-    UserLocalStorage: ImportBackupUserLocalStoreProtocol,
     ConversationLocalStorage: ImportBackupConversationLocalStoreProtocol,
-    UserAdapter: ImportBackupUserEntityProtocol,
+    UserEntity: ImportBackupUserEntityProtocol,
     ConversationAdapter: ImportBackupConversationEntityProtocol,
     MessageAdapter: ImportBackupMessageEntityProtocol
 >: ImportBackupUseCaseProtocol {
 
-    let userLocalStorage: UserLocalStorage
     let conversationLocalStorage: ConversationLocalStorage
     let context: @Sendable () -> NSManagedObjectContext
     let fileManager: @Sendable () -> FileManager = { .default }
@@ -39,14 +37,12 @@ public struct ImportBackupUseCase<
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
-        userLocalStorage: UserLocalStorage,
         conversationLocalStorage: ConversationLocalStorage,
         context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext, // TODO: delete if possible
         fileArchiver: any ImportBackupFileArchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
-        self.userLocalStorage = userLocalStorage
         self.conversationLocalStorage = conversationLocalStorage
         self.context = context
         self.fileArchiver = fileArchiver
@@ -98,25 +94,29 @@ public struct ImportBackupUseCase<
                     let pager = try await importer.importBackup(from: url, using: password)
                     let total = Int(exactly: pager.totalPagesCount) ?? 0
 
-                    let storedUserIDs = try await userLocalStorage.fetchAllUserIDs()
-
                     try await context.perform {
 
+                        let userFetchRequest = UserEntity.fetchRequest()
+                        userFetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
+                        let storedUserIDs = try context.fetch(userFetchRequest)
+                            .compactMap(UserEntity.init)
+                            .map(\.id)
+
                         while pager.usersPager.hasMorePages() {
-                            let users = pager.usersPager.nextPage()
-                            for current in 0 ..< users.size {
-                                guard let user = users.get(index: current), let userID = QualifiedID(user.id) else {
-                                    continue
-                                }
+                            let backupUsers = pager.usersPager.nextPage()
+                            for current in 0 ..< backupUsers.size {
+                                guard
+                                    let backupUser = backupUsers.get(index: current),
+                                    let userID = QualifiedID(backupUser.id)
+                                else { continue }
 
                                 if !storedUserIDs.contains(userID) {
-                                    // TODO: use local store
-                                    let user = UserAdapter.fetchOrCreate(id: userID, context: context)
+                                    let user = UserEntity.create(id: userID, context: context)
                                     user.name = user.name
                                     user.handle = user.handle
                                 }
 
-                                if current % 50 == 0 || current == users.size - 1 {
+                                if current % 50 == 0 || current == backupUsers.size - 1 {
                                     try Task.checkCancellation()
                                     reportProgress(Int(exactly: current) ?? 0, total)
                                 }
