@@ -225,7 +225,7 @@ final class ContextExecutor: SerialExecutor {
         self.context = context
     }
 
-    func enqueue(_ job: ExecutorJob) {
+    func enqueue(_ job: consuming ExecutorJob) {
         let unownedJob = UnownedJob(job)
         let unownedExecutor = asUnownedSerialExecutor()
 
