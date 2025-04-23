@@ -31,15 +31,18 @@ public struct ImportBackupUseCase<
     let context: @Sendable () -> NSManagedObjectContext
     let fileManager: @Sendable () -> FileManager = { .default }
     let fileArchiver: any ImportBackupFileArchiverProtocol
+    let syncTrigger: @Sendable () -> Void
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
         context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext,
         fileArchiver: any ImportBackupFileArchiverProtocol,
+        syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
         self.context = context
         self.fileArchiver = fileArchiver
+        self.syncTrigger = syncTrigger
         self.logger = logger
     }
 
@@ -114,9 +117,6 @@ public struct ImportBackupUseCase<
                                 }
                             }
                         }
-                    }
-
-                    try await context.perform {
 
                         let storedConversations = try context.fetch(ConversationAdapter.fetchRequest())
                             .compactMap(ConversationAdapter.init)
@@ -143,9 +143,6 @@ public struct ImportBackupUseCase<
                                 }
                             }
                         }
-                    }
-
-                    try await context.perform {
 
                         /*
                         let storedMessages = try context.fetch(MessageAdapter.fetchRequest())
@@ -178,12 +175,13 @@ public struct ImportBackupUseCase<
                         try context.save()
                     }
 
-                    // TODO: trigger sync
+                    syncTrigger()
 
                     continuation.yield(.done)
                     continuation.finish()
 
                 } catch {
+                    // TODO: roll back?
                     continuation.finish(throwing: error)
                 }
             }
