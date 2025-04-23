@@ -102,10 +102,14 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
                 return .areTypingIndicatorsEnabled(false)
             }
         case .labels:
-            return try parseResponse(
-                (response.statusCode, data),
-                forPayloadType: LabelsResponseV0.self
-            )
+            do {
+                return try parseResponse(
+                    (response.statusCode, data),
+                    forPayloadType: LabelsResponseV0.self
+                )
+            } catch UserPropertiesAPIError.propertyNotFound {
+                return .conversationLabels([])
+            }
         }
     }
 
