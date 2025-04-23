@@ -40,6 +40,19 @@ struct UpdateEventMigrator {
     }
 
     func migrateLegacyUpdateEvents() async throws {
+        do {
+            try await internalMigrateLegacyUpdateEvents()
+        } catch {
+            WireLogger.sync.error(
+                "failed to migrate legacy update events, discarding changes. " +
+                "Error: \(String(describing: error))"
+            )
+            await dao.discardChanges()
+            throw error
+        }
+    }
+
+    private func internalMigrateLegacyUpdateEvents() async throws {
         WireLogger.sync.debug("migrating legacy update events...")
 
         // Store new events starting at this index.

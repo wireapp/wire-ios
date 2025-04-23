@@ -29,6 +29,7 @@ protocol UpdateEventMigratorDAOProtocol {
     func insertEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws
     func deleteNextBatchOfLegacyEvents() async
     func save() async throws
+    func discardChanges() async
 
 }
 
@@ -112,6 +113,12 @@ struct UpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
     func save() async throws {
         try await context.perform {
             try context.save()
+        }
+    }
+
+    func discardChanges() async {
+        await context.perform {
+            context.rollback()
         }
     }
 
@@ -201,6 +208,10 @@ actor ActorBasedUpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
 
     func save() async throws {
         try context.save()
+    }
+
+    func discardChanges() async {
+        context.rollback()
     }
 
 }
