@@ -28,6 +28,8 @@ public extension SessionManager {
 
             ImportBackupUseCase(
                 importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
+                    userRepository: ImportBackupUserRepositoryAdapter(),
+                    conversationRepository: ImportBackupConversationRepositoryAdapter(),
                     context: userSession.managedObjectContext.performAndWait { userSession.managedObjectContext.zm_sync },
                     fileArchiver: ImportBackupFileArchiver(),
                     syncTrigger: {

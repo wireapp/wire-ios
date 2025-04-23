@@ -23,11 +23,15 @@ public import WireLogging
 @preconcurrency import WireBackup
 
 public struct ImportBackupUseCase<
+    UserRepository: ImportBackupUserRepositoryProtocol,
+    ConversationRepository: ImportBackupConversationRepositoryProtocol,
     UserAdapter: ImportBackupUserEntityProtocol,
     ConversationAdapter: ImportBackupConversationEntityProtocol,
     MessageAdapter: ImportBackupMessageEntityProtocol
 >: ImportBackupUseCaseProtocol {
 
+    let userRepository: UserRepository
+    let conversationRepository: ConversationRepository
     let context: @Sendable () -> NSManagedObjectContext
     let fileManager: @Sendable () -> FileManager = { .default }
     let fileArchiver: any ImportBackupFileArchiverProtocol
@@ -35,11 +39,15 @@ public struct ImportBackupUseCase<
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
-        context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext,
+        userRepository: UserRepository,
+        conversationRepository: ConversationRepository,
+        context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext, // TODO: delete if possible
         fileArchiver: any ImportBackupFileArchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.userRepository = userRepository
+        self.conversationRepository = conversationRepository
         self.context = context
         self.fileArchiver = fileArchiver
         self.syncTrigger = syncTrigger

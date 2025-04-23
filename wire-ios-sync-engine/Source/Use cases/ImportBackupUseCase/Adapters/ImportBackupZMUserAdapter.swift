@@ -19,7 +19,7 @@
 import WireDataModel
 import WireDomainPackage
 
-struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
+struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol { // TODO: try to replace by repository (WireDomain)
 
     typealias QualifiedID = WireDomainPackage.QualifiedID
 
