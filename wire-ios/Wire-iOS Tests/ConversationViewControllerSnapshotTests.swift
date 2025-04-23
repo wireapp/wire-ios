@@ -26,12 +26,10 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
     private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: ConversationViewController!
-    private var mockConversation: ZMConversation!
     private var serviceUser: ZMUser!
     private var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
     var snapshotHelper: SnapshotHelper!
-    private var imageTransformerMock: MockImageTransformer!
 
     override func setupCoreDataStack() {
         coreDataFixture = CoreDataFixture()
@@ -47,31 +45,161 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
     override func setUp() {
         super.setUp()
+
         snapshotHelper = SnapshotHelper()
-        imageTransformerMock = .init()
-        mockConversation = createTeamGroupConversation()
+        serviceUser = coreDataFixture.createServiceUser()
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+        sut = nil
+        serviceUser = nil
+        coreDataFixture = nil
+
+        super.tearDown()
+    }
+
+    func testForInitState() {
+        // given
+        let mockConversation = createTeamGroupConversation()
+        createSut(conversation: mockConversation)
+
+        // then
+        snapshotHelper.verify(matching: sut)
+    }
+}
+
+// MARK: - Disable / Enable search in conversations
+
+extension ConversationViewControllerSnapshotTests {
+
+    func testThatTheSearchButtonIsDisabledIfMessagesAreEncryptedInTheDataBase() {
+        // given
+        let mockConversation = createTeamGroupConversation()
+        createSut(conversation: mockConversation)
+
+        // when
+        userSession.encryptMessagesAtRest = true
+
+        // then
+        XCTAssertFalse(sut.shouldShowCollectionsButton)
+    }
+
+    func testThatTheSearchButtonIsEnabledIfMessagesAreNotEncryptedInTheDataBase() {
+        // given
+        let mockConversation = createTeamGroupConversation()
+        createSut(conversation: mockConversation)
+
+        // when
+        userSession.encryptMessagesAtRest = false
+
+        // then
+        XCTAssertTrue(sut.shouldShowCollectionsButton)
+    }
+
+    func testThatTheSearchButtonIsDisabled_IfConversationIsPendingConnection() {
+        // given
+        let mockConversation = createOneOnOneConversation(.pending)
+        createSut(conversation: mockConversation)
+
+        // then
+        XCTAssertFalse(sut.shouldShowCollectionsButton)
+    }
+
+    func testThatTheSearchButtonIsDisabled_IfConversationIsSentConnection() {
+        // given
+        let mockConversation = createOneOnOneConversation(.sent)
+        createSut(conversation: mockConversation)
+
+        // then
+        XCTAssertFalse(sut.shouldShowCollectionsButton)
+    }
+
+    func testThatTheSearchButtonIsEnabled_IfConversationIsOneOnOne() {
+        // given
+        let mockConversation = createOneOnOneConversation(.accepted)
+        createSut(conversation: mockConversation)
+
+        // then
+        XCTAssertTrue(sut.shouldShowCollectionsButton)
+    }
+
+}
+
+// MARK: - Guests bar controller
+
+extension ConversationViewControllerSnapshotTests {
+
+    func testThatGuestsBarControllerIsVisibleIfExternalsArePresent() {
+        // given
+        let mockConversation = createTeamGroupConversation()
+        mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
+        let teamMember = Member.insertNewObject(in: uiMOC)
+        teamMember.user = otherUser
+        teamMember.team = team
+        otherUser.membership?.setTeamRole(.partner)
+        UIColor.setAccentOverride(.green)
+        createSut(conversation: mockConversation)
+
+        // when
+        sut.updateGuestsBarVisibility()
+
+        // then
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testThatGuestsBarControllerIsVisibleIfServicesArePresent() {
+        // given
+        let mockConversation = createTeamGroupConversation()
+        mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
+        mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
+
+        UIColor.setAccentOverride(.green)
+        createSut(conversation: mockConversation)
+
+        // when
+        sut.updateGuestsBarVisibility()
+
+        // then
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testThatGuestsBarControllerIsVisibleIfExternalsAndServicesArePresent() {
+        // given
+        let mockConversation = createTeamGroupConversation()
+        let teamMember = Member.insertNewObject(in: uiMOC)
+        teamMember.user = otherUser
+        teamMember.team = team
+        otherUser.membership?.setTeamRole(.partner)
+
+        mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
+        mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
+
+        UIColor.setAccentOverride(.green)
+        createSut(conversation: mockConversation)
+
+        // when
+        sut.updateGuestsBarVisibility()
+
+        // then
+        snapshotHelper.verify(matching: sut)
+    }
+
+    // MARK: - Helper Method
+
+    private func createSut(conversation: ZMConversation) {
+        //mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.coreDataStack = coreDataStack
         userSession.mockConversationList = ConversationList(
-            allConversations: [mockConversation!],
+            allConversations: [conversation],
             filteringPredicate: NSPredicate(value: true),
             managedObjectContext: uiMOC,
             description: "all conversations"
         )
 
-        serviceUser = coreDataFixture.createServiceUser()
-
-        let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
-
-        let zClientViewController = ZClientViewController(
-            account: mockAccount,
-            selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
-            userSession: userSession,
-            trackingManager: nil
-        )
-
         sut = ConversationViewController(
-            conversation: mockConversation,
+            conversation: conversation,
             visibleMessage: nil,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
@@ -83,98 +211,24 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         )
     }
 
-    override func tearDown() {
-        snapshotHelper = nil
-        sut = nil
-        serviceUser = nil
-        coreDataFixture = nil
-        imageTransformerMock = nil
-        mockMainCoordinator = nil
+    private func createOneOnOneConversation(_ connectionStatus: ZMConnectionStatus) -> ZMConversation {
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = UUID()
+        otherUser.name = "Bruno"
 
-        super.tearDown()
-    }
+        let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
+        mockConversation.messageProtocol = .proteus
+        mockConversation.addParticipantAndUpdateConversationState(user: selfUser)
+        mockConversation.conversationType = .oneOnOne
+        mockConversation.remoteIdentifier = UUID.create()
+        mockConversation.oneOnOneUser = otherUser
 
-    func testForInitState() {
-        snapshotHelper.verify(matching: sut)
-    }
-}
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
+        connection.to = otherUser
+        connection.status = connectionStatus
 
-// MARK: - Disable / Enable search in conversations
-
-extension ConversationViewControllerSnapshotTests {
-
-    func testThatTheSearchButtonIsDisabledIfMessagesAreEncryptedInTheDataBase() {
-        // given
-
-        // when
-        userSession.encryptMessagesAtRest = true
-
-        // then
-        XCTAssertFalse(sut.shouldShowCollectionsButton)
-    }
-
-    func testThatTheSearchButtonIsEnabledIfMessagesAreNotEncryptedInTheDataBase() {
-        // given
-
-        // when
-        userSession.encryptMessagesAtRest = false
-
-        // then
-        XCTAssertTrue(sut.shouldShowCollectionsButton)
-    }
-}
-
-// MARK: - Guests bar controller
-
-extension ConversationViewControllerSnapshotTests {
-
-    func testThatGuestsBarControllerIsVisibleIfExternalsArePresent() {
-        // given
-        mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
-        let teamMember = Member.insertNewObject(in: uiMOC)
-        teamMember.user = otherUser
-        teamMember.team = team
-        otherUser.membership?.setTeamRole(.partner)
-        UIColor.setAccentOverride(.green)
-
-        // when
-        sut.updateGuestsBarVisibility()
-
-        // then
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func testThatGuestsBarControllerIsVisibleIfServicesArePresent() {
-        // given
-        mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
-        mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
-
-        UIColor.setAccentOverride(.green)
-
-        // when
-        sut.updateGuestsBarVisibility()
-
-        // then
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func testThatGuestsBarControllerIsVisibleIfExternalsAndServicesArePresent() {
-        // given
-        let teamMember = Member.insertNewObject(in: uiMOC)
-        teamMember.user = otherUser
-        teamMember.team = team
-        otherUser.membership?.setTeamRole(.partner)
-
-        mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
-        mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
-
-        UIColor.setAccentOverride(.green)
-
-        // when
-        sut.updateGuestsBarVisibility()
-
-        // then
-        snapshotHelper.verify(matching: sut)
+        return mockConversation
     }
 
 }
