@@ -76,13 +76,14 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
+        let error = CoreCryptoError.Other("conversation not found")
 
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            throw CoreCryptoError.Other("conversation not found")
+            throw error
         }
 
         // Then
-        await assertItThrows(error: DecryptionError.failedToDecryptMessage) {
+        await assertItThrows(error: DecryptionError.failedToDecryptMessage(reason: error)) {
             // When
             try _ = await sut.decrypt(
                 message: message,

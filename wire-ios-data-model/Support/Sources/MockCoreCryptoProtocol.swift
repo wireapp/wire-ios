@@ -49,6 +49,26 @@ public class MockCoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
             fatalError("no mock for `transaction`")
         }
     }
+    
+    // MARK: - registerEpochObserver
+    
+    public var registerEpochObserver_Invocations: [any WireCoreCryptoUniffi.EpochObserver] = []
+    public var registerEpochObserver_MockError: Error?
+    public var registerEpochObserver_MockMethod: ((any WireCoreCryptoUniffi.EpochObserver) async throws -> Void)?
+    
+    public func registerEpochObserver(_ epochObserver: any WireCoreCryptoUniffi.EpochObserver) async throws {
+        registerEpochObserver_Invocations.append(epochObserver)
+
+        if let error = registerEpochObserver_MockError {
+            throw error
+        }
+
+        guard let mock = registerEpochObserver_MockMethod else {
+            fatalError("no mock for `registerEpochObserver`")
+        }
+
+        try await mock(epochObserver)
+    }
 
     // MARK: - provideTransport
 

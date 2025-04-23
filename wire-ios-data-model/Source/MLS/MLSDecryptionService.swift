@@ -118,13 +118,20 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Message decryption
 
-    public enum MLSMessageDecryptionError: Error {
-
+    public enum MLSMessageDecryptionError: Error, Equatable {
         case failedToConvertMessageToBytes
-        case failedToDecryptMessage
+        case failedToDecryptMessage(reason: Error)
         case failedToDecodeSenderClientID
         case wrongEpoch
 
+        public static func == (lhs: MLSDecryptionService.MLSMessageDecryptionError, rhs: MLSDecryptionService.MLSMessageDecryptionError) -> Bool {
+            switch (lhs, rhs) {
+            case (.failedToConvertMessageToBytes, .failedToConvertMessageToBytes): true
+            case (.failedToDecryptMessage, .failedToDecryptMessage): true
+            case (.failedToDecodeSenderClientID, .failedToDecodeSenderClientID): true
+            default: false
+            }
+        }
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
@@ -215,10 +222,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             case .Other(coreCryptoCommitForMissingProposalError): return []
 
             case .Other, .ConversationAlreadyExists, .MessageEpochTooOld, .OrphanWelcome, .MessageRejected:
-                throw MLSMessageDecryptionError.failedToDecryptMessage
-            
+                throw MLSMessageDecryptionError.failedToDecryptMessage(reason: error)
+
             @unknown default:
-                throw MLSMessageDecryptionError.failedToDecryptMessage
+                throw MLSMessageDecryptionError.failedToDecryptMessage(reason: error)
             }
         } catch MLSActionExecutor.Failure.bufferedDecryptedMessage {
             // [WPB-16231] fix CC transaction is not saved
@@ -229,7 +236,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                     "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
                 )
 
-            throw MLSMessageDecryptionError.failedToDecryptMessage
+            throw MLSMessageDecryptionError.failedToDecryptMessage(reason: error)
         }
     }
 
