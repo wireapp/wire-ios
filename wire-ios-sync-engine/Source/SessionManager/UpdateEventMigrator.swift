@@ -114,7 +114,7 @@ private extension UpdateEvent {
 
             self = .conversation(.delete(event))
 
-        case .conversationMessageAdd:
+        case .conversationMLSMessageAdd:
             guard let event = Self.conversationMLSMessageAddEvent(
                 from: legacyEvent,
                 localDomain: localDomain
