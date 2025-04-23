@@ -29,6 +29,20 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
         return fetchRequest
     }
 
+    static func fetchOrCreate(
+        id: QualifiedID,
+        context: NSManagedObjectContext
+    ) -> ImportBackupZMUserAdapter {
+        let user = ZMUser.fetchOrCreate(
+            with: id.uuid,
+            domain: id.domain,
+            in: context
+        )
+        return ImportBackupZMUserAdapter(user: user)
+    }
+
+    // MARK: -
+
     var user: ZMUser
 
     var id: QualifiedID {
@@ -52,13 +66,12 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
         nonmutating set { user.handle = newValue }
     }
 
-    init(context: NSManagedObjectContext) {
-        user = ZMUser(context: context)
-        user.needsToBeUpdatedFromBackend = true
-    }
-
     init?(_ record: any NSFetchRequestResult) {
         guard let user = record as? ZMUser else { return nil }
+        self.init(user: user)
+    }
+
+    private init(user: ZMUser) {
         self.user = user
     }
 

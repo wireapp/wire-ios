@@ -25,6 +25,4 @@ public protocol ImportBackupEntityProtocol {
 
     init?(_ record: any NSFetchRequestResult)
 
-    init(context: NSManagedObjectContext)
-
 }

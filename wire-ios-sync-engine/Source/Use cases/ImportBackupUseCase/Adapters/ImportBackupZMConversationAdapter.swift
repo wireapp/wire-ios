@@ -29,6 +29,20 @@ struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol
         return fetchRequest
     }
 
+    static func fetchOrCreate(
+        id: QualifiedID,
+        context: NSManagedObjectContext
+    ) -> ImportBackupZMConversationAdapter {
+        let conversation = ZMConversation.fetchOrCreate(
+            with: id.uuid,
+            domain: id.domain,
+            in: context
+        )
+        return ImportBackupZMConversationAdapter(conversation: conversation)
+    }
+
+    // MARK: -
+
     var conversation: ZMConversation
 
     var id: QualifiedID {
@@ -47,13 +61,12 @@ struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol
         nonmutating set { conversation.userDefinedName = newValue }
     }
 
-    init(context: NSManagedObjectContext) {
-        conversation = ZMConversation(context: context)
-        conversation.needsToBeUpdatedFromBackend = true
-    }
-
     init?(_ record: any NSFetchRequestResult) {
         guard let conversation = record as? ZMConversation else { return nil }
+        self.init(conversation: conversation)
+    }
+
+    private init(conversation: ZMConversation) {
         self.conversation = conversation
     }
 

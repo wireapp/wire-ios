@@ -24,7 +24,7 @@ struct CreateBackupZMConversationAdapter: CreateBackupConversationEntityProtocol
     typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
-        ZMConversation.fetchRequest()
+        ZMConversation.fetchRequest() // TODO: self conversations shouldn't be fetched
     }
 
     let id: QualifiedID

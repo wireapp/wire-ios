@@ -16,9 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import CoreData
+
 public protocol ImportBackupUserEntityProtocol: ImportBackupEntityProtocol {
 
-    var id: QualifiedID { get nonmutating set }
+    static func fetchOrCreate(
+        id: QualifiedID,
+        context: NSManagedObjectContext
+    ) -> Self
+
+    var id: QualifiedID { get }
     var name: String { get nonmutating set }
     var handle: String { get nonmutating set }
 

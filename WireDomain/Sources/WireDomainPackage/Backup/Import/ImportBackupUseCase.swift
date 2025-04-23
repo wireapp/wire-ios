@@ -100,10 +100,12 @@ public struct ImportBackupUseCase<
                                 }
 
                                 if !storedUsers.contains(where: { $0.id == userID }) {
-                                    let userEntity = UserAdapter(context: context)
-                                    userEntity.id = userID
-                                    userEntity.name = user.name
-                                    userEntity.handle = user.handle
+                                    let user = UserAdapter.fetchOrCreate(
+                                        id: userID,
+                                        context: context
+                                    )
+                                    user.name = user.name
+                                    user.handle = user.handle
                                 }
 
                                 if current % 50 == 0 || current == users.size - 1 {
@@ -128,9 +130,11 @@ public struct ImportBackupUseCase<
                                 else { continue }
 
                                 if !storedConversations.contains(where: { $0.id == conversationID }) {
-                                    let conversationEntity = ConversationAdapter(context: context)
-                                    conversationEntity.id = conversationID
-                                    conversationEntity.name = conversation.name
+                                    let conversation = ConversationAdapter.fetchOrCreate(
+                                        id: conversationID,
+                                        context: context
+                                    )
+                                    conversation.name = conversation.name
                                 }
 
                                 if current % 50 == 0 || current == conversations.size - 1 {
