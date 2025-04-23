@@ -96,12 +96,20 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
             case .invalidCredentials, .missingAuth, .badRequest:
                 throw RemoveUserClientError.invalidCredentials
 
+            case .unknown:
+                switch failureResponse.code {
+                case TooManyRequestsStatusCode:
+                    throw RemoveUserClientError.tooManyRequests
+                default:
+                    throw RemoveUserClientError.generic
+                }
+
             default:
-                throw failure
+                throw RemoveUserClientError.generic
             }
 
         default:
-            throw failure
+            throw RemoveUserClientError.generic
         }
     }
 }
@@ -111,5 +119,10 @@ public enum RemoveUserClientError: Error {
     case clientToDeleteNotFound
     case clientDoesNotExistLocally
     case invalidCredentials
+    case tooManyRequests
+
+    // other error types that are not explicitly handled
+    // this allows showing a readable error message to the user
+    case generic
 
 }
