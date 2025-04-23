@@ -18,6 +18,7 @@
 
 import WireDomainPackage
 import WireLogging
+import WireDomain
 
 public extension SessionManager {
 
@@ -26,14 +27,28 @@ public extension SessionManager {
         // return `nil` immediately if there is no active user session
         activeUserSession.map { userSession in
 
-            ImportBackupUseCase(
+            let syncContext = userSession.managedObjectContext.performAndWait {
+                userSession.managedObjectContext.zm_sync!
+            }
+
+            let messageLocalStore = MessageLocalStore( // TODO: create or use existing?
+                context: syncContext
+            )
+            let userLocalStore = UserLocalStore(
+                context: syncContext,
+                messageLocalStore: messageLocalStore
+            )
+
+            return ImportBackupUseCase(
                 importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
-                    userRepository: ImportBackupUserRepositoryAdapter(),
-                    conversationRepository: ImportBackupConversationRepositoryAdapter(),
+                    userLocalStorage: ImportBackupUserLocalStoreAdapter(
+                        userLocalStore: userLocalStore
+                    ),
+                    conversationLocalStorage: ImportBackupConversationLocalStoreAdapter(),
                     context: userSession.managedObjectContext.performAndWait { userSession.managedObjectContext.zm_sync },
                     fileArchiver: ImportBackupFileArchiver(),
                     syncTrigger: {
-                        userSession.syncManagedObjectContext.performGroupedBlock {
+                        syncContext.performGroupedBlock {
                             userSession.triggerInitialSync()
                         }
                     },

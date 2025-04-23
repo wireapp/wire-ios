@@ -16,4 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ImportBackupUserRepositoryProtocol: Sendable {}
+public protocol ImportBackupUserLocalStoreProtocol: Sendable {
+    func fetchAllUserIDs() async throws -> [QualifiedID]
+}

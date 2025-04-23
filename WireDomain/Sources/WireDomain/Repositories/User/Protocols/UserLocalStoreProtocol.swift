@@ -22,7 +22,7 @@ import WireDataModel
 // sourcery: AutoMockable
 /// A local store dedicated to user.
 /// The store uses the injected context to perform `CoreData` operations on user objects.
-public protocol UserLocalStoreProtocol {
+public protocol UserLocalStoreProtocol: Sendable {
 
     /// Fetch self user from the local store
 

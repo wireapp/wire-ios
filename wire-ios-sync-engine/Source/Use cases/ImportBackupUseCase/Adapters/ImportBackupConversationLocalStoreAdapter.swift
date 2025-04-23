@@ -18,4 +18,8 @@
 
 import WireDomainPackage
 
-struct ImportBackupUserRepositoryAdapter: ImportBackupUserRepositoryProtocol {}
+struct ImportBackupConversationLocalStoreAdapter: ImportBackupConversationLocalStoreProtocol {
+
+    init() {}
+
+}

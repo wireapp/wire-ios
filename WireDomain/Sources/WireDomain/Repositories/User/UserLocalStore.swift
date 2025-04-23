@@ -102,6 +102,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
         try await context.perform {
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
             let knownUsers = try self.context.fetch(fetchRequest)
             return knownUsers.compactMap(\.qualifiedID)
         }

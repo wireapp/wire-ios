@@ -16,6 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDomain
 import WireDomainPackage
 
-struct ImportBackupConversationRepositoryAdapter: ImportBackupConversationRepositoryProtocol {}
+struct ImportBackupUserLocalStoreAdapter: ImportBackupUserLocalStoreProtocol {
+
+    private let userLocalStore: any UserLocalStoreProtocol
+
+    init(userLocalStore: any UserLocalStoreProtocol) {
+        self.userLocalStore = userLocalStore
+    }
+
+    func fetchAllUserIDs() async throws -> [WireDomainPackage.QualifiedID] {
+        try await userLocalStore.fetchUsersQualifiedIDs()
+            .map(WireDomainPackage.QualifiedID.init)
+    }
+
+}

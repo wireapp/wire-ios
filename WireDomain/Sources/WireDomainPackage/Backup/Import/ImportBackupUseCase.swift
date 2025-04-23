@@ -23,15 +23,15 @@ public import WireLogging
 @preconcurrency import WireBackup
 
 public struct ImportBackupUseCase<
-    UserRepository: ImportBackupUserRepositoryProtocol,
-    ConversationRepository: ImportBackupConversationRepositoryProtocol,
+    UserLocalStorage: ImportBackupUserLocalStoreProtocol,
+    ConversationLocalStorage: ImportBackupConversationLocalStoreProtocol,
     UserAdapter: ImportBackupUserEntityProtocol,
     ConversationAdapter: ImportBackupConversationEntityProtocol,
     MessageAdapter: ImportBackupMessageEntityProtocol
 >: ImportBackupUseCaseProtocol {
 
-    let userRepository: UserRepository
-    let conversationRepository: ConversationRepository
+    let userLocalStorage: UserLocalStorage
+    let conversationLocalStorage: ConversationLocalStorage
     let context: @Sendable () -> NSManagedObjectContext
     let fileManager: @Sendable () -> FileManager = { .default }
     let fileArchiver: any ImportBackupFileArchiverProtocol
@@ -39,15 +39,15 @@ public struct ImportBackupUseCase<
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
-        userRepository: UserRepository,
-        conversationRepository: ConversationRepository,
+        userLocalStorage: UserLocalStorage,
+        conversationLocalStorage: ConversationLocalStorage,
         context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext, // TODO: delete if possible
         fileArchiver: any ImportBackupFileArchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
-        self.userRepository = userRepository
-        self.conversationRepository = conversationRepository
+        self.userLocalStorage = userLocalStorage
+        self.conversationLocalStorage = conversationLocalStorage
         self.context = context
         self.fileArchiver = fileArchiver
         self.syncTrigger = syncTrigger
@@ -98,10 +98,9 @@ public struct ImportBackupUseCase<
                     let pager = try await importer.importBackup(from: url, using: password)
                     let total = Int(exactly: pager.totalPagesCount) ?? 0
 
-                    try await context.perform {
+                    let storedUserIDs = try await userLocalStorage.fetchAllUserIDs()
 
-                        let storedUsers = try context.fetch(UserAdapter.fetchRequest())
-                            .compactMap(UserAdapter.init)
+                    try await context.perform {
 
                         while pager.usersPager.hasMorePages() {
                             let users = pager.usersPager.nextPage()
@@ -110,11 +109,9 @@ public struct ImportBackupUseCase<
                                     continue
                                 }
 
-                                if !storedUsers.contains(where: { $0.id == userID }) {
-                                    let user = UserAdapter.fetchOrCreate(
-                                        id: userID,
-                                        context: context
-                                    )
+                                if !storedUserIDs.contains(userID) {
+                                    // TODO: use local store
+                                    let user = UserAdapter.fetchOrCreate(id: userID, context: context)
                                     user.name = user.name
                                     user.handle = user.handle
                                 }

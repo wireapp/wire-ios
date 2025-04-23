@@ -150,4 +150,9 @@ public protocol UserRepositoryProtocol {
 
     func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
 
+//    /// Fetches all user IDs from the local storage.
+//    /// - returns: A list of users' qualified IDs.
+//
+//    func fetchAllUserIDs() async throws -> [WireDataModel.QualifiedID]
+
 }
