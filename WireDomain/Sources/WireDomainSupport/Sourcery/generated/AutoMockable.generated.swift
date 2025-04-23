@@ -3662,6 +3662,21 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         try await mock(index)
     }
 
+    // MARK: - calculateLastUnreadMessages
+
+    public var calculateLastUnreadMessages_Invocations: [Void] = []
+    public var calculateLastUnreadMessages_MockMethod: (() async -> Void)?
+
+    public func calculateLastUnreadMessages() async {
+        calculateLastUnreadMessages_Invocations.append(())
+
+        guard let mock = calculateLastUnreadMessages_MockMethod else {
+            fatalError("no mock for `calculateLastUnreadMessages`")
+        }
+
+        await mock()
+    }
+
 }
 
 public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
