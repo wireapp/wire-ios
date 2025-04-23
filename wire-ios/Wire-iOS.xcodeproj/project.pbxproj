@@ -770,7 +770,6 @@
 				SelfProfileViewControllerTests.swift,
 				"Settings/Debug Report/SettingsDebugReportViewControllerSnapshotTests.swift",
 				"Settings/Debug Report/SettingsDebugReportViewModelTests.swift",
-				Settings/SettingsPropertyTests.swift,
 				Settings/SettingsTests.swift,
 				"Settings+Reset.swift",
 				SettingsTableViewControllerSnapshotTests.swift,
