@@ -41,7 +41,8 @@
     [self verifyMockLater:self.downstreamSync];
 
     self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
-                                                         lastEventIDRepository:self.lastEventIDRepository];
+                                                         lastEventIDRepository:self.lastEventIDRepository
+                                                               isSyncV2Enabled:NO];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockApplicationStatus = [[MockApplicationStatus alloc] init];
     self.mockApplicationStatus.mockSynchronizationState = ZMSynchronizationStateSlowSyncing;

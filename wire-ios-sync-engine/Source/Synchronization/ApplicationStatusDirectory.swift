@@ -45,7 +45,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         application: ZMApplication,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        journal: Journal
+        isSyncV2Enabled: Bool
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
@@ -54,7 +54,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.syncStatus = SyncStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository,
-            journal: journal
+            isSyncV2Enabled: isSyncV2Enabled
         )
         self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)

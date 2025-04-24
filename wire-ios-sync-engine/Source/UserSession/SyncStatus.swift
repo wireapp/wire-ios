@@ -47,7 +47,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     weak var syncStateDelegate: ZMSyncStateDelegate?
 
-    private let journal: Journal
+    private let isSyncV2Enabled: Bool
 
     private let lastEventIDRepository: LastEventIDRepositoryInterface
     fileprivate var lastUpdateEventID: UUID?
@@ -62,7 +62,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
     public var isSlowSyncing: Bool {
-        guard !journal[.isSyncV2Enabled] else { return false }
+        guard !isSyncV2Enabled else { return false }
         return !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
     }
 
@@ -70,28 +70,28 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     private var isRecovering = false
 
     public var isSyncing: Bool {
-        guard !journal[.isSyncV2Enabled] else { return false }
+        guard !isSyncV2Enabled else { return false }
         return currentSyncPhase.isSyncing || !isPushChannelOpen
     }
 
     public var isSyncingInBackground: Bool {
-        guard !journal[.isSyncV2Enabled] else { return false }
+        guard !isSyncV2Enabled else { return false }
         return currentSyncPhase.isSyncing
     }
 
     public var isPushChannelOpen: Bool {
-        guard !journal[.isSyncV2Enabled] else { return false }
+        guard !isSyncV2Enabled else { return false }
         return pushChannelEstablishedDate != nil
     }
 
     public init(
         managedObjectContext: NSManagedObjectContext,
         lastEventIDRepository: LastEventIDRepositoryInterface,
-        journal: Journal
+        isSyncV2Enabled: Bool
     ) {
         self.managedObjectContext = managedObjectContext
         self.lastEventIDRepository = lastEventIDRepository
-        self.journal = journal
+        self.isSyncV2Enabled = isSyncV2Enabled
 
         super.init()
 
