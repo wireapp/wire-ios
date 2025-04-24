@@ -16,36 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
+public import Foundation
 
-/// Fetches users locally and stores them in the database.
+/// Fully qualified identifier in a federated environment.
 
-public final class SyncUsersAction: EntityAction {
+public struct QualifiedID: Codable, Hashable, Sendable {
 
-    public typealias Result = Void
-
-    public enum Failure: Error, Equatable {
-
-        case invalidBody
-        case invalidResponsePayload
-        case endpointUnavailable
-        case failedToEncodeRequestPayload
-        case unknownError(code: Int, label: String, message: String)
-    }
-
-    // MARK: - Properties
-
-    public let qualifiedIDs: [QualifiedID]
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
+    public var id: UUID
+    public var domain: String
 
     public init(
-        qualifiedIDs: [QualifiedID],
-        resultHandler: ResultHandler? = nil
+        id: UUID,
+        domain: String
     ) {
-        self.qualifiedIDs = qualifiedIDs
-        self.resultHandler = resultHandler
+        self.id = id
+        self.domain = domain
+    }
+
+}
+
+extension QualifiedID: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        "\(uuid)@\(domain)"
+    }
+
+}
+
+extension QualifiedID {
+
+    public var uuid: UUID {
+        get { id }
+        set { id = newValue }
+    }
+
+    public init(
+        uuid: UUID,
+        domain: String
+    ) {
+        self.init(
+            id: uuid,
+            domain: domain
+        )
     }
 
 }

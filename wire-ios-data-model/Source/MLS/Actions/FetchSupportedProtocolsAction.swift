@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 public final class FetchSupportedProtocolsAction: EntityAction {
 

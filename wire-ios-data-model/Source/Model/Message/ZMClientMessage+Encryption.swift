@@ -19,6 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireLogging
+import WireFoundation
 
 private var zmLog = ZMSLog(tag: "message encryption")
 

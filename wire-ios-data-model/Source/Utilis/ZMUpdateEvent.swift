@@ -17,6 +17,7 @@
 //
 
 import WireLogging
+import WireFoundation
 
 public enum UpdateEventSource: String {
     case pushChannel

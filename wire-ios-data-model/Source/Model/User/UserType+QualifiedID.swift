@@ -17,6 +17,7 @@
 //
 
 import WireTransport
+import WireFoundation
 
 public extension UserType {
 

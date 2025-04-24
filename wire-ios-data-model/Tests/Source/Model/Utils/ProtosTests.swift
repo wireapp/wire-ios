@@ -18,6 +18,7 @@
 
 import WireProtos
 import XCTest
+import WireFoundation
 
 @testable import WireDataModel
 

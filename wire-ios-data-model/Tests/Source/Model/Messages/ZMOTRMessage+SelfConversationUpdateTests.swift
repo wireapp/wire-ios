@@ -17,6 +17,8 @@
 //
 
 import XCTest
+import WireFoundation
+
 @testable import WireDataModel
 
 class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
