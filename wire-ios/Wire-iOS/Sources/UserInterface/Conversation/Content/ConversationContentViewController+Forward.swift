@@ -47,7 +47,7 @@ extension ShareDestination where Self: ConversationGroupAvatarViewConversation {
         return avatarView
     }
 
-    var qualifiedID: WireDataModel.QualifiedID? {
+    var qualifiedID: QualifiedID? {
         nil
     }
 }

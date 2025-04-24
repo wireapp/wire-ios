@@ -25,7 +25,7 @@ class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRan
 
     var stableRandomParticipants: [UserType] = []
 
-    var qualifiedID: WireDataModel.QualifiedID? = .mockID1
+    var qualifiedID: QualifiedID? = .mockID1
 
     override required init() {}
 

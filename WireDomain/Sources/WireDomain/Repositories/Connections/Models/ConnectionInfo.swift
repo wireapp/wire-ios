@@ -17,13 +17,14 @@
 //
 
 import WireDataModel
+import WireFoundation
 
 public struct ConnectionInfo: Equatable, Sendable {
     public let senderID: UUID?
     public let receiverID: UUID?
-    public let receiverQualifiedID: WireDataModel.QualifiedID?
+    public let receiverQualifiedID: QualifiedID?
     public let conversationID: UUID?
-    public let qualifiedConversationID: WireDataModel.QualifiedID?
+    public let qualifiedConversationID: QualifiedID?
     public let lastUpdate: Date
     public let status: WireDataModel.ZMConnectionStatus
 }

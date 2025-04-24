@@ -17,9 +17,11 @@
 //
 
 import WireDataModel
+import Foundation
+import WireFoundation
 
 public struct NewUserInfo: Equatable, Sendable {
-    let userID: WireDataModel.QualifiedID
+    let userID: QualifiedID
     let name: String
     let handle: String?
     let teamID: UUID?

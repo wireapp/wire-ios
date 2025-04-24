@@ -18,6 +18,7 @@
 
 import WireAPI
 import WireDataModel
+import WireFoundation
 
 extension WireAPI.ConnectionStatus {
 

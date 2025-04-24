@@ -19,27 +19,28 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireFoundation
 
-extension Collection<WireDataModel.QualifiedID> {
+extension Collection<QualifiedID> {
 
-    func toAPIModel() -> [WireAPI.QualifiedID] {
+    func toAPIModel() -> [QualifiedID] {
         map { $0.toAPIModel() }
     }
 
 }
 
-extension WireDataModel.QualifiedID {
+extension QualifiedID {
 
-    func toAPIModel() -> WireAPI.QualifiedID {
+    func toAPIModel() -> QualifiedID {
         UserID(uuid: uuid, domain: domain)
     }
 
 }
 
-extension WireAPI.QualifiedID {
+extension QualifiedID {
 
-    func toDomainModel() -> WireDataModel.QualifiedID {
-        WireDataModel.QualifiedID(uuid: uuid, domain: domain)
+    func toDomainModel() -> QualifiedID {
+        QualifiedID(uuid: uuid, domain: domain)
     }
 
 }

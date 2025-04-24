@@ -19,6 +19,8 @@
 import WireAPI
 import WireDomainSupport
 import XCTest
+import WireFoundation
+
 @testable import WireDomain
 
 final class UserDeleteEventProcessorTests: XCTestCase {

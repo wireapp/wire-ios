@@ -21,6 +21,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
 import XCTest
+import WireFoundation
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -147,7 +149,7 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
     // TODO: [WPB-17284] Add UTs (if possible) for other message content types
 
     private enum Scaffolding {
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
+        static let conversationID = QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let mlsTextMessageEvent = ConversationMLSMessageAddEvent(
             conversationID: conversationID,
