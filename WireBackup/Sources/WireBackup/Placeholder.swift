@@ -16,3 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
+public protocol Dummy {
+    func something()
+}

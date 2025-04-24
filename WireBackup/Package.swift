@@ -20,14 +20,19 @@ let package = Package(
                 "WireFoundation"
             ]
         ),
-        .testTarget(
-            name: "WireBackupTests",
-            dependencies: ["WireBackup"]
-        ),
         .target(
             name: "WireBackupSupport",
-            dependencies: ["WireBackup"],
+            dependencies: [
+                "WireBackup"
+            ],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+        ),
+        .testTarget(
+            name: "WireBackupTests",
+            dependencies: [
+                "WireBackup",
+                "WireBackupSupport"
+            ]
         )
     ],
     swiftLanguageModes: [.v6]
