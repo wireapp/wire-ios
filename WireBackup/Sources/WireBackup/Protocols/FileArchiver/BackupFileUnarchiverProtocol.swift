@@ -16,4 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package protocol BackupCreatorProtocol {}
+public import Foundation
+
+// sourcery: AutoMockable
+public protocol BackupFileUnarchiverProtocol: Sendable {
+
+    /// Extract the zip file at `sourceURL` and place the contents in the provided `destinationURL` directory.
+    func unzipFile(
+        at sourceURL: URL,
+        to destinationURL: URL
+    ) throws
+
+}

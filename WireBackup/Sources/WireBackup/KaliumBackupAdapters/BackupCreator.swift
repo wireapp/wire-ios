@@ -16,20 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+public import WireFoundation
+
 import KaliumBackup
-import WireFoundation
 
-final class CreateBackupFileArchiverToFileZipperAdapter: FileZipper {
+public struct BackupCreator<FileArchiver> where FileArchiver: BackupFileArchiverProtocol {
 
-    let fileManager: FileManager
-    let fileArchiver: any CreateBackupFileArchiverProtocol
+    private let mpBackupCreator: MPBackupExporter
 
-    init(
-        fileManager: FileManager,
-        fileArchiver: any CreateBackupFileArchiverProtocol
+    public init(
+        selfUserID: QualifiedID,
+        workDirectoryURL: URL,
+        outputDirectoryURL: URL,
+        fileArchiver: FileArchiver
     ) {
-        self.fileManager = fileManager
+        mpBackupCreator = MPBackupExporter(
+            selfUserId: BackupQualifiedId(selfUserID),
+            workDirectory: workDirectoryURL.path(),
+            outputDirectory: outputDirectoryURL.path(),
+            fileZipper: FileArchiverToFileZipperAdapter(fileArchiver)
+        )
+    }
+
+}
+
+private final class FileArchiverToFileZipperAdapter<FileArchiver>: FileZipper
+where FileArchiver: BackupFileArchiverProtocol {
+
+    let fileManager: FileManager = .default
+    let fileArchiver: FileArchiver
+
+    init(_ fileArchiver: FileArchiver) {
         self.fileArchiver = fileArchiver
     }
 

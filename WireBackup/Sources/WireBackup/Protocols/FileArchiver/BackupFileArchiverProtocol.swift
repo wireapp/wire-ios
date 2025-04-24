@@ -16,27 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireBackup
-public import WireFoundation
+public import Foundation
 
-import KaliumBackup
+// sourcery: AutoMockable
+public protocol BackupFileArchiverProtocol: Sendable {
 
-public struct BackupCreator: BackupCreatorProtocol {
-
-    private let mpBackupCreator: MPBackupExporter
-
-    public init(
-        selfUserID: QualifiedID,
-        workDirectoryURL: URL,
-        outputDirectoryURL: URL,
-        fileZipper: any FileZipper
-    ) {
-        mpBackupCreator = MPBackupExporter(
-            selfUserId: BackupQualifiedId(selfUserID),
-            workDirectory: workDirectoryURL.path(),
-            outputDirectory: outputDirectoryURL.path(),
-            fileZipper: <#T##any FileZipper#>
-        )
-    }
+    /// Creates a zip file at `destinationURL` from the file or directory at `sourceURL`.
+    func zipResources(
+        at resourceURLs: [URL],
+        into destinationURL: URL
+    ) throws
 
 }

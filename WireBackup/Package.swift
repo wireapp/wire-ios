@@ -6,7 +6,6 @@ let package = Package(
     name: "WireBackup",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "KaliumBackupAdapter", targets: ["KaliumBackupAdapter"]),
         .library(name: "WireBackup", targets: ["WireBackup"])
     ],
     dependencies: [
@@ -17,18 +16,10 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "KaliumBackupAdapter",
+            name: "WireBackup",
             dependencies: [
                 "KaliumBackup",
                 .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines"),
-                "WireBackup",
-                "WireFoundation"
-            ]
-        ),
-
-        .target(
-            name: "WireBackup",
-            dependencies: [
                 "WireFoundation"
             ]
         ),
