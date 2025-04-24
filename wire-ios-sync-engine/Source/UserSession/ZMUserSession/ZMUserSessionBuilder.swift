@@ -54,7 +54,7 @@ struct ZMUserSessionBuilder {
     private var userId: UUID?
     private var minTLSVersion: String?
     private var apiVersion: WireAPI.APIVersion?
-    private var journal: JournalStore?
+    private var journal: Journal?
 
     // MARK: - Initialize
 
@@ -145,7 +145,7 @@ struct ZMUserSessionBuilder {
         transportSession: any TransportSessionType,
         userId: UUID,
         minTLSVersion: String?,
-        journal: JournalStore
+        journal: Journal
     ) {
         // reused dependencies
 

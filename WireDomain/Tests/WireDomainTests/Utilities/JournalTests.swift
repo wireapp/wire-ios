@@ -24,45 +24,33 @@ import Testing
 @Suite("JournalStore tests", .serialized)
 class JournalStoreTests {
 
-    let directoryURL: URL
+    let userID = UUID()
+    let storage = UserDefaults.temporary()
 
-    init() {
-        self.directoryURL = FileManager.default.temporaryDirectory.appending(
-            path: UUID().uuidString
-        )
-    }
-
-    deinit {
-        try? FileManager.default.removeItem(at: directoryURL)
-    }
+    lazy var sut = Journal(
+        userID: userID,
+        storage: storage
+    )
 
     @Test("Store returns default entry when no entry found")
-    func returnsDefaultValueWhenNoEntryFound() throws {
-        // Given
-        let sut = try JournalStore(directoryURL: directoryURL)
-
+    func returnsDefaultValueWhenNoEntryFound() {
         // When
-        let entry = try sut.fetchEntry(SyncV2JournalEntry.self)
+        let entry = sut[.isSyncV2Enabled]
 
         // Then
-        #expect(entry == SyncV2JournalEntry.defaultValue)
+        #expect(entry == JournalKey<Bool>.isSyncV2Enabled.defaultValue)
     }
 
     @Test("Store an entry, then fetch it.")
-    func storeAndFetchAnEntry() throws {
+    func storeAndFetchAnEntry() {
         // Given
-        let sut = try JournalStore(directoryURL: directoryURL)
-        let entry = SyncV2JournalEntry(
-            isEnabled: true,
-            didMigrateLegacyEvents: true
-        )
+        #expect(sut[.isSyncV2Enabled] == false)
 
         // When
-        try sut.storeEntry(entry)
-        let fetchedEntry = try sut.fetchEntry(SyncV2JournalEntry.self)
+        sut[.isSyncV2Enabled] = true
 
         // Then
-        #expect(fetchedEntry == entry)
+        #expect(sut[.isSyncV2Enabled] == true)
     }
 
 }

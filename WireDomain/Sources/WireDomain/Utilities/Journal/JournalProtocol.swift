@@ -16,21 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Inforation concerning the new version of the
-/// sync logic.
+public protocol JournalProtocol {
 
-public struct SyncV2JournalEntry: JournalEntry, Sendable, Equatable {
+    subscript(_ key: JournalKey<Bool>) -> Bool { get set }
+    func save() throws
 
-    public static let uniqueName = "sync_v2"
-    public static let defaultValue = SyncV2JournalEntry()
+}
 
-    /// Whether the new sync is enabled.
+public enum JournalError: Error {
 
-    public var isSyncV2Enabled = false
-
-    /// Whether an initial sync is required after
-    /// migrating legacy events.
-
-    public var isInitialSyncRequired = false
+    case failedToSave
 
 }

@@ -1057,11 +1057,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                     return
                 }
 
-                let journal = try! JournalStore(
-                    rootURL: CoreDataStack.accountDataFolder(
-                        accountIdentifier: account.userIdentifier,
-                        applicationContainer: sharedContainerURL
-                    )
+                let journal = Journal(
+                    userID: account.userIdentifier,
+                    storage: sharedUserDefaults
                 )
 
                 enableNewSyncIfNeeded(
@@ -1086,7 +1084,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func enableNewSyncIfNeeded(
-        journal: JournalStore,
+        journal: Journal,
         coreDataStack: CoreDataStack,
         completion: @escaping () -> Void
     ) {
@@ -1102,10 +1100,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             return completion()
         }
 
-        var journalEntry = try! journal.fetchEntry(SyncV2JournalEntry.self)
-
         // Only continue if new sync isn't already on.
-        guard !journalEntry.isSyncV2Enabled else {
+        guard !journal[.isSyncV2Enabled] else {
             return completion()
         }
 
@@ -1126,14 +1122,13 @@ public final class SessionManager: NSObject, SessionManagerType {
                     try await migrator.migrateLegacyUpdateEvents()
                     // Since we only migrate some events, we require an
                     // initial sync to ensure we didn't miss updates.
-                    journalEntry.isInitialSyncRequired = true
+                    journal[.isInitialSyncRequired] = true
                 } else {
                     WireLogger.sync.debug("no migration needed")
                 }
 
-                journalEntry.isSyncV2Enabled = true
-                try journal.storeEntry(journalEntry)
-
+                journal[.isSyncV2Enabled] = true
+                try journal.save()
             } catch {
                 WireLogger.sync.critical("failed to migrate update events: \(error)")
             }
@@ -1144,13 +1139,12 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     /// Executes post migration slow sync or sync resources
     private func triggerMigrationsNeedsActionsIfNeeded(
-        journal: JournalStore,
+        journal: Journal,
         userSession: ZMUserSession
     ) {
-        let entry = try! journal.fetchEntry(SyncV2JournalEntry.self)
         let context = userSession.syncContext
         context.perform {
-            if context.readMigrationNeedsSlowSyncFlag() || entry.isInitialSyncRequired {
+            if context.readMigrationNeedsSlowSyncFlag() || journal[.isInitialSyncRequired] {
                 userSession.triggerInitialSync()
             } else if context.readMigrationNeedsSyncResourcesFlag() {
                 userSession.triggerResourcesSync()
@@ -1290,7 +1284,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func startBackgroundSession(
         for account: Account,
         with coreDataStack: CoreDataStack,
-        journal: JournalStore
+        journal: Journal
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig,

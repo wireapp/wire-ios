@@ -61,7 +61,7 @@ open class AuthenticatedSessionFactory {
         configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool,
-        journal: JournalStore
+        journal: Journal
     ) -> ZMUserSession? {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,

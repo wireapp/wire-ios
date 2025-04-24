@@ -109,7 +109,7 @@ public final class ZMUserSession: NSObject {
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     let analyiticsLogger: WireLogger
-    private let journal: JournalStore
+    private let journal: Journal
 
     // MARK: Computed Properties
 
@@ -410,7 +410,7 @@ public final class ZMUserSession: NSObject {
         backendEnvironment: WireAPI.BackendEnvironment,
         minTLSVersion: WireAPI.TLSVersion,
         apiVersion: WireAPI.APIVersion,
-        journal: JournalStore
+        journal: Journal
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
