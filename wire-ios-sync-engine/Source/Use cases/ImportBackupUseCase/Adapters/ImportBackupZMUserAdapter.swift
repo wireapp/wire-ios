@@ -18,10 +18,9 @@
 
 import WireDataModel
 import WireDomainPackage
+import WireFoundation
 
 struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
-
-    typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
         ZMUser.fetchRequest() // TODO: what about the self user?
@@ -42,8 +41,7 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
     var user: ZMUser
 
     var id: QualifiedID {
-        let qualifiedID = user.qualifiedID ?? .init(uuid: user.remoteIdentifier, domain: user.domain ?? "")
-        return QualifiedID(qualifiedID)
+        user.qualifiedID ?? .init(uuid: user.remoteIdentifier, domain: user.domain ?? "")
     }
 
     var name: String {

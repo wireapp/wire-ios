@@ -18,10 +18,9 @@
 
 import WireDataModel
 import WireDomainPackage
+import WireFoundation
 
 struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol { // TODO: try to replace by repository (WireDomain)
-
-    typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
         ZMConversation.fetchRequest()
@@ -46,8 +45,7 @@ struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol
     var conversation: ZMConversation
 
     var id: QualifiedID {
-        let qualifiedID = conversation.qualifiedID ?? .init(uuid: conversation.remoteIdentifier, domain: conversation.domain ?? "")
-        return QualifiedID(qualifiedID)
+        conversation.qualifiedID ?? .init(uuid: conversation.remoteIdentifier, domain: conversation.domain ?? "")
     }
 
     var name: String {

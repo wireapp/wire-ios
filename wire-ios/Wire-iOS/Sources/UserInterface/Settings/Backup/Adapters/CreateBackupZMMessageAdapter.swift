@@ -17,12 +17,11 @@
 //
 
 import Foundation
+import WireFoundation
 import WireDataModel
 import WireDomainPackage
 
 struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
-
-    typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
         ZMMessage.fetchRequest()
@@ -126,8 +125,8 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
         }
 
         self.id = id
-        self.conversationID = QualifiedID(conversationID)
-        self.senderUserID = QualifiedID(senderUserID)
+        self.conversationID = conversationID
+        self.senderUserID = senderUserID
         self.senderClientID = message.senderClientID
         self.creationDate = creationDate
         self.content = content

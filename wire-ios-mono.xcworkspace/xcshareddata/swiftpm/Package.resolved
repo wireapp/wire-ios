@@ -101,6 +101,15 @@
         }
       },
       {
+        "package": "KMPNativeCoroutines",
+        "repositoryURL": "https://github.com/rickclephas/KMP-NativeCoroutines.git",
+        "state": {
+          "branch": null,
+          "revision": "c84619cc90d2d4b05787b0a686ad7767e4033ab5",
+          "version": "1.0.0-ALPHA-27"
+        }
+      },
+      {
         "package": "NeedleFoundation",
         "repositoryURL": "https://github.com/uber/needle.git",
         "state": {
@@ -143,6 +152,15 @@
           "branch": null,
           "revision": "8c61e5e38e9f737dd68512ed1ea5ab081244ad65",
           "version": "1.12.0"
+        }
+      },
+      {
+        "package": "RxSwift",
+        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "5dd1907d64f0d36f158f61a466bab75067224893",
+          "version": "6.9.0"
         }
       },
       {

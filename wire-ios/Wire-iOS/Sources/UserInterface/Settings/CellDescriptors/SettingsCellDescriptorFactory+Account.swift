@@ -396,7 +396,7 @@ extension SettingsCellDescriptorFactory {
                 eventProcessorHandle: EventProcessorHandle(),
                 fileArchiver: CreateBackupFileArchiver(),
                 currentDateProvider: SystemDateProvider(),
-                selfUserID: WireDomainPackage.QualifiedID(selfUser.qualifiedID!),
+                selfUserID: selfUser.qualifiedID!,
                 selfUserHandle: selfUser.handle,
                 logger: WireLogger.backupExport
             )

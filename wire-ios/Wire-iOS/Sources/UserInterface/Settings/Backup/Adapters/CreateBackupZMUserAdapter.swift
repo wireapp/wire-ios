@@ -18,10 +18,9 @@
 
 import WireDataModel
 import WireDomainPackage
+import WireFoundation
 
 struct CreateBackupZMUserAdapter: CreateBackupUserEntityProtocol {
-
-    typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
         ZMUser.fetchRequest()
@@ -32,7 +31,7 @@ struct CreateBackupZMUserAdapter: CreateBackupUserEntityProtocol {
     let handle: String
 
     init?(_ record: any NSFetchRequestResult) {
-        guard let user = record as? ZMUser, let qualifiedID = user.qualifiedID.map(QualifiedID.init) else { return nil } // TODO: prevent silent failure?
+        guard let user = record as? ZMUser, let qualifiedID = user.qualifiedID else { return nil } // TODO: prevent silent failure?
 
         id = qualifiedID
         name = user.name ?? ""
