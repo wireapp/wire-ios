@@ -114,7 +114,8 @@ open class AuthenticatedSessionFactory {
             applicationGroupIdentifier: nil,
             applicationVersion: appVersion,
             minTLSVersion: minTLSVersion,
-            selfClientID: selfClientID
+            selfClientID: selfClientID,
+            isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()
