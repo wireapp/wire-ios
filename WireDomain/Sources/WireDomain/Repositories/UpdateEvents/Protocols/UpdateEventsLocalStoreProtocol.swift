@@ -69,4 +69,5 @@ public protocol UpdateEventsLocalStoreProtocol {
         atIndex index: Int64
     ) async throws
 
+    func calculateLastUnreadMessages() async
 }
