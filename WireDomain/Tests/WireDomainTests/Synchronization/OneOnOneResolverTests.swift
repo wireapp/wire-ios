@@ -108,7 +108,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(createGroupInvocation.groupID, Scaffolding.mlsGroupID)
         XCTAssertEqual(
             createGroupInvocation.users,
-            [MLSUser(Scaffolding.receiverQualifiedID.toDomainModel())]
+            [MLSUser(Scaffolding.receiverQualifiedID)]
         )
 
         await context.perform {
@@ -337,7 +337,7 @@ final class OneOnOneResolverTests: XCTestCase {
         userLocalStore.fetchUserIdDomain_MockValue = user
         userLocalStore.fetchSelfUser_MockValue = selfUser
         userLocalStore
-            .fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
+            .fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID]
 
         pullMLSOneOnOneSync.pullUserIDUserDomain_MockValue = Scaffolding.mlsGroupID
         conversationLocalStore.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation
