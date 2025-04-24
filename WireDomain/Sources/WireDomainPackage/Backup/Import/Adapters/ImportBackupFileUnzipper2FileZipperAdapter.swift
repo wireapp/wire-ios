@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireBackup
+import KaliumBackup
 import WireFoundation
 
 final class ImportBackupFileArchiverToBackupFileUnzipper: BackupFileUnzipper {
@@ -33,14 +33,14 @@ final class ImportBackupFileArchiverToBackupFileUnzipper: BackupFileUnzipper {
         self.fileArchiver = fileArchiver
     }
 
-    func unzipBackup(zipPath: String) -> String { // TODO: add throws
+    func unzipBackup(zipPath: String) throws -> String {
 
         let archiveURL = URL(filePath: zipPath, directoryHint: .notDirectory)
         let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             .appending(path: UUID().uuidString, directoryHint: .isDirectory)
-        try! fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true) // TODO: throw error
+        try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
 
-        try! fileArchiver.unzipFile(at: archiveURL, to: destinationDirectory) // TODO: throw error
+        try fileArchiver.unzipFile(at: archiveURL, to: destinationDirectory)
         return destinationDirectory.path()
     }
 

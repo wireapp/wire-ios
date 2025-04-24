@@ -23,8 +23,8 @@ let package = Package(
         .target(
             name: "WireDomainPackage",
             dependencies: [
+                "KaliumBackup",
                 "WireAPI",
-                "WireBackup",
                 "WireLogging",
                 "WireFoundation",
                 .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines")
@@ -45,13 +45,13 @@ let package = Package(
         ),
 
         .binaryTarget(
-            name: "WireBackup",
-            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/16aeff5783fbd8d66d914bd6a8de3d60d2b3c7f5/WireDomain/Frameworks/WireBackup.xcframework.zip?download=true",
-            checksum: "ac0896ea966ffdf9199ed99410345db11e82ef76b9ee5f87a237ebc5c1fca9df"
+            name: "KaliumBackup",
+            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/ef4ecddb36eb5fe9c743b4fe48f224d8ef846532/WireDomain/Frameworks/KaliumBackup.xcframework.zip?download=true",
+            checksum: "e6165410781ef8207a8d5bdc02bd04f092517da37e9e5bb57879610685c31806"
         )
         // .binaryTarget(
-        //     name: "WireBackup",
-        //     path: "../../wire-android/kalium/backup/build/XCFrameworks/release/WireBackup.xcframework"
+        //     name: "KaliumBackup",
+        //     path: "../../wire-android/kalium/backup/build/XCFrameworks/release/KaliumBackup.xcframework"
         // )
     ]
 )

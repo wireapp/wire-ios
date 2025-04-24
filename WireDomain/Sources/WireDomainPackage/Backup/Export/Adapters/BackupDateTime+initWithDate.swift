@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireBackup
+import KaliumBackup
 
 extension BackupDateTime {
 

@@ -20,7 +20,7 @@ public import CoreData
 public import WireFoundation
 public import WireLogging
 
-@preconcurrency import WireBackup
+@preconcurrency import KaliumBackup
 
 public struct CreateBackupUseCase<
     UserAdapter: CreateBackupUserEntityProtocol,

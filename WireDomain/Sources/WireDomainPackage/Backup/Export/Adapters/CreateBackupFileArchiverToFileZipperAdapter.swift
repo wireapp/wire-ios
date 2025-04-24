@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireBackup
+import KaliumBackup
 import WireFoundation
 
 final class CreateBackupFileArchiverToFileZipperAdapter: FileZipper {

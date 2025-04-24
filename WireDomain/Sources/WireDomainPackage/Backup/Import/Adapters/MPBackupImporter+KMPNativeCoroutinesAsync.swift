@@ -17,7 +17,7 @@
 //
 
 import KMPNativeCoroutinesAsync
-@preconcurrency import WireBackup
+@preconcurrency import KaliumBackup
 
 extension MPBackupImporter {
 

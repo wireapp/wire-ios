@@ -17,7 +17,8 @@
 //
 
 import WireAPI
-import WireBackup
+import WireFoundation
+import KaliumBackup
 
 extension BackupQualifiedId {
 

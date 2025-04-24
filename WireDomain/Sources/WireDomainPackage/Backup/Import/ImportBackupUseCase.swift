@@ -20,7 +20,7 @@ public import CoreData
 public import Foundation
 public import WireLogging
 
-@preconcurrency import WireBackup
+@preconcurrency import KaliumBackup
 import WireFoundation
 
 public struct ImportBackupUseCase<

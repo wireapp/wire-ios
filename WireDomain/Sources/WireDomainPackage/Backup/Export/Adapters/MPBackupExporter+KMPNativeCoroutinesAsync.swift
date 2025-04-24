@@ -17,12 +17,11 @@
 //
 
 import KMPNativeCoroutinesAsync
-@preconcurrency import WireBackup
+@preconcurrency import KaliumBackup
 
 extension MPBackupExporter {
 
     func finalize(password: String) async throws -> URL {
-        let password = if password.isEmpty { String?.none } else { password }
 
         let result = await asyncResult(for: finalize(password: password))
         let backupResult: any BackupExportResult

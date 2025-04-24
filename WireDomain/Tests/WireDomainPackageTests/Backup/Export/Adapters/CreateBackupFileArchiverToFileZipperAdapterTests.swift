@@ -17,13 +17,12 @@
 //
 
 import Testing
-import WireBackup
+import KaliumBackup
 import WireDomainPackageSupport
-import WireFoundationSupport
 
 @testable import WireDomainPackage
 
-struct CreateBackupFileZipper2FileZipperAdapterTests {
+struct CreateBackupFileArchiverToFileZipperAdapterTests {
 
     @Test
     func testFileArchiverInvocation() async throws {
@@ -31,13 +30,9 @@ struct CreateBackupFileZipper2FileZipperAdapterTests {
         let mockFileArchiver = CreateBackupFileArchiverProtocolMock()
         mockFileArchiver.zipResourcesAtResourceURLsURLIntoDestinationURLURLVoidClosure = { _, _ in }
 
-        let mockDateProvider = MockCurrentDateProviding()
-        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-02T14:42:12+02:00")
-
-        let sut = CreateBackupFileZipper2FileZipperAdapter(
+        let sut = CreateBackupFileArchiverToFileZipperAdapter(
             fileManager: .default,
-            fileArchiver: mockFileArchiver,
-            currentDateProvider: mockDateProvider
+            fileArchiver: mockFileArchiver
         )
 
         // When
