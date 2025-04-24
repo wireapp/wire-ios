@@ -422,12 +422,12 @@ final class ConversationContentViewController: UIViewController {
 
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows
 
-        if let firstIndexPath = indexPathsForVisibleRows?.first {
-            let lastVisibleMessage = dataSource.messages[firstIndexPath.section]
+        if let firstIndexPath = indexPathsForVisibleRows?.first,
+           let lastVisibleMessage = dataSource.messages[safe: firstIndexPath.section] {
             conversation.markMessagesAsRead(until: lastVisibleMessage)
         }
 
-        // Update media bar visiblity
+        // Update media bar visibility
         updateMediaBar()
     }
 
