@@ -134,4 +134,12 @@ public protocol UserDefaultsProtocol {
     func dictionaryRepresentation() -> [String: Any]
 }
 
+public extension UserDefaultsProtocol {
+
+    func keys() -> [String] {
+        Array(dictionaryRepresentation().keys)
+    }
+
+}
+
 extension UserDefaults: UserDefaultsProtocol {}

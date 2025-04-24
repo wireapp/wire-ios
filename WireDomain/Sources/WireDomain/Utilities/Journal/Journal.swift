@@ -78,10 +78,8 @@ public class Journal: JournalProtocol {
     /// Delete all values in the journal.
 
     public func erase() {
-        for key in storage.dictionaryRepresentation().keys {
-            if key.hasPrefix(namespace) {
-                storage.removeObject(forKey: key)
-            }
+        for key in storage.keys() where key.hasPrefix(namespace) {
+            storage.removeObject(forKey: key)
         }
     }
 
