@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -98,12 +98,12 @@ public class MockCheckOneOnOneConversationIsReadyUseCaseProtocol: CheckOneOnOneC
 
     // MARK: - invoke
 
-    public var invokeUserID_Invocations: [QualifiedID] = []
+    public var invokeUserID_Invocations: [WireDataModel.QualifiedID] = []
     public var invokeUserID_MockError: Error?
-    public var invokeUserID_MockMethod: ((QualifiedID) async throws -> Bool)?
+    public var invokeUserID_MockMethod: ((WireDataModel.QualifiedID) async throws -> Bool)?
     public var invokeUserID_MockValue: Bool?
 
-    public func invoke(userID: QualifiedID) async throws -> Bool {
+    public func invoke(userID: WireDataModel.QualifiedID) async throws -> Bool {
         invokeUserID_Invocations.append(userID)
 
         if let error = invokeUserID_MockError {
@@ -721,12 +721,12 @@ public class MockSearchUsersUseCaseProtocol: SearchUsersUseCaseProtocol {
 
     // MARK: - invoke
 
-    public var invokeQueryOptionsMessageProtocol_Invocations: [(query: String, options: SearchOptions, messageProtocol: MessageProtocol?)] = []
+    public var invokeQueryOptionsMessageProtocol_Invocations: [(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?)] = []
     public var invokeQueryOptionsMessageProtocol_MockError: Error?
-    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, MessageProtocol?) async throws -> SearchResult)?
+    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, WireDataModel.MessageProtocol?) async throws -> SearchResult)?
     public var invokeQueryOptionsMessageProtocol_MockValue: SearchResult?
 
-    public func invoke(query: String, options: SearchOptions, messageProtocol: MessageProtocol?) async throws -> SearchResult {
+    public func invoke(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?) async throws -> SearchResult {
         invokeQueryOptionsMessageProtocol_Invocations.append((query: query, options: options, messageProtocol: messageProtocol))
 
         if let error = invokeQueryOptionsMessageProtocol_MockError {
@@ -1181,10 +1181,10 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
     // MARK: - calculateSupportedProtocols
 
     public var calculateSupportedProtocols_Invocations: [Void] = []
-    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
-    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
+    public var calculateSupportedProtocols_MockMethod: (() -> Set<WireDataModel.MessageProtocol>)?
+    public var calculateSupportedProtocols_MockValue: Set<WireDataModel.MessageProtocol>?
 
-    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
+    public func calculateSupportedProtocols() -> Set<WireDataModel.MessageProtocol> {
         calculateSupportedProtocols_Invocations.append(())
 
         if let mock = calculateSupportedProtocols_MockMethod {
@@ -1203,6 +1203,29 @@ class MockUpdateEventMigratorDAOProtocol: UpdateEventMigratorDAOProtocol {
     // MARK: - Life cycle
 
 
+
+    // MARK: - existsLegacyEvent
+
+    var existsLegacyEvent_Invocations: [Void] = []
+    var existsLegacyEvent_MockError: Error?
+    var existsLegacyEvent_MockMethod: (() async throws -> Bool)?
+    var existsLegacyEvent_MockValue: Bool?
+
+    func existsLegacyEvent() async throws -> Bool {
+        existsLegacyEvent_Invocations.append(())
+
+        if let error = existsLegacyEvent_MockError {
+            throw error
+        }
+
+        if let mock = existsLegacyEvent_MockMethod {
+            return try await mock()
+        } else if let mock = existsLegacyEvent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `existsLegacyEvent`")
+        }
+    }
 
     // MARK: - indexOfLastEventEnvelope
 
@@ -1265,24 +1288,54 @@ class MockUpdateEventMigratorDAOProtocol: UpdateEventMigratorDAOProtocol {
         try await mock(eventEnvelope, index)
     }
 
-    // MARK: - deleteAllLegacyEventsAndSave
+    // MARK: - deleteNextBatchOfLegacyEvents
 
-    var deleteAllLegacyEventsAndSave_Invocations: [Void] = []
-    var deleteAllLegacyEventsAndSave_MockError: Error?
-    var deleteAllLegacyEventsAndSave_MockMethod: (() async throws -> Void)?
+    var deleteNextBatchOfLegacyEvents_Invocations: [Void] = []
+    var deleteNextBatchOfLegacyEvents_MockMethod: (() async -> Void)?
 
-    func deleteAllLegacyEventsAndSave() async throws {
-        deleteAllLegacyEventsAndSave_Invocations.append(())
+    func deleteNextBatchOfLegacyEvents() async {
+        deleteNextBatchOfLegacyEvents_Invocations.append(())
 
-        if let error = deleteAllLegacyEventsAndSave_MockError {
+        guard let mock = deleteNextBatchOfLegacyEvents_MockMethod else {
+            fatalError("no mock for `deleteNextBatchOfLegacyEvents`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - save
+
+    var save_Invocations: [Void] = []
+    var save_MockError: Error?
+    var save_MockMethod: (() async throws -> Void)?
+
+    func save() async throws {
+        save_Invocations.append(())
+
+        if let error = save_MockError {
             throw error
         }
 
-        guard let mock = deleteAllLegacyEventsAndSave_MockMethod else {
-            fatalError("no mock for `deleteAllLegacyEventsAndSave`")
+        guard let mock = save_MockMethod else {
+            fatalError("no mock for `save`")
         }
 
         try await mock()
+    }
+
+    // MARK: - discardChanges
+
+    var discardChanges_Invocations: [Void] = []
+    var discardChanges_MockMethod: (() async -> Void)?
+
+    func discardChanges() async {
+        discardChanges_Invocations.append(())
+
+        guard let mock = discardChanges_MockMethod else {
+            fatalError("no mock for `discardChanges`")
+        }
+
+        await mock()
     }
 
 }
