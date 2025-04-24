@@ -181,7 +181,9 @@ extension ConversationViewController {
     }
 
     func updateRightNavigationItemsButtons() {
-        navigationItem.rightBarButtonItems = rightNavigationItems(forConversation: conversation)
+        let items = rightNavigationItems(forConversation: conversation)
+        navigationItem.rightBarButtonItems = items
+        parent?.navigationItem.rightBarButtonItems = items
     }
 
     /// Update left navigation bar items
