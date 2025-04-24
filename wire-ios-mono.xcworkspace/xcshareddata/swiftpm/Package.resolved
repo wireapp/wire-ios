@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "fbdf582e56ea3f507309508f3fecf442f64753e8",
-          "version": "1.2.54"
+          "revision": "c728a32592730f89843639970e91feb75f7c1a53",
+          "version": "1.3.1"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "4741bcb266e9a805a403c758e56f2a3cad7f66a3",
-          "version": "0.1.1-alpha09"
+          "revision": "4b7577af50585420dc8280b38296e84daf2a6696",
+          "version": "0.1.1-alpha10"
         }
       },
       {
@@ -101,15 +101,6 @@
         }
       },
       {
-        "package": "KMPNativeCoroutines",
-        "repositoryURL": "https://github.com/rickclephas/KMP-NativeCoroutines.git",
-        "state": {
-          "branch": null,
-          "revision": "c84619cc90d2d4b05787b0a686ad7767e4033ab5",
-          "version": "1.0.0-ALPHA-27"
-        }
-      },
-      {
         "package": "NeedleFoundation",
         "repositoryURL": "https://github.com/uber/needle.git",
         "state": {
@@ -155,21 +146,12 @@
         }
       },
       {
-        "package": "RxSwift",
-        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "5dd1907d64f0d36f158f61a466bab75067224893",
-          "version": "6.9.0"
-        }
-      },
-      {
         "package": "smithy-swift",
         "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
         "state": {
           "branch": null,
-          "revision": "755367ae4e10004f8b5a94fbfdf3f638a1f225bc",
-          "version": "0.125.0"
+          "revision": "da2b2e906b6a8ef3674541b372c79c8eafd811c6",
+          "version": "0.127.0"
         }
       },
       {
