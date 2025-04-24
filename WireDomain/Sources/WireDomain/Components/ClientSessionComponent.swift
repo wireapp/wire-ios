@@ -176,7 +176,8 @@ public final class ClientSessionComponent {
     )
 
     private lazy var updateEventsLocalStore = UpdateEventsLocalStore(
-        context: eventContext,
+        eventContext: eventContext,
+        syncContext: syncContext,
         userID: selfUserID,
         sharedUserDefaults: sharedUserDefaults
     )
