@@ -10,11 +10,15 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
+        .package(path: "../WireFoundation"),
         .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
-            name: "WireBackup"
+            name: "WireBackup",
+            dependencies: [
+                "WireFoundation"
+            ]
         ),
         .testTarget(
             name: "WireBackupTests",
