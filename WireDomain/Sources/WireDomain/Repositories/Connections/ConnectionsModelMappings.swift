@@ -49,9 +49,9 @@ extension WireAPI.Connection {
         .init(
             senderID: senderID,
             receiverID: receiverID,
-            receiverQualifiedID: receiverQualifiedID?.toDomainModel(),
+            receiverQualifiedID: receiverQualifiedID,
             conversationID: conversationID,
-            qualifiedConversationID: qualifiedConversationID?.toDomainModel(),
+            qualifiedConversationID: qualifiedConversationID,
             lastUpdate: lastUpdate,
             status: status.toDomainModel()
         )

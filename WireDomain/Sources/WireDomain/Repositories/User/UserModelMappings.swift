@@ -21,30 +21,6 @@ import WireAPI
 import WireDataModel
 import WireFoundation
 
-extension Collection<QualifiedID> {
-
-    func toAPIModel() -> [QualifiedID] {
-        map { $0.toAPIModel() }
-    }
-
-}
-
-extension QualifiedID {
-
-    func toAPIModel() -> QualifiedID {
-        UserID(uuid: uuid, domain: domain)
-    }
-
-}
-
-extension QualifiedID {
-
-    func toDomainModel() -> QualifiedID {
-        QualifiedID(uuid: uuid, domain: domain)
-    }
-
-}
-
 extension Set<WireAPI.MessageProtocol> {
 
     func toDomainModel() -> Set<WireDataModel.MessageProtocol> {
@@ -132,7 +108,7 @@ extension WireAPI.User {
     func toDomainModel() -> NewUserInfo {
 
         .init(
-            userID: id.toDomainModel(),
+            userID: id,
             name: name,
             handle: handle,
             teamID: teamID,
@@ -159,7 +135,7 @@ extension WireAPI.SelfUser {
 
     func toDomainModel() -> NewUserInfo {
         .init(
-            userID: qualifiedID.toDomainModel(),
+            userID: qualifiedID,
             name: name,
             handle: handle,
             teamID: teamID,

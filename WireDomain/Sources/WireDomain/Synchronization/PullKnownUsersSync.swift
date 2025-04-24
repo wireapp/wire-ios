@@ -35,7 +35,7 @@ struct PullKnownUsersSync: PullKnownUsersSyncProtocol {
     func pull() async throws {
         let knownUserIDs = try await store.fetchUsersQualifiedIDs()
 
-        let userList = try await api.getUsers(userIDs: knownUserIDs.toAPIModel())
+        let userList = try await api.getUsers(userIDs: knownUserIDs)
 
         for user in userList.found {
             await store.persistUser(userInfo: user.toDomainModel())

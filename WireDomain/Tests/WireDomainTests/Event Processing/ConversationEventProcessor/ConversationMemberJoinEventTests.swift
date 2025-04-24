@@ -80,12 +80,12 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
             )
 
             let sender = modelHelper.createUser(
-                qualifiedID: Scaffolding.senderID.toDomainModel(),
+                qualifiedID: Scaffolding.senderID,
                 in: context
             )
 
             let addedUser = modelHelper.createUser(
-                qualifiedID: Scaffolding.memberID.toDomainModel(),
+                qualifiedID: Scaffolding.memberID,
                 in: context
             )
 

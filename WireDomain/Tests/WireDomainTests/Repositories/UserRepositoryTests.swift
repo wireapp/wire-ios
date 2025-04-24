@@ -96,7 +96,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        try await sut.pullUsers(userIDs: [Scaffolding.user1.id.toDomainModel()])
+        try await sut.pullUsers(userIDs: [Scaffolding.user1.id])
 
         // Then
 
@@ -118,7 +118,7 @@ final class UserRepositoryTests: XCTestCase {
             failed: []
         )
 
-        userLocalStore.fetchUsersQualifiedIDs_MockValue = [Scaffolding.user1.id.toDomainModel()]
+        userLocalStore.fetchUsersQualifiedIDs_MockValue = [Scaffolding.user1.id]
         userLocalStore.persistUserUserInfo_MockMethod = { _ in }
 
         // When
@@ -393,7 +393,7 @@ final class UserRepositoryTests: XCTestCase {
     func testFetchAllUserIdsWithOneOnOneConversation_It_Invokes_Local_Store_Method() async throws {
         // Given
 
-        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID.toDomainModel()]
+        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID]
 
         // When
 
@@ -402,13 +402,13 @@ final class UserRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userLocalStore.fetchAllUserIDsWithOneOnOneConversation_Invocations.count, 1)
-        XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
+        XCTAssertEqual(userIds, [Scaffolding.qualifiedID])
     }
 
     func testFetchAllUserIdsWithOneOnOneConversation() async throws {
         // Given
 
-        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID.toDomainModel()]
+        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID]
 
         // When
 
@@ -417,7 +417,7 @@ final class UserRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userLocalStore.fetchAllUserIDsWithOneOnOneConversation_Invocations.count, 1)
-        XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
+        XCTAssertEqual(userIds, [Scaffolding.qualifiedID])
     }
 
     private enum Scaffolding {

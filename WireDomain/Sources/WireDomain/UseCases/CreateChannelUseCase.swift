@@ -150,7 +150,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             let unqualifiedUserIDs: [UUID]
 
             if let ids = usersExcludingSelfUser.qualifiedUserIDs {
-                qualifiedUserIDs = ids.toAPIModel()
+                qualifiedUserIDs = ids
                 unqualifiedUserIDs = []
             } else {
                 qualifiedUserIDs = []
