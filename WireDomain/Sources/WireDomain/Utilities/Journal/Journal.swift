@@ -83,7 +83,7 @@ public class Journal: JournalProtocol {
         }
     }
 
-    private func rawKey(for key: JournalKey<some Any>) -> String {
+    func rawKey(for key: JournalKey<some Any>) -> String {
         // Prefix to avoid possible namespace conflicts.
         "\(namespace).\(key.name)"
     }

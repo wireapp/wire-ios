@@ -53,4 +53,18 @@ class JournalStoreTests {
         #expect(sut[.isSyncV2Enabled] == true)
     }
 
+    @Test("Erasing the journal only erases its values")
+    func erasingTheJournal() {
+        // Given
+        sut[.isSyncV2Enabled] = true
+        storage.set(true, forKey: "notAJournalKey")
+
+        // When
+        sut.erase()
+
+        // Then
+        #expect(storage.object(forKey: sut.rawKey(for: .isSyncV2Enabled)) == nil)
+        #expect(storage.object(forKey: "notAJournalKey") != nil)
+    }
+
 }
