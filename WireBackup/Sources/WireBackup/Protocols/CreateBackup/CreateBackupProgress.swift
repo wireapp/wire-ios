@@ -18,26 +18,23 @@
 
 public import Foundation
 
-// sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol: Sendable {
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
-}
-
-// MARK: -
-
-public enum ImportBackupProgress: Equatable, Sendable {
+public enum CreateBackupProgress: Sendable {
 
     case progress(_ current: Int, _ total: Int)
-    case done
+    case done(URL)
 
 }
 
 // MARK: - Convenience
 
-extension ImportBackupProgress {
+extension CreateBackupProgress {
 
     public static func progress(current: Int, total: Int) -> Self {
         .progress(current, total)
+    }
+
+    public static func done(url: URL) -> Self {
+        .done(url)
     }
 
 }

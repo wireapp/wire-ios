@@ -16,14 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
-
-@testable import WireDomainPackage
-
-struct Test {
-
-    @Test func nothing() async throws {
-        #expect(Bool(false))
-    }
-
+// sourcery: AutoMockable
+/// A use case to export the current app state using a provided `password`.
+public protocol CreateBackupUseCaseProtocol {
+    func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error>
 }
+

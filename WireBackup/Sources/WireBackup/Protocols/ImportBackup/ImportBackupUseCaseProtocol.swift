@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum CreateBackupError: Error, Equatable, CaseIterable {
-    /// The archiving library returned a failure when compressing the files.
-    case compressionError
+public import Foundation
+
+// sourcery: AutoMockable
+public protocol ImportBackupUseCaseProtocol: Sendable {
+    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
 }

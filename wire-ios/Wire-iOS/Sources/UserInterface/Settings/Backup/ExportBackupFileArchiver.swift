@@ -34,3 +34,8 @@ struct CreateBackupFileArchiver: CreateBackupFileArchiverProtocol {
         }
     }
 }
+
+enum CreateBackupFileArchiverError: Error, Equatable, CaseIterable {
+    /// The archiving library returned a failure when compressing the files.
+    case compressionError
+}
