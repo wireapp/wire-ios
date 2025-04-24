@@ -188,7 +188,6 @@ extension ConversationViewControllerSnapshotTests {
     // MARK: - Helper Method
 
     private func createSut(conversation: ZMConversation) {
-        //mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.coreDataStack = coreDataStack
         userSession.mockConversationList = ConversationList(
