@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDesign
 import WireLogging
 import WireSyncEngine
+import WireFoundation
 
 extension ZMConversation: ShareDestination {
 

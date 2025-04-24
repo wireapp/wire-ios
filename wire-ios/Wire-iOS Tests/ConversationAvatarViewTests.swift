@@ -18,6 +18,8 @@
 
 import WireTestingPackage
 import XCTest
+import WireFoundation
+
 @testable import Wire
 
 final class ConversationAvatarViewTests: XCTestCase {
