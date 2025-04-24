@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import WireTestingPackage
 import XCTest
+
 @testable import WireAPI
 @testable import WireAPISupport
 
