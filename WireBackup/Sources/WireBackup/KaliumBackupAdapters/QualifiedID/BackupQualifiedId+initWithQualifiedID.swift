@@ -16,7 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol Dummy {
-    func something()
+import WireFoundation
+import KaliumBackup
+
+extension BackupQualifiedId {
+
+    convenience init(_ qualifiedID: QualifiedID) {
+        self.init(
+            id: qualifiedID.id.uuidString,
+            domain: qualifiedID.domain
+        )
+    }
+
 }

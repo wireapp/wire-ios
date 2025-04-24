@@ -25,7 +25,6 @@ struct PlaceholderTest {
 
     @Test func nothing() async throws {
         #expect(Bool(false))
-        _ = DummyMock()
     }
 
 }

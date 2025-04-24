@@ -16,17 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
 import KaliumBackup
 
-extension BackupDateTime {
+extension QualifiedID {
 
-    convenience init(_ date: Date) {
-        // TODO: is there a way around formatting and parsing strings?
-        let isoString = ISO8601FormatStyle.format(date)
-        let instant = Kotlinx_datetimeInstant.Companion().parse(isoString: isoString)
-        self.init(instant: instant)
+    init?(_ qualifiedID: BackupQualifiedId) {
+        guard let id = UUID(uuidString: qualifiedID.id) else { return nil }
+        self.init(id: id, domain: qualifiedID.domain)
     }
-}
 
-private let ISO8601FormatStyle = Date.ISO8601FormatStyle()
+}
