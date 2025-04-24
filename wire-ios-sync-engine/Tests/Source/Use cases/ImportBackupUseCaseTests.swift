@@ -19,6 +19,7 @@
 import WireDataModelSupport
 import WireDomainPackage
 import WireDomainPackageSupport
+import WireFoundation
 import XCTest
 
 @testable import WireSyncEngine

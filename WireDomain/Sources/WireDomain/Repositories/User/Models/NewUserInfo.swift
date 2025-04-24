@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireDataModel
+import WireFoundation
 
 public struct NewUserInfo: Equatable, Sendable {
-    let userID: WireDataModel.QualifiedID
+    let userID: QualifiedID
     let name: String
     let handle: String?
     let teamID: UUID?

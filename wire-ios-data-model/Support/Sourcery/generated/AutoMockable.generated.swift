@@ -27,6 +27,7 @@
 import LocalAuthentication
 import Combine
 import WireCoreCrypto
+import WireFoundation
 
 @testable import WireDataModel
 

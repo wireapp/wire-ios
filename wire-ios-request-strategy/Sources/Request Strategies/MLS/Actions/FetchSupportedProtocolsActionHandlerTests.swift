@@ -18,6 +18,8 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
+
 @testable import WireRequestStrategy
 
 final class FetchSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<

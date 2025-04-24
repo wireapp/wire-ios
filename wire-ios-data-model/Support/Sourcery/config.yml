@@ -5,5 +5,5 @@ templates:
 output:
   ./generated
 args:
-  autoMockableImports: ["LocalAuthentication", "Combine", "WireCoreCrypto"]
+  autoMockableImports: ["LocalAuthentication", "Combine", "WireCoreCrypto", "WireFoundation"]
   autoMockableTestableImports: ["WireDataModel"]

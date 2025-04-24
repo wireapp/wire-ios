@@ -18,7 +18,9 @@
 
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
 import XCTest
+
 @testable import WireDomain
 
 final class ConnectionsLocalStoreTests: XCTestCase {
@@ -146,15 +148,15 @@ final class ConnectionsLocalStoreTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        nonisolated(unsafe) static let member1ID = WireDataModel.QualifiedID(
+        nonisolated(unsafe) static let member1ID = QualifiedID(
             uuid: .mockID1,
             domain: String.randomDomain()
         )
-        nonisolated(unsafe) static let conversationID = WireDataModel.QualifiedID(
+        nonisolated(unsafe) static let conversationID = QualifiedID(
             uuid: .mockID2,
             domain: String.randomDomain()
         )
-        nonisolated(unsafe) static let member2ID = WireDataModel.QualifiedID(
+        nonisolated(unsafe) static let member2ID = QualifiedID(
             uuid: .mockID3,
             domain: String.randomDomain()
         )

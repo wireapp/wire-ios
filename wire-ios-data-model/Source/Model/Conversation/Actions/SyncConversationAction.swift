@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 /// Fetches the metadata of a single conversation and stores it locally
 /// in the database.

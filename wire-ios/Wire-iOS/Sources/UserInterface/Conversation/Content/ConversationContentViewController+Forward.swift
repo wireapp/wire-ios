@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
@@ -47,7 +48,7 @@ extension ShareDestination where Self: ConversationGroupAvatarViewConversation {
         return avatarView
     }
 
-    var qualifiedID: WireDataModel.QualifiedID? {
+    var qualifiedID: QualifiedID? {
         nil
     }
 }

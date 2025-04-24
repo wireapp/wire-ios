@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 /// A local store dedicated to conversations.
@@ -399,7 +400,7 @@ public protocol ConversationLocalStoreProtocol {
 
     func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
-    ) async -> WireDataModel.QualifiedID?
+    ) async -> QualifiedID?
 
     func name(
         for conversation: ZMConversation

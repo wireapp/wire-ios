@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModelSupport
+import WireFoundation
 import WireRequestStrategy
 import WireSyncEngineSupport
 import WireTransport

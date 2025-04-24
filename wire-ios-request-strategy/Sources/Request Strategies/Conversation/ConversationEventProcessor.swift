@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {

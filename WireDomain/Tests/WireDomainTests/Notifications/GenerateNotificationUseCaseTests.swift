@@ -19,8 +19,10 @@
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
 import WireTestingPackage
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -68,7 +70,7 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
+        static let conversationID = QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
         static let userPushRemoveEvent = UpdateEvent.user(.pushRemove)
         static let conversationRenameEvent = UpdateEvent.conversation(

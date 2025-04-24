@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import WireTestingPackage
 import XCTest
+
 @testable import Wire
 
 class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider,
@@ -25,7 +27,7 @@ class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRan
 
     var stableRandomParticipants: [UserType] = []
 
-    var qualifiedID: WireDataModel.QualifiedID? = .mockID1
+    var qualifiedID: QualifiedID? = .mockID1
 
     override required init() {}
 

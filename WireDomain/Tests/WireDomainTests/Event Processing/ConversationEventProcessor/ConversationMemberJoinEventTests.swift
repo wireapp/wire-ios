@@ -19,7 +19,9 @@
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireFoundation
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 
@@ -110,7 +112,7 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
     private enum Scaffolding {
         static let domain = "domain.com"
         static let conversationID = ConversationID(uuid: UUID(), domain: domain)
-        static let memberID = WireAPI.QualifiedID(uuid: UUID(), domain: domain)
+        static let memberID = QualifiedID(uuid: UUID(), domain: domain)
         static let senderID = UserID(uuid: UUID(), domain: domain)
 
         static let member = Conversation.Member(

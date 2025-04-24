@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 extension Payload {
     struct NewConversation: CodableAPIVersionAware, Equatable {
