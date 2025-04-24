@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import Foundation
+import WireDataModel
 import WireFoundation
 
 public struct NewUserInfo: Equatable, Sendable {

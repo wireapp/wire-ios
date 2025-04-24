@@ -19,8 +19,8 @@
 import avs
 import Combine
 import Foundation
-import WireFoundation
 import WireDataModelSupport
+import WireFoundation
 import XCTest
 
 @testable import WireSyncEngine

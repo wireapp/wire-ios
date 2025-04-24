@@ -19,8 +19,8 @@
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import WireTestingPackage
 import WireFoundation
+import WireTestingPackage
 import XCTest
 
 @testable import WireAPI

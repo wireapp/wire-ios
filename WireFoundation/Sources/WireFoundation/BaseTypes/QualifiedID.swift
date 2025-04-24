@@ -43,14 +43,14 @@ extension QualifiedID: CustomDebugStringConvertible {
 
 }
 
-extension QualifiedID {
+public extension QualifiedID {
 
-    public var uuid: UUID {
+    var uuid: UUID {
         get { id }
         set { id = newValue }
     }
 
-    public init(
+    init(
         uuid: UUID,
         domain: String
     ) {

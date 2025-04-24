@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireFoundation
 import WireDataModel
+import WireFoundation
 
 public enum Payload {
 

@@ -18,8 +18,8 @@
 
 import WireAPI
 import WireDataModel
-import WireLogging
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 /// Creates and setup a group conversation

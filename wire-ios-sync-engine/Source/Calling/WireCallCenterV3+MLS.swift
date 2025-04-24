@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireFoundation
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 struct ConferenceParticipantsInfo {

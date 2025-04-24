@@ -18,8 +18,8 @@
 
 import Foundation
 import WireDataModel
-import WireLogging
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MLSEventProcessing {

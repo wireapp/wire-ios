@@ -20,9 +20,9 @@ import Combine
 import Foundation
 import WireAnalytics
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireRequestStrategy
-import WireFoundation
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,

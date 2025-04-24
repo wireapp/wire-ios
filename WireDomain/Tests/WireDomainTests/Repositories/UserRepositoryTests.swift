@@ -20,9 +20,9 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireFoundation
 import WireTestingPackage
 import XCTest
-import WireFoundation
 
 @testable import WireAPI
 @testable import WireDomain

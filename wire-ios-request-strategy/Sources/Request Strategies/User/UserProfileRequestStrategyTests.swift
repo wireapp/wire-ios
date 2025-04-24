@@ -18,10 +18,10 @@
 
 import Foundation
 import WireDataModelSupport
+import WireFoundation
 import WireRequestStrategySupport
 import WireTransport
 import XCTest
-import WireFoundation
 
 @testable import WireRequestStrategy
 

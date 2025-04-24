@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireProtos
 import WireFoundation
+import WireProtos
 
 // MARK: - GenericMessage
 

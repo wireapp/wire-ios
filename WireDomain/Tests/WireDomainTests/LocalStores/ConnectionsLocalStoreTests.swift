@@ -18,8 +18,8 @@
 
 import WireDataModel
 import WireDataModelSupport
-import XCTest
 import WireFoundation
+import XCTest
 
 @testable import WireDomain
 

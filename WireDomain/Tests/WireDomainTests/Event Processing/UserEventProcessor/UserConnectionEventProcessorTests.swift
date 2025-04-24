@@ -18,8 +18,8 @@
 
 import WireAPI
 import WireDomainSupport
-import XCTest
 import WireFoundation
+import XCTest
 
 @testable import WireDomain
 

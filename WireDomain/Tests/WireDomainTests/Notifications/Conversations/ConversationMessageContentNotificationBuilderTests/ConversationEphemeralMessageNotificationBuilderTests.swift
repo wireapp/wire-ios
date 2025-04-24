@@ -18,8 +18,8 @@
 
 import WireAPISupport
 import WireDataModel
-import WireFoundation
 import WireDataModelSupport
+import WireFoundation
 import WireTestingPackage
 import XCTest
 
