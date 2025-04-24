@@ -20,6 +20,7 @@ public protocol JournalProtocol {
 
     subscript(_ key: JournalKey<Bool>) -> Bool { get set }
     func save() throws
+    func erase()
 
 }
 

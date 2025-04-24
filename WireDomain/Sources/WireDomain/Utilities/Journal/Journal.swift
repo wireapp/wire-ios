@@ -35,6 +35,10 @@ public class Journal: JournalProtocol {
     private let userID: UUID
     private let storage: any UserDefaultsProtocol
 
+    private var namespace: String {
+        "\(userID.uuidString).journal"
+    }
+
     /// Create a new `Journal` for a particular user.
     ///
     /// - Parameters:
@@ -71,9 +75,19 @@ public class Journal: JournalProtocol {
         }
     }
 
+    /// Delete all values in the journal.
+
+    public func erase() {
+        for key in storage.dictionaryRepresentation().keys {
+            if key.hasPrefix(namespace) {
+                storage.removeObject(forKey: key)
+            }
+        }
+    }
+
     private func rawKey<T>(for key: JournalKey<T>) -> String {
         // Prefix to avoid possible namespace conflicts.
-        "\(userID.uuidString).journal.\(key.name)"
+        "\(namespace).\(key.name)"
     }
 
 }

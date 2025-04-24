@@ -131,6 +131,7 @@ public protocol UserDefaultsProtocol {
 
     func removeObject(forKey defaultName: String)
     func synchronize() -> Bool
+    func dictionaryRepresentation() -> [String: Any]
 }
 
 extension UserDefaults: UserDefaultsProtocol {}

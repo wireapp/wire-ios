@@ -1179,6 +1179,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         // Clear tmp directory when the user logout from the session.
         deleteTemporaryData()
 
+        Journal(userID: account.userIdentifier, storage: sharedUserDefaults).erase()
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
