@@ -177,7 +177,8 @@ struct ZMUserSessionBuilder {
             requestCancellation: transportSession,
             application: application,
             lastEventIDRepository: lastEventIDRepository,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            journal: journal
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
