@@ -39,7 +39,7 @@ public enum URLAction: Equatable {
     case openConversation(id: UUID)
 
     /// The UI search for the user ID and open the profile view for connection request if not connected
-    case openUserProfile(id: UUID)
+    case openUserProfile(id: UUID, domain: String)
 
     /// Switch to a custom backend
     case accessBackend(configurationURL: URL)
@@ -97,7 +97,8 @@ extension URLAction {
         case URL.DeepLink.user:
             if let lastComponent = url.pathComponents.last,
                let uuid = UUID(uuidString: lastComponent) {
-                self = .openUserProfile(id: uuid)
+                // TODO: [WPB-10531] The profile deep link should contain the domain to support federated users.
+                self = .openUserProfile(id: uuid, domain: "wire.com")
             } else {
                 throw DeepLinkRequestError.invalidUserLink
             }

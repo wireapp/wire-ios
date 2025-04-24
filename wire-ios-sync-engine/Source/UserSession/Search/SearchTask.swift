@@ -23,7 +23,7 @@ public class SearchTask {
 
     public enum Task {
         case search(searchRequest: SearchRequest)
-        case lookup(userId: UUID)
+        case lookup(userId: UUID, domain: String)
     }
 
     public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
@@ -87,7 +87,7 @@ public class SearchTask {
         searchUsersCache: SearchUsersCache?
     ) {
         self.init(
-            task: .lookup(userId: userId),
+            task: .lookup(userId: userId, domain: "wire.com"),
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
@@ -141,6 +141,7 @@ public class SearchTask {
         performRemoteSearchForTeamUser()
         // v2+
         performRemoteSearch()
+        performUserWithDomainLookup()
     }
 }
 
@@ -148,7 +149,7 @@ extension SearchTask {
 
     /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
-        guard case let .lookup(userId) = task else { return }
+        guard case let .lookup(userId, domain) = task else { return }
 
         tasksRemaining += 1
 
@@ -360,7 +361,7 @@ extension SearchTask {
 
     func performUserLookup() {
         guard
-            case let .lookup(userId) = task,
+            case let .lookup(userId, domain) = task,
             let apiVersion = BackendInfo.apiVersion,
             apiVersion <= .v1
         else { return }
@@ -401,6 +402,55 @@ extension SearchTask {
 
     static func searchRequestForUser(withUUID uuid: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
         .init(getFromPath: "/users/\(uuid.transportString())", apiVersion: apiVersion.rawValue)
+    }
+
+    func performUserWithDomainLookup() {
+        guard
+            case let .lookup(userId, domain) = task,
+            let apiVersion = BackendInfo.apiVersion,
+            apiVersion > .v1
+        else {
+            return
+        }
+
+        tasksRemaining += 1
+
+        searchContext.performGroupedBlock { [self] in
+
+            let qualifiedID = QualifiedID(uuid: userId, domain: domain)
+            let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
+
+            request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
+                defer {
+                    self?.tasksRemaining -= 1
+                }
+
+                guard
+                    let contextProvider = self?.contextProvider,
+                    let payload = response.payload?.asDictionary(),
+                    let result = SearchResult(
+                        userLookupPayload: payload,
+                        contextProvider: contextProvider,
+                        searchUsersCache: self?.searchUsersCache
+                    )
+                else { return }
+
+                if let updatedResult = self?.result.union(withDirectoryResult: result) {
+                    self?.result = updatedResult
+                }
+            })
+
+            request.add(ZMTaskCreatedHandler(on: searchContext) { [weak self] taskIdentifier in
+                self?.userLookupTaskIdentifier = taskIdentifier
+            })
+
+            transportSession.enqueueOneTime(request)
+        }
+
+    }
+
+    static func searchRequestForUser(qualifiedID: QualifiedID, apiVersion: APIVersion) -> ZMTransportRequest {
+        .init(getFromPath: "/users/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
     }
 
 }
@@ -637,7 +687,7 @@ extension SearchTask {
         }
     }
 
-    static func searchRequestInDirectory(withHandle handle: String, apiVersion: APIVersion) -> ZMTransportRequest {
+    static func searchRequestInDirectory(withHandle handle: String, apiVersion: APIVersion) -> ZMTransportRequest {//
         var handle = handle.lowercased()
 
         if handle.hasPrefix("@") {

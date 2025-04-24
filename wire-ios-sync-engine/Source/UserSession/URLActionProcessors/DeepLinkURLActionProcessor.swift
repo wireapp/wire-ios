@@ -44,8 +44,8 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         case let .openConversation(id):
             handleOpenConversation(id: id, delegate: delegate)
 
-        case let .openUserProfile(id):
-            handleOpenUserProfile(id: id, delegate: delegate)
+        case let .openUserProfile(id, domain):
+            handleOpenUserProfile(id: id, domain: domain, delegate: delegate)
 
         default:
             delegate?.completedURLAction(urlAction)
@@ -201,17 +201,17 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
     }
 
-    private func handleOpenUserProfile(id: UUID, delegate: PresentationDelegate?) {
+    private func handleOpenUserProfile(id: UUID, domain: String, delegate: PresentationDelegate?) {
 
         let viewContext = contextProvider.viewContext
 
         if let user = ZMUser.fetch(with: id, domain: nil, in: viewContext) {
             delegate?.showUserProfile(user: user)
         } else {
-            delegate?.showConnectionRequest(userId: id)
+            delegate?.showConnectionRequest(userId: id, domain: domain)
         }
 
-        delegate?.completedURLAction(.openUserProfile(id: id))
+        delegate?.completedURLAction(.openUserProfile(id: id, domain: domain))
 
     }
 

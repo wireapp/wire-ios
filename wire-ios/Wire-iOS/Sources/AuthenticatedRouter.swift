@@ -24,7 +24,7 @@ import WireSyncEngine
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
     case userProfile(UserType)
-    case connectionRequest(UUID)
+    case connectionRequest(UUID, String)
     case conversationList
 }
 
@@ -171,8 +171,8 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
         switch destination {
         case let .conversation(converation, message):
             _zClientViewController?.showConversation(converation, at: message)
-        case let .connectionRequest(userId):
-            _zClientViewController?.showConnectionRequest(userId: userId)
+        case let .connectionRequest(userId, domain):
+            _zClientViewController?.showConnectionRequest(userId: userId, domain: domain)
         case .conversationList:
             _zClientViewController?.showConversationList()
         case let .userProfile(user):

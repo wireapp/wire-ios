@@ -30,6 +30,7 @@ final class SearchUserViewController: UIViewController {
     private var searchDirectory: SearchDirectory!
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
     private let userId: UUID
+    private let domain: String
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
     private let mainCoordinator: AnyMainCoordinator
@@ -44,12 +45,14 @@ final class SearchUserViewController: UIViewController {
 
     init(
         userId: UUID,
+        domain: String,
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.userId = userId
+        self.domain = domain
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
@@ -80,7 +83,7 @@ final class SearchUserViewController: UIViewController {
 
         activityIndicator.start()
 
-        if let task = searchDirectory?.lookup(userId: userId) {
+        if let task = searchDirectory?.lookup(userId: userId, domain: domain) {
             task.addResultHandler { [weak self] in
                 self?.activityIndicator.stop()
                 self?.handleSearchResult(searchResult: $0, isCompleted: $1)

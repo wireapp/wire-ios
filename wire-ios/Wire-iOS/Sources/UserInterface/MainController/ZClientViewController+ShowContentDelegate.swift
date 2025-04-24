@@ -29,9 +29,10 @@ extension ZClientViewController {
         await mainCoordinator.presentViewController(navigationController)
     }
 
-    func showConnectionRequest(userId: UUID) {
+    func showConnectionRequest(userId: UUID, domain: String) {
         let searchUserViewConroller = SearchUserViewController(
             userId: userId,
+            domain: domain,
             profileViewControllerDelegate: self,
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
