@@ -18,10 +18,9 @@
 
 public import WireFoundation
 
-public protocol CreateBackupUserEntityProtocol: CreateBackupEntityProtocol {
+public protocol ConversationEntityProtocol {
 
     var id: QualifiedID { get }
-    var name: String { get }
-    var handle: String { get }
+    var name: String { get nonmutating set }
 
 }

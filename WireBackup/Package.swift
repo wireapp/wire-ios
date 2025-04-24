@@ -16,6 +16,16 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "WireBackupKaliumAdapter",
+            dependencies: [
+                "KaliumBackup",
+                .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines"),
+                "WireBackup",
+                "WireFoundation"
+            ]
+        ),
+
+        .target(
             name: "WireBackup",
             dependencies: [
                 "KaliumBackup",

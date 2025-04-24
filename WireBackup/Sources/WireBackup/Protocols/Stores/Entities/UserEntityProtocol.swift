@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportBackupProgress: Equatable, Sendable {
+public import WireFoundation
 
-    case progress(_ current: Int, _ total: Int)
-    case done
+public protocol UserEntityProtocol {
 
-    public static func progress(current: Int, total: Int) -> Self { .progress(current, total) }
+    var id: QualifiedID { get }
+    var name: String { get nonmutating set }
+    var handle: String { get nonmutating set }
 
 }

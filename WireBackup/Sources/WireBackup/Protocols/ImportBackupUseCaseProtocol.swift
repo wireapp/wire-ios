@@ -16,11 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+public import Foundation
 
-public protocol CreateBackupConversationEntityProtocol: CreateBackupEntityProtocol {
+// sourcery: AutoMockable
+public protocol ImportBackupUseCaseProtocol: Sendable {
+    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+}
 
-    var id: QualifiedID { get }
-    var name: String { get }
+// MARK: -
+
+public enum ImportBackupProgress: Equatable, Sendable {
+
+    case progress(_ current: Int, _ total: Int)
+    case done
+
+}
+
+// MARK: - Convenience
+
+extension ImportBackupProgress {
+
+    public static func progress(current: Int, total: Int) -> Self {
+        .progress(current, total)
+    }
 
 }

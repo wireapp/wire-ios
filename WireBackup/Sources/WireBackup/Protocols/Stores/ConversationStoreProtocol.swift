@@ -16,29 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
-// sourcery: AutoMockable
-/// A use case to export the current app state using a provided `password`.
-public protocol CreateBackupUseCaseProtocol {
-    func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error>
-}
-
-public enum CreateBackupProgress: Sendable {
-
-    case progress(_ current: Int, _ total: Int)
-    case done(URL)
-
-}
-
-extension CreateBackupProgress {
-
-    public static func progress(current: Int, total: Int) -> Self {
-        .progress(current, total)
-    }
-
-    public static func done(url: URL) -> Self {
-        .done(url)
-    }
-
-}
+public protocol ConversationStoreProtocol {}

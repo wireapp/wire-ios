@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 // sourcery: AutoMockable
-public protocol ImportBackupFileArchiverProtocol: Sendable {
+public protocol InterruptEventProcessingProtocol: Sendable {
 
-    func unzipFile(
-        at sourceURL: URL,
-        to destinationURL: URL
-    ) throws
+    /// Finishes and then interrupts processing incoming events.
+    /// If it's already paused, this method does nothing.
+    func pauseProcessingEvents() async
+
+    /// Continues processing incoming events if it was paused/interrupted.
+    func continueProcessingEvents()
 
 }

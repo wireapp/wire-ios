@@ -16,14 +16,3 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol CreateBackupEventProcessorHandleProtocol: Sendable {
-
-    /// Interrupts processing incoming events.
-    /// If it's already paused, this method does nothing.
-    func pauseProcessingEvents() async
-
-    /// Continues processing incoming events if it was paused/interrupted.
-    func continueProcessingEvents()
-
-}

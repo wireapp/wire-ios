@@ -17,6 +17,7 @@
 //
 
 import KaliumBackup
+import WireBackup
 
 extension BackupMessageContent.AssetAssetMetadata {
 
