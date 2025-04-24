@@ -22,6 +22,7 @@ import WireAnalytics
 import WireDataModel
 import WireLogging
 import WireRequestStrategy
+import WireFoundation
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,

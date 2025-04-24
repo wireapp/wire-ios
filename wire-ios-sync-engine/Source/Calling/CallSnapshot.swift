@@ -17,6 +17,7 @@
 //
 
 import Combine
+import WireFoundation
 import Foundation
 
 /// The snapshot of the state of a call.

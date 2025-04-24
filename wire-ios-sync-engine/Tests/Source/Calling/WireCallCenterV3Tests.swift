@@ -19,6 +19,7 @@
 import avs
 import Combine
 import Foundation
+import WireFoundation
 import WireDataModelSupport
 import XCTest
 
