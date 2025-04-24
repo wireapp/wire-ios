@@ -18,6 +18,8 @@
 
 import Foundation
 import XCTest
+import WireFoundation
+
 @testable import WireRequestStrategy
 
 class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {

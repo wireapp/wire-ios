@@ -21,6 +21,8 @@ import WireDataModelSupport
 import WireRequestStrategySupport
 import WireTransport
 import XCTest
+import WireFoundation
+
 @testable import WireRequestStrategy
 
 class UserProfileRequestStrategyTests: MessagingTestBase {

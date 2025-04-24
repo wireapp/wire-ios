@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireFoundation
+
 @testable import WireRequestStrategy
 
 extension Payload.ConversationEvent {

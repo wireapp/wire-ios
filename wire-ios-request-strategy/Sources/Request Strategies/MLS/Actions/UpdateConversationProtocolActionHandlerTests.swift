@@ -17,6 +17,8 @@
 //
 
 import XCTest
+import WireFoundation
+
 @testable import WireRequestStrategy
 
 final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<

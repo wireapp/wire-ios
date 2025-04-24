@@ -18,6 +18,7 @@
 
 import Foundation
 import WireTransport
+import WireFoundation
 
 extension Payload {
     struct UpdateConversationMemberLeave: CodableEventData {

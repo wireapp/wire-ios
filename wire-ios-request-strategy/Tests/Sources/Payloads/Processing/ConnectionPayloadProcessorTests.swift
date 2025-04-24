@@ -18,6 +18,8 @@
 
 import WireTransport
 import XCTest
+import WireFoundation
+
 @testable import WireRequestStrategy
 
 final class ConnectionPayloadProcessorTests: MessagingTestBase {

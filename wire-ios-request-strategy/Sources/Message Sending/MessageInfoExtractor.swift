@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLogging
+import WireFoundation
 
 enum MessageInfoExtractorError: Error {
     case missingConversation
