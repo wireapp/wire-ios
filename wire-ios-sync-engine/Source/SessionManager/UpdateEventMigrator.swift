@@ -45,7 +45,7 @@ struct UpdateEventMigrator {
         } catch {
             WireLogger.sync.error(
                 "failed to migrate legacy update events, discarding changes. " +
-                "Error: \(String(describing: error))"
+                    "Error: \(String(describing: error))"
             )
             await dao.discardChanges()
             throw error
