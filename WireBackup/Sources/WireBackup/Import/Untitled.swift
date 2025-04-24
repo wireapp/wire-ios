@@ -16,14 +16,3 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
-public enum CreateBackupProgress: Sendable {
-
-    case progress(_ current: Int, _ total: Int)
-    case done(URL)
-
-    public static func progress(current: Int, total: Int) -> Self { .progress(current, total) }
-    public static func done(url: URL) -> Self { .done(url) }
-
-}
