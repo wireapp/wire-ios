@@ -47,10 +47,12 @@ extension MPBackupExporter {
     }
 }
 
-enum FinalizeBackupError: Error {
+private enum FinalizeBackupError: Error {
+
     case success(_ outputFile: String)
     case ioError(_ message: String)
     case zipError(_ message: String)
     case otherFailure(_ message: String)
     case unexpectedResultType
+
 }

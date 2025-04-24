@@ -16,21 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+
 import KaliumBackup
-import WireFoundation
 
-final class ImportBackupFileArchiverToBackupFileUnzipper: BackupFileUnzipper {
+public struct BackupImporter<FileUnarchiver> where FileUnarchiver: BackupFileUnarchiverProtocol {
 
-    let fileManager: FileManager
-    let fileArchiver: any ImportBackupFileArchiverProtocol
+    private let mpBackupImporter: MPBackupImporter
 
-    init(
-        fileManager: FileManager,
-        fileArchiver: any ImportBackupFileArchiverProtocol
+    public init(
+        workDirectoryURL: URL,
+        fileUnarchiver: FileUnarchiver
     ) {
-        self.fileManager = fileManager
-        self.fileArchiver = fileArchiver
+        mpBackupImporter = MPBackupImporter(
+            pathToWorkDirectory: workDirectoryURL.path(),
+            backupFileUnzipper: FileUnarchiverToBackupFileUnzipper(fileUnarchiver: fileUnarchiver)
+        )
+    }
+
+}
+
+private final class FileUnarchiverToBackupFileUnzipper<FileUnarchiver>: BackupFileUnzipper
+where FileUnarchiver: BackupFileUnarchiverProtocol {
+
+    let fileUnarchiver: FileUnarchiver
+
+    init(fileUnarchiver: FileUnarchiver) {
+        self.fileUnarchiver = fileUnarchiver
     }
 
     func unzipBackup(zipPath: String) throws -> String {
@@ -38,10 +50,11 @@ final class ImportBackupFileArchiverToBackupFileUnzipper: BackupFileUnzipper {
         let archiveURL = URL(filePath: zipPath, directoryHint: .notDirectory)
         let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             .appending(path: UUID().uuidString, directoryHint: .isDirectory)
-        try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
 
-        try fileArchiver.unzipFile(at: archiveURL, to: destinationDirectory)
+        try fileUnarchiver.unzipFile(at: archiveURL, to: destinationDirectory)
         return destinationDirectory.path()
+
     }
 
 }

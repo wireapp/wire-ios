@@ -44,7 +44,6 @@ public struct BackupCreator<FileArchiver> where FileArchiver: BackupFileArchiver
 private final class FileArchiverToFileZipperAdapter<FileArchiver>: FileZipper
 where FileArchiver: BackupFileArchiverProtocol {
 
-    let fileManager: FileManager = .default
     let fileArchiver: FileArchiver
 
     init(_ fileArchiver: FileArchiver) {
@@ -60,7 +59,7 @@ where FileArchiver: BackupFileArchiverProtocol {
         // create temporary directory for the destination file
         let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             .appending(path: UUID().uuidString, directoryHint: .isDirectory)
-        try fileManager.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
 
         // call zip library
         let destinationURL = destinationDirectory.appendingPathComponent("backup.zip", isDirectory: false)

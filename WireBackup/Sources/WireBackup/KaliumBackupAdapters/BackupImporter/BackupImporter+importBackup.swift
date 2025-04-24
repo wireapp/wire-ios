@@ -21,29 +21,6 @@ import KMPNativeCoroutinesAsync
 
 extension MPBackupImporter {
 
-    func peek(into backupFile: URL) async throws -> (version: String, isEncrypted: Bool) {
-
-        let result = await asyncResult(for: peek(pathToBackupFile: backupFile.path()))
-        let peekResult: BackupPeekResult
-        switch result {
-        case .failure(let error):
-            throw error
-        case .success(let result):
-            peekResult = result
-        }
-
-        switch peekResult {
-        case let result as BackupPeekResult.Success:
-            return (result.version, result.isEncrypted) // TODO: `isEncrypted` is always `false`. bug exporting or bug in library?
-        case is BackupPeekResult.FailureUnknownFormat:
-            throw PeekResultError.unknownFormat
-        case let error as BackupPeekResult.FailureUnsupportedVersion:
-            throw PeekResultError.unsupportedVersion(error.backupVersion)
-        default:
-            throw PeekResultError.unexpectedPeekResultType
-        }
-    }
-
     func importBackup(
         from backupFile: URL,
         using password: String
@@ -79,18 +56,15 @@ extension MPBackupImporter {
             throw ImportResultError.unexpectedImportResultType
         }
     }
+
 }
 
-enum PeekResultError: Error {
-    case unknownFormat
-    case unsupportedVersion(_ backupVersion: String)
-    case unexpectedPeekResultType
-}
+private enum ImportResultError: Error {
 
-enum ImportResultError: Error {
     case incorrectPassword
     case parsingFailed
     case unzippingFailed(_ description: String)
     case unknown(_ description: String)
     case unexpectedImportResultType
+
 }
