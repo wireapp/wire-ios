@@ -24,7 +24,7 @@ let package = Package(
             dependencies: [
                 "WireAPI",
                 "WireLogging",
-                .product(name: "WireFoundation", package: "WireFoundation")
+                "WireFoundation"
             ]
         ),
         .target(
