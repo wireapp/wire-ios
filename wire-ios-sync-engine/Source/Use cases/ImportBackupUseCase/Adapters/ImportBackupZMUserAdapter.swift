@@ -33,6 +33,7 @@ struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
     ) -> ImportBackupZMUserAdapter {
         let user = ZMUser.fetchOrCreate(with: id.uuid, domain: id.domain, in: context)
         user.needsToBeUpdatedFromBackend = true
+        user.isPendingMetadataRefresh = false
         return ImportBackupZMUserAdapter(user: user)
     }
 

@@ -33,7 +33,6 @@ public extension SessionManager {
 
             return ImportBackupUseCase(
                 importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
-                    conversationLocalStorage: ImportBackupConversationLocalStoreAdapter(),
                     context: syncContext,
                     fileArchiver: ImportBackupFileArchiver(),
                     syncTrigger: {

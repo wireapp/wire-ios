@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import Foundation
 
 /// An event where the account of a user (either the

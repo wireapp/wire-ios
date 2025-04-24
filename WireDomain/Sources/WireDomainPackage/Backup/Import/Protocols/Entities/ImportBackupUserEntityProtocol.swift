@@ -17,6 +17,7 @@
 //
 
 public import CoreData
+public import WireFoundation
 
 public protocol ImportBackupUserEntityProtocol: ImportBackupEntityProtocol {
 

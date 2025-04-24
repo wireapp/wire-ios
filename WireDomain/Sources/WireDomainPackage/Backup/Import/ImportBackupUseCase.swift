@@ -21,15 +21,14 @@ public import Foundation
 public import WireLogging
 
 @preconcurrency import WireBackup
+import WireFoundation
 
 public struct ImportBackupUseCase<
-    ConversationLocalStorage: ImportBackupConversationLocalStoreProtocol,
     UserEntity: ImportBackupUserEntityProtocol,
-    ConversationAdapter: ImportBackupConversationEntityProtocol,
-    MessageAdapter: ImportBackupMessageEntityProtocol
+    ConversationEntity: ImportBackupConversationEntityProtocol,
+    MessageEntity: ImportBackupMessageEntityProtocol
 >: ImportBackupUseCaseProtocol {
 
-    let conversationLocalStorage: ConversationLocalStorage
     let context: @Sendable () -> NSManagedObjectContext
     let fileManager: @Sendable () -> FileManager = { .default }
     let fileArchiver: any ImportBackupFileArchiverProtocol
@@ -37,13 +36,11 @@ public struct ImportBackupUseCase<
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
-        conversationLocalStorage: ConversationLocalStorage,
         context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext, // TODO: delete if possible
         fileArchiver: any ImportBackupFileArchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
-        self.conversationLocalStorage = conversationLocalStorage
         self.context = context
         self.fileArchiver = fileArchiver
         self.syncTrigger = syncTrigger
@@ -62,7 +59,7 @@ public struct ImportBackupUseCase<
                     try? fileManager.removeItem(at: workDirectoryURL)
                 }
 
-                // TODO: disable event processing
+                // TODO: disable event processing?
 
                 do {
                     let logger = logger()
@@ -112,8 +109,8 @@ public struct ImportBackupUseCase<
 
                                 if !storedUserIDs.contains(userID) {
                                     let user = UserEntity.create(id: userID, context: context)
-                                    user.name = user.name
-                                    user.handle = user.handle
+                                    user.name = backupUser.name
+                                    user.handle = backupUser.handle
                                 }
 
                                 if current % 50 == 0 || current == backupUsers.size - 1 {
@@ -123,26 +120,26 @@ public struct ImportBackupUseCase<
                             }
                         }
 
-                        let storedConversations = try context.fetch(ConversationAdapter.fetchRequest())
-                            .compactMap(ConversationAdapter.init)
+                        let conversationFetchRequest = ConversationEntity.fetchRequest()
+                        conversationFetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
+                        let storedConversationIDs = try context.fetch(conversationFetchRequest)
+                            .compactMap(ConversationEntity.init)
+                            .map(\.id)
 
                         while pager.conversationsPager.hasMorePages() {
-                            let conversations = pager.conversationsPager.nextPage()
-                            for current in 0 ..< conversations.size {
+                            let backupConversations = pager.conversationsPager.nextPage()
+                            for current in 0 ..< backupConversations.size {
                                 guard
-                                    let conversation = conversations.get(index: current),
-                                    let conversationID = QualifiedID(conversation.id)
+                                    let backupConversation = backupConversations.get(index: current),
+                                    let conversationID = QualifiedID(backupConversation.id)
                                 else { continue }
 
-                                if !storedConversations.contains(where: { $0.id == conversationID }) { // TODO: what if it is in the db but marked as deleted?
-                                    let conversation = ConversationAdapter.fetchOrCreate(
-                                        id: conversationID,
-                                        context: context
-                                    )
-                                    conversation.name = conversation.name
+                                if !storedConversationIDs.contains(conversationID) { // TODO: what if it is in the db but marked as deleted?
+                                    let conversation = ConversationEntity.create(id: conversationID, context: context)
+                                    conversation.name = backupConversation.name
                                 }
 
-                                if current % 50 == 0 || current == conversations.size - 1 {
+                                if current % 50 == 0 || current == backupConversations.size - 1 {
                                     try Task.checkCancellation()
                                     reportProgress(Int(exactly: current) ?? 0, total)
                                 }

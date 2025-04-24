@@ -20,17 +20,35 @@ public import Foundation
 
 /// Fully qualified identifier in a federated environment.
 
-public struct QualifiedID: Hashable, Sendable {
+public struct QualifiedID: Codable, Hashable, Sendable {
 
-    public var uuid: UUID
+    public var id: UUID
     public var domain: String
+
+    public init(
+        id: UUID,
+        domain: String
+    ) {
+        self.id = id
+        self.domain = domain
+    }
+
+}
+
+extension QualifiedID {
+
+    public var uuid: UUID {
+        get { id }
+        set { id = newValue }
+    }
 
     public init(
         uuid: UUID,
         domain: String
     ) {
-        self.uuid = uuid
-        self.domain = domain
+        self.init(
+            id: uuid,
+            domain: domain
+        )
     }
-
 }

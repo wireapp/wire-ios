@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireFoundation
 import XCTest
+
 @testable import WireAPI
 @testable import WireAPISupport
 

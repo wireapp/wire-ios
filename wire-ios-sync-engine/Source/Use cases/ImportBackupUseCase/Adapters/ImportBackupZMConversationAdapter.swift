@@ -24,12 +24,10 @@ struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol
     typealias QualifiedID = WireDomainPackage.QualifiedID
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
-        let fetchRequest = ZMConversation.fetchRequest()
-        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
-        return fetchRequest
+        ZMConversation.fetchRequest()
     }
 
-    static func fetchOrCreate(
+    static func create(
         id: QualifiedID,
         context: NSManagedObjectContext
     ) -> ImportBackupZMConversationAdapter {
@@ -39,6 +37,7 @@ struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol
             in: context
         )
         conversation.needsToBeUpdatedFromBackend = true
+        conversation.isPendingMetadataRefresh = true
         return ImportBackupZMConversationAdapter(conversation: conversation)
     }
 
@@ -47,14 +46,8 @@ struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol
     var conversation: ZMConversation
 
     var id: QualifiedID {
-        get {
-            let qualifiedID = conversation.qualifiedID ?? .init(uuid: conversation.remoteIdentifier, domain: conversation.domain ?? "")
-            return QualifiedID(qualifiedID)
-        }
-        nonmutating set {
-            conversation.remoteIdentifier = newValue.uuid
-            conversation.domain = newValue.domain
-        }
+        let qualifiedID = conversation.qualifiedID ?? .init(uuid: conversation.remoteIdentifier, domain: conversation.domain ?? "")
+        return QualifiedID(qualifiedID)
     }
 
     var name: String {

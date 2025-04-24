@@ -26,7 +26,7 @@ let package = Package(
                 "WireAPI",
                 "WireBackup",
                 "WireLogging",
-                .product(name: "WireFoundation", package: "WireFoundation"),
+                "WireFoundation",
                 .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines")
             ]
         ),

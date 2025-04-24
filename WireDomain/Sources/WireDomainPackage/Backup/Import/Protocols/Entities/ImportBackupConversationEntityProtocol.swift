@@ -17,10 +17,11 @@
 //
 
 public import CoreData
+public import WireFoundation
 
 public protocol ImportBackupConversationEntityProtocol: ImportBackupEntityProtocol {
 
-    static func fetchOrCreate(
+    static func create(
         id: QualifiedID,
         context: NSManagedObjectContext
     ) -> Self
