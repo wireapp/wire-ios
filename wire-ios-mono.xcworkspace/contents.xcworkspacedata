@@ -171,7 +171,7 @@
       location = "group:wire-ios-request-strategy/WireRequestStrategy.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireDomain/WireDomain.xcodeproj">
+      location = "group:WireDomain/WireDomain Project.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">

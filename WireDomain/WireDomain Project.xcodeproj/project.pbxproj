@@ -19,7 +19,7 @@
 		59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59EA774E2D00CE0C002CA0B8 /* WireLogging */; };
 		C91D188E2D7212FC00B63B66 /* NeedleFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = C91D188D2D7212FC00B63B66 /* NeedleFoundation */; };
 		C93BFF322D93DB82000F6573 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = C93BFF312D93DB82000F6573 /* WireAPI */; };
-		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
+		C97BCCAA2C98704B004F2D0D /* WireDomain_Project.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain_Project.framework */; };
 		C9B4C1F72D4915F10072A0EE /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = C9B4C1F62D4915F10072A0EE /* WireCrypto */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
@@ -52,7 +52,7 @@
 /* Begin PBXFileReference section */
 		017F67822C207A3200B6E02D /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01BDA5442C20762200636E50 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		01D0DCA62C1C8C870076CB1C /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		01D0DCA62C1C8C870076CB1C /* WireDomain_Project.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDomain_Project.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCB02C1C8C880076CB1C /* WireDomainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireDomainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,7 +82,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C93BFF322D93DB82000F6573 /* WireAPI in Frameworks */,
-				C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */,
+				C97BCCAA2C98704B004F2D0D /* WireDomain_Project.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,7 +129,7 @@
 		01D0DCA72C1C8C870076CB1C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				01D0DCA62C1C8C870076CB1C /* WireDomain.framework */,
+				01D0DCA62C1C8C870076CB1C /* WireDomain_Project.framework */,
 				01D0DCB02C1C8C880076CB1C /* WireDomainTests.xctest */,
 				017F67822C207A3200B6E02D /* WireDomainSupport.framework */,
 			);
@@ -191,9 +191,9 @@
 			productReference = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		01D0DCA52C1C8C870076CB1C /* WireDomain */ = {
+		01D0DCA52C1C8C870076CB1C /* WireDomain Project */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 01D0DCBA2C1C8C880076CB1C /* Build configuration list for PBXNativeTarget "WireDomain" */;
+			buildConfigurationList = 01D0DCBA2C1C8C880076CB1C /* Build configuration list for PBXNativeTarget "WireDomain Project" */;
 			buildPhases = (
 				01D0DCA22C1C8C870076CB1C /* Sources */,
 				01D0DCA32C1C8C870076CB1C /* Frameworks */,
@@ -206,7 +206,7 @@
 			fileSystemSynchronizedGroups = (
 				59EA7A282D00CFB2002CA0B8 /* WireDomain */,
 			);
-			name = WireDomain;
+			name = "WireDomain Project";
 			packageProductDependencies = (
 				59909A5D2C5BBEA8009C41DE /* WireAPI */,
 				598D042C2C89C63100B64D71 /* WireFoundation */,
@@ -216,7 +216,7 @@
 				C91D188D2D7212FC00B63B66 /* NeedleFoundation */,
 			);
 			productName = WireDomain;
-			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
+			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain_Project.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		01D0DCAF2C1C8C880076CB1C /* WireDomainTests */ = {
@@ -267,7 +267,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 01D0DCA02C1C8C870076CB1C /* Build configuration list for PBXProject "WireDomain" */;
+			buildConfigurationList = 01D0DCA02C1C8C870076CB1C /* Build configuration list for PBXProject "WireDomain Project" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -302,7 +302,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				01D0DCA52C1C8C870076CB1C /* WireDomain */,
+				01D0DCA52C1C8C870076CB1C /* WireDomain Project */,
 				01D0DCAF2C1C8C880076CB1C /* WireDomainTests */,
 				017F67812C207A3200B6E02D /* WireDomainSupport */,
 			);
@@ -382,12 +382,12 @@
 /* Begin PBXTargetDependency section */
 		017F67932C207A9100B6E02D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 01D0DCA52C1C8C870076CB1C /* WireDomain */;
+			target = 01D0DCA52C1C8C870076CB1C /* WireDomain Project */;
 			targetProxy = 017F67922C207A9100B6E02D /* PBXContainerItemProxy */;
 		};
 		01D0DCB32C1C8C880076CB1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 01D0DCA52C1C8C870076CB1C /* WireDomain */;
+			target = 01D0DCA52C1C8C870076CB1C /* WireDomain Project */;
 			targetProxy = 01D0DCB22C1C8C880076CB1C /* PBXContainerItemProxy */;
 		};
 		5904B1B62D31582700E866D1 /* PBXTargetDependency */ = {
@@ -725,7 +725,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01D0DCA02C1C8C870076CB1C /* Build configuration list for PBXProject "WireDomain" */ = {
+		01D0DCA02C1C8C870076CB1C /* Build configuration list for PBXProject "WireDomain Project" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01D0DCB82C1C8C880076CB1C /* Debug */,
@@ -734,7 +734,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01D0DCBA2C1C8C880076CB1C /* Build configuration list for PBXNativeTarget "WireDomain" */ = {
+		01D0DCBA2C1C8C880076CB1C /* Build configuration list for PBXNativeTarget "WireDomain Project" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01D0DCBB2C1C8C880076CB1C /* Debug */,
