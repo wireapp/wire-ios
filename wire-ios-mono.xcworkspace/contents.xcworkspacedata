@@ -225,6 +225,9 @@
       location = "container:WireDebug">
    </FileRef>
    <FileRef
+      location = "group:WireDomain">
+   </FileRef>
+   <FileRef
       location = "group:WireFoundation">
    </FileRef>
    <FileRef
