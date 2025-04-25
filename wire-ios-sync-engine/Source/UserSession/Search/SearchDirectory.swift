@@ -87,9 +87,9 @@ public class SearchDirectory: NSObject {
     /// an empty directory result is returned.
     ///
     /// Returns a SearchTask which should be retained until the results arrive.
-    public func lookup(userId: UUID, domain: String) -> SearchTask {
+    public func lookup(qualifiedID: QualifiedID) -> SearchTask { // TODO: update comment
         let task = SearchTask(
-            task: .lookup(userId: userId, domain: domain),
+            task: .lookup(qualifiedID: qualifiedID),
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,

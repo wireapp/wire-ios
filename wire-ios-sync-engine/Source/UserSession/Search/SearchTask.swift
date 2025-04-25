@@ -23,7 +23,7 @@ public class SearchTask {
 
     public enum Task {
         case search(searchRequest: SearchRequest)
-        case lookup(userId: UUID, domain: String)
+        case lookup(qualifiedID: QualifiedID)
     }
 
     public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
@@ -80,14 +80,14 @@ public class SearchTask {
     }
 
     convenience init(
-        lookupUserId userId: UUID,
+        qualifiedID: QualifiedID,
         searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?
     ) {
         self.init(
-            task: .lookup(userId: userId, domain: "wire.com"),
+            task: .lookup(qualifiedID: qualifiedID),
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
@@ -149,7 +149,7 @@ extension SearchTask {
 
     /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
-        guard case let .lookup(userId, domain) = task else { return }
+        guard case let .lookup(qualifiedID) = task else { return }
 
         tasksRemaining += 1
 
@@ -162,9 +162,9 @@ extension SearchTask {
 
             /// search for the local user with matching user ID and active
             let activeMembers = teamMembers(matchingQuery: "", team: selfUser.team, searchOptions: options)
-            let teamMembers = activeMembers.filter { $0.remoteIdentifier == userId }
+            let teamMembers = activeMembers.filter { $0.remoteIdentifier == qualifiedID.uuid }
             let connectedUsers = connectedUsers(matchingQuery: "", hostedOnDomain: nil)
-                .filter { $0.remoteIdentifier == userId }
+                .filter { $0.remoteIdentifier == qualifiedID.uuid }
 
             contextProvider.viewContext.performGroupedBlock { [self] in
 
@@ -361,7 +361,7 @@ extension SearchTask {
 
     func performUserLookup() {
         guard
-            case let .lookup(userId, domain) = task,
+            case let .lookup(qualifiedID) = task,
             let apiVersion = BackendInfo.apiVersion,
             apiVersion <= .v1
         else { return }
@@ -369,7 +369,7 @@ extension SearchTask {
         tasksRemaining += 1
 
         searchContext.performGroupedBlock { [self] in
-            let request = type(of: self).searchRequestForUser(withUUID: userId, apiVersion: apiVersion)
+            let request = type(of: self).searchRequestForUser(withUUID: qualifiedID.uuid, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
                 defer {
@@ -404,9 +404,9 @@ extension SearchTask {
         .init(getFromPath: "/users/\(uuid.transportString())", apiVersion: apiVersion.rawValue)
     }
 
-    func performUserWithDomainLookup() {
+    func performUserWithDomainLookup() { //TODO: update name
         guard
-            case let .lookup(userId, domain) = task,
+            case let .lookup(qualifiedID) = task,
             let apiVersion = BackendInfo.apiVersion,
             apiVersion > .v1
         else {
@@ -417,7 +417,6 @@ extension SearchTask {
 
         searchContext.performGroupedBlock { [self] in
 
-            let qualifiedID = QualifiedID(uuid: userId, domain: domain)
             let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in

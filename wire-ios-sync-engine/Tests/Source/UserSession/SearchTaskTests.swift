@@ -1421,7 +1421,7 @@ final class SearchTaskTests: DatabaseTest {
 
     private func makeSearchTask(lookupUserId: UUID) -> SearchTask {
         SearchTask(
-            lookupUserId: lookupUserId,
+            qualifiedID: QualifiedID(uuid: lookupUserId, domain: "wire.com"),
             searchContext: searchMOC,
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,

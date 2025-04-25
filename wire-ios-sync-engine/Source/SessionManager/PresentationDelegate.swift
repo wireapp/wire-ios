@@ -33,7 +33,7 @@ public protocol PresentationDelegate: AnyObject {
 
     /// Called when the connection screen for a centain user shold be presented
     /// - parameter userId: The userId which will be connected to.
-    func showConnectionRequest(userId: UUID, domain: String)
+    func showConnectionRequest(qualifiedID: QualifiedID) // TODO: update comments
 
     /// Called when an attempt was made to process a URLAction but failed
     ///

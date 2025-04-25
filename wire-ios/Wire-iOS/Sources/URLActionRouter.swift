@@ -239,8 +239,8 @@ extension URLActionRouter: PresentationDelegate {
         }
     }
 
-    func showConnectionRequest(userId: UUID, domain: String) {
-        navigate(to: .connectionRequest(userId, domain))
+    func showConnectionRequest(qualifiedID: QualifiedID) {
+        navigate(to: .connectionRequest(qualifiedID))
     }
 
     func showUserProfile(user: UserType) {
