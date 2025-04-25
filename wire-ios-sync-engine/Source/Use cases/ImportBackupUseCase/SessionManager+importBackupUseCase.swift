@@ -28,7 +28,7 @@ public extension SessionManager {
             ImportBackupUseCase(
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
-                streamDecryptor: ImportBackupStreamDecryptor(),
+                streamDecryptor: ImportLegacyBackupStreamDecryptor(),
                 fileArchiver: ImportBackupFileArchiver(),
                 entityStorage: ImportBackupEntityStorage(),
                 appStateUpdater: ImportBackupAppStateUpdater(sessionManager: self),

@@ -20,7 +20,7 @@ import Foundation
 import WireCrypto
 import WireDomainPackage
 
-struct ImportBackupStreamDecryptor: ImportBackupStreamDecryptorProtocol { // TODO: add Legacy to name
+struct ImportLegacyBackupStreamDecryptor: ImportLegacyBackupStreamDecryptorProtocol {
 
     func decrypt(
         input: InputStream,

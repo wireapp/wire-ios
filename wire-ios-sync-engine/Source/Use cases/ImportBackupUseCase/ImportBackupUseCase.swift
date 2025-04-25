@@ -28,7 +28,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
-    let streamDecryptor: ImportBackupStreamDecryptorProtocol
+    let streamDecryptor: ImportLegacyBackupStreamDecryptorProtocol
     let fileArchiver: ImportBackupFileArchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
     let appStateUpdater: ImportBackupAppStateUpdaterProtocol
