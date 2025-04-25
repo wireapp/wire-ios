@@ -1173,9 +1173,11 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v3/users/\(domain)/\(userId.transportString())")
+        XCTAssertEqual(
+            mockTransportSession.receivedRequests().first?.path,
+            "/v3/users/\(domain)/\(userId.transportString())"
+        )
     }
-
 
     func testThatItCallsCompletionHandlerForUserLookup() {
         // given

@@ -369,8 +369,8 @@ extension SearchTask {
 
         searchContext.performGroupedBlock { [self] in
             let request = apiVersion <= .v1
-            ? type(of: self).searchRequestForUser(withUUID: qualifiedID.uuid, apiVersion: apiVersion)
-            : type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
+                ? type(of: self).searchRequestForUser(withUUID: qualifiedID.uuid, apiVersion: apiVersion)
+                : type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
 
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
                 defer {
@@ -406,7 +406,10 @@ extension SearchTask {
     }
 
     static func searchRequestForUser(qualifiedID: QualifiedID, apiVersion: APIVersion) -> ZMTransportRequest {
-        .init(getFromPath: "/users/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
+        .init(
+            getFromPath: "/users/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
 }

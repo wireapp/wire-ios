@@ -83,7 +83,8 @@ public class SearchDirectory: NSObject {
         return task
     }
 
-    /// Lookup a user by user Id and domain (qualifiedID), returns a search user in the directory results. If the user doesn't exists
+    /// Lookup a user by user Id and domain (qualifiedID), returns a search user in the directory results. If the user
+    /// doesn't exists
     /// an empty directory result is returned.
     ///
     /// Returns a SearchTask which should be retained until the results arrive.
