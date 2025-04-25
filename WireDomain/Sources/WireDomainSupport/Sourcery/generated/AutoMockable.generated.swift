@@ -26,7 +26,6 @@
 
 import WireAPI
 import WireDataModel
-import WireDomainPackage
 import WireFoundation
 
 @testable import WireDomain
@@ -1997,6 +1996,38 @@ public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
             return mock
         } else {
             fatalError("no mock for `perform`")
+        }
+    }
+
+}
+
+public class MockIndividualToTeamMigrationUseCaseProtocol: IndividualToTeamMigrationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeTeamName_Invocations: [String] = []
+    public var invokeTeamName_MockError: Error?
+    public var invokeTeamName_MockMethod: ((String) async throws -> IndividualToTeamMigrationResult)?
+    public var invokeTeamName_MockValue: IndividualToTeamMigrationResult?
+
+    public func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
+        invokeTeamName_Invocations.append(teamName)
+
+        if let error = invokeTeamName_MockError {
+            throw error
+        }
+
+        if let mock = invokeTeamName_MockMethod {
+            return try await mock(teamName)
+        } else if let mock = invokeTeamName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeTeamName`")
         }
     }
 

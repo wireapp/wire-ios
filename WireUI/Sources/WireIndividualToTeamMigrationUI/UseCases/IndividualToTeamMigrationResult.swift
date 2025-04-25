@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-// sourcery: AutoMockable
-public protocol ImportBackupStreamDecryptorProtocol: Sendable {
+public struct IndividualToTeamMigrationResult: Sendable {
 
-    func decrypt(
-        input: InputStream,
-        output: OutputStream,
-        accountID: UUID,
-        password: String
-    ) throws
+    public let teamID: UUID
+    public let teamName: String
+
+    public init(teamID: UUID, teamName: String) {
+        self.teamID = teamID
+        self.teamName = teamName
+    }
 
 }

@@ -22,7 +22,9 @@
       "identifier" : "3E88BCB11B1F35DF00232589",
       "name" : "WireTransport-ios-tests"
     },
-    "testExecutionOrdering" : "random"
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {

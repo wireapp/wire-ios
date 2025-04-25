@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireDomainPackage
 import WireLogging
 
 @MainActor
@@ -134,15 +133,15 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .success
                     }
                 }
-            } catch ImportBackupError.passwordRequired {
+            } catch ImportLegacyBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
                 return // don't clean up temporary file
-            } catch ImportBackupError.decryptionError {
+            } catch ImportLegacyBackupError.decryptionError {
                 logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
                 return // don't clean up temporary file
-            } catch ImportBackupError.incompatibleFileFormat {
+            } catch ImportLegacyBackupError.incompatibleFileFormat {
                 logger.warn("restore failed due to incompatible file format")
                 alertContent = .init(
                     title: Strings.Alert.IncompatibleBackupError.title,
@@ -150,7 +149,7 @@ final class ImportBackupViewModel: ObservableObject {
                     action: Strings.Alert.ok
                 )
                 state = .restoreFailed
-            } catch ImportBackupError.invalidAccountID {
+            } catch ImportLegacyBackupError.invalidAccountID {
                 logger.warn("restore failed due to invalid account ID")
                 alertContent = .init(
                     title: Strings.Alert.WrongFileError.title,

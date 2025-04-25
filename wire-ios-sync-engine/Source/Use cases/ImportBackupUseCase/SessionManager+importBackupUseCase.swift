@@ -16,10 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPackage
-import WireLogging
-import WireDomain
-
 public extension SessionManager {
 
     var importBackupUseCase: ImportBackupUseCaseProtocol? {
@@ -44,7 +40,7 @@ public extension SessionManager {
                 ),
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
-                streamDecryptor: ImportBackupStreamDecryptor(),
+                streamDecryptor: ImportLegacyBackupStreamDecryptor(),
                 fileArchiver: ImportBackupFileArchiver(),
                 entityStorage: ImportBackupEntityStorage(),
                 appStateUpdater: ImportBackupAppStateUpdater(sessionManager: self),

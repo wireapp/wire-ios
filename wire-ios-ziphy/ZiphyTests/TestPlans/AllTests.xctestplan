@@ -22,7 +22,9 @@
       "identifier" : "DBF380631B15C0B800369FB7",
       "name" : "ZiphyTests"
     },
-    "testExecutionOrdering" : "random"
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {

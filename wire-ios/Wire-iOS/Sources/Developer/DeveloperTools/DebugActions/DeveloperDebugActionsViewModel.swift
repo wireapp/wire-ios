@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SwiftUI
 import WireDataModel
 import WireFoundation
 import WireLogging
@@ -45,7 +46,7 @@ enum MLSGroupSearchItem: Identifiable {
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
 
-    @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
+    @Published var debugItems: [DeveloperDebugActionsDisplayModel.DebugItem] = []
     @Published var mlsGroupSearchItem: MLSGroupSearchItem?
 
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
@@ -68,7 +69,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     private func setupButtons() {
-        buttons = [
+        let buttonItems: [DeveloperDebugActionsDisplayModel.ButtonItem] = [
             .init(title: "Send debug logs", action: sendDebugLogs),
             .init(title: "Trigger incremental sync", action: triggerIncrementalSync),
             .init(title: "Trigger resources sync", action: triggerResourcesSync),
@@ -80,6 +81,26 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
             .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie)
         ]
+
+        let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
+            .init(title: "Use CallKit", isOn: Binding(
+                get: { self.isCallKitEnabled() },
+                set: { self.enableCallKit($0) }
+            ), enabled: !UIDevice.isSimulator)
+        ]
+
+        debugItems = buttonItems.map { .button($0) } + toggleItems.map { .toggle($0) }
+    }
+
+    // MARK: - CallKit
+
+    private func isCallKitEnabled() -> Bool {
+        SessionManager.shared?.callNotificationStyle == .callKit
+    }
+
+    private func enableCallKit(_ enabled: Bool) {
+        SessionManager.shared?.callNotificationStyle = enabled ? .callKit : .pushNotifications
+        onDismiss?()
     }
 
     // MARK: - Clear access token & cookie

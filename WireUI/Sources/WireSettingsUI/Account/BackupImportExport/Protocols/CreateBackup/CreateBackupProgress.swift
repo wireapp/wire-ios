@@ -16,26 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAPI
-import WireDomain
-import WireDomainPackage
-
-public extension ZMUserSession {
-    func createIndividualToTeamMigrationUseCase(
-        apiVersion: WireAPI.APIVersion
-    ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
-            return nil
-        }
-
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
-
-        return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
-            context: syncContext
-        )
-    }
-}
+public protocol ConversationStoreProtocol {}

@@ -17,8 +17,6 @@
 //
 
 import WireDataModelSupport
-import WireDomainPackage
-import WireDomainPackageSupport
 import WireFoundation
 import XCTest
 
@@ -28,8 +26,8 @@ import XCTest
 final class ImportBackupUseCaseTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
-    private var mockStreamDecryptor: MockImportBackupStreamDecryptorProtocol!
-    private var mockFileArchiver: ImportBackupFileArchiverProtocolMock!
+    private var mockStreamDecryptor: MockImportLegacyBackupStreamDecryptorProtocol!
+    private var mockFileArchiver: MockImportBackupFileArchiverProtocol!
     private var mockEntityStorage: MockImportBackupEntityStorageProtocol!
     private var mockAppStateUpdater: MockImportBackupAppStateUpdaterProtocol!
     private var dispatchGroup: ZMSDispatchGroup!

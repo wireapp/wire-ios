@@ -406,6 +406,8 @@ extension SettingsCellDescriptorFactory {
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
+            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
+            importBackupUseCase: ImportBackupUseCaseAdapter(importBackupUseCase),
             createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),

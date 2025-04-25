@@ -296,7 +296,6 @@
 		591F8A042B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
 		59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CDA2CFF8F2B00920B59 /* WireLogging */; };
-		5961FC942DBB85CE00496641 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5961FC932DBB85CE00496641 /* WireFoundation */; };
 		5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82D2BD6A33F00305BBC /* UserPropertyValidating.swift */; };
 		5966D8302BD6AA4100305BBC /* UserPropertyNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82F2BD6AA4100305BBC /* UserPropertyNormalization.swift */; };
 		5966D8322BD6AA8200305BBC /* UserPropertyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */; };
@@ -323,6 +322,7 @@
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D398D02D552573001C9C5F /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59D398CF2D552573001C9C5F /* WireTestingPackage */; };
+		59E977E72DBBB0D100D055F5 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59E977E62DBBB0D100D055F5 /* WireFoundation */; };
 		59EC73F72C20B03100E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EC73F62C20B03100E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59EC73F92C20B04600E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC73F82C20B04600E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m */; };
 		59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */; };
@@ -1899,7 +1899,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5961FC942DBB85CE00496641 /* WireFoundation in Frameworks */,
+				59E977E72DBBB0D100D055F5 /* WireFoundation in Frameworks */,
 				591B6E542C8B09D2009F8A7B /* WireDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5233,10 +5233,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
 		};
-		5961FC932DBB85CE00496641 /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
-		};
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
@@ -5248,6 +5244,10 @@
 		59D398CF2D552573001C9C5F /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireTestingPackage;
+		};
+		59E977E62DBBB0D100D055F5 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
 		};
 		CBD35F2B2D09EBB20080DA37 /* WireCrypto */ = {
 			isa = XCSwiftPackageProductDependency;
