@@ -16,14 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
 enum DeveloperDebugActionsDisplayModel {
 
-    struct ButtonItem: Identifiable {
-        var id: String { title }
+    enum DebugItem: Identifiable {
+        case button(ButtonItem)
+        case toggle(ToggleItem)
 
+        var id: String {
+            switch self {
+            case let .button(buttonItem):
+                buttonItem.title
+            case let .toggle(toggleItem):
+                toggleItem.title
+            }
+        }
+    }
+
+    struct ButtonItem {
         let title: String
         let action: () -> Void
+    }
+
+    struct ToggleItem {
+        let title: String
+        let isOn: Binding<Bool>
+        let enabled: Bool
     }
 }
