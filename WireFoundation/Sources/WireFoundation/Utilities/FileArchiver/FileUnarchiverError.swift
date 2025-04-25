@@ -16,21 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import ZipArchive
-
-struct ImportBackupFileArchiver: FileUnarchiverProtocol {
-
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
-
-        let success = SSZipArchive.unzipFile(
-            atPath: sourceURL.path,
-            toDestination: destinationURL.path
-        )
-
-        guard success else {
-            throw FileUnarchiverError.unexpectedFailure
-        }
-
-    }
+public enum FileUnarchiverError: Error {
+    case unexpectedFailure
 }

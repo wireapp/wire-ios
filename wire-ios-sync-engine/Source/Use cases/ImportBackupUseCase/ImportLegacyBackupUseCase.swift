@@ -25,6 +25,9 @@ import WireSystem
 
 struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
 
+    // using WireFoundation.QualifiedID leads to linking errors
+    private typealias QualifiedID = WireDataModel.QualifiedID
+
 //    let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
 //        ImportBackupZMUserAdapter,
 //        ImportBackupZMConversationAdapter,
@@ -34,7 +37,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
     let streamDecryptor: ImportLegacyBackupStreamDecryptorProtocol
-    let fileArchiver: BackupFileUnarchiverProtocol
+    let fileUnarchiver: FileUnarchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
     let appStateUpdater: ImportBackupAppStateUpdaterProtocol
 
@@ -185,7 +188,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
             throw ImportLegacyBackupError.invalidAccountID
         }
 
-        try fileArchiver.unzipFile(at: decryptedURL, to: unzippedURL)
+        try fileUnarchiver.unzipFile(at: decryptedURL, to: unzippedURL)
         return unzippedURL
     }
 

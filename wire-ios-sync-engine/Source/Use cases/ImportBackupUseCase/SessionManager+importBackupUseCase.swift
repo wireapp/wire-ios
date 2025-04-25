@@ -27,7 +27,7 @@ public extension SessionManager {
                 userSession.managedObjectContext.zm_sync!
             }
 
-            return ImportBackupUseCase(
+            return ImportLegacyBackupUseCase(
 //                importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
 //                    context: syncContext,
 //                    fileArchiver: ImportBackupFileArchiver(),
@@ -41,7 +41,7 @@ public extension SessionManager {
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
                 streamDecryptor: ImportLegacyBackupStreamDecryptor(),
-                fileArchiver: ImportBackupFileArchiver(),
+                fileUnarchiver: ImportBackupFileArchiver(),
                 entityStorage: ImportBackupEntityStorage(),
                 appStateUpdater: ImportBackupAppStateUpdater(sessionManager: self),
                 sharedContainerURL: sharedContainerURL,
