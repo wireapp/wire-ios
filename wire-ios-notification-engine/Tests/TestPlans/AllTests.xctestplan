@@ -22,7 +22,9 @@
       "identifier" : "EE761664299E60C9005DB75F",
       "name" : "WireNotificationEngineTests"
     },
-    "testExecutionOrdering" : "random"
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {

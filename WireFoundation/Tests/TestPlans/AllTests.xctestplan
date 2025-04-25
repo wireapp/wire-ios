@@ -22,7 +22,9 @@
       "identifier" : "WireFoundationTests",
       "name" : "WireFoundationTests"
     },
-    "testExecutionOrdering" : "random"
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {

@@ -27,16 +27,11 @@
       "identifier" : "01D0DCAF2C1C8C880076CB1C",
       "name" : "WireDomainTests"
     },
-    "testExecutionOrdering" : "random"
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireDomainPackageTests",
-        "name" : "WireDomainPackageTests"
-      }
-    },
     {
       "skippedTests" : [
         "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()",

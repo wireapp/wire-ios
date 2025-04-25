@@ -26,7 +26,6 @@
 
 import WireAPI
 import WireDataModel
-import WireDomainPackage
 
 @testable import WireDomain
 

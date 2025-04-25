@@ -18,7 +18,6 @@
 
 import Foundation
 import WireCrypto
-import WireDomainPackage
 
 struct ImportLegacyBackupStreamDecryptor: ImportLegacyBackupStreamDecryptorProtocol {
 

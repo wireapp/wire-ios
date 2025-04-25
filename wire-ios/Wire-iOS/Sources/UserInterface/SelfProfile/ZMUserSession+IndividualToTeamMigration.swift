@@ -19,7 +19,6 @@
 import Foundation
 import WireAPI
 import WireDomain
-import WireDomainPackage
 import WireSyncEngine
 
 public extension ZMUserSession {
