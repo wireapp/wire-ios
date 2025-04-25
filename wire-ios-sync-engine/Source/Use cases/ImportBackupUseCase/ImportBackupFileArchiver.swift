@@ -18,7 +18,7 @@
 
 import ZipArchive
 
-struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
+struct ImportBackupFileArchiver: BackupFileUnarchiverProtocol {
 
     func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
 
@@ -28,7 +28,7 @@ struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
         )
 
         guard success else {
-            throw ImportBackupError.decompressionError // TODO: unarchiving
+            throw ImportBackupError.unarchivingFailed // TODO: unarchiving
         }
 
     }
