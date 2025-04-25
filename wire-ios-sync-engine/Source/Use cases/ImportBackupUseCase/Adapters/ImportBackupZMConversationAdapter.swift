@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-import WireDomainPackage
 import WireFoundation
 
 struct ImportBackupZMConversationAdapter: ImportBackupConversationEntityProtocol { // TODO: try to replace by repository (WireDomain)

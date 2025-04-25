@@ -19,7 +19,6 @@
 import Foundation
 import WireFoundation
 import WireDataModel
-import WireDomainPackage
 
 struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
 

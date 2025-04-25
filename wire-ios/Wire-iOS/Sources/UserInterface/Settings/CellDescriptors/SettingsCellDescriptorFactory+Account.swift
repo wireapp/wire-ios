@@ -20,7 +20,6 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireDomainPackage
 import WireFoundation
 import WireLogging
 import WireSettingsUI

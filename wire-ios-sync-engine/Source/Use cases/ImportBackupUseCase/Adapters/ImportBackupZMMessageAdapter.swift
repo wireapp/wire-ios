@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-import WireDomainPackage
 
 struct ImportBackupZMMessageAdapter: ImportBackupMessageEntityProtocol {
 

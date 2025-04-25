@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-import WireDomainPackage
 import WireFoundation
 
 struct ImportBackupZMUserAdapter: ImportBackupUserEntityProtocol {
