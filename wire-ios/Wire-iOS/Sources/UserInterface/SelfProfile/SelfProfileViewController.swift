@@ -258,7 +258,10 @@ final class SelfProfileViewController: UIViewController {
                   .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
                 return
             }
-            userDidTapCreateTeam(useCase: useCase, userName: userName)
+            userDidTapCreateTeam(
+                useCase: IndividualToTeamMigrationUseCaseAdapter(useCase),
+                userName: userName
+            )
         }
     }
 

@@ -15,7 +15,6 @@ let package = Package(
         .package(path: "../WireAPI"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
-        .package(path: "../WirePlugins"),
     ],
     targets: [
         .target(
