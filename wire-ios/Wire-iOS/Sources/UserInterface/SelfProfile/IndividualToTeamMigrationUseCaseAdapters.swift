@@ -19,7 +19,7 @@
 import WireIndividualToTeamMigrationUI
 import WireDomain
 
-// This adapters are required because WireDomain is an Xcode project and contains the protocol, result+error types and
+// These adapters are required because WireDomain is an Xcode project and contains the protocol, result+error types and
 // the implementation of the `IndividualToTeamMigrationUseCase` while WireUI is a Swift package and cannot depend on
 // Xcode projects. Therefore the types are duplicated and these adapters bridge from WireDomain to
 // WireIndividualToTeamMigrationUI.

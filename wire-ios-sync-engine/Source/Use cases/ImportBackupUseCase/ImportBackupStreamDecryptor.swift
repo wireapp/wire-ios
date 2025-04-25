@@ -20,7 +20,7 @@ import Foundation
 import WireCrypto
 import WireDomainPackage
 
-struct ImportBackupStreamDecryptor: ImportBackupStreamDecryptorProtocol {
+struct ImportBackupStreamDecryptor: ImportBackupStreamDecryptorProtocol { // TODO: add Legacy to name
 
     func decrypt(
         input: InputStream,
@@ -44,13 +44,13 @@ struct ImportBackupStreamDecryptor: ImportBackupStreamDecryptorProtocol {
 
         } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
             if password.isEmpty {
-                throw ImportBackupError.passwordRequired
+                throw ImportLegacyBackupError.passwordRequired
             } else {
-                throw ImportBackupError.decryptionError
+                throw ImportLegacyBackupError.decryptionError
             }
 
         } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-            throw ImportBackupError.keyCreationFailed
+            throw ImportLegacyBackupError.keyCreationFailed
         }
 
     }
