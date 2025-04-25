@@ -90,9 +90,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     func testThatItAsksToShowUserProfile_WhenUserIsKnown() {
         // GIVEN
         let userId = UUID()
-        let domain = "wire.com"
-        let qualifiedID = QualifiedID(uuid: userId, domain: domain)
-        let action: URLAction = .openUserProfile(qualifiedID: qualifiedID)
+        let action: URLAction = .openUserProfile(id: userId)
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = userId
 
@@ -107,9 +105,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     func testThatItAsksToShowConnectionRequest_WhenUserIsUnknown() {
         // GIVEN
         let userId = UUID()
-        let domain = "wire.com"
-        let qualifiedID = QualifiedID(uuid: userId, domain: domain)
-        let action: URLAction = .openUserProfile(qualifiedID: qualifiedID)
+        let action: URLAction = .openUserProfile(id: userId)
 
         // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)

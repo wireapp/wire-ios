@@ -91,14 +91,12 @@ class URLActionTests: ZMTBaseTest {
         let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
         let url = URL(string: "wire://user/\(uuidString)")!
         let uuid = UUID(uuidString: uuidString)!
-        let domain = "wire.com"
-        let qualifiedID = QualifiedID(uuid: uuid, domain: domain)
 
         // when
         let action = try URLAction(url: url)
 
         // then
-        XCTAssertEqual(action, URLAction.openUserProfile(qualifiedID: qualifiedID))
+        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid))
     }
 
     func testThatItParsesImportEventsLink() throws {
