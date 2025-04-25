@@ -31,15 +31,7 @@ let package = Package(
             name: "WireDomainPackageSupport",
             dependencies: ["WireDomainPackage"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
-        ),
-        .testTarget(
-            name: "WireDomainPackageTests",
-            dependencies: [
-                "WireDomainPackage",
-                "WireDomainPackageSupport",
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
-            ]
-        ),
+        )
     ]
 )
 
