@@ -16,21 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireBackup/Tests/WireBackupTests/WireBackupTests.swift
-import WireBackupSupport
-import Testing
-
-@testable import WireBackup
-
-struct PlaceholderTest {
-
-    @Test func nothing() async throws {
-        #expect(Bool(false))
-    }
-
-========
 public enum IndividualToTeamMigrationError: Error, Sendable {
     case userAlreadyInTeam
     case generic(any Error)
->>>>>>>> chore/unify-qualifiedid-WPB-14592:WireUI/Sources/WireIndividualToTeamMigrationUI/UseCases/IndividualToTeamMigrationError.swift
 }

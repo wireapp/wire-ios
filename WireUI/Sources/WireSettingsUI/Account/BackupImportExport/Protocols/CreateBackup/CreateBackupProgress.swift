@@ -16,4 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ConversationStoreProtocol {}
+import Foundation
+
+public enum CreateBackupProgress: Sendable {
+
+    case progress(_ current: Int, _ total: Int)
+    case done(URL)
+
+}
