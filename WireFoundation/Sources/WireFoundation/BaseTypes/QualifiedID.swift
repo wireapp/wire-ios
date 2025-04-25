@@ -16,15 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireBackupSupport
-import Testing
+public import Foundation
 
-@testable import WireBackup
+/// Fully qualified identifier in a federated environment.
 
-struct PlaceholderTest {
+public struct QualifiedID: Codable, Hashable, Sendable {
 
-    @Test func nothing() async throws {
-        #expect(Bool(false))
+    public var id: UUID
+    public var domain: String
+
+    public init(
+        id: UUID,
+        domain: String
+    ) {
+        self.id = id
+        self.domain = domain
+    }
+
+}
+
+extension QualifiedID: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        "\(uuid)@\(domain)"
+    }
+
+}
+
+public extension QualifiedID {
+
+    var uuid: UUID {
+        get { id }
+        set { id = newValue }
+    }
+
+    init(
+        uuid: UUID,
+        domain: String
+    ) {
+        self.init(
+            id: uuid,
+            domain: domain
+        )
     }
 
 }

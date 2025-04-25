@@ -23,18 +23,18 @@ import WireFoundation
 import WireLogging
 import WireSystem
 
-struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
+struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
 
-    let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
-        ImportBackupZMUserAdapter,
-        ImportBackupZMConversationAdapter,
-        ImportBackupZMMessageAdapter
-    >
+//    let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
+//        ImportBackupZMUserAdapter,
+//        ImportBackupZMConversationAdapter,
+//        ImportBackupZMMessageAdapter
+//    >
 
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
     let streamDecryptor: ImportLegacyBackupStreamDecryptorProtocol
-    let fileArchiver: ImportBackupFileArchiverProtocol
+    let fileArchiver: BackupFileUnarchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
     let appStateUpdater: ImportBackupAppStateUpdaterProtocol
 
@@ -46,7 +46,8 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
 
         case .crossPlatform:
-            importCrossPlatformBackupUseCase.invoke(url: url, password: password)
+            fatalError()
+            // importCrossPlatformBackupUseCase.invoke(url: url, password: password)
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
             importIOSBackup(url, password)

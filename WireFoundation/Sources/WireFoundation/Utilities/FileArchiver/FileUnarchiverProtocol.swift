@@ -19,12 +19,12 @@
 public import Foundation
 
 // sourcery: AutoMockable
-public protocol BackupFileArchiverProtocol: Sendable {
+public protocol FileUnarchiverProtocol: Sendable {
 
-    /// Creates a zip file at `destinationURL` from the file or directory at `sourceURL`.
-    func zipResources(
-        at resourceURLs: [URL],
-        into destinationURL: URL
+    /// Extract the zip file at `sourceURL` and place the contents in the provided `destinationURL` directory.
+    func unzipFile(
+        at sourceURL: URL,
+        to destinationURL: URL
     ) throws
 
 }

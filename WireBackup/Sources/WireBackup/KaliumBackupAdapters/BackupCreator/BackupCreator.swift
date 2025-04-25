@@ -21,7 +21,7 @@ public import WireFoundation
 
 import KaliumBackup
 
-public struct BackupCreator<FileArchiver> where FileArchiver: BackupFileArchiverProtocol {
+public struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtocol {
 
     private let mpBackupCreator: MPBackupExporter
 
@@ -42,7 +42,7 @@ public struct BackupCreator<FileArchiver> where FileArchiver: BackupFileArchiver
 }
 
 private final class FileArchiverToFileZipperAdapter<FileArchiver>: FileZipper
-where FileArchiver: BackupFileArchiverProtocol {
+where FileArchiver: FileArchiverProtocol {
 
     let fileArchiver: FileArchiver
 

@@ -17,10 +17,11 @@
 //
 
 public import Foundation
+public import WireFoundation
 
 import KaliumBackup
 
-public struct BackupImporter<FileUnarchiver> where FileUnarchiver: BackupFileUnarchiverProtocol {
+public struct BackupImporter<FileUnarchiver> where FileUnarchiver: FileUnarchiverProtocol {
 
     private let mpBackupImporter: MPBackupImporter
 
@@ -37,7 +38,7 @@ public struct BackupImporter<FileUnarchiver> where FileUnarchiver: BackupFileUna
 }
 
 private final class FileUnarchiverToBackupFileUnzipper<FileUnarchiver>: BackupFileUnzipper
-where FileUnarchiver: BackupFileUnarchiverProtocol {
+where FileUnarchiver: FileUnarchiverProtocol {
 
     let fileUnarchiver: FileUnarchiver
 
