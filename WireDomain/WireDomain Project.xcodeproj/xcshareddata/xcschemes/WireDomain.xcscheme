@@ -18,7 +18,7 @@
                BlueprintIdentifier = "01D0DCA52C1C8C870076CB1C"
                BuildableName = "WireDomain.framework"
                BlueprintName = "WireDomain"
-               ReferencedContainer = "container:WireDomain.xcodeproj">
+               ReferencedContainer = "container:WireDomain Project.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -43,7 +43,7 @@
                BlueprintIdentifier = "01D0DCAF2C1C8C880076CB1C"
                BuildableName = "WireDomainTests.xctest"
                BlueprintName = "WireDomainTests"
-               ReferencedContainer = "container:WireDomain.xcodeproj">
+               ReferencedContainer = "container:WireDomain Project.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,7 +71,7 @@
             BlueprintIdentifier = "01D0DCA52C1C8C870076CB1C"
             BuildableName = "WireDomain.framework"
             BlueprintName = "WireDomain"
-            ReferencedContainer = "container:WireDomain.xcodeproj">
+            ReferencedContainer = "container:WireDomain Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

@@ -23,7 +23,7 @@
     "language" : "en",
     "region" : "DE",
     "targetForVariableExpansion" : {
-      "containerPath" : "container:WireDomain.xcodeproj",
+      "containerPath" : "container:WireDomain Project.xcodeproj",
       "identifier" : "01D0DCAF2C1C8C880076CB1C",
       "name" : "WireDomainTests"
     },
@@ -33,13 +33,20 @@
   },
   "testTargets" : [
     {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireDomainPackageTests",
+        "name" : "WireDomainPackageTests"
+      }
+    },
+    {
       "skippedTests" : [
         "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()",
         "PullMLSStatusSyncTests\/testPull_EndpointUnavailable()",
         "PullMLSStatusSyncTests\/testPull_MLSNotEnabled()"
       ],
       "target" : {
-        "containerPath" : "container:WireDomain.xcodeproj",
+        "containerPath" : "container:WireDomain Project.xcodeproj",
         "identifier" : "01D0DCAF2C1C8C880076CB1C",
         "name" : "WireDomainTests"
       }
