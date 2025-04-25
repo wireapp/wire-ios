@@ -1175,7 +1175,7 @@ final class SearchTaskTests: DatabaseTest {
         // then
         XCTAssertEqual(
             mockTransportSession.receivedRequests().first?.path,
-            "/v3/users/\(domain)/\(userId.transportString())"
+            "/v2/users/\(domain)/\(userId.transportString())"
         )
     }
 
