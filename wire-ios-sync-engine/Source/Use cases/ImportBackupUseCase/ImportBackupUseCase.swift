@@ -87,7 +87,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         selfUserQualifiedID = qualifiedID
                         selfClientBackup = backup
                     } else {
-                        throw ImportBackupError.faildToBackUpUserClient
+                        throw ImportBackupError.failedToBackUpUserClient
                     }
 
                     logger.debug("reporting migration required")

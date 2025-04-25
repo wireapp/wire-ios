@@ -159,3 +159,12 @@ private extension URL {
         SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
     }
 }
+
+// MARK: - CreateLegacyBackupError
+
+enum CreateLegacyBackupError: Error {
+    case noActiveAccountForExport
+    case compressionError
+    /// Failed to create `InputStream` or `OutputStream` from `URL`.
+    case failedToCreateStreamsForEncryption
+}

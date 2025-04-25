@@ -27,7 +27,7 @@ public enum ImportBackupError: Error, Equatable, CaseIterable {
     case invalidFileExtension
     case keyCreationFailed
     case decryptionError
-    case faildToBackUpUserClient
+    case failedToBackUpUserClient
     /// Failed to create `InputStream` or `OutputStream` from `URL`.
     case failedToCreateStreamForDecryption
 }

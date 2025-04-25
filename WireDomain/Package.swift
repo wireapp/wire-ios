@@ -8,8 +8,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireDomainPackage", targets: ["WireDomainPackage"]),
-        .library(name: "WireDomainPackageSupport", targets: ["WireDomainPackageSupport"])
+        .library(name: "WireDomainPackage", targets: ["WireDomainPackage"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
@@ -26,11 +25,6 @@ let package = Package(
                 "WireLogging",
                 .product(name: "WireFoundation", package: "WireFoundation")
             ]
-        ),
-        .target(
-            name: "WireDomainPackageSupport",
-            dependencies: ["WireDomainPackage"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         )
     ]
 )
