@@ -201,7 +201,7 @@
 		1687C0E22150EE91003099DD /* ZMClientMessageTests+Mentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687C0E12150EE91003099DD /* ZMClientMessageTests+Mentions.swift */; };
 		1689FD462194A63E00A656E2 /* ZMClientMessageTests+Editing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1689FD452194A63E00A656E2 /* ZMClientMessageTests+Editing.swift */; };
 		168D7BFD26F365ED00789960 /* EntityAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7BFC26F365ED00789960 /* EntityAction.swift */; };
-		168D7C9626F9ED1E00789960 /* QualifiedIDExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7C9526F9ED1E00789960 /* QualifiedIDExtensions.swift */; };
+		168D7C9626F9ED1E00789960 /* QualifiedID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7C9526F9ED1E00789960 /* QualifiedID.swift */; };
 		168FF330258200AD0066DAE3 /* ZMClientMessageTests+ResetSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168FF32F258200AD0066DAE3 /* ZMClientMessageTests+ResetSession.swift */; };
 		16925337234F677B0041A8FF /* ZMConversationListDirectoryTests+Labels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16925336234F677B0041A8FF /* ZMConversationListDirectoryTests+Labels.swift */; };
 		1693155325A30D4E00709F15 /* UserClientTests+ResetSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1693155225A30D4E00709F15 /* UserClientTests+ResetSession.swift */; };
@@ -295,8 +295,6 @@
 		591F8A022B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */; };
 		591F8A042B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
-		593375E92DBA4FE700BEAA10 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 593375E82DBA4FE700BEAA10 /* WireFoundation */; };
-		593375EB2DBA4FEE00BEAA10 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 593375EA2DBA4FEE00BEAA10 /* WireFoundation */; };
 		59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CDA2CFF8F2B00920B59 /* WireLogging */; };
 		5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82D2BD6A33F00305BBC /* UserPropertyValidating.swift */; };
 		5966D8302BD6AA4100305BBC /* UserPropertyNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82F2BD6AA4100305BBC /* UserPropertyNormalization.swift */; };
@@ -1121,7 +1119,7 @@
 		1687C0E12150EE91003099DD /* ZMClientMessageTests+Mentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Mentions.swift"; sourceTree = "<group>"; };
 		1689FD452194A63E00A656E2 /* ZMClientMessageTests+Editing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Editing.swift"; sourceTree = "<group>"; };
 		168D7BFC26F365ED00789960 /* EntityAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityAction.swift; sourceTree = "<group>"; };
-		168D7C9526F9ED1E00789960 /* QualifiedIDExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualifiedIDExtensions.swift; sourceTree = "<group>"; };
+		168D7C9526F9ED1E00789960 /* QualifiedID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualifiedID.swift; sourceTree = "<group>"; };
 		168FF32F258200AD0066DAE3 /* ZMClientMessageTests+ResetSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+ResetSession.swift"; sourceTree = "<group>"; };
 		16925336234F677B0041A8FF /* ZMConversationListDirectoryTests+Labels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationListDirectoryTests+Labels.swift"; sourceTree = "<group>"; };
 		1693155225A30D4E00709F15 /* UserClientTests+ResetSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClientTests+ResetSession.swift"; sourceTree = "<group>"; };
@@ -1901,7 +1899,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				591B6E542C8B09D2009F8A7B /* WireDataModel.framework in Frameworks */,
-				593375E92DBA4FE700BEAA10 /* WireFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1932,7 +1929,6 @@
 				CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */,
 				F9C9A5071CAD5DF10039E10C /* WireDataModel.framework in Frameworks */,
 				59D398D02D552573001C9C5F /* WireTestingPackage in Frameworks */,
-				593375EB2DBA4FEE00BEAA10 /* WireFoundation in Frameworks */,
 				59FFAD9D2C822977000C8085 /* WireTesting.framework in Frameworks */,
 				5902AC752DA92365000A8F7F /* WireFoundationSupport in Frameworks */,
 				591B6E4E2C8B09CA009F8A7B /* OCMock.xcframework in Frameworks */,
@@ -2861,7 +2857,7 @@
 				87C125F61EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift */,
 				16460A45206544B00096B616 /* PersistentMetadataKeys.swift */,
 				168D7BFC26F365ED00789960 /* EntityAction.swift */,
-				168D7C9526F9ED1E00789960 /* QualifiedIDExtensions.swift */,
+				168D7C9526F9ED1E00789960 /* QualifiedID.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -4484,7 +4480,7 @@
 				63B1336829A503D100009D84 /* CountSelfMLSKeyPackagesAction.swift in Sources */,
 				F11F3E891FA32463007B6D3D /* InvalidClientsRemoval.swift in Sources */,
 				F9FD75781E2F9A0600B4558B /* SearchUserObserverCenter.swift in Sources */,
-				168D7C9626F9ED1E00789960 /* QualifiedIDExtensions.swift in Sources */,
+				168D7C9626F9ED1E00789960 /* QualifiedID.swift in Sources */,
 				54F6CEAB1CE2972200A1276D /* ZMAssetClientMessage+Download.swift in Sources */,
 				F9B71F221CB264EF001DB03F /* ZMConversation.m in Sources */,
 				EEAAD760252C713E00E6A44E /* ClassIdentifier.swift in Sources */,
@@ -5230,14 +5226,6 @@
 		5902AC742DA92365000A8F7F /* WireFoundationSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundationSupport;
-		};
-		593375E82DBA4FE700BEAA10 /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
-		};
-		593375EA2DBA4FEE00BEAA10 /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
 		};
 		59537CDA2CFF8F2B00920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
