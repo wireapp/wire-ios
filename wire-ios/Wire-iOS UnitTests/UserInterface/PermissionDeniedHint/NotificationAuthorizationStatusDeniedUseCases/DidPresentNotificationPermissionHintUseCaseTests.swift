@@ -40,6 +40,8 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        userDefaults = nil
+        mockDateProvider = nil
     }
 
     func testDateIsStored() throws {
