@@ -22,7 +22,9 @@
       "identifier" : "TrimStringCatalogsTests",
       "name" : "TrimStringCatalogsTests"
     },
-    "testExecutionOrdering" : "random"
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {

@@ -16,25 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
-public enum IndividualToTeamMigrationError: Error, Sendable {
-    case userAlreadyInTeam
-    case generic(any Error)
-}
-
-public struct IndividualToTeamMigrationResult: Sendable {
-    public let teamID: UUID
-    public let teamName: String
-
-    public init(teamID: UUID, teamName: String) {
-        self.teamID = teamID
-        self.teamName = teamName
-    }
-}
+import Foundation
 
 // sourcery: AutoMockable
-/// Sends a request to the backend to migrate the user to a team.
-public protocol IndividualToTeamMigrationUseCaseProtocol: Sendable {
-    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
+public protocol ImportLegacyBackupStreamDecryptorProtocol: Sendable {
+
+    func decrypt(
+        input: InputStream,
+        output: OutputStream,
+        accountID: UUID,
+        password: String
+    ) throws
+
 }

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPackage
 import WireLogging
 import WireTestingPackage
 import XCTest
@@ -90,7 +89,7 @@ final class ImportBackupViewModelTest: XCTestCase {
         sut.pickedBackupFile(result: .success(temporaryFile))
         wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
         sut.confirmOverwrite()
-        continuation.finish(throwing: ImportBackupError.passwordRequired)
+        continuation.finish(throwing: ImportLegacyBackupError.passwordRequired)
 
         // Then
         wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
@@ -108,7 +107,7 @@ final class ImportBackupViewModelTest: XCTestCase {
         wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
         sut.confirmOverwrite()
         wait(forConditionToBeTrue: sut.importProgress == 0, timeout: 3)
-        continuation.finish(throwing: ImportBackupError.decryptionError)
+        continuation.finish(throwing: ImportLegacyBackupError.decryptionError)
         wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
         mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
         sut.enterPassword("pw")

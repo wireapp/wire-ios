@@ -16,16 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
-import WireDomainPackageSupport
-
-@testable import WireDomainPackage
-
-struct PlaceholderTests {
-
-    @Test
-    func testNothing() async throws {
-        #expect(true)
-    }
-
+/// Sends a request to the backend to migrate the user to a team.
+public protocol IndividualToTeamMigrationUseCaseProtocol: Sendable {
+    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }

@@ -17,15 +17,25 @@
 //
 
 import Foundation
+import WireAPI
+import WireDomain
+import WireSyncEngine
 
-// sourcery: AutoMockable
-public protocol ImportBackupStreamDecryptorProtocol: Sendable {
+public extension ZMUserSession {
+    func createIndividualToTeamMigrationUseCase(
+        apiVersion: WireAPI.APIVersion
+    ) -> IndividualToTeamMigrationUseCaseProtocol? {
+        guard let apiService else {
+            assertionFailure("apiService is nil")
+            return nil
+        }
 
-    func decrypt(
-        input: InputStream,
-        output: OutputStream,
-        accountID: UUID,
-        password: String
-    ) throws
+        let builder = AccountsAPIBuilder(apiService: apiService)
+        let accountsAPI = builder.makeAPI(for: apiVersion)
 
+        return IndividualToTeamMigrationUseCase(
+            accountsAPI: accountsAPI,
+            context: syncContext
+        )
+    }
 }

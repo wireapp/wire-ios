@@ -19,7 +19,9 @@
       }
     ],
     "language" : "en",
-    "region" : "US"
+    "region" : "US",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {

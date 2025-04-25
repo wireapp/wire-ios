@@ -27,7 +27,9 @@
       "identifier" : "54C9023D1B7532DD007162A8",
       "name" : "WireMockTransportTests"
     },
-    "testExecutionOrdering" : "random"
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {

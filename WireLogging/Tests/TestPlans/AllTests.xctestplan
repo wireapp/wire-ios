@@ -21,7 +21,9 @@
       "containerPath" : "container:WireLogging",
       "identifier" : "WireLoggingTests",
       "name" : "WireLoggingTests"
-    }
+    },
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {
