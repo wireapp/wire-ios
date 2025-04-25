@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireIndividualToTeamMigrationUI
 import WireDomain
+import WireIndividualToTeamMigrationUI
 
 // These adapters are required because WireDomain is an Xcode project and contains the protocol, result+error types and
 // the implementation of the `IndividualToTeamMigrationUseCase` while WireUI is a Swift package and cannot depend on
 // Xcode projects. Therefore the types are duplicated and these adapters bridge from WireDomain to
 // WireIndividualToTeamMigrationUI.
 
-struct IndividualToTeamMigrationUseCaseAdapter: WireIndividualToTeamMigrationUI.IndividualToTeamMigrationUseCaseProtocol {
+struct IndividualToTeamMigrationUseCaseAdapter: WireIndividualToTeamMigrationUI
+    .IndividualToTeamMigrationUseCaseProtocol {
 
     let individualToTeamMigrationUseCase: any WireDomain.IndividualToTeamMigrationUseCaseProtocol
 
@@ -60,7 +61,7 @@ extension WireIndividualToTeamMigrationUI.IndividualToTeamMigrationError {
         switch error {
         case .userAlreadyInTeam:
             self = .userAlreadyInTeam
-        case .generic(let error):
+        case let .generic(error):
             self = .generic(error)
         }
     }

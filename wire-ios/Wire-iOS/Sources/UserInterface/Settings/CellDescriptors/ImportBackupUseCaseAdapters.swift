@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import WireSettingsUI
+import WireSyncEngine
 
 // These adapters are required because WireSyncEngine is an Xcode project and contains the protocol, result+error types
 // and the implementation of the `ImportBackupUseCaseProtocol` while WireUI is a Swift package and cannot depend on
@@ -63,7 +63,7 @@ extension WireSettingsUI.ImportBackupProgress {
 
     init(_ result: WireSyncEngine.ImportBackupProgress) {
         switch result {
-        case .progress(let value):
+        case let .progress(value):
             self = .progress(value)
         case .done:
             self = .done
