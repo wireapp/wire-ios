@@ -1412,6 +1412,10 @@ extension ZMUserSession: ContextProvider {
     public var viewContext: NSManagedObjectContext {
         coreDataStack.viewContext
     }
+    
+    public var viewBackgroundContext: NSManagedObjectContext {
+        coreDataStack.viewBackgroundContext
+    }
 
     public var syncContext: NSManagedObjectContext {
         coreDataStack.syncContext

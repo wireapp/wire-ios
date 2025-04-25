@@ -26,10 +26,8 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     struct Configuration: Equatable {
         var location: LocationMessageData
         var message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
-
+        var isObfuscated: Bool
+        
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.message == rhs.message &&
                 lhs.message == rhs.message &&
@@ -202,6 +200,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
         didSet {
             if let message, let locationMessageData = message.locationMessageData {
                 configuration.location = locationMessageData
+                configuration.isObfuscated = message.isObfuscated
             }
         }
     }
@@ -219,6 +218,11 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage, location: LocationMessageData) {
-        self.configuration = View.Configuration(location: location, message: message)
+        self.configuration = View
+            .Configuration(
+                location: location,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
     }
 }

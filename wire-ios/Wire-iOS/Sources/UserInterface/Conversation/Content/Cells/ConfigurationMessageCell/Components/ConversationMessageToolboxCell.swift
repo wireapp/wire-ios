@@ -83,7 +83,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         if object.isRedundant {
             toolboxView.setAllContentHidden()
         }
-
     }
 
     func messageToolboxDidRequestOpeningDetails(

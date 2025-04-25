@@ -24,9 +24,7 @@ final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration: Equatable {
         var message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
+        var isObfuscated: Bool
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.message == rhs.message &&
@@ -155,7 +153,7 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
 
     init(message: ZMConversationMessage) {
         self.configuration = View
-            .Configuration(message: message)
+            .Configuration(message: message, isObfuscated: message.isObfuscated)
     }
 
 }

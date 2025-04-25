@@ -25,9 +25,7 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
     struct Configuration: Equatable {
         var image: ZMImageMessageData
         var message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
+        var isObfuscated: Bool
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.message == rhs.message &&
@@ -202,7 +200,12 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
 
     init(message: ZMConversationMessage, image: ZMImageMessageData) {
         self.message = message
-        self.configuration = View.Configuration(image: image, message: message)
+        self.configuration = View
+            .Configuration(
+                image: image,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
     }
 

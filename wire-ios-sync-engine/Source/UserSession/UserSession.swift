@@ -292,6 +292,4 @@ public protocol UserSession: AnyObject {
 
     /// Cache for search users.
     var searchUsersCache: SearchUsersCache { get }
-
-    func performBackgroundTask(_ block: @escaping (NSManagedObjectContext) -> Void)
 }

@@ -28,7 +28,7 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
-
+    
     var isTornDown = false
 
     var userProfile: UserProfile
@@ -418,14 +418,6 @@ final class UserSessionMock: UserSession {
     var contextProvider: any ContextProvider {
         coreDataStack ?? MockContextProvider()
     }
-
-    var performBackgroundTaskReturnValue: NSManagedObjectContext?
-    func performBackgroundTask(
-        _ block: @escaping (NSManagedObjectContext) -> Void
-    ) {
-        block(performBackgroundTaskReturnValue ?? viewContext)
-    }
-
 }
 
 // MARK: - UserSessionMock + ContextProvider
@@ -434,6 +426,7 @@ extension UserSessionMock: ContextProvider {
 
     var account: Account { contextProvider.account }
     var viewContext: NSManagedObjectContext { contextProvider.viewContext }
+    var viewBackgroundContext: NSManagedObjectContext { contextProvider.viewBackgroundContext }
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
     var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }

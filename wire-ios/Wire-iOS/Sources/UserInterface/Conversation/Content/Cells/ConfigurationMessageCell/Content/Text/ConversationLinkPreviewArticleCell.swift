@@ -25,9 +25,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
         var textMessageData: TextMessageData
         let showImage: Bool
         var message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
+        var isObfuscated: Bool
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.message == rhs.message &&
@@ -137,7 +135,13 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     init(message: ZMConversationMessage, data: TextMessageData) {
         let showImage = data.linkPreviewHasImage
-        self.configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
+        self.configuration = View
+            .Configuration(
+                textMessageData: data,
+                showImage: showImage,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
     }
 }

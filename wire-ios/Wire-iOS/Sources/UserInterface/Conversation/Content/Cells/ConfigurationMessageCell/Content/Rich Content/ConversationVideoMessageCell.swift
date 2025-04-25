@@ -24,9 +24,7 @@ final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
     struct Configuration: Equatable {
         var message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
-        }
+        var isObfuscated: Bool
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.message == rhs.message &&
@@ -168,7 +166,8 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message, isObfuscated: message.isObfuscated)
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
     }
 

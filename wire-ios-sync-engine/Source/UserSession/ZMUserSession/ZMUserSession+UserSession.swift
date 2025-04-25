@@ -376,13 +376,6 @@ extension ZMUserSession: UserSession {
             isFederationUsageAllowed: isFederationUsageAllowed
         )
     }
-
-    public func performBackgroundTask(
-        _ block: @escaping (NSManagedObjectContext) -> Void
-    ) {
-        coreDataStack.messagesContainer.performBackgroundTask(block)
-    }
-
 }
 
 extension UInt64 {

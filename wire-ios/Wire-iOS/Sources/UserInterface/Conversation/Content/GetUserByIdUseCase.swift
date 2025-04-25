@@ -20,12 +20,12 @@ import CoreData
 import Foundation
 import WireDataModel
 
-protocol GetUserByIdUseCaseProtocol {
-    func getUserById(id: Any, context: NSManagedObjectContext) -> (any UserType)?
+protocol GetUserByIDUseCaseProtocol {
+    func getUserByID(id: Any, context: NSManagedObjectContext) -> (any UserType)?
 }
 
-class GetUserByIdUseCase: GetUserByIdUseCaseProtocol {
-    func getUserById(id: Any, context: NSManagedObjectContext) -> (any UserType)? {
+class GetUserByIdUseCase: GetUserByIDUseCaseProtocol {
+    func getUserByID(id: Any, context: NSManagedObjectContext) -> (any UserType)? {
         guard let managedObjectId = id as? NSManagedObjectID else {
             return nil
         }

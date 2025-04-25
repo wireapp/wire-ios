@@ -32,14 +32,14 @@ import WireAccountImageUI
 @testable import Wire
 @testable import WireCommonComponents
 
-class MockGetUserByIdUseCaseProtocol: GetUserByIdUseCaseProtocol {
+class MockGetUserByIdUseCaseProtocol: GetUserByIDUseCaseProtocol {
 
-    // MARK: - getUserById
+    // MARK: - getUserByID
 
     var getUserByIdIdContext_Invocations: [(id: Any, context: NSManagedObjectContext)] = []
     var getUserByIdIdContext_MockValue: (any UserType)?
 
-    func getUserById(id: Any, context: NSManagedObjectContext) -> (any UserType)? {
+    func getUserByID(id: Any, context: NSManagedObjectContext) -> (any UserType)? {
         getUserByIdIdContext_Invocations.append((id: id, context: context))
 
         if let mock = getUserByIdIdContext_MockValue {

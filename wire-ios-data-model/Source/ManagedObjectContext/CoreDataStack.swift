@@ -45,6 +45,7 @@ public protocol ContextProvider {
     var account: Account { get }
 
     var viewContext: NSManagedObjectContext { get }
+    var viewBackgroundContext: NSManagedObjectContext { get }
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
@@ -119,6 +120,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     public var viewContext: NSManagedObjectContext {
         messagesContainer.viewContext
     }
+    public lazy var viewBackgroundContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
     public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 

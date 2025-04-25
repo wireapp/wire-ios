@@ -90,7 +90,7 @@ final class ConversationContentViewController: UIViewController {
         actionResponder: self,
         cellDelegate: self,
         userSession: userSession,
-        getUserByIdUseCase: GetUserByIdUseCase()
+        getUserByIDUseCase: GetUserByIdUseCase()
     )
 
     /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has
@@ -351,7 +351,8 @@ final class ConversationContentViewController: UIViewController {
 
     @discardableResult
     func willSelectRow(at indexPath: IndexPath, tableView: UITableView) -> IndexPath? {
-        guard dataSource.messages.indices.contains(indexPath.section) == true else { return nil }
+        let messages = dataSource.allMessages
+        guard messages.indices.contains(indexPath.section) == true else { return nil }
 
         // If the menu is visible, hide it and do nothing
         if UIMenuController.shared.isMenuVisible {
@@ -359,7 +360,7 @@ final class ConversationContentViewController: UIViewController {
             return nil
         }
 
-        let message = dataSource.messages[indexPath.section]
+        let message = messages[indexPath.section]
 
         if message == dataSource.selectedMessage {
 
@@ -423,7 +424,7 @@ final class ConversationContentViewController: UIViewController {
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows
 
         if let firstIndexPath = indexPathsForVisibleRows?.first,
-           let lastVisibleMessage = dataSource.messages[safe: firstIndexPath.section] {
+           let lastVisibleMessage = dataSource.allMessages[safe: firstIndexPath.section] {
             conversation.markMessagesAsRead(until: lastVisibleMessage)
         }
 
