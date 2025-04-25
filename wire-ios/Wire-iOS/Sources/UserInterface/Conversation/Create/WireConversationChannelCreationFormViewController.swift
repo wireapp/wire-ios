@@ -132,6 +132,9 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         }
 
         values.name = channelCreationSettings.channelName
+        values.allowGuests = channelCreationSettings.guestsAllowed
+        values.allowServices = channelCreationSettings.servicesAllowed
+        values.enableReceipts = channelCreationSettings.readReceiptsEnabled
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
