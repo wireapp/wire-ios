@@ -19,7 +19,6 @@
 import Foundation
 import WireAPI
 import WireDataModel
-import WireFoundation
 import WireLogging
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -87,7 +86,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func pullConversation(id: UUID, domain: String) async throws {
-        let qualifiedID = QualifiedID(uuid: id, domain: domain)
+        let qualifiedID = WireAPI.QualifiedID(uuid: id, domain: domain)
         let conversationList = try await conversationsAPI.getConversations(
             for: [qualifiedID]
         )

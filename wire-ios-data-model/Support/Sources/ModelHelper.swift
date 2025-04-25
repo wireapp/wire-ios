@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-import WireFoundation
 
 /// A helper object to make it easy to create and relate model objects.
 

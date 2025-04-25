@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 import WireLogging
 
 public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource,

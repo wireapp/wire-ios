@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 /// Contains metadata about a subgroup. Used when fetching information about subgroup from the backend.
 

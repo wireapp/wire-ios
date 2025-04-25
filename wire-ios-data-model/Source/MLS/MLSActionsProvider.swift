@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 // sourcery: AutoMockable
 protocol MLSActionsProviderProtocol {

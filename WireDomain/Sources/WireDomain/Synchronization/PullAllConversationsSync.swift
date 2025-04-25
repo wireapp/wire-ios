@@ -18,7 +18,6 @@
 
 import Foundation
 import WireAPI
-import WireFoundation
 
 struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
 

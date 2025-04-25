@@ -19,7 +19,6 @@
 import Foundation
 import WireAPI
 import WireDataModel
-import WireFoundation
 
 // sourcery: AutoMockable
 /// Facilitate access to users related domain objects.
@@ -58,7 +57,7 @@ public protocol UserRepositoryProtocol {
     /// - parameters:
     ///     - userIDs: IDs of users to fetch
 
-    func pullUsers(userIDs: [QualifiedID]) async throws
+    func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
     /// Updates a user.
     ///
@@ -149,7 +148,7 @@ public protocol UserRepositoryProtocol {
     /// Fetches all user IDs that have a one on one conversation
     /// - returns: A list of users' qualified IDs.
 
-    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [QualifiedID]
+    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
 
 //    /// Fetches all user IDs from the local storage.
 //    /// - returns: A list of users' qualified IDs.

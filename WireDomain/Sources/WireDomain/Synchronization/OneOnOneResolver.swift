@@ -19,7 +19,6 @@
 import CoreData
 import WireAPI
 import WireDataModel
-import WireFoundation
 import WireLogging
 
 public struct OneOnOneResolver: OneOnOneResolverProtocol {
@@ -74,7 +73,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     }
 
     public func resolveOneOnOneConversation(
-        with userID: QualifiedID
+        with userID: WireDataModel.QualifiedID
     ) async throws {
         let user = try await userLocalStore.fetchUser(
             id: userID.uuid, domain: userID.domain
@@ -152,7 +151,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         mlsConversation: ZMConversation,
         mlsGroupID: MLSGroupID,
         user: ZMUser,
-        userID: QualifiedID
+        userID: WireDataModel.QualifiedID
     ) async {
         do {
             try await setupMLSGroup(
@@ -187,7 +186,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     private func setupMLSGroup(
         mlsConversation: ZMConversation,
         groupID: MLSGroupID,
-        userID: QualifiedID
+        userID: WireDataModel.QualifiedID
     ) async throws {
         let mlsService = mlsProvider.service
 
@@ -225,7 +224,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     private func switchLocalConversationToMLS(
         mlsConversation: ZMConversation,
         for user: ZMUser,
-        userID: QualifiedID
+        userID: WireDataModel.QualifiedID
     ) async {
         await context.perform {
             guard !mlsConversation.migratedToMLS else {
@@ -269,7 +268,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     }
 
     private func fetchAllTeamOneOnOneProteusConversations(
-        otherUserID: QualifiedID,
+        otherUserID: WireDataModel.QualifiedID,
         in context: NSManagedObjectContext
     ) -> [ZMConversation] {
         guard let otherUser = ZMUser.fetch(with: otherUserID, in: context) else {

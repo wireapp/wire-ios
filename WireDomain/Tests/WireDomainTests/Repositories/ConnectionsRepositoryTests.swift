@@ -20,7 +20,6 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
-import WireFoundation
 import XCTest
 
 @testable import WireAPI
@@ -91,9 +90,9 @@ final class ConnectionsRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let member1ID = QualifiedID(uuid: .mockID1, domain: String.randomDomain())
-        static let conversationID = QualifiedID(uuid: .mockID2, domain: String.randomDomain())
-        static let member2ID = QualifiedID(uuid: .mockID3, domain: String.randomDomain())
+        static let member1ID = WireAPI.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
+        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
+        static let member2ID = WireAPI.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
         static let lastUpdate = Date()
         static let connectionStatus = ConnectionStatus.accepted
 

@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 final class ConversationTests: ZMConversationTestsBase {
 

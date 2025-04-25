@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 

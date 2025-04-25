@@ -18,7 +18,6 @@
 
 import WireAPI
 import WireDataModel
-import WireFoundation
 import WireLogging
 
 // sourcery: AutoMockable
@@ -146,11 +145,11 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             }
 
             let usersExcludingSelfUser = users.filter { !$0.isSelfUser }
-            let qualifiedUserIDs: [QualifiedID]
+            let qualifiedUserIDs: [WireAPI.QualifiedID]
             let unqualifiedUserIDs: [UUID]
 
             if let ids = usersExcludingSelfUser.qualifiedUserIDs {
-                qualifiedUserIDs = ids
+                qualifiedUserIDs = ids.toAPIModel()
                 unqualifiedUserIDs = []
             } else {
                 qualifiedUserIDs = []

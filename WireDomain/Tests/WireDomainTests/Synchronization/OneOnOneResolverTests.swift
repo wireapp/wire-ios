@@ -22,9 +22,7 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
-import WireFoundation
 import XCTest
-
 @testable import WireDomain
 
 final class OneOnOneResolverTests: XCTestCase {
@@ -108,7 +106,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(createGroupInvocation.groupID, Scaffolding.mlsGroupID)
         XCTAssertEqual(
             createGroupInvocation.users,
-            [MLSUser(Scaffolding.receiverQualifiedID)]
+            [MLSUser(Scaffolding.receiverQualifiedID.toDomainModel())]
         )
 
         await context.perform {
@@ -337,7 +335,7 @@ final class OneOnOneResolverTests: XCTestCase {
         userLocalStore.fetchUserIdDomain_MockValue = user
         userLocalStore.fetchSelfUser_MockValue = selfUser
         userLocalStore
-            .fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID]
+            .fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
 
         pullMLSOneOnOneSync.pullUserIDUserDomain_MockValue = Scaffolding.mlsGroupID
         conversationLocalStore.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation
@@ -363,12 +361,12 @@ final class OneOnOneResolverTests: XCTestCase {
         static let username = "username"
         static let senderID = UUID()
         static let receiverID = UUID()
-        static let receiverQualifiedID = QualifiedID(
+        static let receiverQualifiedID = WireAPI.QualifiedID(
             uuid: receiverID,
             domain: "domain.com"
         )
         static let conversationID = UUID()
-        static let qualifiedConversationID = QualifiedID(
+        static let qualifiedConversationID = WireAPI.QualifiedID(
             uuid: conversationID,
             domain: "domain.com"
         )

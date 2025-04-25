@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-import WireFoundation
 import WireRequestStrategy
 
 public protocol FetchUserClientsUseCaseProtocol {

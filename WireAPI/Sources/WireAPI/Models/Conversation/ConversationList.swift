@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
-
 /// A list of conversations categorized by status.
 public struct ConversationList: Sendable {
 

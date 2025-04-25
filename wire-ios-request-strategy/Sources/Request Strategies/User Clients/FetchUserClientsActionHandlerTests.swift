@@ -17,9 +17,7 @@
 //
 
 import Foundation
-import WireFoundation
 import XCTest
-
 @testable import WireRequestStrategy
 
 class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClientsAction, FetchUserClientsActionHandler> {

@@ -25,7 +25,6 @@
 
 
 import WireCoreCrypto
-import WireFoundation
 import Combine
 
 @testable import WireRequestStrategy

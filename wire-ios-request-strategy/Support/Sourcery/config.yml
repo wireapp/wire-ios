@@ -6,5 +6,5 @@ output:
   ./generated
 args:
   autoMockableTestableImports: ["WireRequestStrategy"]
-  autoMockableImports: ["WireCoreCrypto", "WireFoundation", "Combine"]
-
+  autoMockableImports: ["WireCoreCrypto", "Combine"]
+ 

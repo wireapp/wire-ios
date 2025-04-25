@@ -18,9 +18,7 @@
 
 import WireAPI
 import WireDomainSupport
-import WireFoundation
 import XCTest
-
 @testable import WireDomain
 
 final class UserConnectionEventProcessorTests: XCTestCase {
@@ -76,12 +74,12 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         static let connection = Connection(
             senderID: UUID(),
             receiverID: UUID(),
-            receiverQualifiedID: QualifiedID(
+            receiverQualifiedID: WireAPI.QualifiedID(
                 uuid: UUID(),
                 domain: "domain.com"
             ),
             conversationID: UUID(),
-            qualifiedConversationID: QualifiedID(
+            qualifiedConversationID: WireAPI.QualifiedID(
                 uuid: UUID(),
                 domain: "domain.com"
             ),

@@ -18,7 +18,6 @@
 
 import CoreData
 import WireDataModel
-import WireFoundation
 import WireLogging
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -122,7 +121,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
-    ) async -> QualifiedID? {
+    ) async -> WireDataModel.QualifiedID? {
         await context.perform {
             guard conversation.conversationType == .oneOnOne else {
                 WireLogger.conversation.info(

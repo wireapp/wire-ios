@@ -17,7 +17,6 @@
 //
 
 import WireDataModelSupport
-import WireFoundation
 import WireTransport
 import XCTest
 

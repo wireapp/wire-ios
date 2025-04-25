@@ -25,7 +25,6 @@
 
 
 import WireAnalytics
-import WireFoundation
 
 @testable import WireSyncEngine
 

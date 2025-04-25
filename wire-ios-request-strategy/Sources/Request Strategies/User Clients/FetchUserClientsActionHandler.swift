@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-import WireFoundation
 
 final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction> {
 

@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 class ConversationsAPIV5: ConversationsAPIV4 {
     override var apiVersion: APIVersion { .v5 }

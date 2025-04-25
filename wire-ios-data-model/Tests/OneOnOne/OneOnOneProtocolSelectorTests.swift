@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
 import XCTest
-
 @testable import WireDataModel
 
 final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {

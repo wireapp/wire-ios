@@ -18,7 +18,6 @@
 
 import WireAPI
 import WireDataModel
-import WireFoundation
 
 extension WireAPI.ConnectionStatus {
 
@@ -49,9 +48,9 @@ extension WireAPI.Connection {
         .init(
             senderID: senderID,
             receiverID: receiverID,
-            receiverQualifiedID: receiverQualifiedID,
+            receiverQualifiedID: receiverQualifiedID?.toDomainModel(),
             conversationID: conversationID,
-            qualifiedConversationID: qualifiedConversationID,
+            qualifiedConversationID: qualifiedConversationID?.toDomainModel(),
             lastUpdate: lastUpdate,
             status: status.toDomainModel()
         )

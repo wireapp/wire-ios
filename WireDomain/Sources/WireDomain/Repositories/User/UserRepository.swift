@@ -90,9 +90,9 @@ public final class UserRepository: UserRepositoryProtocol {
         try await pullKnownUsersSync.pull()
     }
 
-    public func pullUsers(userIDs: [QualifiedID]) async throws {
+    public func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws {
         do {
-            let userList = try await usersAPI.getUsers(userIDs: userIDs)
+            let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
             for user in userList.found {
                 await userLocalStore.persistUser(userInfo: user.toDomainModel())
@@ -202,7 +202,7 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
-    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [QualifiedID] {
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
         try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
     }
 

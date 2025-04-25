@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-import WireFoundation
 
 // sourcery: AutoMockable
 /// A local store dedicated to user.
@@ -107,7 +106,7 @@ public protocol UserLocalStoreProtocol: Sendable {
     /// Fetches users qualified IDs locally.
     /// - returns: A list of qualified IDs.
 
-    func fetchUsersQualifiedIDs() async throws -> [QualifiedID]
+    func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID]
 
     /// Indicates whether the user is a self user.
     /// - Parameters:
@@ -142,7 +141,7 @@ public protocol UserLocalStoreProtocol: Sendable {
     /// Fetches all user IDs that have a one on one conversation
     /// - returns: A list of users' qualified IDs.
 
-    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [QualifiedID]
+    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
 
     /// Fetch the self user Supported Protocols
 

@@ -19,11 +19,9 @@
 import Foundation
 import WireDataModel
 import WireDataModelSupport
-import WireFoundation
 import WireRequestStrategySupport
 import WireTransport
 import XCTest
-
 @testable import WireRequestStrategy
 
 class ConversationRequestStrategyTests: MessagingTestBase {

@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 extension Payload {
     struct QualifiedConversationList: Codable {

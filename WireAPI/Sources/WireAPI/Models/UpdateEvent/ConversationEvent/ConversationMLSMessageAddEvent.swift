@@ -17,9 +17,8 @@
 //
 
 import Foundation
-import WireFoundation
 
-/// An event where an MLS message was received in a conversation.
+/// An event where an mls message was received in a conversation.
 
 public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
 

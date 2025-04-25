@@ -17,8 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
-
 @testable import WireDataModel
 @testable import WireDataModelSupport
 

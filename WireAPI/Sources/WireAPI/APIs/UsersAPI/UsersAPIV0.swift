@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 class UsersAPIV0: UsersAPI, VersionedAPI {
 

@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireConversationsUIBindings
-import WireFoundation
 import WireSyncEngine
 
 typealias ConversationGroupAvatarViewConversation

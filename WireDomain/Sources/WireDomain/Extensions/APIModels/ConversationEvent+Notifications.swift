@@ -18,7 +18,6 @@
 
 import Foundation
 import WireAPI
-import WireFoundation
 
 extension ConversationEvent {
     var senderID: UserID {
@@ -58,7 +57,7 @@ extension ConversationEvent {
         }
     }
 
-    var conversationID: QualifiedID {
+    var conversationID: WireAPI.QualifiedID {
         switch self {
         case let .accessUpdate(event):
             event.conversationID

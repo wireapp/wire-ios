@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import WireTransport
 import XCTest
 
+import WireTransport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 

@@ -18,8 +18,6 @@
 
 import Foundation
 import WireDataModel
-import WireFoundation
-
 @testable import WireRequestStrategy
 
 final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase<

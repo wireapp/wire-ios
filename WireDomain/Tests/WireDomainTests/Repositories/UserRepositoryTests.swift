@@ -20,10 +20,8 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
-import WireFoundation
 import WireTestingPackage
 import XCTest
-
 @testable import WireAPI
 @testable import WireDomain
 
@@ -96,7 +94,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        try await sut.pullUsers(userIDs: [Scaffolding.user1.id])
+        try await sut.pullUsers(userIDs: [Scaffolding.user1.id.toDomainModel()])
 
         // Then
 
@@ -118,7 +116,7 @@ final class UserRepositoryTests: XCTestCase {
             failed: []
         )
 
-        userLocalStore.fetchUsersQualifiedIDs_MockValue = [Scaffolding.user1.id]
+        userLocalStore.fetchUsersQualifiedIDs_MockValue = [Scaffolding.user1.id.toDomainModel()]
         userLocalStore.persistUserUserInfo_MockMethod = { _ in }
 
         // When
@@ -393,7 +391,7 @@ final class UserRepositoryTests: XCTestCase {
     func testFetchAllUserIdsWithOneOnOneConversation_It_Invokes_Local_Store_Method() async throws {
         // Given
 
-        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID]
+        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID.toDomainModel()]
 
         // When
 
@@ -402,13 +400,13 @@ final class UserRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userLocalStore.fetchAllUserIDsWithOneOnOneConversation_Invocations.count, 1)
-        XCTAssertEqual(userIds, [Scaffolding.qualifiedID])
+        XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
     }
 
     func testFetchAllUserIdsWithOneOnOneConversation() async throws {
         // Given
 
-        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID]
+        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID.toDomainModel()]
 
         // When
 
@@ -417,7 +415,7 @@ final class UserRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userLocalStore.fetchAllUserIDsWithOneOnOneConversation_Invocations.count, 1)
-        XCTAssertEqual(userIds, [Scaffolding.qualifiedID])
+        XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
     }
 
     private enum Scaffolding {

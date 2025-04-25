@@ -17,8 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
-
 @testable import WireRequestStrategy
 
 class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
