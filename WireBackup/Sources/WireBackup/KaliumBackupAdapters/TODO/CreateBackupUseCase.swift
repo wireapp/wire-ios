@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/*
 public import CoreData
 public import WireFoundation
 public import WireLogging
@@ -242,3 +243,4 @@ public struct CreateBackupUseCase<
     }
 
 }
+*/
