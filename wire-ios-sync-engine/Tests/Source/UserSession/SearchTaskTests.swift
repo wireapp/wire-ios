@@ -1161,6 +1161,22 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/users/\(userId.transportString())")
     }
 
+    func testThatItSendsAUserLookupRequest_IfApiVersionIsV2AndAbove() {
+        // given
+        BackendInfo.apiVersion = .v3
+        let userId = UUID()
+        let domain = "wire.com"
+        let task = makeSearchTask(lookupUserId: userId, domain: domain)
+
+        // when
+        task.performUserLookup()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v3/users/\(domain)/\(userId.transportString())")
+    }
+
+
     func testThatItCallsCompletionHandlerForUserLookup() {
         // given
         let resultArrived = customExpectation(description: "received result")
@@ -1419,9 +1435,9 @@ final class SearchTaskTests: DatabaseTest {
         )
     }
 
-    private func makeSearchTask(lookupUserId: UUID) -> SearchTask {
+    private func makeSearchTask(lookupUserId: UUID, domain: String = "wire.com") -> SearchTask {
         SearchTask(
-            qualifiedID: QualifiedID(uuid: lookupUserId, domain: "wire.com"),
+            qualifiedID: QualifiedID(uuid: lookupUserId, domain: domain),
             searchContext: searchMOC,
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
