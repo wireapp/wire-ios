@@ -273,7 +273,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 01D0DCA02C1C8C870076CB1C /* Build configuration list for PBXProject "WireDomain Project" */;
+			buildConfigurationList = 01D0DCA02C1C8C870076CB1C /* Build configuration list for PBXProject "WireDomain" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -731,7 +731,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01D0DCA02C1C8C870076CB1C /* Build configuration list for PBXProject "WireDomain Project" */ = {
+		01D0DCA02C1C8C870076CB1C /* Build configuration list for PBXProject "WireDomain" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				01D0DCB82C1C8C880076CB1C /* Debug */,

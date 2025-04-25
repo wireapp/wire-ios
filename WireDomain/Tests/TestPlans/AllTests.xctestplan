@@ -23,7 +23,7 @@
     "language" : "en",
     "region" : "DE",
     "targetForVariableExpansion" : {
-      "containerPath" : "container:WireDomain Project.xcodeproj",
+      "containerPath" : "container:WireDomain.xcodeproj",
       "identifier" : "01D0DCAF2C1C8C880076CB1C",
       "name" : "WireDomainTests"
     },
@@ -44,7 +44,7 @@
         "PullMLSStatusSyncTests\/testPull_MLSNotEnabled()"
       ],
       "target" : {
-        "containerPath" : "container:WireDomain Project.xcodeproj",
+        "containerPath" : "container:WireDomain.xcodeproj",
         "identifier" : "01D0DCAF2C1C8C880076CB1C",
         "name" : "WireDomainTests"
       }
