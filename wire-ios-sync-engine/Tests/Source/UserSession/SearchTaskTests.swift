@@ -1163,7 +1163,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsAUserLookupRequest_IfApiVersionIsV2AndAbove() {
         // given
-        BackendInfo.apiVersion = .v3
+        BackendInfo.apiVersion = .v2
         let userId = UUID()
         let domain = "wire.com"
         let task = makeSearchTask(lookupUserId: userId, domain: domain)

@@ -368,10 +368,7 @@ extension SearchTask {
         tasksRemaining += 1
 
         searchContext.performGroupedBlock { [self] in
-            let request = apiVersion <= .v1
-                ? type(of: self).searchRequestForUser(withUUID: qualifiedID.uuid, apiVersion: apiVersion)
-                : type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
-
+            let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
                 defer {
                     self?.tasksRemaining -= 1
@@ -401,15 +398,16 @@ extension SearchTask {
 
     }
 
-    static func searchRequestForUser(withUUID uuid: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
-        .init(getFromPath: "/users/\(uuid.transportString())", apiVersion: apiVersion.rawValue)
-    }
-
+    // GET /users/:id has been removed in v1.
+    // We should use the qualified endpoint GET /users/:domain/:id instead.
+    // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/603095166/API+changes+v1+v2
     static func searchRequestForUser(qualifiedID: QualifiedID, apiVersion: APIVersion) -> ZMTransportRequest {
-        .init(
-            getFromPath: "/users/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
-            apiVersion: apiVersion.rawValue
-        )
+        (apiVersion <= .v1)
+            ? .init(getFromPath: "/users/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
+            : .init(
+                getFromPath: "/users/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
+                apiVersion: apiVersion.rawValue
+            )
     }
 
 }
