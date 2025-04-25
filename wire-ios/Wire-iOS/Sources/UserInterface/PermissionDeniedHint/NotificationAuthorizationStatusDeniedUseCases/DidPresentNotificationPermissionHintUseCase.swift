@@ -34,11 +34,8 @@ struct DidPresentNotificationPermissionHintUseCase<DateProvider>: DidPresentNoti
 
 extension DidPresentNotificationPermissionHintUseCase where DateProvider == SystemDateProvider {
 
-    init(
-        currentDateProvider: SystemDateProvider = .init(),
-        userDefaults: UserDefaults = .standard
-    ) {
-        self.currentDateProvider = currentDateProvider
+    init(userDefaults: UserDefaults) {
+        self.currentDateProvider = SystemDateProvider()
         self.userDefaults = userDefaults
     }
 }
