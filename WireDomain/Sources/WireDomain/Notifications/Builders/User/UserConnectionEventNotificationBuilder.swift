@@ -19,6 +19,7 @@
 import UserNotifications
 import WireAPI
 import WireDataModel
+import WireFoundation
 
 struct UserConnectionEventNotificationBuilder {
 
@@ -39,7 +40,7 @@ struct UserConnectionEventNotificationBuilder {
             return nil
         }
 
-        var qualifiedID: WireAPI.QualifiedID?
+        var qualifiedID: QualifiedID?
         let connection = event.connection
 
         if let qualifiedConversationID = connection.qualifiedConversationID {
@@ -70,7 +71,7 @@ struct UserConnectionEventNotificationBuilder {
         username: String?,
         selfUserID: UUID,
         senderID: UUID?,
-        conversationID: WireAPI.QualifiedID?
+        conversationID: QualifiedID?
     ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
@@ -120,7 +121,7 @@ struct UserConnectionEventNotificationBuilder {
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID?,
-        conversationID: WireAPI.QualifiedID?
+        conversationID: QualifiedID?
     ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 

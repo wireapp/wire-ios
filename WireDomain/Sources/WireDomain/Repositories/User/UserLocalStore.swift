@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -79,7 +80,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [QualifiedID] {
         try await context.perform { [context] in
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             let predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
@@ -99,7 +100,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
+    public func fetchUsersQualifiedIDs() async throws -> [QualifiedID] {
         try await context.perform {
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             let knownUsers = try self.context.fetch(fetchRequest)

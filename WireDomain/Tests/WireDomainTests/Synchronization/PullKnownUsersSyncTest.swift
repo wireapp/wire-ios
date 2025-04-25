@@ -17,7 +17,9 @@
 //
 
 import WireAPISupport
+import WireFoundation
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -48,8 +50,8 @@ final class PullKnownUsersSyncTests: XCTestCase {
         )
 
         store.fetchUsersQualifiedIDs_MockValue = [
-            Scaffolding.user1.id.toDomainModel(),
-            Scaffolding.user2.id.toDomainModel()
+            Scaffolding.user1.id,
+            Scaffolding.user2.id
         ]
 
         store.persistUserUserInfo_MockMethod = { _ in }

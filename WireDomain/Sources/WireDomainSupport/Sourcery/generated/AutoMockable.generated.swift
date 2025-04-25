@@ -26,6 +26,7 @@
 
 import WireAPI
 import WireDataModel
+import WireFoundation
 
 @testable import WireDomain
 
@@ -1126,10 +1127,10 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     // MARK: - fetchOtherUserIDInOneOnOneConversation
 
     public var fetchOtherUserIDInOneOnOneConversationConversation_Invocations: [ZMConversation] = []
-    public var fetchOtherUserIDInOneOnOneConversationConversation_MockMethod: ((ZMConversation) async -> WireDataModel.QualifiedID?)?
-    public var fetchOtherUserIDInOneOnOneConversationConversation_MockValue: WireDataModel.QualifiedID??
+    public var fetchOtherUserIDInOneOnOneConversationConversation_MockMethod: ((ZMConversation) async -> QualifiedID?)?
+    public var fetchOtherUserIDInOneOnOneConversationConversation_MockValue: QualifiedID??
 
-    public func fetchOtherUserIDInOneOnOneConversation(conversation: ZMConversation) async -> WireDataModel.QualifiedID? {
+    public func fetchOtherUserIDInOneOnOneConversation(conversation: ZMConversation) async -> QualifiedID? {
         fetchOtherUserIDInOneOnOneConversationConversation_Invocations.append(conversation)
 
         if let mock = fetchOtherUserIDInOneOnOneConversationConversation_MockMethod {
@@ -2392,11 +2393,11 @@ public class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
 
     // MARK: - resolveOneOnOneConversation
 
-    public var resolveOneOnOneConversationWith_Invocations: [WireDataModel.QualifiedID] = []
+    public var resolveOneOnOneConversationWith_Invocations: [QualifiedID] = []
     public var resolveOneOnOneConversationWith_MockError: Error?
-    public var resolveOneOnOneConversationWith_MockMethod: ((WireDataModel.QualifiedID) async throws -> Void)?
+    public var resolveOneOnOneConversationWith_MockMethod: ((QualifiedID) async throws -> Void)?
 
-    public func resolveOneOnOneConversation(with userID: WireDataModel.QualifiedID) async throws {
+    public func resolveOneOnOneConversation(with userID: QualifiedID) async throws {
         resolveOneOnOneConversationWith_Invocations.append(userID)
 
         if let error = resolveOneOnOneConversationWith_MockError {
@@ -4300,10 +4301,10 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     public var fetchUsersQualifiedIDs_Invocations: [Void] = []
     public var fetchUsersQualifiedIDs_MockError: Error?
-    public var fetchUsersQualifiedIDs_MockMethod: (() async throws -> [WireDataModel.QualifiedID])?
-    public var fetchUsersQualifiedIDs_MockValue: [WireDataModel.QualifiedID]?
+    public var fetchUsersQualifiedIDs_MockMethod: (() async throws -> [QualifiedID])?
+    public var fetchUsersQualifiedIDs_MockValue: [QualifiedID]?
 
-    public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
+    public func fetchUsersQualifiedIDs() async throws -> [QualifiedID] {
         fetchUsersQualifiedIDs_Invocations.append(())
 
         if let error = fetchUsersQualifiedIDs_MockError {
@@ -4421,10 +4422,10 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     public var fetchAllUserIDsWithOneOnOneConversation_Invocations: [Void] = []
     public var fetchAllUserIDsWithOneOnOneConversation_MockError: Error?
-    public var fetchAllUserIDsWithOneOnOneConversation_MockMethod: (() async throws -> [WireDataModel.QualifiedID])?
-    public var fetchAllUserIDsWithOneOnOneConversation_MockValue: [WireDataModel.QualifiedID]?
+    public var fetchAllUserIDsWithOneOnOneConversation_MockMethod: (() async throws -> [QualifiedID])?
+    public var fetchAllUserIDsWithOneOnOneConversation_MockValue: [QualifiedID]?
 
-    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [QualifiedID] {
         fetchAllUserIDsWithOneOnOneConversation_Invocations.append(())
 
         if let error = fetchAllUserIDsWithOneOnOneConversation_MockError {
@@ -4640,11 +4641,11 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - pullUsers
 
-    public var pullUsersUserIDs_Invocations: [[WireDataModel.QualifiedID]] = []
+    public var pullUsersUserIDs_Invocations: [[QualifiedID]] = []
     public var pullUsersUserIDs_MockError: Error?
-    public var pullUsersUserIDs_MockMethod: (([WireDataModel.QualifiedID]) async throws -> Void)?
+    public var pullUsersUserIDs_MockMethod: (([QualifiedID]) async throws -> Void)?
 
-    public func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws {
+    public func pullUsers(userIDs: [QualifiedID]) async throws {
         pullUsersUserIDs_Invocations.append(userIDs)
 
         if let error = pullUsersUserIDs_MockError {
@@ -4818,10 +4819,10 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     public var fetchAllUserIDsWithOneOnOneConversation_Invocations: [Void] = []
     public var fetchAllUserIDsWithOneOnOneConversation_MockError: Error?
-    public var fetchAllUserIDsWithOneOnOneConversation_MockMethod: (() async throws -> [WireDataModel.QualifiedID])?
-    public var fetchAllUserIDsWithOneOnOneConversation_MockValue: [WireDataModel.QualifiedID]?
+    public var fetchAllUserIDsWithOneOnOneConversation_MockMethod: (() async throws -> [QualifiedID])?
+    public var fetchAllUserIDsWithOneOnOneConversation_MockValue: [QualifiedID]?
 
-    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [QualifiedID] {
         fetchAllUserIDsWithOneOnOneConversation_Invocations.append(())
 
         if let error = fetchAllUserIDsWithOneOnOneConversation_MockError {

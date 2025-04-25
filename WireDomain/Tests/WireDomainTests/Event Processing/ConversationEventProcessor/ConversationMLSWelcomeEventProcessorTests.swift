@@ -19,7 +19,9 @@
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireFoundation
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 
@@ -119,7 +121,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
         static let conversationID = ConversationID(uuid: .mockID1, domain: domain)
         static let senderID = UserID(uuid: .mockID2, domain: domain)
         static let mlsGroupID = MLSGroupID.random()
-        static let qualifiedID = WireDataModel.QualifiedID(uuid: .mockID1, domain: domain)
+        static let qualifiedID = QualifiedID(uuid: .mockID1, domain: domain)
 
         static let event = ConversationMLSWelcomeEvent(
             conversationID: conversationID,

@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireFoundation
 import XCTest
+
 @testable import WireDataModel
 
 class GenericMessageTests: XCTestCase {

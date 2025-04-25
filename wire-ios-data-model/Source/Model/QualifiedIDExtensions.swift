@@ -17,27 +17,7 @@
 //
 
 import Foundation
-
-public struct QualifiedID: Codable, Equatable, Hashable, CustomDebugStringConvertible {
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
-
-    public let uuid: UUID
-    public let domain: String
-
-    public init(uuid: UUID, domain: String) {
-        self.uuid = uuid
-        self.domain = domain
-    }
-
-    public var debugDescription: String {
-        "\(uuid)@\(domain)"
-    }
-
-}
+import WireFoundation
 
 extension QualifiedID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
@@ -46,7 +26,7 @@ extension QualifiedID: SafeForLoggingStringConvertible {
 }
 
 public protocol HasQualifiedID {
-    var qualifiedID: WireDataModel.QualifiedID? { get }
+    var qualifiedID: QualifiedID? { get }
 }
 
 public extension ZMUser {

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 /// An event where a user is typing in a conversation.
 

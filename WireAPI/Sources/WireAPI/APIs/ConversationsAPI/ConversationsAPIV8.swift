@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 final class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }

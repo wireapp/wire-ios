@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 struct QualifiedConversationMember: Decodable, ToAPIModelConvertible {
 

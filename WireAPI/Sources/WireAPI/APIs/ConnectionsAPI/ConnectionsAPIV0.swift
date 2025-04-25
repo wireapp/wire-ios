@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
 

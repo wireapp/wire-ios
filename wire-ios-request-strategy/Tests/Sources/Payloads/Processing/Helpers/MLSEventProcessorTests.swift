@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModelSupport
+import WireFoundation
 import XCTest
 
 @testable import WireRequestStrategy

@@ -116,9 +116,9 @@ extension WireAPI.Conversation.Member {
 
     func toDomainModel() -> WireDomain.Conversation.Members.Member {
         .init(
-            qualifiedID: qualifiedID?.toDomainModel(),
+            qualifiedID: qualifiedID,
             id: id,
-            qualifiedTarget: qualifiedTarget?.toDomainModel(),
+            qualifiedTarget: qualifiedTarget,
             target: target,
             conversationRole: conversationRole,
             service: service.map { .init(id: $0.id, provider: $0.provider) },
@@ -138,7 +138,7 @@ extension WireAPI.Conversation {
     func toDomainModel() -> WireDomain.Conversation {
         .init(
             id: id,
-            qualifiedID: qualifiedID?.toDomainModel(),
+            qualifiedID: qualifiedID,
             teamID: teamID,
             type: type?.toDomainModel(),
             messageProtocol: messageProtocol?.toDomainModel(),

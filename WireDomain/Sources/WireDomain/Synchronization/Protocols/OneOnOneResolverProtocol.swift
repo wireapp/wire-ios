@@ -17,13 +17,14 @@
 //
 
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 /// Resolves 1:1 conversations
 public protocol OneOnOneResolverProtocol {
 
     func resolveOneOnOneConversation(
-        with userID: WireDataModel.QualifiedID
+        with userID: QualifiedID
     ) async throws
 
     func resolveAllOneOnOneConversations() async throws

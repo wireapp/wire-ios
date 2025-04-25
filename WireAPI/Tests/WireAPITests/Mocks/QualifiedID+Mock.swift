@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireFoundation
 
 extension QualifiedID {
 

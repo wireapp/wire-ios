@@ -20,6 +20,7 @@ import avs
 import Combine
 import Foundation
 import WireDataModelSupport
+import WireFoundation
 import XCTest
 
 @testable import WireSyncEngine

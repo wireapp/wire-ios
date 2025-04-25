@@ -18,6 +18,8 @@
 
 import Foundation
 import WireDataModelSupport
+import WireFoundation
+
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase {
