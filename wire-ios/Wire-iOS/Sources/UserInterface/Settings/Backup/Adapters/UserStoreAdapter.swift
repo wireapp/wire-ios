@@ -42,22 +42,26 @@ struct UserStoreAdapter: UserStoreProtocol {
     struct UserEntity: UserEntityProtocol {
         typealias QualifiedID = WireFoundation.QualifiedID
 
+        let user: ZMUser
+
         var id: QualifiedID {
-            fatalError()
+            user.qualifiedID.map { qualifiedID in
+                QualifiedID(qualifiedID)
+            } ?? QualifiedID(id: user.remoteIdentifier, domain: "")
         }
 
         var name: String {
-            get { fatalError() }
-            nonmutating set { fatalError() }
+            get { user.name ?? "" }
+            nonmutating set { user.name = newValue }
         }
 
         var handle: String {
-            get { fatalError() }
-            nonmutating set { fatalError() }
+            get { user.handle ?? "" }
+            nonmutating set { user.handle = newValue }
         }
 
         init(_ user: ZMUser) {
-            fatalError("todo")
+            self.user = user
         }
 
     }

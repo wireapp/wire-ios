@@ -21,6 +21,6 @@ public import WireFoundation
 public protocol ConversationEntityProtocol {
 
     var id: QualifiedID { get }
-    var name: String { get nonmutating set }
+    var name: String { get }
 
 }

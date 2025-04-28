@@ -172,11 +172,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func totalBackupableMessageCount() async throws -> Int {
-        fatalError("TODO")
+        try await context.perform { [context] in
+            try context.count(for: ZMClientMessage.fetchRequest())
+        }
     }
 
     public func fetchAllBackupableMessages() async throws -> [ZMClientMessage] {
-        fatalError("TODO")
+        try await context.perform { [context] in
+            try context.fetch(ZMClientMessage.fetchRequest()) as! [ZMClientMessage]
+        }
     }
 
     public func addClientMessage(

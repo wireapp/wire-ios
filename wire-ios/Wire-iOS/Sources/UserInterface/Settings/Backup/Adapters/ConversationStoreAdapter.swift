@@ -42,22 +42,20 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
     struct ConversationEntity: ConversationEntityProtocol {
         typealias QualifiedID = WireFoundation.QualifiedID
 
+        let conversation: ZMConversation
+
         var id: QualifiedID {
-            fatalError()
+            conversation.qualifiedID.map { qualifiedID in
+                QualifiedID(qualifiedID)
+            } ?? QualifiedID(id: conversation.remoteIdentifier, domain: "")
         }
 
         var name: String {
-            get { fatalError() }
-            nonmutating set { fatalError() }
-        }
-
-        var handle: String {
-            get { fatalError() }
-            nonmutating set { fatalError() }
+            conversation.name ?? ""
         }
 
         init(_ conversation: ZMConversation) {
-            fatalError("TODO")
+            self.conversation = conversation
         }
 
     }

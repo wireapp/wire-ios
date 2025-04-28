@@ -77,7 +77,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             nonmutating set { fatalError() }
         }
 
-        init(_ message: ZMClientMessage) {
+        init(_ message: ZMMessage) {
             fatalError("TODO")
         }
 
