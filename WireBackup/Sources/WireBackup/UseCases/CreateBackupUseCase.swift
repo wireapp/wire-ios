@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*
 public import CoreData
 public import WireFoundation
 public import WireLogging
@@ -24,21 +23,23 @@ public import WireLogging
 @preconcurrency import KaliumBackup
 
 public struct CreateBackupUseCase<
-    UserAdapter: CreateBackupUserEntityProtocol,
-    ConversationAdapter: CreateBackupConversationEntityProtocol,
-    MessageAdapter: CreateBackupMessageEntityProtocol
+    UserEntity: UserEntityProtocol,
+    ConversationAdapter: ConversationEntityProtocol,
+    MessageAdapter: MessageEntityProtocol
 >: CreateBackupUseCaseProtocol {
 
+    /*
     let context: @Sendable () -> NSManagedObjectContext
     let eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol
-    let fileManager: @Sendable () -> FileManager = { .default }
     let selfUserID: QualifiedID
     let selfUserHandle: String?
     let fileArchiver: any CreateBackupFileArchiverProtocol
     let currentDateProvider: any CurrentDateProviding
-    let logger: @Sendable () -> any LoggerProtocol
+     */
+    let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
 
     public init(
+        /*
         context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext,
         userAdapterType _: UserAdapter.Type = UserAdapter.self,
         conversationAdapterType _: ConversationAdapter.Type = ConversationAdapter.self,
@@ -48,32 +49,34 @@ public struct CreateBackupUseCase<
         currentDateProvider: any CurrentDateProviding,
         selfUserID: QualifiedID,
         selfUserHandle: String?,
+         */
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
-        self.context = context
-        self.eventProcessorHandle = eventProcessorHandle
-        self.fileArchiver = fileArchiver
-        self.currentDateProvider = currentDateProvider
-        self.selfUserID = selfUserID
-        self.selfUserHandle = selfUserHandle
+//        self.context = context
+//        self.eventProcessorHandle = eventProcessorHandle
+//        self.fileArchiver = fileArchiver
+//        self.currentDateProvider = currentDateProvider
+//        self.selfUserID = selfUserID
+//        self.selfUserHandle = selfUserHandle
         self.logger = logger
     }
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [context, currentDateProvider, eventProcessorHandle, fileManager, fileArchiver, logger, selfUserID, selfUserHandle] in
+            let task = Task<Void, Never> { [/*context, currentDateProvider, eventProcessorHandle, fileManager, fileArchiver, logger, selfUserID, selfUserHandle,*/ logger] in
 
-                let fileManager = fileManager()
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingPathComponent(UUID().uuidString)
                 let outputDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingPathComponent(UUID().uuidString)
 
+                let fileManager = FileManager.default
                 defer { try? fileManager.removeItem(at: workDirectoryURL) }
 
                 do {
                     let logger = logger()
-                    let context = context()
+                    //let context = context()
+                    /*
                     let reportProgress: (Int, Int) -> Void = { current, total in
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
@@ -145,6 +148,7 @@ public struct CreateBackupUseCase<
                     continuation.yield(.done(finalPath))
                     continuation.finish()
 
+                                      */
                 } catch {
                     continuation.finish(throwing: error)
                 }
@@ -155,6 +159,7 @@ public struct CreateBackupUseCase<
         }
     }
 
+/*
     private static func fetchCounts(
         in context: NSManagedObjectContext
     ) throws -> (userCount: Int, messageCount: Int, conversationCount: Int) {
@@ -239,8 +244,7 @@ public struct CreateBackupUseCase<
                 reportProgress(index + 1)
             }
         }
+    */
 
-    }
 
 }
-*/

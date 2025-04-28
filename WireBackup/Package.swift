@@ -12,6 +12,7 @@ let package = Package(
         .package(url: "https://github.com/rickclephas/KMP-NativeCoroutines.git", exact: "1.0.0-ALPHA-27"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WireFoundation"),
+        .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -20,7 +21,8 @@ let package = Package(
             dependencies: [
                 "KaliumBackup",
                 .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines"),
-                "WireFoundation"
+                "WireFoundation",
+                "WireLogging"
             ]
         ),
         .target(
