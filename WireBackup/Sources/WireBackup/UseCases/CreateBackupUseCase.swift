@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
 public import WireFoundation
 public import WireLogging
 
@@ -25,17 +24,18 @@ public import WireLogging
 public struct CreateBackupUseCase<
     UserEntity: UserEntityProtocol,
     ConversationAdapter: ConversationEntityProtocol,
-    MessageAdapter: MessageEntityProtocol
+    MessageAdapter: MessageEntityProtocol,
+    FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
 
     /*
     let context: @Sendable () -> NSManagedObjectContext
-    let eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol
+     */
+    let eventProcessorHandle: any InterruptEventProcessingProtocol
     let selfUserID: QualifiedID
     let selfUserHandle: String?
-    let fileArchiver: any CreateBackupFileArchiverProtocol
+    let fileArchiver: FileArchiver
     let currentDateProvider: any CurrentDateProviding
-     */
     let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
 
     public init(
@@ -44,26 +44,26 @@ public struct CreateBackupUseCase<
         userAdapterType _: UserAdapter.Type = UserAdapter.self,
         conversationAdapterType _: ConversationAdapter.Type = ConversationAdapter.self,
         messageAdapterType _: MessageAdapter.Type = MessageAdapter.self,
-        eventProcessorHandle: any CreateBackupEventProcessorHandleProtocol,
-        fileArchiver: any CreateBackupFileArchiverProtocol,
+         */
+        eventProcessorHandle: any InterruptEventProcessingProtocol,
+        fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
         selfUserID: QualifiedID,
         selfUserHandle: String?,
-         */
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
 //        self.context = context
-//        self.eventProcessorHandle = eventProcessorHandle
-//        self.fileArchiver = fileArchiver
-//        self.currentDateProvider = currentDateProvider
-//        self.selfUserID = selfUserID
-//        self.selfUserHandle = selfUserHandle
+        self.eventProcessorHandle = eventProcessorHandle
+        self.fileArchiver = fileArchiver
+        self.currentDateProvider = currentDateProvider
+        self.selfUserID = selfUserID
+        self.selfUserHandle = selfUserHandle
         self.logger = logger
     }
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [/*context, currentDateProvider, eventProcessorHandle, fileManager, fileArchiver, logger, selfUserID, selfUserHandle,*/ logger] in
+            let task = Task<Void, Never> { [/*context,*/ currentDateProvider, eventProcessorHandle, fileArchiver, logger, selfUserID, selfUserHandle] in
 
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingPathComponent(UUID().uuidString)
@@ -76,22 +76,19 @@ public struct CreateBackupUseCase<
                 do {
                     let logger = logger()
                     //let context = context()
-                    /*
+
                     let reportProgress: (Int, Int) -> Void = { current, total in
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
 
                     reportProgress(0, 0)
-                    logger.debug("initializing MPBackupExporter")
-                    let exporter = MPBackupExporter(
-                        selfUserId: BackupQualifiedId(selfUserID),
-                        workDirectory: workDirectoryURL.path(),
-                        outputDirectory: outputDirectoryURL.path(),
-                        fileZipper: CreateBackupFileArchiverToFileZipperAdapter(
-                            fileManager: fileManager,
-                            fileArchiver: fileArchiver
-                        )
+                    logger.debug("initializing backup creator")
+                    let exporter = BackupCreator(
+                        selfUserID: selfUserID,
+                        workDirectoryURL: workDirectoryURL,
+                        outputDirectoryURL: outputDirectoryURL,
+                        fileArchiver: fileArchiver
                     )
 
                     try Task.checkCancellation()
@@ -101,6 +98,7 @@ public struct CreateBackupUseCase<
                     await eventProcessorHandle.pauseProcessingEvents()
                     defer { eventProcessorHandle.continueProcessingEvents() }
 
+                    /*
                     // get the counts of users, messages and conversations in order to report progress accurately
                     logger.debug("calculating entity counts")
                     let (userCount, messageCount, conversationCount) = try await context.perform {
@@ -148,7 +146,7 @@ public struct CreateBackupUseCase<
                     continuation.yield(.done(finalPath))
                     continuation.finish()
 
-                                      */
+                     */
                 } catch {
                     continuation.finish(throwing: error)
                 }

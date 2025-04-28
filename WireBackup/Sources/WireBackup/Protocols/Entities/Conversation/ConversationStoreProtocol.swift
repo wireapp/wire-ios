@@ -16,4 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ConversationStoreProtocol {}
+public protocol ConversationStoreProtocol {
+    associatedtype ConversationEntity: ConversationEntityProtocol
+}
