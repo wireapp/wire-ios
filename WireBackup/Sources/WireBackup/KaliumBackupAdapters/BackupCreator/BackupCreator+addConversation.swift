@@ -16,13 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol UserStoreProtocol {
-    associatedtype UserEntity: UserEntityProtocol
+import KMPNativeCoroutinesAsync
+@preconcurrency import KaliumBackup
 
-    /// Returns the number of all stored users in the local data store, including deleted ones.
-    func totalUserCount() async throws -> Int
+extension BackupCreator {
 
-    /// Returns all users stored in the local database, including deleted ones.
-    func fetchAllUsers() async throws -> [UserEntity]
+    func addConversation<ConversationEntity>(_ conversation: ConversationEntity)
+    where ConversationEntity: ConversationEntityProtocol {
 
+        let backupConversation = BackupConversation(
+            id: BackupQualifiedId(conversation.id),
+            name: conversation.name
+        )
+        mpBackupCreator.add(conversation: backupConversation)
+
+    }
 }

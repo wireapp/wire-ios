@@ -23,7 +23,7 @@ import KaliumBackup
 
 public struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtocol {
 
-    private let mpBackupCreator: MPBackupExporter
+    let mpBackupCreator: MPBackupExporter
 
     public init(
         selfUserID: QualifiedID,

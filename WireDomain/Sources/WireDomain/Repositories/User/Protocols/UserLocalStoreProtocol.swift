@@ -61,6 +61,10 @@ public protocol UserLocalStoreProtocol: Sendable {
         userIDs: [(id: UUID, domain: String?)]
     ) async -> Set<ZMUser>
 
+    /// Fetches all stored users from the local database, including the ones marked as deleted.
+
+    func fetchAllUsers() async throws -> [ZMUser]
+
     /// Removes user push token from storage.
 
     func deletePushToken()

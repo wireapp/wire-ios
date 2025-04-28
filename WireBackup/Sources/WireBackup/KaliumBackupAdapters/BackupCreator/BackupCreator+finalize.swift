@@ -19,11 +19,11 @@
 import KMPNativeCoroutinesAsync
 @preconcurrency import KaliumBackup
 
-extension MPBackupExporter {
+extension BackupCreator {
 
     func finalize(password: String) async throws -> URL {
 
-        let result = await asyncResult(for: finalize(password: password))
+        let result = await asyncResult(for: mpBackupCreator.finalize(password: password))
         let backupResult: any BackupExportResult
         switch result {
         case .failure(let error):

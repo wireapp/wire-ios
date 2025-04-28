@@ -22,4 +22,7 @@ public protocol ConversationStoreProtocol {
     /// Returns the number of all stored conversations in the local data store, including deleted ones.
     func totalConversationCount() async throws -> Int
 
+    /// Returns all conversations stored in the local database, including deleted ones.
+    func fetchAllConversations() async throws -> [ConversationEntity]
+
 }

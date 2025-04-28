@@ -34,9 +34,6 @@ public struct CreateBackupUseCase<
     let userStore: UserStore
     let conversationStore: ConversationStore
 
-    /*
-    let context: @Sendable () -> NSManagedObjectContext
-     */
     let eventProcessorHandle: any InterruptEventProcessingProtocol
     let selfUserID: QualifiedID
     let selfUserHandle: String?
@@ -47,12 +44,6 @@ public struct CreateBackupUseCase<
     public init(
         userStore: UserStore,
         conversationStore: ConversationStore,
-        /*
-        context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext,
-        userAdapterType _: UserAdapter.Type = UserAdapter.self,
-        conversationAdapterType _: ConversationAdapter.Type = ConversationAdapter.self,
-        messageAdapterType _: MessageAdapter.Type = MessageAdapter.self,
-         */
         eventProcessorHandle: any InterruptEventProcessingProtocol,
         fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
@@ -62,7 +53,6 @@ public struct CreateBackupUseCase<
     ) {
         self.userStore = userStore
         self.conversationStore = conversationStore
-//        self.context = context
         self.eventProcessorHandle = eventProcessorHandle
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
@@ -85,16 +75,16 @@ public struct CreateBackupUseCase<
 
                 do {
                     let logger = logger()
-                    //let context = context()
-
                     let reportProgress: (Int, Int) -> Void = { current, total in
+                        guard current % 50 == 0 || current == total else { return } // debounce
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
 
                     reportProgress(0, 0)
+
                     logger.debug("initializing backup creator")
-                    let exporter = BackupCreator(
+                    let backupCreator = BackupCreator(
                         selfUserID: selfUserID,
                         workDirectoryURL: workDirectoryURL,
                         outputDirectoryURL: outputDirectoryURL,
@@ -113,7 +103,6 @@ public struct CreateBackupUseCase<
                     let userCount = try await userStore.totalUserCount()
                     let conversationCount = try await conversationStore.totalConversationCount()
                     let messageCount = 0 // try await messageStore.totalUserCount() // TODO: implement
-                    /*
                     let total = userCount + conversationCount + messageCount
                     logger.debug([
                         "userCount: \(userCount)",
@@ -123,28 +112,30 @@ public struct CreateBackupUseCase<
                     ].joined(separator: ", "))
 
                     // fetch the data and pass it into the backup exporter
-                    try await context.perform {
-                        try Self.exportUsers(from: context, using: exporter, reportProgress: { current in
-                            reportProgress(current, total)
-                        })
+                    let allUsers = try await userStore.fetchAllUsers()
+                    for userIndex in 0 ..< allUsers.count {
+                        backupCreator.addUser(allUsers[userIndex])
+                        reportProgress(userIndex + 1, total)
                     }
 
                     let conversationProgressOffset = userCount
-                    try await context.perform {
-                        try Self.exportConversations(from: context, using: exporter, reportProgress: { current in
-                            reportProgress(conversationProgressOffset + current, total)
-                        })
+                    let allConversations = try await conversationStore.fetchAllConversations()
+                    for conversationIndex in 0 ..< allConversations.count {
+                        backupCreator.addConversation(allConversations[conversationIndex])
+                        reportProgress(conversationProgressOffset + conversationIndex + 1, total)
                     }
 
+                    /*
                     let messageProgressOffset = userCount + conversationCount
                     try await context.perform {
                         try Self.exportMessages(from: context, using: exporter, reportProgress: { current in
                             reportProgress(messageProgressOffset + current, total)
                         })
                     }
+                     */
 
                     // create the file
-                    let outputFileURL = try await exporter.finalize(password: password)
+                    let outputFileURL = try await backupCreator.finalize(password: password)
                     // rename
                     let iso8601Date = Date.ISO8601FormatStyle(timeSeparator: .omitted).format(currentDateProvider.now)
                     let filename = "Wire-" + (selfUserHandle.map { "\($0)-" } ?? "") + "Backup_" + iso8601Date + ".wbu"
@@ -156,7 +147,6 @@ public struct CreateBackupUseCase<
                     continuation.yield(.done(finalPath))
                     continuation.finish()
 
-                     */
                 } catch {
                     continuation.finish(throwing: error)
                 }
@@ -178,23 +168,25 @@ public struct CreateBackupUseCase<
 
         return (userCount, conversationCount, messageCount)
     }
+ */
 
-    private static func exportUsers(
-        from context: NSManagedObjectContext,
-        using backupExporter: MPBackupExporter,
-        reportProgress: (Int) -> Void
-    ) throws {
-        try exportRecored(context: context, entityType: UserAdapter.self, export: { user in
-            backupExporter.add(
-                user: BackupUser(
-                    id: BackupQualifiedId(user.id),
-                    name: user.name,
-                    handle: user.handle
-                )
-            )
-        }, reportProgress: reportProgress)
-    }
+//    private static func exportUsers(
+//        from context: NSManagedObjectContext,
+//        using backupExporter: MPBackupExporter,
+//        reportProgress: (Int) -> Void
+//    ) throws {
+//        try exportRecored(context: context, entityType: UserAdapter.self, export: { user in
+//            backupExporter.add(
+//                user: BackupUser(
+//                    id: BackupQualifiedId(user.id),
+//                    name: user.name,
+//                    handle: user.handle
+//                )
+//            )
+//        }, reportProgress: reportProgress)
+//    }
 
+    /*
     private static func exportConversations(
         from context: NSManagedObjectContext,
         using backupExporter: MPBackupExporter,
