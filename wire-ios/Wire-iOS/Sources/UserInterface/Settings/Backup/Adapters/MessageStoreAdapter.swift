@@ -35,7 +35,16 @@ struct MessageStoreAdapter: MessageStoreProtocol {
     }
 
     func fetchAllMessages() async throws -> [MessageEntity] {
-        try await messageLocalStore.fetchAllBackupableMessages().map(MessageEntity.init)
+        let messages = try await messageLocalStore.fetchAllBackupableMessages()
+        return await messageLocalStore.context.perform {
+            messages.compactMap { message in
+                guard let message = MessageEntity(message) else {
+                    assertionFailure()
+                    return nil
+                }
+                return message
+            }
+        }
     }
 
     // MARK: -
@@ -43,44 +52,140 @@ struct MessageStoreAdapter: MessageStoreProtocol {
     struct MessageEntity: MessageEntityProtocol {
         typealias QualifiedID = WireFoundation.QualifiedID
 
-        var id: String {
-            fatalError()
-        }
+        let id: String
+        let conversationID: QualifiedID
+        let senderUserID: QualifiedID
+        let senderClientID: String?
+        let creationDate: Date
+        let content: WireBackup.MessageContent
 
-        var name: String {
-            get { fatalError() }
-            nonmutating set { fatalError() }
-        }
-
-        var conversationID: QualifiedID {
-            get { fatalError() }
-            nonmutating set { fatalError() }
-        }
-
-        var senderUserID: QualifiedID {
-            get { fatalError() }
-            nonmutating set { fatalError() }
-        }
-
-        var senderClientID: String? {
-            get { fatalError() }
-            nonmutating set { fatalError() }
-        }
-
-        var creationDate: Date {
-            get { fatalError() }
-            nonmutating set { fatalError() }
-        }
-
-        var content: WireBackup.MessageContent {
-            get { fatalError() }
-            nonmutating set { fatalError() }
-        }
-
-        init(_ message: ZMMessage) {
-            fatalError("TODO")
+        init?(_ message: ZMMessage) {
+            if let clientMessage = message as? ZMAssetClientMessage, !clientMessage.isObfuscated {
+                fatalError()
+                // self.init(clientMessage)
+            } else if let assetClientMessage = message as? ZMAssetClientMessage, !assetClientMessage.isObfuscated {
+                fatalError()
+                // self.init(assetClientMessage)
+            } else {
+                return nil
+            }
         }
 
     }
 
 }
+
+/*
+struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
+
+    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
+        ZMMessage.fetchRequest()
+    }
+
+    let id: String
+    let conversationID: QualifiedID
+    let senderUserID: QualifiedID
+    let senderClientID: String?
+    let creationDate: Date
+    let content: CreateBackupMessageContent
+
+    init?(_ record: any NSFetchRequestResult) {
+        if let clientMessage = record as? ZMAssetClientMessage, !clientMessage.isObfuscated {
+            self.init(clientMessage)
+        } else if let assetClientMessage = record as? ZMAssetClientMessage, !assetClientMessage.isObfuscated {
+            self.init(assetClientMessage)
+        } else {
+            return nil
+        }
+    }
+
+    init?(_ clientMessage: ZMClientMessage) {
+
+        if let messageText = clientMessage.textMessageData?.messageText {
+            self.init(clientMessage, content: .text(messageText))
+
+        } else if let locationMessageData = clientMessage.locationMessageData {
+            self.init(
+                clientMessage,
+                content: .location(
+                    longitude: locationMessageData.longitude,
+                    latitude: locationMessageData.latitude,
+                    name: locationMessageData.name,
+                    zoom: locationMessageData.zoomLevel
+                )
+            )
+
+        } else {
+            return nil
+        }
+
+    }
+
+    init?(_ assetClientMessage: ZMAssetClientMessage) {
+
+        guard let asset = assetClientMessage.underlyingMessage?.assetData else { return nil }
+
+        let size: UInt64
+        let name: String?
+        let encryption: CreateBackupMessageContent.AssetContent.EncryptionAlgorithm?
+        let metadata: CreateBackupMessageContent.AssetContent.Metadata? = nil
+
+        if asset.hasOriginal, asset.uploaded.hasAssetID {
+            size = asset.original.size
+            name = asset.original.name
+        } else if asset.hasPreview, asset.uploaded.hasAssetID {
+            size = asset.original.size
+            name = nil
+        } else {
+            return nil
+        }
+
+        switch (asset.uploaded.hasEncryption, asset.uploaded.encryption) {
+        case (false, _):
+            encryption = .none
+        case (true, .aesCbc):
+            encryption = .aesCBC
+        case (true, .aesGcm):
+            encryption = .aesGCM
+        }
+
+        self.init(
+            assetClientMessage,
+            content: .asset(
+                mimeType: asset.original.mimeType, // TODO: hasMimeType?
+                size: size,
+                name: name,
+                otrKey: asset.uploaded.otrKey, // TODO: uploaded?
+                sha256: asset.uploaded.sha256,
+                assetID: asset.uploaded.assetID,
+                assetToken: asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil,
+                assetDomain: asset.uploaded.hasAssetDomain ? asset.uploaded.assetDomain : nil,
+                encryption: encryption,
+                metadata: metadata
+            )
+        )
+
+    }
+
+    init?(_ message: ZMMessage, content: CreateBackupMessageContent) {
+
+        guard
+            let id = message.nonce?.transportString(),
+            let senderUserID = message.senderUser?.qualifiedID,
+            let creationDate = message.serverTimestamp,
+            let conversationID = message.conversation?.qualifiedID
+        else {
+            // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
+            return nil
+        }
+
+        self.id = id
+        self.conversationID = conversationID
+        self.senderUserID = senderUserID
+        self.senderClientID = message.senderClientID
+        self.creationDate = creationDate
+        self.content = content
+    }
+
+}
+*/

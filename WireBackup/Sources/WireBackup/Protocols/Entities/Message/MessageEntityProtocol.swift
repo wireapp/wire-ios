@@ -22,11 +22,11 @@ public import WireFoundation
 public protocol MessageEntityProtocol {
 
     var id: String { get }
-    var conversationID: QualifiedID { get nonmutating set }
-    var senderUserID: QualifiedID { get nonmutating set }
-    var senderClientID: String? { get nonmutating set }
-    var creationDate: Date { get nonmutating set }
-    var content: MessageContent { get nonmutating set }
+    var conversationID: QualifiedID { get }
+    var senderUserID: QualifiedID { get }
+    var senderClientID: String? { get }
+    var creationDate: Date { get }
+    var content: MessageContent { get }
 
 }
 

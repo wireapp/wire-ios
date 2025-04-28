@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
+public import CoreData
+
 import WireCryptobox
 import WireDataModel
 import WireLogging
@@ -38,7 +39,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     // MARK: - Properties
 
-    let context: NSManagedObjectContext
+    public let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
 
@@ -173,13 +174,14 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func totalBackupableMessageCount() async throws -> Int {
         try await context.perform { [context] in
-            try context.count(for: ZMClientMessage.fetchRequest())
+            try context.count(for: ZMMessage.fetchRequest())
         }
     }
 
-    public func fetchAllBackupableMessages() async throws -> [ZMClientMessage] {
+    public func fetchAllBackupableMessages() async throws -> [ZMMessage] {
+        // TODO: adjust fetchrequest! (e.g. no system messages)
         try await context.perform { [context] in
-            try context.fetch(ZMClientMessage.fetchRequest()) as! [ZMClientMessage]
+            try context.fetch(ZMMessage.fetchRequest()) as! [ZMClientMessage]
         }
     }
 
