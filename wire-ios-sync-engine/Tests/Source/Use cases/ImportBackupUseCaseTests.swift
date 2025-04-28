@@ -17,7 +17,6 @@
 //
 
 import WireDataModelSupport
-import WireDomainPackage
 import XCTest
 
 @testable import WireSyncEngine
@@ -26,7 +25,7 @@ import XCTest
 final class ImportBackupUseCaseTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
-    private var mockStreamDecryptor: MockImportBackupStreamDecryptorProtocol!
+    private var mockStreamDecryptor: MockImportLegacyBackupStreamDecryptorProtocol!
     private var mockFileArchiver: MockImportBackupFileArchiverProtocol!
     private var mockEntityStorage: MockImportBackupEntityStorageProtocol!
     private var mockAppStateUpdater: MockImportBackupAppStateUpdaterProtocol!
@@ -145,7 +144,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
                 let filePath = "/path/to/file.\(extensions)"
                 for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
                 XCTFail("Unexpected success")
-            } catch ImportBackupError.noActiveAccountForImport {
+            } catch ImportLegacyBackupError.noActiveAccountForImport {
                 // Then
             }
         }
@@ -162,7 +161,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
                 let filePath = "/path/to/file.\(extensions)"
                 for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
                 XCTFail("Unexpected success")
-            } catch ImportBackupError.invalidFileExtension {
+            } catch ImportLegacyBackupError.invalidFileExtension {
                 // Then
             }
         }

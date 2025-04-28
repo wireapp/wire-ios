@@ -16,20 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import ZipArchive
-
-struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
-
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
-
-        let success = SSZipArchive.unzipFile(
-            atPath: sourceURL.path,
-            toDestination: destinationURL.path
-        )
-
-        guard success else {
-            throw ImportLegacyBackupError.compressionError
-        }
-
-    }
+/// Sends a request to the backend to migrate the user to a team.
+public protocol IndividualToTeamMigrationUseCaseProtocol: Sendable {
+    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }

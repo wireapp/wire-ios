@@ -18,12 +18,8 @@
 
 public import Foundation
 
-public enum IndividualToTeamMigrationError: Error, Sendable {
-    case userAlreadyInTeam
-    case generic(any Error)
-}
-
 public struct IndividualToTeamMigrationResult: Sendable {
+
     public let teamID: UUID
     public let teamName: String
 
@@ -31,10 +27,5 @@ public struct IndividualToTeamMigrationResult: Sendable {
         self.teamID = teamID
         self.teamName = teamName
     }
-}
 
-// sourcery: AutoMockable
-/// Sends a request to the backend to migrate the user to a team.
-public protocol IndividualToTeamMigrationUseCaseProtocol: Sendable {
-    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }

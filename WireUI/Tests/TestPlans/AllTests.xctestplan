@@ -27,7 +27,9 @@
       "identifier" : "WireDesignTests",
       "name" : "WireDesignTests"
     },
-    "testExecutionOrdering" : "random"
+    "testExecutionOrdering" : "random",
+    "threadSanitizerEnabled" : true,
+    "undefinedBehaviorSanitizerEnabled" : true
   },
   "testTargets" : [
     {
