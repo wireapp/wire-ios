@@ -15,6 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import avs
+@testable import Wire
 
-WIRE_SHORT_VERSION = 3.124.0
-MAJOR_VERSION = 3
+final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
+    var isMicrophoneMuted: Bool = false
+
+    var intensityLevel: AVSIntensityLevel = .none
+
+    func playMediaByName(_ name: String!) {}
+}
