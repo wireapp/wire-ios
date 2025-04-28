@@ -20,21 +20,19 @@ public import Foundation
 
 public enum CreateBackupProgress: Sendable {
 
-    case progress(_ current: Int, _ total: Int)
-    case done(URL)
+    case progress(current: Int, total: Int)
+    case done(url: URL)
 
 }
 
-// MARK: - Convenience
-
 extension CreateBackupProgress {
 
-    public static func progress(current: Int, total: Int) -> Self {
-        .progress(current, total)
+    public static func progress(_ current: Int, _ total: Int) -> Self {
+        .progress(current: current, total: total)
     }
 
-    public static func done(url: URL) -> Self {
-        .done(url)
+    public static func done(_ url: URL) -> Self {
+        .done(url: url)
     }
 
 }

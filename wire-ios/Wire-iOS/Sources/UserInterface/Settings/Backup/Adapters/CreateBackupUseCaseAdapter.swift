@@ -21,7 +21,8 @@ import WireDomainPackage
 import WireSettingsUI
 import WireSyncEngine
 
-// These adapters are required because TODO: finish
+// Instead of adding WireBackup as a dependency of WireUI, the use case, progress and error types exist twice and this
+// adapter bridges between them.
 
 struct CreateBackupUseCaseAdapter: WireSettingsUI.CreateBackupUseCaseProtocol {
 
@@ -44,7 +45,7 @@ struct CreateBackupUseCaseAdapter: WireSettingsUI.CreateBackupUseCaseProtocol {
                         }
                     }
                     continuation.finish()
-                } catch let error as WireSyncEngine.CreateBackupError { // TODO: map errors
+                } catch let error as WireBackup.CreateBackupError {
                     continuation.finish(throwing: WireSettingsUI.CreateBackupError(error))
                 } catch {
                     continuation.finish(throwing: error)
@@ -56,46 +57,28 @@ struct CreateBackupUseCaseAdapter: WireSettingsUI.CreateBackupUseCaseProtocol {
         }
     }
 
-    /*
 }
 
 extension WireSettingsUI.CreateBackupProgress {
 
-    init(_ result: WireSyncEngine.CreateBackupProgress) {
+    init(_ result: WireBackup.CreateBackupProgress) {
         switch result {
-        case let .progress(value):
-            self = .progress(value)
-        case .done:
-            self = .done
+        case let .progress(current, total):
+            self = .progress(current, total)
+        case .done(let url):
+            self = .done(url)
         }
     }
+
 }
 
-extension WireSettingsUI.CreateLegacyBackupError {
+extension WireSettingsUI.CreateBackupError {
 
-    init(_ error: WireSyncEngine.CreateLegacyBackupError) {
+    init(_ error: WireBackup.CreateBackupError) {
         switch error {
-        case .noActiveAccountForCreate:
-            self = .noActiveAccountForCreate
-        case .passwordRequired:
-            self = .passwordRequired
-        case .incompatibleFileFormat:
-            self = .incompatibleFileFormat
-        case .invalidAccountID:
-            self = .invalidAccountID
-        case .compressionError:
-            self = .compressionError
-        case .invalidFileExtension:
-            self = .invalidFileExtension
-        case .keyCreationFailed:
-            self = .keyCreationFailed
-        case .decryptionError:
-            self = .decryptionError
-        case .failedToBackUpUserClient:
-            self = .failedToBackUpUserClient
-        case .failedToCreateStreamForDecryption:
-            self = .failedToCreateStreamForDecryption
+        case .todo:
+            self = .todo
         }
     }
- */
+
 }
