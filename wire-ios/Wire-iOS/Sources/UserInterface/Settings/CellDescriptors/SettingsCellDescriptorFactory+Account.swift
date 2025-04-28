@@ -25,6 +25,7 @@ import WireLogging
 import WireSettingsUI
 import WireSyncEngine
 import WireAPI
+import WireBackup
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -380,7 +381,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         // TODO: remove
-        struct EventProcessorHandle: CreateBackupEventProcessorHandleProtocol {
+        struct EventProcessorHandle: InterruptEventProcessingProtocol {
             func pauseProcessingEvents() {}
             func continueProcessingEvents() {}
         }

@@ -92,6 +92,7 @@
 		59B7684B2D2D5A17007B5F1E /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */; };
 		59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FA92C89DE8600201827 /* WireFoundation */; };
 		59B99FAC2C89DF2100201827 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FAB2C89DF2100201827 /* WireAPI */; };
+		59BAEAFC2DBF483400B54AC4 /* WireBackup in Frameworks */ = {isa = PBXBuildFile; productRef = 59BAEAFB2DBF483400B54AC4 /* WireBackup */; };
 		59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
@@ -923,6 +924,7 @@
 				01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
 				76BFA65D2D89E6B8000F2D0A /* WireConversationsAPI in Frameworks */,
+				59BAEAFC2DBF483400B54AC4 /* WireBackup in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
 				01D2B7A52D64A9190030D28D /* WireCoreCrypto in Frameworks */,
 				A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */,
@@ -1357,6 +1359,7 @@
 				01C774262D9EECE100A2FF07 /* WireAVS */,
 				76BFA65C2D89E6B8000F2D0A /* WireConversationsAPI */,
 				76BFA65E2D89E6D8000F2D0A /* WireConversationsUIBindings */,
+				59BAEAFB2DBF483400B54AC4 /* WireBackup */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -2886,6 +2889,10 @@
 		59B99FAB2C89DF2100201827 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
+		};
+		59BAEAFB2DBF483400B54AC4 /* WireBackup */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireBackup;
 		};
 		59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
