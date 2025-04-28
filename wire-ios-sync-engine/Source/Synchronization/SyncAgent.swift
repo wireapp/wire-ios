@@ -115,9 +115,10 @@ final class SyncAgent: NSObject {
                 WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
                 throw error
             }
-            // Incremental sync automatically follows the slow sync.
+
             try await performIncrementalSync()
         } else {
+            // Incremental sync automatically follows the slow sync.
             legacySyncStatus.forceSlowSync()
         }
     }
