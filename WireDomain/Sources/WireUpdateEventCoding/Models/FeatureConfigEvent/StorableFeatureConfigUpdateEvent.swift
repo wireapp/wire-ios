@@ -212,6 +212,9 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
 
 // MARK: Private Models
 
+// NOTE: All the following models should be `private`. However, when doing so the Swift compiler crashes. Hopefully this
+// will be fixed in the future. For now, we have to keep them `internal`.
+
 enum StorableFeatureConfig: Equatable, Codable, Sendable {
 
     case appLock(StorableAppLockFeatureConfig)
