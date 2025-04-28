@@ -66,4 +66,20 @@ public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
 
     public var decryptedMessages: [DecryptedMessage] = []
 
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        subconversation: String? = nil,
+        message: String,
+        timestamp: Date? = nil,
+        decryptedMessages: [ConversationMLSMessageAddEvent.DecryptedMessage] = []
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.subconversation = subconversation
+        self.message = message
+        self.timestamp = timestamp
+        self.decryptedMessages = decryptedMessages
+    }
+
 }

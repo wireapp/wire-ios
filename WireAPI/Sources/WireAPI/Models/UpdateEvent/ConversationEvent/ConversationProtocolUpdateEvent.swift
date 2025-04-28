@@ -34,4 +34,14 @@ public struct ConversationProtocolUpdateEvent: Equatable, Codable, Sendable {
 
     public let newProtocol: ConversationMessageProtocol
 
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        newProtocol: ConversationMessageProtocol
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.newProtocol = newProtocol
+    }
+
 }

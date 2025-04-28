@@ -34,4 +34,14 @@ public struct ConversationAddPermissionEvent: Equatable, Codable, Sendable {
     /// The new permission value (`everyone` or `admins`)
 
     public let addPermission: ChannelPermission
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        addPermission: ChannelPermission
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.addPermission = addPermission
+    }
 }

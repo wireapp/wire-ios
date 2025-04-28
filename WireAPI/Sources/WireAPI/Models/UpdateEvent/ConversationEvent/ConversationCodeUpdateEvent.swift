@@ -46,4 +46,20 @@ public struct ConversationCodeUpdateEvent: Equatable, Codable, Sendable {
 
     public let isPasswordProtected: Bool
 
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        uri: String? = nil,
+        key: String,
+        code: String,
+        isPasswordProtected: Bool
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.uri = uri
+        self.key = key
+        self.code = code
+        self.isPasswordProtected = isPasswordProtected
+    }
+
 }

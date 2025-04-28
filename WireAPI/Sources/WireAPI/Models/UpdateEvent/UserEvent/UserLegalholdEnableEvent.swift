@@ -26,4 +26,10 @@ public struct UserLegalholdEnableEvent: Equatable, Codable, Sendable {
 
     public let userID: UUID
 
+    public init(
+        userID: UUID
+    ) {
+        self.userID = userID
+    }
+
 }

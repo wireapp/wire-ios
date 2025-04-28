@@ -42,4 +42,18 @@ public struct ConversationMemberLeaveEvent: Equatable, Codable, Sendable {
 
     public let reason: ConversationMemberLeaveReason
 
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        removedUserIDs: Set<UserID>,
+        reason: ConversationMemberLeaveReason
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.removedUserIDs = removedUserIDs
+        self.reason = reason
+    }
+
 }

@@ -52,4 +52,18 @@ public struct MLSPublicKeys: Equatable, Codable, Sendable {
 
     }
 
+    public init(
+        ed25519: String? = nil,
+        ed448: String? = nil,
+        p256: String? = nil,
+        p384: String? = nil,
+        p512: String? = nil
+    ) {
+        self.ed25519 = ed25519
+        self.ed448 = ed448
+        self.p256 = p256
+        self.p384 = p384
+        self.p512 = p512
+    }
+
 }
