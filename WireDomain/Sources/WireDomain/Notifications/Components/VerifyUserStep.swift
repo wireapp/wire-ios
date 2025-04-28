@@ -67,6 +67,7 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
 
     func verifyUserSession() async throws {
         let verifyUserSessionUseCase = VerifyUserSessionUseCase(
+            journal: journal,
             cookieStorage: cookieStorage,
             coreData: coreData
         )
@@ -103,6 +104,13 @@ extension VerifyUserStep {
 
     public var sharedUserDefaults: UserDefaults {
         UserDefaults(suiteName: dependency.applicationIdentifier)!
+    }
+
+    private var journal: Journal {
+        Journal(
+            userID: userID,
+            storage: sharedUserDefaults
+        )
     }
 
     public var cookieStorage: any CookieStorageProtocol {

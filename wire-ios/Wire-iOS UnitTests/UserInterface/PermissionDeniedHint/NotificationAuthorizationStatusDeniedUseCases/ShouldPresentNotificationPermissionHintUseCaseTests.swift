@@ -46,6 +46,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = nil
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningTrueForDeniedAndNoDate() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
@@ -58,6 +59,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         XCTAssertTrue(shouldPresentHint)
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningTrueForDeniedAndDistantPastDate() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
@@ -71,6 +73,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         XCTAssertTrue(shouldPresentHint)
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningFalseForDeniedAndRecentPastDate() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
@@ -87,6 +90,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         XCTAssertFalse(shouldPresentHint)
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningFalseForAuthorized() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .authorized)
@@ -99,6 +103,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         XCTAssertFalse(shouldPresentHint)
     }
 
+    // TODO: [WPB-17397] re-enable
     func testReturningFalseForNotDetermined() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .notDetermined)

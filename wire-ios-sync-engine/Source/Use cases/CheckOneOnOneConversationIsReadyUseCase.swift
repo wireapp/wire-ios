@@ -27,7 +27,7 @@ public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
     ///
     /// - Parameter userID: The qualified ID of the user to check the one on one conversation for
     /// - Returns: Whether the one on one conversation is ready.
-    func invoke(userID: QualifiedID) async throws -> Bool
+    func invoke(userID: WireDataModel.QualifiedID) async throws -> Bool
 
 }
 

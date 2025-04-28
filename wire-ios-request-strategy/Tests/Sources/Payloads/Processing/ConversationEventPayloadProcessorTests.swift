@@ -1207,6 +1207,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 from: nil,
                 qualifiedID: self.groupConversation.qualifiedID,
                 qualifiedFrom: nil,
+                subconversationType: nil,
                 timestamp: nil,
                 type: nil
             )
@@ -1480,6 +1481,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 from: nil,
                 qualifiedID: groupConversation.qualifiedID,
                 qualifiedFrom: nil,
+                subconversationType: nil,
                 timestamp: nil,
                 type: nil
             )

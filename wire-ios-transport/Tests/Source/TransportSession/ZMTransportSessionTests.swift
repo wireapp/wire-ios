@@ -93,7 +93,8 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
             applicationGroupIdentifier: containerIdentifier,
             applicationVersion: "1.0",
             minTLSVersion: nil,
-            selfClientID: nil
+            selfClientID: nil,
+            isSyncV2Enabled: false
         )
     }
 
