@@ -883,6 +883,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    // Only used for testing
     public func triggerIncrementalSync() {
         Task {
             do {
@@ -1075,6 +1076,15 @@ extension ZMUserSession: SyncAgentDelegate {
 
     func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool) {
         didFinishIncrementalSync(isRecovering: isRecovering)
+    }
+
+    func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: Error) {
+        WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.isPerformingSync = false
+            self?.updateNetworkState()
+        }
     }
 
     func didStartInitialSync() {
