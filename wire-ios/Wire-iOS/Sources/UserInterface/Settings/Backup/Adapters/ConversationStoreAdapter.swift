@@ -30,7 +30,11 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
     }
 
     func totalConversationCount() async throws -> Int {
-        try await conversationLocalStore.totalConversationCount()
+        try await conversationLocalStore.totalBackupableConversationCount()
+    }
+
+    func fetchAllConversations() async throws -> [ConversationEntity] {
+        try await conversationLocalStore.fetchAllBackupableConversations().map(ConversationEntity.init)
     }
 
     // MARK: -
@@ -50,6 +54,10 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
         var handle: String {
             get { fatalError() }
             nonmutating set { fatalError() }
+        }
+
+        init(_ conversation: ZMConversation) {
+            fatalError("TODO")
         }
 
     }

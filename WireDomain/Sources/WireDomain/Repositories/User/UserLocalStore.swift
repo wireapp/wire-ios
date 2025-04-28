@@ -99,7 +99,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    public func totalUserCount() async throws -> Int {
+    public func totalBackupableUserCount() async throws -> Int {
         try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             return try context.count(for: fetchRequest)
@@ -145,6 +145,12 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
 
         return (user, isSelfUser)
+    }
+
+    public func fetchAllBackupableUsers() async throws -> [ZMUser] {
+        try await context.perform { [context] in
+            try context.fetch(ZMUser.fetchRequest()) as! [ZMUser]
+        }
     }
 
     public func deletePushToken() {

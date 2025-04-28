@@ -23,13 +23,103 @@ extension BackupCreator {
 
     func addMessage<MessageEntity>(_ message: MessageEntity) where MessageEntity: MessageEntityProtocol {
 
-        fatalError()
-//        let backupUser = BackupUser(
-//            id: BackupQualifiedId(user.id),
-//            name: user.name,
-//            handle: user.handle
-//        )
-//        mpBackupCreator.add(user: backupUser)
+        let backupMessage = BackupMessage(
+            id: message.id,
+            conversationId: BackupQualifiedId(message.conversationID),
+            senderUserId: BackupQualifiedId(message.senderUserID),
+            senderClientId: message.senderClientID ?? "", // TODO: make optional
+            creationDate: BackupDateTime(message.creationDate),
+            content: BackupMessageContent(message.content),
+            webPrimaryKey: nil // TODO: remove
+        )
+        mpBackupCreator.add(message: backupMessage)
 
     }
+
+    private func BackupMessageContent(_ content: MessageContent) -> KaliumBackup.BackupMessageContent {
+        switch content {
+
+        case .text(let content):
+            KaliumBackup.BackupMessageContent.Text(
+                text: content.text
+            )
+
+        case let .location(content):
+            KaliumBackup.BackupMessageContent.Location(
+                longitude: content.longitude,
+                latitude: content.latitude,
+                name: content.name,
+                zoom: content.zoom.map { KotlinInt(int: $0) }
+            )
+
+        case let .asset(content):
+            KaliumBackup.BackupMessageContent.Asset(
+                mimeType: content.mimeType,
+                size: Int32(exactly: content.size) ?? 0,
+                name: content.name,
+                otrKey: KotlinByteArray(content.otrKey),
+                sha256: KotlinByteArray(content.sha256),
+                assetId: content.assetID,
+                assetToken: content.assetToken,
+                assetDomain: content.assetDomain,
+                encryption: AssetEncryptionAlgorithm(content.encryption),
+                metaData: AssetAssetMetadata(content.metadata)
+            )
+
+        }
+    }
+
+    private func AssetEncryptionAlgorithm(
+        _ encryption: MessageContent.AssetContent.EncryptionAlgorithm?
+    ) -> BackupMessageContent.AssetEncryptionAlgorithm? {
+        switch encryption {
+
+        case .aesCBC:
+            .aesCbc
+
+        case .aesGCM:
+            .aesGcm
+
+        case .none:
+            .none
+
+        }
+    }
+
+    private func AssetAssetMetadata(
+        _ metadata: MessageContent.AssetContent.Metadata?
+    ) -> BackupMessageContent.AssetAssetMetadata? {
+        switch metadata {
+
+        case .image(let metadata):
+            KaliumBackup.BackupMessageContent.AssetAssetMetadataImage(
+                width: metadata.width,
+                height: metadata.height,
+                tag: metadata.tag
+            )
+
+        case .video(let metadata):
+            KaliumBackup.BackupMessageContent.AssetAssetMetadataVideo(
+                width: metadata.width.map { KotlinInt(int: $0) },
+                height: metadata.height.map { KotlinInt(int: $0) },
+                duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }, // TODO: types should match CoreCrypto types
+            )
+
+        case .audio(let metadata):
+            KaliumBackup.BackupMessageContent.AssetAssetMetadataAudio(
+                normalization: metadata.normalization.map { KotlinByteArray($0) },
+                duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }
+            )
+
+        case .generic(let metadata):
+            KaliumBackup.BackupMessageContent.AssetAssetMetadataGeneric(
+                name: metadata.name
+            )
+
+        case .none:
+            .none
+
+        }
+    }
+
 }

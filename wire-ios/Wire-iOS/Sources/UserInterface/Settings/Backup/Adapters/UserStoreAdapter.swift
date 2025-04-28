@@ -30,7 +30,11 @@ struct UserStoreAdapter: UserStoreProtocol {
     }
 
     func totalUserCount() async throws -> Int {
-        try await userLocalStore.totalUserCount()
+        try await userLocalStore.totalBackupableUserCount()
+    }
+
+    func fetchAllUsers() async throws -> [UserEntity] {
+        try await userLocalStore.fetchAllBackupableUsers().map(UserEntity.init)
     }
 
     // MARK: -
@@ -50,6 +54,10 @@ struct UserStoreAdapter: UserStoreProtocol {
         var handle: String {
             get { fatalError() }
             nonmutating set { fatalError() }
+        }
+
+        init(_ user: ZMUser) {
+            fatalError("todo")
         }
 
     }

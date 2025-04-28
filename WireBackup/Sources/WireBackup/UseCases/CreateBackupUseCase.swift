@@ -24,7 +24,7 @@ public import WireLogging
 public struct CreateBackupUseCase<
     UserStore: UserStoreProtocol,
     ConversationStore: ConversationStoreProtocol,
-    // MessageAdapter: MessageEntityProtocol,
+    MessageStore: MessageStoreProtocol,
     FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
 
@@ -33,6 +33,7 @@ public struct CreateBackupUseCase<
 
     let userStore: UserStore
     let conversationStore: ConversationStore
+    let messageStore: MessageStore
 
     let eventProcessorHandle: any InterruptEventProcessingProtocol
     let selfUserID: QualifiedID
@@ -44,6 +45,7 @@ public struct CreateBackupUseCase<
     public init(
         userStore: UserStore,
         conversationStore: ConversationStore,
+        messageStore: MessageStore,
         eventProcessorHandle: any InterruptEventProcessingProtocol,
         fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
@@ -53,6 +55,7 @@ public struct CreateBackupUseCase<
     ) {
         self.userStore = userStore
         self.conversationStore = conversationStore
+        self.messageStore = messageStore
         self.eventProcessorHandle = eventProcessorHandle
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
@@ -63,7 +66,17 @@ public struct CreateBackupUseCase<
 
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            let task = Task<Void, Never> { [/*context,*/ currentDateProvider, eventProcessorHandle, fileArchiver, logger, selfUserID, selfUserHandle] in
+            let task = Task<Void, Never> { [
+                userStore,
+                conversationStore,
+                messageStore,
+                currentDateProvider,
+                eventProcessorHandle,
+                fileArchiver,
+                logger,
+                selfUserID,
+                selfUserHandle
+            ] in
 
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingPathComponent(UUID().uuidString)
@@ -125,14 +138,12 @@ public struct CreateBackupUseCase<
                         reportProgress(conversationProgressOffset + conversationIndex + 1, total)
                     }
 
-                    /*
                     let messageProgressOffset = userCount + conversationCount
-                    try await context.perform {
-                        try Self.exportMessages(from: context, using: exporter, reportProgress: { current in
-                            reportProgress(messageProgressOffset + current, total)
-                        })
+                    let allMessages = try await messageStore.fetchAllMessages()
+                    for messageIndex in 0 ..< allMessages.count {
+                        backupCreator.addMessage(allMessages[messageIndex])
+                        reportProgress(messageProgressOffset + messageIndex + 1, total)
                     }
-                     */
 
                     // create the file
                     let outputFileURL = try await backupCreator.finalize(password: password)
@@ -156,95 +167,5 @@ public struct CreateBackupUseCase<
             }
         }
     }
-
-/*
-    private static func fetchCounts(
-        in context: NSManagedObjectContext
-    ) throws -> (userCount: Int, messageCount: Int, conversationCount: Int) {
-
-        let userCount = try context.count(for: UserAdapter.fetchRequest())
-        let conversationCount = try context.count(for: ConversationAdapter.fetchRequest())
-        let messageCount = try context.count(for: MessageAdapter.fetchRequest())
-
-        return (userCount, conversationCount, messageCount)
-    }
- */
-
-//    private static func exportUsers(
-//        from context: NSManagedObjectContext,
-//        using backupExporter: MPBackupExporter,
-//        reportProgress: (Int) -> Void
-//    ) throws {
-//        try exportRecored(context: context, entityType: UserAdapter.self, export: { user in
-//            backupExporter.add(
-//                user: BackupUser(
-//                    id: BackupQualifiedId(user.id),
-//                    name: user.name,
-//                    handle: user.handle
-//                )
-//            )
-//        }, reportProgress: reportProgress)
-//    }
-
-    /*
-    private static func exportConversations(
-        from context: NSManagedObjectContext,
-        using backupExporter: MPBackupExporter,
-        reportProgress: (Int) -> Void
-    ) throws {
-        try exportRecored(context: context, entityType: ConversationAdapter.self, export: { conversation in
-            backupExporter.add(
-                conversation: BackupConversation(
-                    id: BackupQualifiedId(conversation.id),
-                    name: conversation.name
-                )
-            )
-        }, reportProgress: reportProgress)
-    }
-
-    private static func exportMessages(
-        from context: NSManagedObjectContext,
-        using backupExporter: MPBackupExporter,
-        reportProgress: (Int) -> Void
-    ) throws {
-        try exportRecored(context: context, entityType: MessageAdapter.self, export: { message in
-            backupExporter.add(
-                message: BackupMessage(
-                    id: message.id,
-                    conversationId: BackupQualifiedId(message.conversationID),
-                    senderUserId: BackupQualifiedId(message.senderUserID),
-                    senderClientId: message.senderClientID ?? "", // TODO: make optional
-                    creationDate: BackupDateTime(message.creationDate),
-                    content: .from(message.content),
-                    webPrimaryKey: nil // TODO: remove
-                )
-            )
-        }, reportProgress: reportProgress)
-    }
-
-    private static func exportRecored<Entity: CreateBackupEntityProtocol>(
-        context: NSManagedObjectContext,
-        entityType: Entity.Type,
-        export: (Entity) -> Void,
-        reportProgress: (Int) -> Void
-    ) throws {
-
-        let fetchRequest = entityType.fetchRequest()
-        fetchRequest.fetchBatchSize = 50
-        let records = try context.fetch(fetchRequest)
-        let recordCount = records.count
-
-        for (index, record) in records.enumerated() {
-            guard let entity = entityType.init(record) else { continue }
-
-            autoreleasepool { export(entity) }
-
-            if index % 50 == 0 || index == recordCount - 1 {
-                try Task.checkCancellation()
-                reportProgress(index + 1)
-            }
-        }
-    */
-
 
 }

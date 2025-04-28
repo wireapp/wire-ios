@@ -253,7 +253,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func totalConversationCount() async throws -> Int {
+    public func totalBackupableConversationCount() async throws -> Int {
         try await context.perform { [context] in
             try context.count(for: ZMConversation.fetchRequest())
         }
@@ -553,6 +553,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 with: groupID,
                 in: context
             )
+        }
+    }
+
+    public func fetchAllBackupableConversations() async throws -> [ZMConversation] {
+        try await context.perform { [context] in
+            try context.fetch(ZMConversation.fetchRequest()) as! [ZMConversation]
         }
     }
 

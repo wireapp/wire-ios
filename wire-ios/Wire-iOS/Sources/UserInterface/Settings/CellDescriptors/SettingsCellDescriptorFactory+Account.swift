@@ -408,6 +408,7 @@ extension SettingsCellDescriptorFactory {
                 CreateBackupUseCase(
                     userStore: UserStoreAdapter(userLocalStore: userLocalStore),
                     conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
+                    messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
                     eventProcessorHandle: EventProcessorHandle(),
                     fileArchiver: CreateBackupFileArchiver(),
                     currentDateProvider: SystemDateProvider(),

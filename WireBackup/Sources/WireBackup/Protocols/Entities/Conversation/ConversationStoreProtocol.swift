@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ConversationStoreProtocol {
+public protocol ConversationStoreProtocol: Sendable {
     associatedtype ConversationEntity: ConversationEntityProtocol
 
     /// Returns the number of all stored conversations in the local data store, including deleted ones.

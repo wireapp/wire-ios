@@ -26,13 +26,13 @@ public protocol MessageEntityProtocol {
     var senderUserID: QualifiedID { get nonmutating set }
     var senderClientID: String? { get nonmutating set }
     var creationDate: Date { get nonmutating set }
-    var content: CreateBackupMessageContent { get nonmutating set }
+    var content: MessageContent { get nonmutating set }
 
 }
 
 // MARK: -
 
-public enum CreateBackupMessageContent {
+public enum MessageContent {
 
     case text(TextContent)
     case location(LocationContent)
@@ -42,7 +42,7 @@ public enum CreateBackupMessageContent {
 
 // MARK: - Nested Types
 
-extension CreateBackupMessageContent {
+extension MessageContent {
 
     public struct TextContent {
         public var text: String
@@ -84,7 +84,7 @@ extension CreateBackupMessageContent {
 
 }
 
-extension CreateBackupMessageContent.AssetContent.Metadata {
+extension MessageContent.AssetContent.Metadata {
 
     public struct ImageMetadata {
         var width: Int32
@@ -111,7 +111,7 @@ extension CreateBackupMessageContent.AssetContent.Metadata {
 
 // MARK: - Convenience
 
-extension CreateBackupMessageContent {
+extension MessageContent {
 
     public static func text(
         _ text: String
@@ -169,7 +169,7 @@ extension CreateBackupMessageContent {
 
 }
 
-extension CreateBackupMessageContent.AssetContent.Metadata {
+extension MessageContent.AssetContent.Metadata {
 
     public static func image(
         width: Int32,

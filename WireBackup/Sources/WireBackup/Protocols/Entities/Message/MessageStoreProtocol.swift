@@ -16,21 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*
-import KaliumBackup
-import WireBackup
+public protocol MessageStoreProtocol: Sendable {
+    associatedtype MessageEntity: MessageEntityProtocol
 
-extension BackupMessageContent.AssetEncryptionAlgorithm {
+    /// Returns the number of all stored users in the local data store, including deleted ones.
+    func totalMessageCount() async throws -> Int
 
-    static func from(
-        _ encryptionAlgorithm: CreateBackupMessageContent.AssetContent.EncryptionAlgorithm
-    ) -> BackupMessageContent.AssetEncryptionAlgorithm {
-        switch encryptionAlgorithm {
-        case .aesCBC:
-                .aesCbc
-        case .aesGCM:
-                .aesGcm
-        }
-    }
+    /// Returns all users stored in the local database, including deleted ones.
+    func fetchAllMessages() async throws -> [MessageEntity]
+
 }
-*/

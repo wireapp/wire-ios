@@ -72,6 +72,10 @@ public protocol MessageLocalStoreProtocol {
     ///     - senderID: The message sender ID.
     ///     - senderDomain: The message sender domain.
 
+    func totalBackupableMessageCount() async throws -> Int
+
+    func fetchAllBackupableMessages() async throws -> [ZMClientMessage]
+
     func addClientMessage(
         _ clientMessage: ZMClientMessage,
         isNewMessage: Bool,

@@ -401,6 +401,8 @@ public protocol ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
 
+    func fetchAllBackupableConversations() async throws -> [ZMConversation]
+
     func name(
         for conversation: ZMConversation
     ) async -> String?
@@ -444,7 +446,7 @@ public protocol ConversationLocalStoreProtocol {
     /// Counts the number of conversations in the local store.
     /// - returns: The number of conversation entries in the database.
 
-    func totalConversationCount() async throws -> Int
+    func totalBackupableConversationCount() async throws -> Int
 
     func unreadConversationCount() async -> UInt
 

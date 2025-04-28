@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/*
 public import CoreData
 public import WireFoundation
 
@@ -31,3 +32,4 @@ public protocol ImportBackupUserEntityProtocol: ImportBackupEntityProtocol {
     var handle: String { get nonmutating set }
 
 }
+*/

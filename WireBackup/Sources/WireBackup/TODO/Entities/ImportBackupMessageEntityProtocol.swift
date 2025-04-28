@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/*
 public protocol ImportBackupMessageEntityProtocol: ImportBackupEntityProtocol {
 
 //    var id: QualifiedID { get nonmutating set }
 //    var name: String { get nonmutating set }
 
 }
+*/

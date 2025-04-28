@@ -63,7 +63,7 @@ public protocol UserLocalStoreProtocol: Sendable {
 
     /// Fetches all stored users from the local database, including the ones marked as deleted.
 
-    func fetchAllUsers() async throws -> [ZMUser]
+    func fetchAllBackupableUsers() async throws -> [ZMUser]
 
     /// Removes user push token from storage.
 
@@ -110,7 +110,7 @@ public protocol UserLocalStoreProtocol: Sendable {
     /// Counts the number of users in the local store.
     /// - returns: The number of user entries in the database.
 
-    func totalUserCount() async throws -> Int
+    func totalBackupableUserCount() async throws -> Int
 
     /// Fetches users qualified IDs locally.
     /// - returns: A list of qualified IDs.

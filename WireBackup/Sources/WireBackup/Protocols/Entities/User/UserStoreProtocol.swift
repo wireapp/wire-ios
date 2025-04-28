@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol UserStoreProtocol {
+public protocol UserStoreProtocol: Sendable {
     associatedtype UserEntity: UserEntityProtocol
 
     /// Returns the number of all stored users in the local data store, including deleted ones.

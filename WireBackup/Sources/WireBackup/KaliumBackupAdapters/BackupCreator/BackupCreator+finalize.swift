@@ -44,7 +44,9 @@ extension BackupCreator {
         default:
             throw FinalizeBackupError.unexpectedResultType
         }
+
     }
+
 }
 
 private enum FinalizeBackupError: Error {
