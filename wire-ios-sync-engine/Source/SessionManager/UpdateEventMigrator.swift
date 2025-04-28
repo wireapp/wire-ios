@@ -101,10 +101,11 @@ struct UpdateEventMigrator {
 
             WireLogger.sync.debug("deleting batch of legacy events...")
             await dao.deleteNextBatchOfLegacyEvents()
+
+            WireLogger.sync.debug("saving...")
+            try await dao.save()
         }
 
-        WireLogger.sync.debug("no more legacy events to migrate, saving...")
-        try await dao.save()
         WireLogger.sync.debug("legacy event migration complete")
     }
 
