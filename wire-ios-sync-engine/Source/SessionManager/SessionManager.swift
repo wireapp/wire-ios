@@ -1062,47 +1062,49 @@ public final class SessionManager: NSObject, SessionManagerType {
                     storage: sharedUserDefaults
                 )
 
-                enableNewSyncIfNeeded(
-                    journal: journal,
-                    coreDataStack: coreDataStack
-                ) {
-                    let userSession = self.startBackgroundSession(
-                        for: account,
-                        with: coreDataStack,
-                        journal: journal
-                    )
+                Task {
+                    if self.shouldEnableSyncV2(journal: journal) {
+                        await self.enableSyncV2(
+                            journal: journal,
+                            coreDataStack: coreDataStack
+                        )
+                    }
 
-                    self.triggerMigrationsNeedsActionsIfNeeded(
-                        journal: journal,
-                        userSession: userSession
-                    )
+                    await MainActor.run {
+                        let userSession = self.startBackgroundSession(
+                            for: account,
+                            with: coreDataStack,
+                            journal: journal
+                        )
 
-                    onCompletion(userSession)
+                        self.triggerMigrationsNeedsActionsIfNeeded(
+                            journal: journal,
+                            userSession: userSession
+                        )
+
+                        onCompletion(userSession)
+                    }
                 }
             }
         )
     }
 
-    private func enableNewSyncIfNeeded(
+    private func shouldEnableSyncV2(journal: Journal) -> Bool {
+        guard let apiVersion = BackendInfo.apiVersion else {
+            fatalError("api version unknown")
+        }
+
+        let isAvailble = apiVersion >= .v8
+        let isAlreadyEnabled = journal[.isSyncV2Enabled]
+        return isAvailble && !isAlreadyEnabled
+    }
+
+    private func enableSyncV2(
         journal: Journal,
-        coreDataStack: CoreDataStack,
-        completion: @escaping () -> Void
-    ) {
-        guard
-            let localDomain = BackendInfo.domain,
-            let apiVersion = BackendInfo.apiVersion
-        else {
-            fatalError("local domain and/or api version unknown")
-        }
-
-        // New sync is only available if the client supports v8.
-        guard apiVersion >= .v8 else {
-            return completion()
-        }
-
-        // Only continue if new sync isn't already on.
-        guard !journal[.isSyncV2Enabled] else {
-            return completion()
+        coreDataStack: CoreDataStack
+    ) async {
+        guard let localDomain = BackendInfo.domain else {
+            fatalError("local domain unknown")
         }
 
         let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
@@ -1116,24 +1118,20 @@ public final class SessionManager: NSObject, SessionManagerType {
             localDomain: localDomain
         )
 
-        Task {
-            do {
-                if try await migrator.isMigrationNeeded() {
-                    try await migrator.migrateLegacyUpdateEvents()
-                    // Since we only migrate some events, we require an
-                    // initial sync to ensure we didn't miss updates.
-                    journal[.isInitialSyncRequired] = true
-                } else {
-                    WireLogger.sync.debug("no migration needed")
-                }
-
-                journal[.isSyncV2Enabled] = true
-                try journal.save()
-            } catch {
-                WireLogger.sync.critical("failed to migrate update events: \(error)")
+        do {
+            if try await migrator.isMigrationNeeded() {
+                try await migrator.migrateLegacyUpdateEvents()
+                // Since we only migrate some events, we require an
+                // initial sync to ensure we didn't miss updates.
+                journal[.isInitialSyncRequired] = true
+            } else {
+                WireLogger.sync.debug("no migration needed")
             }
 
-            completion()
+            journal[.isSyncV2Enabled] = true
+            try journal.save()
+        } catch {
+            WireLogger.sync.critical("failed to migrate update events: \(error)")
         }
     }
 
