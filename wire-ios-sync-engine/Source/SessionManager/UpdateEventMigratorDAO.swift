@@ -225,6 +225,9 @@ final class ContextExecutor: SerialExecutor {
         self.context = context
     }
 
+    // Disabling this rule because wants to remove `consuming`
+    // but then the Swift compiler complains.
+    // swiftformat:disable:next noExplicitOwnership
     func enqueue(_ job: consuming ExecutorJob) {
         let unownedJob = UnownedJob(job)
         let unownedExecutor = asUnownedSerialExecutor()
