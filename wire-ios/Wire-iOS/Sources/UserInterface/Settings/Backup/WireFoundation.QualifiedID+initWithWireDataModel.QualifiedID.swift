@@ -19,22 +19,12 @@
 import WireDataModel
 import WireFoundation
 
-/*
-struct CreateBackupZMConversationAdapter: CreateBackupConversationEntityProtocol {
+extension WireFoundation.QualifiedID {
 
-    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
-        ZMConversation.fetchRequest() // TODO: self conversations shouldn't be fetched
+    init(_ qualifiedID: WireDataModel.QualifiedID) {
+        self.init(
+            id: qualifiedID.uuid,
+            domain: qualifiedID.domain
+        )
     }
-
-    let id: QualifiedID
-    let name: String
-
-    init?(_ record: any NSFetchRequestResult) {
-        guard let conversation = record as? ZMConversation, let qualifiedID = conversation.qualifiedID else { return nil } // TODO: prevent silent failure?
-
-        id = qualifiedID
-        name = conversation.name ?? ""
-    }
-
 }
-*/

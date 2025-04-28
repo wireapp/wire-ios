@@ -22,11 +22,17 @@ public import WireLogging
 @preconcurrency import KaliumBackup
 
 public struct CreateBackupUseCase<
-    UserEntity: UserEntityProtocol,
-    ConversationAdapter: ConversationEntityProtocol,
-    MessageAdapter: MessageEntityProtocol,
+    UserStore: UserStoreProtocol,
+    ConversationStore: ConversationStoreProtocol,
+    // MessageAdapter: MessageEntityProtocol,
     FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
+
+    typealias UserEntity = UserStore.UserEntity
+    typealias ConversationEntity = ConversationStore.ConversationEntity
+
+    let userStore: UserStore
+    let conversationStore: ConversationStore
 
     /*
     let context: @Sendable () -> NSManagedObjectContext
@@ -39,6 +45,8 @@ public struct CreateBackupUseCase<
     let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
 
     public init(
+        userStore: UserStore,
+        conversationStore: ConversationStore,
         /*
         context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext,
         userAdapterType _: UserAdapter.Type = UserAdapter.self,
@@ -52,6 +60,8 @@ public struct CreateBackupUseCase<
         selfUserHandle: String?,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.userStore = userStore
+        self.conversationStore = conversationStore
 //        self.context = context
         self.eventProcessorHandle = eventProcessorHandle
         self.fileArchiver = fileArchiver

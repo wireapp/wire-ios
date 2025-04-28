@@ -373,6 +373,8 @@ extension SettingsCellDescriptorFactory {
 
     private var backupImportExportBuilder: BackupImportExportBuilder {
 
+        typealias CreateBackupUseCaseProtocol = WireSettingsUI.CreateBackupUseCaseProtocol
+
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
         let selfUser = ZMUser.selfUser()!
@@ -388,17 +390,21 @@ extension SettingsCellDescriptorFactory {
 
         let importBackupUseCase = sessionManager.importBackupUseCase!
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
-            CreateBackupUseCase(
-                context: context,
-                userAdapterType: CreateBackupZMUserAdapter.self,
-                conversationAdapterType: CreateBackupZMConversationAdapter.self,
-                messageAdapterType: CreateBackupZMMessageAdapter.self,
-                eventProcessorHandle: EventProcessorHandle(),
-                fileArchiver: CreateBackupFileArchiver(),
-                currentDateProvider: SystemDateProvider(),
-                selfUserID: selfUser.qualifiedID!,
-                selfUserHandle: selfUser.handle,
-                logger: WireLogger.backupExport
+            CreateBackupUseCaseAdapter(
+                CreateBackupUseCase(
+                    userStore: UserStoreAdapter(),
+                    conversationStore: ConversationStoreAdapter(),
+//                    context: context,
+//                    userAdapterType: CreateBackupZMUserAdapter.self,
+//                    conversationAdapterType: CreateBackupZMConversationAdapter.self,
+//                    messageAdapterType: CreateBackupZMMessageAdapter.self,
+                    eventProcessorHandle: EventProcessorHandle(),
+                    fileArchiver: CreateBackupFileArchiver(),
+                    currentDateProvider: SystemDateProvider(),
+                    selfUserID: .init(selfUser.qualifiedID!),
+                    selfUserHandle: selfUser.handle,
+                    logger: WireLogger.backupExport
+                )
             )
         } else {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
@@ -407,8 +413,6 @@ extension SettingsCellDescriptorFactory {
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
-            importBackupUseCase: ImportBackupUseCaseAdapter(importBackupUseCase),
-            createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,

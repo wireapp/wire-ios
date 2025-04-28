@@ -19,6 +19,7 @@
 import WireDataModel
 import WireFoundation
 
+/*
 struct CreateBackupZMUserAdapter: CreateBackupUserEntityProtocol {
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
@@ -38,3 +39,4 @@ struct CreateBackupZMUserAdapter: CreateBackupUserEntityProtocol {
     }
 
 }
+*/

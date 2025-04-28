@@ -20,6 +20,7 @@ import Foundation
 import WireFoundation
 import WireDataModel
 
+/*
 struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
 
     static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
@@ -132,3 +133,4 @@ struct CreateBackupZMMessageAdapter: CreateBackupMessageEntityProtocol {
     }
 
 }
+*/

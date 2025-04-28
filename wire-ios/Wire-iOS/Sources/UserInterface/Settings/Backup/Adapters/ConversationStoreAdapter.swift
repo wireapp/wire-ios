@@ -16,25 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireBackup
 import WireDataModel
 import WireFoundation
 
-/*
-struct CreateBackupZMConversationAdapter: CreateBackupConversationEntityProtocol {
+struct ConversationStoreAdapter: ConversationStoreProtocol {
 
-    static func fetchRequest() -> NSFetchRequest<any NSFetchRequestResult> {
-        ZMConversation.fetchRequest() // TODO: self conversations shouldn't be fetched
+    struct ConversationEntity: ConversationEntityProtocol {
+        typealias QualifiedID = WireFoundation.QualifiedID
+
+        var id: QualifiedID {
+            fatalError()
+        }
+
+        var name: String {
+            get { fatalError() }
+            nonmutating set { fatalError() }
+        }
+
+        var handle: String {
+            get { fatalError() }
+            nonmutating set { fatalError() }
+        }
+
     }
-
-    let id: QualifiedID
-    let name: String
-
-    init?(_ record: any NSFetchRequestResult) {
-        guard let conversation = record as? ZMConversation, let qualifiedID = conversation.qualifiedID else { return nil } // TODO: prevent silent failure?
-
-        id = qualifiedID
-        name = conversation.name ?? ""
-    }
-
 }
-*/
