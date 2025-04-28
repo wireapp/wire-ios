@@ -19,13 +19,6 @@
 public protocol JournalProtocol {
 
     subscript(_ key: JournalKey<Bool>) -> Bool { get set }
-    func save() throws
     func erase()
-
-}
-
-public enum JournalError: Error {
-
-    case failedToSave
 
 }

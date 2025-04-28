@@ -1129,7 +1129,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
 
             journal[.isSyncV2Enabled] = true
-            try journal.save()
+
         } catch {
             WireLogger.sync.critical("failed to migrate update events: \(error)")
         }

@@ -64,17 +64,6 @@ public class Journal: JournalProtocol {
         }
     }
 
-    /// Save changes immediately.
-    ///
-    /// Note: saving happens automatically, so only call this
-    /// method if absolutely necessary.
-
-    public func save() throws {
-        guard storage.synchronize() else {
-            throw JournalError.failedToSave
-        }
-    }
-
     /// Delete all values in the journal.
 
     public func erase() {
