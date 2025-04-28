@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import ZipArchive
 
-struct CreateBackupFileArchiver: CreateBackupFileArchiverProtocol {
+struct CreateBackupFileArchiver: FileArchiverProtocol {
 
     func zipResources(
         at resourceURLs: [URL],
@@ -29,7 +30,7 @@ struct CreateBackupFileArchiver: CreateBackupFileArchiverProtocol {
             withFilesAtPaths: resourceURLs.map { $0.path() }
         )
         guard success else {
-            throw CreateBackupError.compressionError
+            throw CreateBackupFileArchiverError.compressionError
         }
     }
 }
