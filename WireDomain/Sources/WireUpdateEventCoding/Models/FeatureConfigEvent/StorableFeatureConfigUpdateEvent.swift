@@ -21,7 +21,7 @@ import WireAPI
 
 struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
 
-    private let featureConfig: StorableFeatureConfig
+     let featureConfig: StorableFeatureConfig
 
     init(_ value: WireAPI.FeatureConfigUpdateEvent) {
         self.featureConfig = switch value.featureConfig {
@@ -87,15 +87,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     )
                 )
         case let .mlsMigration(config):
-            // FIXME: There is a compiler crash :(
-            fatalError()
-//                .mlsMigration(
-//                    StorableMLSMigrationFeatureConfig(
-//                        status: StorableFeatureConfigStatus(config.status),
-//                        startTime: config.startTime,
-//                        finaliseRegardlessAfter: config.finaliseRegardlessAfter
-//                    )
-//                )
+                .mlsMigration(
+                    StorableMLSMigrationFeatureConfig(
+                        status: StorableFeatureConfigStatus(config.status),
+                        startTime: config.startTime,
+                        finaliseRegardlessAfter: config.finaliseRegardlessAfter
+                    )
+                )
         case let .selfDeletingMessages(config):
                 .selfDeletingMessages(
                     StorableSelfDeletingMessagesFeatureConfig(
@@ -180,8 +178,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 )
             )
         case let .mlsMigration(config):
-            // FIXME: Implement
-            fatalError()
+                .mlsMigration(
+                    MLSMigrationFeatureConfig(
+                        status: config.status.toAPIModel(),
+                        startTime: config.startTime,
+                        finaliseRegardlessAfter: config.finaliseRegardlessAfter
+                    )
+                )
         case let .selfDeletingMessages(config):
                 .selfDeletingMessages(
                     .init(
@@ -208,7 +211,7 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
 
 // MARK: Private Models
 
-private enum StorableFeatureConfig: Equatable, Codable, Sendable {
+ enum StorableFeatureConfig: Equatable, Codable, Sendable {
 
     case appLock(StorableAppLockFeatureConfig)
     case classifiedDomains(StorableClassifiedDomainsFeatureConfig)
@@ -227,7 +230,7 @@ private enum StorableFeatureConfig: Equatable, Codable, Sendable {
 
 // MARK: Shared
 
-private enum StorableFeatureConfigStatus: String, Codable, Sendable {
+ enum StorableFeatureConfigStatus: String, Codable, Sendable {
 
     case enabled
     case disabled
@@ -254,13 +257,13 @@ private enum StorableFeatureConfigStatus: String, Codable, Sendable {
 
 // MARK: Feature configs
 
-private struct StorableBasicFeatureConfig: Codable, Equatable, Sendable {
+ struct StorableBasicFeatureConfig: Codable, Equatable, Sendable {
 
     let status: StorableFeatureConfigStatus
 
 }
 
-private struct StorableAppLockFeatureConfig: Codable, Equatable, Sendable {
+ struct StorableAppLockFeatureConfig: Codable, Equatable, Sendable {
 
     let status: StorableFeatureConfigStatus
     let isMandatory: Bool
@@ -268,21 +271,21 @@ private struct StorableAppLockFeatureConfig: Codable, Equatable, Sendable {
 
 }
 
-private struct StorableClassifiedDomainsFeatureConfig: Equatable, Codable, Sendable {
+ struct StorableClassifiedDomainsFeatureConfig: Equatable, Codable, Sendable {
 
     let status: StorableFeatureConfigStatus
     let domains: [String]
 
 }
 
-private struct StorableConferenceCallingFeatureConfig: Codable, Equatable, Sendable {
+ struct StorableConferenceCallingFeatureConfig: Codable, Equatable, Sendable {
 
     let status: StorableFeatureConfigStatus
     let useSFTForOneToOneCalls: Bool
 
 }
 
-private struct StorableEndToEndIdentityFeatureConfig: Equatable, Codable, Sendable {
+ struct StorableEndToEndIdentityFeatureConfig: Equatable, Codable, Sendable {
 
     let status: StorableFeatureConfigStatus
     let acmeDiscoveryURL: String?
@@ -292,7 +295,7 @@ private struct StorableEndToEndIdentityFeatureConfig: Equatable, Codable, Sendab
 
 }
 
-private struct StorableMLSFeatureConfig: Equatable, Codable, Sendable {
+ struct StorableMLSFeatureConfig: Equatable, Codable, Sendable {
 
     let status: StorableFeatureConfigStatus
     let protocolToggleUsers: [UUID]
@@ -303,22 +306,22 @@ private struct StorableMLSFeatureConfig: Equatable, Codable, Sendable {
 
 }
 
-private struct StorableMLSMigrationFeatureConfig: Equatable, Codable, Sendable {
+ struct StorableMLSMigrationFeatureConfig: Equatable, Codable, Sendable {
 
     let status: StorableFeatureConfigStatus
-//        let startTime: Date? FIXME: Uncomment
-//        let finaliseRegardlessAfter: Date? FIXME: Uncomment
+    let startTime: Date?
+    let finaliseRegardlessAfter: Date?
 
 }
 
-private struct StorableSelfDeletingMessagesFeatureConfig: Equatable, Codable, Sendable {
+ struct StorableSelfDeletingMessagesFeatureConfig: Equatable, Codable, Sendable {
 
     let status: StorableFeatureConfigStatus
     let enforcedTimeoutSeconds: UInt
 
 }
 
-private struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
+ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
 
     enum Permission: String, Codable, Sendable {
 
