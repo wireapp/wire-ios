@@ -16,16 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
-public struct IndividualToTeamMigrationResult: Sendable {
-
-    public let teamID: UUID
-    public let teamName: String
-
-    public init(teamID: UUID, teamName: String) {
-        self.teamID = teamID
-        self.teamName = teamName
-    }
-
+public enum CreateLegacyBackupError: Error {
+    case noActiveAccountForExport
+    case compressionError
+    /// Failed to create `InputStream` or `OutputStream` from `URL`.
+    case failedToCreateStreamsForEncryption
 }

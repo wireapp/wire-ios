@@ -16,18 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportLegacyBackupError: Error, Equatable, CaseIterable {
-    case noActiveAccountForImport
-    /// The backup file is encrypted and a password is needed for decryption.
-    case passwordRequired
-    /// E.g. if the file to import was created with a different (incompatible) version of the app.
-    case incompatibleFileFormat // there is no mapping to this error (it's never thrown)
-    case invalidAccountID
-    case unarchivingFailed
-    case invalidFileExtension
-    case keyCreationFailed
-    case decryptionError
-    case failedToBackUpUserClient
-    /// Failed to create `InputStream` or `OutputStream` from `URL`.
-    case failedToCreateStreamForDecryption
+public import Foundation
+
+public enum IndividualToTeamMigrationError: Error, Sendable {
+    case userAlreadyInTeam
+    case generic(any Error)
+}
+
+public struct IndividualToTeamMigrationResult: Sendable {
+    public let teamID: UUID
+    public let teamName: String
+
+    public init(teamID: UUID, teamName: String) {
+        self.teamID = teamID
+        self.teamName = teamName
+    }
+}
+
+// sourcery: AutoMockable
+/// Sends a request to the backend to migrate the user to a team.
+public protocol IndividualToTeamMigrationUseCaseProtocol: Sendable {
+    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }

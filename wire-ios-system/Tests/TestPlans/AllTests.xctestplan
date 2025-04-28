@@ -22,9 +22,7 @@
       "identifier" : "54A3272B1B99A3190004EB95",
       "name" : "WireSystem Tests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

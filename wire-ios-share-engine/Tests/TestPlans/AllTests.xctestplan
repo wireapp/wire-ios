@@ -22,9 +22,7 @@
       "identifier" : "5470D3F11D76E1B000FDE440",
       "name" : "WireShareEngineTests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

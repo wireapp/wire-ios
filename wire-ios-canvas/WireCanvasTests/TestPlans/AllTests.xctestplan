@@ -20,9 +20,7 @@
       "identifier" : "01E9445F2D01805B006921E4",
       "name" : "WireCanvasTests"
     },
-    "testTimeoutsEnabled" : true,
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {

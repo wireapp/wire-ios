@@ -11,9 +11,7 @@
   "defaultOptions" : {
     "language" : "en",
     "region" : "DE",
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

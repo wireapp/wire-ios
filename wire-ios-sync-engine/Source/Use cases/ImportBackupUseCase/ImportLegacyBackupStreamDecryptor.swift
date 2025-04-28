@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCrypto
+import WireDomainPackage
 
 struct ImportLegacyBackupStreamDecryptor: ImportLegacyBackupStreamDecryptorProtocol {
 
@@ -43,13 +44,13 @@ struct ImportLegacyBackupStreamDecryptor: ImportLegacyBackupStreamDecryptorProto
 
         } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
             if password.isEmpty {
-                throw ImportLegacyBackupError.passwordRequired
+                throw ImportBackupError.passwordRequired
             } else {
-                throw ImportLegacyBackupError.decryptionError
+                throw ImportBackupError.decryptionError
             }
 
         } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed {
-            throw ImportLegacyBackupError.keyCreationFailed
+            throw ImportBackupError.keyCreationFailed
         }
 
     }

@@ -21,6 +21,7 @@ import WireAnalytics
 import WireAPI
 import WireCommonComponents
 import WireDesign
+import WireDomainPackage
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents
@@ -257,10 +258,7 @@ final class SelfProfileViewController: UIViewController {
                   .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
                 return
             }
-            userDidTapCreateTeam(
-                useCase: IndividualToTeamMigrationUseCaseAdapter(useCase),
-                userName: userName
-            )
+            userDidTapCreateTeam(useCase: useCase, userName: userName)
         }
     }
 

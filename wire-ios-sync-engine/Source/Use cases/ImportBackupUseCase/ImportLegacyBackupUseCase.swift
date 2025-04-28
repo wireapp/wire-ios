@@ -19,6 +19,7 @@
 import Foundation
 import WireCrypto
 import WireDataModel
+import WireDomainPackage
 import WireFoundation
 import WireLogging
 import WireSystem
@@ -57,7 +58,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
 
         case nil:
             AsyncThrowingStream { continuation in
-                continuation.finish(throwing: ImportLegacyBackupError.invalidFileExtension)
+                continuation.finish(throwing: ImportBackupError.invalidFileExtension)
             }
         }
     }
@@ -72,7 +73,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
 
                     // to start with we need an active user session, later the session will be torn down
                     guard let account = userSession()?.contextProvider.account else {
-                        throw ImportLegacyBackupError.noActiveAccountForImport
+                        throw ImportBackupError.noActiveAccountForImport
                     }
 
                     // before we start the first operation let the user know, the progress has started
@@ -99,7 +100,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
                         selfUserQualifiedID = qualifiedID
                         selfClientBackup = backup
                     } else {
-                        throw ImportLegacyBackupError.failedToBackUpUserClient
+                        throw ImportBackupError.faildToBackUpUserClient
                     }
 
                     logger.debug("reporting migration required")
@@ -175,7 +176,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
         guard
             let inputStream = InputStream(url: url),
             let outputStream = OutputStream(url: decryptedURL, append: false)
-        else { throw ImportLegacyBackupError.failedToCreateStreamForDecryption }
+        else { throw ImportBackupError.failedToCreateStreamForDecryption }
 
         do {
             try streamDecryptor.decrypt(
@@ -185,7 +186,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
                 password: password
             )
         } catch WireCrypto.ChaCha20Poly1305.StreamEncryption.EncryptionError.mismatchingUUID {
-            throw ImportLegacyBackupError.invalidAccountID
+            throw ImportBackupError.invalidAccountID
         }
 
         try fileUnarchiver.unzipFile(at: decryptedURL, to: unzippedURL)

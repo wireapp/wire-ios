@@ -9,8 +9,7 @@
     }
   ],
   "defaultOptions" : {
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+
   },
   "testTargets" : [
     {

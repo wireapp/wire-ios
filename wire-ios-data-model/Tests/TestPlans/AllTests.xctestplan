@@ -25,9 +25,7 @@
       "identifier" : "F9C9A5051CAD5DF10039E10C",
       "name" : "WireDataModelTests"
     },
-    "testTimeoutsEnabled" : true,
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {

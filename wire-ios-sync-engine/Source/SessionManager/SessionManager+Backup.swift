@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCrypto
+import WireDomainPackage
 import ZipArchive
 
 extension SessionManager {
@@ -157,13 +158,4 @@ private extension URL {
     func zipDirectory(to url: URL) -> Bool {
         SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
     }
-}
-
-// MARK: - CreateLegacyBackupError
-
-enum CreateLegacyBackupError: Error {
-    case noActiveAccountForExport
-    case compressionError
-    /// Failed to create `InputStream` or `OutputStream` from `URL`.
-    case failedToCreateStreamsForEncryption
 }

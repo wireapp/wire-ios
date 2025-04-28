@@ -32,9 +32,7 @@
       "identifier" : "166901731D707509000FE4AF",
       "name" : "WireRequestStrategyTests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

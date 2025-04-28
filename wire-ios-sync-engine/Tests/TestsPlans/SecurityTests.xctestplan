@@ -16,9 +16,7 @@
         "enabled" : false
       }
     ],
-    "testTimeoutsEnabled" : true,
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {

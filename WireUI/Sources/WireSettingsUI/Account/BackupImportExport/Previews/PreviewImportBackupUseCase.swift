@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomainPackage
 
 struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
 
@@ -36,7 +37,7 @@ struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
                         try Task.checkCancellation()
 
                         if i == failAtIndex {
-                            throw ImportLegacyBackupError.allCases.randomElement()!
+                            throw ImportBackupError.allCases.randomElement()!
                         }
 
                         continuation.yield(.progress(i, steps))

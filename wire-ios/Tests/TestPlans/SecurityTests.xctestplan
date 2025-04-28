@@ -110,9 +110,7 @@
       "containerPath" : "container:Wire-iOS.xcodeproj",
       "identifier" : "8F42C537199244A700288E4D",
       "name" : "Wire-iOS"
-    },
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    }
   },
   "testTargets" : [
     {

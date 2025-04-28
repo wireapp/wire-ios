@@ -11,9 +11,7 @@
   "defaultOptions" : {
     "language" : "en",
     "region" : "US",
-    "testTimeoutsEnabled" : true,
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {

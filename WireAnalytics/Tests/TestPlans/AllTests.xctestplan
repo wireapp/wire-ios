@@ -22,9 +22,7 @@
       "identifier" : "WireAnalyticsTests",
       "name" : "WireAnalyticsTests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

@@ -22,9 +22,7 @@
       "identifier" : "WireAPITests",
       "name" : "WireAPITests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

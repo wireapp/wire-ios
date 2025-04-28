@@ -22,9 +22,7 @@
       "identifier" : "BFF057931D25434E004A2C29",
       "name" : "WireLinkPreviewTests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

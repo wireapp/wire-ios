@@ -27,9 +27,7 @@
       "identifier" : "01D0DCAF2C1C8C880076CB1C",
       "name" : "WireDomainTests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

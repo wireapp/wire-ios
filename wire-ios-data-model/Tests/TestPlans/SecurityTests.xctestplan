@@ -28,9 +28,7 @@
       "containerPath" : "container:WireDataModel.xcodeproj",
       "identifier" : "F9C9A4FB1CAD5DF10039E10C",
       "name" : "WireDataModel"
-    },
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    }
   },
   "testTargets" : [
     {

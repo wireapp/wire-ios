@@ -22,9 +22,7 @@
       "identifier" : "3E88BD421B1F3EA300232589",
       "name" : "WireUtilities-Tests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

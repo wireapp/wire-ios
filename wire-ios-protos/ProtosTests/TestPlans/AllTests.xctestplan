@@ -22,9 +22,7 @@
       "identifier" : "090838081B872DBF00629095",
       "name" : "WireProtosTests"
     },
-    "testExecutionOrdering" : "random",
-    "threadSanitizerEnabled" : true,
-    "undefinedBehaviorSanitizerEnabled" : true
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {
