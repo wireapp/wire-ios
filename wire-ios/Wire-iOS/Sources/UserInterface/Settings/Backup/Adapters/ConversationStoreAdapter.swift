@@ -19,8 +19,21 @@
 import WireBackup
 import WireDataModel
 import WireFoundation
+import WireDomain
 
 struct ConversationStoreAdapter: ConversationStoreProtocol {
+
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+
+    init(conversationLocalStore: any ConversationLocalStoreProtocol) {
+        self.conversationLocalStore = conversationLocalStore
+    }
+
+    func totalConversationCount() async throws -> Int {
+        try await conversationLocalStore.totalConversationCount()
+    }
+
+    // MARK: -
 
     struct ConversationEntity: ConversationEntityProtocol {
         typealias QualifiedID = WireFoundation.QualifiedID

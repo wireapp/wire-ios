@@ -99,11 +99,18 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
+    public func totalUserCount() async throws -> Int {
+        try await context.perform { [context] in
+            let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            return try context.count(for: fetchRequest)
+        }
+    }
+
     public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
-        try await context.perform {
+        try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
-            let knownUsers = try self.context.fetch(fetchRequest)
+            let knownUsers = try context.fetch(fetchRequest)
             return knownUsers.compactMap(\.qualifiedID)
         }
     }

@@ -103,6 +103,11 @@ public protocol UserLocalStoreProtocol: Sendable {
 
     func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async
 
+    /// Counts the number of users in the local store.
+    /// - returns: The number of user entries in the database.
+
+    func totalUserCount() async throws -> Int
+
     /// Fetches users qualified IDs locally.
     /// - returns: A list of qualified IDs.
 

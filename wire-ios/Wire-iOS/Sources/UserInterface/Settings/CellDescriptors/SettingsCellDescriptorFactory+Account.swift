@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireSettingsUI
@@ -388,16 +389,25 @@ extension SettingsCellDescriptorFactory {
             func continueProcessingEvents() {}
         }
 
+        let messageLocalStore = MessageLocalStore(
+            context: context
+        )
+        let userLocalStore = UserLocalStore(
+            context: context,
+            messageLocalStore: messageLocalStore
+        )
+        let conversationLocalStore = ConversationLocalStore(
+            context: context,
+            mlsService: nil, // TODO: why nil?
+            messageLocalStore: messageLocalStore
+        )
+
         let importBackupUseCase = sessionManager.importBackupUseCase!
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
             CreateBackupUseCaseAdapter(
                 CreateBackupUseCase(
-                    userStore: UserStoreAdapter(),
-                    conversationStore: ConversationStoreAdapter(),
-//                    context: context,
-//                    userAdapterType: CreateBackupZMUserAdapter.self,
-//                    conversationAdapterType: CreateBackupZMConversationAdapter.self,
-//                    messageAdapterType: CreateBackupZMMessageAdapter.self,
+                    userStore: UserStoreAdapter(userLocalStore: userLocalStore),
+                    conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
                     eventProcessorHandle: EventProcessorHandle(),
                     fileArchiver: CreateBackupFileArchiver(),
                     currentDateProvider: SystemDateProvider(),

@@ -19,8 +19,21 @@
 import WireBackup
 import WireDataModel
 import WireFoundation
+import WireDomain
 
 struct UserStoreAdapter: UserStoreProtocol {
+
+    let userLocalStore: any UserLocalStoreProtocol
+
+    init(userLocalStore: any UserLocalStoreProtocol) {
+        self.userLocalStore = userLocalStore
+    }
+
+    func totalUserCount() async throws -> Int {
+        try await userLocalStore.totalUserCount()
+    }
+
+    // MARK: -
 
     struct UserEntity: UserEntityProtocol {
         typealias QualifiedID = WireFoundation.QualifiedID
@@ -40,4 +53,5 @@ struct UserStoreAdapter: UserStoreProtocol {
         }
 
     }
+
 }

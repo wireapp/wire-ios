@@ -441,6 +441,11 @@ public protocol ConversationLocalStoreProtocol {
         for conversation: ZMConversation
     ) async
 
+    /// Counts the number of conversations in the local store.
+    /// - returns: The number of conversation entries in the database.
+
+    func totalConversationCount() async throws -> Int
+
     func unreadConversationCount() async -> UInt
 
     /// Stores the private conversation (aka channel) permission locally.

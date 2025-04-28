@@ -253,6 +253,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func totalConversationCount() async throws -> Int {
+        try await context.perform { [context] in
+            try context.count(for: ZMConversation.fetchRequest())
+        }
+    }
+
     public func unreadConversationCount() async -> UInt {
         await context.perform { [context] in
             ZMConversation.unreadConversationCount(in: context)

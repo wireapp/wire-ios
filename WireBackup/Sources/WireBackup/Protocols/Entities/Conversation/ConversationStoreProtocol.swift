@@ -18,4 +18,8 @@
 
 public protocol ConversationStoreProtocol {
     associatedtype ConversationEntity: ConversationEntityProtocol
+
+    /// Returns the number of all stored conversations in the local data store, including deleted ones.
+    func totalConversationCount() async throws -> Int
+
 }

@@ -108,12 +108,12 @@ public struct CreateBackupUseCase<
                     await eventProcessorHandle.pauseProcessingEvents()
                     defer { eventProcessorHandle.continueProcessingEvents() }
 
-                    /*
                     // get the counts of users, messages and conversations in order to report progress accurately
                     logger.debug("calculating entity counts")
-                    let (userCount, messageCount, conversationCount) = try await context.perform {
-                        try Self.fetchCounts(in: context)
-                    }
+                    let userCount = try await userStore.totalUserCount()
+                    let conversationCount = try await conversationStore.totalConversationCount()
+                    let messageCount = 0 // try await messageStore.totalUserCount() // TODO: implement
+                    /*
                     let total = userCount + conversationCount + messageCount
                     logger.debug([
                         "userCount: \(userCount)",

@@ -18,4 +18,8 @@
 
 public protocol UserStoreProtocol {
     associatedtype UserEntity: UserEntityProtocol
+
+    /// Returns the number of all stored users in the local data store, including deleted ones.
+    func totalUserCount() async throws -> Int
+
 }
