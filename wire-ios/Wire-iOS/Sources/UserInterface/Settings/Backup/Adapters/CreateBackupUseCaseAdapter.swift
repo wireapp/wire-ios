@@ -19,6 +19,7 @@
 import WireBackup
 import WireDomainPackage
 import WireSettingsUI
+import WireSyncEngine
 
 // These adapters are required because TODO: finish
 
@@ -32,7 +33,6 @@ struct CreateBackupUseCaseAdapter: WireSettingsUI.CreateBackupUseCaseProtocol {
 
     func invoke(password: String) -> AsyncThrowingStream<WireSettingsUI.CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            fatalError("TODO")
             let task = Task<Void, Never> {
                 do {
                     for try await update in createBackupUseCase.invoke(password: password) {
@@ -44,8 +44,8 @@ struct CreateBackupUseCaseAdapter: WireSettingsUI.CreateBackupUseCaseProtocol {
                         }
                     }
                     continuation.finish()
-//                } catch let error as WireDomainPackage.CreateLegacyBackupError { // TODO: map errors
-//                    continuation.finish(throwing: WireSettingsUI.CreateLegacyBackupError(error))
+                } catch let error as WireSyncEngine.CreateBackupError { // TODO: map errors
+                    continuation.finish(throwing: WireSettingsUI.CreateBackupError(error))
                 } catch {
                     continuation.finish(throwing: error)
                 }

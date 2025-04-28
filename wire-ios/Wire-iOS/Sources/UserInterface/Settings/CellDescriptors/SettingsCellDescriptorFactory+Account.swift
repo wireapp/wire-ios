@@ -423,7 +423,7 @@ extension SettingsCellDescriptorFactory {
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
+            createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
