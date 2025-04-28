@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Combine
 public import SwiftUI
 
 public final class WireTextStyleMapping: ObservableObject, Sendable {
