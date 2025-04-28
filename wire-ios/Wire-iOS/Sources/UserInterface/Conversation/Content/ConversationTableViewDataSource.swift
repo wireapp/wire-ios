@@ -143,12 +143,15 @@ final class ConversationTableViewDataSource: NSObject {
                 ($0.serverTimestamp ?? .distantPast) > ($1.serverTimestamp ?? .distantPast)
             }
 
-            let selfUserOnBackgroundThread = getUserByIDUseCase.getUserByID(
+            guard let selfUserOnBackgroundThread = getUserByIDUseCase.getUserByID(
                 id: selfUserObjectID,
                 context: backgroundContext
-            )!
-
-            var sections = [Section]()
+            ) else {
+                DispatchQueue.main.async {
+                    completion(self.currentSections)
+                }
+                return
+            }
             
             // Go through messages and calculate sections
             let result = messages.enumerated().map { offset, element in

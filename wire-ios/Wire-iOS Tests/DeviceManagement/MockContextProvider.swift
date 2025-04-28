@@ -29,6 +29,10 @@ final class MockContextProvider: ContextProvider {
     var viewContext: NSManagedObjectContext {
         NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
+    
+    var viewBackgroundContext: NSManagedObjectContext {
+        viewContext
+    }
 
     var syncContext: NSManagedObjectContext {
         NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)

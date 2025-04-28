@@ -15,8 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import avs
+@testable import Wire
 
-"exportBackup.cancel.label" = "取消备份";
-"importBackup.cancel.label" = "取消恢复";
-"backup.password.show.label" = "显示密码";
-"backup.password.hide.label" = "隐藏密码";
+final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
+    var isMicrophoneMuted: Bool = false
+
+    var intensityLevel: AVSIntensityLevel = .none
+
+    func playMediaByName(_ name: String!) {}
+}

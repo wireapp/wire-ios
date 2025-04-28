@@ -343,7 +343,7 @@
 "conversation.create.mls.subtitle" = "Выберите MLS для создания группы с использованием протокола Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
 "conversation.create.mls.cancel" = "Отмена";
-"conversation.create.non_federating_domains_error.title" = "Разговор не может быть создан";
+"conversation.create.non_federating_domains_error.title" = "Беседа не может быть создана";
 "conversation.create.non_federating_domains_error.message" = "Пользователи бэкендов %@ не могут присоединиться к одной беседе.\nДля создания беседы удалите затронутых участников.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
 "conversation.create.non_federating_domains_error.learn_more" = "Подробнее";

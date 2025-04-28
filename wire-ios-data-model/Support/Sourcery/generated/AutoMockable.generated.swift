@@ -2376,6 +2376,15 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
 
     public var underlyingViewContext: NSManagedObjectContext!
 
+    // MARK: - viewBackgroundContext
+
+    public var viewBackgroundContext: NSManagedObjectContext {
+        get { return underlyingViewBackgroundContext }
+        set(value) { underlyingViewBackgroundContext = value }
+    }
+
+    public var underlyingViewBackgroundContext: NSManagedObjectContext!
+
     // MARK: - syncContext
 
     public var syncContext: NSManagedObjectContext {
