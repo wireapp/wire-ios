@@ -25,19 +25,6 @@ final class TextMessage: ZMMessage, TextMessageData {
     // swiftlint:disable:next static_over_final_class
     override class func entityName() -> String { "TextMessage" }
 
-    // TODO: delete
-    override init(
-        entity: NSEntityDescription,
-        insertInto context: NSManagedObjectContext?
-    ) {
-        super.init(
-            entity: entity,
-            insertInto: context
-        )
-    }
-
-
-
     @NSManaged public var text: String?
 
     override var textMessageData: (any TextMessageData)? { self }
