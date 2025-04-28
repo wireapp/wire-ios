@@ -295,14 +295,10 @@ extension SettingsPropertyName {
             return Settings.Callkit.caption
         case .muteIncomingCallsWhileInACall:
             return Settings.MuteOtherCall.caption
-        case .tweetOpeningOption:
-            return LinkOptions.Twitter.title
         case .mapsOpeningOption:
             return LinkOptions.Maps.title
         case .browserOpeningOption:
             return LinkOptions.Browser.title
-        case .callingProtocolStrategy:
-            return "Calling protocol"
         case .enableBatchCollections:
             return "Use AssetCollectionBatched"
         case .lockApp:

@@ -31,6 +31,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     var consumerQueue: GroupQueue?
     var pingTimer: ZMTimer?
     private let minTLSVersion: TLSVersion
+    private let isEnabled: Bool
 
     var clientID: String? {
         didSet {
@@ -56,8 +57,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     var canOpenConnection: Bool {
-        // This is a legacy push channel, so don't open it if we should use the new one.
-        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        guard isEnabled else { return false }
         return keepOpen && websocketURL != nil && consumer != nil
     }
 
@@ -78,7 +78,8 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         proxyUsername: String?,
         proxyPassword: String?,
         minTLSVersion: String?,
-        queue: OperationQueue
+        queue: OperationQueue,
+        isEnabled: Bool
     ) {
         self.environment = environment
         self.scheduler = scheduler
@@ -86,6 +87,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         self.proxyPassword = proxyPassword
         self.workQueue = queue
         self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
+        self.isEnabled = isEnabled
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {

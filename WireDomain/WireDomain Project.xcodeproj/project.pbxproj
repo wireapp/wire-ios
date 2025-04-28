@@ -19,8 +19,10 @@
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
 		59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59DBDE972D395BB50069C64C /* WireDomainPackage */; };
 		59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59EA774E2D00CE0C002CA0B8 /* WireLogging */; };
+		C91D188E2D7212FC00B63B66 /* NeedleFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = C91D188D2D7212FC00B63B66 /* NeedleFoundation */; };
 		C93BFF322D93DB82000F6573 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = C93BFF312D93DB82000F6573 /* WireAPI */; };
 		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
+		C9B4C1F72D4915F10072A0EE /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = C9B4C1F62D4915F10072A0EE /* WireCrypto */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 /* End PBXBuildFile section */
@@ -60,18 +62,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		342162F52DA55954000FA6A1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		5904B1B92D31586500E866D1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Repositories/DatabaseSaver.swift,
-			);
-			target = 01D0DCAF2C1C8C880076CB1C /* WireDomainTests */;
-		};
-		59930B842DAD09A000F08A0E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Sourcery/AutoMockable.stencil,
-				Sourcery/config.yml,
+				Sourcery/generated/AutoMockable.generated.swift,
 			);
 			target = 017F67812C207A3200B6E02D /* WireDomainSupport */;
 		};
@@ -80,8 +74,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5904B7822D315AAC00E866D1 /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
 		59EA78992D00CF1C002CA0B8 /* WireDomainTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomainTests; sourceTree = "<group>"; };
-		59EA78D42D00CF22002CA0B8 /* WireDomainSupport */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59930B842DAD09A000F08A0E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireDomainSupport; sourceTree = "<group>"; };
-		59EA7A282D00CFB2002CA0B8 /* WireDomain */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (342162F52DA55954000FA6A1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireDomain; sourceTree = "<group>"; };
+		59EA78D42D00CF22002CA0B8 /* WireDomainSupport */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5904B1B92D31586500E866D1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WireDomainSupport; sourceTree = "<group>"; };
+		59EA7A282D00CFB2002CA0B8 /* WireDomain */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireDomain; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,10 +94,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
+				C91D188E2D7212FC00B63B66 /* NeedleFoundation in Frameworks */,
 				59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */,
 				591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */,
 				594904952D0710BF00238104 /* WireAnalytics in Frameworks */,
 				59EA774F2D00CE0C002CA0B8 /* WireLogging in Frameworks */,
+				C9B4C1F72D4915F10072A0EE /* WireCrypto in Frameworks */,
 				59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */,
 				01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */,
 			);
@@ -130,7 +126,6 @@
 			children = (
 				01D0DCE82C1C8EA10076CB1C /* Sources */,
 				01D0DCED2C1C8EA10076CB1C /* Tests */,
-				01D0DCA72C1C8C870076CB1C /* Products */,
 				01D0DCC02C1C8CBA0076CB1C /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -152,6 +147,7 @@
 				01BDA5442C20762200636E50 /* WireDataModelSupport.framework */,
 				01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */,
 				CB7979122C738508006FBA58 /* WireTransportSupport.framework */,
+				01D0DCA72C1C8C870076CB1C /* Products */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -191,9 +187,6 @@
 			dependencies = (
 				017F67932C207A9100B6E02D /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				59EA78D42D00CF22002CA0B8 /* WireDomainSupport */,
-			);
 			name = WireDomainSupport;
 			packageProductDependencies = (
 				59202AD12D54D3D500143413 /* WireDomainPackage */,
@@ -224,7 +217,9 @@
 				598D042C2C89C63100B64D71 /* WireFoundation */,
 				59EA774E2D00CE0C002CA0B8 /* WireLogging */,
 				594904942D0710BF00238104 /* WireAnalytics */,
+				C9B4C1F62D4915F10072A0EE /* WireCrypto */,
 				59DBDE972D395BB50069C64C /* WireDomainPackage */,
+				C91D188D2D7212FC00B63B66 /* NeedleFoundation */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -285,9 +280,29 @@
 			knownRegions = (
 				en,
 				Base,
+				ar,
+				"zh-Hans",
+				"zh-Hant",
+				da,
+				nl,
+				et,
+				fi,
+				fr,
+				de,
+				it,
+				ja,
+				lt,
+				pl,
+				"pt-BR",
+				ru,
+				sl,
+				es,
+				tr,
+				uk,
 			);
 			mainGroup = 01D0DC9C2C1C8C870076CB1C;
 			packageReferences = (
+				C91D188C2D7212F000B63B66 /* XCRemoteSwiftPackageReference "needle" */,
 			);
 			productRefGroup = 01D0DCA72C1C8C870076CB1C /* Products */;
 			projectDirPath = "";
@@ -745,6 +760,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		C91D188C2D7212F000B63B66 /* XCRemoteSwiftPackageReference "needle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/uber/needle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.25.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		59202AD12D54D3D500143413 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -774,9 +800,18 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
 		};
+		C91D188D2D7212FC00B63B66 /* NeedleFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C91D188C2D7212F000B63B66 /* XCRemoteSwiftPackageReference "needle" */;
+			productName = NeedleFoundation;
+		};
 		C93BFF312D93DB82000F6573 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
+		};
+		C9B4C1F62D4915F10072A0EE /* WireCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCrypto;
 		};
 		C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */ = {
 			isa = XCSwiftPackageProductDependency;
