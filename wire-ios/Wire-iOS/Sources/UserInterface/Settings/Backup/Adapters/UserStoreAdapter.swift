@@ -34,7 +34,16 @@ struct UserStoreAdapter: UserStoreProtocol {
     }
 
     func fetchAllUsers() async throws -> [UserEntity] {
-        try await userLocalStore.fetchAllBackupableUsers().map(UserEntity.init)
+        let users = try await userLocalStore.fetchAllBackupableUsers()
+        return await userLocalStore.context.perform {
+            users.compactMap { user in
+                guard let user = UserEntity(user) else {
+                    assertionFailure()
+                    return nil
+                }
+                return user
+            }
+        }
     }
 
     // MARK: -
@@ -42,26 +51,16 @@ struct UserStoreAdapter: UserStoreProtocol {
     struct UserEntity: UserEntityProtocol {
         typealias QualifiedID = WireFoundation.QualifiedID
 
-        let user: ZMUser
+        let id: QualifiedID
+        let name: String
+        let handle: String
 
-        var id: QualifiedID {
-            user.qualifiedID.map { qualifiedID in
-                QualifiedID(qualifiedID)
-            } ?? QualifiedID(id: user.remoteIdentifier, domain: "")
-        }
+        init?(_ user: ZMUser) {
+            guard let qualifiedID = user.qualifiedID else { return nil }
 
-        var name: String {
-            get { user.name ?? "" }
-            nonmutating set { user.name = newValue }
-        }
-
-        var handle: String {
-            get { user.handle ?? "" }
-            nonmutating set { user.handle = newValue }
-        }
-
-        init(_ user: ZMUser) {
-            self.user = user
+            id = QualifiedID(qualifiedID)
+            name = user.name ?? ""
+            handle = user.handle ?? ""
         }
 
     }

@@ -34,7 +34,16 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
     }
 
     func fetchAllConversations() async throws -> [ConversationEntity] {
-        try await conversationLocalStore.fetchAllBackupableConversations().map(ConversationEntity.init)
+        let conversations = try await conversationLocalStore.fetchAllBackupableConversations()
+        return await conversationLocalStore.context.perform {
+            conversations.compactMap { conversation in
+                guard let conversation = ConversationEntity(conversation) else {
+                    assertionFailure()
+                    return nil
+                }
+                return conversation
+            }
+        }
     }
 
     // MARK: -
@@ -42,21 +51,16 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
     struct ConversationEntity: ConversationEntityProtocol {
         typealias QualifiedID = WireFoundation.QualifiedID
 
-        let conversation: ZMConversation
+        let id: QualifiedID
+        let name: String
 
-        var id: QualifiedID {
-            conversation.qualifiedID.map { qualifiedID in
-                QualifiedID(qualifiedID)
-            } ?? QualifiedID(id: conversation.remoteIdentifier, domain: "")
-        }
+        init?(_ conversation: ZMConversation) {
+            guard let qualifiedID = conversation.qualifiedID else { return nil }
 
-        var name: String {
-            conversation.name ?? ""
-        }
-
-        init(_ conversation: ZMConversation) {
-            self.conversation = conversation
+            id = QualifiedID(qualifiedID)
+            name = conversation.name ?? ""
         }
 
     }
+
 }

@@ -24,6 +24,8 @@ import WireDataModel
 /// The store uses the injected context to perform `CoreData` operations on user objects.
 public protocol UserLocalStoreProtocol: Sendable {
 
+    var context: NSManagedObjectContext { get }
+
     /// Fetch self user from the local store
 
     func fetchSelfUser() async -> ZMUser

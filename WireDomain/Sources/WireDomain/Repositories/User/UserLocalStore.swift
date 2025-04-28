@@ -27,7 +27,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
+    public let context: NSManagedObjectContext
+
     private let messageLocalStore: any MessageLocalStoreProtocol
     private let userDefaults: UserDefaults
 

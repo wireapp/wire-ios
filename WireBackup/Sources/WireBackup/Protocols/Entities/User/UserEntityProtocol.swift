@@ -21,7 +21,7 @@ public import WireFoundation
 public protocol UserEntityProtocol {
 
     var id: QualifiedID { get }
-    var name: String { get nonmutating set }
-    var handle: String { get nonmutating set }
+    var name: String { get }
+    var handle: String { get }
 
 }
