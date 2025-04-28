@@ -48,17 +48,17 @@ enum StorableUpdateEvent: Equatable, Codable, Sendable {
     func toAPIModel() -> WireAPI.UpdateEvent {
         switch self {
         case let .conversation(conversation):
-            return .conversation(conversation.toAPIModel())
+            .conversation(conversation.toAPIModel())
         case let .featureConfig(featureConfig):
-            return .featureConfig(featureConfig.toAPIModel())
+            .featureConfig(featureConfig.toAPIModel())
         case let .federation(federation):
-            return .federation(federation.toAPIModel())
+            .federation(federation.toAPIModel())
         case let .user(user):
-            return .user(user.toAPIModel())
+            .user(user.toAPIModel())
         case let .team(team):
-            return .team(team.toAPIModel())
+            .team(team.toAPIModel())
         case let .unknown(eventType):
-            return .unknown(eventType: eventType)
+            .unknown(eventType: eventType)
         }
     }
 

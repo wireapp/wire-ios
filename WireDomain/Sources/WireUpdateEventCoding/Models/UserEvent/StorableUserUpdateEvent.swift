@@ -77,9 +77,9 @@ private enum StorableUserAssetSize: String, Codable, Equatable, Sendable {
     func toAPIModel() -> WireAPI.UserAssetSize {
         switch self {
         case .preview:
-            return .preview
+            .preview
         case .complete:
-            return .complete
+            .complete
         }
     }
 
@@ -99,7 +99,7 @@ private enum StorableUserAssetType: String, Codable, Equatable, Sendable {
     func toAPIModel() -> WireAPI.UserAssetType {
         switch self {
         case .image:
-            return .image
+            .image
         }
     }
 

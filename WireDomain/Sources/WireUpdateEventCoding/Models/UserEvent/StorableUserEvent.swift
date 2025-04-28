@@ -66,29 +66,29 @@ enum StorableUserEvent: Equatable, Codable, Sendable {
     func toAPIModel() -> WireAPI.UserEvent {
         switch self {
         case let .clientAdd(clientAdd):
-            return .clientAdd(clientAdd.toAPIModel())
+            .clientAdd(clientAdd.toAPIModel())
         case let .clientRemove(clientRemove):
-            return .clientRemove(clientRemove.toAPIModel())
+            .clientRemove(clientRemove.toAPIModel())
         case let .connection(connection):
-            return .connection(connection.toAPIModel())
+            .connection(connection.toAPIModel())
         case let .contactJoin(contactJoin):
-            return .contactJoin(contactJoin.toAPIModel())
+            .contactJoin(contactJoin.toAPIModel())
         case let .delete(delete):
-            return .delete(delete.toAPIModel())
+            .delete(delete.toAPIModel())
         case let .legalholdDisable(legalholdDisable):
-            return .legalholdDisable(legalholdDisable.toAPIModel())
+            .legalholdDisable(legalholdDisable.toAPIModel())
         case let .legalholdEnable(legalholdEnable):
-            return .legalholdEnable(legalholdEnable.toAPIModel())
+            .legalholdEnable(legalholdEnable.toAPIModel())
         case let .legalholdRequest(legalholdRequest):
-            return .legalholdRequest(legalholdRequest.toAPIModel())
+            .legalholdRequest(legalholdRequest.toAPIModel())
         case let .propertiesSet(propertiesSet):
-            return .propertiesSet(propertiesSet.toAPIModel())
+            .propertiesSet(propertiesSet.toAPIModel())
         case let .propertiesDelete(propertiesDelete):
-            return .propertiesDelete(propertiesDelete.toAPIModel())
+            .propertiesDelete(propertiesDelete.toAPIModel())
         case .pushRemove:
-            return .pushRemove
+            .pushRemove
         case let .update(update):
-            return .update(update.toAPIModel())
+            .update(update.toAPIModel())
         }
     }
 

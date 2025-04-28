@@ -28,7 +28,7 @@ struct StorableUserContactJoinEvent: Equatable, Codable {
     }
 
     func toAPIModel() -> WireAPI.UserContactJoinEvent {
-        .init(name: self.name)
+        .init(name: name)
     }
 
 }

@@ -32,7 +32,7 @@ struct StorableConversationCreateEvent: Equatable, Codable, Sendable {
         self.timestamp = value.timestamp
         self.conversation = StorableConversation(
             id: value.conversation.id,
-            qualifiedID: value.conversation.qualifiedID.map {  StorableQualifiedID($0) },
+            qualifiedID: value.conversation.qualifiedID.map { StorableQualifiedID($0) },
             teamID: value.conversation.teamID,
             type: value.conversation.type.map { StorableConversationType($0) },
             messageProtocol: value.conversation.messageProtocol.map { StorableConversationMessageProtocol($0) },
@@ -114,7 +114,6 @@ private struct StorableConversation: Equatable, Codable, Sendable {
 
 }
 
-
 private enum StorableConversationType: String, Codable, Sendable {
 
     case group
@@ -138,13 +137,13 @@ private enum StorableConversationType: String, Codable, Sendable {
     func toAPIModel() -> WireAPI.ConversationType {
         switch self {
         case .group:
-            return .group
+            .group
         case .self:
-            return .self
+            .self
         case .oneOnOne:
-            return .oneOnOne
+            .oneOnOne
         case .connection:
-            return .connection
+            .connection
         }
     }
 
@@ -167,9 +166,9 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
     func toAPIModel() -> WireAPI.ConversationGroupType {
         switch self {
         case .group:
-            return .group
+            .group
         case .channel:
-            return .channel
+            .channel
         }
     }
 

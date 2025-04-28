@@ -78,37 +78,37 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
     func toAPIModel() -> WireAPI.ConversationEvent {
         switch self {
         case let .accessUpdate(event):
-            return .accessUpdate(event.toAPIModel())
+            .accessUpdate(event.toAPIModel())
         case let .codeUpdate(event):
-            return .codeUpdate(event.toAPIModel())
+            .codeUpdate(event.toAPIModel())
         case let .create(event):
-            return .create(event.toAPIModel())
+            .create(event.toAPIModel())
         case let .delete(event):
-            return .delete(event.toAPIModel())
+            .delete(event.toAPIModel())
         case let .memberJoin(event):
-            return .memberJoin(event.toAPIModel())
+            .memberJoin(event.toAPIModel())
         case let .memberLeave(event):
-            return .memberLeave(event.toAPIModel())
+            .memberLeave(event.toAPIModel())
         case let .memberUpdate(event):
-            return .memberUpdate(event.toAPIModel())
+            .memberUpdate(event.toAPIModel())
         case let .messageTimerUpdate(event):
-            return .messageTimerUpdate(event.toAPIModel())
+            .messageTimerUpdate(event.toAPIModel())
         case let .mlsMessageAdd(event):
-            return .mlsMessageAdd(event.toAPIModel())
+            .mlsMessageAdd(event.toAPIModel())
         case let .mlsWelcome(event):
-            return .mlsWelcome(event.toAPIModel())
+            .mlsWelcome(event.toAPIModel())
         case let .proteusMessageAdd(event):
-            return .proteusMessageAdd(event.toAPIModel())
+            .proteusMessageAdd(event.toAPIModel())
         case let .protocolUpdate(event):
-            return .protocolUpdate(event.toAPIModel())
+            .protocolUpdate(event.toAPIModel())
         case let .receiptModeUpdate(event):
-            return .receiptModeUpdate(event.toAPIModel())
+            .receiptModeUpdate(event.toAPIModel())
         case let .rename(event):
-            return .rename(event.toAPIModel())
+            .rename(event.toAPIModel())
         case let .typing(event):
-            return .typing(event.toAPIModel())
+            .typing(event.toAPIModel())
         case let .permissionUpdate(event):
-            return .permissionUpdate(event.toAPIModel())
+            .permissionUpdate(event.toAPIModel())
         }
     }
 

@@ -26,7 +26,7 @@ enum StorableTeamEvent: Equatable, Codable, Sendable {
     case memberUpdate(StorableTeamMemberUpdateEvent)
     case create(StorableTeamCreateEvent)
 
-    init(_ value:  WireAPI.TeamEvent) {
+    init(_ value: WireAPI.TeamEvent) {
         switch value {
         case .delete:
             self = .delete
@@ -42,13 +42,13 @@ enum StorableTeamEvent: Equatable, Codable, Sendable {
     func toAPIModel() -> WireAPI.TeamEvent {
         switch self {
         case .delete:
-            return .delete
+            .delete
         case let .memberLeave(memberLeave):
-            return .memberLeave(memberLeave.toAPIModel())
+            .memberLeave(memberLeave.toAPIModel())
         case let .memberUpdate(memberUpdate):
-            return .memberUpdate(memberUpdate.toAPIModel())
+            .memberUpdate(memberUpdate.toAPIModel())
         case let .create(create):
-            return .create(create.toAPIModel())
+            .create(create.toAPIModel())
         }
     }
 

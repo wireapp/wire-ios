@@ -41,13 +41,13 @@ enum StorableConversationAccessMode: String, Equatable, Codable, Sendable {
     func toAPIModel() -> WireAPI.ConversationAccessMode {
         switch self {
         case .private:
-            return .private
+            .private
         case .invite:
-            return .invite
+            .invite
         case .link:
-            return .link
+            .link
         case .code:
-            return .code
+            .code
         }
     }
 

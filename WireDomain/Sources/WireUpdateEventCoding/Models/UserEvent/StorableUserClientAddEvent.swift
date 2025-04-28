@@ -90,7 +90,6 @@ private struct StorableSelfUserClient: Equatable, Identifiable, Codable, Sendabl
 
 }
 
-
 private enum StorableDeviceClass: String, Codable, Sendable {
 
     case phone
@@ -114,18 +113,17 @@ private enum StorableDeviceClass: String, Codable, Sendable {
     func toAPIModel() -> WireAPI.DeviceClass {
         switch self {
         case .phone:
-            return .phone
+            .phone
         case .tablet:
-            return .tablet
+            .tablet
         case .desktop:
-            return .desktop
+            .desktop
         case .legalhold:
-            return .legalhold
+            .legalhold
         }
     }
 
 }
-
 
 private struct StorableMLSPublicKeys: Equatable, Codable, Sendable {
 
@@ -154,9 +152,9 @@ private enum StorableUserClientCapability: String, Codable, Sendable {
     func toAPIModel() -> WireAPI.UserClientCapability {
         switch self {
         case .legalholdConsent:
-            return .legalholdConsent
+            .legalholdConsent
         case .consumableNotifications:
-            return .consumableNotifications
+            .consumableNotifications
         }
     }
 
@@ -182,11 +180,11 @@ private enum StorableUserClientType: String, Codable, Sendable {
     func toAPIModel() -> WireAPI.UserClientType {
         switch self {
         case .permanent:
-            return .permanent
+            .permanent
         case .temporary:
-            return .temporary
+            .temporary
         case .legalhold:
-            return .legalhold
+            .legalhold
         }
     }
 

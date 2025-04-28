@@ -65,11 +65,11 @@ private enum StorableUserProperty: Equatable, Codable {
     func toAPIModel() -> WireAPI.UserProperty {
         switch self {
         case let .areReadReceiptsEnabled(isEnabled):
-            return .areReadReceiptsEnabled(isEnabled)
+            .areReadReceiptsEnabled(isEnabled)
         case let .areTypingIndicatorsEnabled(isEnabled):
-            return .areTypingIndicatorsEnabled(isEnabled)
+            .areTypingIndicatorsEnabled(isEnabled)
         case let .conversationLabels(labels):
-            return .conversationLabels(
+            .conversationLabels(
                 labels.map {
                     WireAPI.ConversationLabel(
                         id: $0.id,
@@ -80,7 +80,7 @@ private enum StorableUserProperty: Equatable, Codable {
                 }
             )
         case let .unknown(key):
-            return .unknown(key: key)
+            .unknown(key: key)
         }
     }
 

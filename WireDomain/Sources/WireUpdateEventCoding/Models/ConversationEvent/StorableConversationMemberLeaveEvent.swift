@@ -67,11 +67,11 @@ private enum StorableConversationMemberLeaveReason: String, Codable, Sendable {
     func toAPIModel() -> WireAPI.ConversationMemberLeaveReason {
         switch self {
         case .userDeleted:
-            return .userDeleted
+            .userDeleted
         case .userLeft:
-            return .userLeft
+            .userLeft
         case .userRemoved:
-            return .userRemoved
+            .userRemoved
         }
     }
 

@@ -26,19 +26,19 @@ enum StorableFederationEvent: Equatable, Codable, Sendable {
 
     init(_ value: WireAPI.FederationEvent) {
         switch value {
-        case .connectionRemoved(let event):
+        case let .connectionRemoved(event):
             self = .connectionRemoved(StorableFederationConnectionRemovedEvent(event))
-        case .delete(let event):
+        case let .delete(event):
             self = .delete(StorableFederationDeleteEvent(event))
         }
     }
 
     func toAPIModel() -> WireAPI.FederationEvent {
         switch self {
-        case .connectionRemoved(let event):
-            return .connectionRemoved(event.toAPIModel())
-        case .delete(let event):
-            return .delete(event.toAPIModel())
+        case let .connectionRemoved(event):
+            .connectionRemoved(event.toAPIModel())
+        case let .delete(event):
+            .delete(event.toAPIModel())
         }
     }
 
