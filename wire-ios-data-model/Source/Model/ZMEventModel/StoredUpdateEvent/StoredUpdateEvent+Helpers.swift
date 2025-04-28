@@ -20,35 +20,7 @@ import CoreData
 import Foundation
 import WireLogging
 
-@objc(StoredUpdateEvent)
-public final class StoredUpdateEvent: NSManagedObject {
-
-    private static let entityName = "StoredUpdateEvent"
-    private static let SortIndexKey = "sortIndex"
-
-    /// The key under which the event payload is encrypted by the public key.
-
-    static let encryptedPayloadKey = "encryptedPayload"
-
-    // MARK: - Properties
-
-    @NSManaged var eventHash: Int64
-
-    @NSManaged var uuidString: String?
-
-    @NSManaged var debugInformation: String?
-
-    @NSManaged var isTransient: Bool
-
-    @NSManaged var payload: NSDictionary?
-
-    @NSManaged var isEncrypted: Bool
-
-    @NSManaged var isCallEvent: Bool
-
-    @NSManaged var source: Int16
-
-    @NSManaged var sortIndex: Int64
+public extension StoredUpdateEvent {
 
     // MARK: - Creation
 
@@ -63,10 +35,11 @@ public final class StoredUpdateEvent: NSManagedObject {
     ///
     /// - Returns: storedEvent which will be persisted in a database
 
-    public static func encryptAndCreate(
+    static func encryptAndCreate(
         _ event: ZMUpdateEvent,
         context: NSManagedObjectContext,
         index: Int64,
+        isCallEvent: Bool,
         publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
         guard let eventId = event.uuid?.transportString(),
@@ -85,6 +58,7 @@ public final class StoredUpdateEvent: NSManagedObject {
             eventId: eventId,
             eventHash: eventHash,
             index: index,
+            isCallEvent: isCallEvent,
             context: context
         ) else {
             WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
@@ -99,11 +73,12 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    static func create(
+    internal static func create(
         from event: ZMUpdateEvent,
         eventId: String,
         eventHash: Int,
         index: Int64,
+        isCallEvent: Bool,
         context: NSManagedObjectContext
     ) -> StoredUpdateEvent? {
         let storedEvent = StoredUpdateEvent.insertNewObject(context)
@@ -113,7 +88,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent?.source = Int16(event.source.rawValue)
         storedEvent?.sortIndex = index
         storedEvent?.uuidString = eventId
-        storedEvent?.isCallEvent = event.isCallEvent
+        storedEvent?.isCallEvent = isCallEvent
         storedEvent?.payload = event.payload as NSDictionary
         storedEvent?.eventHash = Int64(eventHash)
         storedEvent?.isEncrypted = false
@@ -168,7 +143,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         storedEvent.isEncrypted = true
     }
 
-    static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
+    internal static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
         NSEntityDescription.insertNewObject(
             forEntityName: entityName,
             into: context
@@ -199,7 +174,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     /// Returns the highest index of all stored events
 
-    public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
+    static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
         let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
         fetchRequest.fetchBatchSize = 1
@@ -220,7 +195,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         )
     }
 
-    static func eventsFromStoredEvents(
+    internal static func eventsFromStoredEvents(
         _ storedEvents: [StoredUpdateEvent],
         privateKeys: EARPrivateKeys?
     ) -> EventBatch {
@@ -250,12 +225,12 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     struct EventBatch {
 
-        var eventsToProcess = [ZMUpdateEvent]()
-        var eventsToDelete = [StoredUpdateEvent]()
+        public var eventsToProcess = [ZMUpdateEvent]()
+        public var eventsToDelete = [StoredUpdateEvent]()
 
     }
 
-    private static func extractUpdateEvent(
+    static func extractUpdateEvent(
         from storedEvent: StoredUpdateEvent,
         privateKeys: EARPrivateKeys?
     ) -> Result<ZMUpdateEvent, ExtractionFailure> {
@@ -392,7 +367,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         return decryptedPayload
     }
 
-    enum DecryptionFailure: Error {
+    internal enum DecryptionFailure: Error {
 
         case payloadMissing
         case privateKeyUnavailable
@@ -401,4 +376,22 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     }
 
+}
+
+/// Computes an hash to compare UpdateEvent and StoredUpdateEvent
+public enum EventHasher {
+
+    static func hash(eventId: String, payload: [AnyHashable: Any]) -> Int? {
+        guard let payloadData = try? NSKeyedArchiver.archivedData(
+            withRootObject: payload as NSDictionary,
+            requiringSecureCoding: true
+        ) else {
+            return nil
+        }
+        var hasher = Hasher()
+        hasher.combine(payloadData)
+        hasher.combine(eventId)
+        return hasher.finalize()
+
+    }
 }

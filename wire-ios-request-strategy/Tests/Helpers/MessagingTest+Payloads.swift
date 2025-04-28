@@ -115,6 +115,7 @@ extension MessagingTestBase {
             from: senderID?.uuid,
             qualifiedID: conversationID,
             qualifiedFrom: senderID,
+            subconversationType: nil,
             timestamp: timestamp,
             type: ZMUpdateEvent.eventTypeString(for: Event.eventType)
         )

@@ -16,22 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public protocol JournalProtocol {
 
-/// Computes an hash to compare UpdateEvent and StoredUpdateEvent
-enum EventHasher {
+    subscript(_ key: JournalKey<Bool>) -> Bool { get set }
+    func erase()
 
-    static func hash(eventId: String, payload: [AnyHashable: Any]) -> Int? {
-        guard let payloadData = try? NSKeyedArchiver.archivedData(
-            withRootObject: payload as NSDictionary,
-            requiringSecureCoding: true
-        ) else {
-            return nil
-        }
-        var hasher = Hasher()
-        hasher.combine(payloadData)
-        hasher.combine(eventId)
-        return hasher.finalize()
-
-    }
 }
