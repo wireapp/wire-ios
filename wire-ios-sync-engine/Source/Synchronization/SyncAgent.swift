@@ -74,7 +74,10 @@ final class SyncAgent: NSObject {
             do {
                 try await performSync()
             } catch {
-                WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
+                delegate?.syncAgentDidFailSyncing(
+                    self,
+                    error: error
+                )
             }
         }
     }
