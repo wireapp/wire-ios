@@ -27,7 +27,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         var location: LocationMessageData
         var message: ZMConversationMessage
         var isObfuscated: Bool
-        
+
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.message == rhs.message &&
                 lhs.message == rhs.message &&

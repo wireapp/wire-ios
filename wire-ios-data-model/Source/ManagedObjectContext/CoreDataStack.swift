@@ -120,6 +120,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     public var viewContext: NSManagedObjectContext {
         messagesContainer.viewContext
     }
+
     public lazy var viewBackgroundContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
     public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()

@@ -19,8 +19,8 @@
 import DifferenceKit
 import WireDataModel
 import WireFoundation
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -122,22 +122,22 @@ final class ConversationTableViewDataSource: NSObject {
         forceRecalculate: Bool = false,
         completion: @escaping ([Section]) -> Void
     ) {
-        let messagesOnMainThread = self.allMessages
+        let messagesOnMainThread = allMessages
         let messageIds = messagesOnMainThread.map(\.objectID)
         let selfUserOnMainThread = userSession.selfUser
         let selfUserObjectID = selfUserOnMainThread.objectId
         let firstUnreadMessageNonce = firstUnreadMessage?.nonce
-        
+
         // Dispatching to background thread to offload sections calculation
-        
+
         let backgroundContext = userSession.contextProvider.viewBackgroundContext
         backgroundContext.perform { [weak self] in
             guard let self else { return }
-            
+
             var messages: [ZMMessage] = messageIds.compactMap { objectID in
                 try? backgroundContext.existingObject(with: objectID) as? ZMMessage
             }
-            
+
             // sort if needed
             messages = messages.sorted {
                 ($0.serverTimestamp ?? .distantPast) > ($1.serverTimestamp ?? .distantPast)
@@ -152,7 +152,7 @@ final class ConversationTableViewDataSource: NSObject {
                 }
                 return
             }
-            
+
             // Go through messages and calculate sections
             let result = messages.enumerated().map { offset, element in
                 let context = self.context(
@@ -184,7 +184,7 @@ final class ConversationTableViewDataSource: NSObject {
             // Return back to main thread
             DispatchQueue.main.async {
                 var sections = [Section]()
-                
+
                 let allMessages = messagesOnMainThread
                 for (messageObjectId, sectionController, context) in result {
 
@@ -199,7 +199,10 @@ final class ConversationTableViewDataSource: NSObject {
                     }) {
                         sectionController.message = mainThreadObject
                     } else {
-                        WireLogger.conversation.debug("No message found to reset from background to main thread, nonce: \(String(describing: sectionController.message.nonce))")
+                        WireLogger.conversation
+                            .debug(
+                                "No message found to reset from background to main thread, nonce: \(String(describing: sectionController.message.nonce))"
+                            )
                     }
                     sectionController.selfUser = selfUserOnMainThread
 
@@ -243,7 +246,7 @@ final class ConversationTableViewDataSource: NSObject {
                 description.configureCell(cell, animated: true)
             }
         }
-        
+
         let messages = allMessages
 
         let context = context(
@@ -798,7 +801,7 @@ extension ConversationTableViewDataSource {
     ) -> [Section] {
 
         var sections = sections
-        
+
         let messages = allMessages
 
         // find subsequent messages and collapse space if needed
@@ -827,8 +830,9 @@ extension ConversationTableViewDataSource {
                 redundantTo: currentSectionIndex,
                 in: sections,
                 selfUser: selfUser,
-                messages: messages),
-               messages.indices.contains(previousSectionIndex) {
+                messages: messages
+            ),
+                messages.indices.contains(previousSectionIndex) {
 
                 // collapse the status view's height
                 let previousMessage = messages[previousSectionIndex]

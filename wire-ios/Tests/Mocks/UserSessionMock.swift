@@ -28,7 +28,7 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
-    
+
     var isTornDown = false
 
     var userProfile: UserProfile
