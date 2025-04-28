@@ -53,7 +53,6 @@ final class NotificationService: UNNotificationServiceExtension {
                 withContentHandler: contentHandler
             )
         } else {
-            WireLogger.notifications.warn("no service loaded yet, suprressing notification")
             contentHandler(.empty)
         }
     }
@@ -66,6 +65,7 @@ final class NotificationService: UNNotificationServiceExtension {
         // API version decides which service to use, if we don't have it
         // yet then we simply supress the notification request.
         guard let apiVersion = BackendInfo.apiVersion else {
+            WireLogger.notifications.warn("no resolved api version, not loading service")
             return nil
         }
 
