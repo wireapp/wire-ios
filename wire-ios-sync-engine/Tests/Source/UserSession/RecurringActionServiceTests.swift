@@ -26,7 +26,7 @@ import XCTest
 final class RecurringActionServiceTests: XCTestCase {
 
     var userDefaults: UserDefaults!
-    var dateProvider: MockCurrentDateProviding!
+    var dateProvider: CurrentDateProvidingMock!
     var sut: RecurringActionService!
 
     override func setUp() {
