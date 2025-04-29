@@ -19,6 +19,7 @@
 public import WireFoundation
 public import WireLogging
 
+import Foundation
 @preconcurrency import KaliumBackup
 
 public struct CreateBackupUseCase<

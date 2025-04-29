@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 @preconcurrency import KaliumBackup
-import KMPNativeCoroutinesAsync
 
 extension BackupCreator {
 
     func finalize(password: String) async throws -> URL {
 
-        let result = await asyncResult(for: mpBackupCreator.finalize(password: password))
-        let backupResult: any BackupExportResult
-        switch result {
-        case let .failure(error):
-            throw error
-        case let .success(result):
-            backupResult = result
-        }
+        let result = try await mpBackupCreator.finalize(password: password)
 
-        switch backupResult {
+        switch result {
         case let success as BackupExportResultSuccess:
             return URL(filePath: success.pathToOutputFile, directoryHint: .notDirectory)
         case let ioError as BackupExportResultFailureIOError:
