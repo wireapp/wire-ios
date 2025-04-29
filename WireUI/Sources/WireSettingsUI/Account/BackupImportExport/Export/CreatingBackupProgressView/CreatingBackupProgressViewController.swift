@@ -32,11 +32,10 @@ final class CreatingBackupProgressViewController: UIViewController {
         }
     }
 
-    var progressValue = Float() {
+    var progressValues = (current: 0, total: 0) {
         didSet {
             guard isViewLoaded else { return }
-            progressView.progress = progressValue
-            progressLabel.text = "\(Int(progressValue * 100))%"
+            updateProgressValue()
         }
     }
 
@@ -114,9 +113,7 @@ final class CreatingBackupProgressViewController: UIViewController {
 
         descriptionLabel.text = progressDescription
 
-        progressLabel.text = "\(Int(progressValue * 100))%"
-
-        progressView.progress = progressValue
+        updateProgressValue()
 
         exportButton.isEnabled = backupURL != nil
 
@@ -166,6 +163,17 @@ final class CreatingBackupProgressViewController: UIViewController {
         let detent = topSpace + stackViewHeight + bottomSpace
         if let sheetPresentationController = navigationController.sheetPresentationController {
             sheetPresentationController.detents = [.custom { _ in detent }]
+        }
+    }
+
+    private func updateProgressValue() {
+        let progressValue = Float(progressValues.current) / Float(progressValues.total)
+        if progressValue.isFinite {
+            progressLabel.text = "\(Int(progressValue * 100))%"
+            progressView.progress = progressValue
+        } else {
+            progressLabel.text = "0%"
+            progressView.progress = 0
         }
     }
 

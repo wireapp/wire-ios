@@ -23,13 +23,27 @@ public extension SessionManager {
     var importBackupUseCase: ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
-        activeUserSession.map { _ in
+        activeUserSession.map { userSession in
 
-            ImportBackupUseCase(
+            let syncContext = userSession.managedObjectContext.performAndWait {
+                userSession.managedObjectContext.zm_sync!
+            }
+
+            return ImportLegacyBackupUseCase(
+//                importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
+//                    context: syncContext,
+//                    fileArchiver: ImportBackupFileArchiver(),
+//                    syncTrigger: {
+//                        syncContext.performGroupedBlock {
+//                            userSession.triggerInitialSync()
+//                        }
+//                    },
+//                    logger: WireLogger.backupImport
+//                ),
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
-                streamDecryptor: ImportBackupStreamDecryptor(),
-                fileArchiver: ImportBackupFileArchiver(),
+                streamDecryptor: ImportLegacyBackupStreamDecryptor(),
+                fileUnarchiver: ImportBackupFileArchiver(),
                 entityStorage: ImportBackupEntityStorage(),
                 appStateUpdater: ImportBackupAppStateUpdater(sessionManager: self),
                 sharedContainerURL: sharedContainerURL,

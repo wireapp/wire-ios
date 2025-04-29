@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPackage
-import WireDomainPackageSupport
 import WireLogging
 import WireTestingPackage
 import XCTest
@@ -28,7 +26,7 @@ import XCTest
 @MainActor
 final class ExportBackupViewModelTests: XCTestCase {
 
-    private var mockCreateBackupUseCase: CreateBackupUseCaseProtocolMock!
+    private var mockCreateBackupUseCase: MockCreateBackupUseCaseProtocol!
     private var mockCleanUpBackupsUseCase: MockCleanUpBackupsUseCaseProtocol!
     private var mockLogger: (any LoggerProtocol)!
     private var sut: ExportBackupViewModel!
@@ -64,9 +62,7 @@ final class ExportBackupViewModelTests: XCTestCase {
     func testProgressIsReported() {
         // Given
         var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePasswordStringAsyncThrowingStreamCreateBackupProgressAnyErrorReturnValue = .init {
-            continuation = $0
-        }
+        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
         let url = URL(fileURLWithPath: "/")
         let sut = sut as ExportBackupViewModel
 
@@ -75,8 +71,8 @@ final class ExportBackupViewModelTests: XCTestCase {
         wait(forConditionToBeTrue: sut.isSetBackupPasswordPresented, timeout: 3)
 
         sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        continuation.yield(.progress(1, 2))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(current: 1, total: 2), timeout: 3)
 
         continuation.yield(.done(url))
         wait(forConditionToBeTrue: sut.backupProgress == .finished(url), timeout: 3)
@@ -89,9 +85,7 @@ final class ExportBackupViewModelTests: XCTestCase {
     func testCancelTerminatesTask() {
         // Given
         var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePasswordStringAsyncThrowingStreamCreateBackupProgressAnyErrorReturnValue = .init {
-            continuation = $0
-        }
+        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
         let sut = sut as ExportBackupViewModel
         let expectation = XCTestExpectation()
         continuation.onTermination = { @Sendable _ in expectation.fulfill() }
@@ -99,8 +93,8 @@ final class ExportBackupViewModelTests: XCTestCase {
         // When
         sut.showPasswordDialog()
         sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        continuation.yield(.progress(1, 2))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(current: 1, total: 2), timeout: 3)
         sut.cancel()
 
         // Then
@@ -110,16 +104,14 @@ final class ExportBackupViewModelTests: XCTestCase {
     func testErrorPresentsAlert() {
         // Given
         var continuation: AsyncThrowingStream<CreateBackupProgress, any Error>.Continuation!
-        mockCreateBackupUseCase.invokePasswordStringAsyncThrowingStreamCreateBackupProgressAnyErrorReturnValue = .init {
-            continuation = $0
-        }
+        mockCreateBackupUseCase.invokePassword_MockValue = .init { continuation = $0 }
         let sut = sut as ExportBackupViewModel
 
         // When
         sut.showPasswordDialog()
         sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        continuation.yield(.progress(1, 2))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(current: 1, total: 2), timeout: 3)
         continuation.finish(throwing: NSError(domain: "ExportBackupViewModelTests", code: 987))
 
         // Then

@@ -34,7 +34,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     private var secondUser: ZMUser!
     private var thirdUser: ZMUser!
     private var mockAnalyticsEventTracker: MockAnalyticsEventTracker!
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
     private var sut: CallEndedAnalyticsController<WireCallCenterV3>!
 
     var syncContext: NSManagedObjectContext { coreDataStack.syncContext }

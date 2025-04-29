@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPackage
+import WireFoundation
 import ZipArchive
 
-struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
+struct ImportBackupFileArchiver: FileUnarchiverProtocol {
 
     func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
 
@@ -29,7 +29,7 @@ struct ImportBackupFileArchiver: ImportBackupFileArchiverProtocol {
         )
 
         guard success else {
-            throw ImportBackupError.compressionError
+            throw FileUnarchiverError.unexpectedFailure
         }
 
     }

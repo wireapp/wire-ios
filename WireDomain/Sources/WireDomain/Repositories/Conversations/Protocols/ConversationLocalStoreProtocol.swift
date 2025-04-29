@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import CoreData
+
 import Foundation
 import WireDataModel
 
@@ -30,6 +32,8 @@ import WireDataModel
 /// Check out the Confluence page for full details
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
+
+    var context: NSManagedObjectContext { get }
 
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
@@ -401,6 +405,8 @@ public protocol ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
 
+    func fetchAllBackupableConversations() async throws -> [ZMConversation]
+
     func name(
         for conversation: ZMConversation
     ) async -> String?
@@ -440,6 +446,11 @@ public protocol ConversationLocalStoreProtocol {
     func increaseUnreadSelfReplyCount(
         for conversation: ZMConversation
     ) async
+
+    /// Counts the number of conversations in the local store.
+    /// - returns: The number of conversation entries in the database.
+
+    func totalBackupableConversationCount() async throws -> Int
 
     func unreadConversationCount() async -> UInt
 

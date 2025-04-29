@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireLogging
+import os // TODO: delete
 
 extension ZMOperationLoop: ZMPushChannelConsumer {
 
@@ -35,6 +36,10 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                 _ = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
             } catch {
                 WireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
+
+                // TODO: delete
+                let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "update-event")
+                logger.error("\(String(decoding: data, as: UTF8.self), privacy: .public)")
             }
         }
 

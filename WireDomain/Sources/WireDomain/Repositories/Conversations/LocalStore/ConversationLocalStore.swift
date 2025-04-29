@@ -28,7 +28,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     // MARK: - Properties
 
-    let context: NSManagedObjectContext
+    public let context: NSManagedObjectContext
     let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
@@ -250,6 +250,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         await context.perform {
             conversation.internalEstimatedUnreadSelfReplyCount += 1
+        }
+    }
+
+    public func totalBackupableConversationCount() async throws -> Int {
+        try await context.perform { [context] in
+            try context.count(for: ZMConversation.fetchRequest())
         }
     }
 
@@ -547,6 +553,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 with: groupID,
                 in: context
             )
+        }
+    }
+
+    public func fetchAllBackupableConversations() async throws -> [ZMConversation] {
+        try await context.perform { [context] in
+            try context.fetch(ZMConversation.fetchRequest()) as! [ZMConversation]
         }
     }
 

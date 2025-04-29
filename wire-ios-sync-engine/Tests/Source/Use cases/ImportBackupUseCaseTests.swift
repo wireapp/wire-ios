@@ -27,7 +27,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
     private var mockStreamDecryptor: MockImportBackupStreamDecryptorProtocol!
-    private var mockFileArchiver: ImportBackupFileArchiverProtocolMock!
+    private var mockFileArchiver: MockImportBackupFileArchiverProtocol!
     private var mockEntityStorage: MockImportBackupEntityStorageProtocol!
     private var mockAppStateUpdater: MockImportBackupAppStateUpdaterProtocol!
     private var dispatchGroup: ZMSDispatchGroup!

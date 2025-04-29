@@ -60,7 +60,7 @@ extension URL {
 
     /// Appends the name of the store to the path
     func appendingStoreFile() -> URL {
-        appendingPathComponent("store.wiredatabase")
+        appendingPathComponent("store.sqlite") // TODO: undo this change
     }
 
     func appendingEventStoreFile() -> URL {

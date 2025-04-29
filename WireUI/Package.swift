@@ -111,7 +111,6 @@ let package = Package(
             ]
         ),
         .testTarget(name: "WireSettingsUITests", dependencies: [
-            .product(name: "WireDomainPackageSupport", package: "WireDomainPackage"),
             "WireSettingsUI",
             "WireSettingsUISupport"
         ]),

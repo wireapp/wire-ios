@@ -16,13 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import CoreData
+
 import Foundation
 import WireDataModel
 
 // sourcery: AutoMockable
 /// A local store dedicated to user.
 /// The store uses the injected context to perform `CoreData` operations on user objects.
-public protocol UserLocalStoreProtocol {
+public protocol UserLocalStoreProtocol: Sendable {
+
+    var context: NSManagedObjectContext { get }
 
     /// Fetch self user from the local store
 
@@ -60,6 +64,10 @@ public protocol UserLocalStoreProtocol {
     func fetchOrCreateUsers(
         userIDs: [(id: UUID, domain: String?)]
     ) async -> Set<ZMUser>
+
+    /// Fetches all stored users from the local database, including the ones marked as deleted.
+
+    func fetchAllBackupableUsers() async throws -> [ZMUser]
 
     /// Removes user push token from storage.
 
@@ -102,6 +110,11 @@ public protocol UserLocalStoreProtocol {
     /// Persist the supported protocols for the self user.
 
     func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async
+
+    /// Counts the number of users in the local store.
+    /// - returns: The number of user entries in the database.
+
+    func totalBackupableUserCount() async throws -> Int
 
     /// Fetches users qualified IDs locally.
     /// - returns: A list of qualified IDs.

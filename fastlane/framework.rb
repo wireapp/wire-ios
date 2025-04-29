@@ -6,6 +6,7 @@ class Framework
             "WireAPI",
             "WireAnalytics",
             "WireAuthentication",
+            "WireBackup",
             "WireCells",
             "WireConversations",
             "WireDomain",
@@ -107,6 +108,8 @@ class Framework
         frameworks["WireAuthentication"].add_dependency(frameworks["WireFoundation"])
         frameworks["WireAuthentication"].add_dependency(frameworks["WireUI"])
 
+        frameworks["WireBackup"].add_dependency(frameworks["WireFoundation"])
+
         frameworks["WireCells"].add_dependency(frameworks["WireFoundation"])
         frameworks["WireCells"].add_dependency(frameworks["WireUI"])
 
@@ -152,6 +155,8 @@ class Framework
             "WireAuthenticationAll"
         when "wire-ios-ziphy"
             "Ziphy"
+        when "WireBackup"
+            "WireBackupAll"
         when "WireCells"
             "WireCellsAll"
         when "WireConversations"

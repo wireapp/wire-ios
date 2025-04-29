@@ -483,7 +483,7 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
 }
 
-public class MockImportBackupStreamDecryptorProtocol: ImportBackupStreamDecryptorProtocol {
+public class MockImportLegacyBackupStreamDecryptorProtocol: ImportLegacyBackupStreamDecryptorProtocol {
 
     // MARK: - Life cycle
 

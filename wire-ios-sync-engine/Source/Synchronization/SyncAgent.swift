@@ -80,7 +80,7 @@ final class SyncAgent: NSObject {
 
     /// Suspend any ongoing sync tasks.
 
-    func suspend() {
+    func suspend() { // TODO: consider using
         WireLogger.sync.debug("suspending sync")
         Task {
             await incrementalSyncToken?.suspend()

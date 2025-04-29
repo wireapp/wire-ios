@@ -16,12 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import CoreData
+
 import Foundation
 import WireDataModel
 
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {
+
+    var context: NSManagedObjectContext { get }
 
     /// Adds a system message to a given conversation.
     /// - Parameters:
@@ -71,6 +75,10 @@ public protocol MessageLocalStoreProtocol {
     ///     - conversation: The conversation the message is related to.
     ///     - senderID: The message sender ID.
     ///     - senderDomain: The message sender domain.
+
+    func totalBackupableMessageCount() async throws -> Int
+
+    func fetchAllBackupableMessages() async throws -> [ZMMessage]
 
     func addClientMessage(
         _ clientMessage: ZMClientMessage,

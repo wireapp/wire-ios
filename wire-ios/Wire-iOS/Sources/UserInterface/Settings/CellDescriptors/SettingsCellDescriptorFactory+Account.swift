@@ -20,10 +20,13 @@ import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireSettingsUI
 import WireSyncEngine
+import WireAPI
+import WireBackup
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -371,26 +374,62 @@ extension SettingsCellDescriptorFactory {
 
     private var backupImportExportBuilder: BackupImportExportBuilder {
 
+        typealias CreateBackupUseCaseProtocol = WireSettingsUI.CreateBackupUseCaseProtocol
+
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
-        let importBackupUseCase = sessionManager.importBackupUseCase!
+        let selfUser = ZMUser.selfUser()!
+        let context = selfUser.managedObjectContext!.performAndWait {
+            selfUser.managedObjectContext!.zm_sync!
+        }
 
+        // TODO: remove
+        struct EventProcessorHandle: InterruptEventProcessingProtocol {
+            func pauseProcessingEvents() {}
+            func continueProcessingEvents() {}
+        }
+
+        let messageLocalStore = MessageLocalStore(
+            context: context
+        )
+        let userLocalStore = UserLocalStore(
+            context: context,
+            messageLocalStore: messageLocalStore
+        )
+        let conversationLocalStore = ConversationLocalStore(
+            context: context,
+            mlsService: nil, // TODO: why nil?
+            messageLocalStore: messageLocalStore
+        )
+
+        let importBackupUseCase = sessionManager.importBackupUseCase!
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
-            fatalError("TODO: implement")
+            CreateBackupUseCaseAdapter(
+                CreateBackupUseCase(
+                    userStore: UserStoreAdapter(userLocalStore: userLocalStore),
+                    conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
+                    messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
+                    eventProcessorHandle: EventProcessorHandle(),
+                    fileArchiver: CreateBackupFileArchiver(),
+                    currentDateProvider: SystemDateProvider(),
+                    selfUserID: .init(selfUser.qualifiedID!),
+                    selfUserHandle: selfUser.handle,
+                    logger: WireLogger.backupExport
+                )
+            )
         } else {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         }
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            // TODO: [WPB-14592] inject the new use case via `createBackupUseCase` here
-            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
+            createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default
+            wireAccentColor: selfUser.accentColor ?? .default
         )
     }
 

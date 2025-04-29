@@ -27,7 +27,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
+    public let context: NSManagedObjectContext
+
     private let messageLocalStore: any MessageLocalStoreProtocol
     private let userDefaults: UserDefaults
 
@@ -99,10 +100,18 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
-        try await context.perform {
+    public func totalBackupableUserCount() async throws -> Int {
+        try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-            let knownUsers = try self.context.fetch(fetchRequest)
+            return try context.count(for: fetchRequest)
+        }
+    }
+
+    public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
+        try await context.perform { [context] in
+            let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+            let knownUsers = try context.fetch(fetchRequest)
             return knownUsers.compactMap(\.qualifiedID)
         }
     }
@@ -137,6 +146,12 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
 
         return (user, isSelfUser)
+    }
+
+    public func fetchAllBackupableUsers() async throws -> [ZMUser] {
+        try await context.perform { [context] in
+            try context.fetch(ZMUser.fetchRequest()) as! [ZMUser]
+        }
     }
 
     public func deletePushToken() {
