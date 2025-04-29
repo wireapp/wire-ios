@@ -18,6 +18,7 @@
 
 import WireTestingPackage
 import XCTest
+
 @testable import Wire
 
 class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRandomParticipantsProvider,

@@ -45,8 +45,6 @@ struct CreateBackupUseCaseAdapter: WireSettingsUI.CreateBackupUseCaseProtocol {
                         }
                     }
                     continuation.finish()
-                } catch let error as WireBackup.CreateBackupError {
-                    continuation.finish(throwing: WireSettingsUI.CreateBackupError(error))
                 } catch {
                     continuation.finish(throwing: error)
                 }
@@ -67,17 +65,6 @@ extension WireSettingsUI.CreateBackupProgress {
             self = .progress(current, total)
         case let .done(url):
             self = .done(url)
-        }
-    }
-
-}
-
-extension WireSettingsUI.CreateBackupError {
-
-    init(_ error: WireBackup.CreateBackupError) {
-        switch error {
-        case .todo:
-            self = .todo
         }
     }
 

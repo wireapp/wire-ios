@@ -29,12 +29,6 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
     // using WireFoundation.QualifiedID leads to linking errors
     private typealias QualifiedID = WireDataModel.QualifiedID
 
-//    let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
-//        ImportBackupZMUserAdapter,
-//        ImportBackupZMConversationAdapter,
-//        ImportBackupZMMessageAdapter
-//    >
-
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
     let streamDecryptor: ImportLegacyBackupStreamDecryptorProtocol
@@ -48,10 +42,6 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
     func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
 
         switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
-
-        case .crossPlatform:
-            fatalError()
-            // importCrossPlatformBackupUseCase.invoke(url: url, password: password)
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
             importIOSBackup(url, password)
@@ -210,7 +200,6 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
 /// There are some external apps that users can use to transfer backup files, which can modify their attachments and
 /// change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore conversations.
 private enum BackupFileExtensions: String, CaseIterable {
-    case crossPlatform = "wbu"
     case fileExtensionWithUnderscore = "ios_wbu"
     case fileExtensionWithHyphen = "ios-wbu"
 }

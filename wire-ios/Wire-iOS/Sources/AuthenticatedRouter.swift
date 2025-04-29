@@ -18,13 +18,14 @@
 
 import UIKit
 import WireFoundation
+import WireDataModel
 import WireLogging
 import WireSyncEngine
 
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
     case userProfile(UserType)
-    case connectionRequest(QualifiedID)
+    case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
 }
 

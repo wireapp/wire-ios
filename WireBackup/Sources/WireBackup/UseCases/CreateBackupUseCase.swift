@@ -25,8 +25,7 @@ public struct CreateBackupUseCase<
     UserStore: UserStoreProtocol,
     ConversationStore: ConversationStoreProtocol,
     MessageStore: MessageStoreProtocol,
-    FileArchiver: FileArchiverProtocol,
-    EventProcessorHandle: InterruptEventProcessingProtocol
+    FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
 
     typealias UserEntity = UserStore.UserEntity
@@ -36,7 +35,7 @@ public struct CreateBackupUseCase<
     let conversationStore: ConversationStore
     let messageStore: MessageStore
 
-    let eventProcessorHandle: EventProcessorHandle?
+    let eventProcessorHandle: (any InterruptEventProcessingProtocol)?
     let selfUserID: QualifiedID
     let selfUserHandle: String?
     let fileArchiver: FileArchiver
@@ -47,7 +46,7 @@ public struct CreateBackupUseCase<
         userStore: UserStore,
         conversationStore: ConversationStore,
         messageStore: MessageStore,
-        eventProcessorHandle: EventProcessorHandle?,
+        eventProcessorHandle: (any InterruptEventProcessingProtocol)?,
         fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
         selfUserID: QualifiedID,
@@ -110,9 +109,16 @@ public struct CreateBackupUseCase<
                     try Task.checkCancellation()
 
                     // finish processing incoming events and then stop
-                    logger.debug("pausing event processing")
-                    await eventProcessorHandle.pauseProcessingEvents()
-                    defer { eventProcessorHandle.continueProcessingEvents() }
+                    if let eventProcessorHandle {
+                        logger.debug("pausing event processing")
+                        await eventProcessorHandle.pauseProcessingEvents()
+                    }
+                    defer {
+                        if let eventProcessorHandle {
+                            logger.debug("resuming event processing")
+                            eventProcessorHandle.continueProcessingEvents()
+                        }
+                    }
 
                     // get the counts of users, messages and conversations in order to report progress accurately
                     logger.debug("calculating entity counts")

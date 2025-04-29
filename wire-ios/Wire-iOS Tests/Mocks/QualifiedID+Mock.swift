@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireFoundation
 import WireSyncEngine
 
-extension QualifiedID {
-    static let mockID1 = QualifiedID(uuid: .mockID1, domain: "example.com")
-    static let mockID2 = QualifiedID(uuid: .mockID2, domain: "example.com")
-    static let mockID3 = QualifiedID(uuid: .mockID3, domain: "example.com")
+extension WireDataModel.QualifiedID {
+    static let mockID1 = WireDataModel.QualifiedID(uuid: .mockID1, domain: "example.com")
+    static let mockID2 = WireDataModel.QualifiedID(uuid: .mockID2, domain: "example.com")
+    static let mockID3 = WireDataModel.QualifiedID(uuid: .mockID3, domain: "example.com")
 }
