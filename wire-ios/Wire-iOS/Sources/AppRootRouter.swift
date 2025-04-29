@@ -250,16 +250,16 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         case let .locked(userSession):
             screenCurtainWindow.userSession = userSession
             showAppLock(userSession: userSession, completion: completion)
-        case .syncFailure(let error, let onRetry):
+        case let .syncFailure(error, onRetry):
             presentSyncErrorAlert(error: error, onRetry: onRetry)
         }
     }
-    
+
     private func presentSyncErrorAlert(
         error: any Error,
         onRetry: @escaping () -> Void
     ) {
-        
+
         let syncErrorMessage = if DeveloperFlag.showDetailedSyncError.isOn {
             // show detailed sync error message
             (error as NSError).description
@@ -267,28 +267,32 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             // show generic sync error message
             L10n.Localizable.Sync.Error.message
         }
-        
+
         let alert = UIAlertController(
             title: L10n.Localizable.Sync.Error.title,
             message: syncErrorMessage,
             preferredStyle: .alert
         )
-        
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.Sync.Error.retry,
-            style: .default) { [weak self] _ in
+
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.Sync.Error.retry,
+                style: .default
+            ) { [weak self] _ in
                 onRetry()
                 self?.appStateTransitionGroup.leave()
             }
         )
-        
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.General.cancel,
-            style: .destructive) { [weak self] _ in
+
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.General.cancel,
+                style: .destructive
+            ) { [weak self] _ in
                 self?.appStateTransitionGroup.leave()
             }
         )
-        
+
         rootViewController.present(alert, animated: true)
     }
 

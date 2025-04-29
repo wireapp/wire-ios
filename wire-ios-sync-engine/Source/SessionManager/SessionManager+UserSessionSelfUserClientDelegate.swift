@@ -28,7 +28,7 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
 
     /// Invoked when the client has completed the initial sync
     func clientCompletedInitialSync(accountId: UUID)
-    
+
     func clientDidFailSyncing(
         error: any Error,
         retryHandler: @escaping () -> Void
@@ -80,7 +80,7 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
             }
         }
     }
-    
+
     func clientDidFailSyncing(
         error: any Error,
         retryHandler: @escaping () -> Void

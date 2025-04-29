@@ -90,7 +90,7 @@ extension AppState: CustomDebugStringConvertible {
             "migrating"
         case .loading:
             "loading"
-        case .syncFailure(let error, _):
+        case let .syncFailure(error, _):
             "syncFailure: \(error.localizedDescription)"
         }
     }
@@ -121,7 +121,7 @@ extension AppState: SafeForLoggingStringConvertible {
             "migrating"
         case let .loading(account, from):
             "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
-        case .syncFailure(let error, _):
+        case let .syncFailure(error, _):
             "syncFailure \(error.localizedDescription)"
         }
     }
@@ -337,7 +337,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             transition(to: .authenticated(activeSession))
         }
     }
-    
+
     func sessionManagerDidFailSyncing(
         error: any Error,
         retryHandler: @escaping () -> Void

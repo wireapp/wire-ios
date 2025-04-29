@@ -73,7 +73,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .asyncStreamNotifications:
             "Turn on to enable new sync with consumable notifications"
-            
+
         case .showDetailedSyncError:
             "Show detailed sync error"
         }

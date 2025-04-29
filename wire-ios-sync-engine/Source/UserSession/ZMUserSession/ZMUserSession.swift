@@ -1084,15 +1084,15 @@ extension ZMUserSession: SyncAgentDelegate {
                 self?.isPerformingSync = true
                 self?.updateNetworkState()
             }
-            
+
             syncAgent.resume()
         }
-        
+
         delegate?.clientDidFailSyncing(
             error: error,
             retryHandler: onRetry
         )
-        
+
         WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
 
         managedObjectContext.performGroupedBlock { [weak self] in
