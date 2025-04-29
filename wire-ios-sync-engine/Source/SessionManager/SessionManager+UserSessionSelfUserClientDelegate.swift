@@ -28,6 +28,11 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
 
     /// Invoked when the client has completed the initial sync
     func clientCompletedInitialSync(accountId: UUID)
+    
+    func clientDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    )
 }
 
 extension SessionManager: UserSessionSelfUserClientDelegate {
@@ -73,6 +78,18 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
             await MainActor.run {
                 delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
             }
+        }
+    }
+    
+    func clientDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    ) {
+        Task {
+            delegate?.sessionManagerDidFailSyncing(
+                error: error,
+                retryHandler: retryHandler
+            )
         }
     }
 }

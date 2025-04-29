@@ -34,6 +34,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case useWireAuthentication
     case wireCellsAttachmentsPreviews
     case asyncStreamNotifications
+    case showDetailedSyncError
 
     public var description: String {
         switch self {
@@ -72,6 +73,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .asyncStreamNotifications:
             "Turn on to enable new sync with consumable notifications"
+            
+        case .showDetailedSyncError:
+            "Show detailed sync error"
         }
     }
 

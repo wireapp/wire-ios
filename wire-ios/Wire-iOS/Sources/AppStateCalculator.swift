@@ -32,6 +32,7 @@ enum AppState: Equatable {
     case databaseFailure(reason: Error)
     case migrating
     case loading(account: Account, from: Account?)
+    case syncFailure(error: any Error, onRetry: () -> Void)
 
     static func == (lhs: AppState, rhs: AppState) -> Bool {
         switch (lhs, rhs) {
@@ -89,6 +90,8 @@ extension AppState: CustomDebugStringConvertible {
             "migrating"
         case .loading:
             "loading"
+        case .syncFailure(let error, _):
+            "syncFailure: \(error.localizedDescription)"
         }
     }
 }
@@ -118,6 +121,8 @@ extension AppState: SafeForLoggingStringConvertible {
             "migrating"
         case let .loading(account, from):
             "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+        case .syncFailure(let error, _):
+            "syncFailure \(error.localizedDescription)"
         }
     }
 
@@ -331,6 +336,13 @@ extension AppStateCalculator: SessionManagerDelegate {
         if let activeSession {
             transition(to: .authenticated(activeSession))
         }
+    }
+    
+    func sessionManagerDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    ) {
+        transition(to: .syncFailure(error: error, onRetry: retryHandler))
     }
 }
 
