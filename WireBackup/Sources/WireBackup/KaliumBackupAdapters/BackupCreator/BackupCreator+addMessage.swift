@@ -17,7 +17,6 @@
 //
 
 @preconcurrency import KaliumBackup
-import KMPNativeCoroutinesAsync
 
 extension BackupCreator {
 

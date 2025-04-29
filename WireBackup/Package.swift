@@ -9,7 +9,6 @@ let package = Package(
         .library(name: "WireBackup", targets: ["WireBackup"])
     ],
     dependencies: [
-        .package(url: "https://github.com/rickclephas/KMP-NativeCoroutines.git", exact: "1.0.0-ALPHA-27"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
@@ -20,7 +19,6 @@ let package = Package(
             name: "WireBackup",
             dependencies: [
                 "KaliumBackup",
-                .product(name: "KMPNativeCoroutinesAsync", package: "KMP-NativeCoroutines"),
                 "WireFoundation",
                 "WireLogging"
             ]
@@ -36,14 +34,15 @@ let package = Package(
             name: "WireBackupTests",
             dependencies: [
                 "WireBackup",
-                "WireBackupSupport"
+                "WireBackupSupport",
+                .product(name: "WireFoundationSupport", package: "WireFoundation")
             ]
         ),
 
         .binaryTarget(
             name: "KaliumBackup",
-            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/ef4ecddb36eb5fe9c743b4fe48f224d8ef846532/WireDomain/Frameworks/KaliumBackup.xcframework.zip?download=true",
-            checksum: "e6165410781ef8207a8d5bdc02bd04f092517da37e9e5bb57879610685c31806"
+            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/133dbdd065eb515e5fe32803380dae8a864729f2/WireBackup/Frameworks/KaliumBackup.xcframework.zip?download=true",
+            checksum: "dcd518218c20a27cd99b30380be722b4bdbc2ca77b2527cb45cd6172dad0c973"
         )
     ],
     swiftLanguageModes: [.v6]
