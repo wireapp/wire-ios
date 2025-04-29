@@ -128,22 +128,31 @@ public struct CreateBackupUseCase<
                     let allUsers = try await userStore.fetchAllUsers()
                     for userIndex in 0 ..< allUsers.count {
                         backupCreator.addUser(allUsers[userIndex])
+                        if userIndex % 50 == 0 { try Task.checkCancellation() }
                         reportProgress(userIndex + 1, total)
                     }
+
+                    try Task.checkCancellation()
 
                     let conversationProgressOffset = userCount
                     let allConversations = try await conversationStore.fetchAllConversations()
                     for conversationIndex in 0 ..< allConversations.count {
                         backupCreator.addConversation(allConversations[conversationIndex])
+                        if conversationIndex % 50 == 0 { try Task.checkCancellation() }
                         reportProgress(conversationProgressOffset + conversationIndex + 1, total)
                     }
+
+                    try Task.checkCancellation()
 
                     let messageProgressOffset = userCount + conversationCount
                     let allMessages = try await messageStore.fetchAllMessages()
                     for messageIndex in 0 ..< allMessages.count {
                         backupCreator.addMessage(allMessages[messageIndex])
+                        if messageIndex % 50 == 0 { try Task.checkCancellation() }
                         reportProgress(messageProgressOffset + messageIndex + 1, total)
                     }
+
+                    try Task.checkCancellation()
 
                     // create the file
                     let outputFileURL = try await backupCreator.finalize(password: password)
@@ -161,10 +170,13 @@ public struct CreateBackupUseCase<
                 } catch {
                     continuation.finish(throwing: error)
                 }
+
             }
+
             continuation.onTermination = { _ in
                 task.cancel()
             }
+
         }
     }
 
