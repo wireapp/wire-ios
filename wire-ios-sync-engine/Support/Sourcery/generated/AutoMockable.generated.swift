@@ -1042,6 +1042,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock(activeSession)
     }
 
+    // MARK: - sessionManagerDidFailSyncing
+
+    public var sessionManagerDidFailSyncingErrorRetryHandler_Invocations: [(error: any Error, retryHandler: () -> Void)] = []
+    public var sessionManagerDidFailSyncingErrorRetryHandler_MockMethod: ((any Error, @escaping () -> Void) -> Void)?
+
+    public func sessionManagerDidFailSyncing(error: any Error, retryHandler: @escaping () -> Void) {
+        sessionManagerDidFailSyncingErrorRetryHandler_Invocations.append((error: error, retryHandler: retryHandler))
+
+        guard let mock = sessionManagerDidFailSyncingErrorRetryHandler_MockMethod else {
+            fatalError("no mock for `sessionManagerDidFailSyncingErrorRetryHandler`")
+        }
+
+        mock(error, retryHandler)
+    }
+
     // MARK: - sessionManagerDidChangeActiveUserSession
 
     public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []
