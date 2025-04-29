@@ -114,10 +114,10 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             self.init(
                 assetClientMessage,
                 content: .asset(
-                    mimeType: asset.original.mimeType, // TODO: hasMimeType?
+                    mimeType: asset.original.hasMimeType ? asset.original.mimeType : "application/octet-stream",
                     size: size,
                     name: name,
-                    otrKey: asset.uploaded.otrKey, // TODO: uploaded?
+                    otrKey: asset.uploaded.otrKey,
                     sha256: asset.uploaded.sha256,
                     assetID: asset.uploaded.assetID,
                     assetToken: asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil,
@@ -136,10 +136,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 let senderUserID = message.senderUser?.qualifiedID,
                 let creationDate = message.serverTimestamp,
                 let conversationID = message.conversation?.qualifiedID
-            else {
-                // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
-                return nil
-            }
+            else { return nil }
 
             self.id = id
             self.conversationID = QualifiedID(conversationID)

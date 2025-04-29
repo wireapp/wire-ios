@@ -27,10 +27,10 @@ extension BackupCreator {
             id: message.id,
             conversationId: BackupQualifiedId(message.conversationID),
             senderUserId: BackupQualifiedId(message.senderUserID),
-            senderClientId: message.senderClientID ?? "", // TODO: make optional
+            senderClientId: message.senderClientID ?? "",
             creationDate: BackupDateTime(message.creationDate),
             content: BackupMessageContent(message.content),
-            webPrimaryKey: nil // TODO: remove
+            webPrimaryKey: nil
         )
         mpBackupCreator.add(message: backupMessage)
 

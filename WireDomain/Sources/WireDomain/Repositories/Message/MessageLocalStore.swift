@@ -180,7 +180,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func fetchAllBackupableMessages() async throws -> [ZMMessage] {
         let fetchRequest = ZMMessage.fetchRequest()
-        // TODO: adjust fetchrequest! (e.g. no system messages)
         return try await context.perform { [context] in
             try context.fetch(fetchRequest) as! [ZMClientMessage]
         }

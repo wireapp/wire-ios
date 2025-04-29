@@ -383,12 +383,6 @@ extension SettingsCellDescriptorFactory {
             selfUser.managedObjectContext!.zm_sync!
         }
 
-        // TODO: remove
-        struct EventProcessorHandle: InterruptEventProcessingProtocol {
-            func pauseProcessingEvents() {}
-            func continueProcessingEvents() {}
-        }
-
         let messageLocalStore = MessageLocalStore(
             context: context
         )
@@ -398,7 +392,7 @@ extension SettingsCellDescriptorFactory {
         )
         let conversationLocalStore = ConversationLocalStore(
             context: context,
-            mlsService: nil, // TODO: why nil?
+            mlsService: nil,
             messageLocalStore: messageLocalStore
         )
 
@@ -409,7 +403,7 @@ extension SettingsCellDescriptorFactory {
                     userStore: UserStoreAdapter(userLocalStore: userLocalStore),
                     conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
                     messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
-                    eventProcessorHandle: EventProcessorHandle(),
+                    eventProcessorHandle: .none,
                     fileArchiver: CreateBackupFileArchiver(),
                     currentDateProvider: SystemDateProvider(),
                     selfUserID: .init(selfUser.qualifiedID!),
