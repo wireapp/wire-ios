@@ -40,6 +40,7 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-notification-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-share-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
+        frameworks["wire-ios"].add_dependency(frameworks["WireBackup"])
         frameworks["wire-ios"].add_dependency(frameworks["WireFoundation"])
         frameworks["wire-ios"].add_dependency(frameworks["WireLogging"])
         frameworks["wire-ios"].add_dependency(frameworks["WireAuthentication"])
