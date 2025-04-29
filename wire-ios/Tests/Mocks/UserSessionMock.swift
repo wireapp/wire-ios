@@ -426,7 +426,9 @@ extension UserSessionMock: ContextProvider {
 
     var account: Account { contextProvider.account }
     var viewContext: NSManagedObjectContext { contextProvider.viewContext }
-    var viewBackgroundContext: NSManagedObjectContext { contextProvider.viewBackgroundContext }
+    func viewBackgroundContext() -> NSManagedObjectContext {
+        contextProvider.viewBackgroundContext()
+    }
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
     var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }

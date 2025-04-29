@@ -2376,15 +2376,6 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
 
     public var underlyingViewContext: NSManagedObjectContext!
 
-    // MARK: - viewBackgroundContext
-
-    public var viewBackgroundContext: NSManagedObjectContext {
-        get { return underlyingViewBackgroundContext }
-        set(value) { underlyingViewBackgroundContext = value }
-    }
-
-    public var underlyingViewBackgroundContext: NSManagedObjectContext!
-
     // MARK: - syncContext
 
     public var syncContext: NSManagedObjectContext {
@@ -2426,6 +2417,24 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
         }
 
         mock(completionHandler)
+    }
+
+    // MARK: - viewBackgroundContext
+
+    public var viewBackgroundContext_Invocations: [Void] = []
+    public var viewBackgroundContext_MockMethod: (() -> NSManagedObjectContext)?
+    public var viewBackgroundContext_MockValue: NSManagedObjectContext?
+
+    public func viewBackgroundContext() -> NSManagedObjectContext {
+        viewBackgroundContext_Invocations.append(())
+
+        if let mock = viewBackgroundContext_MockMethod {
+            return mock()
+        } else if let mock = viewBackgroundContext_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `viewBackgroundContext`")
+        }
     }
 
 }
