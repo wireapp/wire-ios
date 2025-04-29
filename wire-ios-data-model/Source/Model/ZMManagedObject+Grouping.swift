@@ -155,6 +155,6 @@ extension Array where Element: NSObject {
             return TupleKeyArray(key: valueForKey, value: [$0])
         }
 
-        return tuples.compactMap { $0 }.merge()
+        return tuples.compactMap(\.self).merge()
     }
 }
