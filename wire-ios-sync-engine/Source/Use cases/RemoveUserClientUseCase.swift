@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol RemoveUserClientUseCaseProtocol {
@@ -83,6 +84,11 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
     }
 
     private func handleFailure(_ failure: NetworkError, userClient: UserClient) async throws {
+
+        WireLogger.userClient.error(
+            "error removing self client \(userClient.safeForLoggingDescription): \(failure.localizedDescription)"
+        )
+
         switch failure {
         case let .invalidRequestError(failureResponse, _):
             switch failureResponse.label {
