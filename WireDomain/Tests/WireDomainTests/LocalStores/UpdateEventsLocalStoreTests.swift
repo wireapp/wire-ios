@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
+import WireUpdateEventCoding
 import XCTest
 @testable import WireAPI
 @testable import WireDomain
@@ -82,7 +83,8 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
             let storedEventEnvelope = try XCTUnwrap(eventContext.fetch(request).first)
-            let decodedEnvelope = try JSONDecoder().decode(UpdateEventEnvelope.self, from: storedEventEnvelope.data)
+            let coder = UpdateEventCoder()
+            let decodedEnvelope = try coder.decode(storedEventEnvelope.data)
 
             XCTAssertEqual(decodedEnvelope.id, Scaffolding.envelope1.id)
             XCTAssertEqual(decodedEnvelope.events, Scaffolding.envelope1.events)
@@ -187,8 +189,8 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             let envelope = try XCTUnwrap(result.first)
             XCTAssertEqual(envelope.sortIndex, 2)
 
-            let decoder = JSONDecoder()
-            let decodedEnvelope = try decoder.decode(UpdateEventEnvelope.self, from: envelope.data)
+            let coder = UpdateEventCoder()
+            let decodedEnvelope = try coder.decode(envelope.data)
             XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
         }
     }
@@ -258,11 +260,11 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
     private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
         try await eventContext.perform { [eventContext] in
-            let encoder = JSONEncoder()
+            let coder = UpdateEventCoder()
 
             for (index, envelope) in envelopes.enumerated() {
                 let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-                storedEventEnvelope.data = try encoder.encode(envelope)
+                storedEventEnvelope.data = try coder.encode(envelope)
                 storedEventEnvelope.sortIndex = Int64(index)
             }
 
