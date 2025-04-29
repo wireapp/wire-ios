@@ -169,7 +169,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
             let margins = HorizontalMargins.conversationHorizontalMargins()
 
-            return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth - margins.right - margins.left)
+            return willTextExceedLines(
+                text: textMessage,
+                availableWidth: contentWidth - margins.right - margins.left,
+                numberOfLines: 3
+            )
         } else {
             return message.isSentBySelfUser && message.isCollapsingSupported
         }
@@ -578,22 +582,22 @@ extension ConversationMessageSectionController {
 
     // TODO: [WPB-16627] https://wearezeta.atlassian.net/browse/WPB-16627
     // improve by having one place to calculate width and for actual view to present text
-    func willTextExceedOneLine(text: String, availableWidth: CGFloat) -> Bool {
-
+    func willTextExceedLines(text: String, availableWidth: CGFloat, numberOfLines: Int) -> Bool {
         let textSize = CGSize(width: availableWidth, height: CGFloat.greatestFiniteMagnitude)
 
         let font = UIFont.normalLightFont
         let attributes: [NSAttributedString.Key: Any] = [.font: font]
+
         let boundingBox = text.boundingRect(
             with: textSize,
-            options: .usesLineFragmentOrigin,
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
             attributes: attributes,
             context: nil
         )
 
         let singleLineHeight = NSAttributedString.paragraphStyle.minimumLineHeight
+        let maxHeight = singleLineHeight * CGFloat(numberOfLines)
 
-        return boundingBox.height > singleLineHeight
+        return boundingBox.height > maxHeight
     }
-
 }
