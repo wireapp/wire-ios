@@ -18,6 +18,7 @@
 
 public import WireFoundation
 
+// sourcery: AutoMockable
 public protocol ConversationEntityProtocol {
 
     var id: QualifiedID { get }

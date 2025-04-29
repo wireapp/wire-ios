@@ -19,6 +19,7 @@
 public import Foundation
 public import WireFoundation
 
+// sourcery: AutoMockable
 public protocol MessageEntityProtocol {
 
     var id: String { get }

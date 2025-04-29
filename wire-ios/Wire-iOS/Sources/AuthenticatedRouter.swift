@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireFoundation
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 

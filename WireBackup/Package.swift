@@ -36,7 +36,8 @@ let package = Package(
             name: "WireBackupTests",
             dependencies: [
                 "WireBackup",
-                "WireBackupSupport"
+                "WireBackupSupport",
+                .product(name: "WireFoundationSupport", package: "WireFoundation")
             ]
         ),
 
