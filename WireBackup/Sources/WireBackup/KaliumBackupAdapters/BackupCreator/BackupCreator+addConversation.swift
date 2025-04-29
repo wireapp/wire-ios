@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import KMPNativeCoroutinesAsync
 @preconcurrency import KaliumBackup
+import KMPNativeCoroutinesAsync
 
 extension BackupCreator {
 
-    func addConversation<ConversationEntity>(_ conversation: ConversationEntity)
-    where ConversationEntity: ConversationEntityProtocol {
+    func addConversation(_ conversation: some ConversationEntityProtocol) {
 
         let backupConversation = BackupConversation(
             id: BackupQualifiedId(conversation.id),

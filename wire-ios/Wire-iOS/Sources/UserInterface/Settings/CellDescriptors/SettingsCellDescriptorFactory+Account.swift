@@ -17,6 +17,8 @@
 //
 
 import SwiftUI
+import WireAPI
+import WireBackup
 import WireCommonComponents
 import WireDataModel
 import WireDesign
@@ -25,8 +27,6 @@ import WireFoundation
 import WireLogging
 import WireSettingsUI
 import WireSyncEngine
-import WireAPI
-import WireBackup
 
 extension ZMUser {
     var hasValidEmail: Bool {

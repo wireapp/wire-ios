@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import KMPNativeCoroutinesAsync
 @preconcurrency import KaliumBackup
+import KMPNativeCoroutinesAsync
 
 extension BackupCreator {
 
@@ -26,9 +26,9 @@ extension BackupCreator {
         let result = await asyncResult(for: mpBackupCreator.finalize(password: password))
         let backupResult: any BackupExportResult
         switch result {
-        case .failure(let error):
+        case let .failure(error):
             throw error
-        case .success(let result):
+        case let .success(result):
             backupResult = result
         }
 

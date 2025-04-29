@@ -18,17 +18,13 @@
 
 import Foundation
 import WireBackup
+import WireDataModel
 import WireDomain
 import WireFoundation
-import WireDataModel
 
 struct MessageStoreAdapter: MessageStoreProtocol {
 
     let messageLocalStore: any MessageLocalStoreProtocol
-
-    init(messageLocalStore: any MessageLocalStoreProtocol) {
-        self.messageLocalStore = messageLocalStore
-    }
 
     func totalMessageCount() async throws -> Int {
         try await messageLocalStore.totalBackupableMessageCount()

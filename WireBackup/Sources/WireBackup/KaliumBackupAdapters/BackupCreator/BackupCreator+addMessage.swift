@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import KMPNativeCoroutinesAsync
 @preconcurrency import KaliumBackup
+import KMPNativeCoroutinesAsync
 
 extension BackupCreator {
 
-    func addMessage<MessageEntity>(_ message: MessageEntity) where MessageEntity: MessageEntityProtocol {
+    func addMessage(_ message: some MessageEntityProtocol) {
 
         let backupMessage = BackupMessage(
             id: message.id,
@@ -39,7 +39,7 @@ extension BackupCreator {
     private func BackupMessageContent(_ content: MessageContent) -> KaliumBackup.BackupMessageContent {
         switch content {
 
-        case .text(let content):
+        case let .text(content):
             KaliumBackup.BackupMessageContent.Text(
                 text: content.text
             )
@@ -65,7 +65,6 @@ extension BackupCreator {
                 encryption: AssetEncryptionAlgorithm(content.encryption),
                 metaData: AssetAssetMetadata(content.metadata)
             )
-
         }
     }
 
@@ -82,7 +81,6 @@ extension BackupCreator {
 
         case .none:
             .none
-
         }
     }
 
@@ -91,34 +89,33 @@ extension BackupCreator {
     ) -> BackupMessageContent.AssetAssetMetadata? {
         switch metadata {
 
-        case .image(let metadata):
+        case let .image(metadata):
             KaliumBackup.BackupMessageContent.AssetAssetMetadataImage(
                 width: metadata.width,
                 height: metadata.height,
                 tag: metadata.tag
             )
 
-        case .video(let metadata):
+        case let .video(metadata):
             KaliumBackup.BackupMessageContent.AssetAssetMetadataVideo(
                 width: metadata.width.map { KotlinInt(int: $0) },
                 height: metadata.height.map { KotlinInt(int: $0) },
                 duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) },
             )
 
-        case .audio(let metadata):
+        case let .audio(metadata):
             KaliumBackup.BackupMessageContent.AssetAssetMetadataAudio(
                 normalization: metadata.normalization.map { KotlinByteArray($0) },
                 duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }
             )
 
-        case .generic(let metadata):
+        case let .generic(metadata):
             KaliumBackup.BackupMessageContent.AssetAssetMetadataGeneric(
                 name: metadata.name
             )
 
         case .none:
             .none
-
         }
     }
 

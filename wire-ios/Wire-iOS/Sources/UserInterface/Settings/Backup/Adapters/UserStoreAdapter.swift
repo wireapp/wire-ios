@@ -18,16 +18,12 @@
 
 import WireBackup
 import WireDataModel
-import WireFoundation
 import WireDomain
+import WireFoundation
 
 struct UserStoreAdapter: UserStoreProtocol {
 
     let userLocalStore: any UserLocalStoreProtocol
-
-    init(userLocalStore: any UserLocalStoreProtocol) {
-        self.userLocalStore = userLocalStore
-    }
 
     func totalUserCount() async throws -> Int {
         try await userLocalStore.totalBackupableUserCount()
@@ -58,9 +54,9 @@ struct UserStoreAdapter: UserStoreProtocol {
         init?(_ user: ZMUser) {
             guard let qualifiedID = user.qualifiedID else { return nil }
 
-            id = QualifiedID(qualifiedID)
-            name = user.name ?? ""
-            handle = user.handle ?? ""
+            self.id = QualifiedID(qualifiedID)
+            self.name = user.name ?? ""
+            self.handle = user.handle ?? ""
         }
 
     }
