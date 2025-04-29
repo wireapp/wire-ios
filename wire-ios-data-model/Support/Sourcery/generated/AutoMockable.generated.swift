@@ -2419,21 +2419,21 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
         mock(completionHandler)
     }
 
-    // MARK: - viewBackgroundContext
+    // MARK: - newBackgroundContext
 
-    public var viewBackgroundContext_Invocations: [Void] = []
-    public var viewBackgroundContext_MockMethod: (() -> NSManagedObjectContext)?
-    public var viewBackgroundContext_MockValue: NSManagedObjectContext?
+    public var newBackgroundContext_Invocations: [Void] = []
+    public var newBackgroundContext_MockMethod: (() -> NSManagedObjectContext)?
+    public var newBackgroundContext_MockValue: NSManagedObjectContext?
 
-    public func viewBackgroundContext() -> NSManagedObjectContext {
-        viewBackgroundContext_Invocations.append(())
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        newBackgroundContext_Invocations.append(())
 
-        if let mock = viewBackgroundContext_MockMethod {
+        if let mock = newBackgroundContext_MockMethod {
             return mock()
-        } else if let mock = viewBackgroundContext_MockValue {
+        } else if let mock = newBackgroundContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `viewBackgroundContext`")
+            fatalError("no mock for `newBackgroundContext`")
         }
     }
 

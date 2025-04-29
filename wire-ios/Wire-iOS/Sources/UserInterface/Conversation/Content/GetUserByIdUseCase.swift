@@ -29,6 +29,6 @@ class GetUserByIdUseCase: GetUserByIDUseCaseProtocol {
         guard let managedObjectId = id as? NSManagedObjectID else {
             return nil
         }
-        return context.object(with: managedObjectId) as? UserType
+        return try? context.existingObject(with: managedObjectId) as? UserType
     }
 }

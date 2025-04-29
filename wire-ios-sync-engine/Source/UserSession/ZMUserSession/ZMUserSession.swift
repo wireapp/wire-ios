@@ -1428,8 +1428,8 @@ extension ZMUserSession: ContextProvider {
         coreDataStack.viewContext
     }
     
-    public func viewBackgroundContext() -> NSManagedObjectContext {
-        coreDataStack.viewBackgroundContext()
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        coreDataStack.newBackgroundContext()
     }
 
     public var syncContext: NSManagedObjectContext {

@@ -45,7 +45,7 @@ public protocol ContextProvider {
     var account: Account { get }
 
     var viewContext: NSManagedObjectContext { get }
-    func viewBackgroundContext() -> NSManagedObjectContext
+    func newBackgroundContext() -> NSManagedObjectContext
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
@@ -121,9 +121,9 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         messagesContainer.viewContext
     }
 
-    public func viewBackgroundContext() -> NSManagedObjectContext {
+    public func newBackgroundContext() -> NSManagedObjectContext {
 #if DEBUG
-        return viewBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
+        return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
 #else
         return messagesContainer.newBackgroundContext()
 #endif
@@ -143,7 +143,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     let dispatchGroup: ZMSDispatchGroup?
 
 #if DEBUG
-    public var viewBackgroundContextProvider: (() -> NSManagedObjectContext)?
+    public var newBackgroundContextProvider: (() -> NSManagedObjectContext)?
 #endif
     private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>

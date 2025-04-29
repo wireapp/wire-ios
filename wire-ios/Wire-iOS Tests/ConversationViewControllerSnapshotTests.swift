@@ -196,7 +196,7 @@ extension ConversationViewControllerSnapshotTests {
             managedObjectContext: uiMOC,
             description: "all conversations"
         )
-        userSession.coreDataStack?.viewBackgroundContextProvider = { [uiMOC] in
+        userSession.coreDataStack?.newBackgroundContextProvider = { [uiMOC] in
             uiMOC!
         }
 

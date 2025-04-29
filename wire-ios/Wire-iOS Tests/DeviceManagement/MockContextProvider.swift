@@ -30,7 +30,7 @@ final class MockContextProvider: ContextProvider {
         NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
 
-    func viewBackgroundContext() -> NSManagedObjectContext {
+    func newBackgroundContext() -> NSManagedObjectContext {
         viewContext
     }
 

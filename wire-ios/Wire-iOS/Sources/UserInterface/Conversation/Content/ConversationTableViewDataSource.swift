@@ -122,7 +122,7 @@ final class ConversationTableViewDataSource: NSObject {
 
         // Dispatching to background thread to offload sections calculation
 
-        let backgroundContext = userSession.contextProvider.viewBackgroundContext()
+        let backgroundContext = userSession.contextProvider.newBackgroundContext()
         backgroundContext.perform { [weak self] in
             guard let self else { return }
 
