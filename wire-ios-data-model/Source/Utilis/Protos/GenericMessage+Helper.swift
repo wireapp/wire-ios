@@ -265,12 +265,12 @@ public extension GenericMessage {
         guard let content else { return [] }
         switch content {
         case .text:
-            return text.linkPreview.compactMap { $0 }
+            return text.linkPreview.compactMap(\.self)
         case .edited:
-            return edited.text.linkPreview.compactMap { $0 }
+            return edited.text.linkPreview.compactMap(\.self)
         case let .ephemeral(ephemeral):
             if case .text? = ephemeral.content {
-                return ephemeral.text.linkPreview.compactMap { $0 }
+                return ephemeral.text.linkPreview.compactMap(\.self)
             } else {
                 return []
             }

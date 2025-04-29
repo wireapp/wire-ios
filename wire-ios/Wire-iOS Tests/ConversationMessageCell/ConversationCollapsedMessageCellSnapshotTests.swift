@@ -36,7 +36,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
 
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
     }
 
     override func tearDown() {
@@ -64,7 +64,7 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
     func testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = Bundle.main.bundleURL
-        mockUserDefaults.boolForKey_MockValue = false
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
 
         verify(message: message)
     }
