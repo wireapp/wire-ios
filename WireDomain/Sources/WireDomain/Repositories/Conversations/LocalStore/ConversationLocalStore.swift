@@ -320,7 +320,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 usersAndRoles.append(userAndRole)
             }
 
-            return usersAndRoles.compactMap { $0 }
+            return usersAndRoles.compactMap(\.self)
         }
 
         let users = Set(usersAndRoles.map(\.user))

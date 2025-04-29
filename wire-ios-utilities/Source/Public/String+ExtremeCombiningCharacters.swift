@@ -87,7 +87,7 @@ public extension String {
                 continue
             }
 
-            let diacriticsCount = isDiacriticsMap[range].filter { $0 }.count
+            let diacriticsCount = isDiacriticsMap[range].filter(\.self).count
             let regularCharactersCount = extremeDiacriticsViewWindowSize - diacriticsCount
 
             // verify current diacritics to characters ratio
