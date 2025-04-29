@@ -108,7 +108,7 @@ final class ImportBackupViewModelTest: XCTestCase {
         wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
         sut.confirmOverwrite()
         wait(forConditionToBeTrue: sut.importProgress == (0, 0), timeout: 3)
-        continuation.finish(throwing: ImportLegacyBackupError.decryptionError)
+        continuation.finish(throwing: ImportBackupError.passwordRequired)
         wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
         mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
         sut.enterPassword("pw")

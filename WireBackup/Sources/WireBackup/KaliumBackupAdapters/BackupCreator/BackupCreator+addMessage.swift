@@ -28,14 +28,14 @@ extension BackupCreator {
             senderUserId: BackupQualifiedId(message.senderUserID),
             senderClientId: message.senderClientID ?? "",
             creationDate: BackupDateTime(message.creationDate),
-            content: BackupMessageContent(message.content),
+            content: backupMessageContent(message.content),
             webPrimaryKey: nil
         )
         mpBackupCreator.add(message: backupMessage)
 
     }
 
-    private func BackupMessageContent(_ content: MessageContent) -> KaliumBackup.BackupMessageContent {
+    private func backupMessageContent(_ content: MessageContent) -> KaliumBackup.BackupMessageContent {
         switch content {
 
         case let .text(content):
@@ -61,13 +61,13 @@ extension BackupCreator {
                 assetId: content.assetID,
                 assetToken: content.assetToken,
                 assetDomain: content.assetDomain,
-                encryption: AssetEncryptionAlgorithm(content.encryption),
-                metaData: AssetAssetMetadata(content.metadata)
+                encryption: assetEncryptionAlgorithm(content.encryption),
+                metaData: assetAssetMetadata(content.metadata)
             )
         }
     }
 
-    private func AssetEncryptionAlgorithm(
+    private func assetEncryptionAlgorithm(
         _ encryption: MessageContent.AssetContent.EncryptionAlgorithm?
     ) -> BackupMessageContent.AssetEncryptionAlgorithm? {
         switch encryption {
@@ -83,7 +83,7 @@ extension BackupCreator {
         }
     }
 
-    private func AssetAssetMetadata(
+    private func assetAssetMetadata(
         _ metadata: MessageContent.AssetContent.Metadata?
     ) -> BackupMessageContent.AssetAssetMetadata? {
         switch metadata {
