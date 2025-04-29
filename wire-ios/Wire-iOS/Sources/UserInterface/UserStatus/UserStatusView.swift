@@ -104,9 +104,9 @@ final class UserStatusView: TitleView {
 
         let showInteractiveIcon = isInteractive && !options.contains(.hideActionHint)
         configure(
-            leadingIcons: leadingIcons.compactMap { $0 },
+            leadingIcons: leadingIcons.compactMap(\.self),
             title: title,
-            trailingIcons: trailingIcons.compactMap { $0 },
+            trailingIcons: trailingIcons.compactMap(\.self),
             subtitle: nil,
             interactive: isInteractive,
             showInteractiveIcon: showInteractiveIcon
