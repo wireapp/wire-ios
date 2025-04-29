@@ -109,6 +109,7 @@ public final class ZMUserSession: NSObject {
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     let analyiticsLogger: WireLogger
+    private let journal: Journal
 
     // MARK: Computed Properties
 
@@ -408,7 +409,8 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         backendEnvironment: WireAPI.BackendEnvironment,
         minTLSVersion: WireAPI.TLSVersion,
-        apiVersion: WireAPI.APIVersion
+        apiVersion: WireAPI.APIVersion,
+        journal: Journal
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
@@ -459,6 +461,7 @@ public final class ZMUserSession: NSObject {
             mlsDecryptionService: mlsService,
             proteusService: proteusService
         )
+        self.journal = journal
         super.init()
     }
 
@@ -594,6 +597,7 @@ public final class ZMUserSession: NSObject {
         }
 
         let syncAgent = SyncAgent(
+            journal: journal,
             lastUpdateEventIDRepository: lastEventIDRepository,
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: incrementalSyncProvider,
@@ -762,7 +766,8 @@ public final class ZMUserSession: NSObject {
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
-            isDeveloperModeEnabled: isDeveloperModeEnabled
+            isDeveloperModeEnabled: isDeveloperModeEnabled,
+            isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
     }
 
@@ -883,6 +888,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    // Only used for testing
     public func triggerIncrementalSync() {
         Task {
             do {
@@ -1075,6 +1081,15 @@ extension ZMUserSession: SyncAgentDelegate {
 
     func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool) {
         didFinishIncrementalSync(isRecovering: isRecovering)
+    }
+
+    func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: Error) {
+        WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.isPerformingSync = false
+            self?.updateNetworkState()
+        }
     }
 
     func didStartInitialSync() {

@@ -112,6 +112,11 @@ extension NotificationServiceExtension {
 
     private func logVerifyUserSessionUseCaseError(_ error: VerifyUserSessionUseCase.Failure) {
         switch error {
+        case .syncV2IsNotEnabled:
+            logger.error(
+                "Not displaying notification because sync v2 is not enabled yet",
+                attributes: .newNSE
+            )
         case .userUnauthenticated:
             logger.error(
                 "Not displaying notification because app is not authenticated",

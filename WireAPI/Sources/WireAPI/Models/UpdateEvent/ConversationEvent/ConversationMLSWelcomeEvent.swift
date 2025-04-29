@@ -34,4 +34,14 @@ public struct ConversationMLSWelcomeEvent: Equatable, Codable, Sendable {
 
     public let welcomeMessage: String
 
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        welcomeMessage: String
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.welcomeMessage = welcomeMessage
+    }
+
 }

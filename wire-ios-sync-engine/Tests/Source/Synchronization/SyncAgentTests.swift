@@ -26,17 +26,23 @@ import XCTest
 final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProvider {
 
     var sut: SyncAgent!
+    var journal: Journal!
     var lastUpdateEventIDRepository: MockLastEventIDRepositoryInterface!
     var legacySyncStatus: MockSyncStatusProtocol!
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
 
     override func setUp() {
+        journal = Journal(
+            userID: UUID(),
+            storage: UserDefaults.temporary()
+        )
         lastUpdateEventIDRepository = MockLastEventIDRepositoryInterface()
         legacySyncStatus = MockSyncStatusProtocol()
         initialSync = MockInitialSyncProtocol()
         incrementalSync = MockIncrementalSyncProtocol()
         sut = SyncAgent(
+            journal: journal,
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
             initialSyncProvider: self,
             incrementalSyncProvider: self,
@@ -46,11 +52,11 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     override func tearDown() {
         sut = nil
+        journal = nil
         lastUpdateEventIDRepository = nil
         legacySyncStatus = nil
         initialSync = nil
         incrementalSync = nil
-        DeveloperFlag.newInitialSync.enable(false, storage: .temporary())
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -63,7 +69,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformSyncIfNeeded_InitialSync() async throws {
         // Given
-        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
+        journal[.isSyncV2Enabled] = true
 
         // Mock
         lastUpdateEventIDRepository.fetchLastEventID_MockValue = .some(nil)
@@ -86,7 +92,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformSyncIfNeeded_IncrementalSync() async throws {
         // Given
-        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
+        journal[.isSyncV2Enabled] = true
 
         // Mock
         lastUpdateEventIDRepository.fetchLastEventID_MockValue = .some(UUID())
@@ -107,7 +113,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformInitialSync() async throws {
         // Given
-        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
+        journal[.isSyncV2Enabled] = true
 
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
@@ -128,7 +134,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformInitialSync_Legacy() async throws {
         // Given
-        DeveloperFlag.newInitialSync.enable(false, storage: .temporary())
+        journal[.isSyncV2Enabled] = false
 
         // Mock
         legacySyncStatus.forceSlowSync_MockMethod = {}
@@ -142,7 +148,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformResourceSync() async throws {
         // Given
-        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
+        journal[.isSyncV2Enabled] = true
 
         // Mock
         initialSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
@@ -163,7 +169,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformResourceSync_Legacy() async throws {
         // Given
-        DeveloperFlag.newInitialSync.enable(false, storage: .temporary())
+        journal[.isSyncV2Enabled] = false
 
         // Mock
         legacySyncStatus.resyncResources_MockMethod = {}
@@ -177,7 +183,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformIncrementalSync() async throws {
         // Given
-        DeveloperFlag.newInitialSync.enable(true, storage: .temporary())
+        journal[.isSyncV2Enabled] = true
 
         // Mock
         incrementalSync.perform_MockMethod = {
