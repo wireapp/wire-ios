@@ -31,19 +31,23 @@ struct VerifyUserSessionUseCase {
     enum Failure: Error {
         case coreDataMissingSharedContainer
         case coreDataMigrationRequired
+        case syncV2IsNotEnabled
         case unableToLoadStores(Error)
         case userUnauthenticated
     }
 
     // MARK: - Properties
 
+    private let journal: any JournalProtocol
     private let cookieStorage: any CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
 
     init(
+        journal: any JournalProtocol,
         cookieStorage: any CookieStorageProtocol,
         coreData: any CoreDataStackProtocol
     ) {
+        self.journal = journal
         self.cookieStorage = cookieStorage
         self.coreData = coreData
     }
@@ -51,6 +55,10 @@ struct VerifyUserSessionUseCase {
     /// Ensures user is properly authenticated.
 
     func invoke() async throws {
+        guard journal[.isSyncV2Enabled] else {
+            throw Failure.syncV2IsNotEnabled
+        }
+
         guard try await isAuthenticated() else {
             throw Failure.userUnauthenticated
         }

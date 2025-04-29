@@ -130,6 +130,15 @@ public protocol UserDefaultsProtocol {
     func bool(forKey defaultName: String) -> Bool
 
     func removeObject(forKey defaultName: String)
+    func dictionaryRepresentation() -> [String: Any]
+}
+
+public extension UserDefaultsProtocol {
+
+    func keys() -> [String] {
+        Array(dictionaryRepresentation().keys)
+    }
+
 }
 
 extension UserDefaults: UserDefaultsProtocol {}

@@ -18,8 +18,8 @@
 
 import Foundation
 
-protocol EventData {
+public protocol EventData {
     static var eventType: ZMUpdateEventType { get }
 }
 
-typealias CodableEventData = Codable & EventData
+public typealias CodableEventData = Codable & EventData

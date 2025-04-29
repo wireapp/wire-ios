@@ -43,32 +43,4 @@ public final class StoredUpdateEventEnvelope: NSManagedObject {
 
     @NSManaged public var sortIndex: Int64
 
-    /// Create a fetch request sorted by the `sortIndex`.
-    ///
-    /// - Parameter asending: Whether the results are returned in ascending order.
-    /// - Returns: A fetch request sorted by the `sortIndex`.
-
-    public static func sortedFetchRequest(asending: Bool) -> NSFetchRequest<StoredUpdateEventEnvelope> {
-        let request = NSFetchRequest<StoredUpdateEventEnvelope>(entityName: entityName)
-        request.sortDescriptors = [
-            NSSortDescriptor(
-                keyPath: \StoredUpdateEventEnvelope.sortIndex,
-                ascending: asending
-            )
-        ]
-        return request
-    }
-
-    /// Create a fetch request to retrieve a single event envelope.
-    ///
-    /// - Parameter sortIndex: The sort index of the desired envelope.
-    /// - Returns: A fetch request for a single event envelope.
-
-    public static func fetchRequest(sortIndex: Int64) -> NSFetchRequest<StoredUpdateEventEnvelope> {
-        let request = NSFetchRequest<StoredUpdateEventEnvelope>(entityName: entityName)
-        request.predicate = NSPredicate(format: "\(#keyPath(StoredUpdateEventEnvelope.sortIndex)) == \(sortIndex)")
-        request.fetchLimit = 1
-        return request
-    }
-
 }
