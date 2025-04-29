@@ -424,9 +424,8 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
-        if let capabilities = payloadAsDictionary.optionalArray(forKey: "capabilities") as? [String],
-           capabilities.contains("consumable-notifications") {
-            client.asyncStreamCapable = true
+        if let capabilities = payloadAsDictionary.optionalArray(forKey: "capabilities") as? [String] {
+            client.asyncStreamCapable = capabilities.contains("consumable-notifications")
         }
 
         let selfUser = ZMUser.selfUser(in: context)

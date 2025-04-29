@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModelSupport
+import WireDomain
 import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
@@ -285,6 +286,12 @@ final class APIMigrationManagerTests: MessagingTest {
         let mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
 
+        let userID = UUID()
+        let journal = Journal(
+            userID: userID,
+            storage: UserDefaults.temporary()
+        )
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
@@ -304,8 +311,9 @@ final class APIMigrationManagerTests: MessagingTest {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: mockTransportSession,
-            userId: .create(),
-            minTLSVersion: nil
+            userId: userID,
+            minTLSVersion: nil,
+            journal: journal
         )
 
         let userSession = builder.build()

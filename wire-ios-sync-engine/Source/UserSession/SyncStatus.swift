@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDomain
 import WireLogging
 
 private let zmLog = ZMSLog(tag: "SyncStatus")
@@ -46,6 +47,8 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     weak var syncStateDelegate: ZMSyncStateDelegate?
 
+    private let isSyncV2Enabled: Bool
+
     private let lastEventIDRepository: LastEventIDRepositoryInterface
     fileprivate var lastUpdateEventID: UUID?
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
@@ -59,7 +62,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
     public var isSlowSyncing: Bool {
-        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        guard !isSyncV2Enabled else { return false }
         return !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
     }
 
@@ -67,26 +70,28 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     private var isRecovering = false
 
     public var isSyncing: Bool {
-        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        guard !isSyncV2Enabled else { return false }
         return currentSyncPhase.isSyncing || !isPushChannelOpen
     }
 
     public var isSyncingInBackground: Bool {
-        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        guard !isSyncV2Enabled else { return false }
         return currentSyncPhase.isSyncing
     }
 
     public var isPushChannelOpen: Bool {
-        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        guard !isSyncV2Enabled else { return false }
         return pushChannelEstablishedDate != nil
     }
 
     public init(
         managedObjectContext: NSManagedObjectContext,
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        isSyncV2Enabled: Bool
     ) {
         self.managedObjectContext = managedObjectContext
         self.lastEventIDRepository = lastEventIDRepository
+        self.isSyncV2Enabled = isSyncV2Enabled
 
         super.init()
 

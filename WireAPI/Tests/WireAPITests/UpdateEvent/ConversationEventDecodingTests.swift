@@ -509,7 +509,8 @@ final class ConversationEventDecodingTests: XCTestCase {
             senderID: senderID,
             subconversation: "subconversation",
             message: "message",
-            timestamp: fractionalDate(from: "2024-06-04T15:03:07.598Z")
+            timestamp: fractionalDate(from: "2024-06-04T15:03:07.598Z"),
+            decryptedMessages: []
         )
 
         static let mlsWelcomeEvent = ConversationMLSWelcomeEvent(

@@ -139,6 +139,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         )
                     }
 
+                    await store.calculateLastUnreadMessages()
+
                     do {
                         // Save.
                         try await databaseSaver.save()
@@ -147,6 +149,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     }
 
                 }
+
             } catch {
                 logger.warn("live event stream encountered error: \(String(describing: error))")
             }
@@ -194,6 +197,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             processedEnvelopeIDs.formUnion(envelopes.map(\.id))
             try await store.deleteNextPendingEvents(limit: batchSize)
+            await store.calculateLastUnreadMessages()
 
             do {
                 try await databaseSaver.save()

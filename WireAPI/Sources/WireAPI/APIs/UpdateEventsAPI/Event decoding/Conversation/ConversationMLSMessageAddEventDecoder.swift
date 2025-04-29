@@ -53,7 +53,8 @@ struct ConversationMLSMessageAddEventDecoder {
             senderID: senderID,
             subconversation: subconversation,
             message: payload,
-            timestamp: timestamp?.date
+            timestamp: timestamp?.date,
+            decryptedMessages: []
         )
     }
 

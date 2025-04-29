@@ -42,8 +42,7 @@ final class UserClientsLocalStoreTests: XCTestCase {
         userLocalStore = MockUserLocalStoreProtocol()
 
         sut = UserClientsLocalStore(
-            context: context,
-            userLocalStore: userLocalStore
+            context: context
         )
     }
 

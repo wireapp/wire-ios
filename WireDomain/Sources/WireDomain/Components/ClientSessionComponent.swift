@@ -44,6 +44,7 @@ public final class ClientSessionComponent {
 
     public let asyncStreamEnabled: Bool
 
+    private let onProcessedCallEvent: (CallEventInfo) -> Void
     private let onSelfClientInvalidated: () async -> Void
 
     public init(
@@ -64,6 +65,7 @@ public final class ClientSessionComponent {
         proteusService: any ProteusServiceInterface,
         asyncStreamEnabled: Bool,
         onSelfClientInvalidated: @escaping () async -> Void
+        onProcessedCallEvent: @escaping (CallEventInfo) -> Void
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -81,6 +83,7 @@ public final class ClientSessionComponent {
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
         self.asyncStreamEnabled = asyncStreamEnabled
+        self.onProcessedCallEvent = onProcessedCallEvent
         self.onSelfClientInvalidated = onSelfClientInvalidated
     }
 
@@ -161,7 +164,6 @@ public final class ClientSessionComponent {
     private lazy var conversationLocalStore = ConversationLocalStore(
         context: syncContext,
         mlsService: mlsService,
-        userLocalStore: userLocalStore,
         messageLocalStore: messageLocalStore
     )
 
@@ -169,9 +171,8 @@ public final class ClientSessionComponent {
         context: syncContext
     )
 
-    private lazy var messageLocalStore = MessageLocalStore(
-        context: syncContext,
-        userLocalStore: userLocalStore
+    private lazy var messageLocalStore: some MessageLocalStoreProtocol = MessageLocalStore(
+        context: syncContext
     )
 
     private lazy var teamLocalStore = TeamLocalStore(
@@ -180,14 +181,14 @@ public final class ClientSessionComponent {
     )
 
     private lazy var updateEventsLocalStore = UpdateEventsLocalStore(
-        context: eventContext,
+        eventContext: eventContext,
+        syncContext: syncContext,
         userID: selfUserID,
         sharedUserDefaults: sharedUserDefaults
     )
 
-    private lazy var userClientsLocalStore = UserClientsLocalStore(
-        context: syncContext,
-        userLocalStore: userLocalStore
+    private lazy var userClientsLocalStore: some UserClientsLocalStore = UserClientsLocalStore(
+        context: syncContext
     )
 
     private lazy var userConnectionsStore = ConnectionsLocalStore(
@@ -196,6 +197,7 @@ public final class ClientSessionComponent {
 
     private lazy var userLocalStore = UserLocalStore(
         context: syncContext,
+        messageLocalStore: messageLocalStore,
         userDefaults: sharedUserDefaults
     )
 
@@ -400,7 +402,6 @@ public final class ClientSessionComponent {
         usersAPI: usersAPI,
         selfUserAPI: selfUserAPI,
         conversationLabelsRepository: conversationLabelsRepository,
-        conversationLocalStore: conversationLocalStore,
         userLocalStore: userLocalStore
     )
 
@@ -411,7 +412,7 @@ public final class ClientSessionComponent {
         mlsService: mlsService,
         mlsDecryptionService: mlsDecryptionService,
         userClientsLocalStore: userClientsLocalStore,
-        messageRepository: messageRepository,
+        messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
         conversationLocalStore: conversationLocalStore
     )
@@ -454,7 +455,8 @@ public final class ClientSessionComponent {
         conversationLocalStore: conversationLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        protobufMessageProcessor: conversationProtobufMessageProcessor
+        protobufMessageProcessor: conversationProtobufMessageProcessor,
+        onProcessedCallEvent: onProcessedCallEvent
     )
 
     private lazy var conversationMLSWelcomeEventProcessor = ConversationMLSWelcomeEventProcessor(
@@ -469,7 +471,8 @@ public final class ClientSessionComponent {
         conversationLocalStore: conversationLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        protobufMessageProcessor: conversationProtobufMessageProcessor
+        protobufMessageProcessor: conversationProtobufMessageProcessor,
+        onProcessedCallEvent: onProcessedCallEvent
     )
 
     private lazy var conversationProtocolUpdateEventProcessor = ConversationProtocolUpdateEventProcessor(

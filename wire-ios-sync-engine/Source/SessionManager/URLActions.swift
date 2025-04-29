@@ -97,6 +97,7 @@ extension URLAction {
         case URL.DeepLink.user:
             if let lastComponent = url.pathComponents.last,
                let uuid = UUID(uuidString: lastComponent) {
+                // TODO: [WPB-10531] The profile deep link should contain the domain to support federated users.
                 self = .openUserProfile(id: uuid)
             } else {
                 throw DeepLinkRequestError.invalidUserLink

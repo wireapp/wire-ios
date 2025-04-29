@@ -24,23 +24,26 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     init(
-        context: NSManagedObjectContext,
-        userLocalStore: any UserLocalStoreProtocol
+        context: NSManagedObjectContext
     ) {
         self.context = context
-        self.userLocalStore = userLocalStore
     }
 
     public func fetchSelfClient() async -> UserClient? {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            return selfUser.selfClient()
+        }
+    }
 
-        return await context.perform {
-            selfUser.selfClient()
+    public func fetchSelfClientID() async -> UUID {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            return selfUser.remoteIdentifier
         }
     }
 
@@ -78,10 +81,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     public func deletedSelfClients(
         newClients: [String]
     ) async -> [String] {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
 
-        return await context.perform {
-            selfUser.clients
+            return selfUser.clients
                 .compactMap(\.remoteIdentifier)
                 .filter {
                     !newClients.contains($0)
@@ -175,10 +178,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     }
 
     public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
 
-        return await context.perform {
-            selfUser.clients.all { userClient in
+            return selfUser.clients.all { userClient in
                 let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
 
                 let isRecentlyActive: Bool = {

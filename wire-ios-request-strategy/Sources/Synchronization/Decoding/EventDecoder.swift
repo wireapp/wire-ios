@@ -344,6 +344,7 @@ extension EventDecoder {
                 event,
                 context: eventMOC,
                 index: Int64(idx) + startIndex + 1,
+                isCallEvent: event.isCallEvent,
                 publicKeys: publicKeys
             )
         }

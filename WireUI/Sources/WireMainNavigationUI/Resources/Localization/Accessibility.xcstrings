@@ -237,8 +237,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open list of archived conversations"
+            "state" : "translated",
+            "value" : "双击打开已归档对话列表"
           }
         },
         "zh-Hant" : {
@@ -361,8 +361,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "List of recent conversations"
+            "state" : "translated",
+            "value" : "最近对话列表"
           }
         },
         "zh-Hant" : {
@@ -485,8 +485,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open list of recent conversations"
+            "state" : "translated",
+            "value" : "双击打开最近对话列表"
           }
         },
         "zh-Hant" : {
@@ -733,8 +733,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open Settings"
+            "state" : "translated",
+            "value" : "双击打开设置"
           }
         },
         "zh-Hant" : {

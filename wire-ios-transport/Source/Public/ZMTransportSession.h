@@ -87,7 +87,8 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
          applicationGroupIdentifier:(nullable NSString *)applicationGroupIdentifier
                  applicationVersion:(nonnull NSString *)applicationVersion
                       minTLSVersion:(nullable NSString *)minTLSVersion
-                       selfClientID: (nullable NSString *)selfClientID;
+                       selfClientID:(nullable NSString *)selfClientID
+                    isSyncV2Enabled:(bool)isSyncV2Enabled;
 
 - (void)tearDown;
 

@@ -91,6 +91,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                 from: otherUser.remoteIdentifier,
                 qualifiedID: groupConversation.qualifiedID,
                 qualifiedFrom: otherUser.qualifiedID,
+                subconversationType: nil,
                 timestamp: nil,
                 type: "conversation.member-join"
             )

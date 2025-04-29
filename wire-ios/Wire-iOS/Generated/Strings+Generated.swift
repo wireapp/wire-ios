@@ -4419,16 +4419,6 @@ internal enum L10n {
           internal static let google = L10n.tr("Localizable", "open_link.maps.option.google", fallback: "Google Maps")
         }
       }
-      internal enum Twitter {
-        internal enum Option {
-          /// Browser / Twitter
-          internal static let `default` = L10n.tr("Localizable", "open_link.twitter.option.default", fallback: "Browser / Twitter")
-          /// Tweetbot
-          internal static let tweetbot = L10n.tr("Localizable", "open_link.twitter.option.tweetbot", fallback: "Tweetbot")
-          /// Twitterrific
-          internal static let twitterrific = L10n.tr("Localizable", "open_link.twitter.option.twitterrific", fallback: "Twitterrific")
-        }
-      }
     }
     internal enum Participants {
       /// Add
@@ -5502,10 +5492,6 @@ internal enum L10n {
             }
           }
         }
-        internal enum ApnsLogging {
-          /// APNS Logging
-          internal static let title = L10n.tr("Localizable", "self.settings.apns_logging.title", fallback: "APNS Logging")
-        }
         internal enum Callkit {
           /// Share with iOS
           internal static let caption = L10n.tr("Localizable", "self.settings.callkit.caption", fallback: "Share with iOS")
@@ -5588,10 +5574,6 @@ internal enum L10n {
           internal enum Maps {
             /// Locations
             internal static let title = L10n.tr("Localizable", "self.settings.link_options.maps.title", fallback: "Locations")
-          }
-          internal enum Twitter {
-            /// Tweets
-            internal static let title = L10n.tr("Localizable", "self.settings.link_options.twitter.title", fallback: "Tweets")
           }
         }
         internal enum ManageTeam {

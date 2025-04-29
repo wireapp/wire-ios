@@ -125,6 +125,7 @@ public final class UserSessionComponent {
         clientID: String,
         asyncStreamEnabled: Bool,
         onSelfClientInvalidated: @escaping () async -> Void
+        onProcessedCallEvent: @escaping (CallEventInfo) -> Void
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
@@ -144,6 +145,7 @@ public final class UserSessionComponent {
             proteusService: proteusService,
             asyncStreamEnabled: asyncStreamEnabled,
             onSelfClientInvalidated: onSelfClientInvalidated
+            onProcessedCallEvent: onProcessedCallEvent
         )
     }
 

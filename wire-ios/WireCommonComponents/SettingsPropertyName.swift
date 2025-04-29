@@ -61,18 +61,16 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case pingSoundName = "PingSoundName"
 
     // Open In
-    case tweetOpeningOption = "TweetOpeningOption"
     case mapsOpeningOption = "MapsOpeningOption"
     case browserOpeningOption = "BrowserOpeningOption"
 
-    // Persoanl Information
+    // Personal Information
     // Analytics
     case disableAnalyticsSharing = "DisableAnalyticsSharing"
 
     // Debug
     case disableCallKit = "DisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
-    case callingProtocolStrategy = "CallingProtcolStrategy"
     case enableBatchCollections = "EnableBatchCollections"
 
     case lockApp
