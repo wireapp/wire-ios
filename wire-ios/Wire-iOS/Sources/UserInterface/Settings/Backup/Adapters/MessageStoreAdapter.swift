@@ -114,7 +114,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             self.init(
                 assetClientMessage,
                 content: .asset(
-                    mimeType: asset.original.mimeType, // TODO: hasMimeType?
+                    mimeType: asset.original.hasMimeType ? asset.original.mimeType : "application/octet-stream",
                     size: size,
                     name: name,
                     otrKey: asset.uploaded.otrKey, // TODO: uploaded?

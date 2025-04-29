@@ -25,7 +25,8 @@ public struct CreateBackupUseCase<
     UserStore: UserStoreProtocol,
     ConversationStore: ConversationStoreProtocol,
     MessageStore: MessageStoreProtocol,
-    FileArchiver: FileArchiverProtocol
+    FileArchiver: FileArchiverProtocol,
+    EventProcessorHandle: InterruptEventProcessingProtocol
 >: CreateBackupUseCaseProtocol {
 
     typealias UserEntity = UserStore.UserEntity
@@ -35,7 +36,7 @@ public struct CreateBackupUseCase<
     let conversationStore: ConversationStore
     let messageStore: MessageStore
 
-    let eventProcessorHandle: any InterruptEventProcessingProtocol
+    let eventProcessorHandle: EventProcessorHandle?
     let selfUserID: QualifiedID
     let selfUserHandle: String?
     let fileArchiver: FileArchiver
@@ -46,7 +47,7 @@ public struct CreateBackupUseCase<
         userStore: UserStore,
         conversationStore: ConversationStore,
         messageStore: MessageStore,
-        eventProcessorHandle: any InterruptEventProcessingProtocol,
+        eventProcessorHandle: EventProcessorHandle?,
         fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
         selfUserID: QualifiedID,
@@ -67,6 +68,7 @@ public struct CreateBackupUseCase<
     public func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> { [
+                // swiftlint:disable closure_parameter_position
                 userStore,
                 conversationStore,
                 messageStore,
@@ -76,6 +78,7 @@ public struct CreateBackupUseCase<
                 logger,
                 selfUserID,
                 selfUserHandle
+                // swiftlint:enable closure_parameter_position
             ] in
 
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())

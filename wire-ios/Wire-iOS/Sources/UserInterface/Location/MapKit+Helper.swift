@@ -33,7 +33,7 @@ extension CLPlacemark {
         let lines: [String]?
 
         lines = [subThoroughfare, thoroughfare, locality, subLocality, administrativeArea, postalCode, country]
-            .compactMap { $0 }
+            .compactMap(\.self)
 
         return includeCountry ? lines?.joined(separator: ", ") : lines?.dropLast().joined(separator: ", ")
     }

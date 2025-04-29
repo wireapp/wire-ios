@@ -30,16 +30,16 @@ public extension SessionManager {
             }
 
             return ImportLegacyBackupUseCase(
-//                importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
-//                    context: syncContext,
-//                    fileArchiver: ImportBackupFileArchiver(),
-//                    syncTrigger: {
-//                        syncContext.performGroupedBlock {
-//                            userSession.triggerInitialSync()
-//                        }
-//                    },
-//                    logger: WireLogger.backupImport
-//                ),
+                // importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase(
+                //     context: syncContext,
+                //     fileArchiver: ImportBackupFileArchiver(),
+                //     syncTrigger: {
+                //         syncContext.performGroupedBlock {
+                //             userSession.triggerInitialSync()
+                //         }
+                //     },
+                //     logger: WireLogger.backupImport
+                // ),
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
                 streamDecryptor: ImportLegacyBackupStreamDecryptor(),
