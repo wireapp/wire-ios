@@ -18,16 +18,12 @@
 
 import WireBackup
 import WireDataModel
-import WireFoundation
 import WireDomain
+import WireFoundation
 
 struct ConversationStoreAdapter: ConversationStoreProtocol {
 
     let conversationLocalStore: any ConversationLocalStoreProtocol
-
-    init(conversationLocalStore: any ConversationLocalStoreProtocol) {
-        self.conversationLocalStore = conversationLocalStore
-    }
 
     func totalConversationCount() async throws -> Int {
         try await conversationLocalStore.totalBackupableConversationCount()
@@ -57,8 +53,8 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
         init?(_ conversation: ZMConversation) {
             guard let qualifiedID = conversation.qualifiedID else { return nil }
 
-            id = QualifiedID(qualifiedID)
-            name = conversation.name ?? ""
+            self.id = QualifiedID(qualifiedID)
+            self.name = conversation.name ?? ""
         }
 
     }

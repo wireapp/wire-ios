@@ -40,7 +40,7 @@ struct CreateBackupUseCaseAdapter: WireSettingsUI.CreateBackupUseCaseProtocol {
                         switch update {
                         case let .progress(current, total):
                             continuation.yield(.progress(current, total))
-                        case .done(let url):
+                        case let .done(url):
                             continuation.yield(.done(url))
                         }
                     }
@@ -65,7 +65,7 @@ extension WireSettingsUI.CreateBackupProgress {
         switch result {
         case let .progress(current, total):
             self = .progress(current, total)
-        case .done(let url):
+        case let .done(url):
             self = .done(url)
         }
     }

@@ -42,20 +42,20 @@ public enum MessageContent {
 
 // MARK: - Nested Types
 
-extension MessageContent {
+public extension MessageContent {
 
-    public struct TextContent {
+    struct TextContent {
         public var text: String
     }
 
-    public struct LocationContent {
+    struct LocationContent {
         public var longitude: Float
         public var latitude: Float
         public var name: String?
         public var zoom: Int32?
     }
 
-    public struct AssetContent {
+    struct AssetContent {
         var mimeType: String
         var size: UInt64
         var name: String?
@@ -84,26 +84,26 @@ extension MessageContent {
 
 }
 
-extension MessageContent.AssetContent.Metadata {
+public extension MessageContent.AssetContent.Metadata {
 
-    public struct ImageMetadata {
+    struct ImageMetadata {
         var width: Int32
         var height: Int32
         var tag: String?
     }
 
-    public struct VideoMetadata {
+    struct VideoMetadata {
         var width: Int32?
         var height: Int32?
         var duration: UInt64?
     }
 
-    public struct AudioMetadata {
+    struct AudioMetadata {
         var normalization: Data?
         var duration: UInt64?
     }
 
-    public struct GenericMetadata {
+    struct GenericMetadata {
         var name: String?
     }
 
@@ -111,9 +111,9 @@ extension MessageContent.AssetContent.Metadata {
 
 // MARK: - Convenience
 
-extension MessageContent {
+public extension MessageContent {
 
-    public static func text(
+    static func text(
         _ text: String
     ) -> Self {
         .text(
@@ -123,7 +123,7 @@ extension MessageContent {
         )
     }
 
-    public static func location(
+    static func location(
         longitude: Float,
         latitude: Float,
         name: String?,
@@ -139,7 +139,7 @@ extension MessageContent {
         )
     }
 
-    public static func asset(
+    static func asset(
         mimeType: String,
         size: UInt64,
         name: String?,
@@ -169,9 +169,9 @@ extension MessageContent {
 
 }
 
-extension MessageContent.AssetContent.Metadata {
+public extension MessageContent.AssetContent.Metadata {
 
-    public static func image(
+    static func image(
         width: Int32,
         height: Int32,
         tag: String?
@@ -185,7 +185,7 @@ extension MessageContent.AssetContent.Metadata {
         )
     }
 
-    public static func video(
+    static func video(
         width: Int32?,
         height: Int32?,
         duration: UInt64?
@@ -199,7 +199,7 @@ extension MessageContent.AssetContent.Metadata {
         )
     }
 
-    public static func audio(
+    static func audio(
         normalization: Data,
         duration: UInt64
     ) -> Self {
@@ -211,7 +211,7 @@ extension MessageContent.AssetContent.Metadata {
         )
     }
 
-    public static func generic(
+    static func generic(
         name: String?
     ) -> Self {
         .generic(

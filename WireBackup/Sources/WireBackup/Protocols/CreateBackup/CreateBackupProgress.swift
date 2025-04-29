@@ -25,13 +25,13 @@ public enum CreateBackupProgress: Sendable {
 
 }
 
-extension CreateBackupProgress {
+public extension CreateBackupProgress {
 
-    public static func progress(_ current: Int, _ total: Int) -> Self {
+    static func progress(_ current: Int, _ total: Int) -> Self {
         .progress(current: current, total: total)
     }
 
-    public static func done(_ url: URL) -> Self {
+    static func done(_ url: URL) -> Self {
         .done(url: url)
     }
 

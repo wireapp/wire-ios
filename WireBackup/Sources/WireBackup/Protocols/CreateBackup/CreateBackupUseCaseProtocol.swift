@@ -21,4 +21,3 @@
 public protocol CreateBackupUseCaseProtocol: Sendable {
     func invoke(password: String) -> AsyncThrowingStream<CreateBackupProgress, any Error>
 }
-

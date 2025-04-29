@@ -21,7 +21,8 @@ public import WireFoundation
 
 import KaliumBackup
 
-/// Abstraction around the multi-platform framework, attempting to improve the interface by using proper types and Swift concurrency.
+/// Abstraction around the multi-platform framework, attempting to improve the interface by using proper types and Swift
+/// concurrency.
 public struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtocol {
 
     let mpBackupCreator: MPBackupExporter
@@ -32,7 +33,7 @@ public struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtoc
         outputDirectoryURL: URL,
         fileArchiver: FileArchiver
     ) {
-        mpBackupCreator = MPBackupExporter(
+        self.mpBackupCreator = MPBackupExporter(
             selfUserId: BackupQualifiedId(selfUserID),
             workDirectory: workDirectoryURL.path(),
             outputDirectory: outputDirectoryURL.path(),
@@ -43,7 +44,7 @@ public struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtoc
 }
 
 private final class FileArchiverToFileZipperAdapter<FileArchiver>: FileZipper
-where FileArchiver: FileArchiverProtocol {
+    where FileArchiver: FileArchiverProtocol {
 
     let fileArchiver: FileArchiver
 

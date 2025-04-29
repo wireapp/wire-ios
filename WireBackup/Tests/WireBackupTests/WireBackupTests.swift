@@ -16,14 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireBackupSupport
 import Testing
+import WireBackupSupport
 
 @testable import WireBackup
 
 struct PlaceholderTest {
 
-    @Test func nothing() async throws {
+    @Test
+    func nothing() async throws {
         #expect(Bool(false))
     }
 

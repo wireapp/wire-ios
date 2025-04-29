@@ -106,7 +106,7 @@ final class ExportBackupViewModel: ObservableObject {
 
         backupProgress = switch state {
         case let .creatingBackup(current, total):
-                .ongoing(current: current, total: total)
+            .ongoing(current: current, total: total)
         case let .backupReady(url):
             .finished(url)
         default:
