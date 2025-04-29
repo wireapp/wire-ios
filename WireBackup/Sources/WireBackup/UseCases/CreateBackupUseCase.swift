@@ -40,7 +40,7 @@ public struct CreateBackupUseCase<
     let selfUserHandle: String?
     let fileArchiver: FileArchiver
     let currentDateProvider: any CurrentDateProviding
-    let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
+    let logger: @Sendable () -> any LoggerProtocol
 
     public init(
         userStore: UserStore,

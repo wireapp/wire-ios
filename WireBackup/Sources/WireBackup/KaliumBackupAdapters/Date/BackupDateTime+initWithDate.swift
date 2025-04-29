@@ -22,7 +22,6 @@ import KaliumBackup
 extension BackupDateTime {
 
     convenience init(_ date: Date) {
-        // TODO: is there a way around formatting and parsing strings?
         let isoString = ISO8601FormatStyle.format(date)
         let instant = Kotlinx_datetimeInstant.Companion().parse(isoString: isoString)
         self.init(instant: instant)
