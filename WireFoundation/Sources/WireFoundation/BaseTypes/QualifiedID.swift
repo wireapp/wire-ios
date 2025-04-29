@@ -38,26 +38,7 @@ public struct QualifiedID: Codable, Hashable, Sendable {
 extension QualifiedID: CustomDebugStringConvertible {
 
     public var debugDescription: String {
-        "\(uuid)@\(domain)"
-    }
-
-}
-
-public extension QualifiedID {
-
-    var uuid: UUID {
-        get { id }
-        set { id = newValue }
-    }
-
-    init(
-        uuid: UUID,
-        domain: String
-    ) {
-        self.init(
-            id: uuid,
-            domain: domain
-        )
+        "\(id)@\(domain)"
     }
 
 }
