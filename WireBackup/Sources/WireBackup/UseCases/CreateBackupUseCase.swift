@@ -26,8 +26,7 @@ public struct CreateBackupUseCase<
     UserStore: UserStoreProtocol,
     ConversationStore: ConversationStoreProtocol,
     MessageStore: MessageStoreProtocol,
-    FileArchiver: FileArchiverProtocol,
-    EventProcessorHandle: InterruptEventProcessingProtocol
+    FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
 
     typealias UserEntity = UserStore.UserEntity
@@ -37,7 +36,6 @@ public struct CreateBackupUseCase<
     let conversationStore: ConversationStore
     let messageStore: MessageStore
 
-    let eventProcessorHandle: EventProcessorHandle?
     let selfUserID: QualifiedID
     let selfUserHandle: String?
     let fileArchiver: FileArchiver
@@ -48,7 +46,6 @@ public struct CreateBackupUseCase<
         userStore: UserStore,
         conversationStore: ConversationStore,
         messageStore: MessageStore,
-        eventProcessorHandle: EventProcessorHandle?,
         fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
         selfUserID: QualifiedID,
@@ -58,7 +55,6 @@ public struct CreateBackupUseCase<
         self.userStore = userStore
         self.conversationStore = conversationStore
         self.messageStore = messageStore
-        self.eventProcessorHandle = eventProcessorHandle
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
         self.selfUserID = selfUserID
@@ -74,7 +70,6 @@ public struct CreateBackupUseCase<
                 conversationStore,
                 messageStore,
                 currentDateProvider,
-                eventProcessorHandle,
                 fileArchiver,
                 logger,
                 selfUserID,
@@ -109,11 +104,6 @@ public struct CreateBackupUseCase<
                     )
 
                     try Task.checkCancellation()
-
-                    // finish processing incoming events and then stop
-                    logger.debug("pausing event processing")
-                    await eventProcessorHandle.pauseProcessingEvents()
-                    defer { eventProcessorHandle.continueProcessingEvents() }
 
                     // get the counts of users, messages and conversations in order to report progress accurately
                     logger.debug("calculating entity counts")

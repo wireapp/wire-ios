@@ -16,32 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import KMPNativeCoroutinesAsync
+import Foundation
 @preconcurrency import KaliumBackup
 
-extension MPBackupImporter {
+extension BackupImporter {
 
     func importBackup(
         from backupFile: URL,
         using password: String
     ) async throws -> BackupImportPager {
 
-        let result = await asyncResult(
-            for: importFile(
-                multiplatformBackupFilePath: backupFile.path(),
-                passphrase: password
-            )
-        )
+        let result = try await mpBackupImporter.importFile(multiplatformBackupFilePath: backupFile.path(), passphrase: password)
 
-        let importResult: BackupImportResult
         switch result {
-        case .failure(let error):
-            throw error
-        case .success(let result):
-            importResult = result
-        }
-
-        switch importResult {
         case is BackupImportResult.FailureMissingOrWrongPassphrase:
             throw ImportResultError.incorrectPassword
         case is BackupImportResult.FailureParsingFailure:

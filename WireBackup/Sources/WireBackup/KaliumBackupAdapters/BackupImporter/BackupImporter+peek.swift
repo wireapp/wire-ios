@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import KMPNativeCoroutinesAsync
+import Foundation
 @preconcurrency import KaliumBackup
 
-extension MPBackupImporter {
+extension BackupImporter {
 
     func peek(into backupFile: URL) async throws -> PeekResult {
 
-        let result = await asyncResult(for: peek(pathToBackupFile: backupFile.path()))
-        let peekResult: BackupPeekResult
-        switch result {
-        case .failure(let error):
-            throw error
-        case .success(let result):
-            peekResult = result
-        }
+        let result = try await mpBackupImporter.peek(pathToBackupFile: backupFile.path())
 
-        switch peekResult {
+        switch result {
         case let result as BackupPeekResult.Success:
             return PeekResult(result.version, result.isEncrypted)
         case is BackupPeekResult.FailureUnknownFormat:

@@ -23,7 +23,7 @@ import KaliumBackup
 
 public struct BackupImporter<FileUnarchiver> where FileUnarchiver: FileUnarchiverProtocol {
 
-    private let mpBackupImporter: MPBackupImporter
+    let mpBackupImporter: MPBackupImporter
 
     public init(
         workDirectoryURL: URL,

@@ -383,33 +383,21 @@ extension SettingsCellDescriptorFactory {
             selfUser.managedObjectContext!.zm_sync!
         }
 
-        // TODO: remove
-        struct EventProcessorHandle: InterruptEventProcessingProtocol {
-            func pauseProcessingEvents() {}
-            func continueProcessingEvents() {}
-        }
-
-        let messageLocalStore = MessageLocalStore(
-            context: context
-        )
-        let userLocalStore = UserLocalStore(
-            context: context,
-            messageLocalStore: messageLocalStore
-        )
+        let messageLocalStore = MessageLocalStore(context: context)
+        let userLocalStore = UserLocalStore(context: context, messageLocalStore: messageLocalStore)
         let conversationLocalStore = ConversationLocalStore(
             context: context,
             mlsService: nil, // TODO: why nil?
             messageLocalStore: messageLocalStore
         )
 
-        let importBackupUseCase = sessionManager.importBackupUseCase!
+        let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
             CreateBackupUseCaseAdapter(
                 CreateBackupUseCase(
                     userStore: UserStoreAdapter(userLocalStore: userLocalStore),
                     conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
                     messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
-                    eventProcessorHandle: EventProcessorHandle(),
                     fileArchiver: CreateBackupFileArchiver(),
                     currentDateProvider: SystemDateProvider(),
                     selfUserID: .init(selfUser.qualifiedID!),
