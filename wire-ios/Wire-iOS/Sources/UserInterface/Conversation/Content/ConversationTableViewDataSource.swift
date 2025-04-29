@@ -60,15 +60,6 @@ final class ConversationTableViewDataSource: NSObject {
 
     let userSession: UserSession
 
-    func resetSectionControllers() {
-        sectionControllers.reset()
-        calculateSections { [weak self] sections in
-            guard let self else { return }
-            currentSections = sections
-            tableView.reloadData()
-        }
-    }
-
     var actionControllers = ThreadSafeDictionary<UUID, ConversationMessageActionController>()
 
     let conversation: ZMConversation
@@ -290,6 +281,15 @@ final class ConversationTableViewDataSource: NSObject {
         super.init()
 
         tableView.dataSource = self
+    }
+    
+    func resetSectionControllers() {
+        sectionControllers.reset()
+        calculateSections { [weak self] sections in
+            guard let self else { return }
+            currentSections = sections
+            tableView.reloadData()
+        }
     }
 
     func section(for message: ZMConversationMessage) -> Int? {

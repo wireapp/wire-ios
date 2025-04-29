@@ -18,6 +18,9 @@
 
 public import Foundation
 
+/// A debouncer that triggers the action immediately on the first call (leading)
+/// and once more after a delay if additional calls occur (trailing).
+/// Useful for responding instantly but also handling final state after other input.
 public final class LeadingTrailingDebouncer<ID: Hashable> {
 
     private struct DebounceState {
