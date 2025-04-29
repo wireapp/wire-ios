@@ -74,7 +74,7 @@ final class CreateBackupUseCaseTests: XCTestCase {
     }
 
     func testExample() throws {
-        XCTFail("TODO: implement")
+        try XCTSkip() // TODO: [WPB-16658] will be finished with the restore part
     }
 
 }
