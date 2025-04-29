@@ -21,6 +21,7 @@ public import WireFoundation
 
 import KaliumBackup
 
+/// Abstraction around the multi-platform framework, attempting to improve the interface by using proper types and Swift concurrency.
 public struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtocol {
 
     let mpBackupCreator: MPBackupExporter
