@@ -113,6 +113,7 @@ final class ConversationTableViewDataSource: NSObject {
         forceRecalculate: Bool = false,
         completion: @escaping ([Section]) -> Void
     ) {
+        let mainThreadContext = userSession.contextProvider.viewContext
         let messagesOnMainThread = allMessages
         let messageIds = messagesOnMainThread.map(\.objectID)
         let selfUserOnMainThread = userSession.selfUser
@@ -185,16 +186,16 @@ final class ConversationTableViewDataSource: NSObject {
 
                     // Re-set messages from Main thread to section controller to not have crash with later interactions
                     // with data
-                    if let mainThreadObject = allMessages.first(where: {
-                        $0.objectID == (sectionController.message as! ZMMessage).objectID
-                    }) {
-                        sectionController.message = mainThreadObject
+                    if let managedID = (sectionController.message as? ZMMessage)?.objectID,
+                       let mainThreadMessage = try? mainThreadContext.existingObject(with: managedID) as? ZMMessage {
+                        sectionController.message = mainThreadMessage
                     } else {
                         WireLogger.conversation
                             .debug(
                                 "No message found to reset from background to main thread, nonce: \(String(describing: sectionController.message.nonce))"
                             )
                     }
+
                     sectionController.selfUser = selfUserOnMainThread
 
                     if sectionController.context != context || forceRecalculate {
