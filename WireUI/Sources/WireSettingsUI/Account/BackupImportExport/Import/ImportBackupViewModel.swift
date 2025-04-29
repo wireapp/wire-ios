@@ -134,23 +134,23 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .success
                     }
                 }
-            } catch ImportBackupError.passwordRequired {
+            } catch ImportLegacyBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
                 return // don't clean up temporary file
-            } catch ImportBackupError.decryptionError {
+            } catch ImportLegacyBackupError.decryptionError {
                 logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
                 return // don't clean up temporary file
-            } catch ImportBackupError.incompatibleFileFormat {
-                logger.warn("restore failed due to incompatible file format")
-                alertContent = .init(
-                    title: Strings.Alert.IncompatibleBackupError.title,
-                    message: Strings.Alert.IncompatibleBackupError.message,
-                    action: Strings.Alert.ok
-                )
-                state = .restoreFailed
-            } catch ImportBackupError.invalidAccountID {
+//            } catch ImportBackupError.incompatibleFileFormat { // TODO: fix
+//                logger.warn("restore failed due to incompatible file format")
+//                alertContent = .init(
+//                    title: Strings.Alert.IncompatibleBackupError.title,
+//                    message: Strings.Alert.IncompatibleBackupError.message,
+//                    action: Strings.Alert.ok
+//                )
+//                state = .restoreFailed
+            } catch ImportLegacyBackupError.invalidAccountID {
                 logger.warn("restore failed due to invalid account ID")
                 alertContent = .init(
                     title: Strings.Alert.WrongFileError.title,

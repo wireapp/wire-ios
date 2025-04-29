@@ -398,7 +398,7 @@ extension SettingsCellDescriptorFactory {
                     userStore: UserStoreAdapter(userLocalStore: userLocalStore),
                     conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
                     messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
-                    fileArchiver: CreateBackupFileArchiver(),
+                    fileArchiver: ZipArchiveFileArchiver(),
                     currentDateProvider: SystemDateProvider(),
                     selfUserID: .init(selfUser.qualifiedID!),
                     selfUserHandle: selfUser.handle,

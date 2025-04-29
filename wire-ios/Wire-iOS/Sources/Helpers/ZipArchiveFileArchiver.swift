@@ -19,7 +19,7 @@
 import WireFoundation
 import ZipArchive
 
-struct CreateBackupFileArchiver: FileArchiverProtocol {
+struct ZipArchiveFileArchiver: FileArchiverProtocol {
 
     func zipResources(
         at resourceURLs: [URL],
@@ -30,12 +30,13 @@ struct CreateBackupFileArchiver: FileArchiverProtocol {
             withFilesAtPaths: resourceURLs.map { $0.path() }
         )
         guard success else {
-            throw CreateBackupFileArchiverError.compressionError
+            throw ZipArchiveFileArchiverError.unknown
         }
     }
+
 }
 
-enum CreateBackupFileArchiverError: Error, Equatable, CaseIterable {
+enum ZipArchiveFileArchiverError: Error, Equatable, CaseIterable {
     /// The archiving library returned a failure when compressing the files.
-    case compressionError
+    case unknown
 }

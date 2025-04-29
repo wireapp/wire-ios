@@ -16,11 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireFoundation
-
-extension WireDataModel.QualifiedID {
-    static let mockID1 = WireDataModel.QualifiedID(uuid: .mockID1, domain: "example.com")
-    static let mockID2 = WireDataModel.QualifiedID(uuid: .mockID2, domain: "example.com")
-    static let mockID3 = WireDataModel.QualifiedID(uuid: .mockID3, domain: "example.com")
+public enum ImportBackupError: Error {
+    case incompatibleFileFormat // there is no mapping to this error (it's never thrown) // TODO: still true?
+    case invalidFileExtension
 }
