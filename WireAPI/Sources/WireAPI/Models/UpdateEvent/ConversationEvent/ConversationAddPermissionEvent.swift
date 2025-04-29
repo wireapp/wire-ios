@@ -21,7 +21,7 @@ import Foundation
 /// An event where the conversation permission was updated.
 /// This event occurs for private conversations (aka channels) only.
 
-public struct ConversationAddPermissionEvent: Equatable, Codable, Sendable {
+public struct ConversationAddPermissionEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 

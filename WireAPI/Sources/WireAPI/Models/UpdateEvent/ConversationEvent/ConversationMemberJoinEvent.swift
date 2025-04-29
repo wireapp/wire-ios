@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where some participants were added to a conversation.
 
-public struct ConversationMemberJoinEvent: Equatable, Codable, Sendable {
+public struct ConversationMemberJoinEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
