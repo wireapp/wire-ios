@@ -207,7 +207,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
         showUnreadDot: Bool
     ) -> SUT {
 
-        let currentDateProvider = MockCurrentDateProviding()
+        let currentDateProvider = CurrentDateProvidingMock()
         currentDateProvider.now = now
 
         return BurstTimestampSenderMessageCellDescription(

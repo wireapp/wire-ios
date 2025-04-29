@@ -24,9 +24,9 @@ import XCTest
 
 final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
     private var userDefaults: UserDefaults!
-    private var sut: DidPresentNotificationPermissionHintUseCase<MockCurrentDateProviding>!
+    private var sut: DidPresentNotificationPermissionHintUseCase<CurrentDateProvidingMock>!
 
     override func setUp() {
         mockDateProvider = .init()
