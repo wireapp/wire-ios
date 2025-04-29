@@ -62,7 +62,7 @@ where FileArchiver: FileArchiverProtocol {
             .appending(path: UUID().uuidString, directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
 
-        // call zip library
+        // create zip file
         let destinationURL = destinationDirectory.appendingPathComponent("backup.zip", isDirectory: false)
         try fileArchiver.zipResources(at: targetURLs, into: destinationURL)
 
