@@ -42,6 +42,7 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = nil
     }
 
+    // TODO: [WPB-17397] re-enable
     func testDateIsStored() throws {
 
         // When

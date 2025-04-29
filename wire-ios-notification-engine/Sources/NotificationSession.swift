@@ -182,7 +182,10 @@ public final class NotificationSession {
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
             minTLSVersion: minTLSVersion,
-            selfClientID: selfClientID
+            selfClientID: selfClientID,
+            // This flag only concerns the push channel which isn't relevant
+            // in the notification session.
+            isSyncV2Enabled: false
         )
 
         try self.init(

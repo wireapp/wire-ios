@@ -27,21 +27,30 @@ import XCTest
 
 final class VerifyUserSessionUseCaseTests: XCTestCase {
     private var sut: VerifyUserSessionUseCase!
+    private var journal: Journal!
     private var cookieStorage: MockCookieStorageProtocol!
     private var stack: MockCoreDataStackProtocol!
 
     override func setUp() async throws {
+        journal = Journal(
+            userID: UUID(),
+            storage: UserDefaults.temporary()
+        )
         stack = MockCoreDataStackProtocol()
         cookieStorage = MockCookieStorageProtocol()
 
         sut = VerifyUserSessionUseCase(
+            journal: journal,
             cookieStorage: cookieStorage,
             coreData: stack
         )
+
+        journal[.isSyncV2Enabled] = true
     }
 
     override func tearDown() async throws {
         sut = nil
+        journal = nil
         cookieStorage = nil
         stack = nil
     }
@@ -61,6 +70,19 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
 
         // Then
         XCTAssertEqual(cookieStorage.fetchCookies_Invocations.count, 1)
+
+    }
+
+    func testVerify_It_Throws_User_SyncV2IsNotEnabled_Error() async throws {
+
+        // Given
+        journal[.isSyncV2Enabled] = false
+
+        // Then
+        await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.syncV2IsNotEnabled) { [self] in
+            // When
+            try await sut.invoke()
+        }
 
     }
 
@@ -165,6 +187,8 @@ extension VerifyUserSessionUseCase.Failure: Equatable {
         case (.userUnauthenticated, .userUnauthenticated):
             true
         case (.unableToLoadStores, .unableToLoadStores):
+            true
+        case (.syncV2IsNotEnabled, .syncV2IsNotEnabled):
             true
         default:
             false

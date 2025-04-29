@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import WireDomain
 import WireRequestStrategy
 
 @objcMembers
@@ -43,7 +44,8 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
         lastEventIDRepository: LastEventIDRepositoryInterface,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        isSyncV2Enabled: Bool
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
@@ -51,7 +53,8 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         operationStatus.isInBackground = application.applicationState == .background
         self.syncStatus = SyncStatus(
             managedObjectContext: managedObjectContext,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            isSyncV2Enabled: isSyncV2Enabled
         )
         self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)

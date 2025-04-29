@@ -24,7 +24,7 @@ public protocol SearchUsersUseCaseProtocol {
     func invoke(
         query: String,
         options: SearchOptions,
-        messageProtocol: MessageProtocol?
+        messageProtocol: WireDataModel.MessageProtocol?
     ) async throws -> SearchResult
 }
 

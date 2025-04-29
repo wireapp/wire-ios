@@ -26,7 +26,7 @@ public extension ZMConversation {
 
     @NSManaged var isDeletedRemotely: Bool
 
-    /// Whether the converstion is marked as read only
+    /// Whether the conversation is marked as read only
 
     @NSManaged var isForcedReadOnly: Bool
 
