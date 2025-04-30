@@ -134,7 +134,7 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .success
                     }
                 }
-            } catch ImportLegacyBackupError.passwordRequired {
+            } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
                 return // don't clean up temporary file

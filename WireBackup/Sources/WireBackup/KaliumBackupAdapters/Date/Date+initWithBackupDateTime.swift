@@ -19,13 +19,10 @@
 import Foundation
 import KaliumBackup
 
-extension BackupDateTime {
+extension Date {
 
-    convenience init(_ date: Date) {
-        let instant = Kotlinx_datetimeInstant
-            .Companion()
-            .fromEpochMilliseconds(epochMilliseconds: Int64(date.timeIntervalSince1970) * 1000)
-        self.init(instant: instant)
+    init(_ backupDateTime: BackupDateTime) {
+        self = Date(timeIntervalSince1970: TimeInterval(backupDateTime.instant.epochSeconds))
     }
 
 }

@@ -103,6 +103,7 @@ public struct ImportBackupUseCase<
                             else { continue }
 
                             if !storedUserIDs.contains(userID) {
+                                // TODO: create UserEntity from BackupUser here? make BackupUser conform to protocol?
                                 try await userStore.addUser(
                                     id: userID,
                                     name: backupUser.name,
@@ -148,15 +149,19 @@ public struct ImportBackupUseCase<
                         for current in 0 ..< backupMessages.size {
                             guard
                                 let backupMessage = backupMessages.get(index: current),
-                                let mesasgeID = UUID(uuidString: backupMessage.id)
+                                let messageID = UUID(uuidString: backupMessage.id),
+                                let content = WireBackup.MessageContent(backupMessage.content)
                             else { continue }
 
-                            if !storedMessageIDs.contains(mesasgeID) { // TODO: what if it is in the db but marked as deleted?
-                                print("need to add message \(backupMessage.content)")
-//                                try await messageStore.addMessage(
-//                                    id: messageID,
-//                                    name: backupMessage.name
-//                                )
+                            if !storedMessageIDs.contains(messageID) { // TODO: what if it is in the db but marked as deleted?
+                                try await messageStore.addMessage(
+                                    id: messageID,
+                                    conversationID: QualifiedID(backupMessage.conversationId),
+                                    senderUserID: QualifiedID(backupMessage.senderUserId),
+                                    senderClientID: backupMessage.senderClientId,
+                                    creationDate: Date(backupMessage.creationDate),
+                                    content: content
+                                )
                             }
 
                             if current % 50 == 0 || current == backupMessages.size - 1 {
@@ -165,35 +170,6 @@ public struct ImportBackupUseCase<
                             }
                         }
                     }
-
-                        /*
-                        let storedMessages = try context.fetch(MessageAdapter.fetchRequest())
-                            .compactMap(MessageAdapter.init)
-
-                        while pager.messagesPager.hasMorePages() {
-                            let messages = pager.messagesPager.nextPage()
-                            for current in 0 ..< messages.size {
-                                guard let message = messages.get(index: current) else { continue }
-
-                                // if !storedMessages.contains(where: { $0.id == }) {
-
-                                fatalError("TODO")
-                                message.id
-                                message.conversationId
-                                message.content
-                                message.creationDate
-                                message.senderClientId
-                                message.senderUserId
-                                logger.error("TODO: import message \(message)")
-
-                                if current % 50 == 0 || current == messages.size - 1 {
-                                    try Task.checkCancellation()
-                                    reportProgress(Int(exactly: current) ?? 0, total)
-                                }
-                            }
-                        }
-
-                     */
 
                     syncTrigger()
 

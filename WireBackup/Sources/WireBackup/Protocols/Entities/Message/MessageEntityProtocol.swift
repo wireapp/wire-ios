@@ -21,8 +21,9 @@ public import WireFoundation
 
 // sourcery: AutoMockable
 public protocol MessageEntityProtocol {
+    typealias MessageID = UUID
 
-    var id: String { get }
+    var id: MessageID { get }
     var conversationID: QualifiedID { get }
     var senderUserID: QualifiedID { get }
     var senderClientID: String? { get }

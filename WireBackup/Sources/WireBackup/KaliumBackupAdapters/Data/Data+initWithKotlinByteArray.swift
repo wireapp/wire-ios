@@ -19,13 +19,16 @@
 import Foundation
 import KaliumBackup
 
-extension BackupDateTime {
+extension Data {
 
-    convenience init(_ date: Date) {
-        let instant = Kotlinx_datetimeInstant
-            .Companion()
-            .fromEpochMilliseconds(epochMilliseconds: Int64(date.timeIntervalSince1970) * 1000)
-        self.init(instant: instant)
+    init(_ kotlinByteArray: KotlinByteArray) {
+        fatalError()
+//        let bytes = [UInt8](data)
+//        let intArray = bytes.map(Int8.init(bitPattern:))
+//        self.init(size: Int32(bytes.count))
+//        for (index, element) in intArray.enumerated() {
+//            set(index: Int32(index), value: element)
+//        }
     }
 
 }

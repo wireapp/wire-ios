@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+public import WireFoundation
 
 // sourcery: AutoMockable
 public protocol MessageStoreProtocol: Sendable {
@@ -26,9 +27,19 @@ public protocol MessageStoreProtocol: Sendable {
     func totalMessageCount() async throws -> Int
 
     /// Returns the IDs of all messages stored in the local database, including deleted ones.
-    func fetchAllMessageIDs() async throws -> [UUID]
+    func fetchAllMessageIDs() async throws -> [MessageEntity.MessageID]
 
     /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() async throws -> [MessageEntity]
+
+    /// Adds a message from the backup file to the local data store.
+    func addMessage(
+        id: MessageEntity.MessageID,
+        conversationID: ConversationEntityProtocol.ConversationID?,
+        senderUserID: UserEntityProtocol.UserID?,
+        senderClientID: String?,
+        creationDate: Date,
+        content: WireBackup.MessageContent
+    ) async throws
 
 }

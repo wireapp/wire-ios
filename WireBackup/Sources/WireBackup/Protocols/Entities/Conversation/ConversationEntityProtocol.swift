@@ -20,8 +20,9 @@ public import WireFoundation
 
 // sourcery: AutoMockable
 public protocol ConversationEntityProtocol {
+    typealias ConversationID = QualifiedID
 
-    var id: QualifiedID { get }
+    var id: ConversationID { get }
     var name: String { get }
 
 }

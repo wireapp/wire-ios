@@ -19,6 +19,8 @@
 import SwiftUI
 import WireDesign
 
+// TODO: call cleanup use case
+
 struct CreatingBackupProgressView: View {
 
     var progress: CreatingBackupProgressModel

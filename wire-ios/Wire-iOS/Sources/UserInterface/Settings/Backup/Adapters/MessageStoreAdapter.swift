@@ -44,11 +44,33 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         }
     }
 
+    func addMessage( // TODO: should it accept MessageEntity?
+        id: MessageEntity.MessageID,
+        conversationID: QualifiedID?,
+        senderUserID: QualifiedID?,
+        senderClientID: String?,
+        creationDate: Date,
+        content: WireBackup.MessageContent
+    ) async throws {
+        switch content {
+
+        case .text(let textContent):
+            fatalError()
+
+        case .location(let locationContent):
+            fatalError()
+
+        case .asset(let assetContent):
+            fatalError()
+
+        }
+    }
+
     // MARK: -
 
     struct MessageEntity: MessageEntityProtocol {
 
-        let id: String
+        let id: MessageID
         let conversationID: QualifiedID
         let senderUserID: QualifiedID
         let senderClientID: String?
@@ -136,7 +158,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         init?(_ message: ZMMessage, content: MessageContent) {
 
             guard
-                let id = message.nonce?.transportString(),
+                let id = message.nonce,
                 let senderUserID = message.senderUser?.qualifiedID,
                 let creationDate = message.serverTimestamp,
                 let conversationID = message.conversation?.qualifiedID
