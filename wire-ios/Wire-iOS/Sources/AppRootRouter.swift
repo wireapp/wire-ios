@@ -260,7 +260,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         onRetry: @escaping () -> Void
     ) {
 
-        let syncErrorMessage = if DeveloperFlag.showDetailedSyncError.isOn {
+        let syncErrorMessage = if DeveloperFlag.showDetailedErrors.isOn {
             // show detailed sync error message
             (error as NSError).description
         } else {
