@@ -96,8 +96,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         if
             let conversation = object.conversation,
             conversation.isSelfConversation,
-            conversation.messageProtocol == .mls
-        {
+            conversation.messageProtocol == .mls {
             completion()
             return
         }
