@@ -84,13 +84,11 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
     }
 
     private func handleFailure(_ failure: NetworkError, userClient: UserClient) async throws {
-
         WireLogger.userClient.error(
-            "error removing self client \(userClient.safeForLoggingDescription): \(failure.localizedDescription)"
+            "error removing self client: \(failure.localizedDescription)",
+            attributes: [.selfClientId: userClient.safeForLoggingDescription]
         )
-WireLogger.userClient.error(
-            "error removing self client: \(failure.localizedDescription)", attributes: [.selfClientId: userClient.safeForLoggingDescription]
-        )
+
         switch failure {
         case let .invalidRequestError(failureResponse, _):
             switch failureResponse.label {
