@@ -245,7 +245,8 @@ final class APIMigrationManagerTests: MessagingTest {
         let mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(

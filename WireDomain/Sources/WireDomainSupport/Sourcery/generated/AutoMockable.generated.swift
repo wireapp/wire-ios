@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -213,33 +213,6 @@ public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
 
 }
 
-class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - processEvent
-
-    var processEvent_Invocations: [ConversationEvent] = []
-    var processEvent_MockError: Error?
-    var processEvent_MockMethod: ((ConversationEvent) async throws -> Void)?
-
-    func processEvent(_ event: ConversationEvent) async throws {
-        processEvent_Invocations.append(event)
-
-        if let error = processEvent_MockError {
-            throw error
-        }
-
-        guard let mock = processEvent_MockMethod else {
-            fatalError("no mock for `processEvent`")
-        }
-
-        try await mock(event)
-    }
-}
-
 class MockConversationAudioMessageNotificationBuilderProtocol: ConversationAudioMessageNotificationBuilderProtocol {
 
     // MARK: - Life cycle
@@ -397,6 +370,34 @@ class MockConversationEventNotificationBuilderProtocol: ConversationEventNotific
         } else {
             fatalError("no mock for `buildContentEvent`")
         }
+    }
+
+}
+
+class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - processEvent
+
+    var processEvent_Invocations: [ConversationEvent] = []
+    var processEvent_MockError: Error?
+    var processEvent_MockMethod: ((ConversationEvent) async throws -> Void)?
+
+    func processEvent(_ event: ConversationEvent) async throws {
+        processEvent_Invocations.append(event)
+
+        if let error = processEvent_MockError {
+            throw error
+        }
+
+        guard let mock = processEvent_MockMethod else {
+            fatalError("no mock for `processEvent`")
+        }
+
+        try await mock(event)
     }
 
 }
@@ -2075,38 +2076,6 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
         }
 
         try await mock(eventData)
-    }
-
-}
-
-public class MockMLSTransportProvider: MLSTransportProvider {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - provideMLSTransport
-
-    public var provideMLSTransport_Invocations: [Void] = []
-    public var provideMLSTransport_MockError: Error?
-    public var provideMLSTransport_MockMethod: (() throws -> MlsTransport)?
-    public var provideMLSTransport_MockValue: MlsTransport?
-
-    public func provideMLSTransport() throws -> MlsTransport {
-        provideMLSTransport_Invocations.append(())
-
-        if let error = provideMLSTransport_MockError {
-            throw error
-        }
-
-        if let mock = provideMLSTransport_MockMethod {
-            return try mock()
-        } else if let mock = provideMLSTransport_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `provideMLSTransport`")
-        }
     }
 
 }

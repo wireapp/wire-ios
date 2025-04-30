@@ -54,7 +54,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let lastUpdateEventIDRepository: any LastEventIDRepositoryInterface
     private let initialSyncProvider: any InitialSyncProvider
     private let incrementalSyncProvider: any IncrementalSyncProvider
-    private let mlsTransportProvider: any MLSTransportProvider
     private let legacySyncStatus: any SyncStatusProtocol
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
@@ -81,7 +80,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
-        mlsTransportProvider: any MLSTransportProvider,
         legacySyncStatus: any SyncStatusProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
@@ -90,7 +88,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.coreCryptoProvider = coreCryptoProvider
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider
-        self.mlsTransportProvider = mlsTransportProvider
         self.legacySyncStatus = legacySyncStatus
         self.syncStateSubject = syncStateSubject
         super.init()
@@ -107,12 +104,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func resume() {
         Task {
-            do {
-                try await coreCryptoProvider.registerMlsTransport(mlsTransportProvider.provideMLSTransport())
-            } catch {
-                WireLogger.sync.error("failed to register mls transport: \(String(describing: error))")
-            }
-
             do {
                 try await performSync()
             } catch {

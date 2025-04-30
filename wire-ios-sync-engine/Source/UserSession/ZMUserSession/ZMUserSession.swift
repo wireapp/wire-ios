@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireAnalytics
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireLogging
@@ -567,6 +568,8 @@ public final class ZMUserSession: NSObject {
             )
         )
 
+        coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
+
         let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
             clientSessionComponent
         } else {
@@ -580,7 +583,6 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: incrementalSyncProvider,
-            mlsTransportProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus,
             syncStateSubject: clientSessionComponent.syncStateSubject
         )

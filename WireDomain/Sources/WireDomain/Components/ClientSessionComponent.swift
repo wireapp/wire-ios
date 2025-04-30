@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
 
 public final class ClientSessionComponent {
@@ -677,7 +678,7 @@ public final class ClientSessionComponent {
         isMLSEnabled: isMLSEnabled
     )
 
-    lazy var mlsTransport = MLSTransportImpl(
+    public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
         mlsAPI: mlsAPI,
         conversationEventProcessor: conversationEventProcessor
     )

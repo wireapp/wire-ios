@@ -48,8 +48,7 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
             transportSession.renewAccessTokenCalls = []
         }
         BackendInfo.apiVersion = apiVersion
-        
-        
+
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
 
         // when

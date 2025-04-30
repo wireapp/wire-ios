@@ -108,7 +108,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let userClient = syncMOC.performAndWait {
             self.createSelfClient()
         }
-        
+
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
 
         // WHEN

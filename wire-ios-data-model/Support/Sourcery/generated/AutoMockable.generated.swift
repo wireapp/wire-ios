@@ -1894,21 +1894,16 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
     // MARK: - registerMlsTransport
 
     public var registerMlsTransport_Invocations: [any MlsTransport] = []
-    public var registerMlsTransport_MockError: Error?
-    public var registerMlsTransport_MockMethod: ((any MlsTransport) async throws -> Void)?
+    public var registerMlsTransport_MockMethod: ((any MlsTransport) -> Void)?
 
-    public func registerMlsTransport(_ transport: any MlsTransport) async throws {
+    public func registerMlsTransport(_ transport: any MlsTransport) {
         registerMlsTransport_Invocations.append(transport)
-
-        if let error = registerMlsTransport_MockError {
-            throw error
-        }
 
         guard let mock = registerMlsTransport_MockMethod else {
             fatalError("no mock for `registerMlsTransport`")
         }
 
-        try await mock(transport)
+        mock(transport)
     }
 
 }

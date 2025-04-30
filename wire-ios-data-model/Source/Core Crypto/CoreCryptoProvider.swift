@@ -41,8 +41,19 @@ public protocol CoreCryptoProviderProtocol {
     ///   - certificateChain: the resulting certificate chain from the end to end identity enrollment
     func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws
         -> CRLsDistributionPoints?
+
+    /// Provide the mls transport which will be registered with the core crypto instance
+    ///
+    /// - parameters:
+    ///   - transport: mls transport which sends mls messages to the backend
+    func registerMlsTransport(_ transport: any MlsTransport)
     
-    func registerMlsTransport(_ transport: any MlsTransport) async throws
+    
+    /// Register observer of epochs
+    ///
+    /// - parameters:
+    ///   - epochObserver: observer which will be informed on epoch changes
+    func registerEpochObserver(_ epochObserver: any WireCoreCryptoUniffi.EpochObserver) async
 
 }
 
@@ -58,7 +69,9 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var loadingCoreCrypto = false
     private var initialisatingMLS = false
     private var hasInitialisedMLS = false
+    private var hasRegisteredMlsTransport = false
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
+    private nonisolated(unsafe) var mlsTransport: MlsTransport?
 
     public init(
         selfUserID: UUID,
@@ -78,7 +91,9 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
-        try await getCoreCrypto()
+        let coreCrypto = try await getCoreCrypto()
+        try await registerMlsTransportIfNecessary(coreCrypto: coreCrypto)
+        return coreCrypto
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
@@ -109,11 +124,20 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
     }
-    
-    public func registerMlsTransport(_ transport: any MlsTransport) async throws {
-        try await coreCrypto().configure { coreCrypto in
-            try await coreCrypto.provideTransport(transport: transport)
+
+    public nonisolated func registerMlsTransport(_ transport: any MlsTransport) {
+        mlsTransport = transport
+    }
+
+    private func registerMlsTransportIfNecessary(coreCrypto: SafeCoreCrypto) async throws {
+        guard let mlsTransport, !hasRegisteredMlsTransport else {
+            return
         }
+        
+        try await coreCrypto.configure { coreCrypto in
+            try await coreCrypto.provideTransport(transport: mlsTransport)
+        }
+        hasRegisteredMlsTransport = true
     }
 
     // Create an CoreCrypto instance with guranteees that only one task is performing
