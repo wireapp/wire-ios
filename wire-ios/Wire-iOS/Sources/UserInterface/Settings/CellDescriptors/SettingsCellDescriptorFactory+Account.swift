@@ -404,7 +404,7 @@ extension SettingsCellDescriptorFactory {
             legacyImportBackupUseCase: ImportLegacyBackupUseCaseAdapter(sessionManager.importLegacyBackupUseCase!)
         )
         //let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
-        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if true /* DeveloperFlag.createCrossPlatformBackups.isOn */ { // TODO: feature flag
             CreateBackupUseCaseAdapter(
                 CreateBackupUseCase(
                     selfUserID: .init(selfUser.qualifiedID!),
