@@ -172,20 +172,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     }
 
-    public func totalBackupableMessageCount() async throws -> Int {
-        try await context.perform { [context] in
-            try context.count(for: ZMMessage.fetchRequest())
-        }
-    }
-
-    public func fetchAllBackupableMessages() async throws -> [ZMMessage] {
-        let fetchRequest = ZMMessage.fetchRequest()
-        // TODO: adjust fetchrequest! (e.g. no system messages)
-        return try await context.perform { [context] in
-            try context.fetch(fetchRequest) as! [ZMClientMessage]
-        }
-    }
-
     public func addClientMessage(
         _ clientMessage: ZMClientMessage,
         isNewMessage: Bool,
@@ -1033,6 +1019,29 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             try clientMessage.setUnderlyingMessage(message)
         } catch {
             assertionFailure("Failed to set generic message: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Backup / Restore
+
+    public func totalBackupableMessageCount() async throws -> Int {
+        try await context.perform { [context] in
+            try context.count(for: ZMMessage.fetchRequest())
+        }
+    }
+
+    public func fetchAllBackupableMessageIDs() async throws -> [UUID] {
+        try await context.perform { [context] in
+            let messages = try context.fetch(ZMMessage.fetchRequest()) as! [ZMMessage]
+            return messages.compactMap(\.nonce)
+        }
+    }
+
+    public func fetchAllBackupableMessages() async throws -> [ZMMessage] {
+        let fetchRequest = ZMMessage.fetchRequest()
+        // TODO: adjust fetchrequest! (e.g. no system messages)
+        return try await context.perform { [context] in
+            try context.fetch(fetchRequest) as! [ZMMessage]
         }
     }
 

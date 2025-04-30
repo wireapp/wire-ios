@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+public import Foundation
 
 // sourcery: AutoMockable
 public protocol MessageStoreProtocol: Sendable {
@@ -26,7 +26,7 @@ public protocol MessageStoreProtocol: Sendable {
     func totalMessageCount() async throws -> Int
 
     /// Returns the IDs of all messages stored in the local database, including deleted ones.
-    func fetchAllMessageIDs() async throws -> [QualifiedID]
+    func fetchAllMessageIDs() async throws -> [UUID]
 
     /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() async throws -> [MessageEntity]

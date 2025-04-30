@@ -141,6 +141,31 @@ public struct ImportBackupUseCase<
                         }
                     }
 
+                    let storedMessageIDs = try await messageStore.fetchAllMessageIDs()
+                    let messagesPager = pagers.pagers.messagesPager
+                    while messagesPager.hasMorePages() {
+                        let backupMessages = messagesPager.nextPage()
+                        for current in 0 ..< backupMessages.size {
+                            guard
+                                let backupMessage = backupMessages.get(index: current),
+                                let mesasgeID = UUID(uuidString: backupMessage.id)
+                            else { continue }
+
+                            if !storedMessageIDs.contains(mesasgeID) { // TODO: what if it is in the db but marked as deleted?
+                                print("need to add message \(backupMessage.content)")
+//                                try await messageStore.addMessage(
+//                                    id: messageID,
+//                                    name: backupMessage.name
+//                                )
+                            }
+
+                            if current % 50 == 0 || current == backupMessages.size - 1 {
+                                try Task.checkCancellation()
+                                reportProgress(Int(exactly: current) ?? 0, total)
+                            }
+                        }
+                    }
+
                         /*
                         let storedMessages = try context.fetch(MessageAdapter.fetchRequest())
                             .compactMap(MessageAdapter.init)

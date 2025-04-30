@@ -31,9 +31,8 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         try await messageLocalStore.totalBackupableMessageCount()
     }
 
-    func fetchAllMessageIDs() async throws -> [QualifiedID] {
-        fatalError("TODO")
-//        try await messageLocalStore.fetchAllBackupableMessageIDs()
+    func fetchAllMessageIDs() async throws -> [UUID] {
+        try await messageLocalStore.fetchAllBackupableMessageIDs()
     }
 
     func fetchAllMessages() async throws -> [MessageEntity] {
