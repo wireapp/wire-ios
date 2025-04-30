@@ -50,12 +50,16 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
     }
 
     func addConversation(id: QualifiedID, name: String) async throws {
-        // fatalError() // TODO: fix
-        if true {
-            print("TODO")
-        }
-        //WireDomain.Conversation
-        //conversationLocalStore.storeConversation(newName: <#T##String#>, conversation: <#T##ZMConversation#>)
+        let conversation = await conversationLocalStore.fetchOrCreateConversation(
+            id: id.id,
+            domain: id.domain
+        )
+        conversation.userDefinedName = name
+        await conversationLocalStore.storeConversation(
+            needsBackendUpdate: true,
+            conversationID: id.id,
+            conversationDomain: id.domain
+        )
     }
 
     // MARK: -
