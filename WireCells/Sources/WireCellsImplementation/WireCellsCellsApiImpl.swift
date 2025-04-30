@@ -29,7 +29,7 @@ final class WireCellsCellsApiImpl: WireCellsCellsAPI, Sendable {
 
     func getNode(uuid: UUID) async throws -> WireCellsCellNodeDTO {
         let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString)
-        guard let dto = response.toDto() else {
+        guard let dto = response.toDTO() else {
             throw WireCellsCellsAPIError.failedToDecodeNode
         }
         return dto
@@ -44,7 +44,7 @@ final class WireCellsCellsApiImpl: WireCellsCellsAPI, Sendable {
             sortField: Constants.sortedBy
         )
 
-        return try await NodeServiceAPI.lookup(body: request).toDto()
+        return try await NodeServiceAPI.lookup(body: request).toDTO()
     }
 
     func getFilesForPath(path: String, limit: Int, offset: Int) async throws -> WireCellsGetFilesResponseDTO {
@@ -58,7 +58,7 @@ final class WireCellsCellsApiImpl: WireCellsCellsAPI, Sendable {
             sortField: Constants.sortedBy
         )
 
-        return try await NodeServiceAPI.lookup(body: request).toDto()
+        return try await NodeServiceAPI.lookup(body: request).toDTO()
     }
 
     func delete(uuid: UUID) async throws {

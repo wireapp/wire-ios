@@ -46,7 +46,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
         node: WireCellsCellNode,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
-        try await awsClient.upload(path: path, node: node.toDto(), onProgressUpdate: onProgressUpdate)
+        try await awsClient.upload(path: path, node: node.toDTO(), onProgressUpdate: onProgressUpdate)
     }
 
     package func getFiles(

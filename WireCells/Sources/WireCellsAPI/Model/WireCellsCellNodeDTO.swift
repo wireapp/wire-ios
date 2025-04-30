@@ -32,7 +32,7 @@ package struct WireCellsCellNodeDTO: Equatable, Hashable, Sendable {
     package let contentUrl: URL?
     package let contentHash: String?
     package let mimeType: String?
-    package let previews: [PreviewDto]
+    package let previews: [PreviewDTO]
     package let ownerUserId: String?
     package let conversationId: String?
     package let publicLinkId: String?
@@ -50,7 +50,7 @@ package struct WireCellsCellNodeDTO: Equatable, Hashable, Sendable {
         contentUrl: URL? = nil,
         contentHash: String? = nil,
         mimeType: String? = nil,
-        previews: [PreviewDto] = [],
+        previews: [PreviewDTO] = [],
         ownerUserId: String? = nil,
         conversationId: String? = nil,
         publicLinkId: String? = nil
@@ -98,7 +98,7 @@ package extension WireCellsCellNodeDTO {
 }
 
 package extension WireCellsCellNode {
-    func toDto() -> WireCellsCellNodeDTO {
+    func toDTO() -> WireCellsCellNodeDTO {
         WireCellsCellNodeDTO(
             uuid: id.uuid,
             versionId: id.versionID,
@@ -112,7 +112,7 @@ package extension WireCellsCellNode {
             contentUrl: contentUrl,
             contentHash: contentHash,
             mimeType: mimeType,
-            previews: previews.map { PreviewDto(url: $0.url, dimension: $0.dimension) },
+            previews: previews.map { PreviewDTO(url: $0.url, dimension: $0.dimension) },
             ownerUserId: ownerUserID,
             conversationId: conversationID?.pydioQualifiedID,
             publicLinkId: publicLinkID?.string
@@ -121,7 +121,7 @@ package extension WireCellsCellNode {
 }
 
 package extension RestNode {
-    func toDto() -> WireCellsCellNodeDTO? {
+    func toDTO() -> WireCellsCellNodeDTO? {
         guard let uuid = UUID(uuidString: uuid) else { return nil }
         // `versionMeta` is optional in the API response. Need to check with Charles if it can actually be nil, and
         // when.
@@ -140,10 +140,10 @@ package extension RestNode {
             contentUrl: preSignedGET?.url.flatMap(URL.init(string:)),
             contentHash: contentHash,
             mimeType: contentType,
-            previews: previews?.compactMap { preview -> PreviewDto? in
+            previews: previews?.compactMap { preview -> PreviewDTO? in
                 guard let urlString = preview.preSignedGET?.url else { return nil }
                 guard let url = URL(string: urlString) else { return nil }
-                return PreviewDto(url: url, dimension: preview.dimension ?? 0)
+                return PreviewDTO(url: url, dimension: preview.dimension ?? 0)
             } ?? [],
             ownerUserId: userMetadata?
                 .first(where: { $0.namespace == "usermeta-owner-uuid" })?
@@ -154,12 +154,12 @@ package extension RestNode {
     }
 }
 
-package struct PreviewDto: Equatable, Hashable, Sendable {
+package struct PreviewDTO: Equatable, Hashable, Sendable {
     package let url: URL
     package let dimension: Int?
 }
 
-package extension PreviewDto {
+package extension PreviewDTO {
     func toModel() -> WireCellsNodePreview {
         WireCellsNodePreview(
             url: url,

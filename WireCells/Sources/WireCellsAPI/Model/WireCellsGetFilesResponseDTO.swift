@@ -28,10 +28,10 @@ package struct WireCellsGetFilesResponseDTO: Equatable, Hashable, Sendable {
 }
 
 package extension RestNodeCollection {
-    func toDto() -> WireCellsGetFilesResponseDTO {
+    func toDTO() -> WireCellsGetFilesResponseDTO {
         WireCellsGetFilesResponseDTO(
             // /!\ Will silently filter out nil values that could not be mapped to DTOs
-            nodes: nodes?.compactMap { $0.toDto() } ?? []
+            nodes: nodes?.compactMap { $0.toDTO() } ?? []
         )
     }
 }
