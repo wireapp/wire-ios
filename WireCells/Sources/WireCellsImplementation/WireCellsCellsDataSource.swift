@@ -21,21 +21,21 @@ package import WireCellsAPI
 
 package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
     private let awsClient: any WireCellsAWSClient
-    private let cellsApi: any WireCellsCellsAPI
+    private let cellsAPI: any WireCellsCellsAPI
     private let fileManager: FileManager
 
     package init(
         awsClient: any WireCellsAWSClient,
-        cellsApi: any WireCellsCellsAPI,
+        cellsAPI: any WireCellsCellsAPI,
         fileManager: FileManager = .default
     ) {
         self.awsClient = awsClient
-        self.cellsApi = cellsApi
+        self.cellsAPI = cellsAPI
         self.fileManager = fileManager
     }
 
     package func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult {
-        let result = try await cellsApi.preCheck(path: nodePath)
+        let result = try await cellsAPI.preCheck(path: nodePath)
         return result.fileExists
             ? .fileExists(nextPath: result.nextPath ?? nodePath)
             : .success
@@ -58,18 +58,18 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
     ) async throws -> [WireCellsCellNode] {
         let response = try await (
             path == nil
-                ? cellsApi.getFiles(query: query, limit: limit, offset: offset)
-                : cellsApi.getFilesForPath(path: path!, limit: limit, offset: offset)
+                ? cellsAPI.getFiles(query: query, limit: limit, offset: offset)
+                : cellsAPI.getFilesForPath(path: path!, limit: limit, offset: offset)
         )
         return response.nodes.map { $0.toModel() }
     }
 
     package func deleteFile(nodeUUID: UUID) async throws {
-        try await cellsApi.delete(uuid: nodeUUID)
+        try await cellsAPI.delete(uuid: nodeUUID)
     }
 
     package func deleteFiles(paths: [String]) async throws {
-        try await cellsApi.delete(paths: paths)
+        try await cellsAPI.delete(paths: paths)
     }
 
     package func publishDrafts(nodes: [WireCellsNodeID]) async throws {
@@ -78,7 +78,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
             for node in nodes {
                 group.addTask { [weak self] in
                     guard let self else { return }
-                    try await cellsApi.publishDraft(uuid: node.uuid, versionID: node.versionID)
+                    try await cellsAPI.publishDraft(uuid: node.uuid, versionID: node.versionID)
                 }
             }
             try await group.waitForAll()
@@ -86,7 +86,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
     }
 
     package func cancelDraft(nodeID: WireCellsNodeID) async throws {
-        try await cellsApi.cancelDraft(uuid: nodeID.uuid, versionID: nodeID.versionID)
+        try await cellsAPI.cancelDraft(uuid: nodeID.uuid, versionID: nodeID.versionID)
     }
 
     package func downloadFile(
@@ -106,7 +106,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
     }
 
     package func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview] {
-        let dto = try await cellsApi.getNode(uuid: nodeUUID)
+        let dto = try await cellsAPI.getNode(uuid: nodeUUID)
         // TODO: Handle the case when the dto is nil
         return dto.previews.map {
             WireCellsNodePreview(url: $0.url, dimension: $0.dimension ?? 0)
@@ -114,19 +114,19 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
     }
 
     package func getNode(nodeUUID: UUID) async throws -> WireCellsCellNode {
-        let dto = try await cellsApi.getNode(uuid: nodeUUID)
+        let dto = try await cellsAPI.getNode(uuid: nodeUUID)
         return dto.toModel()
     }
 
     package func createPublicLink(nodeUUID: UUID, fileName: String) async throws -> WireCellsPublicLink {
-        try await cellsApi.createPublicLink(uuid: nodeUUID, fileName: fileName)
+        try await cellsAPI.createPublicLink(uuid: nodeUUID, fileName: fileName)
     }
 
     package func getPublicLink(linkUUID: UUID) async throws -> URL {
-        try await cellsApi.getPublicLink(uuid: linkUUID)
+        try await cellsAPI.getPublicLink(uuid: linkUUID)
     }
 
     package func deletePublicLink(linkUUID: UUID) async throws {
-        try await cellsApi.deletePublicLink(uuid: linkUUID)
+        try await cellsAPI.deletePublicLink(uuid: linkUUID)
     }
 }
