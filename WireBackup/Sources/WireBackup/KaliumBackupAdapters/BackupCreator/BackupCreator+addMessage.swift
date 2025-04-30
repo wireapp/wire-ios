@@ -99,7 +99,7 @@ extension BackupCreator {
             KaliumBackup.BackupMessageContent.AssetAssetMetadataVideo(
                 width: metadata.width.map { KotlinInt(int: $0) },
                 height: metadata.height.map { KotlinInt(int: $0) },
-                duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }, // TODO: types should match CoreCrypto types
+                duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) } // TODO: types should match CoreCrypto types
             )
 
         case let .audio(metadata):
