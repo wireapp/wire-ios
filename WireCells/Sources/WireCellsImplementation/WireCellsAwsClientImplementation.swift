@@ -48,7 +48,6 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         self.s3 = S3Client(config: config)
     }
 
-    // TODO: Report progress update
     package func download(
         objectKey: String,
         to fileHandle: FileHandle,
@@ -74,16 +73,22 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
                 throw WireCellsAWSClientError.writeError
             }
 
+            onProgressUpdate(UInt64(data.count))
+
         case let .stream(stream):
 
+            var  bytesRead: UInt64 = 0
             while let chunk = try await stream.readAsync(upToCount: Constants.readAsyncChunkSize) {
-                // TODO: Report progress update
+
                 // Write the chunk to the destination file.
                 do {
                     try fileHandle.write(contentsOf: chunk)
                 } catch {
                     throw WireCellsAWSClientError.writeError
                 }
+
+                bytesRead += UInt64(chunk.count)
+                onProgressUpdate(bytesRead)
             }
 
         default:
