@@ -45,7 +45,7 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
     }
 
     func authenticationInvalidated(_ error: NSError, accountId: UUID) {}
-    
+
     func clientDidFailSyncing(error: any Error, retryHandler: @escaping () -> Void) {}
-    
+
 }
