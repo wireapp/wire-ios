@@ -19,18 +19,19 @@
 import WireFoundation
 import ZipArchive
 
-struct ImportBackupFileArchiver: FileUnarchiverProtocol {
+struct ZipArchiveFileArchiver: FileArchiverProtocol {
 
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
-
-        let success = SSZipArchive.unzipFile(
-            atPath: sourceURL.path,
-            toDestination: destinationURL.path
+    func zipResources(
+        at resourceURLs: [URL],
+        into destinationURL: URL
+    ) throws {
+        let success = SSZipArchive.createZipFile(
+            atPath: destinationURL.path(),
+            withFilesAtPaths: resourceURLs.map { $0.path() }
         )
-
         guard success else {
             throw FileArchivingError.unknown
         }
-
     }
+
 }

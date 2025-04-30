@@ -391,7 +391,19 @@ extension SettingsCellDescriptorFactory {
             messageLocalStore: messageLocalStore
         )
 
-        let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
+        let importBackupUseCase = CompositeImportBackupUseCase(
+            importBackupUseCase: ImportBackupUseCase(
+                selfUserID: .init(selfUser.qualifiedID!),
+                userStore: UserStoreAdapter(userLocalStore: userLocalStore),
+                conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
+                messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
+                fileUnarchiver: ZipArchiveFileUnarchiver(),
+                syncTrigger: { print("TODO: sync") }, // TODO: implement
+                logger: WireLogger.backupImport
+            ),
+            legacyImportBackupUseCase: ImportLegacyBackupUseCaseAdapter(sessionManager.importLegacyBackupUseCase!)
+        )
+        //let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
             CreateBackupUseCaseAdapter(
                 CreateBackupUseCase(
@@ -412,7 +424,7 @@ extension SettingsCellDescriptorFactory {
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: createBackupUseCase,
-            importBackupUseCase: importBackupUseCase,
+            importBackupUseCase: ImportBackupUseCaseAdapter(importBackupUseCase),
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,

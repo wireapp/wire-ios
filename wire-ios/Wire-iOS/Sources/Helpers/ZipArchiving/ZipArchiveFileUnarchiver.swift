@@ -19,24 +19,18 @@
 import WireFoundation
 import ZipArchive
 
-struct ZipArchiveFileArchiver: FileArchiverProtocol {
+struct ZipArchiveFileUnarchiver: FileUnarchiverProtocol {
 
-    func zipResources(
-        at resourceURLs: [URL],
-        into destinationURL: URL
-    ) throws {
-        let success = SSZipArchive.createZipFile(
-            atPath: destinationURL.path(),
-            withFilesAtPaths: resourceURLs.map { $0.path() }
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+
+        let success = SSZipArchive.unzipFile(
+            atPath: sourceURL.path,
+            toDestination: destinationURL.path
         )
+
         guard success else {
-            throw ZipArchiveFileArchiverError.unknown
+            throw FileArchivingError.unknown
         }
+
     }
-
-}
-
-enum ZipArchiveFileArchiverError: Error, Equatable, CaseIterable {
-    /// The archiving library returned a failure when compressing the files.
-    case unknown
 }

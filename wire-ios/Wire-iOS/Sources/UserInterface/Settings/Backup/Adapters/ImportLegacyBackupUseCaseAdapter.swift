@@ -23,15 +23,15 @@ import WireSettingsUI
 
 // These adapters are required because TODO: finish
 
-struct ImportBackupUseCaseAdapter: WireDomainPackage.ImportBackupUseCaseProtocol {
+struct ImportLegacyBackupUseCaseAdapter: WireBackup.ImportBackupUseCaseProtocol {
 
-    let importBackupUseCase: WireBackup.ImportBackupUseCaseProtocol
+    let importBackupUseCase: WireDomainPackage.ImportBackupUseCaseProtocol
 
-    init(_ importBackupUseCase: WireBackup.ImportBackupUseCaseProtocol) {
+    init(_ importBackupUseCase: WireDomainPackage.ImportBackupUseCaseProtocol) {
         self.importBackupUseCase = importBackupUseCase
     }
 
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<WireDomainPackage.ImportBackupProgress, any Error> {
+    func invoke(url: URL, password: String) -> AsyncThrowingStream<WireBackup.ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> {
                 do {
@@ -44,8 +44,8 @@ struct ImportBackupUseCaseAdapter: WireDomainPackage.ImportBackupUseCaseProtocol
                         }
                     }
                     continuation.finish()
-                } catch let error as WireBackup.ImportBackupError {
-                    continuation.finish(throwing: WireSettingsUI.ImportBackupError(error))
+                } catch let error as WireSettingsUI.ImportBackupError {
+                    continuation.finish(throwing: WireBackup.ImportBackupError(error))
                 } catch {
                     continuation.finish(throwing: error)
                 }
@@ -58,7 +58,7 @@ struct ImportBackupUseCaseAdapter: WireDomainPackage.ImportBackupUseCaseProtocol
 
 }
 
-extension WireDomainPackage.ImportBackupProgress {
+extension WireBackup.ImportBackupProgress {
 
     init(_ result: WireDomainPackage.ImportBackupProgress) {
         switch result {
@@ -70,9 +70,9 @@ extension WireDomainPackage.ImportBackupProgress {
     }
 }
 
-extension WireSettingsUI.ImportBackupError {
+extension WireBackup.ImportBackupError {
 
-    init(_ error: WireBackup.ImportBackupError) {
+    init(_ error: WireSettingsUI.ImportBackupError) {
         switch error {
 //        case .noActiveAccountForImport:
 //            self = .noActiveAccountForImport

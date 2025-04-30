@@ -17,5 +17,5 @@
 //
 
 public enum FileArchivingError: Error {
-    case unknownFailure
+    case unknown
 }
