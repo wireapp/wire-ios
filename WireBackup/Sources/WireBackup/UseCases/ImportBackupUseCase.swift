@@ -103,11 +103,11 @@ public struct ImportBackupUseCase<
                             else { continue }
 
                             if !storedUserIDs.contains(userID) {
-                                userStore
-                                fatalError("TODO")
-//                                let user = UserEntity.create(id: userID, context: context)
-//                                user.name = backupUser.name
-//                                user.handle = backupUser.handle
+                                try await userStore.addUser(
+                                    id: userID,
+                                    name: backupUser.name,
+                                    handle: backupUser.handle
+                                )
                             }
 
                             if current % 50 == 0 || current == backupUsers.size - 1 {
@@ -116,33 +116,30 @@ public struct ImportBackupUseCase<
                             }
                         }
                     }
-                    /*
 
-                        let conversationFetchRequest = ConversationEntity.fetchRequest()
-                        conversationFetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
-                        let storedConversationIDs = try context.fetch(conversationFetchRequest)
-                            .compactMap(ConversationEntity.init)
-                            .map(\.id)
+                    let storedConversationIDs = try await conversationStore.fetchAllConversationIDs()
+                    let conversationsPager = pagers.pagers.conversationsPager
+                    while conversationsPager.hasMorePages() {
+                        let backupConversations = conversationsPager.nextPage()
+                        for current in 0 ..< backupConversations.size {
+                            guard
+                                let backupConversation = backupConversations.get(index: current),
+                                let conversationID = QualifiedID(backupConversation.id)
+                            else { continue }
 
-                        while pager.conversationsPager.hasMorePages() {
-                            let backupConversations = pager.conversationsPager.nextPage()
-                            for current in 0 ..< backupConversations.size {
-                                guard
-                                    let backupConversation = backupConversations.get(index: current),
-                                    let conversationID = QualifiedID(backupConversation.id)
-                                else { continue }
+                            if !storedConversationIDs.contains(conversationID) { // TODO: what if it is in the db but marked as deleted?
+                                try await conversationStore.addConversation(
+                                    id: conversationID,
+                                    name: backupConversation.name
+                                )
+                            }
 
-                                if !storedConversationIDs.contains(conversationID) { // TODO: what if it is in the db but marked as deleted?
-                                    let conversation = ConversationEntity.create(id: conversationID, context: context)
-                                    conversation.name = backupConversation.name
-                                }
-
-                                if current % 50 == 0 || current == backupConversations.size - 1 {
-                                    try Task.checkCancellation()
-                                    reportProgress(Int(exactly: current) ?? 0, total)
-                                }
+                            if current % 50 == 0 || current == backupConversations.size - 1 {
+                                try Task.checkCancellation()
+                                reportProgress(Int(exactly: current) ?? 0, total)
                             }
                         }
+                    }
 
                         /*
                         let storedMessages = try context.fetch(MessageAdapter.fetchRequest())
@@ -170,7 +167,6 @@ public struct ImportBackupUseCase<
                                 }
                             }
                         }
-                         */
 
                      try await context.perform {
                         try context.save()

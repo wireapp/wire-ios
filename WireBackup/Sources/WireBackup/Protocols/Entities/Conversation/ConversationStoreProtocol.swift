@@ -31,4 +31,7 @@ public protocol ConversationStoreProtocol: Sendable {
     /// Returns all conversations stored in the local database, including deleted ones.
     func fetchAllConversations() async throws -> [ConversationEntity]
 
+    /// Adds a conversation from the backup file to the local data store.
+    func addConversation(id: QualifiedID, name: String) async throws
+
 }

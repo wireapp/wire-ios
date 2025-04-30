@@ -31,4 +31,7 @@ public protocol UserStoreProtocol: Sendable {
     /// Returns all users stored in the local database, including deleted ones.
     func fetchAllUsers() async throws -> [UserEntity]
 
+    /// Adds a user from the backup file to the local data store.
+    func addUser(id: QualifiedID, name: String, handle: String) async throws
+
 }
