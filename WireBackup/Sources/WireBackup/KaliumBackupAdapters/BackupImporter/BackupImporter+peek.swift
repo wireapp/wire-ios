@@ -27,6 +27,8 @@ extension BackupImporter {
 
         switch result {
         case let result as BackupPeekResult.Success:
+            let userIDMatches = try await result.isCreatedBySameUser(userId: BackupQualifiedId(selfUserID)).boolValue
+            guard userIDMatches else { throw PeekResultError.selfUserIDMismatch }
             return PeekResult(result.version, result.isEncrypted)
         case is BackupPeekResult.FailureUnknownFormat:
             throw PeekResultError.unknownFormat
@@ -39,8 +41,8 @@ extension BackupImporter {
 
     struct PeekResult {
 
-        private var version: String
-        private var isEncrypted: Bool
+        let version: String
+        let isEncrypted: Bool
 
         fileprivate init(_ version: String, _ isEncrypted: Bool) {
             self.version = version
@@ -53,6 +55,7 @@ extension BackupImporter {
 
 private enum PeekResultError: Error {
 
+    case selfUserIDMismatch
     case unknownFormat
     case unsupportedVersion(_ backupVersion: String)
     case unexpectedPeekResultType

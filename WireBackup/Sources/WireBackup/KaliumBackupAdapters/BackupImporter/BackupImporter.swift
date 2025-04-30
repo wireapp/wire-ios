@@ -24,11 +24,14 @@ import KaliumBackup
 public struct BackupImporter<FileUnarchiver> where FileUnarchiver: FileUnarchiverProtocol {
 
     let mpBackupImporter: MPBackupImporter
+    let selfUserID: QualifiedID
 
     public init(
+        selfUserID: QualifiedID,
         workDirectoryURL: URL,
         fileUnarchiver: FileUnarchiver
     ) {
+        self.selfUserID = selfUserID
         mpBackupImporter = MPBackupImporter(
             pathToWorkDirectory: workDirectoryURL.path(),
             backupFileUnzipper: FileUnarchiverToBackupFileUnzipper(fileUnarchiver: fileUnarchiver)

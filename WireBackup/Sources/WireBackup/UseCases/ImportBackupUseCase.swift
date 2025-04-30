@@ -18,70 +18,66 @@
 
 public import Foundation
 public import WireLogging
+public import WireFoundation
 
 public struct ImportBackupUseCase<
     UserStore: UserStoreProtocol,
     ConversationStore: ConversationStoreProtocol,
-    MessageStore: MessageStoreProtocol
+    MessageStore: MessageStoreProtocol,
+    FileUnarchiver: FileUnarchiverProtocol
 >: ImportBackupUseCaseProtocol {
 
-    // TODO: selfUserID
-
+    let selfUserID: QualifiedID
     let userStore: UserStore
     let conversationStore: ConversationStore
     let messageStore: MessageStore
-
-//    let fileArchiver: any ImportBackupFileArchiverProtocol
-//    let syncTrigger: @Sendable () -> Void
+    let fileUnarchiver: FileUnarchiver
+    let syncTrigger: @Sendable () -> Void
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
-        userStore: UserStore,
+        selfUserID: QualifiedID,
+        userStore: UserStore, // TODO: create repository instances with a child context?
         conversationStore: ConversationStore,
         messageStore: MessageStore,
-//        fileArchiver: any ImportBackupFileArchiverProtocol,
-//        syncTrigger: @escaping @Sendable () -> Void,
+        fileUnarchiver: FileUnarchiver,
+        syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.selfUserID = selfUserID
         self.userStore = userStore
         self.conversationStore = conversationStore
         self.messageStore = messageStore
-//        self.fileArchiver = fileArchiver
-//        self.syncTrigger = syncTrigger
+        self.fileUnarchiver = fileUnarchiver
+        self.syncTrigger = syncTrigger
         self.logger = logger
     }
 
     public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
-            /*
-            let task = Task<Void, Never> { [context, fileArchiver] in
+            let task = Task<Void, Never> { [fileUnarchiver, logger, selfUserID] in
 
-                let fileManager = fileManager()
                 let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     .appendingPathComponent(UUID().uuidString)
 
                 defer {
-                    try? fileManager.removeItem(at: workDirectoryURL)
+                    try? FileManager.default.removeItem(at: workDirectoryURL)
                 }
-
-                // TODO: disable event processing?
 
                 do {
                     let logger = logger()
-                    let context = context()
                     let reportProgress: (Int, Int) -> Void = { current, total in
+                        guard current % 50 == 0 || current == total else { return }
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
 
                     reportProgress(0, 0)
                     logger.debug("initializing MPBackupImporter")
-                    let importer = MPBackupImporter(
-                        pathToWorkDirectory: workDirectoryURL.path(),
-                        backupFileUnzipper: ImportBackupFileArchiverToBackupFileUnzipper(
-                            fileManager: fileManager,
-                            fileArchiver: fileArchiver
-                        )
+                    let importer = BackupImporter(
+                        selfUserID: selfUserID,
+                        workDirectoryURL: workDirectoryURL,
+                        fileUnarchiver: fileUnarchiver
                     )
 
                     try Task.checkCancellation()
@@ -90,13 +86,13 @@ public struct ImportBackupUseCase<
                     if password.isEmpty, peekResult.isEncrypted {
                         throw ImportBackupError.passwordRequired
                     }
-             // TODO: compare selfUserID
 
                     try Task.checkCancellation()
 
                     let pager = try await importer.importBackup(from: url, using: password)
                     let total = Int(exactly: pager.totalPagesCount) ?? 0
 
+                    /*
                     try await context.perform {
 
                         let userFetchRequest = UserEntity.fetchRequest()
@@ -182,6 +178,7 @@ public struct ImportBackupUseCase<
 
                         try context.save()
                     }
+                     */
 
                     syncTrigger()
 
@@ -193,10 +190,11 @@ public struct ImportBackupUseCase<
                     continuation.finish(throwing: error)
                 }
             }
+
             continuation.onTermination = { _ in
                 task.cancel()
             }
-             */
+
         }
     }
 

@@ -84,7 +84,7 @@ public struct CreateBackupUseCase<
                 do {
                     let logger = logger()
                     let reportProgress: (Int, Int) -> Void = { current, total in
-                        guard current % 50 == 0 || current == total else { return } // debounce
+                        guard current % 50 == 0 || current == total else { return }
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
