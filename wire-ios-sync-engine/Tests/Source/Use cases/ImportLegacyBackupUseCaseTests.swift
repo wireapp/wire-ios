@@ -18,22 +18,24 @@
 
 import WireDataModelSupport
 import WireDomainPackage
+import WireFoundation
+import WireFoundationSupport
 import XCTest
 
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
-final class ImportBackupUseCaseTests: XCTestCase {
+final class ImportLegacyBackupUseCaseTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
-    private var mockStreamDecryptor: MockImportBackupStreamDecryptorProtocol!
-    private var mockFileArchiver: MockImportBackupFileArchiverProtocol!
+    private var mockStreamDecryptor: MockImportLegacyBackupStreamDecryptorProtocol!
+    private var mockFileUnarchiver: FileUnarchiverProtocolMock!
     private var mockEntityStorage: MockImportBackupEntityStorageProtocol!
     private var mockAppStateUpdater: MockImportBackupAppStateUpdaterProtocol!
     private var dispatchGroup: ZMSDispatchGroup!
     private var sharedContainerURL: URL!
     private var mockUserSession: MockUserSession!
-    private var sut: ImportBackupUseCase!
+    private var sut: ImportLegacyBackupUseCase!
 
     override func setUp() async throws {
         let fileManager = FileManager()
@@ -45,8 +47,8 @@ final class ImportBackupUseCaseTests: XCTestCase {
         mockStreamDecryptor = .init()
         mockStreamDecryptor.decryptInputOutputAccountIDPassword_MockMethod = { _, _, _, _ in }
 
-        mockFileArchiver = .init()
-        mockFileArchiver.unzipFileAtSourceURLURLToDestinationURLURLVoidClosure = { _, _ in }
+        mockFileUnarchiver = .init()
+        mockFileUnarchiver.unzipFileAtSourceURLURLToDestinationURLURLVoidClosure = { _, _ in }
 
         mockEntityStorage = .init()
         mockEntityStorage.importsDirectory = fileManager
@@ -109,11 +111,11 @@ final class ImportBackupUseCaseTests: XCTestCase {
             try viewContext.save()
         }
 
-        sut = .init(
+        sut = ImportLegacyBackupUseCase(
             userSession: { [weak self] in self?.mockUserSession },
             dispatchGroup: dispatchGroup,
             streamDecryptor: mockStreamDecryptor,
-            fileArchiver: mockFileArchiver,
+            fileUnarchiver: mockFileUnarchiver,
             entityStorage: mockEntityStorage,
             appStateUpdater: mockAppStateUpdater,
             sharedContainerURL: sharedContainerURL,
@@ -127,7 +129,7 @@ final class ImportBackupUseCaseTests: XCTestCase {
         dispatchGroup = nil
         mockAppStateUpdater = nil
         mockEntityStorage = nil
-        mockFileArchiver = nil
+        mockFileUnarchiver = nil
         mockStreamDecryptor = nil
         coreDataStack = nil
         sharedContainerURL = nil
@@ -178,14 +180,14 @@ final class ImportBackupUseCaseTests: XCTestCase {
             .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
 
         // Then
-        XCTAssertEqual(sequence, [.progress(0.25), .progress(0.5), .done])
+        XCTAssertEqual(sequence, [.progress(1, 4), .progress(2, 4), .done])
         XCTAssertEqual(mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.accountID, accountID)
         XCTAssertEqual(
             mockStreamDecryptor.decryptInputOutputAccountIDPassword_Invocations.first?.password,
             "c<%I2f41\"6!'"
         )
         XCTAssertFalse(
-            mockFileArchiver.unzipFileAtSourceURLURLToDestinationURLURLVoidReceivedInvocations.isEmpty
+            mockFileUnarchiver.unzipFileAtSourceURLURLToDestinationURLURLVoidReceivedInvocations.isEmpty
         )
         XCTAssertFalse(mockAppStateUpdater.reportMigrationNeeded_Invocations.isEmpty)
         XCTAssertFalse(
