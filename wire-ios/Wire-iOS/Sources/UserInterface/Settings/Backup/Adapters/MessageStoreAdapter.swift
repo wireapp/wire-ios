@@ -31,8 +31,8 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         try await messageLocalStore.totalBackupableMessageCount()
     }
 
-    func fetchAllMessageIDs() async throws -> [UUID] {
-        try await messageLocalStore.fetchAllBackupableMessageIDs()
+    func fetchAllMessageIDs() async throws -> [MessageEntity.MessageID] {
+        try await messageLocalStore.fetchAllBackupableMessageIDs().map(\.uuidString)
     }
 
     func fetchAllMessages() async throws -> [MessageEntity] {
@@ -191,7 +191,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 return nil
             }
 
-            self.id = id
+            self.id = id.uuidString // TODO: check why this is UUID and MessageLocalStoreProtocol defines id: String
             self.conversationID = QualifiedID(conversationID)
             self.senderUserID = QualifiedID(senderUserID)
             self.senderClientID = message.senderClientID
