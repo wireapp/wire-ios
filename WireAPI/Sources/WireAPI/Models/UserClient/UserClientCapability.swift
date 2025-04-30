@@ -24,7 +24,6 @@ public enum UserClientCapability: String, Codable, Sendable {
     /// (directly or indirectly).
 
     case legalholdConsent = "legalhold-implicit-consent"
-    case consumableNotifications = "consumable-notifications"
 
     /// The client is able to use new incremental sync from server using websocket acknowledgement (async notifications)
 

@@ -64,7 +64,7 @@ public final class ClientSessionComponent {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         asyncStreamEnabled: Bool,
-        onSelfClientInvalidated: @escaping () async -> Void
+        onSelfClientInvalidated: @escaping () async -> Void,
         onProcessedCallEvent: @escaping (CallEventInfo) -> Void
     ) {
         self.selfUserID = selfUserID

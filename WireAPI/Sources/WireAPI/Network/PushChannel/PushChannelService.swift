@@ -47,7 +47,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
         self.asyncStreamEnabled = asyncStreamEnabled
     }
 
-    public func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol {
+    public func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol {// TODO: add param here readWrite instead of asyncStreamEnabled
         var request = request
         let accessToken = try await authenticationManager.getValidAccessToken()
         request.setAccessToken(accessToken)

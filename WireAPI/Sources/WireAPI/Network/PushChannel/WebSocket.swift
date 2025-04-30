@@ -45,7 +45,8 @@ public actor WebSocket: WebSocketProtocol {
                             let message = try await connection.receive()
                             continuation.yield(message)
                         } catch {
-                            WireLogger.webSocket.error(String(String(describing: error)))
+                            
+                            WireLogger.webSocket.error("\(String(describing: error)) - closeCode: \(connection.closeCode) - closeReason: \(String(describing: connection.closeReason)), debug: \(connection.networkInformation)")
                             continuation.finish(throwing: error)
                             isAlive = false
                         }

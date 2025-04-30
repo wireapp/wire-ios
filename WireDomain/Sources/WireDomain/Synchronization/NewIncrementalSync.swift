@@ -133,6 +133,8 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                         )
                     }
 
+                    await store.calculateLastUnreadMessages()
+
                     do {
                         // Save.
                         try await databaseSaver.save()
@@ -145,7 +147,7 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                 // TODO: do slow sync (initial sync)
 //                throw Failure.needsInitialSync
             } catch {
-                logger.warn("live event stream encountered error: \(String(describing: error))")
+                logger.warn("v3 live event stream encountered error: \(String(describing: error))")
             }
 
             logger.debug("live event stream did finish")

@@ -586,7 +586,7 @@ public final class ZMUserSession: NSObject {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             asyncStreamEnabled: asyncStreamEnabled,
-            onSelfClientInvalidated: onSelfClientInvalidated
+            onSelfClientInvalidated: onSelfClientInvalidated,
             onProcessedCallEvent: onProcessedCallEvent(callEventInfo:)
         )
 
