@@ -85,11 +85,9 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
         error: any Error,
         retryHandler: @escaping () -> Void
     ) {
-        Task {
-            delegate?.sessionManagerDidFailSyncing(
-                error: error,
-                retryHandler: retryHandler
-            )
-        }
+        delegate?.sessionManagerDidFailSyncing(
+            error: error,
+            retryHandler: retryHandler
+        )
     }
 }
