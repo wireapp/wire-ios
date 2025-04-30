@@ -41,7 +41,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
                 if currentSyncPhase != .done {
                     WireLogger.sync.info(
                         "did start sync phase",
-                        attributes: .legacySyncPhaseStartedAttributes(
+                        attributes: .legacySyncPhaseDidStartAttributes(
                             currentSyncPhase.description,
                             initialSync: isSlowSyncing
                         )

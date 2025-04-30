@@ -27,86 +27,73 @@ public extension LogAttributes {
     static let newNSE = [LogAttributesKey.nse: "new"]
     static let legacyNSE = [LogAttributesKey.nse: "legacy"]
     
-    // Sync type
+    // Sync types
     static let initialSync = [LogAttributesKey.syncType: "initial"]
     static let incrementalSync = [LogAttributesKey.syncType: "incremental"]
     
-    // Sync version
+    // Sync versions
     static let syncV1 = [LogAttributesKey.syncVersion: "v1"]
     static let syncV2 = [LogAttributesKey.syncVersion: "v2"]
     static let syncV3 = [LogAttributesKey.syncVersion: "v3"]
     
-    // MARK: Sync V1 logging
+    // MARK: - Sync V1
     
-    static func legacySyncDidStartAttributes(
-        initialSync: Bool
-    ) -> LogAttributes {
-        let syncTypeLog: LogAttributes = initialSync ? .initialSync : .incrementalSync
-        let syncVersionLog: LogAttributes = .syncV1
-        let safePublicLog: LogAttributes = .safePublic
-        
-        return merge(
-            syncTypeLog,
-            syncVersionLog,
-            safePublicLog
+    static func legacySyncDidStartAttributes(initialSync: Bool) -> Self {
+        baseLegacySyncAttributes(initialSync: initialSync)
+    }
+    
+    static func legacySyncDidFinishAttributes(duration: String, initialSync: Bool) -> Self {
+        merge(
+            baseLegacySyncAttributes(initialSync: initialSync),
+            [.duration: duration]
         )
     }
     
-    static func legacySyncDidFinishAttributes(
-        duration: String,
-        initialSync: Bool
-    ) -> LogAttributes {
-        let syncTypeLog: LogAttributes = initialSync ? .initialSync : .incrementalSync
-        let syncVersionLog: LogAttributes = .syncV1
-        let syncDuration: LogAttributes = [.duration: duration]
-        let safePublicLog: LogAttributes = .safePublic
-        
-        return merge(
-            syncTypeLog,
-            syncVersionLog,
-            syncDuration,
-            safePublicLog
+    static func legacySyncPhaseDidStartAttributes(_ phase: String, initialSync: Bool) -> Self {
+        merge(
+            baseLegacySyncAttributes(initialSync: initialSync),
+            [.syncPhase: phase]
         )
     }
     
-    static func legacySyncPhaseDidStartAttributes(
-        _ syncPhase: String,
-        initialSync: Bool
-    ) -> Self {
-        let syncTypeLog: LogAttributes = initialSync ? .initialSync : .incrementalSync
-        let syncVersionLog: LogAttributes = .syncV1
-        let syncPhaseLog: LogAttributes = [.syncPhase: syncPhase]
-        let safePublicLog: LogAttributes = .safePublic
-        
-        return merge(
-            syncTypeLog,
-            syncVersionLog,
-            syncPhaseLog,
-            safePublicLog
+    static func legacySyncPhaseDidCompleteAttributes(_ phase: String, duration: String, initialSync: Bool) -> Self {
+        merge(
+            baseLegacySyncAttributes(initialSync: initialSync),
+            [.syncPhase: phase, .duration: duration]
         )
     }
     
-    static func legacySyncPhaseDidCompleteAttributes(
-        _ syncPhase: String,
-        duration: String,
-        initialSync: Bool
-    ) -> Self {
-        let syncTypeLog: LogAttributes = initialSync ? .initialSync : .incrementalSync
-        let syncVersionLog: LogAttributes = .syncV1
-        let syncDuration: LogAttributes = [.duration: duration]
-        let syncPhaseLog: LogAttributes = [.syncPhase: syncPhase]
-        let safePublicLog: LogAttributes = .safePublic
-        
-        return merge(
-            syncTypeLog,
-            syncVersionLog,
-            syncDuration,
-            syncPhaseLog,
-            safePublicLog
+    private static func baseLegacySyncAttributes(initialSync: Bool) -> Self {
+        merge(
+            initialSync ? .initialSync : .incrementalSync,
+            .syncV1,
+            .safePublic
         )
     }
     
+    // MARK: - Sync V2/V3
+    
+    static func newInitialSyncDidStartAttributes() -> Self {
+        baseNewSyncAttributes()
+    }
+    
+    static func newInitialSyncPhaseAttributes(_ phase: String) -> Self {
+        merge(
+            baseNewSyncAttributes(),
+            [.syncPhase: phase]
+        )
+    }
+    
+    private static func baseNewSyncAttributes() -> Self {
+        let version = DeveloperFlag.asyncStreamNotifications.isOn ? syncV3 : syncV2
+        return merge(
+            .initialSync,
+            version,
+            .safePublic
+        )
+    }
 }
+
 
 private extension LogAttributes {
     static func merge(_ attributes: Self...) -> Self {

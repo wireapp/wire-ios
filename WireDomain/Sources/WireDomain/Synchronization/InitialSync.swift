@@ -41,7 +41,10 @@ public struct InitialSync: InitialSyncProtocol {
     }
 
     public func perform(skipPullingLastUpdateEventID: Bool) async throws {
-        try await logger.measureTime(label: "initial sync") {
+        try await log(
+            label: "new initial sync",
+            attributes: .newInitialSyncDidStartAttributes()
+        ) {
             if !skipPullingLastUpdateEventID {
                 try await pullLastUpdateEventID()
             }
@@ -52,11 +55,15 @@ public struct InitialSync: InitialSyncProtocol {
     }
 
     private func pullLastUpdateEventID() async throws {
-        do {
-            logger.debug("pulling last update event id")
-            try await pullLastUpdateEventIDSync.pull()
-        } catch {
-            throw Failure(phase: "pull last update event id", reason: error)
+        try await log(
+            label: "sync phase",
+            attributes: .newInitialSyncPhaseAttributes("pulling last update event id")
+        ) {
+            do {
+                try await pullLastUpdateEventIDSync.pull()
+            } catch {
+                throw Failure(phase: "pull last update event id", reason: error)
+            }
         }
     }
 
@@ -70,20 +77,45 @@ public struct InitialSync: InitialSyncProtocol {
     }
 
     private func pushSupportedProtocols() async throws {
-        do {
-            logger.debug("pushing supported protocols")
-            try await pushSupportedProtocolsUseCase.invoke()
-        } catch {
-            throw Failure(phase: "push supported protocols", reason: error)
+        try await log(
+            label: "sync phase",
+            attributes: .newInitialSyncPhaseAttributes("push supported protocols")
+        ) {
+            do {
+                try await pushSupportedProtocolsUseCase.invoke()
+            } catch {
+                throw Failure(phase: "push supported protocols", reason: error)
+            }
         }
     }
 
     private func resolveOneOnOneConversations() async throws {
-        do {
-            try await oneOnOneResolver.resolveAllOneOnOneConversations()
-        } catch {
-            throw Failure(phase: "resolve one on one conversations", reason: error)
+        try await log(
+            label: "sync phase",
+            attributes: .newInitialSyncPhaseAttributes("resolve one on one conversations")
+        ) {
+            do {
+                try await oneOnOneResolver.resolveAllOneOnOneConversations()
+            } catch {
+                throw Failure(phase: "resolve one on one conversations", reason: error)
+            }
         }
+    }
+    
+    private func log(
+        label: String,
+        attributes: LogAttributes,
+        block: () async throws -> Void
+    ) async throws  {
+        let startMessage = "did start \(label)"
+        logger.info(startMessage, attributes: attributes)
+        let start = Date.now
+        try await block()
+        let durationInSeconds = start.timeIntervalSinceNow.magnitude
+        var updatedAttributes = attributes
+        updatedAttributes[.duration] = String(format: "%.2f", durationInSeconds)
+        let completedMessage = "did complete \(label)"
+        logger.info(completedMessage, attributes: updatedAttributes)
     }
 
 }
