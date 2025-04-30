@@ -21,7 +21,7 @@ import WireAPI
 import WireLogging
 
 public struct NewIncrementalSync: IncrementalSyncProtocol {
-    enum Failure: Error {
+    public enum Failure: Error {
         case needsInitialSync
     }
 
@@ -56,7 +56,7 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
         logger.debug("opening new push channel")
         let liveEventStream = try await pushChannel.open()
 
-        let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel] in
+        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel] in
             logger.debug("handling live event stream")
 
             do {
@@ -145,7 +145,7 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                 }
             } catch PushChannelError.missingEvents {
                 // TODO: do slow sync (initial sync)
-//                throw Failure.needsInitialSync
+                throw Failure.needsInitialSync
             } catch {
                 logger.warn("v3 live event stream encountered error: \(String(describing: error))")
             }

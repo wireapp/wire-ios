@@ -62,7 +62,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         logger.debug("processing stored update events")
         let processedEnvelopeIDs = try await processStoredEvents()
 
-        let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver] in
+        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver] in
             logger.debug("handling live event stream")
 
             do {
@@ -217,11 +217,11 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
     public struct Token {
 
-        let task: Task<Void, Never>
+        let task: Task<Void, Error>
         let closePushChannel: () async -> Void
 
         public init(
-            task: Task<Void, Never>,
+            task: Task<Void, Error>,
             closePushChannel: @escaping () async -> Void
         ) {
             self.task = task

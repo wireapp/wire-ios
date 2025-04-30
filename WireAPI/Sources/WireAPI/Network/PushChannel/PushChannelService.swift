@@ -24,9 +24,10 @@ public protocol PushChannelServiceProtocol {
     /// Create a new push channel.
     ///
     /// - Parameter request: A request for a web socket connection.
+    /// - Parameter readWriteEnabled: A boolean value to allow sending data back to server
     /// - Returns: A push channel.
 
-    func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol
+    func createPushChannel(_ request: URLRequest, readWriteEnabled: Bool) async throws -> any PushChannelProtocol
 }
 
 /// A service for creating push channel connections to a specific backend.
@@ -35,24 +36,21 @@ public final class PushChannelService: PushChannelServiceProtocol {
 
     private let networkService: NetworkService
     private let authenticationManager: any AuthenticationManagerProtocol
-    private let asyncStreamEnabled: Bool
 
     public init(
         networkService: NetworkService,
-        authenticationManager: any AuthenticationManagerProtocol,
-        asyncStreamEnabled: Bool
+        authenticationManager: any AuthenticationManagerProtocol
     ) {
         self.networkService = networkService
         self.authenticationManager = authenticationManager
-        self.asyncStreamEnabled = asyncStreamEnabled
     }
 
-    public func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol {// TODO: add param here readWrite instead of asyncStreamEnabled
+    public func createPushChannel(_ request: URLRequest, readWriteEnabled: Bool) async throws -> any PushChannelProtocol {
         var request = request
         let accessToken = try await authenticationManager.getValidAccessToken()
         request.setAccessToken(accessToken)
         let webSocket = try networkService.executeWebSocketRequest(request)
-        if asyncStreamEnabled {
+        if readWriteEnabled {
             return NewPushChannel(webSocket: webSocket)
         } else {
             return PushChannel(webSocket: webSocket)

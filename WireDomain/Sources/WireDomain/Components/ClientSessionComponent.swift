@@ -328,8 +328,7 @@ public final class ClientSessionComponent {
 
     private lazy var pushChannelService = PushChannelService(
         networkService: pushChannelNetworkService,
-        authenticationManager: authenticationManager,
-        asyncStreamEnabled: asyncStreamEnabled
+        authenticationManager: authenticationManager
     )
 
     public lazy var incrementalSync = IncrementalSync(

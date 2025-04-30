@@ -34,7 +34,7 @@ class PushChannelAPIImpl: PushChannelAPI {
             .withQueryItem(name: "client", value: clientID)
             .build()
 
-        return try await pushChannelService.createPushChannel(request)
+        return try await pushChannelService.createPushChannel(request, readWriteEnabled: false)
     }
 
 }
@@ -57,7 +57,7 @@ class NewPushChannelAPIImpl: PushChannelAPI, VersionedAPI {
             .withQueryItem(name: "client", value: clientID)
             .build()
 
-        return try await pushChannelService.createPushChannel(request)
+        return try await pushChannelService.createPushChannel(request, readWriteEnabled: true)
     }
 
 }
