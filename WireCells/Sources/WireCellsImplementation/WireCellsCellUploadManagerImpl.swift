@@ -71,7 +71,7 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
 
         let node = WireCellsCellNode(
             uuid: UUID(),
-            versionID: UUID().uuidString,
+            versionID: UUID(),
             path: resolvedPath,
             modified: nil,
             size: assetSize,
