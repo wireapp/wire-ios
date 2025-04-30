@@ -105,7 +105,6 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
 
     package func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview] {
         let dto = try await cellsAPI.getNode(uuid: nodeUUID)
-        // TODO: Handle the case when the dto is nil
         return dto.previews.map {
             WireCellsNodePreview(url: $0.url, dimension: $0.dimension ?? 0)
         }
