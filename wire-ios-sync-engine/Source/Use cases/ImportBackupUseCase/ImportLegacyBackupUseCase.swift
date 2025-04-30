@@ -29,12 +29,6 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
     // using WireFoundation.QualifiedID leads to linking errors
     private typealias QualifiedID = WireDataModel.QualifiedID
 
-//    let importCrossPlatformBackupUseCase: WireDomainPackage.ImportBackupUseCase<
-//        ImportBackupZMUserAdapter,
-//        ImportBackupZMConversationAdapter,
-//        ImportBackupZMMessageAdapter
-//    >
-
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
     let streamDecryptor: ImportLegacyBackupStreamDecryptorProtocol
@@ -46,28 +40,6 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
     let logger: WireLogger
 
     func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
-
-        switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
-
-        case .crossPlatform:
-            fatalError()
-            // importCrossPlatformBackupUseCase.invoke(url: url, password: password)
-
-        case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
-            importIOSBackup(url, password)
-
-        case nil:
-            AsyncThrowingStream { continuation in
-                // continuation.finish(throwing: ImportBackupError.invalidFileExtension)
-                fatalError() // TODO: fix
-            }
-        }
-    }
-
-    private func importIOSBackup(
-        _ url: URL,
-        _ password: String
-    ) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> { @MainActor in
                 do {
@@ -204,16 +176,6 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
         return entityStorage.importsDirectory.appendingPathComponent(filename)
     }
 
-}
-
-// MARK: -
-
-/// There are some external apps that users can use to transfer backup files, which can modify their attachments and
-/// change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore conversations.
-private enum BackupFileExtensions: String, CaseIterable { // TODO: delete
-    case crossPlatform = "wbu"
-    case fileExtensionWithUnderscore = "ios_wbu"
-    case fileExtensionWithHyphen = "ios-wbu"
 }
 
 // MARK: -
