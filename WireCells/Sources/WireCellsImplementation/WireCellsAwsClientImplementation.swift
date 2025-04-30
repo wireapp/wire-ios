@@ -183,14 +183,11 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         )
     }
 
-    // TODO: Implement this method
     package func getPreSignedUrl(objectKey: String) async throws -> String {
-//        let signer = S3Presigner(client: s3)
-//        let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
-//        let signed = try await signer.presignGetObject(input: input, expires:
-//        .hours(Constants.preSignedUrlExpiryInHours))
-//        return signed.url.absoluteString
-        fatalError("Not implemented")
+        let expiration = TimeInterval(Constants.preSignedUrlExpiryInHours * 60 * 60)
+        let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
+        let signed = try await s3.presignedURLForGetObject(input: input, expiration: expiration)
+        return signed.absoluteString
     }
 }
 
