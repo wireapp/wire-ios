@@ -28,7 +28,7 @@ package enum WireCellsAWSClientError: Error {
     case writeError
 }
 
-package protocol WireCellsAWSClient {
+package protocol WireCellsAWSClient: Sendable {
     /// Downloads an object from S3 to a given writable OutputStream.
     func download(
         objectKey: String,

@@ -17,7 +17,7 @@
 //
 
 import AWSClientRuntime
-import AWSS3
+@preconcurrency import AWSS3
 package import Foundation
 import SmithyIdentity
 package import WireCellsAPI

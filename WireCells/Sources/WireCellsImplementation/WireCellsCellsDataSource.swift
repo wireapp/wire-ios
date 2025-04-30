@@ -46,8 +46,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
         node: WireCellsCellNode,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
-        // FIXME: Fix and uncomment
-//        try await awsClient.upload(path: path, node: node.toDto(), onProgressUpdate: onProgressUpdate)
+        try await awsClient.upload(path: path, node: node.toDto(), onProgressUpdate: onProgressUpdate)
     }
 
     package func getFiles(
@@ -92,7 +91,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
     package func downloadFile(
         out: URL,
         cellPath: String,
-        onProgressUpdate: @escaping (UInt64) -> Void
+        onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         guard let stream = OutputStream(url: out, append: true) else {
             throw WireCellsRepositoryError.failedToCreateWriteStream
@@ -101,8 +100,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
         fileManager.createFile(atPath: out.path, contents: nil, attributes: nil)
 
         let fileHandle = try FileHandle(forWritingTo: out)
-        // FIXME: Fix and uncomment
-//        try await awsClient.download(objectKey: cellPath, to: fileHandle, onProgressUpdate: onProgressUpdate)
+        try await awsClient.download(objectKey: cellPath, to: fileHandle, onProgressUpdate: onProgressUpdate)
     }
 
     package func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview] {
