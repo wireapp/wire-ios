@@ -43,7 +43,7 @@ public protocol WireCellsMessageAttachmentDraftRepository {
     func getAll(conversationID: WireCellsConversationID) async throws(MessageAttachmentDraftRepositoryError)
         -> [WireCellsMessageAttachmentDraft]
 
-    func observe(conversationID: WireCellsConversationID) -> AsyncStream<[WireCellsMessageAttachmentDraft]>
+    func observe(conversationID: WireCellsConversationID) async throws -> AsyncStream<[WireCellsMessageAttachmentDraft]>
 
     func updateStatus(
         draftID: WireCellsMessageAttachmentDraftID,

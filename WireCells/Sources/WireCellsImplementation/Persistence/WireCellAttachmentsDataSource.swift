@@ -58,12 +58,10 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
 
     func observe(
         conversationID: WireCellsConversationID
-    )-> AsyncStream<[WireCellsMessageAttachmentDraft]> {
-        fatalError()
-        // FIXME: Fix and uncomment
-//        messageAttachmentDAO.observeAttachments(
-//            conversationID: conversationID
-//        )
+    ) async throws -> AsyncStream<[WireCellsMessageAttachmentDraft]> {
+        try await messageAttachmentDAO.observeAttachments(
+            conversationID: conversationID
+        ).observe()
     }
 
     func updateStatus(
