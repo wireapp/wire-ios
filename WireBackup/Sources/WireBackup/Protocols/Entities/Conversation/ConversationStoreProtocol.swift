@@ -26,7 +26,7 @@ public protocol ConversationStoreProtocol: Sendable {
     func totalConversationCount() async throws -> Int
 
     /// Returns the IDs of all conversations stored in the local database, including deleted ones.
-    func fetchAllConversationIDs() async throws -> [QualifiedID]
+    func fetchAllConversationIDs() async throws -> Set<QualifiedID>
 
     /// Returns all conversations stored in the local database, including deleted ones.
     func fetchAllConversations() async throws -> [ConversationEntity]

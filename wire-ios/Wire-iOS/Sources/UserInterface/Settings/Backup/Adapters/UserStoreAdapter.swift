@@ -22,11 +22,18 @@ import WireDomain
 import WireFoundation
 
 struct UserStoreAdapter: UserStoreProtocol {
+    typealias QualifiedID = WireFoundation.QualifiedID
 
     let userLocalStore: any UserLocalStoreProtocol
 
     func totalUserCount() async throws -> Int {
         try await userLocalStore.totalBackupableUserCount()
+    }
+
+    func fetchAllUserIDs() async throws -> Set<QualifiedID> {
+        let userIDs = try await userLocalStore.fetchAllBackupableUserIDs()
+            .map(WireFoundation.QualifiedID.init)
+        return Set(userIDs)
     }
 
     func fetchAllUsers() async throws -> [UserEntity] {
@@ -42,10 +49,32 @@ struct UserStoreAdapter: UserStoreProtocol {
         }
     }
 
+    func addUser(
+        id: QualifiedID,
+        name: String,
+        handle: String
+    ) async throws {
+        let userInfo = NewUserInfo(
+            userID: WireDataModel.QualifiedID(id),
+            name: name,
+            handle: handle,
+            teamID: nil,
+            accentID: 0,
+            previewAssetKey: nil,
+            completeAssetKey: nil,
+            isDeleted: false,
+            email: nil,
+            expiresAt: nil,
+            serviceID: nil,
+            serviceProvider: nil,
+            supportedProtocols: nil
+        )
+        await userLocalStore.persistUser(userInfo: userInfo)
+    }
+
     // MARK: -
 
     struct UserEntity: UserEntityProtocol {
-        typealias QualifiedID = WireFoundation.QualifiedID
 
         let id: QualifiedID
         let name: String

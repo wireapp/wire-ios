@@ -22,11 +22,18 @@ import WireDomain
 import WireFoundation
 
 struct ConversationStoreAdapter: ConversationStoreProtocol {
+    typealias QualifiedID = WireFoundation.QualifiedID
 
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
     func totalConversationCount() async throws -> Int {
         try await conversationLocalStore.totalBackupableConversationCount()
+    }
+
+    func fetchAllConversationIDs() async throws -> Set<QualifiedID> {
+        let conversationIDs = try await conversationLocalStore.fetchAllBackupableConversationIDs()
+            .map(WireFoundation.QualifiedID.init)
+        return Set(conversationIDs)
     }
 
     func fetchAllConversations() async throws -> [ConversationEntity] {
@@ -42,10 +49,18 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
         }
     }
 
+    func addConversation(id: QualifiedID, name: String) async throws {
+        // fatalError() // TODO: fix
+        if true {
+            print("TODO")
+        }
+        //WireDomain.Conversation
+        //conversationLocalStore.storeConversation(newName: <#T##String#>, conversation: <#T##ZMConversation#>)
+    }
+
     // MARK: -
 
     struct ConversationEntity: ConversationEntityProtocol {
-        typealias QualifiedID = WireFoundation.QualifiedID
 
         let id: QualifiedID
         let name: String

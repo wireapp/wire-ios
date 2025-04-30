@@ -23,11 +23,17 @@ import WireDomain
 import WireFoundation
 
 struct MessageStoreAdapter: MessageStoreProtocol {
+    typealias QualifiedID = WireFoundation.QualifiedID
 
     let messageLocalStore: any MessageLocalStoreProtocol
 
     func totalMessageCount() async throws -> Int {
         try await messageLocalStore.totalBackupableMessageCount()
+    }
+
+    func fetchAllMessageIDs() async throws -> [QualifiedID] {
+        fatalError("TODO")
+//        try await messageLocalStore.fetchAllBackupableMessageIDs()
     }
 
     func fetchAllMessages() async throws -> [MessageEntity] {
@@ -42,7 +48,6 @@ struct MessageStoreAdapter: MessageStoreProtocol {
     // MARK: -
 
     struct MessageEntity: MessageEntityProtocol {
-        typealias QualifiedID = WireFoundation.QualifiedID
 
         let id: String
         let conversationID: QualifiedID

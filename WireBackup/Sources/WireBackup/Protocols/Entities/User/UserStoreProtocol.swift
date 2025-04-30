@@ -26,7 +26,7 @@ public protocol UserStoreProtocol: Sendable {
     func totalUserCount() async throws -> Int
 
     /// Returns the IDs of all users stored in the local database, including deleted ones.
-    func fetchAllUserIDs() async throws -> [QualifiedID]
+    func fetchAllUserIDs() async throws -> Set<QualifiedID>
 
     /// Returns all users stored in the local database, including deleted ones.
     func fetchAllUsers() async throws -> [UserEntity]

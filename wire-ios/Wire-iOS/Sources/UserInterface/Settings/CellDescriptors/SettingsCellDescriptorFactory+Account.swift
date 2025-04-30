@@ -395,13 +395,13 @@ extension SettingsCellDescriptorFactory {
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
             CreateBackupUseCaseAdapter(
                 CreateBackupUseCase(
+                    selfUserID: .init(selfUser.qualifiedID!),
+                    selfUserHandle: selfUser.handle,
                     userStore: UserStoreAdapter(userLocalStore: userLocalStore),
                     conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
                     messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
                     fileArchiver: ZipArchiveFileArchiver(),
                     currentDateProvider: SystemDateProvider(),
-                    selfUserID: .init(selfUser.qualifiedID!),
-                    selfUserHandle: selfUser.handle,
                     logger: WireLogger.backupExport
                 )
             )

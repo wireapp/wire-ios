@@ -405,8 +405,6 @@ public protocol ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
 
-    func fetchAllBackupableConversations() async throws -> [ZMConversation]
-
     func name(
         for conversation: ZMConversation
     ) async -> String?
@@ -447,11 +445,6 @@ public protocol ConversationLocalStoreProtocol {
         for conversation: ZMConversation
     ) async
 
-    /// Counts the number of conversations in the local store.
-    /// - returns: The number of conversation entries in the database.
-
-    func totalBackupableConversationCount() async throws -> Int
-
     func unreadConversationCount() async -> UInt
 
     /// Stores the private conversation (aka channel) permission locally.
@@ -462,5 +455,16 @@ public protocol ConversationLocalStoreProtocol {
         permission: WireDomain.Conversation.ChannelPermission,
         conversation: ZMConversation
     ) async
+
+    // MARK: - Backup / Restore
+
+    /// Counts the number of conversations in the local store.
+    /// - returns: The number of conversation entries in the database.
+
+    func totalBackupableConversationCount() async throws -> Int
+
+    func fetchAllBackupableConversationIDs() async throws -> [QualifiedID]
+
+    func fetchAllBackupableConversations() async throws -> [ZMConversation]
 
 }

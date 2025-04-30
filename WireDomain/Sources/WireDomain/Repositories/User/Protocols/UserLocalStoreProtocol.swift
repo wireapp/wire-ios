@@ -65,10 +65,6 @@ public protocol UserLocalStoreProtocol: Sendable {
         userIDs: [(id: UUID, domain: String?)]
     ) async -> Set<ZMUser>
 
-    /// Fetches all stored users from the local database, including the ones marked as deleted.
-
-    func fetchAllBackupableUsers() async throws -> [ZMUser]
-
     /// Removes user push token from storage.
 
     func deletePushToken()
@@ -110,11 +106,6 @@ public protocol UserLocalStoreProtocol: Sendable {
     /// Persist the supported protocols for the self user.
 
     func updateSelfUserSupportedProtocols(supportedProtocols: Set<WireDataModel.MessageProtocol>) async
-
-    /// Counts the number of users in the local store.
-    /// - returns: The number of user entries in the database.
-
-    func totalBackupableUserCount() async throws -> Int
 
     /// Fetches users qualified IDs locally.
     /// - returns: A list of qualified IDs.
@@ -190,4 +181,18 @@ public protocol UserLocalStoreProtocol: Sendable {
     ) async -> UUID
 
     func fetchSelfUserAvailability() async -> Availability
+
+    // MARK: - Backup / Restore
+
+    /// Counts the number of users in the local store.
+    /// - returns: The number of user entries in the database.
+
+    func totalBackupableUserCount() async throws -> Int
+
+    func fetchAllBackupableUserIDs() async throws -> [QualifiedID]
+
+    /// Fetches all stored users from the local database, including the ones marked as deleted.
+
+    func fetchAllBackupableUsers() async throws -> [ZMUser]
+
 }
