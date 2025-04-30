@@ -88,7 +88,9 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
         WireLogger.userClient.error(
             "error removing self client \(userClient.safeForLoggingDescription): \(failure.localizedDescription)"
         )
-
+WireLogger.userClient.error(
+            "error removing self client: \(failure.localizedDescription)", attributes: [.selfClientId: userClient.safeForLoggingDescription]
+        )
         switch failure {
         case let .invalidRequestError(failureResponse, _):
             switch failureResponse.label {
