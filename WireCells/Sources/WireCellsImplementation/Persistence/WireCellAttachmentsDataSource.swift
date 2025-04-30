@@ -121,20 +121,3 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         }
     }
 }
-
-// fileprivate func withCheckedThrowingContinuation<T, Failure: Error>(
-//    dispatchQueue: DispatchQueue,
-//    isolation: isolated (any Actor)? = #isolation,
-//    function: String = #function,
-//    _ body: @escaping @Sendable () throws(Failure) -> T
-// ) async throws -> sending T {
-//    try await withCheckedThrowingContinuation(isolation: isolation, function: function) { continuation in
-//        dispatchQueue.async {
-//            do {
-//                continuation.resume(returning: try body())
-//            } catch {
-//                continuation.resume(throwing: error)
-//            }
-//        }
-//    }
-// }
