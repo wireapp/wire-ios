@@ -168,9 +168,6 @@ public struct ImportBackupUseCase<
                             }
                         }
 
-                     try await context.perform {
-                        try context.save()
-                    }
                      */
 
                     syncTrigger()

@@ -401,6 +401,7 @@ extension SettingsCellDescriptorFactory {
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: {
                     context.performGroupedBlock {
+                        context.saveOrRollback()
                         userSession.triggerInitialSync()
                     }
                 },
