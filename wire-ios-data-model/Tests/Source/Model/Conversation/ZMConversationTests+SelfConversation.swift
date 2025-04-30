@@ -96,7 +96,6 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         selfClient.mlsPublicKeys = .init(ed25519: "somekey")
         selfClient.needsToUploadMLSPublicKeys = false
 
-
         // A conversation with a cleared time stamp
         let conversationID = UUID.create()
         let clearedTimestamp = Date(timeIntervalSince1970: 0)
