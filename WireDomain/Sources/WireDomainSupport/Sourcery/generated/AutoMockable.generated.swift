@@ -535,6 +535,15 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     public init() {}
 
+    // MARK: - context
+
+    public var context: NSManagedObjectContext {
+        get { return underlyingContext }
+        set(value) { underlyingContext = value }
+    }
+
+    public var underlyingContext: NSManagedObjectContext!
+
 
     // MARK: - fetchOrCreateConversation
 
@@ -1142,6 +1151,29 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - fetchAllBackupableConversations
+
+    public var fetchAllBackupableConversations_Invocations: [Void] = []
+    public var fetchAllBackupableConversations_MockError: Error?
+    public var fetchAllBackupableConversations_MockMethod: (() async throws -> [ZMConversation])?
+    public var fetchAllBackupableConversations_MockValue: [ZMConversation]?
+
+    public func fetchAllBackupableConversations() async throws -> [ZMConversation] {
+        fetchAllBackupableConversations_Invocations.append(())
+
+        if let error = fetchAllBackupableConversations_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllBackupableConversations_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllBackupableConversations_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllBackupableConversations`")
+        }
+    }
+
     // MARK: - name
 
     public var nameFor_Invocations: [ZMConversation] = []
@@ -1308,6 +1340,29 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
 
         await mock(conversation)
+    }
+
+    // MARK: - totalBackupableConversationCount
+
+    public var totalBackupableConversationCount_Invocations: [Void] = []
+    public var totalBackupableConversationCount_MockError: Error?
+    public var totalBackupableConversationCount_MockMethod: (() async throws -> Int)?
+    public var totalBackupableConversationCount_MockValue: Int?
+
+    public func totalBackupableConversationCount() async throws -> Int {
+        totalBackupableConversationCount_Invocations.append(())
+
+        if let error = totalBackupableConversationCount_MockError {
+            throw error
+        }
+
+        if let mock = totalBackupableConversationCount_MockMethod {
+            return try await mock()
+        } else if let mock = totalBackupableConversationCount_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `totalBackupableConversationCount`")
+        }
     }
 
     // MARK: - unreadConversationCount
@@ -2087,6 +2142,15 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     public init() {}
 
+    // MARK: - context
+
+    public var context: NSManagedObjectContext {
+        get { return underlyingContext }
+        set(value) { underlyingContext = value }
+    }
+
+    public var underlyingContext: NSManagedObjectContext!
+
 
     // MARK: - addSystemMessage
 
@@ -2146,6 +2210,52 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchOrCreateAssetClientMessageIdConversationSenderDate`")
+        }
+    }
+
+    // MARK: - totalBackupableMessageCount
+
+    public var totalBackupableMessageCount_Invocations: [Void] = []
+    public var totalBackupableMessageCount_MockError: Error?
+    public var totalBackupableMessageCount_MockMethod: (() async throws -> Int)?
+    public var totalBackupableMessageCount_MockValue: Int?
+
+    public func totalBackupableMessageCount() async throws -> Int {
+        totalBackupableMessageCount_Invocations.append(())
+
+        if let error = totalBackupableMessageCount_MockError {
+            throw error
+        }
+
+        if let mock = totalBackupableMessageCount_MockMethod {
+            return try await mock()
+        } else if let mock = totalBackupableMessageCount_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `totalBackupableMessageCount`")
+        }
+    }
+
+    // MARK: - fetchAllBackupableMessages
+
+    public var fetchAllBackupableMessages_Invocations: [Void] = []
+    public var fetchAllBackupableMessages_MockError: Error?
+    public var fetchAllBackupableMessages_MockMethod: (() async throws -> [ZMMessage])?
+    public var fetchAllBackupableMessages_MockValue: [ZMMessage]?
+
+    public func fetchAllBackupableMessages() async throws -> [ZMMessage] {
+        fetchAllBackupableMessages_Invocations.append(())
+
+        if let error = fetchAllBackupableMessages_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllBackupableMessages_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllBackupableMessages_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllBackupableMessages`")
         }
     }
 
@@ -4092,6 +4202,15 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     public init() {}
 
+    // MARK: - context
+
+    public var context: NSManagedObjectContext {
+        get { return underlyingContext }
+        set(value) { underlyingContext = value }
+    }
+
+    public var underlyingContext: NSManagedObjectContext!
+
 
     // MARK: - fetchSelfUser
 
@@ -4167,6 +4286,29 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchOrCreateUsersUserIDs`")
+        }
+    }
+
+    // MARK: - fetchAllBackupableUsers
+
+    public var fetchAllBackupableUsers_Invocations: [Void] = []
+    public var fetchAllBackupableUsers_MockError: Error?
+    public var fetchAllBackupableUsers_MockMethod: (() async throws -> [ZMUser])?
+    public var fetchAllBackupableUsers_MockValue: [ZMUser]?
+
+    public func fetchAllBackupableUsers() async throws -> [ZMUser] {
+        fetchAllBackupableUsers_Invocations.append(())
+
+        if let error = fetchAllBackupableUsers_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllBackupableUsers_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllBackupableUsers_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllBackupableUsers`")
         }
     }
 
@@ -4263,6 +4405,29 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         }
 
         await mock(supportedProtocols)
+    }
+
+    // MARK: - totalBackupableUserCount
+
+    public var totalBackupableUserCount_Invocations: [Void] = []
+    public var totalBackupableUserCount_MockError: Error?
+    public var totalBackupableUserCount_MockMethod: (() async throws -> Int)?
+    public var totalBackupableUserCount_MockValue: Int?
+
+    public func totalBackupableUserCount() async throws -> Int {
+        totalBackupableUserCount_Invocations.append(())
+
+        if let error = totalBackupableUserCount_MockError {
+            throw error
+        }
+
+        if let mock = totalBackupableUserCount_MockMethod {
+            return try await mock()
+        } else if let mock = totalBackupableUserCount_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `totalBackupableUserCount`")
+        }
     }
 
     // MARK: - fetchUsersQualifiedIDs
