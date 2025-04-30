@@ -42,7 +42,7 @@ public struct WireCellsConversation {
     }
 }
 
-public enum WireCellsConversationDaoError: Error {
+public enum WireCellsConversationDAOError: Error {
     case cellNameNotFound
     case conversationNotFound
     case genericError(any Error)
@@ -50,12 +50,12 @@ public enum WireCellsConversationDaoError: Error {
 }
 
 // sourcery: AutoMockable
-public protocol WireCellsConversationDao {
+public protocol WireCellsConversationDAO {
 
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsConversationDaoError) -> String
+    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsConversationDAOError) -> String
     func setWireCell(
         conversationID: WireCellsConversationID,
         cellName: String
-    ) async throws(WireCellsConversationDaoError)
-    func getAllConversations() async throws(WireCellsConversationDaoError) -> [WireCellsConversation]
+    ) async throws(WireCellsConversationDAOError)
+    func getAllConversations() async throws(WireCellsConversationDAOError) -> [WireCellsConversation]
 }

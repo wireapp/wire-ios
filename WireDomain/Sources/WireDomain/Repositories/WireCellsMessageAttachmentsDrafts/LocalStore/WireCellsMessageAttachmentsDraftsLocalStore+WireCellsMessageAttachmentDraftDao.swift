@@ -22,15 +22,15 @@ import Foundation
 import WireCellsAPI
 import WireDataModel
 
-extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmentDraftDao {
+extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmentDraftDAO {
 
     public func getAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(
-        WireCellsMessageAttachmentDraftDaoError
+        WireCellsMessageAttachmentDraftDAOError
     ) -> WireCellsMessageAttachmentDraft? {
         do {
             return try await context.perform { [context] in
                 guard let fetchRequest = Self.attachmentFetchRequest(for: draftID) else {
-                    throw WireCellsMessageAttachmentDraftDaoError.failedToCreateRequest
+                    throw WireCellsMessageAttachmentDraftDAOError.failedToCreateRequest
                 }
 
                 guard let entity = (try context.fetch(fetchRequest)).first else {
@@ -44,12 +44,12 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
     }
 
     public func getAttachments(conversationID: WireCellsConversationID) async throws(
-        WireCellsMessageAttachmentDraftDaoError
+        WireCellsMessageAttachmentDraftDAOError
     ) -> [WireCellsMessageAttachmentDraft] {
         do {
             return try await context.perform { [context] in
                 guard let fetchRequest = Self.attachmentsFetchRequest(for: conversationID) else {
-                    throw WireCellsMessageAttachmentDraftDaoError.failedToCreateRequest
+                    throw WireCellsMessageAttachmentDraftDAOError.failedToCreateRequest
                 }
 
                 let entities = try context.fetch(fetchRequest)
@@ -62,12 +62,12 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
     }
 
     public func deleteAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(
-        WireCellsMessageAttachmentDraftDaoError
+        WireCellsMessageAttachmentDraftDAOError
     ) {
         do {
             return try await context.perform { [context] in
                 guard let fetchRequest = Self.attachmentFetchRequest(for: draftID) else {
-                    throw WireCellsMessageAttachmentDraftDaoError.failedToCreateRequest
+                    throw WireCellsMessageAttachmentDraftDAOError.failedToCreateRequest
                 }
                 guard let entity = (try context.fetch(fetchRequest)).first else {
                     return
@@ -81,13 +81,13 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
     }
 
     public func deleteAttachments(conversationID: WireCellsConversationID) async throws(
-        WireCellsMessageAttachmentDraftDaoError
+        WireCellsMessageAttachmentDraftDAOError
     ) {
         do {
             return try await context.perform { [context] in
                 guard let fetchRequest = Self
                     .attachmentsFetchRequest(for: conversationID) as? NSFetchRequest<any NSFetchRequestResult> else {
-                    throw WireCellsMessageAttachmentDraftDaoError.failedToCreateRequest
+                    throw WireCellsMessageAttachmentDraftDAOError.failedToCreateRequest
                 }
 
                 let batchRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
@@ -96,7 +96,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
                 let result = try context.execute(batchRequest) as? NSBatchDeleteResult
 
                 if result?.result as? Bool == false {
-                    throw WireCellsMessageAttachmentDraftDaoError.failedToDeleteAttachments
+                    throw WireCellsMessageAttachmentDraftDAOError.failedToDeleteAttachments
                 }
             }
         } catch {
@@ -154,7 +154,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
         assetWidth: UInt64?,
         assetHeight: UInt64?,
         assetDuration: UInt64?
-    ) async throws(WireCellsMessageAttachmentDraftDaoError) -> WireCellsMessageAttachmentDraft {
+    ) async throws(WireCellsMessageAttachmentDraftDAOError) -> WireCellsMessageAttachmentDraft {
         do {
             let conversation = await conversationStore.fetchConversation(
                 id: conversationID.uuid,
@@ -187,19 +187,19 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
     public func updateUploadStatus(
         draftID: WireCellsMessageAttachmentDraftID,
         status: String
-    ) async throws(WireCellsMessageAttachmentDraftDaoError) {
+    ) async throws(WireCellsMessageAttachmentDraftDAOError) {
         do {
             return try await context.perform { [context] in
                 guard let fetchRequest = Self.attachmentFetchRequest(for: draftID) else {
-                    throw WireCellsMessageAttachmentDraftDaoError.failedToCreateRequest
+                    throw WireCellsMessageAttachmentDraftDAOError.failedToCreateRequest
                 }
                 guard let entity = (try context.fetch(fetchRequest)).first else {
-                    throw WireCellsMessageAttachmentDraftDaoError.attachmentNotFound
+                    throw WireCellsMessageAttachmentDraftDAOError.attachmentNotFound
                 }
                 entity.uploadStatus = status
                 try context.save()
             }
-        } catch let error as WireCellsMessageAttachmentDraftDaoError {
+        } catch let error as WireCellsMessageAttachmentDraftDAOError {
             throw error
         } catch {
             throw .genericError(error)

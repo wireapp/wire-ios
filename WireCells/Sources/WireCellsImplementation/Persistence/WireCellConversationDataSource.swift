@@ -20,17 +20,17 @@ import Foundation
 import WireCellsAPI
 
 final class WireCellConversationDataSource: WireCellsCellConversationRepository {
-    private let conversationDao: any WireCellsConversationDao
+    private let conversationDAO: any WireCellsConversationDAO
 
-    init(conversationDao: any WireCellsConversationDao) {
-        self.conversationDao = conversationDao
+    init(conversationDAO: any WireCellsConversationDAO) {
+        self.conversationDAO = conversationDAO
     }
 
     func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsCellConversationRepositoryError)
         -> String {
         do {
-            return try await conversationDao.getCellName(conversationID: conversationID)
-        } catch WireCellsConversationDaoError.cellNameNotFound {
+            return try await conversationDAO.getCellName(conversationID: conversationID)
+        } catch WireCellsConversationDAOError.cellNameNotFound {
             throw WireCellsCellConversationRepositoryError.cellNameNotFound
         } catch {
             throw WireCellsCellConversationRepositoryError.genericError(error)
@@ -42,7 +42,7 @@ final class WireCellConversationDataSource: WireCellsCellConversationRepository 
         cellName: String
     ) async throws(WireCellsCellConversationRepositoryError) {
         do {
-            try await conversationDao.setWireCell(
+            try await conversationDAO.setWireCell(
                 conversationID: conversationID,
                 cellName: cellName
             )
@@ -53,7 +53,7 @@ final class WireCellConversationDataSource: WireCellsCellConversationRepository 
 
     func getConversationNames() async throws(WireCellsCellConversationRepositoryError) -> [WireCellsConversation] {
         do {
-            return try await conversationDao.getAllConversations()
+            return try await conversationDAO.getAllConversations()
         } catch {
             throw WireCellsCellConversationRepositoryError.genericError(error)
         }

@@ -21,10 +21,10 @@ import WireCellsAPI
 
 package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftRepository {
 
-    private let messageAttachmentDao: any WireCellsMessageAttachmentDraftDao
+    private let messageAttachmentDAO: any WireCellsMessageAttachmentDraftDAO
 
-    init(messageAttachmentDao: any WireCellsMessageAttachmentDraftDao) {
-        self.messageAttachmentDao = messageAttachmentDao
+    init(messageAttachmentDAO: any WireCellsMessageAttachmentDraftDAO) {
+        self.messageAttachmentDAO = messageAttachmentDAO
     }
 
     @discardableResult
@@ -37,7 +37,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         uploadStatus: WireCellsAttachmentUploadStatus
     ) async throws(MessageAttachmentDraftRepositoryError) -> WireCellsMessageAttachmentDraft {
         do {
-            return try await messageAttachmentDao.addAttachment(
+            return try await messageAttachmentDAO.addAttachment(
                 uuid: .init(),
                 versionID: node.id.versionID.uuidString,
                 conversationID: conversationID,
@@ -61,7 +61,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
     )-> AsyncStream<[WireCellsMessageAttachmentDraft]> {
         fatalError()
         // FIXME: Fix and uncomment
-//        messageAttachmentDao.observeAttachments(
+//        messageAttachmentDAO.observeAttachments(
 //            conversationID: conversationID
 //        )
     }
@@ -71,7 +71,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         status: WireCellsAttachmentUploadStatus
     ) async throws(MessageAttachmentDraftRepositoryError) {
         do {
-            try await messageAttachmentDao.updateUploadStatus(draftID: draftID, status: status.rawValue)
+            try await messageAttachmentDAO.updateUploadStatus(draftID: draftID, status: status.rawValue)
         } catch {
             throw .genericError(error)
         }
@@ -79,7 +79,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
 
     func remove(draftID: WireCellsMessageAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryError) {
         do {
-            try await messageAttachmentDao.deleteAttachment(draftID: draftID)
+            try await messageAttachmentDAO.deleteAttachment(draftID: draftID)
         } catch {
             throw .genericError(error)
         }
@@ -87,7 +87,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
 
     func removeAttachmentDrafts(conversationID: WireCellsConversationID) async {
         do {
-            try await messageAttachmentDao.deleteAttachments(
+            try await messageAttachmentDAO.deleteAttachments(
                 conversationID: conversationID
             )
         } catch {
@@ -98,7 +98,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
     func get(draftID: WireCellsMessageAttachmentDraftID) async throws(MessageAttachmentDraftRepositoryError)
         -> WireCellsMessageAttachmentDraft {
         do {
-            if let attachment = try await messageAttachmentDao.getAttachment(draftID: draftID) {
+            if let attachment = try await messageAttachmentDAO.getAttachment(draftID: draftID) {
                 return attachment
             } else {
                 throw MessageAttachmentDraftRepositoryError.notFound
@@ -113,7 +113,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
     func getAll(conversationID: WireCellsConversationID) async throws(MessageAttachmentDraftRepositoryError)
         -> [WireCellsMessageAttachmentDraft] {
         do {
-            return try await messageAttachmentDao.getAttachments(
+            return try await messageAttachmentDAO.getAttachments(
                 conversationID: conversationID
             )
         } catch {

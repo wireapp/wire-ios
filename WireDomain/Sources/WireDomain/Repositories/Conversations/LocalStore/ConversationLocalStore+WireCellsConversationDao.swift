@@ -19,12 +19,12 @@
 import WireCellsAPI
 import WireDataModel
 
-extension ConversationLocalStore: WireCellsConversationDao {
+extension ConversationLocalStore: WireCellsConversationDAO {
 
     public func getCellName(
         conversationID: WireCellsAPI
             .WireCellsConversationID
-    ) async throws(WireCellsConversationDaoError) -> String {
+    ) async throws(WireCellsConversationDAOError) -> String {
         do {
             return try await context.perform { [context] in
                 guard let conversation = ZMConversation.fetch(
@@ -32,14 +32,14 @@ extension ConversationLocalStore: WireCellsConversationDao {
                     domain: conversationID.domain,
                     in: context
                 ) else {
-                    throw WireCellsConversationDaoError.conversationNotFound
+                    throw WireCellsConversationDAOError.conversationNotFound
                 }
                 guard let cellName = conversation.cellName else {
-                    throw WireCellsConversationDaoError.cellNameNotFound
+                    throw WireCellsConversationDAOError.cellNameNotFound
                 }
                 return cellName
             }
-        } catch let error as WireCellsConversationDaoError {
+        } catch let error as WireCellsConversationDAOError {
             throw error
         } catch {
             throw .genericError(error)
@@ -49,7 +49,7 @@ extension ConversationLocalStore: WireCellsConversationDao {
     public func setWireCell(
         conversationID: WireCellsAPI.WireCellsConversationID,
         cellName: String
-    ) async throws(WireCellsConversationDaoError) {
+    ) async throws(WireCellsConversationDAOError) {
         do {
             try await context.perform { [context] in
                 guard let conversation = ZMConversation.fetch(
@@ -57,24 +57,24 @@ extension ConversationLocalStore: WireCellsConversationDao {
                     domain: conversationID.domain,
                     in: context
                 ) else {
-                    throw WireCellsConversationDaoError.conversationNotFound
+                    throw WireCellsConversationDAOError.conversationNotFound
                 }
                 conversation.cellName = cellName
                 try context.save()
             }
-        } catch let error as WireCellsConversationDaoError {
+        } catch let error as WireCellsConversationDAOError {
             throw error
         } catch {
             throw .genericError(error)
         }
     }
 
-    public func getAllConversations() async throws(WireCellsConversationDaoError) -> [WireCellsConversation] {
+    public func getAllConversations() async throws(WireCellsConversationDAOError) -> [WireCellsConversation] {
         do {
             return try await context.perform { [context] in
                 guard let fetchRequest: NSFetchRequest<ZMConversation> = ZMConversation
                     .fetchRequest() as? NSFetchRequest<ZMConversation> else {
-                    throw WireCellsConversationDaoError.storageFailure
+                    throw WireCellsConversationDAOError.storageFailure
                 }
                 fetchRequest.predicate = NSPredicate(format: "cellName != nil")
                 fetchRequest.fetchBatchSize = 100
@@ -91,7 +91,7 @@ extension ConversationLocalStore: WireCellsConversationDao {
                     )
                 }
             }
-        } catch let error as WireCellsConversationDaoError {
+        } catch let error as WireCellsConversationDAOError {
             throw error
         } catch {
             throw .genericError(error)

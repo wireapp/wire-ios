@@ -18,7 +18,7 @@
 
 public import Foundation
 
-public enum WireCellsMessageAttachmentDraftDaoError: Error {
+public enum WireCellsMessageAttachmentDraftDAOError: Error {
     case attachmentNotFound
     case failedToDeleteAttachments
     case failedToCreateRequest
@@ -31,22 +31,22 @@ public protocol FetchedResultsControllerObserver<T>: Actor where T: Sendable {
 }
 
 // sourcery: AutoMockable
-public protocol WireCellsMessageAttachmentDraftDao {
+public protocol WireCellsMessageAttachmentDraftDAO {
 
     associatedtype DraftsObserver: FetchedResultsControllerObserver<[WireCellsMessageAttachmentDraft]>
 
-    func getAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(WireCellsMessageAttachmentDraftDaoError)
+    func getAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(WireCellsMessageAttachmentDraftDAOError)
         -> WireCellsMessageAttachmentDraft?
 
-    func getAttachments(conversationID: WireCellsConversationID) async throws(WireCellsMessageAttachmentDraftDaoError)
+    func getAttachments(conversationID: WireCellsConversationID) async throws(WireCellsMessageAttachmentDraftDAOError)
         -> [WireCellsMessageAttachmentDraft]
 
     func deleteAttachment(draftID: WireCellsMessageAttachmentDraftID) async throws(
-        WireCellsMessageAttachmentDraftDaoError
+        WireCellsMessageAttachmentDraftDAOError
     )
 
     func deleteAttachments(conversationID: WireCellsConversationID) async throws(
-        WireCellsMessageAttachmentDraftDaoError
+        WireCellsMessageAttachmentDraftDAOError
     )
 
     func observeAttachments(conversationID: WireCellsConversationID) async throws -> DraftsObserver
@@ -64,10 +64,10 @@ public protocol WireCellsMessageAttachmentDraftDao {
         assetWidth: UInt64?,
         assetHeight: UInt64?,
         assetDuration: UInt64?
-    ) async throws(WireCellsMessageAttachmentDraftDaoError) -> WireCellsMessageAttachmentDraft
+    ) async throws(WireCellsMessageAttachmentDraftDAOError) -> WireCellsMessageAttachmentDraft
 
     func updateUploadStatus(
         draftID: WireCellsMessageAttachmentDraftID,
         status: String
-    ) async throws(WireCellsMessageAttachmentDraftDaoError)
+    ) async throws(WireCellsMessageAttachmentDraftDAOError)
 }
