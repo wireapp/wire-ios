@@ -38,7 +38,7 @@ final class SyncAgent: NSObject {
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
-
+    
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
     }
@@ -186,23 +186,22 @@ final class SyncAgent: NSObject {
 extension SyncAgent: ZMSyncStateDelegate {
 
     func didStartSlowSync() {
-        WireLogger.sync.debug("did start legacy initial sync")
         delegate?.syncAgentDidStartLegacyInitialSync(self)
     }
 
     func didFinishSlowSync() {
-        WireLogger.sync.debug("did finish legacy initial sync")
         delegate?.syncAgentDidFinishLegacyInitialSync(self)
     }
 
     func didStartQuickSync() {
-        WireLogger.sync.debug("did start legacy incremental sync")
         delegate?.syncAgentDidStartLegacyIncrementalSync(self)
     }
 
     func didFinishQuickSync(isRecovering: Bool) {
-        WireLogger.sync.debug("did finish legacy incremental sync")
-        delegate?.syncAgentDidFinishLegacyIncrementalSync(self, isRecovering: isRecovering)
+        delegate?.syncAgentDidFinishLegacyIncrementalSync(
+            self,
+            isRecovering: isRecovering
+        )
     }
 
 }

@@ -62,8 +62,6 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             return nil
         }
 
-        WireLogger.sync.info("start slow sync phase: \(syncPhase.description)")
-
         requestSync.readyForNextRequestIfNotBusy()
         return requestSync.nextRequest(for: apiVersion)
     }

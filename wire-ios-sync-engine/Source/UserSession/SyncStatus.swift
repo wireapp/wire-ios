@@ -38,8 +38,15 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public internal(set) var currentSyncPhase: SyncPhase = .done {
         didSet {
             if currentSyncPhase != oldValue {
-                log()
-                zmLog.debug("did change sync phase: \(currentSyncPhase)")
+                if currentSyncPhase != .done {
+                    WireLogger.sync.info(
+                        "did start sync phase",
+                        attributes: .legacySyncPhaseStartedAttributes(
+                            currentSyncPhase.description,
+                            initialSync: isSlowSyncing
+                        )
+                    )
+                }
                 notifySyncPhaseDidStart()
             }
         }
@@ -48,6 +55,8 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     weak var syncStateDelegate: ZMSyncStateDelegate?
 
     private let isSyncV2Enabled: Bool
+    
+    private let syncTimeTracker = SyncTimeTracker()
 
     private let lastEventIDRepository: LastEventIDRepositoryInterface
     fileprivate var lastUpdateEventID: UUID?
@@ -114,8 +123,10 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     fileprivate func notifySyncPhaseDidStart() {
         switch currentSyncPhase {
         case .fetchingMissedEvents:
+            logSyncStart(initialSync: false, message: "did start legacy incremental sync")
             syncStateDelegate?.didStartQuickSync()
         case .fetchingLastUpdateEventID:
+            logSyncStart(initialSync: true, message: "did start legacy initial sync")
             syncStateDelegate?.didStartSlowSync()
         default:
             break
@@ -124,6 +135,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     public func determineInitialSyncPhase() {
         currentSyncPhase = hasPersistedLastEventID ? .fetchingMissedEvents : .fetchingLastUpdateEventID
+        resetSyncTimeTracker()
         notifySyncPhaseDidStart()
     }
 
@@ -132,10 +144,11 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
             guard let self else { return }
             // Refetch user settings.
             ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+            resetSyncTimeTracker()
             // Reset the status.
             currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-            log("slow sync")
+            logSyncStart(initialSync: true, message: "did start legacy initial sync")
             syncStateDelegate?.didStartSlowSync()
         }
     }
@@ -152,7 +165,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
             currentSyncPhase = hasPersistedLastEventID ? SyncPhase.fetchingLastUpdateEventID
                 .nextPhase : .fetchingLastUpdateEventID
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-            log("resyncResources")
+            logSyncStart(initialSync: true, message: "did start legacy initial sync")
             syncStateDelegate?.didStartSlowSync()
         }
     }
@@ -188,7 +201,8 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public func forceQuickSync() {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
-        log("quick sync")
+        resetSyncTimeTracker()
+        WireLogger.sync.debug("quick sync", attributes: .safePublic)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
 
     }
@@ -202,12 +216,17 @@ public extension SyncStatus {
     func finishCurrentSyncPhase(phase: SyncPhase) {
         precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
-        log("finished sync phase")
-
         if phase.isLastSlowSyncPhase {
             persistLastUpdateEventID()
             syncStateDelegate?.didFinishSlowSync()
         }
+        
+        let didCompleteSync = isSlowSyncing ? phase.isLastSlowSyncPhase : phase.isLastQuickSyncPhase
+
+        didCompleteSyncPhase(
+            phase,
+            completedAllPhases: didCompleteSync
+        )
 
         currentSyncPhase = phase.nextPhase
 
@@ -222,7 +241,6 @@ public extension SyncStatus {
                         "restarting quick sync since push channel was closed or open after request to fetch notifiations"
                     )
             } else {
-                WireLogger.sync.debug("sync complete")
                 notifyQuickSyncDidFinish()
                 isForceQuickSync = false
             }
@@ -236,6 +254,7 @@ public extension SyncStatus {
         WireLogger.sync.warn("failed sync phase: \(phase)")
 
         if currentSyncPhase == .fetchingMissedEvents {
+            resetSyncTimeTracker()
             lastEventIDRepository.storeLastEventID(nil)
             currentSyncPhase = .fetchingLastUpdateEventID
             needsToRestartQuickSync = false
@@ -282,8 +301,6 @@ public extension SyncStatus {
 
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
     func completedFetchingNotificationStream(fetchBeganAt: Date?) {
-        WireLogger.sync
-            .debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
         if currentSyncPhase == .fetchingMissedEvents {
 
             // Only complete the .fetchingMissedEvents phase if the push channel was
@@ -306,6 +323,7 @@ public extension SyncStatus {
         if !currentSyncPhase.isSyncing {
             // As soon as the pushChannel closes we should notify the UI that we are syncing (if we are not already
             // syncing)
+            logSyncStart(initialSync: false, message: "did start legacy incremental sync")
             syncStateDelegate?.didStartQuickSync()
         }
     }
@@ -327,22 +345,75 @@ public extension SyncStatus {
             currentSyncPhase = .fetchingMissedEvents
         }
     }
+    
+    private func didCompleteSyncPhase(
+        _ phase: SyncPhase,
+        completedAllPhases: Bool
+    ) {
+        let currentTime = Date.now
+        let phaseStartTime = syncTimeTracker.phaseStartTime
+        let duration = currentTime.timeIntervalSince(phaseStartTime)
+        
+        logSyncPhaseCompletion(phase: phase, duration: duration)
+        syncTimeTracker.addPhaseDuration(duration)
+        // resetting for next sync phase
+        syncTimeTracker.resetStartTime()
 
-    private func log(_ message: String? = nil) {
-        let info = SyncStatusLog(
-            phase: currentSyncPhase.description,
-            isSyncing: isSyncing,
-            pushChannelEstablishedDate: pushChannelEstablishedDate?.description,
-            message: message
-        )
-        do {
-            let data = try JSONEncoder().encode(info)
-            let jsonString = String(decoding: data, as: UTF8.self)
-            let message = "SYNC_STATUS: \(jsonString)"
-            WireLogger.sync.info(message, attributes: .safePublic)
-        } catch {
-            let message = "SYNC_STATUS: \(description)"
-            WireLogger.sync.error(message, attributes: .safePublic)
+        if completedAllPhases {
+            logSyncCompletion()
+            // Sync is completed and logged, resetting tracked time values
+            resetSyncTimeTracker()
         }
     }
+    
+
+    func resetSyncTimeTracker() {
+        syncTimeTracker.reset()
+    }
 }
+
+// MARK: - Logging
+
+extension SyncStatus {
+    private func logSyncStart(
+        initialSync: Bool,
+        message: String
+    ) {
+        WireLogger.sync.info(
+            message,
+            attributes: .legacySyncDidStartAttributes(
+                initialSync: isSlowSyncing
+            )
+        )
+    }
+    
+    private func logSyncPhaseCompletion(
+        phase: SyncPhase,
+        duration: Double
+    ) {
+        let message = "did complete sync phase"
+
+        WireLogger.sync.info(
+            message,
+            attributes: .legacySyncPhaseDidCompleteAttributes(
+                phase.description,
+                duration: String(duration),
+                initialSync: isSlowSyncing)
+        )
+    }
+    
+    private func logSyncCompletion() {
+        let message = "did finish \(isSlowSyncing ? "legacy initial sync" : "legacy incremental sync")"
+        
+        let syncTotalDuration = syncTimeTracker.totalSyncDuration()
+        
+        WireLogger.sync.info(
+            message,
+            attributes: .legacySyncDidFinishAttributes(
+                duration: String(syncTotalDuration),
+                initialSync: isSlowSyncing
+            )
+        )
+    }
+}
+
