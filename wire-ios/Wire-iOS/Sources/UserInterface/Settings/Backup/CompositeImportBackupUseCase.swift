@@ -21,12 +21,12 @@ import WireBackup
 
 struct CompositeImportBackupUseCase: ImportBackupUseCaseProtocol {
 
-    let importBackupUseCase: @Sendable () -> ImportBackupUseCaseProtocol
-    let legacyImportBackupUseCase: @Sendable () -> ImportBackupUseCaseProtocol
+    let importBackupUseCase: ImportBackupUseCaseProtocol
+    let legacyImportBackupUseCase: ImportBackupUseCaseProtocol
 
     init(
-        importBackupUseCase: @escaping @Sendable @autoclosure () -> ImportBackupUseCaseProtocol,
-        legacyImportBackupUseCase: @escaping @Sendable @autoclosure () -> ImportBackupUseCaseProtocol
+        importBackupUseCase: ImportBackupUseCaseProtocol,
+        legacyImportBackupUseCase: ImportBackupUseCaseProtocol
     ) {
         self.importBackupUseCase = importBackupUseCase
         self.legacyImportBackupUseCase = legacyImportBackupUseCase
@@ -37,10 +37,10 @@ struct CompositeImportBackupUseCase: ImportBackupUseCaseProtocol {
         switch WireBackup.BackupFileExtension(rawValue: fileExtension) {
 
         case .crossPlatform:
-            return importBackupUseCase().invoke(url: url, password: password)
+            return importBackupUseCase.invoke(url: url, password: password)
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
-            return legacyImportBackupUseCase().invoke(url: url, password: password)
+            return legacyImportBackupUseCase.invoke(url: url, password: password)
 
         case nil:
             return AsyncThrowingStream { continuation in
