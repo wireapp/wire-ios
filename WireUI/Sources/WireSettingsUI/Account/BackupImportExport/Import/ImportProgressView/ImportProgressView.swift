@@ -61,7 +61,7 @@ struct ImportProgressView: View {
             .padding(.bottom)
             HStack {
                 Spacer()
-                Text((progressValue * 100).formatted(.percent))
+                Text(progressValue.formatted(.percent))
                     .font(.caption2)
                 Spacer()
             }
