@@ -36,26 +36,24 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         metadata: WireCellsAssetMetadata?,
         uploadStatus: WireCellsAttachmentUploadStatus
     ) async throws(MessageAttachmentDraftRepositoryError) -> WireCellsMessageAttachmentDraft {
-        fatalError()
-        // FIXME: Fix and uncomment
-//        do {
-//            return try await messageAttachmentDao.addAttachment(
-//                uuid: node.id.uuid,
-//                versionID: node.id.versionID,
-//                conversationID: conversationID,
-//                mimeType: mimeType,
-//                fileName: (node.path as NSString).lastPathComponent,
-//                fileSize: node.size ?? 0,
-//                dataPath: dataPath,
-//                nodePath: node.path,
-//                status: uploadStatus.rawValue,
-//                assetWidth: metadata?.width,
-//                assetHeight: metadata?.height,
-//                assetDuration: metadata?.durationMs
-//            )
-//        } catch {
-//            throw .genericError(error)
-//        }
+        do {
+            return try await messageAttachmentDao.addAttachment(
+                uuid: .init(),
+                versionID: node.id.versionID.uuidString,
+                conversationID: conversationID,
+                mimeType: mimeType,
+                fileName: (node.path as NSString).lastPathComponent,
+                fileSize: node.size ?? 0,
+                dataPath: dataPath,
+                nodePath: node.path,
+                uploadStatus: uploadStatus.rawValue,
+                assetWidth: metadata?.width.map { UInt64($0) },
+                assetHeight: metadata?.height.map { UInt64($0) },
+                assetDuration: metadata?.durationMs.map { UInt64($0) }
+            )
+        } catch {
+            throw .genericError(error)
+        }
     }
 
     func observe(
