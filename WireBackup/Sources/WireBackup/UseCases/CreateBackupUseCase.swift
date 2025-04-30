@@ -29,27 +29,23 @@ public struct CreateBackupUseCase<
     FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
 
-    typealias UserEntity = UserStore.UserEntity
-    typealias ConversationEntity = ConversationStore.ConversationEntity
-
+    let selfUserID: QualifiedID
+    let selfUserHandle: String?
     let userStore: UserStore
     let conversationStore: ConversationStore
     let messageStore: MessageStore
-
-    let selfUserID: QualifiedID
-    let selfUserHandle: String?
     let fileArchiver: FileArchiver
     let currentDateProvider: any CurrentDateProviding
     let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
 
     public init(
+        selfUserID: QualifiedID,
+        selfUserHandle: String?,
         userStore: UserStore,
         conversationStore: ConversationStore,
         messageStore: MessageStore,
         fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
-        selfUserID: QualifiedID,
-        selfUserHandle: String?,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
         self.userStore = userStore

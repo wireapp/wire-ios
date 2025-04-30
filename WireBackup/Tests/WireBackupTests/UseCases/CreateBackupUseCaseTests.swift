@@ -52,14 +52,13 @@ final class CreateBackupUseCaseTests: XCTestCase {
         dateProviderMock = .init()
 
         sut = CreateBackupUseCase(
+            selfUserID: QualifiedID(id: UUID(), domain: ""),
+            selfUserHandle: "handle",
             userStore: userStoreMock,
             conversationStore: conversationStoreMock,
             messageStore: messageStoreMock,
-            eventProcessorHandle: .none,
             fileArchiver: fileArchiverMock,
             currentDateProvider: dateProviderMock,
-            selfUserID: QualifiedID(id: UUID(), domain: ""),
-            selfUserHandle: "handle",
             logger: WireLogger(tag: "???")
         )
     }

@@ -16,40 +16,44 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*
-public import CoreData
 public import Foundation
 public import WireLogging
 
-@preconcurrency import KaliumBackup
-import WireFoundation
-
 public struct ImportBackupUseCase<
-    UserEntity: ImportBackupUserEntityProtocol,
-    ConversationEntity: ImportBackupConversationEntityProtocol,
-    MessageEntity: ImportBackupMessageEntityProtocol
+    UserStore: UserStoreProtocol,
+    ConversationStore: ConversationStoreProtocol,
+    MessageStore: MessageStoreProtocol
 >: ImportBackupUseCaseProtocol {
 
-    let context: @Sendable () -> NSManagedObjectContext
-    let fileManager: @Sendable () -> FileManager = { .default }
-    let fileArchiver: any ImportBackupFileArchiverProtocol
-    let syncTrigger: @Sendable () -> Void
+    // TODO: selfUserID
+
+    let userStore: UserStore
+    let conversationStore: ConversationStore
+    let messageStore: MessageStore
+
+//    let fileArchiver: any ImportBackupFileArchiverProtocol
+//    let syncTrigger: @Sendable () -> Void
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
-        context: @escaping @autoclosure @Sendable () -> NSManagedObjectContext, // TODO: delete if possible
-        fileArchiver: any ImportBackupFileArchiverProtocol,
-        syncTrigger: @escaping @Sendable () -> Void,
+        userStore: UserStore,
+        conversationStore: ConversationStore,
+        messageStore: MessageStore,
+//        fileArchiver: any ImportBackupFileArchiverProtocol,
+//        syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
-        self.context = context
-        self.fileArchiver = fileArchiver
-        self.syncTrigger = syncTrigger
+        self.userStore = userStore
+        self.conversationStore = conversationStore
+        self.messageStore = messageStore
+//        self.fileArchiver = fileArchiver
+//        self.syncTrigger = syncTrigger
         self.logger = logger
     }
 
     public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
+            /*
             let task = Task<Void, Never> { [context, fileArchiver] in
 
                 let fileManager = fileManager()
@@ -86,6 +90,7 @@ public struct ImportBackupUseCase<
                     if password.isEmpty, peekResult.isEncrypted {
                         throw ImportBackupError.passwordRequired
                     }
+             // TODO: compare selfUserID
 
                     try Task.checkCancellation()
 
@@ -191,8 +196,8 @@ public struct ImportBackupUseCase<
             continuation.onTermination = { _ in
                 task.cancel()
             }
+             */
         }
     }
 
 }
-*/
