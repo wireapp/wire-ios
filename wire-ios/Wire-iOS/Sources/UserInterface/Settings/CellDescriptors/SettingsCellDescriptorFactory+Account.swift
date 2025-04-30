@@ -382,12 +382,13 @@ extension SettingsCellDescriptorFactory {
         let context = selfUser.managedObjectContext!.performAndWait {
             selfUser.managedObjectContext!.zm_sync!
         }
+        let userSession = sessionManager.activeUserSession!
 
         let messageLocalStore = MessageLocalStore(context: context)
         let userLocalStore = UserLocalStore(context: context, messageLocalStore: messageLocalStore)
         let conversationLocalStore = ConversationLocalStore(
             context: context,
-            mlsService: nil, // TODO: why nil?
+            mlsService: nil, // TODO: nil?
             messageLocalStore: messageLocalStore
         )
 
@@ -398,7 +399,11 @@ extension SettingsCellDescriptorFactory {
                 conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
                 messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
-                syncTrigger: { print("TODO: sync") }, // TODO: implement
+                syncTrigger: {
+                    context.performGroupedBlock {
+                        userSession.triggerInitialSync()
+                    }
+                },
                 logger: WireLogger.backupImport
             ),
             legacyImportBackupUseCase: ImportLegacyBackupUseCaseAdapter(sessionManager.importLegacyBackupUseCase!)
