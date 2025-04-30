@@ -283,7 +283,7 @@ final class ConversationTableViewDataSource: NSObject {
 
         tableView.dataSource = self
     }
-    
+
     func resetSectionControllers() {
         sectionControllers.reset()
         calculateSections { [weak self] sections in

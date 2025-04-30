@@ -1427,7 +1427,7 @@ extension ZMUserSession: ContextProvider {
     public var viewContext: NSManagedObjectContext {
         coreDataStack.viewContext
     }
-    
+
     public func newBackgroundContext() -> NSManagedObjectContext {
         coreDataStack.newBackgroundContext()
     }

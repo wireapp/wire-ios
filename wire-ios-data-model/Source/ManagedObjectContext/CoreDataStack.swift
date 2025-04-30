@@ -122,11 +122,11 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     }
 
     public func newBackgroundContext() -> NSManagedObjectContext {
-#if DEBUG
-        return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
-#else
-        return messagesContainer.newBackgroundContext()
-#endif
+        #if DEBUG
+            return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
+        #else
+            return messagesContainer.newBackgroundContext()
+        #endif
     }
 
     public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
@@ -142,14 +142,13 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
-#if DEBUG
-    public var newBackgroundContextProvider: (() -> NSManagedObjectContext)?
-#endif
+    #if DEBUG
+        public var newBackgroundContextProvider: (() -> NSManagedObjectContext)?
+    #endif
     private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
 
-    
     // MARK: - Initialization
 
     public init(
@@ -213,7 +212,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         self.eventsContainer = eventContainer
         self.messagesMigrator = CoreDataMigrator(isInMemoryStore: inMemoryStore)
         self.eventsMigrator = CoreDataMigrator(isInMemoryStore: inMemoryStore)
-        
+
         super.init()
 
         clearStorageIfNecessary()
