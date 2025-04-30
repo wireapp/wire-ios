@@ -91,6 +91,17 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
+        // Temp fix for avoiding to send a large amount of last read
+        // messages, see: [WPB-17439]
+        if
+            let conversation = object.conversation,
+            conversation.isSelfConversation,
+            conversation.messageProtocol == .mls
+        {
+            completion()
+            return
+        }
+
         let hasRegisteredMLSClient = context.performAndWait {
             let selfClient = ZMUser.selfUser(in: context).selfClient()
             return selfClient?.hasRegisteredMLSClient ?? false
