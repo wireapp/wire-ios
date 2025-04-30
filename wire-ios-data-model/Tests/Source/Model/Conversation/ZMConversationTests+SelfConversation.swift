@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
 
@@ -37,6 +38,11 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         // Given self conversations
         let proteusSelfConversation = try XCTUnwrap(ZMConversation.selfConversation(in: uiMOC))
         let mlsSelfConversation = createMLSSelfConversation()
+
+        // Self client is an mls client
+        let selfClient = ModelHelper().createSelfClient(in: uiMOC)
+        selfClient.mlsPublicKeys = .init(ed25519: "somekey")
+        selfClient.needsToUploadMLSPublicKeys = false
 
         // A conversation with a last read time stamp
         let conversationID = UUID.create()
@@ -84,6 +90,12 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         // Given self conversations
         let proteusSelfConversation = try XCTUnwrap(ZMConversation.selfConversation(in: uiMOC))
         let mlsSelfConversation = createMLSSelfConversation()
+
+        // Self client is an mls client
+        let selfClient = ModelHelper().createSelfClient(in: uiMOC)
+        selfClient.mlsPublicKeys = .init(ed25519: "somekey")
+        selfClient.needsToUploadMLSPublicKeys = false
+
 
         // A conversation with a cleared time stamp
         let conversationID = UUID.create()
