@@ -24,9 +24,12 @@ extension BackupImporter {
     func importBackup(
         from backupFile: URL,
         using password: String
-    ) async throws -> BackupImportPager {
+    ) async throws -> Pagers {
 
-        let result = try await mpBackupImporter.importFile(multiplatformBackupFilePath: backupFile.path(), passphrase: password)
+        let result = try await mpBackupImporter.importFile(
+            multiplatformBackupFilePath: backupFile.path(),
+            passphrase: password
+        )
 
         switch result {
         case is BackupImportResult.FailureMissingOrWrongPassphrase:
@@ -36,13 +39,28 @@ extension BackupImporter {
         case let error as BackupImportResult.FailureUnzippingError:
             throw ImportResultError.unzippingFailed(error.message)
         case let success as BackupImportResult.Success:
-            return success.pager
+            return Pagers(success.pager)
         case let error as BackupImportResult.FailureUnknownError:
             throw ImportResultError.unknown(error.message)
         default:
             throw ImportResultError.unexpectedImportResultType
         }
     }
+
+    struct Pagers {
+
+//        var totalPageCount: Int32 { pagers.totalPagesCount }
+//        var user: Pager { Pager(pagers.usersPager) }
+
+        /*private*/ let pagers: BackupImportPager // TODO: create abstraction (lazy collection?)
+
+        init(_ pagers: BackupImportPager) {
+            self.pagers = pagers
+        }
+
+    }
+
+    // struct Pager {}
 
 }
 

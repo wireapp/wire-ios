@@ -16,14 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 // sourcery: AutoMockable
 public protocol MessageStoreProtocol: Sendable {
     associatedtype MessageEntity: MessageEntityProtocol
 
-    /// Returns the number of all stored users in the local data store, including deleted ones.
+    /// Returns the number of all stored messages in the local data store, including deleted ones.
     func totalMessageCount() async throws -> Int
 
-    /// Returns all users stored in the local database, including deleted ones.
+    /// Returns the IDs of all messages stored in the local database, including deleted ones.
+    func fetchAllMessageIDs() async throws -> [QualifiedID]
+
+    /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() async throws -> [MessageEntity]
 
 }

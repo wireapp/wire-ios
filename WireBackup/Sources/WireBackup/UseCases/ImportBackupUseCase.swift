@@ -89,38 +89,34 @@ public struct ImportBackupUseCase<
 
                     try Task.checkCancellation()
 
-                    let pager = try await importer.importBackup(from: url, using: password)
-                    let total = Int(exactly: pager.totalPagesCount) ?? 0
+                    let pagers = try await importer.importBackup(from: url, using: password)
+                    let total = Int(exactly: pagers.pagers.totalPagesCount) ?? 0 // TODO: why is a conversion needed?
 
-                    /*
-                    try await context.perform {
+                    let storedUserIDs = try await userStore.fetchAllUserIDs()
+                    let usersPager = pagers.pagers.usersPager
+                    while usersPager.hasMorePages() {
+                        let backupUsers = usersPager.nextPage()
+                        for current in 0 ..< backupUsers.size {
+                            guard
+                                let backupUser = backupUsers.get(index: current),
+                                let userID = QualifiedID(backupUser.id)
+                            else { continue }
 
-                        let userFetchRequest = UserEntity.fetchRequest()
-                        userFetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
-                        let storedUserIDs = try context.fetch(userFetchRequest)
-                            .compactMap(UserEntity.init)
-                            .map(\.id)
+                            if !storedUserIDs.contains(userID) {
+                                userStore
+                                fatalError("TODO")
+//                                let user = UserEntity.create(id: userID, context: context)
+//                                user.name = backupUser.name
+//                                user.handle = backupUser.handle
+                            }
 
-                        while pager.usersPager.hasMorePages() {
-                            let backupUsers = pager.usersPager.nextPage()
-                            for current in 0 ..< backupUsers.size {
-                                guard
-                                    let backupUser = backupUsers.get(index: current),
-                                    let userID = QualifiedID(backupUser.id)
-                                else { continue }
-
-                                if !storedUserIDs.contains(userID) {
-                                    let user = UserEntity.create(id: userID, context: context)
-                                    user.name = backupUser.name
-                                    user.handle = backupUser.handle
-                                }
-
-                                if current % 50 == 0 || current == backupUsers.size - 1 {
-                                    try Task.checkCancellation()
-                                    reportProgress(Int(exactly: current) ?? 0, total)
-                                }
+                            if current % 50 == 0 || current == backupUsers.size - 1 {
+                                try Task.checkCancellation()
+                                reportProgress(Int(exactly: current) ?? 0, total)
                             }
                         }
+                    }
+                    /*
 
                         let conversationFetchRequest = ConversationEntity.fetchRequest()
                         conversationFetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"] // qualified id properties
@@ -176,6 +172,7 @@ public struct ImportBackupUseCase<
                         }
                          */
 
+                     try await context.perform {
                         try context.save()
                     }
                      */

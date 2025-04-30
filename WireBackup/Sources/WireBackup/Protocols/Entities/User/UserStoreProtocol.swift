@@ -16,12 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 // sourcery: AutoMockable
 public protocol UserStoreProtocol: Sendable {
     associatedtype UserEntity: UserEntityProtocol
 
     /// Returns the number of all stored users in the local data store, including deleted ones.
     func totalUserCount() async throws -> Int
+
+    /// Returns the IDs of all users stored in the local database, including deleted ones.
+    func fetchAllUserIDs() async throws -> [QualifiedID]
 
     /// Returns all users stored in the local database, including deleted ones.
     func fetchAllUsers() async throws -> [UserEntity]
