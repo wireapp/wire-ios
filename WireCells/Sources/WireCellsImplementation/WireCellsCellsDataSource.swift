@@ -100,7 +100,8 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
         fileManager.createFile(atPath: out.path, contents: nil, attributes: nil)
 
         let fileHandle = try FileHandle(forWritingTo: out)
-        try await awsClient.download(objectKey: cellPath, to: fileHandle, onProgressUpdate: onProgressUpdate)
+        // FIXME: Fix and uncomment
+//        try await awsClient.download(objectKey: cellPath, to: fileHandle, onProgressUpdate: onProgressUpdate)
     }
 
     package func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview] {

@@ -36,31 +36,36 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         metadata: WireCellsAssetMetadata?,
         uploadStatus: WireCellsAttachmentUploadStatus
     ) async throws(MessageAttachmentDraftRepositoryError) -> WireCellsMessageAttachmentDraft {
-        do {
-            return try await messageAttachmentDao.addAttachment(
-                uuid: node.id.uuid,
-                versionID: node.id.versionID,
-                conversationID: conversationID,
-                mimeType: mimeType,
-                fileName: (node.path as NSString).lastPathComponent,
-                fileSize: node.size ?? 0,
-                dataPath: dataPath,
-                nodePath: node.path,
-                status: uploadStatus.rawValue,
-                assetWidth: metadata?.width,
-                assetHeight: metadata?.height,
-                assetDuration: metadata?.durationMs
-            )
-        } catch {
-            throw .genericError(error)
-        }
+        fatalError()
+        // FIXME: Fix and uncomment
+//        do {
+//            return try await messageAttachmentDao.addAttachment(
+//                uuid: node.id.uuid,
+//                versionID: node.id.versionID,
+//                conversationID: conversationID,
+//                mimeType: mimeType,
+//                fileName: (node.path as NSString).lastPathComponent,
+//                fileSize: node.size ?? 0,
+//                dataPath: dataPath,
+//                nodePath: node.path,
+//                status: uploadStatus.rawValue,
+//                assetWidth: metadata?.width,
+//                assetHeight: metadata?.height,
+//                assetDuration: metadata?.durationMs
+//            )
+//        } catch {
+//            throw .genericError(error)
+//        }
     }
 
-    func observe(conversationID: WireCellsConversationID)
-        -> AsyncStream<[WireCellsMessageAttachmentDraft]> {
-        messageAttachmentDao.observeAttachments(
-            conversationID: conversationID
-        )
+    func observe(
+        conversationID: WireCellsConversationID
+    )-> AsyncStream<[WireCellsMessageAttachmentDraft]> {
+        fatalError()
+        // FIXME: Fix and uncomment
+//        messageAttachmentDao.observeAttachments(
+//            conversationID: conversationID
+//        )
     }
 
     func updateStatus(
