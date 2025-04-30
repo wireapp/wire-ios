@@ -23,7 +23,7 @@ extension BackupCreator {
     func addMessage(_ message: some MessageEntityProtocol) {
 
         let backupMessage = BackupMessage(
-            id: message.id.uuidString,
+            id: message.id,
             conversationId: BackupQualifiedId(message.conversationID),
             senderUserId: BackupQualifiedId(message.senderUserID),
             senderClientId: message.senderClientID ?? "", // TODO: make optional

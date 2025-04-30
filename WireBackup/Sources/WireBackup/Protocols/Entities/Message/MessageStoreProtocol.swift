@@ -35,8 +35,8 @@ public protocol MessageStoreProtocol: Sendable {
     /// Adds a message from the backup file to the local data store.
     func addMessage(
         id: MessageEntity.MessageID,
-        conversationID: ConversationEntityProtocol.ConversationID?,
-        senderUserID: UserEntityProtocol.UserID?,
+        conversationID: ConversationEntityProtocol.ConversationID,
+        senderUserID: UserEntityProtocol.UserID,
         senderClientID: String?,
         creationDate: Date,
         content: WireBackup.MessageContent

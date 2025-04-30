@@ -46,22 +46,46 @@ struct MessageStoreAdapter: MessageStoreProtocol {
 
     func addMessage( // TODO: should it accept MessageEntity?
         id: MessageEntity.MessageID,
-        conversationID: QualifiedID?,
-        senderUserID: QualifiedID?,
+        conversationID: QualifiedID,
+        senderUserID: QualifiedID,
         senderClientID: String?,
         creationDate: Date,
         content: WireBackup.MessageContent
     ) async throws {
+
+        let conversation = await messageLocalStore.context.perform {
+            ZMConversation.fetch(
+                with: conversationID.id,
+                domain: conversationID.domain,
+                in: messageLocalStore.context
+            )
+        }
+        guard let conversation else { return }
+
         switch content {
 
         case .text(let textContent):
-            fatalError()
+            let (clientMessage, _) = try await messageLocalStore.fetchOrCreateClientMessage(
+                id: id,
+                conversation: conversation,
+                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
+                date: creationDate
+            )
+            // try clientMessage.setUnderlyingMessage(<#T##message: GenericMessage##GenericMessage#>) // TODO: fix
+            fatalError("TODO")
 
         case .location(let locationContent):
             fatalError()
 
         case .asset(let assetContent):
-            fatalError()
+            let (assetClientMessage, _) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
+                id: id,
+                conversation: conversation,
+                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
+                date: creationDate
+            )
+            // try clientMessage.setUnderlyingMessage(<#T##message: GenericMessage##GenericMessage#>) // TODO: fix
+            fatalError("TODO")
 
         }
     }

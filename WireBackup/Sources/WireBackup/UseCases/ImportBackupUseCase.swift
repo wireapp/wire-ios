@@ -149,15 +149,16 @@ public struct ImportBackupUseCase<
                         for current in 0 ..< backupMessages.size {
                             guard
                                 let backupMessage = backupMessages.get(index: current),
-                                let messageID = UUID(uuidString: backupMessage.id),
+                                let conversationID = QualifiedID(backupMessage.conversationId),
+                                let senderUserID = QualifiedID(backupMessage.senderUserId),
                                 let content = WireBackup.MessageContent(backupMessage.content)
                             else { continue }
 
-                            if !storedMessageIDs.contains(messageID) { // TODO: what if it is in the db but marked as deleted?
+                            if !storedMessageIDs.contains(backupMessage.id) { // TODO: what if it is in the db but marked as deleted?
                                 try await messageStore.addMessage(
-                                    id: messageID,
-                                    conversationID: QualifiedID(backupMessage.conversationId),
-                                    senderUserID: QualifiedID(backupMessage.senderUserId),
+                                    id: backupMessage.id,
+                                    conversationID: conversationID,
+                                    senderUserID: senderUserID,
                                     senderClientID: backupMessage.senderClientId,
                                     creationDate: Date(backupMessage.creationDate),
                                     content: content
