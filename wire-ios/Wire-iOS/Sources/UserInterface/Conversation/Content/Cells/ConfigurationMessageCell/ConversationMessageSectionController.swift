@@ -175,9 +175,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 return false
             }
 
-            let margins = HorizontalMargins.conversationHorizontalMargins()
-
-            return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth - margins.right - margins.left)
+            return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth)
         } else {
             return message.isSentBySelfUser && message.isCollapsingSupported
         }

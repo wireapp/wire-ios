@@ -315,7 +315,8 @@ final class ConversationContentViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        dataSource.contentWidth = tableView.bounds.width
+        let margins = HorizontalMargins.conversationHorizontalMargins()
+        dataSource.contentWidth = tableView.bounds.width - margins.right - margins.left
         scrollToFirstUnreadMessageIfNeeded()
     }
 
@@ -424,7 +425,7 @@ final class ConversationContentViewController: UIViewController {
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows
 
         if let firstIndexPath = indexPathsForVisibleRows?.first,
-           let lastVisibleMessage = dataSource.allMessages[safe: firstIndexPath.section] {
+           let lastVisibleMessage = dataSource.allMessages[ifExists: firstIndexPath.section] {
             conversation.markMessagesAsRead(until: lastVisibleMessage)
         }
 
