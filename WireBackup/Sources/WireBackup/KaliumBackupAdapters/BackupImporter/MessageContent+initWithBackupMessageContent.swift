@@ -24,46 +24,6 @@ import KaliumBackup
 extension WireBackup.MessageContent {
 
     init?(_ backupMessageContent: BackupMessageContent) {
-
-
-        /*
-        private func assetAssetMetadata(
-            _ metadata: MessageContent.AssetContent.Metadata?
-        ) -> BackupMessageContent.AssetAssetMetadata? {
-            switch metadata {
-
-            case let .image(metadata):
-                KaliumBackup.BackupMessageContent.AssetAssetMetadataImage(
-                    width: metadata.width,
-                    height: metadata.height,
-                    tag: metadata.tag
-                )
-
-            case let .video(metadata):
-                KaliumBackup.BackupMessageContent.AssetAssetMetadataVideo(
-                    width: metadata.width.map { KotlinInt(int: $0) },
-                    height: metadata.height.map { KotlinInt(int: $0) },
-                    duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) } // TODO: types should match CoreCrypto types
-                )
-
-            case let .audio(metadata):
-                KaliumBackup.BackupMessageContent.AssetAssetMetadataAudio(
-                    normalization: metadata.normalization.map { KotlinByteArray($0) },
-                    duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }
-                )
-
-            case let .generic(metadata):
-                KaliumBackup.BackupMessageContent.AssetAssetMetadataGeneric(
-                    name: metadata.name
-                )
-
-            case .none:
-                .none
-            }
-        }
-         */
-
-
         switch backupMessageContent {
 
         case let text as BackupMessageContent.Text:

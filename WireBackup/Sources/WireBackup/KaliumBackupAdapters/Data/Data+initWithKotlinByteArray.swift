@@ -22,13 +22,12 @@ import KaliumBackup
 extension Data {
 
     init(_ kotlinByteArray: KotlinByteArray) {
-        fatalError()
-//        let bytes = [UInt8](data)
-//        let intArray = bytes.map(Int8.init(bitPattern:))
-//        self.init(size: Int32(bytes.count))
-//        for (index, element) in intArray.enumerated() {
-//            set(index: Int32(index), value: element)
-//        }
+        let count = Int(kotlinByteArray.size)
+        var bytes = [UInt8](repeating: 0, count: count)
+        for i in 0 ..< kotlinByteArray.size {
+            bytes[Int(i)] = UInt8(bitPattern: kotlinByteArray.get(index: i))
+        }
+        self.init(bytes)
     }
 
 }
