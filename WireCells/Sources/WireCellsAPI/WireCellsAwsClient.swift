@@ -18,7 +18,7 @@
 
 package import Foundation
 
-package enum WireCellsAwsClientError: Error {
+package enum WireCellsAWSClientError: Error {
     case downloadError
     case downloadErrorNoData
     case downloadErrorUnknownObject
@@ -28,7 +28,7 @@ package enum WireCellsAwsClientError: Error {
     case writeError
 }
 
-package protocol WireCellsAwsClient {
+package protocol WireCellsAWSClient {
     /// Downloads an object from S3 to a given writable OutputStream.
     func download(
         objectKey: String,

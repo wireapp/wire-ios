@@ -22,7 +22,7 @@ package import Foundation
 import SmithyIdentity
 package import WireCellsAPI
 
-package final class WireCellsAwsClientImplementation: WireCellsAwsClient {
+package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
     private enum Constants {
         static let bucket = "io"
         static let multipartChunkSize = 10 * 1024 * 1024
@@ -57,13 +57,13 @@ package final class WireCellsAwsClientImplementation: WireCellsAwsClient {
         let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
         let response = try await s3.getObject(input: input)
         guard let body = response.body else {
-            throw WireCellsAwsClientError.downloadErrorNoData
+            throw WireCellsAWSClientError.downloadErrorNoData
         }
 
         switch body {
         case .data:
             guard let data = try await body.readData() else {
-                throw WireCellsAwsClientError.downloadError
+                throw WireCellsAWSClientError.downloadError
             }
 
             // Write the `Data` to the file.
@@ -71,7 +71,7 @@ package final class WireCellsAwsClientImplementation: WireCellsAwsClient {
             do {
                 try fileHandle.write(contentsOf: data)
             } catch {
-                throw WireCellsAwsClientError.writeError
+                throw WireCellsAWSClientError.writeError
             }
 
         case let .stream(stream):
@@ -82,12 +82,12 @@ package final class WireCellsAwsClientImplementation: WireCellsAwsClient {
                 do {
                     try fileHandle.write(contentsOf: chunk)
                 } catch {
-                    throw WireCellsAwsClientError.writeError
+                    throw WireCellsAWSClientError.writeError
                 }
             }
 
         default:
-            throw WireCellsAwsClientError.downloadErrorUnknownObject
+            throw WireCellsAWSClientError.downloadErrorUnknownObject
         }
     }
 
@@ -142,7 +142,7 @@ package final class WireCellsAwsClientImplementation: WireCellsAwsClient {
             input: .init(bucket: Constants.bucket, key: node.path, metadata: node.createDraftNodeMetadata())
         )
         guard let uploadId = createOutput.uploadId else {
-            throw WireCellsAwsClientError.missingUploadID
+            throw WireCellsAWSClientError.missingUploadID
         }
 
         var completedParts: [S3ClientTypes.CompletedPart] = []
