@@ -20,6 +20,7 @@ import Foundation
 import WireAPI
 import WireLogging
 
+/// IncrementalSync using new backend API async stream notifications
 public struct NewIncrementalSync: IncrementalSyncProtocol {
     public enum Failure: Error {
         case needsInitialSync
@@ -144,7 +145,6 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
 
                 }
             } catch PushChannelError.missingEvents {
-                // TODO: do slow sync (initial sync)
                 throw Failure.needsInitialSync
             } catch {
                 logger.warn("v3 live event stream encountered error: \(String(describing: error))")

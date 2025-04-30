@@ -22,11 +22,10 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class IncrementalSyncTests: XCTestCase {
+final class NewIncrementalSyncTests: XCTestCase {
 
-    var sut: IncrementalSync!
+    var sut: NewIncrementalSync!
     var pushChannelAPI: MockPushChannelAPI!
-    var updateEventsSync: MockPullPendingUpdateEventsSyncProtocol!
     var decryptor: MockUpdateEventDecryptorProtocol!
     var store: MockUpdateEventsLocalStoreProtocol!
     var processor: MockUpdateEventProcessorProtocol!
@@ -34,15 +33,13 @@ final class IncrementalSyncTests: XCTestCase {
 
     override func setUp() {
         pushChannelAPI = MockPushChannelAPI()
-        updateEventsSync = MockPullPendingUpdateEventsSyncProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
         store = MockUpdateEventsLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
-        sut = IncrementalSync(
+        sut = NewIncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
-            updateEventsSync: updateEventsSync,
             decryptor: decryptor,
             store: store,
             processor: processor,
@@ -53,7 +50,6 @@ final class IncrementalSyncTests: XCTestCase {
     override func tearDown() {
         sut = nil
         pushChannelAPI = nil
-        updateEventsSync = nil
         decryptor = nil
         store = nil
         processor = nil
@@ -62,9 +58,6 @@ final class IncrementalSyncTests: XCTestCase {
 
     func test_perform_pendingEventsExist() async throws {
         // Mock
-        // Pending events are pulled.
-        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
-
         // Some pending events.
         var storedEnvelopes = [
             Scaffolding.event1,
@@ -129,8 +122,6 @@ final class IncrementalSyncTests: XCTestCase {
         // Then push channel was opened.
         XCTAssertEqual(pushChannel.open_Invocations.count, 1)
 
-        // Then pending events were pulled.
-        XCTAssertEqual(updateEventsSync.pull_Invocations.count, 1)
 
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
