@@ -48,6 +48,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             previousMessageIsKnock: false
         )
         mockUserDefaults.boolForKey_MockValue = false
+        mockUserDefaults.stringArrayForKey_MockValue = []
     }
 
     // MARK: - tearDown
@@ -321,6 +322,85 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         message.senderUser = MockUserType.createDefaultOtherUser()
         let sut = makeSUT(message: message)
         XCTAssertFalse(sut.isCollapsed)
+    }
+    
+    func testSavingWasUncollapsed_FileMessage() throws {
+        mockUserDefaults.boolForKey_MockValue = true
+        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
+        message.senderUser = mockSelfUser
+        let nonce = message.nonce!.uuidString
+        var sut = makeSUT(message: message)
+        XCTAssertTrue(sut.isCollapsed)
+        
+        let expectation = XCTestExpectation()
+        mockUserDefaults.setForKey_MockMethod = { value, _ in
+            XCTAssertEqual(value as? [String], [nonce])
+            expectation.fulfill()
+        }
+        
+        // uncollapse
+        sut.collapse()
+        XCTAssertFalse(sut.isCollapsed)
+        wait(for: [expectation])
+    }
+    
+    func testResetWasUncollapsed_FileMessage() throws {
+        mockUserDefaults.boolForKey_MockValue = true
+        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
+        message.senderUser = mockSelfUser
+        let nonce = message.nonce!.uuidString
+        mockUserDefaults.stringArrayForKey_MockValue = [nonce]
+        var sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+        
+        let expectation = XCTestExpectation()
+        mockUserDefaults.setForKey_MockMethod = { value, _ in
+            XCTAssertEqual(value as? [String], [])
+            expectation.fulfill()
+        }
+        
+        // collapse back
+        sut.collapse()
+        XCTAssertTrue(sut.isCollapsed)
+        wait(for: [expectation])
+    }
+    
+    func testWhenWasUncollapsedBefore_File() throws {
+        mockUserDefaults.boolForKey_MockValue = true
+        let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
+        message.senderUser = mockSelfUser
+        let nonce = message.nonce!.uuidString
+        mockUserDefaults.stringArrayForKey_MockValue = [nonce]
+        let sut = makeSUT(message: message)
+        // when re-created expected to take into account that it was uncollapsed before and stay uncollapsed
+        XCTAssertFalse(sut.isCollapsed)
+    }
+    
+    func testNotSavingWasUncollapsed_TextMessage() throws {
+        mockUserDefaults.boolForKey_MockValue = true
+        let longText = """
+one
+two
+three
+four
+"""
+        let message = try XCTUnwrap(
+            MockMessageFactory.textMessage(withText: longText)
+        )
+        message.senderUser = mockSelfUser
+        var sut = makeSUT(message: message)
+        XCTAssertTrue(sut.isCollapsed)
+        
+        let expectation = XCTestExpectation()
+        expectation.isInverted = true
+        mockUserDefaults.setForKey_MockMethod = { value, _ in
+            expectation.fulfill()
+        }
+        
+        // uncollapse
+        sut.collapse()
+        XCTAssertFalse(sut.isCollapsed)
+        wait(for: [expectation], timeout: 0)
     }
 
     private func makeSUT(message: MockMessage) -> ConversationMessageSectionController {

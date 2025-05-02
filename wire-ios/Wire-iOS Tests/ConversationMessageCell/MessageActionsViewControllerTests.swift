@@ -35,6 +35,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
         mockUserDefaults.boolForKey_MockValue = false
+        mockUserDefaults.stringArrayForKey_MockValue = []
+        mockUserDefaults.setForKey_MockMethod = { _, _ in }
     }
 
     // MARK: - Unit Tests
@@ -186,7 +188,6 @@ final class MessageActionsViewControllerTests: XCTestCase {
         actionController.isCollapsed?.toggle()
 
         XCTAssertEqual(actionController.isCollapsed, false)
-        XCTAssertEqual(actionController.selfUserId, selfUser.remoteIdentifier)
 
         let sut = MessageActionsViewController.controller(
             withActions: MessageAction.allCases,
@@ -201,6 +202,39 @@ final class MessageActionsViewControllerTests: XCTestCase {
             ["Collapse", "Reply", "Details", "Download", "Delete", "Cancel"]
         )
     }
+    
+    func testMenuActionsForImageMessage_collapseOwnMessagesEnabled_wasUncollapsedBefore() {
+        // GIVEN
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKey_MockValue = true
+
+        let message = MockMessageFactory.imageMessage()
+        mockUserDefaults.stringArrayForKey_MockValue = [message.nonce!.uuidString]
+        // WHEN
+        let (actionController, _) = makeSut(
+            message: message,
+            sender: selfUser,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        let sut = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
+
+        // expand message
+
+        // THEN
+        XCTAssertEqual(
+            sut.titles,
+            ["Copy", "Collapse", "Reply", "Details", "Save", "Delete", "Cancel"]
+        )
+    }
+
 
     func testMenuActionsForFileMessage_fromOtherUser_hasNoCollapse() {
         // GIVEN
@@ -217,7 +251,6 @@ final class MessageActionsViewControllerTests: XCTestCase {
         message.senderUser = selfUser
 
         XCTAssertEqual(actionController.isCollapsed, false)
-        XCTAssertEqual(actionController.selfUserId, selfUser.remoteIdentifier)
 
         // THEN
         XCTAssertEqual(sut.titles, ["Reply", "Details", "Download", "Delete", "Cancel"])

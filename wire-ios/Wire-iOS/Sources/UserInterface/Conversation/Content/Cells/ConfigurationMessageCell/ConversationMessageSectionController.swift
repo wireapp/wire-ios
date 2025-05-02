@@ -105,7 +105,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var changeObservers: [Any] = []
 
     private let userSession: UserSession
-    private let userDefaults: UserDefaultsProtocol
+    private let privateDefaults: PrivateUserDefaults<CollapseKey>
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -129,7 +129,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
         self.contentWidth = contentWidth
-        self.userDefaults = userDefaults
+        self.privateDefaults = PrivateUserDefaults<CollapseKey>(
+            userID: userSession.selfUser.remoteIdentifier,
+            storage: userDefaults
+        )
 
         super.init()
 
@@ -145,11 +148,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private var collapseOwnMessagesEnabled: Bool {
-        guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
-        return PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
-            .bool(forKey: .collapseOwnMessages)
+        privateDefaults.bool(forKey: .collapseOwnMessages)
     }
-
+    
     private func isCollapsedInitialValue() -> Bool {
 
         // cases when isCollapsed should be true by default
@@ -159,6 +160,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         // then if in settings user allowed to collapse own messages
         guard collapseOwnMessagesEnabled, message.isSentBySelfUser else {
+            return false
+        }
+        
+        if !message.isText, privateDefaults.wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) {
             return false
         }
 
@@ -219,13 +224,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private func handleCollapseExpand() {
         isCollapsed = !isCollapsed
+        if isCollapsed {
+            privateDefaults.removeWasUncollapsed(message)
+        } else {
+            privateDefaults.saveWasUncollapsed(message)
+        }
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 
     func collapse() {
         handleCollapseExpand()
     }
-
+    
     // MARK: - Content Cells
 
     private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {

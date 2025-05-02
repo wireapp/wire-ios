@@ -41,13 +41,9 @@ final class ConversationMessageActionController {
 
     private var isCollapsedWasUpdated: Bool = false
 
-    /// used to get collapse own messages settings for a specific user
-    /// nil if not applicable
-    var selfUserId: UUID?
-
     weak var responder: MessageActionResponder?
     weak var view: UIView!
-    private let userDefaults: UserDefaultsProtocol
+    private var privateDefaults: PrivateUserDefaults<CollapseKey>?
 
     init(
         responder: MessageActionResponder?,
@@ -63,8 +59,9 @@ final class ConversationMessageActionController {
         self.context = context
         self.view = view
         self.isCollapsed = isCollapsed
-        self.selfUserId = selfUserId
-        self.userDefaults = userDefaults
+        if let selfUserId {
+            self.privateDefaults = PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
+        }
     }
 
     // MARK: - List of Actions
@@ -75,9 +72,7 @@ final class ConversationMessageActionController {
     }
 
     private var collapseOwnMessagesEnabled: Bool {
-        guard let selfUserId else { return false }
-        return PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
-            .bool(forKey: .collapseOwnMessages)
+        privateDefaults?.bool(forKey: .collapseOwnMessages) ?? false
     }
 
     func allMessageMenuElements() -> [UIAction] {
@@ -147,9 +142,9 @@ final class ConversationMessageActionController {
             return message.canVisitLink
         case .collapse:
             guard let isCollapsed,
-                  collapseOwnMessagesEnabled,
                   !isCollapsed,
-                  isCollapsedWasUpdated else {
+                  isCollapsedWasUpdated || (!message.isText && wasUncollapsedBefore())
+            else {
                 return false
             }
 
@@ -159,6 +154,11 @@ final class ConversationMessageActionController {
              .resetSession:
             return false
         }
+    }
+    
+    private func wasUncollapsedBefore() -> Bool {
+        privateDefaults?
+            .wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) ?? false
     }
 
     func canPerformAction(_ selector: Selector) -> Bool {
