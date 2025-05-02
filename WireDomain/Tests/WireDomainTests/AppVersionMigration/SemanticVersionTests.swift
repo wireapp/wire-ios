@@ -16,10 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol JournalProtocol {
+import Foundation
+import Testing
+@testable import WireDomain
 
-    subscript(_ key: JournalKey<Bool>) -> Bool { get set }
-    subscript(_ key: JournalKey<String?>) -> String? { get set }
-    func erase()
+struct SemanticVersionTests {
+
+    @Test("initializedWithSensibleDefaults", arguments: [
+        "0",
+        "0.0",
+        "0.0.0",
+        "0.0.0.0",
+        "-1.0.0",
+        "a.b.c"
+    ])
+    func initializedWithSensibleDefaults(string: String) {
+        #expect(SemanticVersion(stringLiteral: string) == "0.0.0")
+    }
+
+    @Test("Lower versions are ordered before higher ones", arguments: [
+        ("1.1.1", "2.2.2"),
+        ("1.1.1", "1.2.2"),
+        ("1.1.1", "1.1.2")
+    ])
+    func lowerVersionsAreOrderedBeforeHigherOnes(
+        lhs: SemanticVersion,
+        rhs: SemanticVersion
+    ) {
+        #expect(lhs < rhs)
+    }
 
 }
