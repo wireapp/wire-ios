@@ -150,7 +150,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
         fileSize: UInt64,
         dataPath: String,
         nodePath: String,
-        uploadStatus: String,
+        uploadStatus: WireCellsAttachmentUploadStatus,
         assetWidth: UInt64?,
         assetHeight: UInt64?,
         assetDuration: UInt64?
@@ -167,7 +167,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
                 entity.conversation = conversation
                 entity.mimeType = mimeType
                 entity.fileName = fileName
-                entity.fileSize = fileSize
+                entity.fileSize = Int64(fileSize)
                 entity.dataPath = dataPath
                 entity.nodePath = nodePath
                 entity.uploadStatus = uploadStatus
@@ -186,7 +186,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
 
     public func updateUploadStatus(
         draftID: WireCellsMessageAttachmentDraftID,
-        status: String
+        status: WireCellsAttachmentUploadStatus
     ) async throws(WireCellsMessageAttachmentDraftDAOError) {
         do {
             return try await context.perform { [context] in

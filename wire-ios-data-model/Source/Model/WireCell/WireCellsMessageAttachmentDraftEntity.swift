@@ -26,7 +26,7 @@ public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
     @NSManaged public var conversation: ZMConversation?
     @NSManaged public var mimeType: String
     @NSManaged public var fileName: String
-    @NSManaged public var fileSize: UInt64
+    @NSManaged public var fileSize: Int64
     @NSManaged public var dataPath: String
     @NSManaged public var nodePath: String
     @NSManaged public var uploadStatus: WireCellsAttachmentUploadStatus
@@ -41,7 +41,7 @@ public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
             fileName: fileName,
             remoteFilePath: nodePath,
             localFilePath: dataPath,
-            fileSize: fileSize,
+            fileSize: UInt64(fileSize),
             uploadStatus: uploadStatus,
             mimeType: mimeType,
             assetWidth: assetWidth?.uint64Value,

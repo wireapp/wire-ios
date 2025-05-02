@@ -60,7 +60,7 @@ public protocol WireCellsMessageAttachmentDraftDAO {
         fileSize: UInt64,
         dataPath: String,
         nodePath: String,
-        uploadStatus: String,
+        uploadStatus: WireCellsAttachmentUploadStatus,
         assetWidth: UInt64?,
         assetHeight: UInt64?,
         assetDuration: UInt64?
@@ -68,6 +68,6 @@ public protocol WireCellsMessageAttachmentDraftDAO {
 
     func updateUploadStatus(
         draftID: WireCellsMessageAttachmentDraftID,
-        status: String
+        status: WireCellsAttachmentUploadStatus
     ) async throws(WireCellsMessageAttachmentDraftDAOError)
 }
