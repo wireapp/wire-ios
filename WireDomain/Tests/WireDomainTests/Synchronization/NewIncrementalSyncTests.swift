@@ -140,6 +140,10 @@ final class NewIncrementalSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[1].eventEnvelope, Scaffolding.event5)
         XCTAssertEqual(storeInvocations[1].index, 12)
 
+        // Then ack of events done adter storing
+        XCTAssertEqual(pushChannel.ackDeliveryTagMultiple_Invocations.count, 4)
+        
+        
         // Then all events were processed once (duplicates skipped).
         XCTAssertEqual(
             processor.processEvent_Invocations,

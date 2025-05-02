@@ -18,21 +18,12 @@
 
 import Foundation
 
-// TODO: [WPB-9612] make internal
-// This is public for testing purposes.
-public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
-
-    let id: UUID
-    let payload: [UpdateEventDecodingProxy]?
-    let transient: Bool?
-
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            events: (payload ?? []).map(\.updateEvent),
-            isTransient: transient ?? false,
-            deliveryTag: nil
-        )
+struct UpdateEventEnvelopeV8: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case id
+        case payload
     }
 
+    let id: UUID
+    let payload: [UpdateEventDecodingProxy]
 }

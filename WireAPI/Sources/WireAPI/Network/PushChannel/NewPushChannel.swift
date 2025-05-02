@@ -32,12 +32,12 @@ public final class NewPushChannel: PushChannelProtocol {
     }
 
     public func open() async throws -> Stream {
-        WireLogger.pushChannel.debug("opening new push channel")
+        WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV3)
         return try await webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
                 case let .data(data):
-                    WireLogger.pushChannel.debug("received web socket data, decoding...")
+                    WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV3)
                     let envelope = try decoder.decode(WebSocketNotification.self, from: data)
                     if envelope.type == .event {
                         return envelope.toAPIModel()
@@ -46,15 +46,15 @@ public final class NewPushChannel: PushChannelProtocol {
                     }
 
                 case .string:
-                    WireLogger.pushChannel.debug("received web socket string, ignoring...")
+                    WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV3)
                     throw PushChannelError.receivedInvalidMessage
 
                 @unknown default:
-                    WireLogger.pushChannel.debug("received web socket message, ignoring...")
+                    WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV3)
                     throw PushChannelError.receivedInvalidMessage
                 }
             } catch {
-                WireLogger.pushChannel.debug("failed to get next web socket message: \(error)")
+                WireLogger.pushChannel.debug("failed to get next web socket message: \(error)", attributes: .pushChannelV3)
                 await self?.close()
                 throw error
             }
@@ -77,87 +77,15 @@ public final class NewPushChannel: PushChannelProtocol {
     }
 
     public func close() async {
-        WireLogger.pushChannel.debug("closing push channel")
+        WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV3)
         await webSocket.close()
     }
 
     private func write(data: Data) async throws {
-        WireLogger.pushChannel.debug("write data to push channel")
+        WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV3)
         try await webSocket.write(data: data)
     }
 }
 
-public struct WebSocketMessageContext {
-    let message: WebSocketNotification
-    let channel: NewPushChannel?
-}
 
-public struct WebSocketNotification: Decodable {
 
-    enum NotificationType: String, Decodable {
-        case event
-        case notificationsMissed = "notifications-missed"
-    }
-
-    struct NotificationData: Decodable {
-        enum CodingKeys: String, CodingKey {
-            case deliveryTag = "delivery_tag"
-            case event
-        }
-
-        var deliveryTag: UInt64
-        var event: UpdateEventEnvelopeV8
-    }
-
-    var type: NotificationType
-    var data: NotificationData?
-}
-
-extension WebSocketNotification: ToAPIModelConvertible {
-    
-    func toAPIModel() -> UpdateEventEnvelope {
-        guard let event = data?.event  else {
-            assertionFailure("don't call toAPIModel() when type is `notificationsMissed`")
-            return UpdateEventEnvelope(
-                id: UUID(),
-                events: [],
-                isTransient: false
-            )
-        }
-        return UpdateEventEnvelope(
-            id: event.id,
-            events: event.payload.map(\.updateEvent),
-            isTransient: false,
-            deliveryTag: data?.deliveryTag
-        )
-    }
-}
-
-enum AcknowledgmentType: String, Encodable {
-    case fullSync = "ack_full_sync"
-    case ack
-}
-
-struct EventAcknowledgmentNotification: Encodable {
-
-    struct AcknowledgmentData: Encodable {
-        enum CodingKeys: String, CodingKey {
-            case deliveryTag = "delivery_tag"
-            case multiple
-        }
-
-        var deliveryTag: UInt64
-        var multiple: Bool
-    }
-
-    let type: AcknowledgmentType = .ack
-    var data: AcknowledgmentData
-
-    init(deliveryTag: UInt64, multiple: Bool) {
-        self.data = .init(deliveryTag: deliveryTag, multiple: multiple)
-    }
-}
-
-struct FullSyncAcknowledgmentNotification: Encodable {
-    let type: AcknowledgmentType = .fullSync
-}

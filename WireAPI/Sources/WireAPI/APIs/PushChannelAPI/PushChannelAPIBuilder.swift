@@ -28,7 +28,8 @@ public struct PushChannelAPIBuilder {
     /// Create a new builder.
     ///
     /// - Parameter pushChannelService: A push channel service to execute requests.
-
+    /// - Parameter asyncStreamEnabled: True if async stream notifications should be used
+    ///
     public init(pushChannelService: PushChannelService, asyncStreamEnabled: Bool) {
         self.pushChannelService = pushChannelService
         self.asyncStreamEnabled = asyncStreamEnabled

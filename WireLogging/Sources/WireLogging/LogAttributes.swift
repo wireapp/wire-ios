@@ -40,6 +40,7 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case nse = "NSE"
     case accountID = "account_id"
     case mlsGroupID = "mls_group_id"
+    case pushChannelVersion = "push_channel"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue
@@ -50,4 +51,5 @@ public extension LogAttributes {
     static let safePublic = [LogAttributesKey.public: true]
     static let newNSE = [LogAttributesKey.nse: "new"]
     static let legacyNSE = [LogAttributesKey.nse: "legacy"]
+    static let pushChannelV3 = [LogAttributesKey.pushChannelVersion: "v3"]
 }
