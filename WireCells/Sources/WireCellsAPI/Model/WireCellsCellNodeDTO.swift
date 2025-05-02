@@ -123,9 +123,8 @@ package extension WireCellsCellNode {
 package extension RestNode {
     func toDTO() -> WireCellsCellNodeDTO? {
         guard let uuid = UUID(uuidString: uuid) else { return nil }
-        // `versionMeta` is optional in the API response. Need to check with Charles if it can actually be nil, and
-        // when.
-        // What should we do in that case?
+        // TODO: [WPB-17473] `versionMeta` is optional in the API response. Clarify whether this can actually be nil and
+        // what should we do in that case?
         guard let versionMeta, let versionID = UUID(uuidString: versionMeta.versionId) else { return nil }
         return WireCellsCellNodeDTO(
             uuid: uuid,
