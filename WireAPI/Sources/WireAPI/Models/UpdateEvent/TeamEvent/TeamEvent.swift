@@ -20,7 +20,7 @@ import Foundation
 
 /// An event concerning teams.
 
-public enum TeamEvent: Equatable, Codable {
+public enum TeamEvent: Equatable, Codable, Sendable {
 
     /// The self team was deleted.
 
@@ -33,5 +33,9 @@ public enum TeamEvent: Equatable, Codable {
     /// A user's team membership was updated.
 
     case memberUpdate(TeamMemberUpdateEvent)
+
+    /// A team was created.
+
+    case create(TeamCreateEvent)
 
 }

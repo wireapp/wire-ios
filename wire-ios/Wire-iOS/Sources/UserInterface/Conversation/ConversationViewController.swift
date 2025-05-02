@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireConversationsUI
 import WireConversationUI
 import WireDesign
 import WireLogging
@@ -167,7 +168,10 @@ final class ConversationViewController: UIViewController {
             source: ConversationTitleSource(
                 accountImageSource: nil,
                 title: conversation.displayNameWithFallback,
-                subtitle: Self.getConversationSubtitle(conversation)
+                subtitle: Self.getConversationSubtitle(conversation),
+                isMLS: conversation.messageProtocol == .mls,
+                isVerified: conversation.isVerified,
+                isUnderLegalHold: conversation.isUnderLegalHold
             ),
             canAnimate: !ProcessInfo.processInfo.isRunningTests
         )
@@ -463,7 +467,10 @@ final class ConversationViewController: UIViewController {
                     .updateSource(ConversationTitleSource(
                         accountImageSource: imageSource,
                         title: conversation.displayNameWithFallback,
-                        subtitle: Self.getConversationSubtitle(conversation)
+                        subtitle: Self.getConversationSubtitle(conversation),
+                        isMLS: conversation.messageProtocol == .mls,
+                        isVerified: conversation.isVerified,
+                        isUnderLegalHold: conversation.isUnderLegalHold
                     ))
             }
         } else {
@@ -471,7 +478,10 @@ final class ConversationViewController: UIViewController {
             titleView.updateSource(ConversationTitleSource(
                 accountImageSource: nil,
                 title: conversation.displayNameWithFallback,
-                subtitle: Self.getConversationSubtitle(conversation)
+                subtitle: Self.getConversationSubtitle(conversation),
+                isMLS: conversation.messageProtocol == .mls,
+                isVerified: conversation.isVerified,
+                isUnderLegalHold: conversation.isUnderLegalHold
             ))
         }
 
@@ -523,7 +533,7 @@ final class ConversationViewController: UIViewController {
                     return
                 }
                 let mlsFeature = await userSession.makeGetMLSFeatureUseCase().invoke()
-                let resolver = OneOnOneResolver(
+                let resolver = LegacyOneOnOneResolver(
                     migrator: OneOnOneMigrator(mlsService: mlsService),
                     isMLSEnabled: mlsFeature.isEnabled
                 )
@@ -533,7 +543,10 @@ final class ConversationViewController: UIViewController {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
                 }
             } catch {
-                WireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")
+                WireLogger.conversation.warn(
+                    "resolution of proteus 1-1 conversation failed: \(error)",
+                    attributes: [.senderUserId: otherUserID.safeForLoggingDescription]
+                )
             }
         }
     }

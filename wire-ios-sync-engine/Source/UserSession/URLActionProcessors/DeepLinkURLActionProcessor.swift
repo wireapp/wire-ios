@@ -208,7 +208,9 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         if let user = ZMUser.fetch(with: id, domain: nil, in: viewContext) {
             delegate?.showUserProfile(user: user)
         } else {
-            delegate?.showConnectionRequest(userId: id)
+            let currentUserDomain = ZMUser.selfUser(in: viewContext).domain
+            let domain = currentUserDomain ?? "wire.com"
+            delegate?.showConnectionRequest(qualifiedID: QualifiedID(uuid: id, domain: domain))
         }
 
         delegate?.completedURLAction(.openUserProfile(id: id))

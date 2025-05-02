@@ -75,6 +75,7 @@
 		59592D202D4B9527005EDF16 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59191A642D0051C7001AB388 /* WireLogging */; };
 		595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 595C49682CA995E900F8F881 /* WireSettingsUI */; };
 		5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 5977ED1E2D26747900F5C78E /* WireLogging */; };
+		597D9BEF2DA7DA7B000031DE /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 597D9BEE2DA7DA7B000031DE /* WireUtilitiesSupport.framework */; };
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
@@ -389,6 +390,7 @@
 		01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Notification Service Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		597D9BEE2DA7DA7B000031DE /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -768,7 +770,6 @@
 				SelfProfileViewControllerTests.swift,
 				"Settings/Debug Report/SettingsDebugReportViewControllerSnapshotTests.swift",
 				"Settings/Debug Report/SettingsDebugReportViewModelTests.swift",
-				Settings/SettingsPropertyTests.swift,
 				Settings/SettingsTests.swift,
 				"Settings+Reset.swift",
 				SettingsTableViewControllerSnapshotTests.swift,
@@ -993,6 +994,7 @@
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				59152B3B2D284222004425A0 /* WireAnalyticsSupport in Frameworks */,
 				5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */,
+				597D9BEF2DA7DA7B000031DE /* WireUtilitiesSupport.framework in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
 				59B768472D2D59E3007B5F1E /* WireLoggingSupport in Frameworks */,
@@ -1142,6 +1144,7 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				597D9BEE2DA7DA7B000031DE /* WireUtilitiesSupport.framework */,
 				E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */,
 				E970F6E42CC90115007A2CEB /* WireTransport.framework */,
 				EE67F740296F0EBC001D7C88 /* WireCanvas.framework */,

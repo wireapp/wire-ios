@@ -109,6 +109,7 @@ public final class ZMUserSession: NSObject {
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     let analyiticsLogger: WireLogger
+    private let journal: Journal
 
     // MARK: Computed Properties
 
@@ -408,7 +409,8 @@ public final class ZMUserSession: NSObject {
         dependencies: UserSessionDependencies,
         backendEnvironment: WireAPI.BackendEnvironment,
         minTLSVersion: WireAPI.TLSVersion,
-        apiVersion: WireAPI.APIVersion
+        apiVersion: WireAPI.APIVersion,
+        journal: Journal
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
@@ -459,6 +461,7 @@ public final class ZMUserSession: NSObject {
             mlsDecryptionService: mlsService,
             proteusService: proteusService
         )
+        self.journal = journal
         super.init()
     }
 
@@ -552,12 +555,12 @@ public final class ZMUserSession: NSObject {
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
-                setUpSyncAgent(clientID: selfClientID)
+                setUpSyncAgent(clientID: selfClientID, asyncStreamEnabled: selfUserClient.asyncStreamCapable)
             }
         }
     }
 
-    private func setUpSyncAgent(clientID: String) {
+    private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) {
         let onSelfClientInvalidated: () async -> Void = { [self] in
             await syncContext.perform { [self] in
                 syncContext.tearDownCryptoStack()
@@ -582,19 +585,66 @@ public final class ZMUserSession: NSObject {
 
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
-            onSelfClientInvalidated: onSelfClientInvalidated
+            onSelfClientInvalidated: onSelfClientInvalidated,
+            onProcessedCallEvent: onProcessedCallEvent(callEventInfo:)
         )
 
+        let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
+            clientSessionComponent
+        } else {
+            // TODO: [WPB-17225] replace syncProvider here
+            clientSessionComponent
+        }
+
         let syncAgent = SyncAgent(
+            journal: journal,
             lastUpdateEventIDRepository: lastEventIDRepository,
             initialSyncProvider: clientSessionComponent,
-            incrementalSyncProvider: clientSessionComponent,
+            incrementalSyncProvider: incrementalSyncProvider,
             legacySyncStatus: applicationStatusDirectory.syncStatus
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
         syncAgent.delegate = self
+
+        // TODO: [WPB-17223] remove `resume` call from here
         syncAgent.resume()
+    }
+
+    func onProcessedCallEvent(callEventInfo: CallEventInfo) {
+        let serverTimeDelta = syncContext.performAndWait {
+            syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
+        }
+
+        viewContext.perform { [weak self] in // callCenter can only be accessed on the ui context
+            guard let self, let callCenter else { return }
+            guard !callEventInfo.isMuted else {
+                callCenter.isMuted = true
+                return
+            }
+
+            let conversationId = AVSIdentifier(
+                identifier: callEventInfo.conversationID,
+                domain: callEventInfo.conversationDomain
+            )
+
+            let userId = AVSIdentifier(
+                identifier: callEventInfo.userID,
+                domain: callEventInfo.userDomain
+            )
+
+            let callEvent = CallEvent(
+                data: callEventInfo.data,
+                currentTimestamp: Date.now.addingTimeInterval(serverTimeDelta),
+                serverTimestamp: callEventInfo.eventTimestamp,
+                conversationId: conversationId,
+                userId: userId,
+                clientId: callEventInfo.clientID
+            )
+
+            callCenter.processCallEvent(callEvent)
+        }
+
     }
 
     // MARK: - Deinitalize
@@ -716,7 +766,8 @@ public final class ZMUserSession: NSObject {
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
             uiMOC: managedObjectContext,
             syncMOC: syncManagedObjectContext,
-            isDeveloperModeEnabled: isDeveloperModeEnabled
+            isDeveloperModeEnabled: isDeveloperModeEnabled,
+            isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
     }
 
@@ -837,6 +888,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    // Only used for testing
     public func triggerIncrementalSync() {
         Task {
             do {
@@ -1031,6 +1083,29 @@ extension ZMUserSession: SyncAgentDelegate {
         didFinishIncrementalSync(isRecovering: isRecovering)
     }
 
+    func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error) {
+        let onRetry: () -> Void = { [weak self] in
+            self?.managedObjectContext.performGroupedBlock {
+                self?.isPerformingSync = true
+                self?.updateNetworkState()
+            }
+
+            syncAgent.resume()
+        }
+
+        delegate?.clientDidFailSyncing(
+            error: error,
+            retryHandler: onRetry
+        )
+
+        WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.isPerformingSync = false
+            self?.updateNetworkState()
+        }
+    }
+
     func didStartInitialSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
@@ -1091,6 +1166,11 @@ extension ZMUserSession: SyncAgentDelegate {
                 context: notificationContext
             ).post()
 
+            guard !isRecovering else {
+                // in case of recovery, we don't need more
+                return
+            }
+
             WaitingGroupTask(context: syncContext) { [weak self] in
                 guard let self else { return }
                 await fetchBackendMLSPublicKeys()
@@ -1149,7 +1229,7 @@ extension ZMUserSession: SyncAgentDelegate {
         -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
 
-        let resolver = OneOnOneResolver(
+        let resolver = LegacyOneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
         )
@@ -1162,7 +1242,7 @@ extension ZMUserSession: SyncAgentDelegate {
         )
     }
 
-    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsProtocol {
+    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
         guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }
@@ -1174,7 +1254,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
         }
 
-        return PullSelfUserClients.make(
+        return PullSelfUserClientsSync.make(
             apiService: apiService,
             apiVersion: wireAPIVersion,
             context: context
@@ -1302,8 +1382,6 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         registerCurrentPushToken()
         renewAccessTokenIfNeeded(for: userClient)
 
-        WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)
-
         managedObjectContext.performGroupedBlock { [weak self] in
             guard
                 let context = self?.managedObjectContext,
@@ -1321,7 +1399,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
-            setUpSyncAgent(clientID: selfClientID)
+            setUpSyncAgent(clientID: selfClientID, asyncStreamEnabled: userClient.asyncStreamCapable)
         }
     }
 

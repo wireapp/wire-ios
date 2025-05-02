@@ -26,7 +26,9 @@ public class MessageRepository: MessageRepositoryProtocol {
 
     // MARK: - Object lifecycle
 
-    public init(localStore: any MessageLocalStoreProtocol) {
+    public init(
+        localStore: any MessageLocalStoreProtocol
+    ) {
         self.localStore = localStore
     }
 

@@ -48,7 +48,7 @@ public final class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDo
     public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession? = nil) {
         self.foregroundSession = foregroundSession
         self.backgroundSession = backgroundSession ?? foregroundSession
-        self.allSessions = [foregroundSession, backgroundSession].compactMap { $0 }
+        self.allSessions = [foregroundSession, backgroundSession].compactMap(\.self)
     }
 
     var tearDownCalled = false
@@ -93,7 +93,8 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
             applicationGroupIdentifier: containerIdentifier,
             applicationVersion: "1.0",
             minTLSVersion: nil,
-            selfClientID: nil
+            selfClientID: nil,
+            isSyncV2Enabled: false
         )
     }
 

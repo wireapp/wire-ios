@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSystemSupport
+import WireFoundationSupport
 import WireTesting
-import WireUtilitiesSupport
 import XCTest
 
 @testable import Wire
 
 final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
     private var userDefaults: UserDefaults!
-    private var sut: DidPresentNotificationPermissionHintUseCase<MockCurrentDateProviding>!
+    private var sut: DidPresentNotificationPermissionHintUseCase<CurrentDateProvidingMock>!
 
     override func setUp() {
         mockDateProvider = .init()
@@ -43,6 +42,7 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = nil
     }
 
+    // TODO: [WPB-17397] re-enable
     func testDateIsStored() throws {
 
         // When

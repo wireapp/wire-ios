@@ -33,7 +33,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
-    let userLocalStore: any UserLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
 
     // MARK: - Object lifecycle
@@ -41,12 +40,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public init(
         context: NSManagedObjectContext,
         mlsService: (any MLSServiceInterface)?,
-        userLocalStore: any UserLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.context = context
         self.mlsService = mlsService
-        self.userLocalStore = userLocalStore
         self.messageLocalStore = messageLocalStore
     }
 
@@ -224,6 +221,44 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func increaseUnreadCount(
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.internalEstimatedUnreadCount += 1
+        }
+    }
+
+    public func decreaseUnreadCount(
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.internalEstimatedUnreadCount -= 1
+        }
+    }
+
+    public func increaseUnreadSelfMentionCount(
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.internalEstimatedUnreadSelfMentionCount += 1
+        }
+    }
+
+    public func increaseUnreadSelfReplyCount(
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.internalEstimatedUnreadSelfReplyCount += 1
+        }
+    }
+
+    public func unreadConversationCount() async -> UInt {
+        await context.perform { [context] in
+            ZMConversation.unreadConversationCount(in: context)
+        }
+    }
+
     public func storeConversation(
         permission: Conversation.ChannelPermission,
         conversation: ZMConversation
@@ -258,10 +293,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         let usersAndRoles = await withTaskGroup(of: UserAndRole?.self) { taskGroup in
             for newParticipant in participants {
                 taskGroup.addTask { [self] in
-                    let user = await userLocalStore.fetchOrCreateUser(
-                        id: newParticipant.id,
-                        domain: newParticipant.domain
-                    )
+                    let user = await context.perform { [context] in
+                        ZMUser.fetchOrCreate(
+                            with: newParticipant.id,
+                            domain: newParticipant.domain,
+                            in: context
+                        )
+                    }
 
                     if let participantRole = newParticipant.role {
                         let role = await fetchOrCreateRole(
@@ -282,7 +320,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 usersAndRoles.append(userAndRole)
             }
 
-            return usersAndRoles.compactMap { $0 }
+            return usersAndRoles.compactMap(\.self)
         }
 
         let users = Set(usersAndRoles.map(\.user))
@@ -480,6 +518,27 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func createMLSConversation(
+        conversationID: UUID,
+        conversationDomain: String?,
+        mlsGroupID: MLSGroupID
+    ) async {
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            )
+
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = conversationDomain
+            conversation.mlsGroupID = mlsGroupID
+            conversation.mlsStatus = .ready
+            context.saveOrRollback()
+        }
+
+    }
+
     public func fetchMLSConversation(
         groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation? {
@@ -488,6 +547,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 with: groupID,
                 in: context
             )
+        }
+    }
+
+    public func conversationNeedsBackendUpdate(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.needsToBeUpdatedFromBackend
         }
     }
 
@@ -504,6 +571,27 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async -> Bool {
         await context.perform {
             conversation.isForcedReadOnly
+        }
+    }
+
+    public func isMessageSilenced(
+        _ message: GenericMessage,
+        senderID: UUID?,
+        conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.isMessageSilenced(message, senderID: senderID)
+        }
+    }
+
+    public func shouldHideNotification() async -> Bool {
+        await context.perform { [context] in
+            let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
+            let value = context.persistentStoreMetadata(
+                forKey: ZMShouldHideNotificationContentKey
+            ) as? NSNumber
+
+            return value?.boolValue ?? false
         }
     }
 
@@ -539,10 +627,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         in conversation: ZMConversation,
         date: Date
     ) async {
-        guard let participant = try? await userLocalStore.fetchUser(
-            id: participantID,
-            domain: participantDomain
-        ) else {
+        let participant = await context.perform { [context] in
+            ZMUser.fetch(
+                with: participantID,
+                domain: participantDomain,
+                in: context
+            )
+        }
+        guard let participant else {
             return
         }
 
@@ -559,6 +651,23 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async -> MutedMessageTypes {
         await context.perform {
             conversation.mutedMessageTypes
+        }
+    }
+
+    public func conversationMutedMessageTypesIncludingAvailability(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            return selfUser.mutedMessagesTypes.union(conversation.mutedMessageTypes)
+        }
+    }
+
+    public func lastReadServerTimestamp(
+        _ conversation: ZMConversation
+    ) async -> Date? {
+        await context.perform {
+            conversation.lastReadServerTimeStamp
         }
     }
 
@@ -607,16 +716,27 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func name(
+        for conversation: ZMConversation
+    ) async -> String? {
+        await context.perform {
+            conversation.displayName
+        }
+    }
+
     public func removeParticipantFromAllGroupConversations(
         participantID: UUID,
         participantDomain: String?,
         date: Date
     ) async throws {
 
-        let user = try await userLocalStore.fetchUser(
-            id: participantID,
-            domain: participantDomain
-        )
+        let user = await context.perform { [context] in
+            ZMUser.fetchOrCreate(
+                with: participantID,
+                domain: participantDomain,
+                in: context
+            )
+        }
 
         let allGroupConversations = await context.perform {
             // swiftformat:disable:next redundantProperty

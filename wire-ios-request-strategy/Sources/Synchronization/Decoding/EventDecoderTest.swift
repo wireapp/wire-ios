@@ -976,7 +976,8 @@ extension EventDecoderTest {
                 _ = StoredUpdateEvent.encryptAndCreate(
                     event,
                     context: self.eventMOC,
-                    index: Int64(startIndex) + Int64(index)
+                    index: Int64(startIndex) + Int64(index),
+                    isCallEvent: event.isCallEvent
                 )
             }
 

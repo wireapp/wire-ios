@@ -28,11 +28,11 @@ final class CookieStorageTests: XCTestCase {
 
     var sut: CookieStorage!
     var cookieEncryptionKey: Data!
-    var keychain: MockKeychainProtocol!
+    var keychain: KeychainProtocolMock!
 
     override func setUpWithError() throws {
         cookieEncryptionKey = try Scaffolding.cookieEncryptionKey()
-        keychain = MockKeychainProtocol()
+        keychain = KeychainProtocolMock()
         sut = CookieStorage(
             userID: Scaffolding.userID,
             cookieEncryptionKey: cookieEncryptionKey,

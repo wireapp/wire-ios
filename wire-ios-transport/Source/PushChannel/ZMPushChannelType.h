@@ -33,7 +33,8 @@ NS_SWIFT_NAME(PushChannelType)
                               proxyUsername:(NSString * _Nullable)proxyUsername
                               proxyPassword:(NSString * _Nullable)proxyPassword
                                  minTLSVersion:(NSString * _Nullable)minTLSVersion
-                                      queue:(NSOperationQueue * _Nonnull)queue;
+                                      queue:(NSOperationQueue * _Nonnull)queue
+                                  isEnabled:(bool)isEnabled;
 
 /// Set the consumer of push channel messsages.
 ///

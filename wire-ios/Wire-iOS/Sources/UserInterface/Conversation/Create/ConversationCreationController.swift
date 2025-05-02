@@ -67,9 +67,10 @@ final class ConversationCreationController: UIViewController {
         let sections = [
             guestsSection,
             values.shouldIncludeServices ? servicesSection : nil,
-            receiptsSection,
+            // TODO: [WPB-16771] Remove conditional when read receipts supported on MLS
+            values.encryptionProtocol != .mls ? receiptsSection : nil,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
-        ].compactMap { $0 }
+        ].compactMap(\.self)
 
         if let firstSection = sections.first {
             firstSection.headerTitle = L10n.Localizable.Conversation.Create.Options.title
@@ -425,16 +426,13 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             apiService: apiService
         ).makeAPI(for: apiVersion)
 
-        let userLocalStore = UserLocalStore(context: context)
         let messageLocalStore = MessageLocalStore(
-            context: context,
-            userLocalStore: userLocalStore
+            context: context
         )
 
         let store = ConversationLocalStore(
             context: context,
             mlsService: nil,
-            userLocalStore: userLocalStore,
             messageLocalStore: messageLocalStore
         )
 

@@ -31,6 +31,13 @@
   },
   "testTargets" : [
     {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireDomainPackageTests",
+        "name" : "WireDomainPackageTests"
+      }
+    },
+    {
       "skippedTests" : [
         "PullAllConversationsSyncTests\/testPull_LegacyIdentifiers()",
         "PullMLSStatusSyncTests\/testPull_EndpointUnavailable()",

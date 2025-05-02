@@ -95,21 +95,21 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
 
 }
 
-extension Payload {
+public extension Payload {
 
     /// The domain that the self domain has stopped federate with.
     struct FederationDelete: Codable {
 
-        let domain: String
-        let type: String
+        public let domain: String
+        public let type: String
 
     }
 
     /// The list of domains that have terminated federation with each other.
     struct ConnectionRemoved: Codable {
 
-        let domains: [String]
-        let type: String
+        public let domains: [String]
+        public let type: String
 
     }
 

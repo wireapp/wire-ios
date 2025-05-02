@@ -80,7 +80,8 @@ public final class UserSessionComponent {
     )
 
     private lazy var serverTrustValidator = ServerTrustValidator(
-        pinnedKeys: backendEnvironment.pinnedKeys
+        pinnedKeys: backendEnvironment.pinnedKeys,
+        currentDateProvider: .system
     )
 
     private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(
@@ -122,7 +123,8 @@ public final class UserSessionComponent {
 
     public func clientSessionComponent(
         clientID: String,
-        onSelfClientInvalidated: @escaping () async -> Void
+        onSelfClientInvalidated: @escaping () async -> Void,
+        onProcessedCallEvent: @escaping (CallEventInfo) -> Void
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
@@ -140,7 +142,8 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            onSelfClientInvalidated: onSelfClientInvalidated
+            onSelfClientInvalidated: onSelfClientInvalidated,
+            onProcessedCallEvent: onProcessedCallEvent
         )
     }
 

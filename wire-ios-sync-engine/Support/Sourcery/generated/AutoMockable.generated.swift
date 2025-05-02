@@ -1,6 +1,5 @@
 // Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -26,6 +25,7 @@
 
 
 import WireAnalytics
+import WireAPI
 
 @testable import WireSyncEngine
 
@@ -98,12 +98,12 @@ public class MockCheckOneOnOneConversationIsReadyUseCaseProtocol: CheckOneOnOneC
 
     // MARK: - invoke
 
-    public var invokeUserID_Invocations: [QualifiedID] = []
+    public var invokeUserID_Invocations: [WireDataModel.QualifiedID] = []
     public var invokeUserID_MockError: Error?
-    public var invokeUserID_MockMethod: ((QualifiedID) async throws -> Bool)?
+    public var invokeUserID_MockMethod: ((WireDataModel.QualifiedID) async throws -> Bool)?
     public var invokeUserID_MockValue: Bool?
 
-    public func invoke(userID: QualifiedID) async throws -> Bool {
+    public func invoke(userID: WireDataModel.QualifiedID) async throws -> Bool {
         invokeUserID_Invocations.append(userID)
 
         if let error = invokeUserID_MockError {
@@ -721,12 +721,12 @@ public class MockSearchUsersUseCaseProtocol: SearchUsersUseCaseProtocol {
 
     // MARK: - invoke
 
-    public var invokeQueryOptionsMessageProtocol_Invocations: [(query: String, options: SearchOptions, messageProtocol: MessageProtocol?)] = []
+    public var invokeQueryOptionsMessageProtocol_Invocations: [(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?)] = []
     public var invokeQueryOptionsMessageProtocol_MockError: Error?
-    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, MessageProtocol?) async throws -> SearchResult)?
+    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, WireDataModel.MessageProtocol?) async throws -> SearchResult)?
     public var invokeQueryOptionsMessageProtocol_MockValue: SearchResult?
 
-    public func invoke(query: String, options: SearchOptions, messageProtocol: MessageProtocol?) async throws -> SearchResult {
+    public func invoke(query: String, options: SearchOptions, messageProtocol: WireDataModel.MessageProtocol?) async throws -> SearchResult {
         invokeQueryOptionsMessageProtocol_Invocations.append((query: query, options: options, messageProtocol: messageProtocol))
 
         if let error = invokeQueryOptionsMessageProtocol_MockError {
@@ -1043,6 +1043,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock(activeSession)
     }
 
+    // MARK: - sessionManagerDidFailSyncing
+
+    public var sessionManagerDidFailSyncingErrorRetryHandler_Invocations: [(error: any Error, retryHandler: () -> Void)] = []
+    public var sessionManagerDidFailSyncingErrorRetryHandler_MockMethod: ((any Error, @escaping () -> Void) -> Void)?
+
+    public func sessionManagerDidFailSyncing(error: any Error, retryHandler: @escaping () -> Void) {
+        sessionManagerDidFailSyncingErrorRetryHandler_Invocations.append((error: error, retryHandler: retryHandler))
+
+        guard let mock = sessionManagerDidFailSyncingErrorRetryHandler_MockMethod else {
+            fatalError("no mock for `sessionManagerDidFailSyncingErrorRetryHandler`")
+        }
+
+        mock(error, retryHandler)
+    }
+
     // MARK: - sessionManagerDidChangeActiveUserSession
 
     public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []
@@ -1181,10 +1196,10 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
     // MARK: - calculateSupportedProtocols
 
     public var calculateSupportedProtocols_Invocations: [Void] = []
-    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
-    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
+    public var calculateSupportedProtocols_MockMethod: (() -> Set<WireDataModel.MessageProtocol>)?
+    public var calculateSupportedProtocols_MockValue: Set<WireDataModel.MessageProtocol>?
 
-    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
+    public func calculateSupportedProtocols() -> Set<WireDataModel.MessageProtocol> {
         calculateSupportedProtocols_Invocations.append(())
 
         if let mock = calculateSupportedProtocols_MockMethod {
@@ -1194,6 +1209,148 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
         } else {
             fatalError("no mock for `calculateSupportedProtocols`")
         }
+    }
+
+}
+
+class MockUpdateEventMigratorDAOProtocol: UpdateEventMigratorDAOProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - existsLegacyEvent
+
+    var existsLegacyEvent_Invocations: [Void] = []
+    var existsLegacyEvent_MockError: Error?
+    var existsLegacyEvent_MockMethod: (() async throws -> Bool)?
+    var existsLegacyEvent_MockValue: Bool?
+
+    func existsLegacyEvent() async throws -> Bool {
+        existsLegacyEvent_Invocations.append(())
+
+        if let error = existsLegacyEvent_MockError {
+            throw error
+        }
+
+        if let mock = existsLegacyEvent_MockMethod {
+            return try await mock()
+        } else if let mock = existsLegacyEvent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `existsLegacyEvent`")
+        }
+    }
+
+    // MARK: - indexOfLastEventEnvelope
+
+    var indexOfLastEventEnvelope_Invocations: [Void] = []
+    var indexOfLastEventEnvelope_MockError: Error?
+    var indexOfLastEventEnvelope_MockMethod: (() async throws -> Int64)?
+    var indexOfLastEventEnvelope_MockValue: Int64?
+
+    func indexOfLastEventEnvelope() async throws -> Int64 {
+        indexOfLastEventEnvelope_Invocations.append(())
+
+        if let error = indexOfLastEventEnvelope_MockError {
+            throw error
+        }
+
+        if let mock = indexOfLastEventEnvelope_MockMethod {
+            return try await mock()
+        } else if let mock = indexOfLastEventEnvelope_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `indexOfLastEventEnvelope`")
+        }
+    }
+
+    // MARK: - nextBatchOfLegacyEvents
+
+    var nextBatchOfLegacyEventsPrivateKeys_Invocations: [EARPrivateKeys?] = []
+    var nextBatchOfLegacyEventsPrivateKeys_MockMethod: ((EARPrivateKeys?) async -> [ZMUpdateEvent]?)?
+    var nextBatchOfLegacyEventsPrivateKeys_MockValue: [ZMUpdateEvent]??
+
+    func nextBatchOfLegacyEvents(privateKeys: EARPrivateKeys?) async -> [ZMUpdateEvent]? {
+        nextBatchOfLegacyEventsPrivateKeys_Invocations.append(privateKeys)
+
+        if let mock = nextBatchOfLegacyEventsPrivateKeys_MockMethod {
+            return await mock(privateKeys)
+        } else if let mock = nextBatchOfLegacyEventsPrivateKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `nextBatchOfLegacyEventsPrivateKeys`")
+        }
+    }
+
+    // MARK: - insertEventEnvelope
+
+    var insertEventEnvelopeIndex_Invocations: [(eventEnvelope: UpdateEventEnvelope, index: Int64)] = []
+    var insertEventEnvelopeIndex_MockError: Error?
+    var insertEventEnvelopeIndex_MockMethod: ((UpdateEventEnvelope, Int64) async throws -> Void)?
+
+    func insertEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws {
+        insertEventEnvelopeIndex_Invocations.append((eventEnvelope: eventEnvelope, index: index))
+
+        if let error = insertEventEnvelopeIndex_MockError {
+            throw error
+        }
+
+        guard let mock = insertEventEnvelopeIndex_MockMethod else {
+            fatalError("no mock for `insertEventEnvelopeIndex`")
+        }
+
+        try await mock(eventEnvelope, index)
+    }
+
+    // MARK: - deleteNextBatchOfLegacyEvents
+
+    var deleteNextBatchOfLegacyEvents_Invocations: [Void] = []
+    var deleteNextBatchOfLegacyEvents_MockMethod: (() async -> Void)?
+
+    func deleteNextBatchOfLegacyEvents() async {
+        deleteNextBatchOfLegacyEvents_Invocations.append(())
+
+        guard let mock = deleteNextBatchOfLegacyEvents_MockMethod else {
+            fatalError("no mock for `deleteNextBatchOfLegacyEvents`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - save
+
+    var save_Invocations: [Void] = []
+    var save_MockError: Error?
+    var save_MockMethod: (() async throws -> Void)?
+
+    func save() async throws {
+        save_Invocations.append(())
+
+        if let error = save_MockError {
+            throw error
+        }
+
+        guard let mock = save_MockMethod else {
+            fatalError("no mock for `save`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - discardChanges
+
+    var discardChanges_Invocations: [Void] = []
+    var discardChanges_MockMethod: (() async -> Void)?
+
+    func discardChanges() async {
+        discardChanges_Invocations.append(())
+
+        guard let mock = discardChanges_MockMethod else {
+            fatalError("no mock for `discardChanges`")
+        }
+
+        await mock()
     }
 
 }

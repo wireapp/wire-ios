@@ -39,7 +39,7 @@ struct ConversationMLSMessageAddEventDecoder {
         )
 
         let payload = try container.decode(
-            Payload.self,
+            String.self,
             forKey: .payload
         )
 
@@ -52,15 +52,10 @@ struct ConversationMLSMessageAddEventDecoder {
             conversationID: conversationID,
             senderID: senderID,
             subconversation: subconversation,
-            message: payload.text,
-            timestamp: timestamp?.date
+            message: payload,
+            timestamp: timestamp?.date,
+            decryptedMessages: []
         )
-    }
-
-    private struct Payload: Decodable {
-
-        let text: String
-
     }
 
 }

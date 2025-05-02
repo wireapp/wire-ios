@@ -37,6 +37,7 @@ extern NSString * const ZMPushChannelIsOpenKey;
 @property (nonatomic, readonly) id<ZMApplication> application;
 @property (nonatomic, readonly) id<TransportSessionType> transportSession;
 @property (nonatomic) BOOL isDeveloperModeEnabled;
+@property (nonatomic) BOOL isSyncV2Enabled;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
@@ -47,7 +48,8 @@ extern NSString * const ZMPushChannelIsOpenKey;
                   pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
-                  isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled;
+                  isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
+                         isSyncV2Enabled:(BOOL)isSyncV2Enabled;
 
 - (void)tearDown;
 
