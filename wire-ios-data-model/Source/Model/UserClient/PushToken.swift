@@ -18,27 +18,14 @@
 
 import Foundation
 
+/// Token from Apple Push Notification Service, only supporting standard type
 public struct PushToken: Equatable, Sendable {
-
-    // MARK: - Types
-
-    public enum TokenType: Int, Codable, Sendable {
-
-        case standard
-
-        public var transportType: String {
-            switch self {
-            case .standard: "APNS"
-            }
-        }
-    }
 
     // MARK: - Properties
 
     public let deviceToken: Data
     public let appIdentifier: String
     public let transportType: String
-    public var tokenType: TokenType = .standard
 
     // MARK: - Life cycle
 

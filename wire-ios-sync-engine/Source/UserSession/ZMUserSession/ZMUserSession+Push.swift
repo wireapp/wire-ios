@@ -120,7 +120,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
             -> Void
     ) {
-        Logging.push.safePublic("Notification center wants to present in-app notification: \(notification)")
+        WireLogger.notifications.info("Notification center wants to present in-app notification: \(notification)")
         let categoryIdentifier = notification.request.content.categoryIdentifier
 
         handleInAppNotification(
@@ -136,7 +136,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        Logging.push.safePublic("Did receive notification response: \(response)")
+        WireLogger.notifications.info("Did receive notification response: \(response)")
         let userText = (response as? UNTextInputNotificationResponse)?.userText
         let note = response.notification
 

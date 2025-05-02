@@ -835,10 +835,6 @@ public final class ZMUserSession: NSObject {
     private func calculateBadgeCount() {
         let accountID = coreDataStack.account.userIdentifier
         let unreadCount = Int(ZMConversation.unreadConversationCount(in: syncManagedObjectContext))
-        Logging.push
-            .safePublic(
-                "Updating badge count for \(accountID) to \(SanitizedString(stringLiteral: String(unreadCount)))"
-            )
         sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
     }
 

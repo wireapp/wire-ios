@@ -53,19 +53,14 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
 
             let tokens = payload.tokens
                 .filter {
-                    $0.client == action.clientID && ($0.isStandardAPNSToken || $0.isVoIPToken)
+                    $0.client == action.clientID && ($0.isStandardAPNSToken)
                 }
-                .compactMap { token in
-                    if token.isStandardAPNSToken {
+                .map { token in
                         PushToken(
                             deviceToken: token.token.zmHexDecodedData()!,
                             appIdentifier: token.app,
                             transportType: token.transport
                         )
-                    } else {
-                        // filter out voip token if any
-                        nil
-                    }
                 }
 
             action.notifyResult(.success(tokens))
@@ -94,10 +89,6 @@ extension GetPushTokensActionHandler {
 
         var isStandardAPNSToken: Bool {
             transport.isOne(of: ["APNS", "APNS_SANDBOX"])
-        }
-
-        var isVoIPToken: Bool {
-            transport.isOne(of: ["APNS_VOIP", "APNS_VOIP_SANDBOX"])
         }
 
     }

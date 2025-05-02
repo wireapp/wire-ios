@@ -69,7 +69,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     }
 
     private let application: ZMApplication
-    private let requirePushTokenType: PushToken.TokenType
     private let delegateQueue = DispatchQueue(label: "CallkitProviderDelegateQueue")
     private let provider: CXProvider
     private let callController: CXCallController
@@ -89,12 +88,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     public convenience init(
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         mediaManager: MediaManagerType
     ) {
         self.init(
             application: application,
-            requiredPushTokenType: requiredPushTokenType,
             mediaManager: mediaManager,
             delegate: nil
         )
@@ -102,13 +99,11 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     convenience init(
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         mediaManager: MediaManagerType,
         delegate: CallKitManagerDelegate?
     ) {
         self.init(
             application: application,
-            requiredPushTokenType: requiredPushTokenType,
             provider: CXProvider(configuration: CallKitManager.providerConfiguration),
             callController: CXCallController(queue: DispatchQueue.main),
             mediaManager: mediaManager,
@@ -119,7 +114,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     init(
         isEnabled: Bool = false,
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         provider: CXProvider,
         callController: CXCallController,
         mediaManager: MediaManagerType?,
@@ -127,7 +121,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     ) {
         self.isEnabled = isEnabled
         self.application = application
-        self.requirePushTokenType = requiredPushTokenType
         self.provider = provider
         self.callController = callController
         self.mediaManager = mediaManager

@@ -45,24 +45,6 @@ extension SessionManager: VoIPPushManagerDelegate {
         }
         BackgroundActivityFactory.shared.endBackgroundActivity(activity)
     }
-
-    // MARK: Helpers
-
-    private func accountId(from dictionary: [AnyHashable: Any]) -> UUID? {
-        let pushChannelDataKey = "data"
-        let pushChannelUserIDKey = "user"
-
-        guard let userInfoData = dictionary[pushChannelDataKey] as? [String: Any] else {
-            Logging.push.safePublic("No data dictionary in notification userInfo payload")
-            return nil
-        }
-
-        guard let userIdString = userInfoData[pushChannelUserIDKey] as? String else {
-            return nil
-        }
-
-        return UUID(uuidString: userIdString)
-    }
 }
 
 private extension VoIPPushPayload {
