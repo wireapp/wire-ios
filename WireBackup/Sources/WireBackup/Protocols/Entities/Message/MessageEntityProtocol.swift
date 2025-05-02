@@ -58,16 +58,16 @@ public extension MessageContent {
     }
 
     struct AssetContent {
-        var mimeType: String
-        var size: UInt64
-        var name: String?
-        var otrKey: Data
-        var sha256: Data
-        var assetID: String
-        var assetToken: String?
-        var assetDomain: String?
-        var encryption: EncryptionAlgorithm?
-        var metadata: Metadata?
+        public var mimeType: String
+        public var size: UInt64
+        public var name: String?
+        public var otrKey: Data
+        public var sha256: Data
+        public var assetID: String
+        public var assetToken: String?
+        public var assetDomain: String?
+        public var encryption: EncryptionAlgorithm?
+        public var metadata: Metadata?
 
         public enum EncryptionAlgorithm {
             case aesCBC
@@ -89,24 +89,24 @@ public extension MessageContent {
 public extension MessageContent.AssetContent.Metadata {
 
     struct ImageMetadata {
-        var width: Int32
-        var height: Int32
-        var tag: String?
+        public var width: Int32
+        public var height: Int32
+        public var tag: String?
     }
 
     struct VideoMetadata {
-        var width: Int32?
-        var height: Int32?
-        var duration: UInt64?
+        public var width: Int32?
+        public var height: Int32?
+        public var duration: UInt64?
     }
 
     struct AudioMetadata {
-        var normalization: Data?
-        var duration: UInt64?
+        public var normalization: Data?
+        public var duration: UInt64?
     }
 
     struct GenericMetadata {
-        var name: String?
+        public var name: String?
     }
 
 }

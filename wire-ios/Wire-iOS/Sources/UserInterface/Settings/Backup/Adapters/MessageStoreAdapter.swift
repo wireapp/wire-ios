@@ -21,6 +21,7 @@ import WireBackup
 import WireDataModel
 import WireDomain
 import WireFoundation
+import WireProtos
 
 struct MessageStoreAdapter: MessageStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
@@ -60,33 +61,76 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 in: messageLocalStore.context
             )
         }
-        guard let conversation, let nonce = UUID(uuidString: id) else { return }
+        guard let conversation, let nonce = UUID(transportString: id) else { return }
+
+        // TODO: set sender?
 
         switch content {
 
         case .text(let textContent):
-            let (clientMessage, _) = try await messageLocalStore.fetchOrCreateClientMessage(
+            let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
                 id: id,
                 conversation: conversation,
                 sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
                 date: creationDate
             )
+            guard !isCreated else { return }
             let textMessage = Text(content: textContent.text)
             let genericMessage = GenericMessage(content: textMessage, nonce: nonce)
-            try clientMessage.setUnderlyingMessage(genericMessage)
 
         case .location(let locationContent):
-            fatalError()
-
-        case .asset(let assetContent):
-            let (assetClientMessage, _) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
+            let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
                 id: id,
                 conversation: conversation,
                 sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
                 date: creationDate
             )
-            // try clientMessage.setUnderlyingMessage(<#T##message: GenericMessage##GenericMessage#>) // TODO: fix
-            fatalError("TODO")
+            guard !isCreated else { return }
+            let locationContent = Location.with { location in
+                if let name = locationContent.name {
+                    location.name = name
+                }
+                location.latitude = locationContent.latitude
+                location.longitude = locationContent.longitude
+                location.zoom = locationContent.zoom ?? 0
+            }
+            let genericMessage = GenericMessage(content: locationContent, nonce: nonce)
+            try clientMessage.setUnderlyingMessage(genericMessage)
+
+        case .asset(let assetContent):
+            let (assetClientMessage, isCreated) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
+                id: id,
+                conversation: conversation,
+                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
+                date: creationDate
+            )
+            guard !isCreated else { return }
+            let genericMessage: GenericMessage
+            switch assetContent.metadata {
+            case .image(let imageData):
+                let asset = Asset(
+                    imageSize: CGSize(width: Double(imageData.width), height: Double(imageData.height)),
+                    mimeType: assetContent.mimeType,
+                    size: assetContent.size
+                )
+                // TODO: moc.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message) ?
+                /*
+                guard !message.isRestricted else {
+                    throw AppendMessageError.fileSharingIsRestricted
+                }
+                 */
+                genericMessage = GenericMessage(content: asset, nonce: nonce)
+                // try mergeWithExistingData(message: genericMessage) // TODO: ?
+            case .video(let videoData):
+                fatalError()
+            case .audio(let audioData):
+                fatalError()
+            case .generic(let data):
+                fatalError()
+            case .none:
+                fatalError("TODO: finish") // TODO: ??
+            }
+            try assetClientMessage.setUnderlyingMessage(genericMessage)
 
         }
     }
@@ -192,7 +236,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 return nil
             }
 
-            self.id = id.uuidString // TODO: check why this is UUID and MessageLocalStoreProtocol defines id: String
+            self.id = id.uuidString
             self.conversationID = QualifiedID(conversationID)
             self.senderUserID = QualifiedID(senderUserID)
             self.senderClientID = message.senderClientID
