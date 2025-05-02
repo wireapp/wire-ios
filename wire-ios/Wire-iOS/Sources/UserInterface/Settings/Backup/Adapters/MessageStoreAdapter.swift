@@ -27,6 +27,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
     let messageLocalStore: any MessageLocalStoreProtocol
+    let userLocalStore: any UserLocalStoreProtocol
 
     func totalMessageCount() async throws -> Int {
         try await messageLocalStore.totalBackupableMessageCount()
@@ -62,8 +63,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             )
         }
         guard let conversation, let nonce = UUID(transportString: id) else { return }
-
-        // TODO: set sender?
+        let sender = await userLocalStore.fetchOrCreateUser(id: senderUserID.id, domain: senderUserID.domain)
 
         switch content {
 
@@ -74,9 +74,14 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
                 date: creationDate
             )
-            guard !isCreated else { return }
+            guard isCreated else { return }
             let textMessage = Text(content: textContent.text)
             let genericMessage = GenericMessage(content: textMessage, nonce: nonce)
+            try await messageLocalStore.context.perform {
+                try clientMessage.setUnderlyingMessage(genericMessage)
+                clientMessage.sender = sender
+                clientMessage.visibleInConversation = conversation
+            }
 
         case .location(let locationContent):
             let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
@@ -85,7 +90,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
                 date: creationDate
             )
-            guard !isCreated else { return }
+            guard isCreated else { return }
             let locationContent = Location.with { location in
                 if let name = locationContent.name {
                     location.name = name
@@ -95,7 +100,11 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 location.zoom = locationContent.zoom ?? 0
             }
             let genericMessage = GenericMessage(content: locationContent, nonce: nonce)
-            try clientMessage.setUnderlyingMessage(genericMessage)
+            try await messageLocalStore.context.perform {
+                try clientMessage.setUnderlyingMessage(genericMessage)
+                clientMessage.sender = sender
+                clientMessage.visibleInConversation = conversation
+            }
 
         case .asset(let assetContent):
             let (assetClientMessage, isCreated) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
@@ -104,7 +113,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
                 date: creationDate
             )
-            guard !isCreated else { return }
+            guard isCreated else { return }
             let genericMessage: GenericMessage
             switch assetContent.metadata {
             case .image(let imageData):
@@ -165,7 +174,11 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             case .none:
                 return // TODO: ??
             }
-            try assetClientMessage.setUnderlyingMessage(genericMessage)
+            try await messageLocalStore.context.perform {
+                try assetClientMessage.setUnderlyingMessage(genericMessage)
+                assetClientMessage.sender = sender
+                assetClientMessage.visibleInConversation = conversation
+            }
         }
     }
 
