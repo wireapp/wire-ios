@@ -92,7 +92,7 @@ public extension PrivateUserDefaults {
     func removeObject(forKey key: Key) {
         storage.removeObject(forKey: scopeKey(key))
     }
-    
+
     func stringArray(forKey key: Key) -> [String]? {
         storage.stringArray(forKey: scopeKey(key))
     }
@@ -134,7 +134,7 @@ public protocol UserDefaultsProtocol {
 
     func removeObject(forKey defaultName: String)
     func dictionaryRepresentation() -> [String: Any]
-    
+
     func stringArray(forKey defaultName: String) -> [String]?
 }
 

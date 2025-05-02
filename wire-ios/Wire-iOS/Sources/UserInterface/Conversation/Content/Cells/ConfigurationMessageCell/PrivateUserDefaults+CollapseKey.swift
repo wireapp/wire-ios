@@ -20,27 +20,27 @@ import Foundation
 import WireFoundation
 
 extension PrivateUserDefaults where Key == CollapseKey {
-    
+
     func wasMessagedUncollapsedBefore(nonce: String?) -> Bool {
         guard let nonce, let uncollapsedMessages = stringArray(forKey: .uncollapsedMessages) else {
             return false
         }
         return uncollapsedMessages.contains(nonce)
     }
-    
+
     func removeWasUncollapsed(_ message: ConversationMessage) {
         guard !message.isText,
-            let nonce = message.nonce?.uuidString else { return }
+              let nonce = message.nonce?.uuidString else { return }
         var uncollapsedMessages: [String] = stringArray(forKey: .uncollapsedMessages) ?? []
         if let index = uncollapsedMessages.firstIndex(of: nonce) {
             uncollapsedMessages.remove(at: index)
         }
         set(uncollapsedMessages, forKey: .uncollapsedMessages)
     }
-    
+
     func saveWasUncollapsed(_ message: ConversationMessage) {
         guard !message.isText,
-            let nonce = message.nonce?.uuidString else { return }
+              let nonce = message.nonce?.uuidString else { return }
         var uncollapsedMessages: [String] = stringArray(forKey: .uncollapsedMessages) ?? []
         uncollapsedMessages.append(nonce)
         set(uncollapsedMessages, forKey: .uncollapsedMessages)

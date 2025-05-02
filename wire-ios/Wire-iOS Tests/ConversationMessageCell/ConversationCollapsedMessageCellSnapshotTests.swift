@@ -56,16 +56,16 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
             "text": MockMessageFactory
                 .textMessage(
                     withText:
-"""
-Long long long Long long long Long long long Long long long Long long long Long long long\n
-Long long long Long long long Long long long Long long long Long long long Long long long
-Long long long Long long long Long long long Long long long Long long long Long long long
-"""
+                    """
+                    Long long long Long long long Long long long Long long long Long long long Long long long\n
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    """
                 )
         ]
         messages.forEach { verify(message: $0.value, named: $0.key) }
     }
-    
+
     func testTextCollapsed() {
         let messages: [String: MockMessage] = [
             "singleLineText": MockMessageFactory.textMessage(withText: "Single Line text"),
@@ -76,11 +76,11 @@ Long long long Long long long Long long long Long long long Long long long Long 
             "moreThenThreeLineText": MockMessageFactory
                 .textMessage(
                     withText:
-"""
-Long long long Long long long Long long long Long long long Long long long Long long long\n
-Long long long Long long long Long long long Long long long Long long long Long long long
-Long long long Long long long Long long long Long long long Long long long Long long long
-"""
+                    """
+                    Long long long Long long long Long long long Long long long Long long long Long long long\n
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    """
                 )
         ]
         messages.forEach { verify(message: $0.value, named: $0.key) }

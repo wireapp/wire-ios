@@ -150,7 +150,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private var collapseOwnMessagesEnabled: Bool {
         privateDefaults.bool(forKey: .collapseOwnMessages)
     }
-    
+
     private func isCollapsedInitialValue() -> Bool {
 
         // cases when isCollapsed should be true by default
@@ -162,7 +162,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         guard collapseOwnMessagesEnabled, message.isSentBySelfUser else {
             return false
         }
-        
+
         if !message.isText, privateDefaults.wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) {
             return false
         }
@@ -235,7 +235,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     func collapse() {
         handleCollapseExpand()
     }
-    
+
     // MARK: - Content Cells
 
     private func addPingMessageCells() -> [AnyConversationMessageCellDescription] {

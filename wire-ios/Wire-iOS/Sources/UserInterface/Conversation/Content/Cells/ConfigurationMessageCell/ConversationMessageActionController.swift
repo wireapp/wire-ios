@@ -155,7 +155,7 @@ final class ConversationMessageActionController {
             return false
         }
     }
-    
+
     private func wasUncollapsedBefore() -> Bool {
         privateDefaults?
             .wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) ?? false

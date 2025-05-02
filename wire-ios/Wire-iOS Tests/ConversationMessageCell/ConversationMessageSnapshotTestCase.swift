@@ -54,6 +54,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         super.setUp()
         userSession = UserSessionMock()
         mockUserDefaults.boolForKey_MockValue = false
+        mockUserDefaults.stringArrayForKey_MockValue = []
     }
 
     override func tearDown() {

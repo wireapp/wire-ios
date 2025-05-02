@@ -202,7 +202,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
             ["Collapse", "Reply", "Details", "Download", "Delete", "Cancel"]
         )
     }
-    
+
     func testMenuActionsForImageMessage_collapseOwnMessagesEnabled_wasUncollapsedBefore() {
         // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
@@ -234,7 +234,6 @@ final class MessageActionsViewControllerTests: XCTestCase {
             ["Copy", "Collapse", "Reply", "Details", "Save", "Delete", "Cancel"]
         )
     }
-
 
     func testMenuActionsForFileMessage_fromOtherUser_hasNoCollapse() {
         // GIVEN
