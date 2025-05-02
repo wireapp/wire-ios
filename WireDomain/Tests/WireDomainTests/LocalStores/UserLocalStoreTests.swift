@@ -30,6 +30,7 @@ final class UserLocalStoreTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
     private var mockUserDefaults: UserDefaults!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
 
     private var context: NSManagedObjectContext {
         stack.syncContext
@@ -44,8 +45,11 @@ final class UserLocalStoreTests: XCTestCase {
             suiteName: Scaffolding.defaultsTestSuiteName
         )
 
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+
         sut = UserLocalStore(
             context: context,
+            messageLocalStore: MockMessageLocalStoreProtocol(),
             userDefaults: mockUserDefaults
         )
     }
@@ -60,6 +64,7 @@ final class UserLocalStoreTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
+        conversationLocalStore = nil
     }
 
     // MARK: - Tests

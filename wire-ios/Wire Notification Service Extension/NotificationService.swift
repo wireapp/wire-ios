@@ -19,14 +19,16 @@
 import Foundation
 import UserNotifications
 import WireCommonComponents
+import WireDomain
 import WireLogging
+import WireTransport
 import WireUtilities
 
 final class NotificationService: UNNotificationServiceExtension {
 
     // MARK: - Properties
 
-    let legacyService = LegacyNotificationService()
+    var notificationService: NotificationServiceProtocol?
 
     override init() {
         super.init()
@@ -41,13 +43,42 @@ final class NotificationService: UNNotificationServiceExtension {
     ) {
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
-        legacyService.didReceive(
-            request,
-            withContentHandler: contentHandler
-        )
+        if notificationService == nil {
+            notificationService = loadNotificationService()
+        }
+
+        if let notificationService {
+            notificationService.didReceive(
+                request,
+                withContentHandler: contentHandler
+            )
+        } else {
+            contentHandler(.empty)
+        }
     }
 
     override func serviceExtensionTimeWillExpire() {
-        legacyService.serviceExtensionTimeWillExpire()
+        notificationService?.serviceExtensionTimeWillExpire()
     }
+
+    private func loadNotificationService() -> NotificationServiceProtocol? {
+        // API version decides which service to use, if we don't have it
+        // yet then we simply supress the notification request.
+        guard let apiVersion = BackendInfo.apiVersion else {
+            WireLogger.notifications.warn("no resolved api version, not loading service")
+            return nil
+        }
+
+        /// With v8, the new extension is available, but not necessarily
+        /// turned on yet. Regardless, we will use it and later check
+        /// if the new sync is enabled.
+        if apiVersion >= .v8 {
+            WireLogger.notifications.warn("loading new notification service")
+            return NotificationServiceExtension()
+        } else {
+            WireLogger.notifications.warn("loading legacy notification service")
+            return LegacyNotificationService()
+        }
+    }
+
 }

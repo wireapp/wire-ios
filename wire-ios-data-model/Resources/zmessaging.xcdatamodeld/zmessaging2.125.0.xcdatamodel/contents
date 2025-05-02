@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24E5222f" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.125.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="23H527" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.125.0">
     <entity name="Action" representedClassName=".Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role"/>
@@ -51,7 +51,6 @@
         <attribute name="accessRoleString" optional="YES" attributeType="String"/>
         <attribute name="accessRoleStringsV2" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="archivedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="cellName" optional="YES" attributeType="String"/>
         <attribute name="ciphersuite" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="clearedTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="commitPendingProposalDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -112,7 +111,6 @@
         <relationship name="oneOnOneUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="oneOnOneConversation" inverseEntity="User"/>
         <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="conversation" inverseEntity="ParticipantRole"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="conversations" inverseEntity="Team"/>
-        <relationship name="wireCellsMessageAttachmentDrafts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="WireCellsMessageAttachmentDraft" inverseName="conversation" inverseEntity="WireCellsMessageAttachmentDraft"/>
         <fetchIndex name="byNormalizedUserDefinedNameIndex">
             <fetchIndexElement property="normalizedUserDefinedName" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -375,6 +373,7 @@
     </entity>
     <entity name="UserClient" representedClassName=".UserClient" syncable="YES">
         <attribute name="activationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="asyncStreamCapable" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="deviceClass" optional="YES" attributeType="String"/>
         <attribute name="discoveryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="label" optional="YES" attributeType="String"/>
@@ -406,17 +405,6 @@
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="remoteIdentifier"/>
-            </uniquenessConstraint>
-        </uniquenessConstraints>
-    </entity>
-    <entity name="WireCellsMessageAttachmentDraft" representedClassName=".WireCellsMessageAttachmentDraftEntity" syncable="YES">
-        <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="versionID" attributeType="String"/>
-        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="wireCellsMessageAttachmentDrafts" inverseEntity="Conversation"/>
-        <uniquenessConstraints>
-            <uniquenessConstraint>
-                <constraint value="uuid"/>
-                <constraint value="versionID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

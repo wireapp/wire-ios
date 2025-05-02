@@ -19,6 +19,7 @@
 import XCTest
 
 import WireDataModelSupport
+import WireMockTransport
 @testable import WireSyncEngine
 
 final class DeepLinkURLActionProcessorTests: DatabaseTest {

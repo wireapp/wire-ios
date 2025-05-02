@@ -63,7 +63,7 @@ final class IncrementalSyncTests: XCTestCase {
     func test_perform_pendingEventsExist() async throws {
         // Mock
         // Pending events are pulled.
-        updateEventsSync.pull_MockMethod = {}
+        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
 
         // Some pending events.
         var storedEnvelopes = [
@@ -109,6 +109,9 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Events are processed.
         processor.processEvent_MockMethod = { _ in }
+
+        // Unread messages are set
+        store.calculateLastUnreadMessages_MockMethod = {}
 
         // Database is saved.
         databaseSaver.save_MockMethod = {}
@@ -163,6 +166,10 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Then live events were deleted (duplicates skipped).
         XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11, 12])
+
+        // Then unread messages are calculated once after processing pending events
+        // and once after processing each live event.
+        XCTAssertEqual(store.calculateLastUnreadMessages_Invocations.count, 3)
 
         // Then the database was saved once after processing pending events
         // and once after processing each live event.

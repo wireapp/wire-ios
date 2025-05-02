@@ -55,14 +55,13 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     var sutRoot: NetworkStatusViewController!
     var sutList: NetworkStatusViewController!
 
-    var mockDevice: MockDeviceAbstraction!
+    var mockDevice: DeviceAbstractionMock!
     var mockApplication: MockApplication!
     var mockConversationRoot: MockConversationRootViewController!
     var mockConversationList: MockConversationListViewController!
 
     @MainActor
     override func setUp() {
-        super.setUp()
 
         mockDevice = .init()
         mockDevice.userInterfaceIdiom = .pad
@@ -88,8 +87,6 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         mockApplication = nil
         mockConversationRoot = nil
         mockConversationList = nil
-
-        super.tearDown()
     }
 
     @MainActor

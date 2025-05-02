@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAPI
 import WireDataModel
 
 public struct UserClientInfo: Sendable {
@@ -28,6 +29,7 @@ public struct UserClientInfo: Sendable {
     let deviceClass: WireDataModel.DeviceClass?
     let lastActiveDate: Date?
     let mlsPublicKeys: UserClientInfo.MLSPublicKeys?
+    let capabilities: [UserClientCapability]
 
     struct MLSPublicKeys {
         let ed25519: String?
@@ -36,5 +38,4 @@ public struct UserClientInfo: Sendable {
         let p384: String?
         let p512: String?
     }
-
 }

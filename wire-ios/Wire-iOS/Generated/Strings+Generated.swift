@@ -4419,16 +4419,6 @@ internal enum L10n {
           internal static let google = L10n.tr("Localizable", "open_link.maps.option.google", fallback: "Google Maps")
         }
       }
-      internal enum Twitter {
-        internal enum Option {
-          /// Browser / Twitter
-          internal static let `default` = L10n.tr("Localizable", "open_link.twitter.option.default", fallback: "Browser / Twitter")
-          /// Tweetbot
-          internal static let tweetbot = L10n.tr("Localizable", "open_link.twitter.option.tweetbot", fallback: "Tweetbot")
-          /// Twitterrific
-          internal static let twitterrific = L10n.tr("Localizable", "open_link.twitter.option.twitterrific", fallback: "Twitterrific")
-        }
-      }
     }
     internal enum Participants {
       /// Add
@@ -5502,10 +5492,6 @@ internal enum L10n {
             }
           }
         }
-        internal enum ApnsLogging {
-          /// APNS Logging
-          internal static let title = L10n.tr("Localizable", "self.settings.apns_logging.title", fallback: "APNS Logging")
-        }
         internal enum Callkit {
           /// Share with iOS
           internal static let caption = L10n.tr("Localizable", "self.settings.callkit.caption", fallback: "Share with iOS")
@@ -5588,10 +5574,6 @@ internal enum L10n {
           internal enum Maps {
             /// Locations
             internal static let title = L10n.tr("Localizable", "self.settings.link_options.maps.title", fallback: "Locations")
-          }
-          internal enum Twitter {
-            /// Tweets
-            internal static let title = L10n.tr("Localizable", "self.settings.link_options.twitter.title", fallback: "Tweets")
           }
         }
         internal enum ManageTeam {
@@ -5936,6 +5918,16 @@ internal enum L10n {
     internal enum Sketchpad {
       /// Tap colors to change brush size
       internal static let initialHint = L10n.tr("Localizable", "sketchpad.initial_hint", fallback: "Tap colors to change brush size")
+    }
+    internal enum Sync {
+      internal enum Error {
+        /// An error occured while synchronizing your app, please try again
+        internal static let message = L10n.tr("Localizable", "sync.error.message", fallback: "An error occured while synchronizing your app, please try again")
+        /// Retry
+        internal static let retry = L10n.tr("Localizable", "sync.error.retry", fallback: "Retry")
+        /// Synchronization error
+        internal static let title = L10n.tr("Localizable", "sync.error.title", fallback: "Synchronization error")
+      }
     }
     internal enum SystemStatusBar {
       internal enum NoInternet {

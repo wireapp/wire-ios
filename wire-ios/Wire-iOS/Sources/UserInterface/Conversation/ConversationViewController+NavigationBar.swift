@@ -147,12 +147,10 @@ extension ConversationViewController {
         switch conversation.conversationType {
         case .group: return true
         case .oneOnOne:
-            if let connection = conversation.oneOnOneUser?.connection,
-               connection.status != .pending, connection.status != .sent {
+            guard let connection = conversation.oneOnOneUser?.connection else {
                 return true
-            } else {
-                return conversation.teamRemoteIdentifier != nil
             }
+            return connection.status != .pending && connection.status != .sent
         default: return false
         }
     }
@@ -181,7 +179,9 @@ extension ConversationViewController {
     }
 
     func updateRightNavigationItemsButtons() {
-        navigationItem.rightBarButtonItems = rightNavigationItems(forConversation: conversation)
+        let items = rightNavigationItems(forConversation: conversation)
+        navigationItem.rightBarButtonItems = items
+        parent?.navigationItem.rightBarButtonItems = items
     }
 
     /// Update left navigation bar items

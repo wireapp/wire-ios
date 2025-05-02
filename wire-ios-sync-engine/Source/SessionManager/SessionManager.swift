@@ -23,6 +23,7 @@ import PushKit
 import UserNotifications
 import WireAnalytics
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireRequestStrategy
@@ -68,6 +69,10 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
     func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?)
+    func sessionManagerDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    )
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -1044,33 +1049,104 @@ public final class SessionManager: NSObject, SessionManagerType {
             onStartMigration: { [weak self] in
                 self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
 
-            }, onFailure: { [weak self] error in
+            },
+            onFailure: { [weak self] error in
                 self?.delegate?.sessionManagerDidFailToLoadDatabase(error: error)
                 onCompletion(nil)
 
-            }, onCompletion: { [weak self] coreDataStack in
+            },
+            onCompletion: { [weak self] coreDataStack in
                 guard let self else {
                     assertionFailure("expected 'self' to continue!")
                     return
                 }
 
-                let userSession = startBackgroundSession(
-                    for: account,
-                    with: coreDataStack
+                let journal = Journal(
+                    userID: account.userIdentifier,
+                    storage: sharedUserDefaults
                 )
 
-                triggerMigrationsNeedsActionsIfNeeded(with: userSession)
+                Task {
+                    if self.shouldEnableSyncV2(journal: journal) {
+                        await self.enableSyncV2(
+                            journal: journal,
+                            coreDataStack: coreDataStack
+                        )
+                    }
 
-                onCompletion(userSession)
+                    await MainActor.run {
+                        let userSession = self.startBackgroundSession(
+                            for: account,
+                            with: coreDataStack,
+                            journal: journal
+                        )
+
+                        self.triggerMigrationsNeedsActionsIfNeeded(
+                            journal: journal,
+                            userSession: userSession
+                        )
+
+                        onCompletion(userSession)
+                    }
+                }
             }
         )
     }
 
+    private func shouldEnableSyncV2(journal: Journal) -> Bool {
+        guard let apiVersion = BackendInfo.apiVersion else {
+            fatalError("api version unknown")
+        }
+
+        let isAvailble = apiVersion >= .v8
+        let isAlreadyEnabled = journal[.isSyncV2Enabled]
+        return isAvailble && !isAlreadyEnabled
+    }
+
+    private func enableSyncV2(
+        journal: Journal,
+        coreDataStack: CoreDataStack
+    ) async {
+        guard let localDomain = BackendInfo.domain else {
+            fatalError("local domain unknown")
+        }
+
+        let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
+            ActorBasedUpdateEventMigratorDAO(context: coreDataStack.eventContext)
+        } else {
+            UpdateEventMigratorDAO(context: coreDataStack.eventContext)
+        }
+
+        let migrator = UpdateEventMigrator(
+            dao: dao,
+            localDomain: localDomain
+        )
+
+        do {
+            if try await migrator.isMigrationNeeded() {
+                try await migrator.migrateLegacyUpdateEvents()
+                // Since we only migrate some events, we require an
+                // initial sync to ensure we didn't miss updates.
+                journal[.isInitialSyncRequired] = true
+            } else {
+                WireLogger.sync.debug("no migration needed")
+            }
+
+            journal[.isSyncV2Enabled] = true
+
+        } catch {
+            WireLogger.sync.critical("failed to migrate update events: \(error)")
+        }
+    }
+
     /// Executes post migration slow sync or sync resources
-    private func triggerMigrationsNeedsActionsIfNeeded(with userSession: ZMUserSession) {
+    private func triggerMigrationsNeedsActionsIfNeeded(
+        journal: Journal,
+        userSession: ZMUserSession
+    ) {
         let context = userSession.syncContext
         context.perform {
-            if context.readMigrationNeedsSlowSyncFlag() {
+            if context.readMigrationNeedsSlowSyncFlag() || journal[.isInitialSyncRequired] {
                 userSession.triggerInitialSync()
             } else if context.readMigrationNeedsSyncResourcesFlag() {
                 userSession.triggerResourcesSync()
@@ -1105,6 +1181,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         // Clear tmp directory when the user logout from the session.
         deleteTemporaryData()
 
+        Journal(userID: account.userIdentifier, storage: sharedUserDefaults).erase()
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
@@ -1209,7 +1286,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     // Creates the user session for @c account given, calls @c completion when done.
     private func startBackgroundSession(
         for account: Account,
-        with coreDataStack: CoreDataStack
+        with coreDataStack: CoreDataStack,
+        journal: Journal
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig,
@@ -1221,7 +1299,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
             sharedUserDefaults: sharedUserDefaults,
-            isDeveloperModeEnabled: isDeveloperModeEnabled
+            isDeveloperModeEnabled: isDeveloperModeEnabled,
+            journal: journal
         ) else {
             preconditionFailure("Unable to create session for \(account)")
         }
