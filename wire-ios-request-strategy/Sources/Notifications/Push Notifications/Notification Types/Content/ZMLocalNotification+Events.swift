@@ -339,7 +339,10 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         if let conversation,
            let senderUUID = event.senderUUID,
            conversation.isMessageSilenced(message, senderID: senderUUID) {
-            WireLogger.push.info("Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced")
+            WireLogger.push
+                .info(
+                    "Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced"
+                )
             return false
         } else if conversation == nil {
             // WPB-8946: fixes bug: notifications shown even though availability is busy or away

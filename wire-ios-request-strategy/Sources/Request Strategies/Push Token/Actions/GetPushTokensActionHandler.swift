@@ -56,11 +56,11 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
                     $0.client == action.clientID && ($0.isStandardAPNSToken)
                 }
                 .map { token in
-                        PushToken(
-                            deviceToken: token.token.zmHexDecodedData()!,
-                            appIdentifier: token.app,
-                            transportType: token.transport
-                        )
+                    PushToken(
+                        deviceToken: token.token.zmHexDecodedData()!,
+                        appIdentifier: token.app,
+                        transportType: token.transport
+                    )
                 }
 
             action.notifyResult(.success(tokens))

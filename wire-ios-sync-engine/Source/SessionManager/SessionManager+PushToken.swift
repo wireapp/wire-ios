@@ -75,7 +75,8 @@ extension SessionManager {
                 WireLogger.push.info("syncLocalTokenWithRemote: success")
 
             } catch {
-                WireLogger.push.error("syncLocalTokenWithRemote: failed: pushTokenService failed: \(error.localizedDescription)")
+                WireLogger.push
+                    .error("syncLocalTokenWithRemote: failed: pushTokenService failed: \(error.localizedDescription)")
             }
             session.syncManagedObjectContext.leaveAllGroups(groups)
         }

@@ -1730,7 +1730,8 @@ extension SessionManager: ZMConversationListObserver {
             account?.unreadConversationCount = unreadCount
             let totalUnreadCount = self.accountManager.totalUnreadCount
             self.application.applicationIconBadgeNumber = totalUnreadCount
-            WireLogger.notifications.debug("Updated badge count to \(SanitizedString(stringLiteral: String(totalUnreadCount)))")
+            WireLogger.notifications
+                .debug("Updated badge count to \(SanitizedString(stringLiteral: String(totalUnreadCount)))")
         }
     }
 }

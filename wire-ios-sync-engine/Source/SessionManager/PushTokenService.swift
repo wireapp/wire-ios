@@ -85,7 +85,10 @@ public final class PushTokenService: PushTokenServiceInterface {
                 WireLogger.push.debug("unregister invalid token: \(remoteToken.deviceToken.safeForLoggingDescription)")
                 var removeAction = RemovePushTokenAction(deviceToken: remoteToken.deviceTokenString)
                 try await removeAction.perform(in: context)
-                WireLogger.push.debug("unregister invalid token of type: \(remoteToken.deviceToken.safeForLoggingDescription), success")
+                WireLogger.push
+                    .debug(
+                        "unregister invalid token of type: \(remoteToken.deviceToken.safeForLoggingDescription), success"
+                    )
             }
         } catch let error as RemovePushTokenAction.Failure {
             WireLogger.push.error("unregister remote tokens, failed: \(error)")
@@ -137,7 +140,7 @@ public extension PushTokenServiceInterface {
             in: context
         )
 
-        // note this might be
+        // note [F] not sure why we do this, could this be done by backend? [WPB-17477]
         try await unregisterRemoteTokens(
             clientID: clientID,
             excluding: localToken,
