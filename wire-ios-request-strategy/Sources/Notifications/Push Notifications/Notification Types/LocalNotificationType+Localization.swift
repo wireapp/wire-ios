@@ -172,7 +172,7 @@ extension LocalNotificationType {
 
     private func messageBodyText(eventType: LocalNotificationEventType, senderName: String?) -> String {
         let senderKey = senderName == nil ? NoUserNameKey : nil
-        let localizationKey = [baseKey, senderKey].compactMap { $0 }.joined(separator: ".")
+        let localizationKey = [baseKey, senderKey].compactMap(\.self).joined(separator: ".")
         var arguments: [CVarArg] = []
 
         if let senderName {
@@ -219,8 +219,8 @@ extension LocalNotificationType {
         let teamName = team?.name
         let teamKey = teamName != nil ? TeamKey : nil
         let availabilityKey = availability == .away ? "away" : "busy"
-        let localizationKey = [baseKey, availabilityKey, "title", teamKey].compactMap { $0 }.joined(separator: ".")
-        return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: [teamName].compactMap { $0 })
+        let localizationKey = [baseKey, availabilityKey, "title", teamKey].compactMap(\.self).joined(separator: ".")
+        return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: [teamName].compactMap(\.self))
     }
 
     public func alertMessageBodyText() -> String {
@@ -228,7 +228,7 @@ extension LocalNotificationType {
               availability.isOne(of: .away, .busy) else { return "" }
 
         let availabilityKey = availability == .away ? "away" : "busy"
-        let localizationKey = [baseKey, availabilityKey, "message"].compactMap { $0 }.joined(separator: ".")
+        let localizationKey = [baseKey, availabilityKey, "message"].compactMap(\.self).joined(separator: ".")
         return .localizedStringWithFormat(localizationKey.pushFormatString)
     }
 
@@ -280,7 +280,7 @@ extension LocalNotificationType {
 
             case let .ephemeral(isMention, isReply):
                 mentionOrReplyKey = isMention ? MentionKey : (isReply ? ReplyKey : nil)
-                let key = [baseKey, mentionOrReplyKey].compactMap { $0 }.joined(separator: ".")
+                let key = [baseKey, mentionOrReplyKey].compactMap(\.self).joined(separator: ".")
                 return .localizedStringWithFormat(key.pushFormatString)
 
             case .hidden:
@@ -313,7 +313,7 @@ extension LocalNotificationType {
         }
 
         let localizationKey = [baseKey, conversationTypeKey, senderKey, conversationKey, mentionOrReplyKey]
-            .compactMap { $0 }.joined(separator: ".")
+            .compactMap(\.self).joined(separator: ".")
         return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: arguments)
     }
 

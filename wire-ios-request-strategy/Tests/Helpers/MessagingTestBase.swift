@@ -298,7 +298,7 @@ extension MessagingTestBase {
             return nil
         }
 
-        let userEntries = protobuf.recipients.compactMap { $0 }
+        let userEntries = protobuf.recipients.compactMap(\.self)
         guard let userEntry = userEntries.first(where: { $0.user == client.user?.userId }) else {
             XCTFail("User not found", file: file, line: line)
             return nil
@@ -503,7 +503,7 @@ extension MessagingTestBase {
 extension MessagingTestBase {
 
     override var allDispatchGroups: [ZMSDispatchGroup] {
-        super.allDispatchGroups + [syncMOC?.dispatchGroup, uiMOC?.dispatchGroup].compactMap { $0 }
+        super.allDispatchGroups + [syncMOC?.dispatchGroup, uiMOC?.dispatchGroup].compactMap(\.self)
     }
 
     func performPretendingUiMocIsSyncMoc(block: () -> Void) {

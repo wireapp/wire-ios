@@ -110,7 +110,7 @@ struct MessageInfoExtractor {
             selfDomain: selfDomain,
             selfClientID: selfClientID
         )
-        let userClients = await context.perform { messageRecipients.map { $1 }.flatMap { $0 } }
+        let userClients = await context.perform { messageRecipients.map { $1 }.flatMap(\.self) }
 
         return MessageInfo(
             genericMessage: message,
@@ -142,7 +142,7 @@ struct MessageInfoExtractor {
 
         // get the list of clients
         let clients = await listOfClients(for: recipients, selfDomain: selfDomain, selfClientID: selfClientID)
-        let userClients = await context.perform { recipients.map { $1 }.flatMap { $0 } }
+        let userClients = await context.perform { recipients.map { $1 }.flatMap(\.self) }
         return MessageInfo(
             genericMessage: message,
             listClients: clients,

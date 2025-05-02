@@ -48,13 +48,13 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     var userSession: UserSessionMock!
     var forceRecord: Bool = false
-    var mockUserDefaults = MockUserDefaultsProtocol()
+    var mockUserDefaults = UserDefaultsProtocolMock()
 
     override func setUp() {
         super.setUp()
         userSession = UserSessionMock()
-        mockUserDefaults.boolForKey_MockValue = false
-        mockUserDefaults.stringArrayForKey_MockValue = []
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
     }
 
     override func tearDown() {

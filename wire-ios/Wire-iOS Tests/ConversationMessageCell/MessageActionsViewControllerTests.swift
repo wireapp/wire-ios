@@ -27,16 +27,16 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
     // MARK: - setUp
 
-    var mockUserDefaults = MockUserDefaultsProtocol()
+    var mockUserDefaults = UserDefaultsProtocolMock()
 
     override func setUp() {
         super.setUp()
 
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
-        mockUserDefaults.boolForKey_MockValue = false
-        mockUserDefaults.stringArrayForKey_MockValue = []
-        mockUserDefaults.setForKey_MockMethod = { _, _ in }
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { _, _ in }
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
     }
 
     // MARK: - Unit Tests
@@ -169,7 +169,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
     func testMenuActionsForFileMessage_collapseOwnMessagesEnabled() {
         // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 
         let message = MockMessageFactory.fileTransferMessage()
 
@@ -206,10 +206,10 @@ final class MessageActionsViewControllerTests: XCTestCase {
     func testMenuActionsForImageMessage_collapseOwnMessagesEnabled_wasUncollapsedBefore() {
         // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 
         let message = MockMessageFactory.imageMessage()
-        mockUserDefaults.stringArrayForKey_MockValue = [message.nonce!.uuidString]
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
         // WHEN
         let (actionController, _) = makeSut(
             message: message,
@@ -239,7 +239,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // GIVEN
         let message = MockMessageFactory.fileTransferMessage()
         let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
 
         // WHEN
         let (actionController, sut) = makeSut(

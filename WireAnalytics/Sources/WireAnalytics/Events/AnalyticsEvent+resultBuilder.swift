@@ -24,7 +24,7 @@ extension AnalyticsEvent {
     struct SegmentationBuilder {
 
         static func buildBlock(_ components: [Segmentation]...) -> [Segmentation] {
-            components.flatMap { $0 }
+            components.flatMap(\.self)
         }
 
         static func buildExpression(_ expression: Segmentation) -> [Segmentation] {

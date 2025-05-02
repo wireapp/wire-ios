@@ -30,7 +30,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     var context: ConversationMessageContext!
     var mockSelfUser: MockUserType!
     var userSession: UserSessionMock!
-    var mockUserDefaults = MockUserDefaultsProtocol()
+    var mockUserDefaults = UserDefaultsProtocolMock()
 
     // MARK: - setUp
 
@@ -47,8 +47,8 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             searchQueries: [],
             previousMessageIsKnock: false
         )
-        mockUserDefaults.boolForKey_MockValue = false
-        mockUserDefaults.stringArrayForKey_MockValue = []
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
     }
 
     // MARK: - tearDown
@@ -258,7 +258,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_systemMessage_collapseOwnMessagesEnabled() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
         let sut = makeSUT(message: message)
         XCTAssertTrue(sut.isCollapsed)
@@ -274,7 +274,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_textMessageWithFailedToSendUsers_collapseOwnMessagesEnabled() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.systemMessage(with: .conversationNameChanged))
         message.failedToSendUsers = [MockUserType.createDefaultOtherUser()]
         let sut = makeSUT(message: message)
@@ -288,7 +288,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_textMessage_collapseOwnMessagesEnabled() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.textMessage())
         let sut = makeSUT(message: message)
         XCTAssertFalse(sut.isCollapsed)
@@ -302,7 +302,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_fileMessage_sentBySelfUser_collapseOwnMessagesEnabled() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
         let sut = makeSUT(message: message)
@@ -317,7 +317,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testInitialCollapseValue_fileMessage_sentByOtherUser_collapseOwnMessagesEnabled() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = MockUserType.createDefaultOtherUser()
         let sut = makeSUT(message: message)
@@ -325,7 +325,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testSavingWasUncollapsed_FileMessage() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
         let nonce = message.nonce!.uuidString
@@ -333,7 +333,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(sut.isCollapsed)
 
         let expectation = XCTestExpectation()
-        mockUserDefaults.setForKey_MockMethod = { value, _ in
+        mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { value, _ in
             XCTAssertEqual(value as? [String], [nonce])
             expectation.fulfill()
         }
@@ -345,16 +345,16 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testResetWasUncollapsed_FileMessage() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
         let nonce = message.nonce!.uuidString
-        mockUserDefaults.stringArrayForKey_MockValue = [nonce]
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [nonce]
         var sut = makeSUT(message: message)
         XCTAssertFalse(sut.isCollapsed)
 
         let expectation = XCTestExpectation()
-        mockUserDefaults.setForKey_MockMethod = { value, _ in
+        mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { value, _ in
             XCTAssertEqual(value as? [String], [])
             expectation.fulfill()
         }
@@ -366,18 +366,18 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testWhenWasUncollapsedBefore_File() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
         let nonce = message.nonce!.uuidString
-        mockUserDefaults.stringArrayForKey_MockValue = [nonce]
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [nonce]
         let sut = makeSUT(message: message)
         // when re-created expected to take into account that it was uncollapsed before and stay uncollapsed
         XCTAssertFalse(sut.isCollapsed)
     }
 
     func testNotSavingWasUncollapsed_TextMessage() throws {
-        mockUserDefaults.boolForKey_MockValue = true
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let longText = """
         one
         two
@@ -393,7 +393,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
         let expectation = XCTestExpectation()
         expectation.isInverted = true
-        mockUserDefaults.setForKey_MockMethod = { _, _ in
+        mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { _, _ in
             expectation.fulfill()
         }
 
