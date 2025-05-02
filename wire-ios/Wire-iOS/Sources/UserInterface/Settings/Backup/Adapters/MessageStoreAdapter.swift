@@ -122,16 +122,50 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 genericMessage = GenericMessage(content: asset, nonce: nonce)
                 // try mergeWithExistingData(message: genericMessage) // TODO: ?
             case .video(let videoData):
-                fatalError()
+                let asset = Asset.with { asset in
+                    asset.original = Asset.Original.with { original in
+                        original.size = assetContent.size
+                        original.mimeType = assetContent.mimeType
+                        original.name = assetContent.name ?? "video"
+                        original.video = WireProtos.Asset.VideoMetaData.with { video in
+                            video.durationInMillis = videoData.duration.map { $0 / 1000 } ?? 0 // TODO: compare with backup creation
+                            video.width = videoData.width ?? 0
+                            video.height = videoData.height ?? 0
+                        }
+                    }
+                }
+                genericMessage = GenericMessage(content: asset, nonce: nonce)
+                // TODO: contributionType = .videoMessage ?
+                // TODO: moc.zm_fileAssetCache.storeOriginalFile
             case .audio(let audioData):
-                fatalError()
+                let asset = Asset.with { asset in
+                    asset.original = Asset.Original.with { original in
+                        original.size = assetContent.size
+                        original.mimeType = assetContent.mimeType
+                        original.name = assetContent.name ?? "audio"
+                        original.audio = Asset.AudioMetaData.with { audio in
+                            let loudnessArray = audioData.normalization?.map { Float($0 / 255) }
+                            audio.durationInMillis = audioData.duration.map { $0 * 1000 } ?? 0
+                            // audio.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
+                            // TODO: fix
+                        }
+                    }
+                }
+                genericMessage = GenericMessage(content: asset, nonce: nonce)
+                // TODO: see video
             case .generic(let data):
-                fatalError()
+                let asset = Asset.with { asset in
+                    asset.original = Asset.Original.with { original in
+                        original.size = assetContent.size
+                        original.mimeType = assetContent.mimeType
+                        original.name = assetContent.name ?? "file"
+                    }
+                }
+                genericMessage = GenericMessage(content: asset, nonce: nonce)
             case .none:
-                fatalError("TODO: finish") // TODO: ??
+                return // TODO: ??
             }
             try assetClientMessage.setUnderlyingMessage(genericMessage)
-
         }
     }
 

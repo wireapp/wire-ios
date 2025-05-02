@@ -38,7 +38,7 @@ public extension WireProtos.Asset {
                 $0.audio = WireProtos.Asset.AudioMetaData.with {
                     let loudnessArray = metadata.normalizedLoudness.map { UInt8(roundf($0 * 255)) }
                     $0.durationInMillis = UInt64(metadata.duration * 1000)
-                    $0.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
+                    $0.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data // TODO: consider this mapping for backup/restore
                 }
 
             }
