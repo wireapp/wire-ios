@@ -48,6 +48,7 @@ public enum WireCellsMessageAttachmentDraftUploadStatus: Int16 {
     }
 }
 
+@objc
 public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
 
     @NSManaged public var uuid: UUID

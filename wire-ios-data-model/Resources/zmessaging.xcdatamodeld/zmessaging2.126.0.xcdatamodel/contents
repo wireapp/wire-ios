@@ -410,7 +410,7 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="WireCellsMessageAttachmentDraft" representedClassName="WireCellsMessageAttachmentDraftEntity" syncable="YES">
+    <entity name="WireCellsMessageAttachmentDraft" representedClassName="WireDataModel.WireCellsMessageAttachmentDraftEntity" syncable="YES">
         <attribute name="assetDuration" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
         <attribute name="assetHeight" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
         <attribute name="assetWidth" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
