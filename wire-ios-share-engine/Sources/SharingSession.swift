@@ -21,6 +21,8 @@ import WireDataModel
 import WireLinkPreview
 import WireRequestStrategy
 import WireTransport
+import WireDomain
+import WireAPI
 
 final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
 
@@ -252,7 +254,7 @@ public final class SharingSession {
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         hostBundleIdentifier: String,
-        environment: BackendEnvironmentProvider,
+        environment: WireTransport.BackendEnvironment,
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
@@ -312,9 +314,52 @@ public final class SharingSession {
             // in the sharing session.
             isSyncV2Enabled: false
         )
+        
+        let proxySettings: WireAPI.ProxySettings? = {
+            guard let proxy = environment.proxy else { return nil }
 
+            if proxy.needsAuthentication {
+                guard
+                    let proxyUsername = credentials?.username,
+                    let proxyPassword = credentials?.password else {
+                    fatalInternal("Proxy needs authentication but credentials are missing")
+                    return nil
+                }
+
+                return .authenticated(host: proxy.host, port: proxy.port, username: proxyUsername, password: proxyPassword)
+            } else {
+                return .unauthenticated(host: proxy.host, port: proxy.port)
+            }
+        }()
+        
+        let wireAPIBackendEnvironment = BackendEnvironment(
+            url: environment.backendURL,
+            webSocketURL: environment.backendWSURL,
+            pinnedKeys: environment.trustData.map { trustData in
+                PinnedKey(
+                    key: trustData.certificateKey,
+                    hosts: trustData.hosts.map { host in
+                        switch host.rule {
+                        case .equals:
+                            .equals(host.value)
+                        case .endsWith:
+                            .endsWith(host.value)
+                        }
+                    }
+                )
+            },
+            proxySettings: proxySettings
+        )
+        
+        guard let apiVersion = BackendInfo.apiVersion,
+              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+            fatal("cannot resolve api version")
+
+        }
+        
         try self.init(
             accountIdentifier: accountIdentifier,
+            selfClientID: selfClientID!,
             coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
@@ -323,6 +368,9 @@ public final class SharingSession {
                 applicationContainer: sharedContainerURL
             ),
             appLockConfig: appLockConfig,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            apiVersion: wireAPIVersion,
             sharedUserDefaults: sharedUserDefaults
         )
     }
@@ -397,11 +445,15 @@ public final class SharingSession {
 
     public convenience init(
         accountIdentifier: UUID,
+        selfClientID: String,
         coreDataStack: CoreDataStack,
         transportSession: ZMTransportSession,
         cachesDirectory: URL,
         accountContainer: URL,
         appLockConfig: AppLockController.LegacyConfig?,
+        wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
+        minTLSVersion: WireAPI.TLSVersion,
+        apiVersion: WireAPI.APIVersion,
         sharedUserDefaults: UserDefaults
     ) throws {
 
@@ -472,6 +524,34 @@ public final class SharingSession {
             userDefaults: .standard,
             userID: coreDataStack.account.userIdentifier
         )
+    
+        let userSessionComponent = UserSessionComponent(
+            selfUserID: accountIdentifier,
+            backendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: minTLSVersion,
+            apiVersion: apiVersion,
+            localDomain: WireTransport.BackendInfo.domain!,
+            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
+            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            sharedUserDefaults: sharedUserDefaults,
+            syncContext: coreDataStack.syncContext,
+            eventContext: coreDataStack.eventContext,
+            mlsService: mlsService,
+            mlsDecryptionService: mlsService,
+            proteusService: proteusService
+        )
+        
+        let processHandlers = ClientSessionComponent.ProcessorHandlers(
+            onProcessedCallEvent: { _ in },
+            onSelfClientInvalidated: { },
+            onProcessedTypingUsers: { _ in })
+
+        let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
+            clientID: selfClientID,
+            processorHandlers: processHandlers
+        )
+    
+        coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
 
         try self.init(
             accountIdentifier: accountIdentifier,
@@ -558,7 +638,7 @@ extension SharingSession: LinkPreviewDetectorType {
 
 // MARK: - Helper
 
-private extension ConversationList {
+private extension WireDataModel.ConversationList {
 
     var writeableConversations: [Conversation] {
         items.filter { !$0.isReadOnly }

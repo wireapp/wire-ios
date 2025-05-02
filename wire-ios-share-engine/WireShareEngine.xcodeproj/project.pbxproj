@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1606AD122DC5136000C95115 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1606AD112DC5136000C95115 /* WireDomain.framework */; };
+		1606AD162DC5136F00C95115 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 1606AD152DC5136F00C95115 /* WireAPI */; };
 		165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */; };
 		166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
@@ -53,6 +55,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1606AD112DC5136000C95115 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +116,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1606AD162DC5136F00C95115 /* WireAPI in Frameworks */,
+				1606AD122DC5136000C95115 /* WireDomain.framework in Frameworks */,
 				591B6E322C8B098C009F8A7B /* WireRequestStrategy.framework in Frameworks */,
 				59537D8B2CFF9F8F00920B59 /* WireLogging in Frameworks */,
 			);
@@ -217,6 +222,7 @@
 		5470D4331D77165E00FDE440 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1606AD112DC5136000C95115 /* WireDomain.framework */,
 				E6E504512BC58ACD004948E7 /* WireDataModelSupport.framework */,
 				EE67F6F8296F094C001D7C88 /* WireMockTransport.framework */,
 				EE668BC12954B82900D939E7 /* WireRequestStrategy.framework */,
@@ -596,6 +602,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1606AD152DC5136F00C95115 /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
+		};
 		59537D8A2CFF9F8F00920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
