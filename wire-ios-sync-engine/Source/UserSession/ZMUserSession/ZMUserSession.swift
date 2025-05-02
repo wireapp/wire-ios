@@ -496,9 +496,7 @@ public final class ZMUserSession: NSObject {
                 keyStore: syncManagedObjectContext.zm_cryptKeyStore
             )
 
-            self
-                .strategyDirectory = strategyDirectory ??
-                createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
+            self.strategyDirectory = strategyDirectory ?? createStrategyDirectory()
             legacyUpdateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? createSyncStrategy()
             self.operationLoop = operationLoop ?? createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
@@ -690,7 +688,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
+    private func createStrategyDirectory() -> StrategyDirectoryProtocol {
         StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
@@ -699,7 +697,6 @@ public final class ZMUserSession: NSObject {
             flowManager: flowManager,
             updateEventProcessor: self,
             localNotificationDispatcher: localNotificationDispatcher!,
-            useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: proteusProvider,
@@ -838,10 +835,6 @@ public final class ZMUserSession: NSObject {
     private func calculateBadgeCount() {
         let accountID = coreDataStack.account.userIdentifier
         let unreadCount = Int(ZMConversation.unreadConversationCount(in: syncManagedObjectContext))
-        Logging.push
-            .safePublic(
-                "Updating badge count for \(accountID) to \(SanitizedString(stringLiteral: String(unreadCount)))"
-            )
         sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
     }
 
@@ -1332,18 +1325,13 @@ extension ZMUserSession: SyncAgentDelegate {
         }
     }
 
-    func processPendingCallEvents(completionHandler: @escaping () -> Void) {
+    func processPendingCallEvents() async {
         WireLogger.updateEvent.info("process pending call events")
-        Task {
-            do {
-                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
-                try await legacyUpdateEventProcessor!.processBufferedEvents()
-                await managedObjectContext.perform {
-                    completionHandler()
-                }
-            } catch {
-                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
-            }
+        do {
+            // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
+            try await legacyUpdateEventProcessor!.processBufferedEvents()
+        } catch {
+            WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
         }
     }
 
