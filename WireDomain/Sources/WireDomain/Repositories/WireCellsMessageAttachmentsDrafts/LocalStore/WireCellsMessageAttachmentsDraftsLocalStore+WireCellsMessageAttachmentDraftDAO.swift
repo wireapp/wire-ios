@@ -170,7 +170,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
                 entity.fileSize = Int64(fileSize)
                 entity.dataPath = dataPath
                 entity.nodePath = nodePath
-                entity.uploadStatus = uploadStatus
+                entity.uploadStatus = .init(uploadStatus)
                 entity.assetWidth = assetWidth.map(NSNumber.init)
                 entity.assetHeight = assetHeight.map(NSNumber.init)
                 entity.assetDuration = assetDuration.map(NSNumber.init)
@@ -196,7 +196,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
                 guard let entity = (try context.fetch(fetchRequest)).first else {
                     throw WireCellsMessageAttachmentDraftDAOError.attachmentNotFound
                 }
-                entity.uploadStatus = status
+                entity.uploadStatus = .init(status)
                 try context.save()
             }
         } catch let error as WireCellsMessageAttachmentDraftDAOError {

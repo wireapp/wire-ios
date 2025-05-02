@@ -19,6 +19,35 @@
 import Foundation
 public import WireCellsAPI
 
+@objc
+public enum WireCellsMessageAttachmentDraftUploadStatus: Int16 {
+    case uploading = 0
+    case uploaded = 1
+    case failed = 2
+
+    public init(_ value: WireCellsAttachmentUploadStatus) {
+        switch value {
+        case .uploading:
+            self = .uploading
+        case .uploaded:
+            self = .uploaded
+        case .failed:
+            self = .failed
+        }
+    }
+
+    public func toModel() -> WireCellsAttachmentUploadStatus {
+        switch self {
+        case .uploading:
+            return .uploading
+        case .uploaded:
+            return .uploaded
+        case .failed:
+            return .failed
+        }
+    }
+}
+
 public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
 
     @NSManaged public var uuid: UUID
@@ -29,7 +58,7 @@ public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
     @NSManaged public var fileSize: Int64
     @NSManaged public var dataPath: String
     @NSManaged public var nodePath: String
-    @NSManaged public var uploadStatus: WireCellsAttachmentUploadStatus
+    @NSManaged public var uploadStatus: WireCellsMessageAttachmentDraftUploadStatus
     @NSManaged public var assetHeight: NSNumber?
     @NSManaged public var assetWidth: NSNumber?
     @NSManaged public var assetDuration: NSNumber?
@@ -42,7 +71,7 @@ public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
             remoteFilePath: nodePath,
             localFilePath: dataPath,
             fileSize: UInt64(fileSize),
-            uploadStatus: uploadStatus,
+            uploadStatus: uploadStatus.toModel(),
             mimeType: mimeType,
             assetWidth: assetWidth?.uint64Value,
             assetHeight: assetHeight?.uint64Value,

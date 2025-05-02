@@ -85,9 +85,8 @@ public struct WireCellsMessageAttachmentDraft: Sendable, Hashable, Identifiable 
     }
 }
 
-@objc
-public enum WireCellsAttachmentUploadStatus: Int16, Sendable, Hashable {
-    case uploading = 0
-    case uploaded = 1
-    case failed = 2
+public enum WireCellsAttachmentUploadStatus: Sendable, Hashable {
+    case uploading
+    case uploaded
+    case failed
 }
