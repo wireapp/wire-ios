@@ -29,7 +29,7 @@ public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
     @NSManaged public var fileSize: UInt64
     @NSManaged public var dataPath: String
     @NSManaged public var nodePath: String
-    @NSManaged public var uploadStatus: String
+    @NSManaged public var uploadStatus: WireCellsAttachmentUploadStatus
     @NSManaged public var assetHeight: NSNumber?
     @NSManaged public var assetWidth: NSNumber?
     @NSManaged public var assetDuration: NSNumber?
@@ -42,7 +42,7 @@ public final class WireCellsMessageAttachmentDraftEntity: NSManagedObject {
             remoteFilePath: nodePath,
             localFilePath: dataPath,
             fileSize: fileSize,
-            uploadStatus: WireCellsAttachmentUploadStatus(rawValue: uploadStatus) ?? .uploading,
+            uploadStatus: uploadStatus,
             mimeType: mimeType,
             assetWidth: assetWidth?.uint64Value,
             assetHeight: assetHeight?.uint64Value,
