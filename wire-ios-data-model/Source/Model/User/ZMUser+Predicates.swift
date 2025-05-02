@@ -78,7 +78,7 @@ public extension ZMUser {
                 #keyPath(ZMUser.handle),
                 query.strippingLeadingAtSign()
             )
-            allPredicates.append([namePredicate, handlePredicate].compactMap { $0 })
+            allPredicates.append([namePredicate, handlePredicate].compactMap(\.self))
         }
 
         let orPredicates = allPredicates.map { NSCompoundPredicate(orPredicateWithSubpredicates: $0) }

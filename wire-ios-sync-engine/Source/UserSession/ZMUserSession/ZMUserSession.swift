@@ -1076,7 +1076,21 @@ extension ZMUserSession: SyncAgentDelegate {
         didFinishIncrementalSync(isRecovering: isRecovering)
     }
 
-    func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: Error) {
+    func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error) {
+        let onRetry: () -> Void = { [weak self] in
+            self?.managedObjectContext.performGroupedBlock {
+                self?.isPerformingSync = true
+                self?.updateNetworkState()
+            }
+
+            syncAgent.resume()
+        }
+
+        delegate?.clientDidFailSyncing(
+            error: error,
+            retryHandler: onRetry
+        )
+
         WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
 
         managedObjectContext.performGroupedBlock { [weak self] in

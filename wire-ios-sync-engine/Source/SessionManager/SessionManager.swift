@@ -69,6 +69,10 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
     func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?)
+    func sessionManagerDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    )
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }

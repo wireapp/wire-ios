@@ -105,6 +105,11 @@
 "add_participants.alert.message.new_conversation" = "Up to %d people can join a conversation.";
 "add_participants.alert.message.existing_conversation" = "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.";
 
+// Synchronization
+"sync.error.title" = "Synchronization error";
+"sync.error.message" = "An error occured while synchronizing your app, please try again";
+"sync.error.retry" = "Retry";
+
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
 "conversation.create.channel.back" = "Back";
