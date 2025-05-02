@@ -81,6 +81,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 try clientMessage.setUnderlyingMessage(genericMessage)
                 clientMessage.sender = sender
                 clientMessage.visibleInConversation = conversation
+                clientMessage.markAsSent()
             }
 
         case .location(let locationContent):
@@ -232,7 +233,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             let size: UInt64
             let name: String?
             let encryption: MessageContent.AssetContent.EncryptionAlgorithm?
-            let metadata: MessageContent.AssetContent.Metadata? = nil
+            let metadata: MessageContent.AssetContent.Metadata?
 
             if asset.hasOriginal, asset.uploaded.hasAssetID {
                 size = asset.original.size
@@ -251,6 +252,23 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 encryption = .aesCBC
             case (true, .aesGcm):
                 encryption = .aesGCM
+            }
+
+            if assetClientMessage.isImage, let imageMessageData = assetClientMessage.imageMessageData {
+                metadata = .image(
+                    width: Int32(imageMessageData.originalSize.width),
+                    height: Int32(imageMessageData.originalSize.height),
+                    tag: .none // TODO: ?
+                )
+            } else if assetClientMessage.isVideo {
+                fatalError("TODO")
+//                metadata = .video(width: <#T##Int32?#>, height: <#T##Int32?#>, duration: <#T##UInt64?#>)
+            } else if assetClientMessage.isAudio {
+                fatalError("TODO")
+            } else if assetClientMessage.isFile {
+                fatalError("TODO")
+            } else {
+                metadata = .none
             }
 
             self.init(
