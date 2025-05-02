@@ -51,6 +51,7 @@
         <attribute name="accessRoleString" optional="YES" attributeType="String"/>
         <attribute name="accessRoleStringsV2" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="archivedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="cellName" optional="YES" attributeType="String"/>
         <attribute name="ciphersuite" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="clearedTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="commitPendingProposalDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -111,6 +112,7 @@
         <relationship name="oneOnOneUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="oneOnOneConversation" inverseEntity="User"/>
         <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ParticipantRole" inverseName="conversation" inverseEntity="ParticipantRole"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="conversations" inverseEntity="Team"/>
+        <relationship name="wireCellsMessageAttachmentDrafts" toMany="YES" deletionRule="Cascade" destinationEntity="WireCellsMessageAttachmentDraft" inverseName="conversation" inverseEntity="WireCellsMessageAttachmentDraft"/>
         <fetchIndex name="byNormalizedUserDefinedNameIndex">
             <fetchIndexElement property="normalizedUserDefinedName" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -405,6 +407,25 @@
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="remoteIdentifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="WireCellsMessageAttachmentDraft" representedClassName="WireCellsMessageAttachmentDraftEntity" syncable="YES">
+        <attribute name="assetDuration" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
+        <attribute name="assetHeight" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
+        <attribute name="assetWidth" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
+        <attribute name="dataPath" attributeType="String"/>
+        <attribute name="fileName" attributeType="String"/>
+        <attribute name="fileSize" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="mimeType" attributeType="String"/>
+        <attribute name="nodePath" attributeType="String"/>
+        <attribute name="uploadStatus" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="versionID" attributeType="String"/>
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="wireCellsMessageAttachmentDrafts" inverseEntity="Conversation"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="uuid"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
