@@ -86,6 +86,3 @@ public final class NewPushChannel: PushChannelProtocol {
         try await webSocket.write(data: data)
     }
 }
-
-
-
