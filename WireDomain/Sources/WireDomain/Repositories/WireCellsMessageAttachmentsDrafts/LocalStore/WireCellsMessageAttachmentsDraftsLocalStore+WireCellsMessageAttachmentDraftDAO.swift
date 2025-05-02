@@ -171,9 +171,9 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
                 entity.dataPath = dataPath
                 entity.nodePath = nodePath
                 entity.uploadStatus = .init(uploadStatus)
-                entity.assetWidth = assetWidth.map(NSNumber.init)
-                entity.assetHeight = assetHeight.map(NSNumber.init)
-                entity.assetDuration = assetDuration.map(NSNumber.init)
+                entity.assetWidth = assetWidth.map(NSNumber.init(value:))
+                entity.assetHeight = assetHeight.map(NSNumber.init(value:))
+                entity.assetDuration = assetDuration.map(NSNumber.init(value:))
 
                 try context.save()
 

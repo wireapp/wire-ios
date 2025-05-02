@@ -39,11 +39,11 @@ public enum WireCellsMessageAttachmentDraftUploadStatus: Int16 {
     public func toModel() -> WireCellsAttachmentUploadStatus {
         switch self {
         case .uploading:
-            return .uploading
+            .uploading
         case .uploaded:
-            return .uploaded
+            .uploaded
         case .failed:
-            return .failed
+            .failed
         }
     }
 }

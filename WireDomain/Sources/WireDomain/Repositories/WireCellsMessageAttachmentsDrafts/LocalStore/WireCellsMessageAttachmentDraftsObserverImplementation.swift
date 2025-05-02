@@ -63,7 +63,7 @@ public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObj
     // MARK: - Private methods
 
     private func send(newValues: [WireCellsMessageAttachmentDraft]) {
-        currentValues = newValues.map { $0 }
+        currentValues = newValues.map(\.self)
         for continuation in continuations.values {
             continuation.yield(currentValues)
         }

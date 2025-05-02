@@ -21,7 +21,6 @@ import XCTest
 
 @testable import WireDataModel
 
-
 final class WireCellsMessageAttachmentDraftEntityTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
