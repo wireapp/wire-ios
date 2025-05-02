@@ -110,6 +110,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
 
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
 
         // WHEN
         syncMOC.performGroupedBlock { [self] in

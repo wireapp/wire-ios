@@ -2200,13 +2200,7 @@ public final class MLSService: MLSServiceInterface {
     
     public func startObservingEpochs() {
         Task {
-            do {
-                try await coreCrypto.configure { coreCrypto in
-                    try await coreCrypto.registerEpochObserver(self)
-                }
-            } catch {
-                logger.error("failed to start epoch observer: \(String(describing: error))")
-            }
+            await coreCryptoProvider.registerEpochObserver(self)
         }
     }
 

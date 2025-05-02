@@ -1906,6 +1906,21 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
         mock(transport)
     }
 
+    // MARK: - registerEpochObserver
+
+    public var registerEpochObserver_Invocations: [any WireCoreCryptoUniffi.EpochObserver] = []
+    public var registerEpochObserver_MockMethod: ((any WireCoreCryptoUniffi.EpochObserver) async -> Void)?
+
+    public func registerEpochObserver(_ epochObserver: any WireCoreCryptoUniffi.EpochObserver) async {
+        registerEpochObserver_Invocations.append(epochObserver)
+
+        guard let mock = registerEpochObserver_MockMethod else {
+            fatalError("no mock for `registerEpochObserver`")
+        }
+
+        await mock(epochObserver)
+    }
+
 }
 
 class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {

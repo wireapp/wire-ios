@@ -70,7 +70,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockFeatureRepository = MockFeatureRepositoryInterface()
 
         mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_MockMethod = { _ in }
-        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         mockCoreCryptoContext.e2eiIsEnabledCiphersuite_MockValue = false
         mockCoreCryptoContext.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             100

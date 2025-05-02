@@ -40,6 +40,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         let coreDataStack = createCoreDataStack()
         let selfClient = coreDataStack.syncContext.performAndWait {
