@@ -1,0 +1,6 @@
+Create the env.xcconfig file from by running
+```
+op inject -i wire-ios/WireUITests/env.xcconfig.tpl -o wire-ios/WireUITests/env.xcconfig
+```
+
+or by filling in the template with the values you know
