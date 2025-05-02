@@ -60,7 +60,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 in: messageLocalStore.context
             )
         }
-        guard let conversation else { return }
+        guard let conversation, let nonce = UUID(uuidString: id) else { return }
 
         switch content {
 
@@ -71,8 +71,9 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
                 date: creationDate
             )
-            // try clientMessage.setUnderlyingMessage(<#T##message: GenericMessage##GenericMessage#>) // TODO: fix
-            fatalError("TODO")
+            let textMessage = Text(content: textContent.text)
+            let genericMessage = GenericMessage(content: textMessage, nonce: nonce)
+            try clientMessage.setUnderlyingMessage(genericMessage)
 
         case .location(let locationContent):
             fatalError()

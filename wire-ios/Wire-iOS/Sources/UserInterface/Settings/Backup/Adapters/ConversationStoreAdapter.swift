@@ -54,7 +54,9 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
             id: id.id,
             domain: id.domain
         )
-        conversation.userDefinedName = name
+        await conversation.managedObjectContext?.perform {
+            conversation.userDefinedName = name
+        }
         await conversationLocalStore.storeConversation(
             needsBackendUpdate: true,
             conversationID: id.id,
