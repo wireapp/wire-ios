@@ -16,17 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-public import WireFoundation
-
+import Foundation
+import WireFoundation
 import KaliumBackup
 
-public struct BackupImporter<FileUnarchiver> where FileUnarchiver: FileUnarchiverProtocol {
+struct BackupImporter<FileUnarchiver> where FileUnarchiver: FileUnarchiverProtocol {
 
     let mpBackupImporter: MPBackupImporter
     let selfUserID: QualifiedID
 
-    public init(
+    init(
         selfUserID: QualifiedID,
         workDirectoryURL: URL,
         fileUnarchiver: FileUnarchiver
