@@ -22,7 +22,7 @@ import KaliumBackup
 
 /// Abstraction around the multi-platform framework, attempting to improve the interface by using proper types and Swift
 /// concurrency.
-struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtocol {
+struct BackupCreator {
 
     let mpBackupCreator: MPBackupExporter
 
@@ -30,7 +30,7 @@ struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtocol {
         selfUserID: QualifiedID,
         workDirectoryURL: URL,
         outputDirectoryURL: URL,
-        fileArchiver: FileArchiver
+        fileArchiver: some FileArchiverProtocol
     ) {
         self.mpBackupCreator = MPBackupExporter(
             selfUserId: BackupQualifiedId(selfUserID),

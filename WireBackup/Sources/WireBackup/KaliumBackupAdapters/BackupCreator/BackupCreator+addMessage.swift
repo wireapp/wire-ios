@@ -54,7 +54,7 @@ extension BackupCreator {
         case let .asset(content):
             KaliumBackup.BackupMessageContent.Asset(
                 mimeType: content.mimeType,
-                size: Int32(exactly: content.size) ?? 0,
+                size: Int32(exactly: content.size) ?? 0, // TODO: get rid of Int32?
                 name: content.name,
                 otrKey: KotlinByteArray(content.otrKey),
                 sha256: KotlinByteArray(content.sha256),

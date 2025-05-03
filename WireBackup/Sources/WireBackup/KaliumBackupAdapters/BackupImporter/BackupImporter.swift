@@ -20,7 +20,7 @@ import Foundation
 import WireFoundation
 import KaliumBackup
 
-struct BackupImporter<FileUnarchiver> where FileUnarchiver: FileUnarchiverProtocol {
+struct BackupImporter {
 
     let mpBackupImporter: MPBackupImporter
     let selfUserID: QualifiedID
@@ -28,7 +28,7 @@ struct BackupImporter<FileUnarchiver> where FileUnarchiver: FileUnarchiverProtoc
     init(
         selfUserID: QualifiedID,
         workDirectoryURL: URL,
-        fileUnarchiver: FileUnarchiver
+        fileUnarchiver: some FileUnarchiverProtocol
     ) {
         self.selfUserID = selfUserID
         mpBackupImporter = MPBackupImporter(

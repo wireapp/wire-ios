@@ -90,10 +90,10 @@ public struct ImportBackupUseCase<
                     try Task.checkCancellation()
 
                     let pagers = try await importer.importBackup(from: url, using: password)
-                    let total = Int(exactly: pagers.pagers.totalPagesCount) ?? 0 // TODO: why is a conversion needed?
+                    let total = Int(exactly: pagers.totalPagesCount) ?? 0 // TODO: why is a conversion needed?
 
                     let storedUserIDs = try await userStore.fetchAllUserIDs()
-                    let usersPager = pagers.pagers.usersPager
+                    let usersPager = pagers.usersPager
                     while usersPager.hasMorePages() {
                         let backupUsers = usersPager.nextPage()
                         for current in 0 ..< backupUsers.size {
@@ -119,7 +119,7 @@ public struct ImportBackupUseCase<
                     }
 
                     let storedConversationIDs = try await conversationStore.fetchAllConversationIDs()
-                    let conversationsPager = pagers.pagers.conversationsPager
+                    let conversationsPager = pagers.conversationsPager
                     while conversationsPager.hasMorePages() {
                         let backupConversations = conversationsPager.nextPage()
                         for current in 0 ..< backupConversations.size {
@@ -143,7 +143,7 @@ public struct ImportBackupUseCase<
                     }
 
                     let storedMessageIDs = try await messageStore.fetchAllMessageIDs()
-                    let messagesPager = pagers.pagers.messagesPager
+                    let messagesPager = pagers.messagesPager
                     while messagesPager.hasMorePages() {
                         let backupMessages = messagesPager.nextPage()
                         for current in 0 ..< backupMessages.size {
