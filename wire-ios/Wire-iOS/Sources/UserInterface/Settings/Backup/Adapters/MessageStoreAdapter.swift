@@ -205,25 +205,13 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         }
 
         init?(_ clientMessage: ZMClientMessage) {
+            guard
+                let message = clientMessage.underlyingMessage,
+                message.isInitialized,
+                let messageContent = message.content.flatMap(MessageContent.init)
+            else { return nil }
 
-            if let messageText = clientMessage.textMessageData?.messageText {
-                self.init(clientMessage, content: .text(messageText))
-
-            } else if let locationMessageData = clientMessage.locationMessageData {
-                self.init(
-                    clientMessage,
-                    content: .location(
-                        longitude: locationMessageData.longitude,
-                        latitude: locationMessageData.latitude,
-                        name: locationMessageData.name,
-                        zoom: locationMessageData.zoomLevel
-                    )
-                )
-
-            } else {
-                return nil
-            }
-
+            self.init(clientMessage, content: messageContent)
         }
 
         init?(_ assetClientMessage: ZMAssetClientMessage) {
@@ -254,22 +242,36 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 encryption = .aesGCM
             }
 
-            if assetClientMessage.isImage, let imageMessageData = assetClientMessage.imageMessageData {
+            if let imageAssetData = assetClientMessage.underlyingMessage?.imageAssetData {
                 metadata = .image(
-                    width: Int32(imageMessageData.originalSize.width),
-                    height: Int32(imageMessageData.originalSize.height),
-                    tag: .none // TODO: ?
+                    width: imageAssetData.hasWidth ? imageAssetData.width : 0, // TODO: take originalWidth instead?
+                    height: imageAssetData.hasHeight ? imageAssetData.height : 0,
+                    tag: imageAssetData.hasTag ? imageAssetData.tag : nil
                 )
-            } else if assetClientMessage.isVideo {
-                fatalError("TODO")
-//                metadata = .video(width: <#T##Int32?#>, height: <#T##Int32?#>, duration: <#T##UInt64?#>)
-            } else if assetClientMessage.isAudio {
-                fatalError("TODO")
-            } else if assetClientMessage.isFile {
-                fatalError("TODO")
+//            } else if let v = assetClientMessage.underlyingMessage?.audio {
+//                //
             } else {
-                metadata = .none
+                fatalError()
             }
+
+//            if assetClientMessage.isImage, let genericMessage = assetClientMessage.underlyingMessage, let imageMessageData = assetClientMessage.imageMessageData {
+//
+//
+//                metadata = .image(
+//                    width: Int32(imageMessageData.originalSize.width),
+//                    height: Int32(imageMessageData.originalSize.height),
+//                    tag: .none // TODO: ?
+//                )
+//            } else if assetClientMessage.isVideo {
+//                fatalError("TODO")
+////                metadata = .video(width: <#T##Int32?#>, height: <#T##Int32?#>, duration: <#T##UInt64?#>)
+//            } else if assetClientMessage.isAudio {
+//                fatalError("TODO")
+//            } else if assetClientMessage.isFile {
+//                fatalError("TODO")
+//            } else {
+//                metadata = .none
+//            }
 
             self.init(
                 assetClientMessage,
@@ -309,6 +311,108 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             self.content = content
         }
 
+    }
+
+}
+
+extension MessageContent {
+
+    fileprivate init?(_ content: GenericMessage.OneOf_Content) {
+        switch content {
+
+        case let .text(text):
+            self = .text(text.content)
+
+        case let .image(ImageAsset):
+            return nil
+
+        case let .knock(Knock):
+            return nil
+        case let .lastRead(LastRead):
+            return nil
+        case let .cleared(Cleared):
+            return nil
+        case let .external(External):
+            return nil
+        case let .clientAction(ClientAction):
+            return nil
+        case let .calling(Calling):
+            return nil
+        case let .asset(Asset):
+            return nil
+        case let .hidden(MessageHide):
+            return nil
+
+        case let .location(location):
+            self = .location(
+                longitude: location.longitude,
+                latitude: location.latitude,
+                name: location.hasName ? location.name : nil,
+                zoom: location.hasZoom ? location.zoom : nil
+            )
+
+        case let .deleted(MessageDelete):
+            return nil
+
+        case let .edited(messageEdit):
+            switch messageEdit.content {
+            case let .text(text):
+                self = .text(text.content)
+            case let .composite(composite):
+                return nil
+            case .none:
+                return nil
+            }
+
+        case let .confirmation(Confirmation):
+            return nil
+        case let .reaction(Reaction):
+            return nil
+
+        case let .ephemeral(ephemeral):
+            switch ephemeral.content {
+
+            case .text(let text):
+                self = .text(text.content)
+
+            case .image(let imageAsset):
+                return nil
+
+            case .knock(let knock):
+                return nil
+
+            case .asset(let asset):
+                return nil
+
+            case .location(let location):
+                self = .location(
+                    longitude: location.longitude,
+                    latitude: location.latitude,
+                    name: location.hasName ? location.name : nil,
+                    zoom: location.hasZoom ? location.zoom : nil
+                )
+
+            case .none:
+                return nil
+
+            }
+
+        case let .availability(Availability):
+            return nil
+        case let .composite(Composite):
+            return nil
+        case let .buttonAction(ButtonAction):
+            return nil
+        case let .buttonActionConfirmation(ButtonActionConfirmation):
+            return nil
+        case let .dataTransfer(DataTransfer):
+            return nil
+        case let .inCallEmoji(InCallEmoji):
+            return nil
+        case let .inCallHandRaise(InCallHandRaise):
+            return nil
+
+        }
     }
 
 }

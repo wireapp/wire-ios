@@ -34,6 +34,9 @@ public protocol MessageEntityProtocol {
 
 // MARK: -
 
+// The following types replicate the API of the multi-platform backup library in a Swift friendlier way.
+// (e.g. enums instead of class hierarchy)
+
 public enum MessageContent {
 
     case text(TextContent)
