@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import KaliumBackup
+import Foundation
+import KaliumBackup
 
-extension BackupCreator {
+extension Data {
 
-    func addConversation(_ conversation: BackupConversationModel) {
-
-        let backupConversation = BackupConversation(
-            id: BackupQualifiedId(conversation.id),
-            name: conversation.name
-        )
-        mpBackupCreator.add(conversation: backupConversation)
-
+    init(_ kotlinByteArray: KotlinByteArray) {
+        let count = Int(kotlinByteArray.size)
+        var bytes = [UInt8](repeating: 0, count: count)
+        for i in 0 ..< kotlinByteArray.size {
+            bytes[Int(i)] = UInt8(bitPattern: kotlinByteArray.get(index: i))
+        }
+        self.init(bytes)
     }
 
 }

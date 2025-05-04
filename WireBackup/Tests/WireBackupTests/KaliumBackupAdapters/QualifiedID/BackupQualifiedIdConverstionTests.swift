@@ -16,18 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import KaliumBackup
+import Foundation
+import KaliumBackup
+import Testing
+import WireFoundation
 
-extension BackupCreator {
+@testable import WireBackup
 
-    func addConversation(_ conversation: BackupConversationModel) {
+struct BackupQualifiedIdConverstionTests {
 
-        let backupConversation = BackupConversation(
-            id: BackupQualifiedId(conversation.id),
-            name: conversation.name
-        )
-        mpBackupCreator.add(conversation: backupConversation)
+    @Test(arguments: [
+        QualifiedID(id: UUID(), domain: ""),
+        QualifiedID(id: UUID(), domain: "some@domain"),
+    ])
+    func testConversion(qualifiedID: QualifiedID) async throws {
+        // When
+        let convertedQualifiedID = QualifiedID(BackupQualifiedId(qualifiedID))
 
+        // Then
+        #expect(convertedQualifiedID == qualifiedID)
     }
 
 }

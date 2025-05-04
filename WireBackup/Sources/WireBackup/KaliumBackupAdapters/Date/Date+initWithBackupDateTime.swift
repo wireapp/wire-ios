@@ -16,18 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import KaliumBackup
+import Foundation
+import KaliumBackup
 
-extension BackupCreator {
+extension Date {
 
-    func addConversation(_ conversation: BackupConversationModel) {
-
-        let backupConversation = BackupConversation(
-            id: BackupQualifiedId(conversation.id),
-            name: conversation.name
-        )
-        mpBackupCreator.add(conversation: backupConversation)
-
+    init(_ backupDateTime: BackupDateTime) {
+        self = Date(timeIntervalSince1970: TimeInterval(backupDateTime.instant.epochSeconds))
     }
 
 }

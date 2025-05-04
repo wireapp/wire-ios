@@ -18,11 +18,21 @@
 
 public import WireFoundation
 
-// sourcery: AutoMockable
-public protocol ConversationEntityProtocol { // TODO: make struct
-    typealias ConversationID = QualifiedID
+public struct BackupUserModel {
+    public typealias ID = QualifiedID
 
-    var id: ConversationID { get }
-    var name: String { get }
+    public var id: ID
+    public var name: String
+    public var handle: String
+
+    public init(
+        id: ID,
+        name: String,
+        handle: String
+    ) {
+        self.id = id
+        self.name = name
+        self.handle = handle
+    }
 
 }

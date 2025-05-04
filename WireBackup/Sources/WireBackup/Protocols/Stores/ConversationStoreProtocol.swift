@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import KaliumBackup
+public import WireFoundation
 
-extension BackupCreator {
+// sourcery: AutoMockable
+public protocol ConversationStoreProtocol: Sendable {
 
-    func addConversation(_ conversation: BackupConversationModel) {
+    /// Returns the number of all stored conversations in the local data store, including deleted ones.
+    func totalConversationCount() async throws -> Int
 
-        let backupConversation = BackupConversation(
-            id: BackupQualifiedId(conversation.id),
-            name: conversation.name
-        )
-        mpBackupCreator.add(conversation: backupConversation)
+    /// Returns the IDs of all conversations stored in the local database, including deleted ones.
+    func fetchAllConversationIDs() async throws -> Set<QualifiedID>
 
-    }
+    /// Returns all conversations stored in the local database, including deleted ones.
+    func fetchAllConversations() async throws -> [BackupConversationModel]
 
 }

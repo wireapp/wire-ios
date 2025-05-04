@@ -20,7 +20,7 @@
 
 extension BackupCreator {
 
-    func addUser(_ user: some UserEntityProtocol) {
+    func addUser(_ user: BackupUserModel) {
 
         let backupUser = BackupUser(
             id: BackupQualifiedId(user.id),

@@ -16,19 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import Foundation
+import KaliumBackup
+import Testing
 
-// sourcery: AutoMockable
-public protocol UserStoreProtocol: Sendable { // TODO: move file
-    associatedtype UserEntity: UserEntityProtocol
+@testable import WireBackup
 
-    /// Returns the number of all stored users in the local data store, including deleted ones.
-    func totalUserCount() async throws -> Int
+struct KotlinByteArrayConverstionTests {
 
-    /// Returns the IDs of all users stored in the local database, including deleted ones.
-    func fetchAllUserIDs() async throws -> Set<QualifiedID>
+    @Test func testConversion() async throws {
+        // Given
+        let data = Data("Lorem Ipsum 😶‍🌫️".utf8)
 
-    /// Returns all users stored in the local database, including deleted ones.
-    func fetchAllUsers() async throws -> [UserEntity]
+        // When
+        let convertedData = Data(KotlinByteArray(data))
+
+        // Then
+        #expect(convertedData == data)
+    }
 
 }

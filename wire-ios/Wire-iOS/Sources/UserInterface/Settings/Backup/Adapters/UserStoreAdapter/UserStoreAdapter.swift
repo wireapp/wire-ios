@@ -40,35 +40,17 @@ struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
         return Set(userIDs)
     }
 
-    func fetchAllUsers() async throws -> [UserEntity] {
+    func fetchAllUsers() async throws -> [BackupUserModel] {
         let users = try await userLocalStore.fetchAllUsersForBackup()
         return await context.perform {
             users.compactMap { user in
-                guard let user = UserEntity(user) else {
+                guard let user = BackupUserModel(user) else {
                     assertionFailure()
                     return nil
                 }
                 return user
             }
         }
-    }
-
-    // MARK: -
-
-    struct UserEntity: UserEntityProtocol { // TODO: move out
-
-        let id: QualifiedID
-        let name: String
-        let handle: String
-
-        init?(_ user: ZMUser) {
-            guard let qualifiedID = user.qualifiedID else { return nil }
-
-            self.id = QualifiedID(qualifiedID)
-            self.name = user.name ?? ""
-            self.handle = user.handle ?? ""
-        }
-
     }
 
 }
@@ -80,6 +62,22 @@ extension UserStoreAdapter where UserLocalStore == WireDomain.UserLocalStore {
         self.userLocalStore = UserLocalStore(
             context: context,
             messageLocalStore: MessageLocalStore(context: context)
+        )
+    }
+
+}
+
+// MARK: -
+
+extension BackupUserModel {
+
+    init?(_ user: ZMUser) {
+        guard let qualifiedID = user.qualifiedID else { return nil }
+
+        self.init(
+            id: QualifiedID(qualifiedID),
+            name: user.name ?? "",
+            handle: user.handle ?? ""
         )
     }
 

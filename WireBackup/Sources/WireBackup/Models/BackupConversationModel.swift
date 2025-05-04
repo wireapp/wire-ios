@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import KaliumBackup
+public import WireFoundation
 
-extension BackupCreator {
+public struct BackupConversationModel {
+    public typealias ID = QualifiedID
 
-    func addConversation(_ conversation: BackupConversationModel) {
+    public var id: ID
+    public var name: String
 
-        let backupConversation = BackupConversation(
-            id: BackupQualifiedId(conversation.id),
-            name: conversation.name
-        )
-        mpBackupCreator.add(conversation: backupConversation)
-
+    public init(
+        id: ID,
+        name: String
+    ) {
+        self.id = id
+        self.name = name
     }
 
 }

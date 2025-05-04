@@ -16,19 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import Foundation
+import KaliumBackup
+import Testing
 
-// sourcery: AutoMockable
-public protocol ConversationStoreProtocol: Sendable {
-    associatedtype ConversationEntity: ConversationEntityProtocol
+@testable import WireBackup
 
-    /// Returns the number of all stored conversations in the local data store, including deleted ones.
-    func totalConversationCount() async throws -> Int
+struct BackupDateTimeConverstionTests {
 
-    /// Returns the IDs of all conversations stored in the local database, including deleted ones.
-    func fetchAllConversationIDs() async throws -> Set<QualifiedID>
+    @Test func testConversion() async throws {
+        // Given
+        let dateString = "2025-05-05T01:23:45Z"
+        let date = try Date.ISO8601FormatStyle().parse(dateString)
 
-    /// Returns all conversations stored in the local database, including deleted ones.
-    func fetchAllConversations() async throws -> [ConversationEntity]
+        // When
+        let convertedDate = Date(BackupDateTime(date))
+
+        // Then
+        #expect(convertedDate == date)
+    }
 
 }
