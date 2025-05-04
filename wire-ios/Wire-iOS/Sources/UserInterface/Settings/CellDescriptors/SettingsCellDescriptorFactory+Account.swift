@@ -374,8 +374,6 @@ extension SettingsCellDescriptorFactory {
 
     private var backupImportExportBuilder: BackupImportExportBuilder {
 
-        typealias CreateBackupUseCaseProtocol = WireSettingsUI.CreateBackupUseCaseProtocol
-
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
         let selfUser = ZMUser.selfUser()!
@@ -404,17 +402,15 @@ extension SettingsCellDescriptorFactory {
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
-            CreateBackupUseCaseAdapter(
-                CreateBackupUseCase(
-                    selfUserID: .init(selfUser.qualifiedID!),
-                    selfUserHandle: selfUser.handle,
-                    userStore: UserStoreAdapter(context: context),
-                    conversationStore: ConversationStoreAdapter(context: context),
-                    messageStore: MessageStoreAdapter(context: context),
-                    fileArchiver: ZipArchiveFileArchiver(),
-                    currentDateProvider: SystemDateProvider(),
-                    logger: WireLogger.backupExport
-                )
+            CreateBackupUseCase(
+                selfUserID: .init(selfUser.qualifiedID!),
+                selfUserHandle: selfUser.handle,
+                userStore: UserStoreAdapter(context: context),
+                conversationStore: ConversationStoreAdapter(context: context),
+                messageStore: MessageStoreAdapter(context: context),
+                fileArchiver: ZipArchiveFileArchiver(),
+                currentDateProvider: SystemDateProvider(),
+                logger: WireLogger.backupExport
             )
         }
 

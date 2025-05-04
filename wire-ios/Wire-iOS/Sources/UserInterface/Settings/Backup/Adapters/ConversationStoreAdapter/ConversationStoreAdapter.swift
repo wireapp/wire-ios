@@ -76,7 +76,7 @@ extension ConversationStoreAdapter where ConversationLocalStore == WireDomain.Co
         self.context = context
         self.conversationLocalStore = ConversationLocalStore(
             context: context,
-            mlsService: context.mlsService,
+            mlsService: context.performAndWait { context.mlsService },
             messageLocalStore: MessageLocalStore(context: context)
         )
     }
