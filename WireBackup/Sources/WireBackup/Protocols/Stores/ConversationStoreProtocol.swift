@@ -19,10 +19,18 @@
 public import WireFoundation
 
 // sourcery: AutoMockable
-public protocol ConversationEntityProtocol { // TODO: make struct
-    typealias ConversationID = QualifiedID
+public protocol ConversationStoreProtocol: Sendable {
 
-    var id: ConversationID { get }
-    var name: String { get }
+    /// Returns the number of all stored conversations in the local data store, including deleted ones.
+    func totalConversationCount() async throws -> Int
+
+    /// Returns the IDs of all conversations stored in the local database, including deleted ones.
+    func fetchAllConversationIDs() async throws -> Set<QualifiedID>
+
+    /// Returns all conversations stored in the local database, including deleted ones.
+    func fetchAllConversations() async throws -> [BackupConversationModel]
+
+    /// Adds a conversation from the backup file to the local data store.
+    func addConversation(id: QualifiedID, name: String) async throws
 
 }

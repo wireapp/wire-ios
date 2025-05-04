@@ -20,7 +20,7 @@
 
 extension BackupCreator {
 
-    func addConversation(_ conversation: some ConversationEntityProtocol) {
+    func addConversation(_ conversation: BackupConversationModel) {
 
         let backupConversation = BackupConversation(
             id: BackupQualifiedId(conversation.id),

@@ -18,20 +18,18 @@
 
 public import WireFoundation
 
-// sourcery: AutoMockable
-public protocol UserStoreProtocol: Sendable { // TODO: move file
-    associatedtype UserEntity: UserEntityProtocol
+public struct BackupConversationModel {
+    public typealias ID = QualifiedID
 
-    /// Returns the number of all stored users in the local data store, including deleted ones.
-    func totalUserCount() async throws -> Int
+    public var id: ID
+    public var name: String
 
-    /// Returns the IDs of all users stored in the local database, including deleted ones.
-    func fetchAllUserIDs() async throws -> Set<QualifiedID>
-
-    /// Returns all users stored in the local database, including deleted ones.
-    func fetchAllUsers() async throws -> [UserEntity]
-
-    /// Adds a user from the backup file to the local data store.
-    func addUser(id: QualifiedID, name: String, handle: String) async throws
+    public init(
+        id: ID,
+        name: String
+    ) {
+        self.id = id
+        self.name = name
+    }
 
 }

@@ -40,11 +40,11 @@ struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtoc
         return Set(conversationIDs)
     }
 
-    func fetchAllConversations() async throws -> [ConversationEntity] {
+    func fetchAllConversations() async throws -> [BackupConversationModel] {
         let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
         return await context.perform {
             conversations.compactMap { conversation in
-                guard let conversation = ConversationEntity(conversation) else {
+                guard let conversation = BackupConversationModel(conversation) else {
                     assertionFailure()
                     return nil
                 }
@@ -68,22 +68,6 @@ struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtoc
         )
     }
 
-    // MARK: -
-
-    struct ConversationEntity: ConversationEntityProtocol {
-
-        let id: QualifiedID
-        let name: String
-
-        init?(_ conversation: ZMConversation) {
-            guard let qualifiedID = conversation.qualifiedID else { return nil }
-
-            self.id = QualifiedID(qualifiedID)
-            self.name = conversation.name ?? ""
-        }
-
-    }
-
 }
 
 extension ConversationStoreAdapter where ConversationLocalStore == WireDomain.ConversationLocalStore {
@@ -94,6 +78,21 @@ extension ConversationStoreAdapter where ConversationLocalStore == WireDomain.Co
             context: context,
             mlsService: context.mlsService,
             messageLocalStore: MessageLocalStore(context: context)
+        )
+    }
+
+}
+
+// MARK: -
+
+extension BackupConversationModel {
+
+    init?(_ conversation: ZMConversation) {
+        guard let qualifiedID = conversation.qualifiedID else { return nil }
+
+        self.init(
+            id: QualifiedID(qualifiedID),
+            name: conversation.name ?? ""
         )
     }
 

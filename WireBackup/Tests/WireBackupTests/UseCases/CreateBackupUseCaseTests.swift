@@ -26,8 +26,8 @@ import XCTest
 
 final class CreateBackupUseCaseTests: XCTestCase {
 
-    private typealias UserStoreMock = UserStoreProtocolMock<UserEntityProtocolMock>
-    private typealias ConversationStoreMock = ConversationStoreProtocolMock<ConversationEntityProtocolMock>
+    private typealias UserStoreMock = UserStoreProtocolMock
+    private typealias ConversationStoreMock = ConversationStoreProtocolMock
     private typealias MessageStoreMock = MessageStoreProtocolMock
     private typealias FileArchiverMock = FileArchiverProtocolMock
 
