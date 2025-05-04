@@ -382,16 +382,8 @@ extension SettingsCellDescriptorFactory {
         let context = selfUser.managedObjectContext!.performAndWait {
             selfUser.managedObjectContext!.zm_sync!
         }
+
         let userSession = sessionManager.activeUserSession!
-
-        let messageLocalStore = MessageLocalStore(context: context)
-        let userLocalStore = UserLocalStore(context: context, messageLocalStore: messageLocalStore)
-        let conversationLocalStore = ConversationLocalStore(
-            context: context,
-            mlsService: nil, // TODO: nil?
-            messageLocalStore: messageLocalStore
-        )
-
         let importBackupUseCase = CompositeImportBackupUseCase(
             importBackupUseCase: ImportBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),

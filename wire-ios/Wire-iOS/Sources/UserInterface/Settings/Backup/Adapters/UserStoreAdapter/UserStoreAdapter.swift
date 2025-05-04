@@ -22,17 +22,13 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 
-struct UserStoreAdapter: UserStoreProtocol {
+struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
+where UserLocalStore: UserLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
+    /// The context to call `perform(schedule:_:)` on.
+    let context: NSManagedObjectContext
     let userLocalStore: UserLocalStore
-
-    init(context: NSManagedObjectContext) {
-        userLocalStore = UserLocalStore(
-            context: context,
-            messageLocalStore: MessageLocalStore(context: context)
-        )
-    }
 
     func totalUserCount() async throws -> Int {
         try await userLocalStore.totalBackupableUserCount()
@@ -46,7 +42,7 @@ struct UserStoreAdapter: UserStoreProtocol {
 
     func fetchAllUsers() async throws -> [UserEntity] {
         let users = try await userLocalStore.fetchAllBackupableUsers()
-        return await userLocalStore.context.perform {
+        return await context.perform {
             users.compactMap { user in
                 guard let user = UserEntity(user) else {
                     assertionFailure()
@@ -96,6 +92,18 @@ struct UserStoreAdapter: UserStoreProtocol {
             self.handle = user.handle ?? ""
         }
 
+    }
+
+}
+
+extension UserStoreAdapter where UserLocalStore == WireDomain.UserLocalStore {
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        userLocalStore = UserLocalStore(
+            context: context,
+            messageLocalStore: MessageLocalStore(context: context)
+        )
     }
 
 }
