@@ -185,7 +185,7 @@ struct MessageStoreAdapter: MessageStoreProtocol {
 
     // MARK: -
 
-    struct MessageEntity: MessageEntityProtocol {
+    struct MessageEntity: MessageEntityProtocol { // TODO: move into WireBackup, replace the protocol
 
         let id: MessageID
         let conversationID: QualifiedID
@@ -195,26 +195,25 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         let content: WireBackup.MessageContent
 
         init?(_ message: ZMMessage) {
-            if let clientMessage = message as? ZMClientMessage, !clientMessage.isObfuscated {
-                self.init(clientMessage)
-            } else if let assetClientMessage = message as? ZMAssetClientMessage, !assetClientMessage.isObfuscated {
-                self.init(assetClientMessage)
-            } else {
+            switch message {
+            case let message as ZMClientMessage where !message.isObfuscated:
+                guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
+                self.init(message, genericMessage: genericMessage)
+            case let message as ZMAssetClientMessage where !message.isObfuscated:
+                guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
+                self.init(message, genericMessage: genericMessage)
+            default:
                 return nil
             }
         }
 
-        init?(_ clientMessage: ZMClientMessage) {
-            guard
-                let message = clientMessage.underlyingMessage,
-                message.isInitialized,
-                let messageContent = message.content.flatMap(MessageContent.init)
-            else { return nil }
-
-            self.init(clientMessage, content: messageContent)
-        }
-
+        /*
         init?(_ assetClientMessage: ZMAssetClientMessage) {
+            guard
+                let genericMessage = assetClientMessage.underlyingMessage,
+                genericMessage.isInitialized,
+                let messageContent = genericMessage.content.flatMap(MessageContent.init)
+            else { return nil }
 
             guard let asset = assetClientMessage.underlyingMessage?.assetData else { return nil }
 
@@ -233,14 +232,9 @@ struct MessageStoreAdapter: MessageStoreProtocol {
                 return nil
             }
 
-            switch (asset.uploaded.hasEncryption, asset.uploaded.encryption) {
-            case (false, _):
-                encryption = .none
-            case (true, .aesCbc):
-                encryption = .aesCBC
-            case (true, .aesGcm):
-                encryption = .aesGCM
-            }
+            encryption = asset.uploaded.hasEncryption
+                ? MessageContent.AssetContent.EncryptionAlgorithm(asset.uploaded.encryption)
+                : nil
 
             if let imageAssetData = assetClientMessage.underlyingMessage?.imageAssetData {
                 metadata = .image(
@@ -290,14 +284,16 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             )
 
         }
+         */
 
-        init?(_ message: ZMMessage, content: MessageContent) {
+        init?(_ message: ZMMessage, genericMessage: GenericMessage) {
 
             guard
                 let id = message.nonce,
                 let senderUserID = message.senderUser?.qualifiedID,
                 let creationDate = message.serverTimestamp,
-                let conversationID = message.conversation?.qualifiedID
+                let conversationID = message.conversation?.qualifiedID,
+                let content = genericMessage.content.flatMap(MessageContent.init)
             else {
                 // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
                 return nil
@@ -311,108 +307,6 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             self.content = content
         }
 
-    }
-
-}
-
-extension MessageContent {
-
-    fileprivate init?(_ content: GenericMessage.OneOf_Content) {
-        switch content {
-
-        case let .text(text):
-            self = .text(text.content)
-
-        case let .image(ImageAsset):
-            return nil
-
-        case let .knock(Knock):
-            return nil
-        case let .lastRead(LastRead):
-            return nil
-        case let .cleared(Cleared):
-            return nil
-        case let .external(External):
-            return nil
-        case let .clientAction(ClientAction):
-            return nil
-        case let .calling(Calling):
-            return nil
-        case let .asset(Asset):
-            return nil
-        case let .hidden(MessageHide):
-            return nil
-
-        case let .location(location):
-            self = .location(
-                longitude: location.longitude,
-                latitude: location.latitude,
-                name: location.hasName ? location.name : nil,
-                zoom: location.hasZoom ? location.zoom : nil
-            )
-
-        case let .deleted(MessageDelete):
-            return nil
-
-        case let .edited(messageEdit):
-            switch messageEdit.content {
-            case let .text(text):
-                self = .text(text.content)
-            case let .composite(composite):
-                return nil
-            case .none:
-                return nil
-            }
-
-        case let .confirmation(Confirmation):
-            return nil
-        case let .reaction(Reaction):
-            return nil
-
-        case let .ephemeral(ephemeral):
-            switch ephemeral.content {
-
-            case .text(let text):
-                self = .text(text.content)
-
-            case .image(let imageAsset):
-                return nil
-
-            case .knock(let knock):
-                return nil
-
-            case .asset(let asset):
-                return nil
-
-            case .location(let location):
-                self = .location(
-                    longitude: location.longitude,
-                    latitude: location.latitude,
-                    name: location.hasName ? location.name : nil,
-                    zoom: location.hasZoom ? location.zoom : nil
-                )
-
-            case .none:
-                return nil
-
-            }
-
-        case let .availability(Availability):
-            return nil
-        case let .composite(Composite):
-            return nil
-        case let .buttonAction(ButtonAction):
-            return nil
-        case let .buttonActionConfirmation(ButtonActionConfirmation):
-            return nil
-        case let .dataTransfer(DataTransfer):
-            return nil
-        case let .inCallEmoji(InCallEmoji):
-            return nil
-        case let .inCallHandRaise(InCallHandRaise):
-            return nil
-
-        }
     }
 
 }
