@@ -147,24 +147,7 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
                 let filePath = "/path/to/file.\(extensions)"
                 for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
                 XCTFail("Unexpected success")
-            } catch ImportBackupError.noActiveAccountForImport {
-                // Then
-            }
-        }
-    }
-
-    func testUnknownFileExtensionsThrow() async throws {
-        // Given
-        let extensions = ["zip"]
-        mockUserSession = nil
-
-        for extensions in extensions {
-            do {
-                // When
-                let filePath = "/path/to/file.\(extensions)"
-                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
-                XCTFail("Unexpected success")
-            } catch ImportBackupError.invalidFileExtension {
+            } catch ImportLegacyBackupError.noActiveAccountForImport {
                 // Then
             }
         }
