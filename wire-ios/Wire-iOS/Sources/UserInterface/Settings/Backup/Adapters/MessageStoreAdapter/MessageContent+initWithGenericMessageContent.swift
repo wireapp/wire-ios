@@ -27,37 +27,15 @@ extension MessageContent {
             self.init(text)
         case let .image(imageAsset):
             self.init(imageAsset)
-        case .knock, .lastRead:
-            return nil
-        case let .cleared(Cleared):
-            return nil
-        case let .external(External):
-            return nil
-        case let .clientAction(ClientAction):
-            return nil
-        case let .calling(Calling):
-            return nil
         case let .asset(asset):
             self.init(asset)
-        case let .hidden(MessageHide):
-            return nil
         case let .location(location):
             self.init(location)
-        case let .deleted(MessageDelete):
-            return nil
         case let .edited(messageEdit):
             self.init(messageEdit)
-        case let .confirmation(Confirmation):
-            return nil
-        case let .reaction(Reaction):
-            return nil
         case let .ephemeral(ephemeral):
             self.init(ephemeral)
-        case let .availability(Availability):
-            return nil
-        case let .composite(Composite):
-            return nil
-        case .buttonAction, .buttonActionConfirmation, .dataTransfer, .inCallEmoji, .inCallHandRaise:
+        case .knock, .lastRead, .cleared, .external, .clientAction, .calling, .hidden, .deleted, .confirmation, .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer, .inCallEmoji, .inCallHandRaise:
             return nil
         }
     }
