@@ -16,17 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
-
 import Foundation
 import WireDataModel
 
 // sourcery: AutoMockable
 /// A local store dedicated to user.
 /// The store uses the injected context to perform `CoreData` operations on user objects.
-public protocol UserLocalStoreProtocol: Sendable {
-
-    var context: NSManagedObjectContext { get }
+public protocol UserLocalStoreProtocol {
 
     /// Fetch self user from the local store
 

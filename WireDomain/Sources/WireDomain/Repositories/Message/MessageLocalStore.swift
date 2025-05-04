@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
-
+import CoreData
 import WireCryptobox
 import WireDataModel
 import WireLogging
@@ -39,7 +38,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     // MARK: - Properties
 
-    public let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
 
