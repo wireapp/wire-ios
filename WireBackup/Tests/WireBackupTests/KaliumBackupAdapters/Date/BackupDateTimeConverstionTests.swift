@@ -24,7 +24,8 @@ import Testing
 
 struct BackupDateTimeConverstionTests {
 
-    @Test func testConversion() async throws {
+    @Test
+    func testConversion() async throws {
         // Given
         let dateString = "2025-05-05T01:23:45Z"
         let date = try Date.ISO8601FormatStyle().parse(dateString)

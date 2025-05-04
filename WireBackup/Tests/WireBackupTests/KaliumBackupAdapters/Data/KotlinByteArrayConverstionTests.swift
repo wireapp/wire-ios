@@ -24,7 +24,8 @@ import Testing
 
 struct KotlinByteArrayConverstionTests {
 
-    @Test func testConversion() async throws {
+    @Test
+    func testConversion() async throws {
         // Given
         let data = Data("Lorem Ipsum 😶‍🌫️".utf8)
 

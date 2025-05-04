@@ -16,25 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import KaliumBackup
-import Testing
-import WireFoundation
+import WireDataModel
 
-@testable import WireBackup
-
-struct BackupQualifiedIdConverstionTests {
-
-    @Test(arguments: [
-        QualifiedID(id: UUID(), domain: ""),
-        QualifiedID(id: UUID(), domain: "some@domain")
-    ])
-    func testConversion(qualifiedID: QualifiedID) async throws {
-        // When
-        let convertedQualifiedID = QualifiedID(BackupQualifiedId(qualifiedID))
-
-        // Then
-        #expect(convertedQualifiedID == qualifiedID)
-    }
-
-}
+public typealias QualifiedID = WireDataModel.QualifiedID
