@@ -39,6 +39,8 @@ struct BackupImporter {
 
 }
 
+// MARK: -
+
 private final class FileUnarchiverToBackupFileUnzipper<FileUnarchiver>: BackupFileUnzipper
     where FileUnarchiver: FileUnarchiverProtocol {
 

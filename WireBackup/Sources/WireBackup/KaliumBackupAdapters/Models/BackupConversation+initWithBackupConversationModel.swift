@@ -16,18 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import KaliumBackup
+import KaliumBackup
 
-extension BackupCreator {
+extension BackupConversation {
 
-    func addConversation(_ conversation: BackupConversationModel) {
-
-        let backupConversation = BackupConversation(
+    convenience init(_ conversation: BackupConversationModel) {
+        self.init(
             id: BackupQualifiedId(conversation.id),
             name: conversation.name
         )
-        mpBackupCreator.add(conversation: backupConversation)
-
     }
 
 }

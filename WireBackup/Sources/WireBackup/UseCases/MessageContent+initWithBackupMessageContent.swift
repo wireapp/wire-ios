@@ -19,8 +19,6 @@
 import Foundation
 import KaliumBackup
 
-// TODO: move to proper place
-
 extension WireBackup.MessageContent {
 
     init?(_ backupMessageContent: BackupMessageContent) {

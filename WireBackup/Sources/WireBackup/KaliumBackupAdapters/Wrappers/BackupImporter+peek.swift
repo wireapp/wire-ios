@@ -28,14 +28,14 @@ extension BackupImporter {
         switch result {
         case let result as BackupPeekResult.Success:
             let userIDMatches = try await result.isCreatedBySameUser(userId: BackupQualifiedId(selfUserID)).boolValue
-            guard userIDMatches else { throw PeekResultError.selfUserIDMismatch }
+            guard userIDMatches else { throw PeekBackupFileError.selfUserIDMismatch }
             return PeekResult(result.version, result.isEncrypted)
         case is BackupPeekResult.FailureUnknownFormat:
-            throw PeekResultError.unknownFormat
+            throw PeekBackupFileError.unknownFormat
         case let error as BackupPeekResult.FailureUnsupportedVersion:
-            throw PeekResultError.unsupportedVersion(error.backupVersion)
+            throw PeekBackupFileError.unsupportedVersion(error.backupVersion)
         default:
-            throw PeekResultError.unexpectedPeekResultType
+            throw PeekBackupFileError.unexpectedPeekResultType
         }
     }
 
@@ -51,13 +51,15 @@ extension BackupImporter {
 
     }
 
-}
+    // MARK: -
 
-private enum PeekResultError: Error {
+    enum PeekBackupFileError: Error {
 
-    case selfUserIDMismatch
-    case unknownFormat
-    case unsupportedVersion(_ backupVersion: String)
-    case unexpectedPeekResultType
+        case selfUserIDMismatch
+        case unknownFormat
+        case unsupportedVersion(_ backupVersion: String)
+        case unexpectedPeekResultType
+
+    }
 
 }

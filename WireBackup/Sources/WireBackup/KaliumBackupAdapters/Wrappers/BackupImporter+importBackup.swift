@@ -33,28 +33,30 @@ extension BackupImporter {
 
         switch result {
         case is BackupImportResult.FailureMissingOrWrongPassphrase:
-            throw ImportResultError.incorrectPassword
+            throw OpenBackupError.incorrectPassword
         case is BackupImportResult.FailureParsingFailure:
-            throw ImportResultError.parsingFailed
+            throw OpenBackupError.parsingFailed
         case let error as BackupImportResult.FailureUnzippingError:
-            throw ImportResultError.unzippingFailed(error.message)
+            throw OpenBackupError.unzippingFailed(error.message)
         case let success as BackupImportResult.Success:
             return success.pager
         case let error as BackupImportResult.FailureUnknownError:
-            throw ImportResultError.unknown(error.message)
+            throw OpenBackupError.unknown(error.message)
         default:
-            throw ImportResultError.unexpectedImportResultType
+            throw OpenBackupError.unexpectedImportResultType
         }
     }
 
-}
+    // MARK: -
 
-private enum ImportResultError: Error {
+    enum OpenBackupError: Error {
 
-    case incorrectPassword
-    case parsingFailed
-    case unzippingFailed(_ description: String)
-    case unknown(_ description: String)
-    case unexpectedImportResultType
+        case incorrectPassword
+        case parsingFailed
+        case unzippingFailed(_ description: String)
+        case unknown(_ description: String)
+        case unexpectedImportResultType
+
+    }
 
 }
