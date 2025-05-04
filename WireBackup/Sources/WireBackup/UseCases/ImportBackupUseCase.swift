@@ -155,7 +155,7 @@ public struct ImportBackupUseCase<
                             else { continue }
 
                             if !storedMessageIDs.contains(backupMessage.id) { // TODO: what if it is in the db but marked as deleted?
-                                try await messageStore.addMessage(
+                                let message = BackupMessageModel(
                                     id: backupMessage.id,
                                     conversationID: conversationID,
                                     senderUserID: senderUserID,
@@ -163,6 +163,7 @@ public struct ImportBackupUseCase<
                                     creationDate: Date(backupMessage.creationDate),
                                     content: content
                                 )
+                                try await messageStore.addMessage(message)
                             }
 
                             if current % 50 == 0 || current == backupMessages.size - 1 {

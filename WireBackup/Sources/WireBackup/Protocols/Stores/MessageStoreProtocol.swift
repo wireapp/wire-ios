@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-public import WireFoundation
-
 // sourcery: AutoMockable
 public protocol MessageStoreProtocol: Sendable {
 
@@ -33,15 +30,5 @@ public protocol MessageStoreProtocol: Sendable {
 
     /// Adds a message from the backup file to the local data store.
     func addMessage(_ message: BackupMessageModel) async throws
-
-    // TODO: delete
-    func addMessage(
-        id: BackupMessageModel.ID,
-        conversationID: ConversationEntityProtocol.ConversationID,
-        senderUserID: UserEntityProtocol.UserID,
-        senderClientID: String?,
-        creationDate: Date,
-        content: WireBackup.MessageContent
-    ) async throws
 
 }

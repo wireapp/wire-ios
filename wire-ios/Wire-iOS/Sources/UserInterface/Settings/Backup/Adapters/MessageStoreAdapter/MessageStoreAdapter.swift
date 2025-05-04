@@ -50,47 +50,27 @@ where MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     func addMessage(_ message: BackupMessageModel) async throws {
-        try await addMessage(
-            id: message.id,
-            conversationID: message.conversationID,
-            senderUserID: message.senderUserID,
-            senderClientID: message.senderClientID,
-            creationDate: message.creationDate,
-            content: message.content
-        )
-    }
-
-    func addMessage( // TODO: merge with the func above
-        id: BackupMessageModel.ID,
-        conversationID: QualifiedID,
-        senderUserID: QualifiedID,
-        senderClientID: String?,
-        creationDate: Date,
-        content: WireBackup.MessageContent
-    ) async throws {
-
+        let conversationID = message.conversationID
         let conversation = await context.perform {
-            ZMConversation.fetch(
-                with: conversationID.id,
-                domain: conversationID.domain,
-                in: context
-            )
+            ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
         }
-        guard let conversation, let nonce = UUID(transportString: id) else { return }
+        guard let conversation, let nonce = UUID(transportString: message.id) else { return }
 
+        let senderUserID = message.senderUserID
         let userLocalStore = UserLocalStore(context: context, messageLocalStore: messageLocalStore)
         let sender = await userLocalStore.fetchOrCreateUser(id: senderUserID.id, domain: senderUserID.domain)
 
-        switch content {
+        switch message.content {
 
         case .text(let textContent):
             let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
-                id: id,
+                id: message.id,
                 conversation: conversation,
-                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
-                date: creationDate
+                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: message.senderClientID),
+                date: message.creationDate
             )
-            guard isCreated else { return }
+            guard isCreated else { return } // don't overwrite existing messages
+
             let textMessage = Text(content: textContent.text)
             let genericMessage = GenericMessage(content: textMessage, nonce: nonce)
             try await context.perform {
@@ -102,12 +82,12 @@ where MessageLocalStore: MessageLocalStoreProtocol {
 
         case .location(let locationContent):
             let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
-                id: id,
+                id: message.id,
                 conversation: conversation,
-                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
-                date: creationDate
+                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: message.senderClientID),
+                date: message.creationDate
             )
-            guard isCreated else { return }
+            guard isCreated else { return } // don't overwrite existing messages
             let locationContent = Location.with { location in
                 if let name = locationContent.name {
                     location.name = name
@@ -125,12 +105,13 @@ where MessageLocalStore: MessageLocalStoreProtocol {
 
         case .asset(let assetContent):
             let (assetClientMessage, isCreated) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
-                id: id,
+                id: message.id,
                 conversation: conversation,
-                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: senderClientID),
-                date: creationDate
+                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: message.senderClientID),
+                date: message.creationDate
             )
-            guard isCreated else { return }
+            guard isCreated else { return } // don't overwrite existing messages
+
             let genericMessage: GenericMessage
             switch assetContent.metadata {
             case .image(let imageData):
@@ -206,53 +187,6 @@ extension MessageStoreAdapter where MessageLocalStore == WireDomain.MessageLocal
     init(context: NSManagedObjectContext) {
         self.context = context
         messageLocalStore = MessageLocalStore(context: context)
-    }
-
-}
-
-// MARK: -
-
-extension BackupMessageModel {
-
-    init?(_ message: ZMMessage) {
-        switch message {
-
-        case let message as ZMClientMessage where !message.isObfuscated:
-            guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
-            self.init(message, genericMessage: genericMessage)
-
-        case let message as ZMAssetClientMessage where !message.isObfuscated:
-            guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
-            self.init(message, genericMessage: genericMessage)
-
-        default:
-            return nil
-
-        }
-    }
-
-    init?(_ message: ZMMessage, genericMessage: GenericMessage) {
-
-        guard
-            let id = message.nonce,
-            let senderUserID = message.senderUser?.qualifiedID,
-            let creationDate = message.serverTimestamp,
-            let conversationID = message.conversation?.qualifiedID,
-            let content = genericMessage.content.flatMap(MessageContent.init)
-        else {
-            // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
-            return nil
-        }
-
-        self.init(
-            id: id.uuidString,
-            conversationID: QualifiedID(conversationID),
-            senderUserID: QualifiedID(senderUserID),
-            senderClientID: message.senderClientID,
-            creationDate: creationDate,
-            content: content
-        )
-
     }
 
 }
