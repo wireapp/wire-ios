@@ -21,7 +21,7 @@ import WireProtos
 
 extension MessageContent {
 
-    init?(genericMessageContent content: GenericMessage.OneOf_Content) {
+    init?(_ content: GenericMessage.OneOf_Content) {
         switch content {
         case let .text(text):
             self.init(text)
@@ -37,8 +37,8 @@ extension MessageContent {
             return nil
         case let .calling(Calling):
             return nil
-        case let .asset(Asset): todo
-            return nil
+        case let .asset(asset):
+            self.init(asset)
         case let .hidden(MessageHide):
             return nil
         case let .location(location):
@@ -57,15 +57,7 @@ extension MessageContent {
             return nil
         case let .composite(Composite):
             return nil
-        case let .buttonAction(ButtonAction):
-            return nil
-        case let .buttonActionConfirmation(ButtonActionConfirmation):
-            return nil
-        case let .dataTransfer(DataTransfer):
-            return nil
-        case let .inCallEmoji(InCallEmoji):
-            return nil
-        case let .inCallHandRaise(InCallHandRaise):
+        case .buttonAction, .buttonActionConfirmation, .dataTransfer, .inCallEmoji, .inCallHandRaise:
             return nil
         }
     }
@@ -76,13 +68,9 @@ extension MessageContent {
             self.init(text)
         case .image(let imageAsset):
             self.init(imageAsset)
-        case .knock(let knock):
-            return nil
-        case .asset(let asset):
-            return nil
         case .location(let location):
             self.init(location)
-        case .none:
+        case .knock, .asset, .none:
             return nil
         }
     }
@@ -104,14 +92,32 @@ extension MessageContent {
         switch messageEdit.content {
         case let .text(text):
             self.init(text)
-        case let .composite(composite):
-            return nil
-        case .none:
+        case .composite, .none:
             return nil
         }
     }
 
-    private init(_ imageAsset: ImageAsset) {
+    private init?(_ asset: Asset) {
+        guard
+            let original = asset.hasOriginal ? asset.original : nil,
+            let uploaded = asset.hasUploaded ? asset.uploaded : nil
+        else { return nil }
+
+        self = .asset(
+            mimeType: original.hasMimeType ? original.mimeType : "application/octet-stream",
+            size: original.size,
+            name: original.hasName ? original.name : nil,
+            otrKey: uploaded.otrKey,
+            sha256: uploaded.sha256,
+            assetID: uploaded.assetID,
+            assetToken: uploaded.hasAssetToken ? uploaded.assetToken : nil,
+            assetDomain: uploaded.hasAssetDomain ? uploaded.assetDomain : nil,
+            encryption: uploaded.hasEncryption ? .init(uploaded.encryption) : nil,
+            metadata: original.metaData.flatMap(MessageContent.AssetContent.Metadata.init)
+        )
+    }
+
+    private init?(_ imageAsset: ImageAsset) {
         self = .asset(
             mimeType: imageAsset.hasMimeType ? imageAsset.mimeType : "application/octet-stream",
             size: UInt64(imageAsset.size),
