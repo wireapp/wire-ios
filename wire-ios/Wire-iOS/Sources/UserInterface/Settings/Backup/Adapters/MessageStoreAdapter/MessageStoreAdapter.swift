@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireBackup
 import WireDataModel
@@ -23,18 +24,12 @@ import WireDomain
 import WireFoundation
 import WireProtos
 
-struct MessageStoreAdapter: MessageStoreProtocol, @unchecked Sendable {
+struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked Sendable
+where MessageLocalStore: MessageLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
     private let context: NSManagedObjectContext
     private let messageLocalStore: MessageLocalStore
-
-    init(
-        context: NSManagedObjectContext
-    ) {
-        self.context = context
-        messageLocalStore = MessageLocalStore(context: context)
-    }
 
     func totalMessageCount() async throws -> Int {
         try await messageLocalStore.totalBackupableMessageCount()
@@ -46,7 +41,7 @@ struct MessageStoreAdapter: MessageStoreProtocol, @unchecked Sendable {
 
     func fetchAllMessages() async throws -> [BackupMessageModel] {
         let messages = try await messageLocalStore.fetchAllBackupableMessages()
-        return await messageLocalStore.context.perform {
+        return await context.perform {
             messages.compactMap { message in
                 if let message = BackupMessageModel(message) { message } else { nil }
             }
@@ -73,11 +68,11 @@ struct MessageStoreAdapter: MessageStoreProtocol, @unchecked Sendable {
         content: WireBackup.MessageContent
     ) async throws {
 
-        let conversation = await messageLocalStore.context.perform {
+        let conversation = await context.perform {
             ZMConversation.fetch(
                 with: conversationID.id,
                 domain: conversationID.domain,
-                in: messageLocalStore.context
+                in: context
             )
         }
         guard let conversation, let nonce = UUID(transportString: id) else { return }
@@ -97,7 +92,7 @@ struct MessageStoreAdapter: MessageStoreProtocol, @unchecked Sendable {
             guard isCreated else { return }
             let textMessage = Text(content: textContent.text)
             let genericMessage = GenericMessage(content: textMessage, nonce: nonce)
-            try await messageLocalStore.context.perform {
+            try await context.perform {
                 try clientMessage.setUnderlyingMessage(genericMessage)
                 clientMessage.sender = sender
                 clientMessage.visibleInConversation = conversation
@@ -121,7 +116,7 @@ struct MessageStoreAdapter: MessageStoreProtocol, @unchecked Sendable {
                 location.zoom = locationContent.zoom ?? 0
             }
             let genericMessage = GenericMessage(content: locationContent, nonce: nonce)
-            try await messageLocalStore.context.perform {
+            try await context.perform {
                 try clientMessage.setUnderlyingMessage(genericMessage)
                 clientMessage.sender = sender
                 clientMessage.visibleInConversation = conversation
@@ -195,12 +190,21 @@ struct MessageStoreAdapter: MessageStoreProtocol, @unchecked Sendable {
             case .none:
                 return // TODO: ??
             }
-            try await messageLocalStore.context.perform {
+            try await context.perform {
                 try assetClientMessage.setUnderlyingMessage(genericMessage)
                 assetClientMessage.sender = sender
                 assetClientMessage.visibleInConversation = conversation
             }
         }
+    }
+
+}
+
+extension MessageStoreAdapter where MessageLocalStore == WireDomain.MessageLocalStore {
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        messageLocalStore = MessageLocalStore(context: context)
     }
 
 }

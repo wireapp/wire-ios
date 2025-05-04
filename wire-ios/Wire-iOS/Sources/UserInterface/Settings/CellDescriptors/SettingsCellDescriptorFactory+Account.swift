@@ -395,8 +395,8 @@ extension SettingsCellDescriptorFactory {
         let importBackupUseCase = CompositeImportBackupUseCase(
             importBackupUseCase: ImportBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
-                userStore: UserStoreAdapter(userLocalStore: userLocalStore),
-                conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
+                userStore: UserStoreAdapter(context: context),
+                conversationStore: ConversationStoreAdapter(context: context),
                 messageStore: MessageStoreAdapter(context: context),
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: {
@@ -414,8 +414,8 @@ extension SettingsCellDescriptorFactory {
                 CreateBackupUseCase(
                     selfUserID: .init(selfUser.qualifiedID!),
                     selfUserHandle: selfUser.handle,
-                    userStore: UserStoreAdapter(userLocalStore: userLocalStore),
-                    conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
+                    userStore: UserStoreAdapter(context: context),
+                    conversationStore: ConversationStoreAdapter(context: context),
                     messageStore: MessageStoreAdapter(context: context),
                     fileArchiver: ZipArchiveFileArchiver(),
                     currentDateProvider: SystemDateProvider(),

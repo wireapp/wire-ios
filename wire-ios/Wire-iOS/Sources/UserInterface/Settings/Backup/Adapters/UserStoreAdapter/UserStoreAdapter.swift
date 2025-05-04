@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireBackup
 import WireDataModel
 import WireDomain
@@ -24,7 +25,14 @@ import WireFoundation
 struct UserStoreAdapter: UserStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
-    let userLocalStore: any UserLocalStoreProtocol
+    let userLocalStore: UserLocalStore
+
+    init(context: NSManagedObjectContext) {
+        userLocalStore = UserLocalStore(
+            context: context,
+            messageLocalStore: MessageLocalStore(context: context)
+        )
+    }
 
     func totalUserCount() async throws -> Int {
         try await userLocalStore.totalBackupableUserCount()
