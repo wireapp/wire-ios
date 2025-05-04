@@ -26,7 +26,7 @@ struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtoc
     where ConversationLocalStore: ConversationLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
-    /// The context to call `perform(schedule:_:)` on.
+    /// The context to call `perform(schedule:_:)` on if needed.
     let context: NSManagedObjectContext
     let conversationLocalStore: ConversationLocalStore
 
