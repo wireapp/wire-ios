@@ -35,16 +35,16 @@ extension BackupCreator {
 
     }
 
-    private func backupMessageContent(_ content: MessageContent) -> KaliumBackup.BackupMessageContent {
+    private func backupMessageContent(_ content: MessageContent) -> BackupMessageContent {
         switch content {
 
         case let .text(content):
-            KaliumBackup.BackupMessageContent.Text(
+            BackupMessageContent.Text(
                 text: content.text
             )
 
         case let .location(content):
-            KaliumBackup.BackupMessageContent.Location(
+            BackupMessageContent.Location(
                 longitude: content.longitude,
                 latitude: content.latitude,
                 name: content.name,
@@ -52,7 +52,7 @@ extension BackupCreator {
             )
 
         case let .asset(content):
-            KaliumBackup.BackupMessageContent.Asset(
+            BackupMessageContent.Asset(
                 mimeType: content.mimeType,
                 size: Int32(exactly: content.size) ?? 0, // TODO: get rid of Int32?
                 name: content.name,
@@ -89,27 +89,27 @@ extension BackupCreator {
         switch metadata {
 
         case let .image(metadata):
-            KaliumBackup.BackupMessageContent.AssetAssetMetadataImage(
+            BackupMessageContent.AssetAssetMetadataImage(
                 width: metadata.width,
                 height: metadata.height,
                 tag: metadata.tag
             )
 
         case let .video(metadata):
-            KaliumBackup.BackupMessageContent.AssetAssetMetadataVideo(
+            BackupMessageContent.AssetAssetMetadataVideo(
                 width: metadata.width.map { KotlinInt(int: $0) },
                 height: metadata.height.map { KotlinInt(int: $0) },
                 duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) } // TODO: types should match CoreCrypto types
             )
 
         case let .audio(metadata):
-            KaliumBackup.BackupMessageContent.AssetAssetMetadataAudio(
+            BackupMessageContent.AssetAssetMetadataAudio(
                 normalization: metadata.normalization.map { KotlinByteArray($0) },
                 duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }
             )
 
         case let .generic(metadata):
-            KaliumBackup.BackupMessageContent.AssetAssetMetadataGeneric(
+            BackupMessageContent.AssetAssetMetadataGeneric(
                 name: metadata.name
             )
 
