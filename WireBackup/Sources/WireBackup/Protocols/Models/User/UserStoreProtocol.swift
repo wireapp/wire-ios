@@ -19,7 +19,7 @@
 public import WireFoundation
 
 // sourcery: AutoMockable
-public protocol UserStoreProtocol: Sendable {
+public protocol UserStoreProtocol: Sendable { // TODO: move file
     associatedtype UserEntity: UserEntityProtocol
 
     /// Returns the number of all stored users in the local data store, including deleted ones.

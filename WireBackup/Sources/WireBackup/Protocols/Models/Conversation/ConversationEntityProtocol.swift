@@ -19,7 +19,7 @@
 public import WireFoundation
 
 // sourcery: AutoMockable
-public protocol ConversationEntityProtocol {
+public protocol ConversationEntityProtocol { // TODO: make struct
     typealias ConversationID = QualifiedID
 
     var id: ConversationID { get }

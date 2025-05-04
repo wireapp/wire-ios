@@ -19,9 +19,6 @@
 public import Foundation
 public import WireFoundation
 
-@available(*, deprecated, renamed: "BackupMessageModel")
-public typealias BackupMessageEntity = BackupMessageModel
-
 public struct BackupMessageModel {
     public typealias ID = String
 

@@ -19,7 +19,7 @@
 public import WireFoundation
 
 // sourcery: AutoMockable
-public protocol UserEntityProtocol {
+public protocol UserEntityProtocol { // TODO: make struct
     typealias UserID = QualifiedID
 
     var id: UserID { get }
