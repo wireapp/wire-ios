@@ -26,7 +26,7 @@ import WireProtos
 struct MessageStoreAdapter: MessageStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
-    let messageLocalStore: any MessageLocalStoreProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol // TODO: create and only inject the context
     let userLocalStore: any UserLocalStoreProtocol
 
     func totalMessageCount() async throws -> Int {
