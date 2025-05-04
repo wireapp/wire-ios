@@ -385,7 +385,9 @@ extension SettingsCellDescriptorFactory {
 
         let userSession = sessionManager.activeUserSession!
         let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
-        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
+            CreateLegacyBackupUseCase(sessionManager: sessionManager)
+        } else {
             CreateBackupUseCaseAdapter(
                 CreateBackupUseCase(
                     selfUserID: .init(selfUser.qualifiedID!),
@@ -398,8 +400,6 @@ extension SettingsCellDescriptorFactory {
                     logger: WireLogger.backupExport
                 )
             )
-        } else {
-            CreateLegacyBackupUseCase(sessionManager: sessionManager)
         }
 
         return BackupImportExportBuilder(

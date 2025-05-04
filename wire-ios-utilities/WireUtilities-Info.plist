@@ -6,7 +6,7 @@
 	<string>$(PROTEUS_BY_CORECRYPTO_ENABLED)</string>
 	<key>WireAuthenticationEnabled</key>
 	<string>$(WIRE_AUTHENTICATION_ENABLED)</string>
-	<key>CreateCrossPlatformBackups</key>
-	<string>$(CROSS_PLATFORM_BACKUP_ENABLED)</string>
+	<key>CreateLegacyBackups</key>
+	<string>$(CREATE_LEGACY_BACKUP_ENABLED)</string>
 </dict>
 </plist>

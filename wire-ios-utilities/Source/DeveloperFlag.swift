@@ -22,7 +22,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
-    case createCrossPlatformBackups
+    case createLegacyBackups
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
     case forceDatabaseLoadingFailure
@@ -38,8 +38,8 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public var description: String {
         switch self {
-        case .createCrossPlatformBackups:
-            "Use the cross-platform library when creating backups."
+        case .createLegacyBackups:
+            "Don't use the cross-platform library when creating backups."
 
         case .showCreateMLSGroupToggle:
             "Turn on to show the MLS toggle when creating a new group."
@@ -104,8 +104,8 @@ public enum DeveloperFlag: String, CaseIterable {
 
     private var bundleKey: String? {
         switch self {
-        case .createCrossPlatformBackups:
-            "CreateCrossPlatformBackups"
+        case .createLegacyBackups:
+            "CreateLegacyBackups"
         case .proteusViaCoreCrypto:
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
