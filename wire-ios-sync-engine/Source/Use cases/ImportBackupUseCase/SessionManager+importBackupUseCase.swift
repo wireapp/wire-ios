@@ -20,7 +20,7 @@ import WireDomainPackage
 
 public extension SessionManager {
 
-    var importBackupUseCase: ImportBackupUseCaseProtocol? {
+    var importLegacyBackupUseCase: ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
         activeUserSession.map { _ in

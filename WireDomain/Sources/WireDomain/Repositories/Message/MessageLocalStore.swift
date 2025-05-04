@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
-
+import CoreData
 import WireCryptobox
 import WireDataModel
 import WireLogging
@@ -39,7 +38,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     // MARK: - Properties
 
-    public let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
 
@@ -170,19 +169,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             date: date
         ) as! (ZMAssetClientMessage, Bool)
 
-    }
-
-    public func totalBackupableMessageCount() async throws -> Int {
-        try await context.perform { [context] in
-            try context.count(for: ZMMessage.fetchRequest())
-        }
-    }
-
-    public func fetchAllBackupableMessages() async throws -> [ZMMessage] {
-        let fetchRequest = ZMMessage.fetchRequest()
-        return try await context.perform { [context] in
-            try context.fetch(fetchRequest) as! [ZMClientMessage]
-        }
     }
 
     public func addClientMessage(
@@ -1032,6 +1018,27 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             try clientMessage.setUnderlyingMessage(message)
         } catch {
             assertionFailure("Failed to set generic message: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Backup / Restore
+
+    public func totalMessageCountForBackup() async throws -> Int {
+        try await context.perform { [context] in
+            try context.count(for: ZMMessage.fetchRequest())
+        }
+    }
+
+    public func fetchAllMessageIDsForBackup() async throws -> [UUID] {
+        try await context.perform { [context] in
+            let messages = try context.fetch(ZMMessage.fetchRequest()) as! [ZMMessage]
+            return messages.compactMap(\.nonce)
+        }
+    }
+
+    public func fetchAllMessagesForBackup() async throws -> [ZMMessage] {
+        try await context.perform { [context] in
+            try context.fetch(ZMMessage.fetchRequest()) as! [ZMMessage]
         }
     }
 

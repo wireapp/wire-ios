@@ -16,16 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import KaliumBackup
-
-extension BackupDateTime {
-
-    convenience init(_ date: Date) {
-        let instant = Kotlinx_datetimeInstant
-            .Companion()
-            .fromEpochMilliseconds(epochMilliseconds: Int64(date.timeIntervalSince1970) * 1000)
-        self.init(instant: instant)
-    }
-
+public enum ImportBackupError: Error {
+    case invalidFileExtension
+    case incompatibleFileFormat
+    /// The backup file is encrypted and a password is needed for decryption.
+    case passwordRequired
 }

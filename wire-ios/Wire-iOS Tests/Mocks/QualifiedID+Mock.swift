@@ -18,7 +18,6 @@
 
 import WireDataModel
 import WireFoundation
-import WireSyncEngine
 
 extension WireDataModel.QualifiedID {
     static let mockID1 = WireDataModel.QualifiedID(uuid: .mockID1, domain: "example.com")

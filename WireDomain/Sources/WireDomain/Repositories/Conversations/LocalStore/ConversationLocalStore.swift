@@ -28,7 +28,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     // MARK: - Properties
 
-    public let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
     let mlsService: (any MLSServiceInterface)?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
@@ -250,12 +250,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         await context.perform {
             conversation.internalEstimatedUnreadSelfReplyCount += 1
-        }
-    }
-
-    public func totalBackupableConversationCount() async throws -> Int {
-        try await context.perform { [context] in
-            try context.count(for: ZMConversation.fetchRequest())
         }
     }
 
@@ -553,12 +547,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 with: groupID,
                 in: context
             )
-        }
-    }
-
-    public func fetchAllBackupableConversations() async throws -> [ZMConversation] {
-        try await context.perform { [context] in
-            try context.fetch(ZMConversation.fetchRequest()) as! [ZMConversation]
         }
     }
 
@@ -1269,6 +1257,29 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         return await context.perform {
             handler(conversation)
+        }
+    }
+
+    // MARK: - Backup / Restore
+
+    public func totalConversationCountForBackup() async throws -> Int {
+        try await context.perform { [context] in
+            try context.count(for: ZMConversation.fetchRequest())
+        }
+    }
+
+    public func fetchAllConversationIDsForBackup() async throws -> [QualifiedID] {
+        let fetchRequest = ZMConversation.fetchRequest()
+        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+        return try await context.perform { [context] in
+            let conversations = try context.fetch(fetchRequest) as! [ZMConversation]
+            return conversations.compactMap(\.qualifiedID)
+        }
+    }
+
+    public func fetchAllConversationsForBackup() async throws -> [ZMConversation] {
+        try await context.perform { [context] in
+            try context.fetch(ZMConversation.fetchRequest()) as! [ZMConversation]
         }
     }
 

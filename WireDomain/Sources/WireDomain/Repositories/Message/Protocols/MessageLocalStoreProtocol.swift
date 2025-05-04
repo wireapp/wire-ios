@@ -25,8 +25,6 @@ import WireDataModel
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {
 
-    var context: NSManagedObjectContext { get }
-
     /// Adds a system message to a given conversation.
     /// - Parameters:
     ///     - messageType: The type of system message to add.
@@ -75,10 +73,6 @@ public protocol MessageLocalStoreProtocol {
     ///     - conversation: The conversation the message is related to.
     ///     - senderID: The message sender ID.
     ///     - senderDomain: The message sender domain.
-
-    func totalBackupableMessageCount() async throws -> Int
-
-    func fetchAllBackupableMessages() async throws -> [ZMMessage]
 
     func addClientMessage(
         _ clientMessage: ZMClientMessage,
@@ -208,5 +202,13 @@ public protocol MessageLocalStoreProtocol {
     func isMessageQuotingSelf(
         quotedMessage: ZMOTRMessage?
     ) async -> Bool
+
+    // MARK: - Backup / Restore
+
+    func totalMessageCountForBackup() async throws -> Int
+
+    func fetchAllMessageIDsForBackup() async throws -> [UUID]
+
+    func fetchAllMessagesForBackup() async throws -> [ZMMessage]
 
 }

@@ -383,31 +383,18 @@ extension SettingsCellDescriptorFactory {
             selfUser.managedObjectContext!.zm_sync!
         }
 
-        let messageLocalStore = MessageLocalStore(
-            context: context
-        )
-        let userLocalStore = UserLocalStore(
-            context: context,
-            messageLocalStore: messageLocalStore
-        )
-        let conversationLocalStore = ConversationLocalStore(
-            context: context,
-            mlsService: nil,
-            messageLocalStore: messageLocalStore
-        )
-
-        let importBackupUseCase = sessionManager.importBackupUseCase!
+        let userSession = sessionManager.activeUserSession!
+        let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createCrossPlatformBackups.isOn {
             CreateBackupUseCaseAdapter(
                 CreateBackupUseCase(
-                    userStore: UserStoreAdapter(userLocalStore: userLocalStore),
-                    conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
-                    messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore),
-                    eventProcessorHandle: .none,
-                    fileArchiver: CreateBackupFileArchiver(),
-                    currentDateProvider: SystemDateProvider(),
                     selfUserID: .init(selfUser.qualifiedID!),
                     selfUserHandle: selfUser.handle,
+                    userStore: UserStoreAdapter(context: context),
+                    conversationStore: ConversationStoreAdapter(context: context),
+                    messageStore: MessageStoreAdapter(context: context),
+                    fileArchiver: ZipArchiveFileArchiver(),
+                    currentDateProvider: SystemDateProvider(),
                     logger: WireLogger.backupExport
                 )
             )

@@ -16,22 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-public import WireFoundation
-
+import Foundation
 import KaliumBackup
+import WireFoundation
 
 /// Abstraction around the multi-platform framework, attempting to improve the interface by using proper types and Swift
 /// concurrency.
-public struct BackupCreator<FileArchiver> where FileArchiver: FileArchiverProtocol {
+struct BackupCreator {
 
     let mpBackupCreator: MPBackupExporter
 
-    public init(
+    init(
         selfUserID: QualifiedID,
         workDirectoryURL: URL,
         outputDirectoryURL: URL,
-        fileArchiver: FileArchiver
+        fileArchiver: some FileArchiverProtocol
     ) {
         self.mpBackupCreator = MPBackupExporter(
             selfUserId: BackupQualifiedId(selfUserID),

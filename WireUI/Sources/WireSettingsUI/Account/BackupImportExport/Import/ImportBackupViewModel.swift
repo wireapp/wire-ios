@@ -134,11 +134,11 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .success
                     }
                 }
-            } catch ImportBackupError.passwordRequired {
+            } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
                 return // don't clean up temporary file
-            } catch ImportBackupError.decryptionError {
+            } catch ImportLegacyBackupError.decryptionError {
                 logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
                 return // don't clean up temporary file
@@ -150,7 +150,7 @@ final class ImportBackupViewModel: ObservableObject {
                     action: Strings.Alert.ok
                 )
                 state = .restoreFailed
-            } catch ImportBackupError.invalidAccountID {
+            } catch ImportLegacyBackupError.invalidAccountID {
                 logger.warn("restore failed due to invalid account ID")
                 alertContent = .init(
                     title: Strings.Alert.WrongFileError.title,

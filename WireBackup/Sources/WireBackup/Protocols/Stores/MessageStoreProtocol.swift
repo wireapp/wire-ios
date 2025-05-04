@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireFoundation
+// sourcery: AutoMockable
+public protocol MessageStoreProtocol: Sendable {
 
-extension WireFoundation.QualifiedID {
+    /// Returns the number of all stored messages in the local data store, including deleted ones.
+    func totalMessageCount() async throws -> Int
 
-    init(_ qualifiedID: WireDataModel.QualifiedID) {
-        self.init(
-            id: qualifiedID.uuid,
-            domain: qualifiedID.domain
-        )
-    }
+    /// Returns the IDs of all messages stored in the local database, including deleted ones.
+    func fetchAllMessageIDs() async throws -> [BackupMessageModel.ID]
+
+    /// Returns all messages stored in the local database, including deleted ones.
+    func fetchAllMessages() async throws -> [BackupMessageModel]
+
 }

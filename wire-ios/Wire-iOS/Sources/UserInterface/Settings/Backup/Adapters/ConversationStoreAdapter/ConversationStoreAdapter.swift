@@ -16,22 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireBackup
 import WireDataModel
 import WireDomain
 import WireFoundation
 
-struct ConversationStoreAdapter: ConversationStoreProtocol {
+struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtocol, @unchecked Sendable
+    where ConversationLocalStore: ConversationLocalStoreProtocol {
+    typealias QualifiedID = WireFoundation.QualifiedID
 
-    let conversationLocalStore: any ConversationLocalStoreProtocol
+    /// The context to call `perform(schedule:_:)` on.
+    let context: NSManagedObjectContext
+    let conversationLocalStore: ConversationLocalStore
 
     func totalConversationCount() async throws -> Int {
-        try await conversationLocalStore.totalBackupableConversationCount()
+        try await conversationLocalStore.totalConversationCountForBackup()
+    }
+
+    func fetchAllConversationIDs() async throws -> Set<QualifiedID> {
+        let conversationIDs = try await conversationLocalStore.fetchAllConversationIDsForBackup()
+            .map(WireFoundation.QualifiedID.init)
+        return Set(conversationIDs)
     }
 
     func fetchAllConversations() async throws -> [ConversationEntity] {
-        let conversations = try await conversationLocalStore.fetchAllBackupableConversations()
-        return await conversationLocalStore.context.perform {
+        let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
+        return await context.perform {
             conversations.compactMap { conversation in
                 guard let conversation = ConversationEntity(conversation) else {
                     assertionFailure()
@@ -45,7 +56,6 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
     // MARK: -
 
     struct ConversationEntity: ConversationEntityProtocol {
-        typealias QualifiedID = WireFoundation.QualifiedID
 
         let id: QualifiedID
         let name: String
@@ -57,6 +67,19 @@ struct ConversationStoreAdapter: ConversationStoreProtocol {
             self.name = conversation.name ?? ""
         }
 
+    }
+
+}
+
+extension ConversationStoreAdapter where ConversationLocalStore == WireDomain.ConversationLocalStore {
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        self.conversationLocalStore = ConversationLocalStore(
+            context: context,
+            mlsService: context.mlsService,
+            messageLocalStore: MessageLocalStore(context: context)
+        )
     }
 
 }

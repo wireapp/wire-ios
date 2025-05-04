@@ -16,16 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import KaliumBackup
+public enum BackupFileExtension: String, CaseIterable {
 
-extension BackupDateTime {
+    case crossPlatform = "wbu"
 
-    convenience init(_ date: Date) {
-        let instant = Kotlinx_datetimeInstant
-            .Companion()
-            .fromEpochMilliseconds(epochMilliseconds: Int64(date.timeIntervalSince1970) * 1000)
-        self.init(instant: instant)
-    }
+    // MARK: Legacy
+
+    // There are some external apps that users can use to transfer backup files, which can modify their attachments and
+    // change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore
+    // conversations.
+
+    case fileExtensionWithUnderscore = "ios_wbu"
+    case fileExtensionWithHyphen = "ios-wbu"
 
 }

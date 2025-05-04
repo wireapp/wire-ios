@@ -16,14 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol MessageStoreProtocol: Sendable {
-    associatedtype MessageEntity: MessageEntityProtocol
+import WireBackup
+import WireProtos
 
-    /// Returns the number of all stored users in the local data store, including deleted ones.
-    func totalMessageCount() async throws -> Int
+extension MessageContent.AssetContent.EncryptionAlgorithm {
 
-    /// Returns all users stored in the local database, including deleted ones.
-    func fetchAllMessages() async throws -> [MessageEntity]
+    init(_ encryptionAlgorithm: WireProtos.EncryptionAlgorithm) {
+        switch encryptionAlgorithm {
+        case .aesCbc:
+            self = .aesCBC
+        case .aesGcm:
+            self = .aesGCM
+        }
+    }
 
 }

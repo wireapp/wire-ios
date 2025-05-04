@@ -33,8 +33,6 @@ import WireDataModel
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
-    var context: NSManagedObjectContext { get }
-
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
@@ -405,8 +403,6 @@ public protocol ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
 
-    func fetchAllBackupableConversations() async throws -> [ZMConversation]
-
     func name(
         for conversation: ZMConversation
     ) async -> String?
@@ -447,11 +443,6 @@ public protocol ConversationLocalStoreProtocol {
         for conversation: ZMConversation
     ) async
 
-    /// Counts the number of conversations in the local store.
-    /// - returns: The number of conversation entries in the database.
-
-    func totalBackupableConversationCount() async throws -> Int
-
     func unreadConversationCount() async -> UInt
 
     /// Stores the private conversation (aka channel) permission locally.
@@ -462,5 +453,16 @@ public protocol ConversationLocalStoreProtocol {
         permission: WireDomain.Conversation.ChannelPermission,
         conversation: ZMConversation
     ) async
+
+    // MARK: - Backup / Restore
+
+    /// Counts the number of conversations in the local store.
+    /// - returns: The number of conversation entries in the database.
+
+    func totalConversationCountForBackup() async throws -> Int
+
+    func fetchAllConversationIDsForBackup() async throws -> [QualifiedID]
+
+    func fetchAllConversationsForBackup() async throws -> [ZMConversation]
 
 }

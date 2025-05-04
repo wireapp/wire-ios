@@ -16,16 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import KaliumBackup
+import WireDataModel
+import WireFoundation
 
-extension BackupDateTime {
+extension WireFoundation.QualifiedID {
 
-    convenience init(_ date: Date) {
-        let instant = Kotlinx_datetimeInstant
-            .Companion()
-            .fromEpochMilliseconds(epochMilliseconds: Int64(date.timeIntervalSince1970) * 1000)
-        self.init(instant: instant)
+    init(_ qualifiedID: WireDataModel.QualifiedID) {
+        self.init(
+            id: qualifiedID.uuid,
+            domain: qualifiedID.domain
+        )
+    }
+
+}
+
+extension WireDataModel.QualifiedID {
+
+    init(_ qualifiedID: WireFoundation.QualifiedID) {
+        self.init(
+            uuid: qualifiedID.id,
+            domain: qualifiedID.domain
+        )
     }
 
 }

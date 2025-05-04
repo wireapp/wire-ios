@@ -27,8 +27,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
     // MARK: - Properties
 
-    public let context: NSManagedObjectContext
-
+    private let context: NSManagedObjectContext
     private let messageLocalStore: any MessageLocalStoreProtocol
     private let userDefaults: UserDefaults
 
@@ -100,13 +99,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    public func totalBackupableUserCount() async throws -> Int {
-        try await context.perform { [context] in
-            let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-            return try context.count(for: fetchRequest)
-        }
-    }
-
     public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
         try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
@@ -146,12 +138,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
 
         return (user, isSelfUser)
-    }
-
-    public func fetchAllBackupableUsers() async throws -> [ZMUser] {
-        try await context.perform { [context] in
-            try context.fetch(ZMUser.fetchRequest()) as! [ZMUser]
-        }
     }
 
     public func deletePushToken() {
@@ -427,4 +413,29 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             ZMUser.selfUser(in: context).supportedProtocols
         }
     }
+
+    // MARK: - Backup / Restore
+
+    public func totalUserCountForBackup() async throws -> Int {
+        try await context.perform { [context] in
+            let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            return try context.count(for: fetchRequest)
+        }
+    }
+
+    public func fetchAllUserIDsForBackup() async throws -> [QualifiedID] {
+        let fetchRequest = ZMUser.fetchRequest()
+        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+        return try await context.perform { [context] in
+            let users = try context.fetch(fetchRequest) as! [ZMUser]
+            return users.compactMap(\.qualifiedID)
+        }
+    }
+
+    public func fetchAllUsersForBackup() async throws -> [ZMUser] {
+        try await context.perform { [context] in
+            try context.fetch(ZMUser.fetchRequest()) as! [ZMUser]
+        }
+    }
+
 }

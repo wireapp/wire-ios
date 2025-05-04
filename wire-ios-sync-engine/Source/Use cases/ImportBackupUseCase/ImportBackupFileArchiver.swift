@@ -29,7 +29,7 @@ struct ImportBackupFileArchiver: FileUnarchiverProtocol {
         )
 
         guard success else {
-            throw FileArchivingError.unknownFailure
+            throw FileArchivingError.unknown
         }
 
     }

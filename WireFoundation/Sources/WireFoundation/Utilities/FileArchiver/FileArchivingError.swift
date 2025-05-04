@@ -16,14 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol ConversationStoreProtocol: Sendable {
-    associatedtype ConversationEntity: ConversationEntityProtocol
-
-    /// Returns the number of all stored conversations in the local data store, including deleted ones.
-    func totalConversationCount() async throws -> Int
-
-    /// Returns all conversations stored in the local database, including deleted ones.
-    func fetchAllConversations() async throws -> [ConversationEntity]
-
+public enum FileArchivingError: Error {
+    case unknown
 }

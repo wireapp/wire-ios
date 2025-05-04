@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
-
-// sourcery: AutoMockable
-public protocol UserEntityProtocol {
-
-    var id: QualifiedID { get }
-    var name: String { get }
-    var handle: String { get }
-
+public enum ImportLegacyBackupError: Error, Equatable, CaseIterable { // TODO: split
+    case noActiveAccountForImport
+    /// The backup file is encrypted and a password is needed for decryption.
+    case passwordRequired
+    /// E.g. if the file to import was created with a different (incompatible) version of the app.
+    case invalidAccountID
+    case unarchivingFailed
+    case keyCreationFailed
+    case decryptionError
+    case failedToBackUpUserClient
+    /// Failed to create `InputStream` or `OutputStream` from `URL`.
+    case failedToCreateStreamForDecryption
 }

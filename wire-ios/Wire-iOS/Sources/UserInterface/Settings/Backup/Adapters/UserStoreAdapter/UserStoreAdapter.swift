@@ -16,22 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireBackup
 import WireDataModel
 import WireDomain
 import WireFoundation
 
-struct UserStoreAdapter: UserStoreProtocol {
+struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
+    where UserLocalStore: UserLocalStoreProtocol {
+    typealias QualifiedID = WireFoundation.QualifiedID
 
-    let userLocalStore: any UserLocalStoreProtocol
+    /// The context to call `perform(schedule:_:)` on.
+    let context: NSManagedObjectContext
+    let userLocalStore: UserLocalStore
 
     func totalUserCount() async throws -> Int {
-        try await userLocalStore.totalBackupableUserCount()
+        try await userLocalStore.totalUserCountForBackup()
+    }
+
+    func fetchAllUserIDs() async throws -> Set<QualifiedID> {
+        let userIDs = try await userLocalStore.fetchAllUserIDsForBackup()
+            .map(WireFoundation.QualifiedID.init)
+        return Set(userIDs)
     }
 
     func fetchAllUsers() async throws -> [UserEntity] {
-        let users = try await userLocalStore.fetchAllBackupableUsers()
-        return await userLocalStore.context.perform {
+        let users = try await userLocalStore.fetchAllUsersForBackup()
+        return await context.perform {
             users.compactMap { user in
                 guard let user = UserEntity(user) else {
                     assertionFailure()
@@ -44,8 +55,7 @@ struct UserStoreAdapter: UserStoreProtocol {
 
     // MARK: -
 
-    struct UserEntity: UserEntityProtocol {
-        typealias QualifiedID = WireFoundation.QualifiedID
+    struct UserEntity: UserEntityProtocol { // TODO: move out
 
         let id: QualifiedID
         let name: String
@@ -59,6 +69,18 @@ struct UserStoreAdapter: UserStoreProtocol {
             self.handle = user.handle ?? ""
         }
 
+    }
+
+}
+
+extension UserStoreAdapter where UserLocalStore == WireDomain.UserLocalStore {
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        self.userLocalStore = UserLocalStore(
+            context: context,
+            messageLocalStore: MessageLocalStore(context: context)
+        )
     }
 
 }

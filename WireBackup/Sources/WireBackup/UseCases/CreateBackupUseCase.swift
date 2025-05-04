@@ -29,35 +29,28 @@ public struct CreateBackupUseCase<
     FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
 
-    typealias UserEntity = UserStore.UserEntity
-    typealias ConversationEntity = ConversationStore.ConversationEntity
-
-    let userStore: UserStore
-    let conversationStore: ConversationStore
-    let messageStore: MessageStore
-
-    let eventProcessorHandle: (any InterruptEventProcessingProtocol)?
-    let selfUserID: QualifiedID
-    let selfUserHandle: String?
-    let fileArchiver: FileArchiver
-    let currentDateProvider: any CurrentDateProviding
-    let logger: @Sendable () -> any LoggerProtocol
+    private let selfUserID: QualifiedID
+    private let selfUserHandle: String?
+    private let userStore: UserStore
+    private let conversationStore: ConversationStore
+    private let messageStore: MessageStore
+    private let fileArchiver: FileArchiver
+    private let currentDateProvider: any CurrentDateProviding
+    private let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
 
     public init(
+        selfUserID: QualifiedID,
+        selfUserHandle: String?,
         userStore: UserStore,
         conversationStore: ConversationStore,
         messageStore: MessageStore,
-        eventProcessorHandle: (any InterruptEventProcessingProtocol)?,
         fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
-        selfUserID: QualifiedID,
-        selfUserHandle: String?,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
         self.userStore = userStore
         self.conversationStore = conversationStore
         self.messageStore = messageStore
-        self.eventProcessorHandle = eventProcessorHandle
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
         self.selfUserID = selfUserID
@@ -73,7 +66,6 @@ public struct CreateBackupUseCase<
                 conversationStore,
                 messageStore,
                 currentDateProvider,
-                eventProcessorHandle,
                 fileArchiver,
                 logger,
                 selfUserID,
@@ -92,7 +84,7 @@ public struct CreateBackupUseCase<
                 do {
                     let logger = logger()
                     let reportProgress: (Int, Int) -> Void = { current, total in
-                        guard current % 50 == 0 || current == total else { return } // debounce
+                        guard current % 50 == 0 || current == total else { return }
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
@@ -108,18 +100,6 @@ public struct CreateBackupUseCase<
                     )
 
                     try Task.checkCancellation()
-
-                    // finish processing incoming events and then stop
-                    if let eventProcessorHandle {
-                        logger.debug("pausing event processing")
-                        await eventProcessorHandle.pauseProcessingEvents()
-                    }
-                    defer {
-                        if let eventProcessorHandle {
-                            logger.debug("resuming event processing")
-                            eventProcessorHandle.continueProcessingEvents()
-                        }
-                    }
 
                     // get the counts of users, messages and conversations in order to report progress accurately
                     logger.debug("calculating entity counts")

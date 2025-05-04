@@ -16,14 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 // sourcery: AutoMockable
-public protocol InterruptEventProcessingProtocol: Sendable {
+public protocol UserStoreProtocol: Sendable { // TODO: move file
+    associatedtype UserEntity: UserEntityProtocol
 
-    /// Finishes and then interrupts processing incoming events.
-    /// If it's already paused, this method does nothing.
-    func pauseProcessingEvents() async
+    /// Returns the number of all stored users in the local data store, including deleted ones.
+    func totalUserCount() async throws -> Int
 
-    /// Continues processing incoming events if it was paused/interrupted.
-    func continueProcessingEvents()
+    /// Returns the IDs of all users stored in the local database, including deleted ones.
+    func fetchAllUserIDs() async throws -> Set<QualifiedID>
+
+    /// Returns all users stored in the local database, including deleted ones.
+    func fetchAllUsers() async throws -> [UserEntity]
 
 }

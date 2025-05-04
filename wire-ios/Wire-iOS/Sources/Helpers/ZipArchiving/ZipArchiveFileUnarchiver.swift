@@ -16,12 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import WireFoundation
+import ZipArchive
 
-// sourcery: AutoMockable
-public protocol ConversationEntityProtocol {
+struct ZipArchiveFileUnarchiver: FileUnarchiverProtocol {
 
-    var id: QualifiedID { get }
-    var name: String { get }
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
 
+        let success = SSZipArchive.unzipFile(
+            atPath: sourceURL.path,
+            toDestination: destinationURL.path
+        )
+
+        guard success else {
+            throw FileArchivingError.unknown
+        }
+
+    }
 }
