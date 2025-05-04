@@ -26,14 +26,17 @@ public protocol MessageStoreProtocol: Sendable {
     func totalMessageCount() async throws -> Int
 
     /// Returns the IDs of all messages stored in the local database, including deleted ones.
-    func fetchAllMessageIDs() async throws -> [BackupMessageEntity.ID]
+    func fetchAllMessageIDs() async throws -> [BackupMessageModel.ID]
 
     /// Returns all messages stored in the local database, including deleted ones.
-    func fetchAllMessages() async throws -> [BackupMessageEntity]
+    func fetchAllMessages() async throws -> [BackupMessageModel]
 
     /// Adds a message from the backup file to the local data store.
+    func addMessage(_ message: BackupMessageModel) async throws
+
+    // TODO: delete
     func addMessage(
-        id: BackupMessageEntity.ID,
+        id: BackupMessageModel.ID,
         conversationID: ConversationEntityProtocol.ConversationID,
         senderUserID: UserEntityProtocol.UserID,
         senderClientID: String?,

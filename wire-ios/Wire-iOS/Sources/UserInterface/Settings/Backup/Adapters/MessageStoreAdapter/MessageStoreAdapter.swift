@@ -23,11 +23,18 @@ import WireDomain
 import WireFoundation
 import WireProtos
 
-struct MessageStoreAdapter: MessageStoreProtocol {
+struct MessageStoreAdapter: MessageStoreProtocol, @unchecked Sendable {
     typealias QualifiedID = WireFoundation.QualifiedID
 
-    let messageLocalStore: any MessageLocalStoreProtocol // TODO: create and only inject the context
-    let userLocalStore: any UserLocalStoreProtocol
+    private let context: NSManagedObjectContext
+    private let messageLocalStore: MessageLocalStore
+
+    init(
+        context: NSManagedObjectContext
+    ) {
+        self.context = context
+        messageLocalStore = MessageLocalStore(context: context)
+    }
 
     func totalMessageCount() async throws -> Int {
         try await messageLocalStore.totalBackupableMessageCount()
@@ -46,7 +53,18 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         }
     }
 
-    func addMessage( // TODO: should it accept MessageEntity?
+    func addMessage(_ message: BackupMessageModel) async throws {
+        try await addMessage(
+            id: message.id,
+            conversationID: message.conversationID,
+            senderUserID: message.senderUserID,
+            senderClientID: message.senderClientID,
+            creationDate: message.creationDate,
+            content: message.content
+        )
+    }
+
+    func addMessage( // TODO: merge with the func above
         id: BackupMessageModel.ID,
         conversationID: QualifiedID,
         senderUserID: QualifiedID,
@@ -63,6 +81,8 @@ struct MessageStoreAdapter: MessageStoreProtocol {
             )
         }
         guard let conversation, let nonce = UUID(transportString: id) else { return }
+
+        let userLocalStore = UserLocalStore(context: context, messageLocalStore: messageLocalStore)
         let sender = await userLocalStore.fetchOrCreateUser(id: senderUserID.id, domain: senderUserID.domain)
 
         switch content {
@@ -191,14 +211,18 @@ extension BackupMessageModel {
 
     init?(_ message: ZMMessage) {
         switch message {
+
         case let message as ZMClientMessage where !message.isObfuscated:
             guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
             self.init(message, genericMessage: genericMessage)
+
         case let message as ZMAssetClientMessage where !message.isObfuscated:
             guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
             self.init(message, genericMessage: genericMessage)
+
         default:
             return nil
+
         }
     }
 

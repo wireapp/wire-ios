@@ -397,7 +397,7 @@ extension SettingsCellDescriptorFactory {
                 selfUserID: .init(selfUser.qualifiedID!),
                 userStore: UserStoreAdapter(userLocalStore: userLocalStore),
                 conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
-                messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore, userLocalStore: userLocalStore),
+                messageStore: MessageStoreAdapter(context: context),
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: {
                     context.performGroupedBlock {
@@ -416,7 +416,7 @@ extension SettingsCellDescriptorFactory {
                     selfUserHandle: selfUser.handle,
                     userStore: UserStoreAdapter(userLocalStore: userLocalStore),
                     conversationStore: ConversationStoreAdapter(conversationLocalStore: conversationLocalStore),
-                    messageStore: MessageStoreAdapter(messageLocalStore: messageLocalStore, userLocalStore: userLocalStore),
+                    messageStore: MessageStoreAdapter(context: context),
                     fileArchiver: ZipArchiveFileArchiver(),
                     currentDateProvider: SystemDateProvider(),
                     logger: WireLogger.backupExport

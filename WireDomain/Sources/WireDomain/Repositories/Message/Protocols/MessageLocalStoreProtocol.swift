@@ -25,8 +25,6 @@ import WireDataModel
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {
 
-    var context: NSManagedObjectContext { get }
-
     /// Adds a system message to a given conversation.
     /// - Parameters:
     ///     - messageType: The type of system message to add.
