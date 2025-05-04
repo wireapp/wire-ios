@@ -416,14 +416,14 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
     // MARK: - Backup / Restore
 
-    public func totalBackupableUserCount() async throws -> Int {
+    public func totalUserCountForBackup() async throws -> Int {
         try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             return try context.count(for: fetchRequest)
         }
     }
 
-    public func fetchAllBackupableUserIDs() async throws -> [QualifiedID] {
+    public func fetchAllUserIDsForBackup() async throws -> [QualifiedID] {
         let fetchRequest = ZMUser.fetchRequest()
         fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
         return try await context.perform { [context] in
@@ -432,7 +432,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    public func fetchAllBackupableUsers() async throws -> [ZMUser] {
+    public func fetchAllUsersForBackup() async throws -> [ZMUser] {
         try await context.perform { [context] in
             try context.fetch(ZMUser.fetchRequest()) as! [ZMUser]
         }

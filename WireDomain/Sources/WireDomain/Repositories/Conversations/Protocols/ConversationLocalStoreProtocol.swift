@@ -459,10 +459,10 @@ public protocol ConversationLocalStoreProtocol {
     /// Counts the number of conversations in the local store.
     /// - returns: The number of conversation entries in the database.
 
-    func totalBackupableConversationCount() async throws -> Int
+    func totalConversationCountForBackup() async throws -> Int
 
-    func fetchAllBackupableConversationIDs() async throws -> [QualifiedID]
+    func fetchAllConversationIDsForBackup() async throws -> [QualifiedID]
 
-    func fetchAllBackupableConversations() async throws -> [ZMConversation]
+    func fetchAllConversationsForBackup() async throws -> [ZMConversation]
 
 }

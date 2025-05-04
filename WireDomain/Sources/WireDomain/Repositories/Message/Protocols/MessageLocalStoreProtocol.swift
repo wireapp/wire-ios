@@ -205,10 +205,10 @@ public protocol MessageLocalStoreProtocol {
 
     // MARK: - Backup / Restore
 
-    func totalBackupableMessageCount() async throws -> Int
+    func totalMessageCountForBackup() async throws -> Int
 
-    func fetchAllBackupableMessageIDs() async throws -> [UUID]
+    func fetchAllMessageIDsForBackup() async throws -> [UUID]
 
-    func fetchAllBackupableMessages() async throws -> [ZMMessage]
+    func fetchAllMessagesForBackup() async throws -> [ZMMessage]
 
 }

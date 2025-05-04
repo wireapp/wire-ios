@@ -29,14 +29,14 @@ public struct CreateBackupUseCase<
     FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
 
-    let selfUserID: QualifiedID
-    let selfUserHandle: String?
-    let userStore: UserStore
-    let conversationStore: ConversationStore
-    let messageStore: MessageStore
-    let fileArchiver: FileArchiver
-    let currentDateProvider: any CurrentDateProviding
-    let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
+    private let selfUserID: QualifiedID
+    private let selfUserHandle: String?
+    private let userStore: UserStore
+    private let conversationStore: ConversationStore
+    private let messageStore: MessageStore
+    private let fileArchiver: FileArchiver
+    private let currentDateProvider: any CurrentDateProviding
+    private let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
 
     public init(
         selfUserID: QualifiedID,

@@ -1262,13 +1262,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     // MARK: - Backup / Restore
 
-    public func totalBackupableConversationCount() async throws -> Int {
+    public func totalConversationCountForBackup() async throws -> Int {
         try await context.perform { [context] in
             try context.count(for: ZMConversation.fetchRequest())
         }
     }
 
-    public func fetchAllBackupableConversationIDs() async throws -> [QualifiedID] {
+    public func fetchAllConversationIDsForBackup() async throws -> [QualifiedID] {
         let fetchRequest = ZMConversation.fetchRequest()
         fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
         return try await context.perform { [context] in
@@ -1277,7 +1277,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func fetchAllBackupableConversations() async throws -> [ZMConversation] {
+    public func fetchAllConversationsForBackup() async throws -> [ZMConversation] {
         try await context.perform { [context] in
             try context.fetch(ZMConversation.fetchRequest()) as! [ZMConversation]
         }

@@ -183,12 +183,12 @@ public protocol UserLocalStoreProtocol {
     /// Counts the number of users in the local store.
     /// - returns: The number of user entries in the database.
 
-    func totalBackupableUserCount() async throws -> Int
+    func totalUserCountForBackup() async throws -> Int
 
-    func fetchAllBackupableUserIDs() async throws -> [QualifiedID]
+    func fetchAllUserIDsForBackup() async throws -> [QualifiedID]
 
     /// Fetches all stored users from the local database, including the ones marked as deleted.
 
-    func fetchAllBackupableUsers() async throws -> [ZMUser]
+    func fetchAllUsersForBackup() async throws -> [ZMUser]
 
 }

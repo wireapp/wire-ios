@@ -33,15 +33,15 @@ where MessageLocalStore: MessageLocalStoreProtocol {
     private let messageLocalStore: MessageLocalStore
 
     func totalMessageCount() async throws -> Int {
-        try await messageLocalStore.totalBackupableMessageCount()
+        try await messageLocalStore.totalMessageCountForBackup()
     }
 
     func fetchAllMessageIDs() async throws -> [BackupMessageModel.ID] {
-        try await messageLocalStore.fetchAllBackupableMessageIDs().map(\.uuidString)
+        try await messageLocalStore.fetchAllMessageIDsForBackup().map(\.uuidString)
     }
 
     func fetchAllMessages() async throws -> [BackupMessageModel] {
-        let messages = try await messageLocalStore.fetchAllBackupableMessages()
+        let messages = try await messageLocalStore.fetchAllMessagesForBackup()
         return await context.perform {
             messages.compactMap { message in
                 if let message = BackupMessageModel(message) { message } else { nil }

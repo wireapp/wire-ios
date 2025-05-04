@@ -31,17 +31,17 @@ where UserLocalStore: UserLocalStoreProtocol {
     let userLocalStore: UserLocalStore
 
     func totalUserCount() async throws -> Int {
-        try await userLocalStore.totalBackupableUserCount()
+        try await userLocalStore.totalUserCountForBackup()
     }
 
     func fetchAllUserIDs() async throws -> Set<QualifiedID> {
-        let userIDs = try await userLocalStore.fetchAllBackupableUserIDs()
+        let userIDs = try await userLocalStore.fetchAllUserIDsForBackup()
             .map(WireFoundation.QualifiedID.init)
         return Set(userIDs)
     }
 
     func fetchAllUsers() async throws -> [UserEntity] {
-        let users = try await userLocalStore.fetchAllBackupableUsers()
+        let users = try await userLocalStore.fetchAllUsersForBackup()
         return await context.perform {
             users.compactMap { user in
                 guard let user = UserEntity(user) else {

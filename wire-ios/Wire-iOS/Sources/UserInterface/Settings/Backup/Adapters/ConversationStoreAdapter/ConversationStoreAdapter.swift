@@ -31,17 +31,17 @@ where ConversationLocalStore: ConversationLocalStoreProtocol {
     let conversationLocalStore: ConversationLocalStore
 
     func totalConversationCount() async throws -> Int {
-        try await conversationLocalStore.totalBackupableConversationCount()
+        try await conversationLocalStore.totalConversationCountForBackup()
     }
 
     func fetchAllConversationIDs() async throws -> Set<QualifiedID> {
-        let conversationIDs = try await conversationLocalStore.fetchAllBackupableConversationIDs()
+        let conversationIDs = try await conversationLocalStore.fetchAllConversationIDsForBackup()
             .map(WireFoundation.QualifiedID.init)
         return Set(conversationIDs)
     }
 
     func fetchAllConversations() async throws -> [ConversationEntity] {
-        let conversations = try await conversationLocalStore.fetchAllBackupableConversations()
+        let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
         return await context.perform {
             conversations.compactMap { conversation in
                 guard let conversation = ConversationEntity(conversation) else {
