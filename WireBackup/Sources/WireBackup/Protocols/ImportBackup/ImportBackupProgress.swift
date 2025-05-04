@@ -25,9 +25,9 @@ public enum ImportBackupProgress: Equatable, Sendable {
 
 // MARK: - Convenience
 
-extension ImportBackupProgress {
+public extension ImportBackupProgress {
 
-    public static func progress(current: Int, total: Int) -> Self {
+    static func progress(current: Int, total: Int) -> Self {
         .progress(current, total)
     }
 

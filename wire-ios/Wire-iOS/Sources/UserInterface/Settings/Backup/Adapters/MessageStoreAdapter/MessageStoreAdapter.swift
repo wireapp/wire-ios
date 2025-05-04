@@ -25,7 +25,7 @@ import WireFoundation
 import WireProtos
 
 struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked Sendable
-where MessageLocalStore: MessageLocalStoreProtocol {
+    where MessageLocalStore: MessageLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
     /// The context to call `perform(schedule:_:)` on.
@@ -65,7 +65,7 @@ where MessageLocalStore: MessageLocalStoreProtocol {
 
         switch message.content {
 
-        case .text(let textContent):
+        case let .text(textContent):
             let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
                 id: message.id,
                 conversation: conversation,
@@ -83,7 +83,7 @@ where MessageLocalStore: MessageLocalStoreProtocol {
                 clientMessage.markAsSent()
             }
 
-        case .location(let locationContent):
+        case let .location(locationContent):
             let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
                 id: message.id,
                 conversation: conversation,
@@ -106,7 +106,7 @@ where MessageLocalStore: MessageLocalStoreProtocol {
                 clientMessage.visibleInConversation = conversation
             }
 
-        case .asset(let assetContent):
+        case let .asset(assetContent):
             let (assetClientMessage, isCreated) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
                 id: message.id,
                 conversation: conversation,
@@ -117,21 +117,20 @@ where MessageLocalStore: MessageLocalStoreProtocol {
 
             let genericMessage: GenericMessage
             switch assetContent.metadata {
-            case .image(let imageData):
+            case let .image(imageData):
                 let asset = Asset(
                     imageSize: CGSize(width: Double(imageData.width), height: Double(imageData.height)),
                     mimeType: assetContent.mimeType,
                     size: assetContent.size
                 )
                 // TODO: moc.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message) ?
-                /*
-                guard !message.isRestricted else {
-                    throw AppendMessageError.fileSharingIsRestricted
-                }
-                 */
+                // guard !message.isRestricted else {
+                //    throw AppendMessageError.fileSharingIsRestricted
+                // }
+                // 
                 genericMessage = GenericMessage(content: asset, nonce: nonce)
-                // try mergeWithExistingData(message: genericMessage) // TODO: ?
-            case .video(let videoData):
+            // try mergeWithExistingData(message: genericMessage) // TODO: ?
+            case let .video(videoData):
                 let asset = Asset.with { asset in
                     asset.original = Asset.Original.with { original in
                         original.size = assetContent.size
@@ -145,9 +144,9 @@ where MessageLocalStore: MessageLocalStoreProtocol {
                     }
                 }
                 genericMessage = GenericMessage(content: asset, nonce: nonce)
-                // TODO: contributionType = .videoMessage ?
-                // TODO: moc.zm_fileAssetCache.storeOriginalFile
-            case .audio(let audioData):
+            // TODO: contributionType = .videoMessage ?
+            // TODO: moc.zm_fileAssetCache.storeOriginalFile
+            case let .audio(audioData):
                 let asset = Asset.with { asset in
                     asset.original = Asset.Original.with { original in
                         original.size = assetContent.size
@@ -162,8 +161,8 @@ where MessageLocalStore: MessageLocalStoreProtocol {
                     }
                 }
                 genericMessage = GenericMessage(content: asset, nonce: nonce)
-                // TODO: see video
-            case .generic(let data):
+            // TODO: see video
+            case let .generic(data):
                 let asset = Asset.with { asset in
                     asset.original = Asset.Original.with { original in
                         original.size = assetContent.size
@@ -189,7 +188,7 @@ extension MessageStoreAdapter where MessageLocalStore == WireDomain.MessageLocal
 
     init(context: NSManagedObjectContext) {
         self.context = context
-        messageLocalStore = MessageLocalStore(context: context)
+        self.messageLocalStore = MessageLocalStore(context: context)
     }
 
 }

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireFoundation
 import KaliumBackup
+import WireFoundation
 
 /// Abstraction around the multi-platform framework, attempting to improve the interface by using proper types and Swift
 /// concurrency.

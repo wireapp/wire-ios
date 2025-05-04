@@ -37,15 +37,14 @@ extension WireBackup.MessageContent {
 
         default:
             return nil
-
         }
     }
 
 }
 
-extension WireBackup.MessageContent.TextContent {
+private extension WireBackup.MessageContent.TextContent {
 
-    fileprivate init(_ textContent: BackupMessageContent.Text) {
+    init(_ textContent: BackupMessageContent.Text) {
         self.init(
             text: textContent.text
         )
@@ -117,7 +116,6 @@ extension MessageContent.AssetContent.Metadata {
 
         default:
             return nil
-
         }
     }
 

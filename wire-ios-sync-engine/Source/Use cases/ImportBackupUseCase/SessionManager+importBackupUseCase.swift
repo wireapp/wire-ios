@@ -25,7 +25,7 @@ public extension SessionManager {
         // return `nil` immediately if there is no active user session
         activeUserSession.map { _ in
 
-            return ImportLegacyBackupUseCase(
+            ImportLegacyBackupUseCase(
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
                 streamDecryptor: ImportLegacyBackupStreamDecryptor(),

@@ -23,7 +23,7 @@ import WireDomain
 import WireFoundation
 
 struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtocol, @unchecked Sendable
-where ConversationLocalStore: ConversationLocalStoreProtocol {
+    where ConversationLocalStore: ConversationLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
     /// The context to call `perform(schedule:_:)` on.

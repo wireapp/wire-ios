@@ -21,8 +21,10 @@ public enum BackupFileExtension: String, CaseIterable {
     case crossPlatform = "wbu"
 
     // MARK: Legacy
+
     // There are some external apps that users can use to transfer backup files, which can modify their attachments and
-    // change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore conversations.
+    // change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore
+    // conversations.
 
     case fileExtensionWithUnderscore = "ios_wbu"
     case fileExtensionWithHyphen = "ios-wbu"

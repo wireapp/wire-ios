@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDomainPackage
 import WireBackup
+import WireDomainPackage
 import WireSettingsUI
 
 // These adapters are required because TODO: finish

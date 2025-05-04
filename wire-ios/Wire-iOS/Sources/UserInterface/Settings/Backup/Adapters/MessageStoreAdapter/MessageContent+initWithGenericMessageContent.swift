@@ -35,18 +35,21 @@ extension MessageContent {
             self.init(messageEdit)
         case let .ephemeral(ephemeral):
             self.init(ephemeral)
-        case .knock, .lastRead, .cleared, .external, .clientAction, .calling, .hidden, .deleted, .confirmation, .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer, .inCallEmoji, .inCallHandRaise:
+        case .knock, .lastRead, .cleared, .external, .clientAction, .calling, .hidden, .deleted, .confirmation,
+             .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer,
+             .inCallEmoji,
+             .inCallHandRaise:
             return nil
         }
     }
 
     private init?(_ ephemeral: Ephemeral) {
         switch ephemeral.content {
-        case .text(let text):
+        case let .text(text):
             self.init(text)
-        case .image(let imageAsset):
+        case let .image(imageAsset):
             self.init(imageAsset)
-        case .location(let location):
+        case let .location(location):
             self.init(location)
         case .knock, .asset, .none:
             return nil

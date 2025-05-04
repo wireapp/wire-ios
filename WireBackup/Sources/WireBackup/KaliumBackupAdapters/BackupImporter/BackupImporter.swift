@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireFoundation
 import KaliumBackup
+import WireFoundation
 
 struct BackupImporter {
 
@@ -31,7 +31,7 @@ struct BackupImporter {
         fileUnarchiver: some FileUnarchiverProtocol
     ) {
         self.selfUserID = selfUserID
-        mpBackupImporter = MPBackupImporter(
+        self.mpBackupImporter = MPBackupImporter(
             pathToWorkDirectory: workDirectoryURL.path(),
             backupFileUnzipper: FileUnarchiverToBackupFileUnzipper(fileUnarchiver: fileUnarchiver)
         )
@@ -40,7 +40,7 @@ struct BackupImporter {
 }
 
 private final class FileUnarchiverToBackupFileUnzipper<FileUnarchiver>: BackupFileUnzipper
-where FileUnarchiver: FileUnarchiverProtocol {
+    where FileUnarchiver: FileUnarchiverProtocol {
 
     let fileUnarchiver: FileUnarchiver
 

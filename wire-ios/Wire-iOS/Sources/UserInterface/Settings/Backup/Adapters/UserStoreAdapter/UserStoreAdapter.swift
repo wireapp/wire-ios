@@ -23,7 +23,7 @@ import WireDomain
 import WireFoundation
 
 struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
-where UserLocalStore: UserLocalStoreProtocol {
+    where UserLocalStore: UserLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
     /// The context to call `perform(schedule:_:)` on.
@@ -100,7 +100,7 @@ extension UserStoreAdapter where UserLocalStore == WireDomain.UserLocalStore {
 
     init(context: NSManagedObjectContext) {
         self.context = context
-        userLocalStore = UserLocalStore(
+        self.userLocalStore = UserLocalStore(
             context: context,
             messageLocalStore: MessageLocalStore(context: context)
         )

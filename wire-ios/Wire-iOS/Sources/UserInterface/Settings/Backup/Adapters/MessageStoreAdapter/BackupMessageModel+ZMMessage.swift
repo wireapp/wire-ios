@@ -35,7 +35,6 @@ extension BackupMessageModel {
 
         default:
             return nil
-
         }
     }
 

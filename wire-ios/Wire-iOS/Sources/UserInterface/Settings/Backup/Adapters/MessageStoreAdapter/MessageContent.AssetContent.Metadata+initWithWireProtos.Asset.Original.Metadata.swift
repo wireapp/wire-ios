@@ -23,11 +23,11 @@ extension MessageContent.AssetContent.Metadata {
 
     init(_ metadata: Asset.Original.OneOf_MetaData) {
         switch metadata {
-        case .image(let imageMetadata):
+        case let .image(imageMetadata):
             self.init(imageMetadata)
-        case .video(let videoMetadata):
+        case let .video(videoMetadata):
             self.init(videoMetadata)
-        case .audio(let audioMetadata):
+        case let .audio(audioMetadata):
             self.init(audioMetadata)
         }
     }

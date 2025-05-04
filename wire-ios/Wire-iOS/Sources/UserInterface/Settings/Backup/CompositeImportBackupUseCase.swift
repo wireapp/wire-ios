@@ -24,14 +24,6 @@ struct CompositeImportBackupUseCase: ImportBackupUseCaseProtocol {
     let importBackupUseCase: ImportBackupUseCaseProtocol
     let legacyImportBackupUseCase: ImportBackupUseCaseProtocol
 
-    init(
-        importBackupUseCase: ImportBackupUseCaseProtocol,
-        legacyImportBackupUseCase: ImportBackupUseCaseProtocol
-    ) {
-        self.importBackupUseCase = importBackupUseCase
-        self.legacyImportBackupUseCase = legacyImportBackupUseCase
-    }
-
     func invoke(url: URL, password: String) -> AsyncThrowingStream<WireBackup.ImportBackupProgress, any Error> {
         let fileExtension = url.pathExtension.lowercased()
         switch WireBackup.BackupFileExtension(rawValue: fileExtension) {
@@ -46,7 +38,6 @@ struct CompositeImportBackupUseCase: ImportBackupUseCaseProtocol {
             return AsyncThrowingStream { continuation in
                 continuation.finish(throwing: ImportBackupError.invalidFileExtension)
             }
-
         }
     }
 

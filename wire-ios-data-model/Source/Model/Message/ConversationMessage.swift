@@ -316,21 +316,7 @@ extension ZMMessage: ZMConversationMessage {
 public extension ZMMessage {
 
     @NSManaged var sender: ZMUser?
-    var serverTimestamp: Date? { // TODO: revert changes
-        get {
-            willAccessValue(forKey: "serverTimestamp")
-            let value = primitiveServerTimestamp
-            didAccessValue(forKey: "serverTimestamp")
-            return value
-        }
-
-        set {
-            willChangeValue(forKey: "serverTimestamp")
-            primitiveServerTimestamp = newValue
-            didChangeValue(forKey: "serverTimestamp")
-        }
-    }
-    @NSManaged private var primitiveServerTimestamp: Date?
+    @NSManaged var serverTimestamp: Date?
 
     @objc var textMessageData: TextMessageData? {
         nil

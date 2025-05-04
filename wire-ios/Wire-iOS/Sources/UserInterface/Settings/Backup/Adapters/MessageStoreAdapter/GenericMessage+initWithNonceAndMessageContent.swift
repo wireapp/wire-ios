@@ -17,8 +17,8 @@
 //
 
 import WireBackup
-import WireProtos
 import WireDataModel
+import WireProtos
 
 extension GenericMessage {
 
