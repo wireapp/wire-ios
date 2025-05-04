@@ -73,7 +73,7 @@ struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
             serviceProvider: nil,
             supportedProtocols: nil
         )
-        await userLocalStore.persistUser(userInfo: userInfo)
+        await userLocalStore.persistUser(userInfo: userInfo) // TODO: check if ConversationProtobufMessageProcessor handles this the same way
     }
 
 }
