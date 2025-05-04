@@ -419,8 +419,7 @@ public final class ZMUserSession: NSObject {
         self.transportSession = transportSession
         self.notificationDispatcher = NotificationDispatcher(managedObjectContext: coreDataStack.viewContext)
         self.storedDidSaveNotifications = ContextDidSaveNotificationPersistence(
-            accountContainer: coreDataStack
-                .accountContainer
+            accountContainer: coreDataStack.accountContainer
         )
         self.userExpirationObserver = UserExpirationObserver(managedObjectContext: coreDataStack.viewContext)
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)

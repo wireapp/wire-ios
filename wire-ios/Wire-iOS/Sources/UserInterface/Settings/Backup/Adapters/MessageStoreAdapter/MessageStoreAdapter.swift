@@ -28,7 +28,7 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
     where MessageLocalStore: MessageLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
-    /// The context to call `perform(schedule:_:)` on.
+    /// The context to call `perform(schedule:_:)` on if needed.
     private let context: NSManagedObjectContext
     private let messageLocalStore: MessageLocalStore
 
