@@ -50,6 +50,9 @@ where MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     func addMessage(_ message: BackupMessageModel) async throws {
+
+// TODO: try to use code from parsing incoming events
+
         let conversationID = message.conversationID
         let conversation = await context.perform {
             ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
