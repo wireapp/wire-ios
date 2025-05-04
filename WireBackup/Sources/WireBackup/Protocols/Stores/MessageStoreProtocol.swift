@@ -21,20 +21,19 @@ public import WireFoundation
 
 // sourcery: AutoMockable
 public protocol MessageStoreProtocol: Sendable {
-    associatedtype MessageEntity: MessageEntityProtocol
 
     /// Returns the number of all stored messages in the local data store, including deleted ones.
     func totalMessageCount() async throws -> Int
 
     /// Returns the IDs of all messages stored in the local database, including deleted ones.
-    func fetchAllMessageIDs() async throws -> [MessageEntity.MessageID]
+    func fetchAllMessageIDs() async throws -> [BackupMessageEntity.ID]
 
     /// Returns all messages stored in the local database, including deleted ones.
-    func fetchAllMessages() async throws -> [MessageEntity]
+    func fetchAllMessages() async throws -> [BackupMessageEntity]
 
     /// Adds a message from the backup file to the local data store.
     func addMessage(
-        id: MessageEntity.MessageID,
+        id: BackupMessageEntity.ID,
         conversationID: ConversationEntityProtocol.ConversationID,
         senderUserID: UserEntityProtocol.UserID,
         senderClientID: String?,

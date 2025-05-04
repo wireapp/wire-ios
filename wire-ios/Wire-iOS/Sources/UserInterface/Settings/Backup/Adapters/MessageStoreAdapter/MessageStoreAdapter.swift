@@ -33,21 +33,21 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         try await messageLocalStore.totalBackupableMessageCount()
     }
 
-    func fetchAllMessageIDs() async throws -> [MessageEntity.MessageID] {
+    func fetchAllMessageIDs() async throws -> [BackupMessageModel.ID] {
         try await messageLocalStore.fetchAllBackupableMessageIDs().map(\.uuidString)
     }
 
-    func fetchAllMessages() async throws -> [MessageEntity] {
+    func fetchAllMessages() async throws -> [BackupMessageModel] {
         let messages = try await messageLocalStore.fetchAllBackupableMessages()
         return await messageLocalStore.context.perform {
             messages.compactMap { message in
-                if let message = MessageEntity(message) { message } else { nil }
+                if let message = BackupMessageModel(message) { message } else { nil }
             }
         }
     }
 
     func addMessage( // TODO: should it accept MessageEntity?
-        id: MessageEntity.MessageID,
+        id: BackupMessageModel.ID,
         conversationID: QualifiedID,
         senderUserID: QualifiedID,
         senderClientID: String?,
@@ -183,50 +183,46 @@ struct MessageStoreAdapter: MessageStoreProtocol {
         }
     }
 
-    // MARK: -
+}
 
-    struct MessageEntity: MessageEntityProtocol { // TODO: move into WireBackup, replace the protocol
+// MARK: -
 
-        let id: MessageID
-        let conversationID: QualifiedID
-        let senderUserID: QualifiedID
-        let senderClientID: String?
-        let creationDate: Date
-        let content: WireBackup.MessageContent
+extension BackupMessageModel {
 
-        init?(_ message: ZMMessage) {
-            switch message {
-            case let message as ZMClientMessage where !message.isObfuscated:
-                guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
-                self.init(message, genericMessage: genericMessage)
-            case let message as ZMAssetClientMessage where !message.isObfuscated:
-                guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
-                self.init(message, genericMessage: genericMessage)
-            default:
-                return nil
-            }
+    init?(_ message: ZMMessage) {
+        switch message {
+        case let message as ZMClientMessage where !message.isObfuscated:
+            guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
+            self.init(message, genericMessage: genericMessage)
+        case let message as ZMAssetClientMessage where !message.isObfuscated:
+            guard let genericMessage = message.underlyingMessage, genericMessage.isInitialized else { return nil }
+            self.init(message, genericMessage: genericMessage)
+        default:
+            return nil
+        }
+    }
+
+    init?(_ message: ZMMessage, genericMessage: GenericMessage) {
+
+        guard
+            let id = message.nonce,
+            let senderUserID = message.senderUser?.qualifiedID,
+            let creationDate = message.serverTimestamp,
+            let conversationID = message.conversation?.qualifiedID,
+            let content = genericMessage.content.flatMap(MessageContent.init)
+        else {
+            // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
+            return nil
         }
 
-        init?(_ message: ZMMessage, genericMessage: GenericMessage) {
-
-            guard
-                let id = message.nonce,
-                let senderUserID = message.senderUser?.qualifiedID,
-                let creationDate = message.serverTimestamp,
-                let conversationID = message.conversation?.qualifiedID,
-                let content = genericMessage.content.flatMap(MessageContent.init)
-            else {
-                // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
-                return nil
-            }
-
-            self.id = id.uuidString
-            self.conversationID = QualifiedID(conversationID)
-            self.senderUserID = QualifiedID(senderUserID)
-            self.senderClientID = message.senderClientID
-            self.creationDate = creationDate
-            self.content = content
-        }
+        self.init(
+            id: id.uuidString,
+            conversationID: QualifiedID(conversationID),
+            senderUserID: QualifiedID(senderUserID),
+            senderClientID: message.senderClientID,
+            creationDate: creationDate,
+            content: content
+        )
 
     }
 

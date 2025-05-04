@@ -20,7 +20,7 @@
 
 extension BackupCreator {
 
-    func addMessage(_ message: some MessageEntityProtocol) {
+    func addMessage(_ message: BackupMessageEntity) {
 
         let backupMessage = BackupMessage(
             id: message.id,

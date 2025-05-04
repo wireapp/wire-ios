@@ -28,7 +28,7 @@ final class CreateBackupUseCaseTests: XCTestCase {
 
     private typealias UserStoreMock = UserStoreProtocolMock<UserEntityProtocolMock>
     private typealias ConversationStoreMock = ConversationStoreProtocolMock<ConversationEntityProtocolMock>
-    private typealias MessageStoreMock = MessageStoreProtocolMock<MessageEntityProtocolMock>
+    private typealias MessageStoreMock = MessageStoreProtocolMock
     private typealias FileArchiverMock = FileArchiverProtocolMock
 
     private var userStoreMock: UserStoreMock!
@@ -73,7 +73,7 @@ final class CreateBackupUseCaseTests: XCTestCase {
     }
 
     func testExample() throws {
-        try XCTSkip() // TODO: [WPB-16658] will be finished with the restore part
+        throw XCTSkip() // TODO: [WPB-16658] will be finished with the restore part
     }
 
 }

@@ -19,16 +19,34 @@
 public import Foundation
 public import WireFoundation
 
-// sourcery: AutoMockable
-public protocol MessageEntityProtocol {
-    typealias MessageID = String
+@available(*, deprecated, renamed: "BackupMessageModel")
+public typealias BackupMessageEntity = BackupMessageModel
 
-    var id: MessageID { get }
-    var conversationID: QualifiedID { get }
-    var senderUserID: QualifiedID { get }
-    var senderClientID: String? { get }
-    var creationDate: Date { get }
-    var content: MessageContent { get }
+public struct BackupMessageModel {
+    public typealias ID = String
+
+    public var id: ID
+    public var conversationID: QualifiedID
+    public var senderUserID: QualifiedID
+    public var senderClientID: String?
+    public var creationDate: Date
+    public var content: MessageContent
+
+    public init(
+        id: ID,
+        conversationID: QualifiedID,
+        senderUserID: QualifiedID,
+        senderClientID: String? = nil,
+        creationDate: Date,
+        content: MessageContent
+    ) {
+        self.id = id
+        self.conversationID = conversationID
+        self.senderUserID = senderUserID
+        self.senderClientID = senderClientID
+        self.creationDate = creationDate
+        self.content = content
+    }
 
 }
 
