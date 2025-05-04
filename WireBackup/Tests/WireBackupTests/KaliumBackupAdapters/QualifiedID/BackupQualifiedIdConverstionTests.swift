@@ -27,7 +27,7 @@ struct BackupQualifiedIdConverstionTests {
 
     @Test(arguments: [
         QualifiedID(id: UUID(), domain: ""),
-        QualifiedID(id: UUID(), domain: "some@domain"),
+        QualifiedID(id: UUID(), domain: "some@domain")
     ])
     func testConversion(qualifiedID: QualifiedID) async throws {
         // When

@@ -36,7 +36,7 @@ public struct CreateBackupUseCase<
     private let messageStore: MessageStore
     private let fileArchiver: FileArchiver
     private let currentDateProvider: any CurrentDateProviding
-    private let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
+    private let logger: @Sendable () -> any LoggerProtocol
 
     public init(
         selfUserID: QualifiedID,

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import KaliumBackup
 
 extension BackupMessage {
@@ -53,7 +54,7 @@ private func backupMessageContent(_ content: MessageContent) -> BackupMessageCon
     case let .asset(content):
         BackupMessageContent.Asset(
             mimeType: content.mimeType,
-            size: Int32(exactly: content.size) ?? 0, // TODO: get rid of Int32?
+            size: Int32(exactly: content.size) ?? 0,
             name: content.name,
             otrKey: KotlinByteArray(content.otrKey),
             sha256: KotlinByteArray(content.sha256),
@@ -71,9 +72,9 @@ private func assetEncryptionAlgorithm(
 ) -> BackupMessageContent.AssetEncryptionAlgorithm {
     switch encryption {
     case .aesCBC:
-            .aesCbc
+        .aesCbc
     case .aesGCM:
-            .aesGcm
+        .aesGcm
     }
 }
 
@@ -93,19 +94,18 @@ private func assetAssetMetadata(
         BackupMessageContent.AssetAssetMetadataVideo(
             width: metadata.width.map { KotlinInt(int: $0) },
             height: metadata.height.map { KotlinInt(int: $0) },
-            duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) } // TODO: types should match CoreCrypto types
+            duration: metadata.duration.map { KotlinLong(value: Int64($0)) }
         )
 
     case let .audio(metadata):
         BackupMessageContent.AssetAssetMetadataAudio(
             normalization: metadata.normalization.map { KotlinByteArray($0) },
-            duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }
+            duration: metadata.duration.map { KotlinLong(value: Int64($0)) }
         )
 
     case let .generic(metadata):
         BackupMessageContent.AssetAssetMetadataGeneric(
             name: metadata.name
         )
-
     }
 }
