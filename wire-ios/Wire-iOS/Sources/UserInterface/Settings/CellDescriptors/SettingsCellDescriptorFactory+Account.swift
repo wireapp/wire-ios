@@ -397,7 +397,7 @@ extension SettingsCellDescriptorFactory {
                 },
                 logger: WireLogger.backupImport
             ),
-            legacyImportBackupUseCase: ImportLegacyBackupUseCaseAdapter(sessionManager.importLegacyBackupUseCase!)
+            legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
         )
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
@@ -417,7 +417,7 @@ extension SettingsCellDescriptorFactory {
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: createBackupUseCase,
-            importBackupUseCase: ImportBackupUseCaseAdapter(importBackupUseCase),
+            importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,

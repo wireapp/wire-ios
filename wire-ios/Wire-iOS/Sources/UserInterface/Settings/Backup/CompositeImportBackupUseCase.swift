@@ -18,13 +18,14 @@
 
 import Foundation
 import WireBackup
+import WireFoundation
 
 struct CompositeImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let importBackupUseCase: ImportBackupUseCaseProtocol
     let legacyImportBackupUseCase: ImportBackupUseCaseProtocol
 
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<WireBackup.ImportBackupProgress, any Error> {
+    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         let fileExtension = url.pathExtension.lowercased()
         switch WireBackup.BackupFileExtension(rawValue: fileExtension) {
 
