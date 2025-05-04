@@ -24,7 +24,7 @@ import WireFoundation
 /// concurrency and hide the NSObject API.
 struct BackupCreator {
 
-    let mpBackupCreator: MPBackupExporter
+    private let mpBackupCreator: MPBackupExporter
 
     init(
         selfUserID: QualifiedID,
@@ -40,7 +40,52 @@ struct BackupCreator {
         )
     }
 
+    func addUser(_ user: BackupUserModel) {
+        mpBackupCreator.add(user: BackupUser(user))
+    }
+
+    func addConversation(_ conversation: BackupConversationModel) {
+        mpBackupCreator.add(conversation: BackupConversation(conversation))
+    }
+
+    func addMessage(_ message: BackupMessageModel) {
+        mpBackupCreator.add(message: BackupMessage(message))
+    }
+
+    func finalize(password: String) async throws -> URL {
+
+        let result = try await mpBackupCreator.finalize(password: password)
+
+        switch result {
+        case let success as BackupExportResultSuccess:
+            return URL(filePath: success.pathToOutputFile, directoryHint: .notDirectory)
+        case let ioError as BackupExportResultFailureIOError:
+            throw FinalizeBackupFileError.ioError(ioError.message)
+        case let zipError as BackupExportResultFailureZipError:
+            throw FinalizeBackupFileError.zipError(zipError.message)
+        case let otherFailure as any BackupExportResultFailure:
+            throw FinalizeBackupFileError.otherFailure(otherFailure.message)
+        default:
+            throw FinalizeBackupFileError.unexpectedResultType
+        }
+
+    }
+
+    // MARK: -
+
+    enum FinalizeBackupFileError: Error {
+
+        case success(_ outputFile: String)
+        case ioError(_ message: String)
+        case zipError(_ message: String)
+        case otherFailure(_ message: String)
+        case unexpectedResultType
+
+    }
+
 }
+
+// MARK: -
 
 private final class FileArchiverToFileZipperAdapter<FileArchiver>: FileZipper
     where FileArchiver: FileArchiverProtocol {
