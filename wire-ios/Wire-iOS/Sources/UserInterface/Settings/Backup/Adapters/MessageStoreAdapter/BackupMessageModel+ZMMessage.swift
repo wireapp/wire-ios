@@ -46,10 +46,7 @@ extension BackupMessageModel {
             let creationDate = message.serverTimestamp,
             let conversationID = message.conversation?.qualifiedID,
             let content = genericMessage.content.flatMap(MessageContent.init)
-        else {
-            // TODO: Ideally the fetch request for exporting messages wouldn't fetch messages which can't be exported.
-            return nil
-        }
+        else { return nil }
 
         self.init(
             id: id.uuidString,
