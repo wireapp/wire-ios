@@ -95,10 +95,12 @@ private extension BackendEnvironment {
     }
 
     static var selfUserProfileLink: URL? {
-        guard let userID = SelfUser.provider?.providedSelfUser.remoteIdentifier?.uuidString else {
+        guard let selfUser = SelfUser.provider?.providedSelfUser,
+              let userID = selfUser.remoteIdentifier?.uuidString,
+              let domain = selfUser.domain else {
             return nil
         }
-        return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")
+        return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID.lowercased())@\(domain)")
     }
 
 }
