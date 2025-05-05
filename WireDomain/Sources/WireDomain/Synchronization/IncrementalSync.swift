@@ -50,6 +50,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.databaseSaver = databaseSaver
     }
 
+    public func perform() async throws -> Token {
+        try await perform(acknowledgeFullSync: false)
+    }
+    
     public func perform(acknowledgeFullSync: Bool) async throws -> Token {
         logger.debug("performing incremental sync")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)

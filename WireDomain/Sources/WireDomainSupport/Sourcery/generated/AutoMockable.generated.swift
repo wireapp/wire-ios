@@ -1978,24 +1978,24 @@ public class MockIncrementalSyncProtocol: IncrementalSyncProtocol {
 
     // MARK: - perform
 
-    public var perform_Invocations: [Void] = []
-    public var perform_MockError: Error?
-    public var perform_MockMethod: (() async throws -> IncrementalSync.Token)?
-    public var perform_MockValue: IncrementalSync.Token?
+    public var performAcknowledgeFullSync_Invocations: [Bool] = []
+    public var performAcknowledgeFullSync_MockError: Error?
+    public var performAcknowledgeFullSync_MockMethod: ((Bool) async throws -> IncrementalSync.Token)?
+    public var performAcknowledgeFullSync_MockValue: IncrementalSync.Token?
 
-    public func perform() async throws -> IncrementalSync.Token {
-        perform_Invocations.append(())
+    public func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token {
+        performAcknowledgeFullSync_Invocations.append(acknowledgeFullSync)
 
-        if let error = perform_MockError {
+        if let error = performAcknowledgeFullSync_MockError {
             throw error
         }
 
-        if let mock = perform_MockMethod {
-            return try await mock()
-        } else if let mock = perform_MockValue {
+        if let mock = performAcknowledgeFullSync_MockMethod {
+            return try await mock(acknowledgeFullSync)
+        } else if let mock = performAcknowledgeFullSync_MockValue {
             return mock
         } else {
-            fatalError("no mock for `perform`")
+            fatalError("no mock for `performAcknowledgeFullSync`")
         }
     }
 
