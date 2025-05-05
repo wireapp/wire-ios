@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAPI
+import WireDataModel
 import WireLogging
 
 public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
@@ -26,18 +27,21 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
     private let api: any UpdateEventsAPI
     private let store: any UpdateEventsLocalStoreProtocol
     private let decryptor: any UpdateEventDecryptorProtocol
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let jsonEncoder = JSONEncoder()
 
     public init(
         selfClientID: String,
         api: any UpdateEventsAPI,
         store: any UpdateEventsLocalStoreProtocol,
-        decryptor: any UpdateEventDecryptorProtocol
+        decryptor: any UpdateEventDecryptorProtocol,
+        coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
         self.selfClientID = selfClientID
         self.api = api
         self.store = store
         self.decryptor = decryptor
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
     @discardableResult
@@ -48,9 +52,6 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
         }
 
         WireLogger.sync.debug("pulling pending events since: \(lastEventID)")
-
-        // We'll insert new events from this index.
-        var currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
         var events: [UpdateEvent] = []
 
@@ -78,30 +79,46 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 )
             }
 
-            for envelope in envelopes {
-                count += 1
+            // We'll insert new events from this index.
+            var currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
-                log("decrypting...", envelopeID: envelope.id)
-                var decryptedEnvelope = envelope
-                let decryptedEvents = try await decryptor.decryptEvents(in: envelope)
-                decryptedEnvelope.events = decryptedEvents
+            // We are decrypting the batch within one core crypto transaction
+            try await coreCryptoProvider.coreCrypto().perform { context in
 
-                log("storing...", envelopeID: envelope.id)
-                try await store.persistEventEnvelope(
-                    decryptedEnvelope,
+                var lastEnvelopeID: UUID?
+                var decryptedEnvelopes: [UpdateEventEnvelope] = []
+
+                for envelope in envelopes {
+                    count += 1
+
+                    log("decrypting...", envelopeID: envelope.id)
+                    var decryptedEnvelope = envelope
+                    let decryptedEvents = try await decryptor.decryptEvents(in: envelope, context: context)
+                    decryptedEnvelope.events = decryptedEvents
+
+                    events.append(contentsOf: decryptedEvents)
+                    decryptedEnvelopes.append(decryptedEnvelope)
+
+                    if !envelope.isTransient {
+                        lastEnvelopeID = envelope.id
+                    }
+                }
+
+                for envelope in decryptedEnvelopes {
+                    log("storing...", envelopeID: envelope.id)
+                }
+
+                try await store.persistEventEnvelopes(
+                    decryptedEnvelopes,
                     index: currentIndex
                 )
 
-                events.append(contentsOf: decryptedEvents)
-
-                currentIndex += 1
-
-                if !envelope.isTransient {
+                if let lastEnvelopeID {
                     // We keep track of the last event id so next time we fetch
                     // only new events. We don't track tranisent events because
                     // these events aren't stored in the backend.
-                    log("storing last event id...", envelopeID: envelope.id)
-                    store.storeLastEventID(id: envelope.id)
+                    log("storing last event id...", envelopeID: lastEnvelopeID)
+                    store.storeLastEventID(id: lastEnvelopeID)
                 }
             }
         }

@@ -59,6 +59,7 @@ public final class ClientSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     private let processorHandlers: ProcessorHandlers
 
@@ -78,7 +79,8 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        processorHandlers: ProcessorHandlers
+        processorHandlers: ProcessorHandlers,
+        coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -96,6 +98,7 @@ public final class ClientSessionComponent {
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
         self.processorHandlers = processorHandlers
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
     private lazy var authenticationManager = AuthenticationManager(
@@ -258,7 +261,8 @@ public final class ClientSessionComponent {
         selfClientID: selfClientID,
         api: updateEventsAPI,
         store: updateEventsLocalStore,
-        decryptor: updateEventDecryptor
+        decryptor: updateEventDecryptor,
+        coreCryptoProvider: coreCryptoProvider
     )
 
     private lazy var pullSelfLegalholdInfoSync = PullSelfLegalholdInfoSync(

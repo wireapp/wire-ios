@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
 import WireLogging
 
@@ -27,13 +28,15 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
     func decryptedWelcomeMessageEventData(
-        from eventData: ConversationMLSWelcomeEvent
+        from eventData: ConversationMLSWelcomeEvent,
+        context: CoreCryptoContextProtocol?
     ) async throws {
         let welcomeMessage = eventData.welcomeMessage
         let conversationID = eventData.conversationID
 
         let groupID = try await mlsDecryptionService.processWelcomeMessage(
-            welcomeMessage: welcomeMessage
+            welcomeMessage: welcomeMessage,
+            context: context
         )
 
         await conversationLocalStore.createMLSConversation(
@@ -44,7 +47,8 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     }
 
     func decryptedMessageAddEventData(
-        from eventData: ConversationMLSMessageAddEvent
+        from eventData: ConversationMLSMessageAddEvent,
+        context: CoreCryptoContextProtocol?
     ) async throws -> ConversationMLSMessageAddEvent {
         let conversationID = eventData.conversationID
 
@@ -69,7 +73,8 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         let decryptionResults = try await decryptMLSMessage(
             message: eventData.message,
             mlsGroupID: mlsGroupID,
-            subconversation: eventData.subconversation
+            subconversation: eventData.subconversation,
+            context: context
         )
 
         let decryptedMessages = await processMLSMessageDecryptionResults(
@@ -89,14 +94,16 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     private func decryptMLSMessage(
         message: String,
         mlsGroupID: MLSGroupID,
-        subconversation: String?
+        subconversation: String?,
+        context: CoreCryptoContextProtocol?
     ) async throws -> [MLSDecryptResult] {
         let subconvType = subconversation != nil ? SubgroupType(rawValue: subconversation!) : nil
 
         let results = try await mlsDecryptionService.decrypt(
             message: message,
             for: mlsGroupID,
-            subconversationType: subconvType
+            subconversationType: subconvType,
+            context: context
         )
 
         if results.isEmpty {
