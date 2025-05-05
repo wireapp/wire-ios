@@ -83,7 +83,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
             let storedEventEnvelope = try XCTUnwrap(eventContext.fetch(request).first)
-            let coder = UpdateEventCoder()
+            let coder = StorableUpdateEventCoder()
             let decodedEnvelope = try coder.decode(storedEventEnvelope.data)
 
             XCTAssertEqual(decodedEnvelope.id, Scaffolding.envelope1.id)
@@ -189,7 +189,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             let envelope = try XCTUnwrap(result.first)
             XCTAssertEqual(envelope.sortIndex, 2)
 
-            let coder = UpdateEventCoder()
+            let coder = StorableUpdateEventCoder()
             let decodedEnvelope = try coder.decode(envelope.data)
             XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
         }
@@ -260,7 +260,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
     private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
         try await eventContext.perform { [eventContext] in
-            let coder = UpdateEventCoder()
+            let coder = StorableUpdateEventCoder()
 
             for (index, envelope) in envelopes.enumerated() {
                 let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)

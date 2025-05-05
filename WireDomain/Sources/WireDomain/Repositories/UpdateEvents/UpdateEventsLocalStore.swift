@@ -40,7 +40,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     private let eventContext: NSManagedObjectContext
     private let syncContext: NSManagedObjectContext
     private let storage: PrivateUserDefaults<Key>
-    private let updateEventCoder = UpdateEventCoder()
+    private let updateEventCoder = StorableUpdateEventCoder()
 
     // MARK: - Object lifecycle
 

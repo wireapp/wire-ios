@@ -19,7 +19,9 @@
 public import Foundation
 public import WireAPI
 
-public struct UpdateEventCoder {
+/// Encodes and decodes `UpdateEventEnvelope` objects to and from data for the sole purpose of storing them in a
+/// database.
+public struct StorableUpdateEventCoder {
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
