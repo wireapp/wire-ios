@@ -531,6 +531,7 @@
 		CB5212122D95A76800CF8099 /* ZMConversation+PrivateChannelPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5212112D95A76800CF8099 /* ZMConversation+PrivateChannelPermission.swift */; };
 		CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979172C747652006FBA58 /* WireTransportSupport.framework */; };
 		CB79791B2C7476AC006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791A2C7476AC006FBA58 /* TestSetup.swift */; };
+		CBAEABE92DC8DA8A00C62C4E /* store2-126-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = CBAEABE82DC8DA8A00C62C4E /* store2-126-0.wiredatabase */; };
 		CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F2B2D09EBB20080DA37 /* WireCrypto */; };
 		CBED6B442D91B2F500328BED /* ZMConversation+ConversationGroupType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED6B432D91B2F500328BED /* ZMConversation+ConversationGroupType.swift */; };
 		CBF4F17F2D36935300C9638B /* ConnectionValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF4F17E2D36935300C9638B /* ConnectionValidator.swift */; };
@@ -1449,6 +1450,7 @@
 		CB7979172C747652006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79791A2C7476AC006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		CBAE486A2DC4C82900C62C4E /* zmessaging2.126.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.126.0.xcdatamodel; sourceTree = "<group>"; };
+		CBAEABE82DC8DA8A00C62C4E /* store2-126-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-126-0.wiredatabase"; sourceTree = "<group>"; };
 		CBED6B422D91A3FC00328BED /* zmessaging2.123.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.123.0.xcdatamodel; sourceTree = "<group>"; };
 		CBED6B432D91B2F500328BED /* ZMConversation+ConversationGroupType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+ConversationGroupType.swift"; sourceTree = "<group>"; };
 		CBF4F17E2D36935300C9638B /* ConnectionValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionValidator.swift; sourceTree = "<group>"; };
@@ -3718,6 +3720,7 @@
 		F9C9A83D1CAEDBC40039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CBAEABE82DC8DA8A00C62C4E /* store2-126-0.wiredatabase */,
 				01423BC82DB013DF00C49567 /* store2-125-0.wiredatabase */,
 				01A4709F2DAD6F0C00B1B2E7 /* store2-124-0.wiredatabase */,
 				CB417B072D9FDA2B00F0701B /* store2-123-0.wiredatabase */,
@@ -4056,6 +4059,7 @@
 				166EC36E26C50E960043ED01 /* store2-94-0.wiredatabase in Resources */,
 				F91EAAC61D885D7B0010ACBE /* video.mp4 in Resources */,
 				01423BC92DB013DF00C49567 /* store2-125-0.wiredatabase in Resources */,
+				CBAEABE92DC8DA8A00C62C4E /* store2-126-0.wiredatabase in Resources */,
 				16F7341624F95F9D00AB93B1 /* store2-85-0.wiredatabase in Resources */,
 				F9A706F71CAEE31C00C2F5FE /* animated.gif in Resources */,
 				63340BBD241C2BC5004ED87C /* store2-80-0.wiredatabase in Resources */,
