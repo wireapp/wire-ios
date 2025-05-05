@@ -4928,6 +4928,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock()
     }
 
+    // MARK: - setSyncDelegate
+
+    public var setSyncDelegate_Invocations: [any MLSSyncDelegate] = []
+    public var setSyncDelegate_MockMethod: ((any MLSSyncDelegate) -> Void)?
+
+    public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
+        setSyncDelegate_Invocations.append(delegate)
+
+        guard let mock = setSyncDelegate_MockMethod else {
+            fatalError("no mock for `setSyncDelegate`")
+        }
+
+        mock(delegate)
+    }
+
     // MARK: - onEpochChanged
 
     public var onEpochChanged_Invocations: [Void] = []
@@ -5031,6 +5046,35 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         } else {
             fatalError("no mock for `encryptMessageFor`")
         }
+    }
+
+}
+
+public class MockMLSSyncDelegate: MLSSyncDelegate {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - recoverWithIncrementalSync
+
+    public var recoverWithIncrementalSync_Invocations: [Void] = []
+    public var recoverWithIncrementalSync_MockError: Error?
+    public var recoverWithIncrementalSync_MockMethod: (() async throws -> Void)?
+
+    public func recoverWithIncrementalSync() async throws {
+        recoverWithIncrementalSync_Invocations.append(())
+
+        if let error = recoverWithIncrementalSync_MockError {
+            throw error
+        }
+
+        guard let mock = recoverWithIncrementalSync_MockMethod else {
+            fatalError("no mock for `recoverWithIncrementalSync`")
+        }
+
+        try await mock()
     }
 
 }
