@@ -95,7 +95,7 @@ public extension ZMMessage {
             orPredicate,
             excludingPredicate,
             conversationPredicate
-        ].compactMap { $0 })
+        ].compactMap(\.self))
         return sortedFetchRequest(with: finalPredicate)
     }
 
@@ -130,7 +130,7 @@ public extension ZMMessage {
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             categoryPredicate,
             conversationPredicate
-        ].compactMap { $0 })
+        ].compactMap(\.self))
         return sortedFetchRequest(with: finalPredicate)
     }
 

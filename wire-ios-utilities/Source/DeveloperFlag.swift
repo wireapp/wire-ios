@@ -30,10 +30,10 @@ public enum DeveloperFlag: String, CaseIterable {
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
-    case newInitialSync
     case useWireAuthentication
     case wireCellsAttachmentsPreviews
     case asyncStreamNotifications
+    case showDetailedErrors
 
     public var description: String {
         switch self {
@@ -61,9 +61,6 @@ public enum DeveloperFlag: String, CaseIterable {
         case .forceCRLExpiryAfterOneMinute:
             "Turn on to force CRLs to expire after 1 minute"
 
-        case .newInitialSync:
-            "Use the new and improved 'Initial Sync™' (formerly slow sync)"
-
         case .useWireAuthentication:
             "Use the new WireAuthentication feature module"
 
@@ -72,6 +69,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .asyncStreamNotifications:
             "Turn on to enable new sync with consumable notifications"
+
+        case .showDetailedErrors:
+            "Show detailed errors"
         }
     }
 

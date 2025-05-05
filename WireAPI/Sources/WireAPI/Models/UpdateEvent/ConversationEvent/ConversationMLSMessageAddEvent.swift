@@ -69,10 +69,10 @@ public struct ConversationMLSMessageAddEvent: Equatable, Sendable {
     public init(
         conversationID: ConversationID,
         senderID: UserID,
-        subconversation: String? = nil,
+        subconversation: String?,
         message: String,
-        timestamp: Date? = nil,
-        decryptedMessages: [ConversationMLSMessageAddEvent.DecryptedMessage] = []
+        timestamp: Date?,
+        decryptedMessages: [DecryptedMessage]
     ) {
         self.conversationID = conversationID
         self.senderID = senderID

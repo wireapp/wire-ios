@@ -19,6 +19,7 @@
 import Combine
 import WireAPI
 import WireDataModelSupport
+import WireDomain
 import WireRequestStrategySupport
 import WireTransportSupport
 @testable import WireSyncEngine
@@ -161,6 +162,11 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         let configuration = ZMUserSession.Configuration()
 
+        let journal = Journal(
+            userID: coreDataStack.account.userIdentifier,
+            storage: UserDefaults.temporary()
+        )
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
@@ -181,7 +187,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             userId: coreDataStack.account.userIdentifier,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            journal: journal
         )
 
         let userSession = builder.build()
