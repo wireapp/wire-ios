@@ -28,10 +28,10 @@ final class AuthenticationManagerTests: XCTestCase {
     var backendURL: URL!
     var cookieStorage: MockCookieStorageProtocol!
 
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
 
     override func setUpWithError() throws {
-        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
         cookieStorage = MockCookieStorageProtocol()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
