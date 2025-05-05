@@ -105,7 +105,7 @@ public enum DeveloperFlag: String, CaseIterable {
     private var bundleKey: String? {
         switch self {
         case .createLegacyBackups:
-            "CreateLegacyBackups"
+            "CreateLegacyBackupsEnabled"
         case .proteusViaCoreCrypto:
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
