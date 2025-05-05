@@ -18,4 +18,5 @@
 
 INBUCKET_USERNAME=op://Test Automation/BackendConnection staging/inbucketUsername
 INBUCKET_PASSWORD=op://Test Automation/BackendConnection staging/inbucketPassword
-INBUCKET_URL=op://Test Automation/BackendConnection staging/inbucketUrl
+INBUCKET_URL=op://Test Automation/BackendConnection staging/trimmedInbucketUrl
+BACKEND_URL=op://Test Automation/BackendConnection staging/trimmedBackendURL

@@ -1,6 +1,10 @@
-Create the env.xcconfig file from by running
+Requirements beyond the base project:
+- Have 1Password's cli installed (op)
+
+Create the env.xcconfig file by running
+
 ```
 op inject -i wire-ios/WireUITests/env.xcconfig.tpl -o wire-ios/WireUITests/env.xcconfig
 ```
 
-or by filling in the template with the values you know
+Note: the xcconfig cannot handle "//", so take care when adding values

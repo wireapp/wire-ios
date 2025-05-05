@@ -10,6 +10,10 @@
             "value" : "$(INBUCKET_USERNAME)"
           },
           {
+            "key" : "BACKEND_URL",
+            "value" : "$(BACKEND_URL)"
+          },
+          {
             "key" : "INBUCKET_URL",
             "value" : "$(INBUCKET_URL)"
           },

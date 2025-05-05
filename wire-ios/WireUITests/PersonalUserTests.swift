@@ -20,6 +20,7 @@ import XCTest
 
 final class PersonalUsersTests: XCTestCase {
     var app: XCUIApplication!
+    var context: Dictionary<String,Any> = [:]
 
     override func setUpWithError() throws {
         app = XCUIApplication()
@@ -33,31 +34,56 @@ final class PersonalUsersTests: XCTestCase {
 
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
+        
+        context["app"] = app
     }
 
-    override func tearDownWithError() throws {
-        app = nil
+    override func tearDown() async throws {
+        let email = context["email"] as! String
+        let password = context["password"] as! String
+        let access_token = try? await BackendClient().loginViaAPI(email:email, password:password)
+        if(access_token != nil) {
+            try? await BackendClient().deletePersonalUser(access_token:access_token!, password:password)
+            puts("Cleaned up \(email)")
+        }
     }
 
     @MainActor
     func test_register_asPersonalUser() async throws {
+        let loginPage = LoginPage(theApp:app)
+        let email = "newUser08@wire.engineering" // TODO: Make this auto generated and unique
+        context["email"] = email
+        context["password"] = ProcessInfo.processInfo.environment["DEFAULT_PASSWORD"] // TODO: Make this auto generated
+        
         let textField = emailTextField()
-        let email = "adfdasfasfaewa@wire.engineering"
+        XCTAssertTrue(textField.exists)
         textField.tap()
         textField.typeText(email)
 
-        nextButton().tap()
+        loginPage.nextButton().tap()
 
-        createPersonalAccountLink().tap()
+        loginPage.createPersonalAccountLink().tap()
 
-        newNextButton().tap()
+        loginPage.newNextButton().tap()
 
-        acceptButton().tap()
+        loginPage.acceptButton().tap()
 
-        let verificationCode = try await getVerificationCode(email:email)
+        let verificationCode = try await InbucketClient().getVerificationCode(email:email)
 
-        verificationCodeInput().tap()
-        verificationCodeInput().typeText(verificationCode)
+        loginPage.verificationCodeInput().tap()
+        loginPage.verificationCodeInput().typeText(verificationCode)
+        
+        let registrationPage = RegistrationPage(theApp: app)
+
+        registrationPage.nameField().tap()
+        registrationPage.nameField().typeText("Smoke Tester")
+        registrationPage.nameNextButton().tap()
+
+        registrationPage.passwordField().tap()
+        registrationPage.passwordField().typeText(context["password"] as! String)
+        registrationPage.passwordNextButton().tap()
+        
+        registrationPage.allowButton().tap()
 
         let fullScreenshot = XCUIScreen.main.screenshot()
         let screenshot = XCTAttachment(screenshot: fullScreenshot)
@@ -66,48 +92,9 @@ final class PersonalUsersTests: XCTestCase {
     }
 
     // MARK: - Helpers
-
-    private func getVerificationCode(email:String) async throws -> String {
-        let inbucketURL = "https://\(ProcessInfo.processInfo.environment["INBUCKET_URL"]!)"
-        let inbucketUsername = ProcessInfo.processInfo.environment["INBUCKET_USERNAME"]!
-        let inbucketPassword = ProcessInfo.processInfo.environment["INBUCKET_PASSWORD"]!
-        var verificationCode:String = ""
-        let url = URL(string: "\(inbucketURL)/api/v1/mailbox/\(email)/latest")
-        guard let requestUrl = url else { fatalError() }
-        var request = URLRequest(url: requestUrl)
-        request.httpMethod = "GET"
-        let loginString = String(format: "%@:%@", inbucketUsername, inbucketPassword)
-        let loginData = loginString.data(using: String.Encoding.utf8)!
-        let base64LoginString = loginData.base64EncodedString()
-        request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
-
-        let (inbucketData,_) = try await URLSession.shared.data(for: request)
-
-        // Convert HTTP Response Data to a simple String
-        let message:InbucketMessage = try! JSONDecoder().decode(InbucketMessage.self, from:inbucketData)
-        let subject:String = message.subject
-        verificationCode = String(subject.prefix(6))
     
-        print("Verification Code Found: \(verificationCode) for \(email)")
-        return verificationCode
-    }
-
-    private func verificationCodeInput() -> XCUIElement {
-        let elementsQuery = app.textViews.matching(identifier: "VerificationCode")
-        return elementsQuery.firstMatch
-    }
-
-    private func nextButton() -> XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
-    }
-
-    private func newNextButton() -> XCUIElement {
-        let elementsQuery = app.otherElements
-        return elementsQuery.buttons.containing(.button, identifier: "ConfirmButton").firstMatch
-    }
-
-    private func emailTextField() -> XCUIElement {
+    // TODO: Figure out how to move to page object; expectation and waitForExpectation didn't work with simple copy
+    func emailTextField() -> XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         let textField = elementsQuery.textFields["Email or SSO code"]
         let exists = NSPredicate(format: "exists == 1")
@@ -115,18 +102,17 @@ final class PersonalUsersTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
         return textField
     }
-
-    private func createPersonalAccountLink() -> XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create Personal Account"]
-    }
-
-    private func acceptButton() -> XCUIElement {
-        let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
-    }
+    
 }
 
-struct InbucketMessage: Decodable {
-    let subject:String
+struct RuntimeError: LocalizedError {
+    let description: String
+
+    init(_ description: String) {
+        self.description = description
+    }
+
+    var errorDescription: String? {
+        description
+    }
 }
