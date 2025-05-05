@@ -56,7 +56,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?
     ) {
-        strategies = Self.buildStrategies(
+        self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
             applicationStatusDirectory: applicationStatusDirectory,
             cookieStorage: cookieStorage,
@@ -423,15 +423,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             self.requestStrategies.append(contentsOf: strategies.compactMap { $0 as? RequestStrategy })
             self.eventConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventConsumer })
             self.eventAsyncConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventAsyncConsumer })
-            self.contextChangeTrackers.append(contentsOf: strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
-                if let source = object as? ZMContextChangeTrackerSource {
-                    return source.contextChangeTrackers
-                } else if let tracker = object as? ZMContextChangeTracker {
-                    return [tracker]
-                } else {
-                    return []
-                }
-            })
+            self.contextChangeTrackers
+                .append(contentsOf: strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
+                    if let source = object as? ZMContextChangeTrackerSource {
+                        return source.contextChangeTrackers
+                    } else if let tracker = object as? ZMContextChangeTracker {
+                        return [tracker]
+                    } else {
+                        return []
+                    }
+                })
         }
     }
 

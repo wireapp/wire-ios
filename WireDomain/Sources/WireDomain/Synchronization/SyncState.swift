@@ -16,34 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: document
+/// Describes the current syncing state of the app.
 
 public enum SyncState: Equatable {
 
     /// The app is not syncing.
+
     case idle
 
     /// Initial sync is ongoing.
+
     case initialSyncing(InitialSyncState)
 
     /// Incremental sync is ongoing.
+
     case incrementalSyncing(IncrementalSyncState)
 
     /// App is up to date and processing live events.
+
     case liveSyncing
 
     public enum InitialSyncState: Equatable {
+
         case pullLastEventID
         case pullResources
         case pushSupportedProtocols
         case resolveOneOnOneConversations
+
     }
 
     public enum IncrementalSyncState: Equatable {
+
         case createPushChannel
         case openPushChannel
         case pullPendingEvents
         case processPendingEvents
+
     }
 
 }

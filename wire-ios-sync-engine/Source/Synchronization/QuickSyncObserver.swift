@@ -34,8 +34,7 @@ final class QuickSyncObserver: QuickSyncObserverInterface {
 
     private let decryptionQueue = DispatchQueue(label: "decryptionQueue")
 
-    @Published
-    private var decryptionState: DecryptionState = .notStarted
+    @Published private var decryptionState: DecryptionState = .notStarted
 
     private var cancellables = Set<AnyCancellable>()
 
