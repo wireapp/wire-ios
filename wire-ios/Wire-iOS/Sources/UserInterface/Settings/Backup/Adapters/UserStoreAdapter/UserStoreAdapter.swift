@@ -54,6 +54,7 @@ struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
     }
 
     func addUser(_ user: BackupUserModel) async throws {
+        // TODO: maybe the changes to NewUserInfo can be reverted and the code for event processing used instead
         let userInfo = NewUserInfo(
             userID: WireDataModel.QualifiedID(user.qualifiedID),
             name: user.name,
@@ -69,7 +70,7 @@ struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
             serviceProvider: nil,
             supportedProtocols: nil
         )
-        await userLocalStore.persistUser(userInfo: userInfo) // TODO: check if ConversationProtobufMessageProcessor handles this the same way
+        await userLocalStore.persistUser(userInfo: userInfo)
     }
 
 }

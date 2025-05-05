@@ -110,7 +110,7 @@ extension MessageContent {
             assetDomain: .none,
             encryption: .none,
             metadata: .image(
-                width: imageAsset.width, // TODO: when to use originalWidth/originalHeight?
+                width: imageAsset.width, // TODO: use .width or .originalWidth?
                 height: imageAsset.height,
                 tag: imageAsset.hasTag ? imageAsset.tag : ""
             )

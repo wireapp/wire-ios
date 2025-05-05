@@ -51,7 +51,7 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
 
     func addMessage(_ message: BackupMessageModel) async throws {
 
-// TODO: try to use code from parsing incoming events
+        // TODO: try to use code from parsing incoming events
 
         let conversationID = message.conversationID
         let conversation = await context.perform {
@@ -127,7 +127,7 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
                 // guard !message.isRestricted else {
                 //    throw AppendMessageError.fileSharingIsRestricted
                 // }
-                // 
+                //
                 genericMessage = GenericMessage(content: asset, nonce: nonce)
             // try mergeWithExistingData(message: genericMessage) // TODO: ?
             case let .video(videoData):

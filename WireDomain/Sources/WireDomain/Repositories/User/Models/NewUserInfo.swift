@@ -34,7 +34,7 @@ public struct NewUserInfo: Equatable, Sendable {
     let serviceProvider: UUID?
     let supportedProtocols: Set<WireDataModel.MessageProtocol>?
 
-    public init( // TODO: verify if this is alright
+    public init(
         userID: WireDataModel.QualifiedID,
         name: String,
         handle: String?,
