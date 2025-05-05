@@ -15,18 +15,38 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import Combine
 import Foundation
 import WireDataModel
 import WireDomain
 import WireLogging
 import WireUtilities
 
+// sourcery: AutoMockable
+protocol SyncAgentProtocol {
+
+    var isSyncV2Enabled: Bool { get }
+    var isLive: Bool { get }
+    var syncStatePublisher: AnyPublisher<SyncState, Never> { get }
+
+}
+
 // TODO: [WPB-15440] remove objc interoperability.
 // To temporarily bridge this to legacy code, this inherits from NSObject
 // and exposes a method to objc. Once we integrate the new incremental
 // sync, we won't need to bridge to legacy code and remove the inheritance.
 
-final class SyncAgent: NSObject {
+final class SyncAgent: NSObject, SyncAgentProtocol {
+
+    var isSyncV2Enabled: Bool {
+        journal[.isSyncV2Enabled]
+    }
+
+    private let syncStateSubject: CurrentValueSubject<SyncState, Never>
+    var syncStatePublisher: AnyPublisher<SyncState, Never> {
+        syncStateSubject.eraseToAnyPublisher()
+    }
 
     weak var delegate: SyncAgentDelegate?
 
@@ -43,6 +63,14 @@ final class SyncAgent: NSObject {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
     }
 
+    var isLive: Bool {
+        if isSyncV2Enabled {
+            syncStateSubject.value == .liveSyncing
+        } else {
+            legacySyncStatus.isLive
+        }
+    }
+
     // MARK: - Life cycle
 
     init(
@@ -50,13 +78,15 @@ final class SyncAgent: NSObject {
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
-        legacySyncStatus: any SyncStatusProtocol
+        legacySyncStatus: any SyncStatusProtocol,
+        syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider
         self.legacySyncStatus = legacySyncStatus
+        self.syncStateSubject = syncStateSubject
         super.init()
     }
 
@@ -108,7 +138,7 @@ final class SyncAgent: NSObject {
     /// Perform an initial sync.
 
     func performInitialSync() async throws {
-        if journal[.isSyncV2Enabled] {
+        if isSyncV2Enabled {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new initial sync")
@@ -131,7 +161,7 @@ final class SyncAgent: NSObject {
     /// Perform a resource sync.
 
     func performResourceSync() async throws {
-        if journal[.isSyncV2Enabled] {
+        if isSyncV2Enabled {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new resource sync")
@@ -153,7 +183,7 @@ final class SyncAgent: NSObject {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        if journal[.isSyncV2Enabled] {
+        if isSyncV2Enabled {
             guard incrementalSyncToken == nil else {
                 WireLogger.sync.info("incremental sync already running...")
                 return
@@ -206,3 +236,4 @@ extension SyncAgent: ZMSyncStateDelegate {
     }
 
 }
+

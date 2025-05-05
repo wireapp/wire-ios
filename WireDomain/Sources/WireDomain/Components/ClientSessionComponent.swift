@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireAPI
 import WireDataModel
@@ -296,6 +297,8 @@ public final class ClientSessionComponent {
 
     // MARK: High level syncs
 
+    public lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
+
     public lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
@@ -317,7 +320,8 @@ public final class ClientSessionComponent {
             pullLastUpdateEventIDSync: pullLastUpdateEventIDSync,
             pullResourcesSync: pullResourcesSync,
             pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
-            oneOnOneResolver: oneOnOneResolver
+            oneOnOneResolver: oneOnOneResolver,
+            syncStateSubject: syncStateSubject
         )
     }()
 
@@ -333,7 +337,8 @@ public final class ClientSessionComponent {
         decryptor: updateEventDecryptor,
         store: updateEventsLocalStore,
         processor: updateEventProcessor,
-        databaseSaver: databaseSaver
+        databaseSaver: databaseSaver,
+        syncStateSubject: syncStateSubject
     )
 
     // MARK: - Repositories
