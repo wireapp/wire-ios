@@ -36,34 +36,48 @@ public extension LogAttributes {
     static let syncV2 = [LogAttributesKey.syncVersion: "v2"]
     static let syncV3 = [LogAttributesKey.syncVersion: "v3"]
     
-    // MARK: - Sync V1
+    // MARK: - Legacy sync (V1)
     
-    static func legacySyncDidStartAttributes(initialSync: Bool) -> Self {
+    static func legacySyncDidStartAttributes(
+        initialSync: Bool
+    ) -> Self {
         baseLegacySyncAttributes(initialSync: initialSync)
     }
     
-    static func legacySyncDidFinishAttributes(duration: String, initialSync: Bool) -> Self {
+    static func legacySyncDidFinishAttributes(
+        duration: String,
+        initialSync: Bool
+    ) -> Self {
         merge(
             baseLegacySyncAttributes(initialSync: initialSync),
             [.duration: duration]
         )
     }
     
-    static func legacySyncPhaseDidStartAttributes(_ phase: String, initialSync: Bool) -> Self {
+    static func legacySyncPhaseDidStartAttributes(
+        _ phase: String,
+        initialSync: Bool
+    ) -> Self {
         merge(
             baseLegacySyncAttributes(initialSync: initialSync),
             [.syncPhase: phase]
         )
     }
     
-    static func legacySyncPhaseDidCompleteAttributes(_ phase: String, duration: String, initialSync: Bool) -> Self {
+    static func legacySyncPhaseDidCompleteAttributes(
+        _ phase: String,
+        duration: String,
+        initialSync: Bool
+    ) -> Self {
         merge(
             baseLegacySyncAttributes(initialSync: initialSync),
             [.syncPhase: phase, .duration: duration]
         )
     }
     
-    private static func baseLegacySyncAttributes(initialSync: Bool) -> Self {
+    private static func baseLegacySyncAttributes(
+        initialSync: Bool
+    ) -> Self {
         merge(
             initialSync ? .initialSync : .incrementalSync,
             .syncV1,
@@ -71,29 +85,35 @@ public extension LogAttributes {
         )
     }
     
-    // MARK: - Sync V2/V3
+    // MARK: - New sync (V2, V3)
     
-    static func newInitialSyncDidStartAttributes() -> Self {
-        baseNewSyncAttributes()
+    static func newSyncAttributes(
+        initialSync: Bool
+    ) -> Self {
+        baseNewSyncAttributes(initialSync: initialSync)
     }
     
-    static func newInitialSyncPhaseAttributes(_ phase: String) -> Self {
+    static func newSyncPhaseAttributes(
+        _ phase: String,
+        initialSync: Bool
+    ) -> Self {
         merge(
-            baseNewSyncAttributes(),
+            baseNewSyncAttributes(initialSync: initialSync),
             [.syncPhase: phase]
         )
     }
     
-    private static func baseNewSyncAttributes() -> Self {
+    private static func baseNewSyncAttributes(
+        initialSync: Bool
+    ) -> Self {
         let version = DeveloperFlag.asyncStreamNotifications.isOn ? syncV3 : syncV2
         return merge(
-            .initialSync,
+            initialSync ? .initialSync : .incrementalSync,
             version,
             .safePublic
         )
     }
 }
-
 
 private extension LogAttributes {
     static func merge(_ attributes: Self...) -> Self {

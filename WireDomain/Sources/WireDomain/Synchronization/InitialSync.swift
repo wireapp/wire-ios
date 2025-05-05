@@ -41,9 +41,9 @@ public struct InitialSync: InitialSyncProtocol {
     }
 
     public func perform(skipPullingLastUpdateEventID: Bool) async throws {
-        try await log(
+        try await logger.measureTime(
             label: "new initial sync",
-            attributes: .newInitialSyncDidStartAttributes()
+            attributes: .newSyncAttributes(initialSync: true)
         ) {
             if !skipPullingLastUpdateEventID {
                 try await pullLastUpdateEventID()
@@ -55,67 +55,59 @@ public struct InitialSync: InitialSyncProtocol {
     }
 
     private func pullLastUpdateEventID() async throws {
-        try await log(
-            label: "sync phase",
-            attributes: .newInitialSyncPhaseAttributes("pulling last update event id")
+        let phase = "pulling last update event id"
+        
+        try await logger.measureTime(
+            label: "sync phase: \(phase)",
+            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullLastUpdateEventIDSync.pull()
             } catch {
-                throw Failure(phase: "pull last update event id", reason: error)
+                throw Failure(phase: phase, reason: error)
             }
         }
     }
 
     private func pullResources() async throws {
-        do {
-            logger.debug("pulling resources")
-            try await pullResourcesSync.pull()
-        } catch {
-            throw Failure(phase: "perform resource sync", reason: error)
+        try await logger.measureTime(label: "pull resources") {
+            do {
+                logger.info("pulling resources")
+                try await pullResourcesSync.pull()
+            } catch {
+                throw Failure(phase: "perform resource sync", reason: error)
+            }
         }
     }
 
     private func pushSupportedProtocols() async throws {
-        try await log(
-            label: "sync phase",
-            attributes: .newInitialSyncPhaseAttributes("push supported protocols")
+        let phase = "push supported protocols"
+        
+        try await logger.measureTime(
+            label: "sync phase: \(phase)",
+            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pushSupportedProtocolsUseCase.invoke()
             } catch {
-                throw Failure(phase: "push supported protocols", reason: error)
+                throw Failure(phase: phase, reason: error)
             }
         }
     }
 
     private func resolveOneOnOneConversations() async throws {
-        try await log(
-            label: "sync phase",
-            attributes: .newInitialSyncPhaseAttributes("resolve one on one conversations")
+        let phase = "resolve one on one conversations"
+        
+        try await logger.measureTime(
+            label: "sync phase: \(phase)",
+            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await oneOnOneResolver.resolveAllOneOnOneConversations()
             } catch {
-                throw Failure(phase: "resolve one on one conversations", reason: error)
+                throw Failure(phase: phase, reason: error)
             }
         }
-    }
-    
-    private func log(
-        label: String,
-        attributes: LogAttributes,
-        block: () async throws -> Void
-    ) async throws  {
-        let startMessage = "did start \(label)"
-        logger.info(startMessage, attributes: attributes)
-        let start = Date.now
-        try await block()
-        let durationInSeconds = start.timeIntervalSinceNow.magnitude
-        var updatedAttributes = attributes
-        updatedAttributes[.duration] = String(format: "%.2f", durationInSeconds)
-        let completedMessage = "did complete \(label)"
-        logger.info(completedMessage, attributes: updatedAttributes)
     }
 
 }
