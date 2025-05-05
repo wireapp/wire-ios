@@ -53,15 +53,11 @@ struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
         }
     }
 
-    func addUser(
-        id: QualifiedID,
-        name: String,
-        handle: String
-    ) async throws {
+    func addUser(_ user: BackupUserModel) async throws {
         let userInfo = NewUserInfo(
-            userID: WireDataModel.QualifiedID(id),
-            name: name,
-            handle: handle,
+            userID: WireDataModel.QualifiedID(user.id),
+            name: user.name,
+            handle: user.handle,
             teamID: nil,
             accentID: 0,
             previewAssetKey: nil,

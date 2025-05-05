@@ -25,10 +25,10 @@ extension BackupMessage {
             id: message.id,
             conversationId: BackupQualifiedId(message.conversationID),
             senderUserId: BackupQualifiedId(message.senderUserID),
-            senderClientId: message.senderClientID ?? "", // TODO: make optional
+            senderClientId: message.senderClientID ?? "",
             creationDate: BackupDateTime(message.creationDate),
             content: backupMessageContent(message.content),
-            webPrimaryKey: nil // TODO: remove
+            webPrimaryKey: nil
         )
     }
 
@@ -53,7 +53,7 @@ private func backupMessageContent(_ content: MessageContent) -> BackupMessageCon
     case let .asset(content):
         BackupMessageContent.Asset(
             mimeType: content.mimeType,
-            size: Int32(exactly: content.size) ?? 0, // TODO: get rid of Int32?
+            size: Int32(exactly: content.size) ?? 0,
             name: content.name,
             otrKey: KotlinByteArray(content.otrKey),
             sha256: KotlinByteArray(content.sha256),
@@ -71,9 +71,9 @@ private func assetEncryptionAlgorithm(
 ) -> BackupMessageContent.AssetEncryptionAlgorithm {
     switch encryption {
     case .aesCBC:
-            .aesCbc
+        .aesCbc
     case .aesGCM:
-            .aesGcm
+        .aesGcm
     }
 }
 
@@ -93,7 +93,7 @@ private func assetAssetMetadata(
         BackupMessageContent.AssetAssetMetadataVideo(
             width: metadata.width.map { KotlinInt(int: $0) },
             height: metadata.height.map { KotlinInt(int: $0) },
-            duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) } // TODO: types should match CoreCrypto types
+            duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }
         )
 
     case let .audio(metadata):
@@ -106,6 +106,5 @@ private func assetAssetMetadata(
         BackupMessageContent.AssetAssetMetadataGeneric(
             name: metadata.name
         )
-
     }
 }

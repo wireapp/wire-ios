@@ -36,7 +36,9 @@ public struct CreateBackupUseCase<
     private let messageStore: MessageStore
     private let fileArchiver: FileArchiver
     private let currentDateProvider: any CurrentDateProviding
-    private let logger: @Sendable () -> any LoggerProtocol // TODO: make LoggerProtocol Sendable instead of injecting a closure
+    // TODO: [WPB-14297] Try making LoggerProtocol `Sendable` (implementations might be @unchecked Sendable) and
+    // then the `logger` can be injected without closure.
+    private let logger: @Sendable () -> any LoggerProtocol
 
     public init(
         selfUserID: QualifiedID,

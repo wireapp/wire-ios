@@ -31,6 +31,6 @@ public protocol ConversationStoreProtocol: Sendable {
     func fetchAllConversations() async throws -> [BackupConversationModel]
 
     /// Adds a conversation from the backup file to the local data store.
-    func addConversation(id: QualifiedID, name: String) async throws
+    func addConversation(_ conversation: BackupConversationModel) async throws
 
 }

@@ -31,6 +31,6 @@ public protocol UserStoreProtocol: Sendable {
     func fetchAllUsers() async throws -> [BackupUserModel]
 
     /// Adds a user from the backup file to the local data store.
-    func addUser(id: QualifiedID, name: String, handle: String) async throws
+    func addUser(_ user: BackupUserModel) async throws
 
 }

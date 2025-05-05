@@ -37,7 +37,7 @@ public struct ImportBackupUseCase<
 
     public init(
         selfUserID: QualifiedID,
-        userStore: UserStore, // TODO: create repository instances with a child context?
+        userStore: UserStore,
         conversationStore: ConversationStore,
         messageStore: MessageStore,
         fileUnarchiver: FileUnarchiver,
@@ -90,7 +90,7 @@ public struct ImportBackupUseCase<
                     try Task.checkCancellation()
 
                     let pagers = try await importer.importBackup(from: url, using: password)
-                    let total = Int(exactly: pagers.totalPagesCount) ?? 0 // TODO: why is a conversion needed?
+                    let total = Int(exactly: pagers.totalPagesCount) ?? 0
 
                     let storedUserIDs = try await userStore.fetchAllUserIDs()
                     let usersPager = pagers.usersPager
@@ -103,12 +103,12 @@ public struct ImportBackupUseCase<
                             else { continue }
 
                             if !storedUserIDs.contains(userID) {
-                                // TODO: create UserEntity from BackupUser here? make BackupUser conform to protocol?
-                                try await userStore.addUser(
+                                let user = BackupUserModel(
                                     id: userID,
                                     name: backupUser.name,
                                     handle: backupUser.handle
                                 )
+                                try await userStore.addUser(user)
                             }
 
                             if current % 50 == 0 || current == backupUsers.size - 1 {
@@ -128,11 +128,12 @@ public struct ImportBackupUseCase<
                                 let conversationID = QualifiedID(backupConversation.id)
                             else { continue }
 
-                            if !storedConversationIDs.contains(conversationID) { // TODO: what if it is in the db but marked as deleted?
-                                try await conversationStore.addConversation(
+                            if !storedConversationIDs.contains(conversationID) {
+                                let conversation = BackupConversationModel(
                                     id: conversationID,
                                     name: backupConversation.name
                                 )
+                                try await conversationStore.addConversation(conversation)
                             }
 
                             if current % 50 == 0 || current == backupConversations.size - 1 {
@@ -154,7 +155,8 @@ public struct ImportBackupUseCase<
                                 let content = WireBackup.MessageContent(backupMessage.content)
                             else { continue }
 
-                            if !storedMessageIDs.contains(backupMessage.id) { // TODO: what if it is in the db but marked as deleted?
+                            if !storedMessageIDs
+                                .contains(backupMessage.id) {
                                 let message = BackupMessageModel(
                                     id: backupMessage.id,
                                     conversationID: conversationID,

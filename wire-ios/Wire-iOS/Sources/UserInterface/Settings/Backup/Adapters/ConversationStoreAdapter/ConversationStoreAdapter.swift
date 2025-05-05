@@ -53,18 +53,18 @@ struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtoc
         }
     }
 
-    func addConversation(id: QualifiedID, name: String) async throws {
+    func addConversation(_ backupConversation: BackupConversationModel) async throws {
         let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: id.id,
-            domain: id.domain
+            id: backupConversation.id.id,
+            domain: backupConversation.id.domain
         )
         await conversation.managedObjectContext?.perform {
-            conversation.userDefinedName = name
+            conversation.userDefinedName = backupConversation.name
         }
         await conversationLocalStore.storeConversation(
             needsBackendUpdate: true,
-            conversationID: id.id,
-            conversationDomain: id.domain
+            conversationID: backupConversation.id.id,
+            conversationDomain: backupConversation.id.domain
         )
     }
 
