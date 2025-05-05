@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 /// Keep tracks of each sync phase duration and the start time of a given phase.
 ///
 /// Used to log time for each sync phase along with the time a slow / quick sync took to complete.

@@ -22,28 +22,28 @@ import WireUtilities
 /// Sync related logs
 
 public extension LogAttributes {
-    
+
     // NSE
     static let newNSE = [LogAttributesKey.nse: "new"]
     static let legacyNSE = [LogAttributesKey.nse: "legacy"]
-    
+
     // Sync types
     static let initialSync = [LogAttributesKey.syncType: "initial"]
     static let incrementalSync = [LogAttributesKey.syncType: "incremental"]
-    
+
     // Sync versions
     static let syncV1 = [LogAttributesKey.syncVersion: "v1"]
     static let syncV2 = [LogAttributesKey.syncVersion: "v2"]
     static let syncV3 = [LogAttributesKey.syncVersion: "v3"]
-    
+
     // MARK: - Legacy sync (V1)
-    
+
     static func legacySyncDidStartAttributes(
         initialSync: Bool
     ) -> Self {
         baseLegacySyncAttributes(initialSync: initialSync)
     }
-    
+
     static func legacySyncDidFinishAttributes(
         duration: String,
         initialSync: Bool
@@ -53,7 +53,7 @@ public extension LogAttributes {
             [.duration: duration]
         )
     }
-    
+
     static func legacySyncPhaseDidStartAttributes(
         _ phase: String,
         initialSync: Bool
@@ -63,7 +63,7 @@ public extension LogAttributes {
             [.syncPhase: phase]
         )
     }
-    
+
     static func legacySyncPhaseDidCompleteAttributes(
         _ phase: String,
         duration: String,
@@ -74,7 +74,7 @@ public extension LogAttributes {
             [.syncPhase: phase, .duration: duration]
         )
     }
-    
+
     private static func baseLegacySyncAttributes(
         initialSync: Bool
     ) -> Self {
@@ -84,15 +84,15 @@ public extension LogAttributes {
             .safePublic
         )
     }
-    
+
     // MARK: - New sync (V2, V3)
-    
+
     static func newSyncAttributes(
         initialSync: Bool
     ) -> Self {
         baseNewSyncAttributes(initialSync: initialSync)
     }
-    
+
     static func newSyncPhaseAttributes(
         _ phase: String,
         initialSync: Bool
@@ -102,7 +102,7 @@ public extension LogAttributes {
             [.syncPhase: phase]
         )
     }
-    
+
     private static func baseNewSyncAttributes(
         initialSync: Bool
     ) -> Self {

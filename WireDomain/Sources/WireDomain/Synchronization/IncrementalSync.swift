@@ -55,23 +55,23 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             attributes: .newSyncAttributes(initialSync: false)
         ) {
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
-            
+
             logger.info("opening push channel")
             let liveEventStream = try await pushChannel.open()
-            
+
             logger.info("pulling pending update events")
             try await updateEventsSync.pull()
-            
+
             logger.info("processing stored update events")
             let processedEnvelopeIDs = try await processStoredEvents()
-            
+
             let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver] in
                 logger.info("handling live event stream")
-                
+
                 do {
                     for try await var envelope in liveEventStream {
                         logger.info("received live event envelope")
-                        
+
                         if processedEnvelopeIDs.contains(envelope.id) {
                             logger.info(
                                 "live event already processed, skipping...",
@@ -79,7 +79,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             )
                             continue
                         }
-                        
+
                         do {
                             // Decrypt.
                             logger.info(
@@ -94,7 +94,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             )
                             continue
                         }
-                        
+
                         let index: Int64
                         do {
                             // Store.
@@ -111,7 +111,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             )
                             continue
                         }
-                        
+
                         // Process.
                         for event in envelope.events {
                             do {
@@ -127,7 +127,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                                 )
                             }
                         }
-                        
+
                         do {
                             // Delete.
                             logger.info(
@@ -141,25 +141,25 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                                 attributes: [.eventEnvelopeID: envelope.id]
                             )
                         }
-                        
+
                         await store.calculateLastUnreadMessages()
-                        
+
                         do {
                             // Save.
                             try await databaseSaver.save()
                         } catch {
                             logger.error("failed to save database: \(String(describing: error))")
                         }
-                        
+
                     }
-                    
+
                 } catch {
                     logger.warn("live event stream encountered error: \(String(describing: error))")
                 }
-                
+
                 logger.debug("live event stream did finish")
             }
-            
+
             return Token(task: task, closePushChannel: {
                 await pushChannel.close()
             })

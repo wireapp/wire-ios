@@ -71,21 +71,21 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let teamID = try await pullSelfUser()
         try await pullSelfUserClients()
         try await pullSelfUserSettings()
-        
+
         if let teamID {
             try await pullSelfTeam(teamID: teamID)
             try await pullSelfTeamRoles(teamID: teamID)
             try await pullSelfTeamMembers(teamID: teamID)
             try await pullSelfLegalholdInfo(teamID: teamID)
         }
-        
+
         try await pullUserConnections()
         try await pullAllConversations()
-        
+
         // Pulling known users must happen after we've discovered
         // user ids from user connections and conversations.
         try await pullKnownUsers()
-        
+
         try await pullConversationLabels()
         try await pullFeatureConfigs()
         try await pullMLSStatus()
@@ -93,8 +93,8 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullSelfUser() async throws -> UUID? {
         let phase = "pulling self user"
-        
-        let teamID = try await logger.measureTime(
+
+        return try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
@@ -104,13 +104,11 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
                 throw Failure(resourceName: phase, reason: error)
             }
         }
-        
-        return teamID
     }
 
     private func pullSelfUserClients() async throws {
         let phase = "pulling self user clients"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -125,7 +123,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullSelfUserSettings() async throws {
         let phase = "pulling self user settings"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -140,7 +138,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullSelfTeam(teamID: UUID) async throws {
         let phase = "pulling self team"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -155,7 +153,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullSelfTeamRoles(teamID: UUID) async throws {
         let phase = "pulling self team roles"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -170,7 +168,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullSelfTeamMembers(teamID: UUID) async throws {
         let phase = "pulling self team members"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -185,7 +183,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullSelfLegalholdInfo(teamID: UUID) async throws {
         let phase = "pull self legal hold info"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -200,7 +198,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullUserConnections() async throws {
         let phase = "pull user connections"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -215,7 +213,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullAllConversations() async throws {
         let phase = "pull conversations"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -230,7 +228,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullKnownUsers() async throws {
         let phase = "pull known users"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -245,7 +243,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullConversationLabels() async throws {
         let phase = "pull conversation labels"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -260,7 +258,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullFeatureConfigs() async throws {
         let phase = "pull feature configs"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
@@ -275,7 +273,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private func pullMLSStatus() async throws {
         let phase = "pulling MLS status"
-        
+
         try await logger.measureTime(
             label: "sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)

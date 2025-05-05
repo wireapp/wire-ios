@@ -46,7 +46,7 @@ public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
     public var isLastSlowSyncPhase: Bool {
         self == Self.lastSlowSyncPhase
     }
-    
+
     public var isLastQuickSyncPhase: Bool {
         self == Self.lastQuickSyncPhase
     }
