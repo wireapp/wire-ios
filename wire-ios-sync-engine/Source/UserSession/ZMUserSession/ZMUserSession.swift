@@ -606,9 +606,6 @@ public final class ZMUserSession: NSObject {
         self.syncAgent = syncAgent
         syncAgent.delegate = self
 
-        // TODO: [WPB-17223] remove `resume` call from here
-        syncAgent.resume()
-
         // Finish setting up the final strategies.
         if
             let strategyDirectory = strategyDirectory as? StrategyDirectory,
@@ -626,6 +623,9 @@ public final class ZMUserSession: NSObject {
                 quickSyncObserver: quickSyncObserver
             )
         }
+
+        // TODO: [WPB-17223] remove `resume` call from here
+        syncAgent.resume()
     }
 
     func onProcessedCallEvent(callEventInfo: CallEventInfo) {
