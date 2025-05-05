@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import KaliumBackup
 
 extension BackupMessage {
@@ -93,13 +94,13 @@ private func assetAssetMetadata(
         BackupMessageContent.AssetAssetMetadataVideo(
             width: metadata.width.map { KotlinInt(int: $0) },
             height: metadata.height.map { KotlinInt(int: $0) },
-            duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }
+            duration: metadata.duration.map { KotlinLong(value: Int64($0)) }
         )
 
     case let .audio(metadata):
         BackupMessageContent.AssetAssetMetadataAudio(
             normalization: metadata.normalization.map { KotlinByteArray($0) },
-            duration: metadata.duration.map { KotlinLong(longLong: Int64($0)) }
+            duration: metadata.duration.map { KotlinLong(value: Int64($0)) }
         )
 
     case let .generic(metadata):

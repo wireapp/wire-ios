@@ -179,8 +179,9 @@ public struct ImportBackupUseCase<
                     continuation.yield(.done)
                     continuation.finish()
 
+                } catch BackupImporter.OpenBackupError.parsingFailed {
+                    continuation.finish(throwing: ImportBackupError.incompatibleFileFormat)
                 } catch {
-                    // TODO: roll back?
                     continuation.finish(throwing: error)
                 }
             }

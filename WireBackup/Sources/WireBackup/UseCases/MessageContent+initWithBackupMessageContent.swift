@@ -68,7 +68,7 @@ extension WireBackup.MessageContent.AssetContent {
     init(_ assetContent: BackupMessageContent.Asset) {
         self.init(
             mimeType: assetContent.mimeType,
-            size: UInt64(assetContent.size), // TODO: [WPB-16658] match data types between CoreCrypto, Kalium and iOS 
+            size: UInt64(assetContent.size), // TODO: [WPB-16658] match data types between CoreCrypto, Kalium and iOS
             name: assetContent.name,
             otrKey: Data(assetContent.otrKey),
             sha256: Data(assetContent.sha256),

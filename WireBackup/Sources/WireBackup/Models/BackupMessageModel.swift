@@ -97,7 +97,8 @@ public extension MessageContent {
             case image(ImageMetadata)
             case video(VideoMetadata)
             case audio(AudioMetadata)
-            case generic(GenericMetadata) // TODO: why is generic needed? `name` exists in `AssetContent`, CoreCrypto only has image, video and audio metadata types
+            // TODO: [WPB-16658] check if the `.generic` case needs to be used
+            case generic(GenericMetadata)
 
         }
     }

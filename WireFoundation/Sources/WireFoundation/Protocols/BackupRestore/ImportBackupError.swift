@@ -18,7 +18,7 @@
 
 public enum ImportBackupError: Error {
     case invalidFileExtension
-    case incompatibleFileFormat // there is no mapping to this error (it's never thrown) // TODO: still true?
+    case incompatibleFileFormat
     /// The backup file is encrypted and a password is needed for decryption.
     case passwordRequired
 }
