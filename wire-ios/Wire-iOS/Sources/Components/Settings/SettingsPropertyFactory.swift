@@ -435,6 +435,20 @@ final class SettingsPropertyFactory {
                     storage.set(enabled.boolValue, forKey: .collapseOwnMessages)
                 }
             )
+            
+        case .conversationBackground:
+            let userId = selfUser!.remoteIdentifier!
+            let storage = PrivateUserDefaults<ConversationBackgroundKey>(userID: userId)
+            return SettingsBlockProperty(
+                propertyName: propertyName,
+                getAction: { _ in
+                    SettingsPropertyValue(storage.bool(forKey: .conversationBackground))
+                },
+                setAction: { _, value, _ in
+                    guard case let .number(enabled) = value else { return }
+                    storage.set(enabled.boolValue, forKey: .conversationBackground)
+                }
+            )
 
         default:
             if let userDefaultsKey = type(of: self).userDefaultsPropertiesToKeys[propertyName] {
@@ -452,4 +466,8 @@ final class SettingsPropertyFactory {
 
 enum CollapseKey: String, DefaultsKey {
     case collapseOwnMessages
+}
+
+enum ConversationBackgroundKey: String, DefaultsKey {
+    case conversationBackground
 }
