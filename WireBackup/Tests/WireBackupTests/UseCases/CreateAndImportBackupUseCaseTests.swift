@@ -24,7 +24,7 @@ import XCTest
 
 @testable import WireBackup
 
-final class CreateBackupUseCaseTests: XCTestCase {
+final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
     private typealias UserStoreMock = UserStoreProtocolMock
     private typealias ConversationStoreMock = ConversationStoreProtocolMock
@@ -72,8 +72,16 @@ final class CreateBackupUseCaseTests: XCTestCase {
         userStoreMock = nil
     }
 
-    func testExample() throws {
-        throw XCTSkip() // TODO: [WPB-16658] will be finished with the restore part
+    func testHappyPath() throws {
+        // TODO: [WPB-16658] create mock models, run create and then import & compare
+
+        // let user = BackupUserModel(...)
+        // let conversations = ...
+        throw XCTSkip("not yet implemented")
     }
+
+    // TODO: [WPB-16658] maybe importing a backup file from another platform could be tested
+
+    // TODO: [WPB-16658] edge cases?
 
 }

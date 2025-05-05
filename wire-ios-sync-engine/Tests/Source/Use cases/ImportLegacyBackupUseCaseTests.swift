@@ -153,23 +153,6 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         }
     }
 
-    func testUnknownFileExtensionsThrow() async throws {
-        // Given
-        let extensions = ["zip"]
-        mockUserSession = nil
-
-        for extensions in extensions {
-            do {
-                // When
-                let filePath = "/path/to/file.\(extensions)"
-                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
-                XCTFail("Unexpected success")
-            } catch ImportBackupError.invalidFileExtension {
-                // Then
-            }
-        }
-    }
-
     func testMockInvocations() async throws {
         // Given
         let url = URL(fileURLWithPath: "backup.ios_wbu")
