@@ -4,6 +4,12 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.126.0
+
+* added `WireCellsMessageAttachmentDraft` entity
+* added `wireCellsMessageAttachmentDrafts` attribute to Conversation entity
+* added `cellName` attribute to Conversation entity
+
 ### 2.125.0
 
 * added `asyncStreamCapable` attribute on the UserClient entity
