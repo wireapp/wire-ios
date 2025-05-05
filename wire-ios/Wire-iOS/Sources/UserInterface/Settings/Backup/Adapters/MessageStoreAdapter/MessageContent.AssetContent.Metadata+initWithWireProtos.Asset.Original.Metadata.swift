@@ -44,7 +44,7 @@ extension MessageContent.AssetContent.Metadata {
         self = .video(
             width: videoMetaData.width,
             height: videoMetaData.height,
-            duration: videoMetaData.hasDurationInMillis ? videoMetaData.durationInMillis : nil // TODO: check if conversion is needed
+            duration: videoMetaData.hasDurationInMillis ? videoMetaData.durationInMillis : nil
         )
     }
 
