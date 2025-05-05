@@ -31,8 +31,9 @@ public extension WireLogger {
         let result = try await block()
         let durationInSeconds = start.timeIntervalSinceNow.magnitude
         var updatedAttributes = attributes
-        updatedAttributes[.duration] = String(format: "%.2f", durationInSeconds)
-        let completedMessage = "did complete \(label)"
+        let formattedDuration = String(format: "%.2f", durationInSeconds)
+        updatedAttributes[.duration] = formattedDuration
+        let completedMessage = "did complete \(label) in \(formattedDuration) seconds"
         info(completedMessage, attributes: updatedAttributes)
         return result
     }

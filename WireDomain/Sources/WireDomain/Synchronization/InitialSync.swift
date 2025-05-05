@@ -58,7 +58,7 @@ public struct InitialSync: InitialSyncProtocol {
         let phase = "pulling last update event id"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -72,7 +72,7 @@ public struct InitialSync: InitialSyncProtocol {
     private func pullResources() async throws {
         try await logger.measureTime(label: "pull resources") {
             do {
-                logger.info("pulling resources")
+                logger.debug("pulling resources")
                 try await pullResourcesSync.pull()
             } catch {
                 throw Failure(phase: "perform resource sync", reason: error)
@@ -84,7 +84,7 @@ public struct InitialSync: InitialSyncProtocol {
         let phase = "push supported protocols"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -99,7 +99,7 @@ public struct InitialSync: InitialSyncProtocol {
         let phase = "resolve one on one conversations"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {

@@ -51,7 +51,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
     public func perform() async throws -> Token {
         try await logger.measureTime(
-            label: "incremental sync",
+            label: "new incremental sync",
             attributes: .newSyncAttributes(initialSync: false)
         ) {
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)

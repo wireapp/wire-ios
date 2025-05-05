@@ -95,7 +95,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pulling self user"
 
         return try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -110,7 +110,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pulling self user clients"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -125,7 +125,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pulling self user settings"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -140,7 +140,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pulling self team"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -155,7 +155,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pulling self team roles"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -170,7 +170,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pulling self team members"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -185,7 +185,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pull self legal hold info"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -200,7 +200,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pull user connections"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -215,7 +215,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pull conversations"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -230,7 +230,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pull known users"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -245,7 +245,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pull conversation labels"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -260,7 +260,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pull feature configs"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -275,7 +275,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         let phase = "pulling MLS status"
 
         try await logger.measureTime(
-            label: "sync phase: \(phase)",
+            label: "new sync phase: \(phase)",
             attributes: .newSyncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
