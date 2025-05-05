@@ -24,9 +24,9 @@ import Foundation
 public protocol IncrementalSyncProtocol {
 
     /// Perform the incremental sync.
-    ///
+    /// - Parameter acknowledgeFullSync: In case of New incremental sync, this will inform backend a full sync has been done
     /// - Returns: A token to retain to keep the push channel open.
 
-    func perform() async throws -> IncrementalSync.Token
+    func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token
 
 }

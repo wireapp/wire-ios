@@ -33,7 +33,6 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
     private let logger = WireLogger.sync
-
     public init(
         selfClientID: String,
         pushChannelAPI: any PushChannelAPI,
@@ -49,11 +48,15 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
         self.processor = processor
         self.databaseSaver = databaseSaver
     }
-
-    public func perform() async throws -> IncrementalSync.Token {
+    
+    public func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token {
         logger.debug("performing incremental sync")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
+        if acknowledgeFullSync {
+            try await pushChannel.ackFullSync()
+        }
+        
         logger.debug("opening new push channel")
         let liveEventStream = try await pushChannel.open()
 

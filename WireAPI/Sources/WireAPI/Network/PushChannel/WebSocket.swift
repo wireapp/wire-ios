@@ -92,10 +92,16 @@ public actor WebSocket: WebSocketProtocol {
     }
 
     public func write(data: Data) async throws {
+        if !connection.isOpen {
+            connection.resume()
+        }
         try await connection.send(.data(data))
     }
 
     public func write(string: String) async throws {
+        if !connection.isOpen {
+            connection.resume()
+        }
         try await connection.send(.string(string))
     }
 

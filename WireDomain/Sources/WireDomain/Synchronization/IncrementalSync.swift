@@ -21,6 +21,7 @@ import WireAPI
 import WireLogging
 
 public struct IncrementalSync: IncrementalSyncProtocol {
+    
 
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelAPI
@@ -49,7 +50,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.databaseSaver = databaseSaver
     }
 
-    public func perform() async throws -> Token {
+    public func perform(acknowledgeFullSync: Bool) async throws -> Token {
         logger.debug("performing incremental sync")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 

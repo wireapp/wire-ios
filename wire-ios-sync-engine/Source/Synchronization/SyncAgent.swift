@@ -152,7 +152,7 @@ final class SyncAgent: NSObject {
 
     /// Perform an incremental sync.
 
-    func performIncrementalSync() async throws {
+    func performIncrementalSync(shouldAcknowledgeFullSync: Bool = false) async throws {
         if journal[.isSyncV2Enabled] {
             guard incrementalSyncToken == nil else {
                 WireLogger.sync.info("incremental sync already running...")
@@ -163,14 +163,14 @@ final class SyncAgent: NSObject {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
                     delegate?.syncAgentDidFinishIncrementalSync(self)
                 }
             } catch NewIncrementalSync.Failure.needsInitialSync {
                 WireLogger.sync.debug("slow sync requested by sync v3")
                 try await performInitialSync()
                 WireLogger.sync.debug("slow sync done, restarting live sync")
-                try await performIncrementalSync()
+                try await performIncrementalSync(shouldAcknowledgeFullSync: true)
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
                 throw error

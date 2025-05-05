@@ -80,6 +80,8 @@ public final class NewPushChannel: PushChannelProtocol {
         WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV3)
         await webSocket.close()
     }
+    
+    // MARK: - Helpers
 
     private func write(data: Data) async throws {
         WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV3)
