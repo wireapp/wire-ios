@@ -38,8 +38,8 @@ public enum URLAction: Equatable {
     /// Navigate to a conversation
     case openConversation(id: UUID)
 
-    /// The UI search for the user ID and open the profile view for connection request if not connected
-    case openUserProfile(id: UUID, domain: String?) //TODO: upadte comment
+    /// The UI search for the user ID and domain,  and open the profile view for connection request if not connected
+    case openUserProfile(id: UUID, domain: String?)
 
     /// Switch to a custom backend
     case accessBackend(configurationURL: URL)
