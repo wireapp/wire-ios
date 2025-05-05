@@ -27,7 +27,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
     var localNotificationDispatcher: MockPushMessageHandler!
     var sut: ClientMessageRequestStrategy!
-    var mockApplicationStatus: MockApplicationStatus!
     var mockAttachmentsDetector: MockAttachmentDetector!
     var mockMessageSender: MockMessageSenderInterface!
     var apiVersion: APIVersion! {
@@ -41,8 +40,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performAndWait { [self] in
             localNotificationDispatcher = MockPushMessageHandler()
-            mockApplicationStatus = MockApplicationStatus()
-            mockApplicationStatus.mockSynchronizationState = .online
             mockAttachmentsDetector = MockAttachmentDetector()
             mockMessageSender = MockMessageSenderInterface()
             LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
@@ -55,7 +52,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
     override func tearDown() {
         localNotificationDispatcher = nil
-        mockApplicationStatus = nil
         mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
         sut = nil
@@ -72,7 +68,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         sut = ClientMessageRequestStrategy(
             context: syncMOC,
             localNotificationDispatcher: localNotificationDispatcher,
-            applicationStatus: mockApplicationStatus,
             messageSender: mockMessageSender
         )
     }

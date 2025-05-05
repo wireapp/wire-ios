@@ -16,34 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: document
+import Foundation
 
-public enum SyncState: Equatable {
+// sourcery: AutoMockable
+public protocol QuickSyncObserverInterface {
 
-    /// The app is not syncing.
-    case idle
+    func waitUntilCanSendMessage() async
 
-    /// Initial sync is ongoing.
-    case initialSyncing(InitialSyncState)
+}
 
-    /// Incremental sync is ongoing.
-    case incrementalSyncing(IncrementalSyncState)
+public extension Notification.Name {
 
-    /// App is up to date and processing live events.
-    case liveSyncing
+    /// Published before the first event is decrypted and stored.
+    static let didStartDecryptingEventsNotification = Self("EventProcessorDidStartDecryptingEventsNotification")
 
-    public enum InitialSyncState: Equatable {
-        case pullLastEventID
-        case pullResources
-        case pushSupportedProtocols
-        case resolveOneOnOneConversations
-    }
-
-    public enum IncrementalSyncState: Equatable {
-        case createPushChannel
-        case openPushChannel
-        case pullPendingEvents
-        case processPendingEvents
-    }
-
+    /// Published after the last event has been decrypted and stored.
+    static let didStopDecryptingEventsNotification = Self("EventProcessorDidFinishDecryptingEventsNotification")
 }

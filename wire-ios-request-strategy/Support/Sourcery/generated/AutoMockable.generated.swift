@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -1233,16 +1233,16 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
     public init() {}
 
 
-    // MARK: - waitForDecryptionOfEventsToFinish
+    // MARK: - waitUntilCanSendMessage
 
-    public var waitForDecryptionOfEventsToFinish_Invocations: [Void] = []
-    public var waitForDecryptionOfEventsToFinish_MockMethod: (() async -> Void)?
+    public var waitUntilCanSendMessage_Invocations: [Void] = []
+    public var waitUntilCanSendMessage_MockMethod: (() async -> Void)?
 
-    public func waitForDecryptionOfEventsToFinish() async {
-        waitForDecryptionOfEventsToFinish_Invocations.append(())
+    public func waitUntilCanSendMessage() async {
+        waitUntilCanSendMessage_Invocations.append(())
 
-        guard let mock = waitForDecryptionOfEventsToFinish_MockMethod else {
-            fatalError("no mock for `waitForDecryptionOfEventsToFinish`")
+        guard let mock = waitUntilCanSendMessage_MockMethod else {
+            fatalError("no mock for `waitUntilCanSendMessage`")
         }
 
         await mock()

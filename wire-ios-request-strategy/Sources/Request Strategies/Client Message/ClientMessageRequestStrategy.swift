@@ -42,7 +42,6 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     public init(
         context: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
-        applicationStatus: ApplicationStatus,
         messageSender: MessageSenderInterface
     ) {
         self.insertedObjectSync = InsertedObjectSync(

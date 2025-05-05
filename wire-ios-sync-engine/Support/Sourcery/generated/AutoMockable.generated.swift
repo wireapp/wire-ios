@@ -26,6 +26,8 @@
 
 import WireAnalytics
 import WireAPI
+import WireDomain
+import Combine
 
 @testable import WireSyncEngine
 
@@ -1195,6 +1197,41 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
             fatalError("no mock for `calculateSupportedProtocols`")
         }
     }
+
+}
+
+class MockSyncAgentProtocol: SyncAgentProtocol {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isSyncV2Enabled
+
+    var isSyncV2Enabled: Bool {
+        get { return underlyingIsSyncV2Enabled }
+        set(value) { underlyingIsSyncV2Enabled = value }
+    }
+
+    var underlyingIsSyncV2Enabled: Bool!
+
+    // MARK: - isLive
+
+    var isLive: Bool {
+        get { return underlyingIsLive }
+        set(value) { underlyingIsLive = value }
+    }
+
+    var underlyingIsLive: Bool!
+
+    // MARK: - syncStatePublisher
+
+    var syncStatePublisher: AnyPublisher<SyncState, Never> {
+        get { return underlyingSyncStatePublisher }
+        set(value) { underlyingSyncStatePublisher = value }
+    }
+
+    var underlyingSyncStatePublisher: AnyPublisher<SyncState, Never>!
+
 
 }
 

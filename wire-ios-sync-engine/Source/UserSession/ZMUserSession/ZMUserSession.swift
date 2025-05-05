@@ -610,6 +610,24 @@ public final class ZMUserSession: NSObject {
 
         // TODO: [WPB-17223] remove `resume` call from here
         syncAgent.resume()
+
+        // Finish setting up the final strategies.
+        if
+            let strategyDirectory = strategyDirectory as? StrategyDirectory,
+            let localNotificationDispatcher {
+            let quickSyncObserver = QuickSyncObserver(
+                syncAgent: syncAgent,
+                notificationContext: notificationContext
+            )
+            strategyDirectory.makeRemainingStategies(
+                applicationStatusDirectory: applicationStatusDirectory,
+                syncContext: syncContext,
+                transportSession: transportSession,
+                pushMessageHandler: localNotificationDispatcher,
+                flowManager: flowManager,
+                quickSyncObserver: quickSyncObserver
+            )
+        }
     }
 
     func onProcessedCallEvent(callEventInfo: CallEventInfo) {

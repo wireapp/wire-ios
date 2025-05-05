@@ -97,7 +97,7 @@ final class MessageSenderTests: MessagingTestBase {
         try? await messageSender.sendMessage(message: message)
 
         // then
-        XCTAssertEqual(1, arrangement.quickSyncObserver.waitForDecryptionOfEventsToFinish_Invocations.count)
+        XCTAssertEqual(1, arrangement.quickSyncObserver.waitUntilCanSendMessage_Invocations.count)
     }
 
     func testThatWhenApiVersionIsNotResolved_thenFailWithUnresolvedApiVersion() async throws {
@@ -705,7 +705,6 @@ final class MessageSenderTests: MessagingTestBase {
         let apiProvider = MockAPIProviderInterface()
         let messageApi = MockMessageAPI()
         let processor = MockPrekeyPayloadProcessorInterface()
-        let clientRegistrationDelegate = MockClientRegistrationStatus()
         let sessionEstablisher = MockSessionEstablisherInterface()
         let messageDependencyResolver = MockMessageDependencyResolverInterface()
         let quickSyncObserver = MockQuickSyncObserverInterface()
@@ -725,7 +724,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withQuickSyncObserverCompleting() -> Arrangement {
-            quickSyncObserver.waitForDecryptionOfEventsToFinish_MockMethod = {}
+            quickSyncObserver.waitUntilCanSendMessage_MockMethod = {}
             return self
         }
 
@@ -841,11 +840,10 @@ final class MessageSenderTests: MessagingTestBase {
                 self,
                 MessageSender(
                     apiProvider: apiProvider,
-                    clientRegistrationDelegate: clientRegistrationDelegate,
                     sessionEstablisher: sessionEstablisher,
                     messageDependencyResolver: messageDependencyResolver,
-                    quickSyncObserver: quickSyncObserver,
-                    context: coreDataStack.syncContext
+                    context: coreDataStack.syncContext,
+                    quickSyncObserver: quickSyncObserver
                 )
             )
         }
