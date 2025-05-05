@@ -23,7 +23,7 @@ public protocol MessageStoreProtocol: Sendable {
     func totalMessageCount() async throws -> Int
 
     /// Returns the IDs of all messages stored in the local database, including deleted ones.
-    func fetchAllMessageIDs() async throws -> [BackupMessageModel.ID]
+    func fetchAllMessageIDs() async throws -> [String]
 
     /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() async throws -> [BackupMessageModel]

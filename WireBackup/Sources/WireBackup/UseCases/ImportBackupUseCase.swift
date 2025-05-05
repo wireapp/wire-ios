@@ -104,7 +104,7 @@ public struct ImportBackupUseCase<
 
                             if !storedUserIDs.contains(userID) {
                                 let user = BackupUserModel(
-                                    id: userID,
+                                    qualifiedID: userID,
                                     name: backupUser.name,
                                     handle: backupUser.handle
                                 )
@@ -130,7 +130,7 @@ public struct ImportBackupUseCase<
 
                             if !storedConversationIDs.contains(conversationID) {
                                 let conversation = BackupConversationModel(
-                                    id: conversationID,
+                                    qualifiedID: conversationID,
                                     name: backupConversation.name
                                 )
                                 try await conversationStore.addConversation(conversation)
@@ -155,8 +155,7 @@ public struct ImportBackupUseCase<
                                 let content = WireBackup.MessageContent(backupMessage.content)
                             else { continue }
 
-                            if !storedMessageIDs
-                                .contains(backupMessage.id) {
+                            if !storedMessageIDs.contains(backupMessage.id) {
                                 let message = BackupMessageModel(
                                     id: backupMessage.id,
                                     conversationID: conversationID,

@@ -55,7 +55,7 @@ struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
 
     func addUser(_ user: BackupUserModel) async throws {
         let userInfo = NewUserInfo(
-            userID: WireDataModel.QualifiedID(user.id),
+            userID: WireDataModel.QualifiedID(user.qualifiedID),
             name: user.name,
             handle: user.handle,
             teamID: nil,
@@ -94,7 +94,7 @@ extension BackupUserModel {
         guard let qualifiedID = user.qualifiedID else { return nil }
 
         self.init(
-            id: QualifiedID(qualifiedID),
+            qualifiedID: QualifiedID(qualifiedID),
             name: user.name ?? "",
             handle: user.handle ?? ""
         )
