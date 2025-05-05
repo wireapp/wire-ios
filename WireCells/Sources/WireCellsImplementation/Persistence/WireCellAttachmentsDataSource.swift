@@ -46,7 +46,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
                 fileSize: node.size ?? 0,
                 dataPath: dataPath,
                 nodePath: node.path,
-                uploadStatus: uploadStatus.rawValue,
+                uploadStatus: uploadStatus,
                 assetWidth: metadata?.width.map { UInt64($0) },
                 assetHeight: metadata?.height.map { UInt64($0) },
                 assetDuration: metadata?.durationMs.map { UInt64($0) }
@@ -69,7 +69,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         status: WireCellsAttachmentUploadStatus
     ) async throws(MessageAttachmentDraftRepositoryError) {
         do {
-            try await messageAttachmentDAO.updateUploadStatus(draftID: draftID, status: status.rawValue)
+            try await messageAttachmentDAO.updateUploadStatus(draftID: draftID, status: status)
         } catch {
             throw .genericError(error)
         }
