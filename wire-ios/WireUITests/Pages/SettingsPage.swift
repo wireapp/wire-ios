@@ -23,11 +23,11 @@ class SettingsPage: PageModel {
         let elementsQuery = app.cells
         return elementsQuery["Account"]
     }
-    
+
     func openAccountSettings() -> AccountSettingsPage {
         let accountSettings = accountSettingsMenu()
         accountSettings.waitForExistence(timeout: 1)
         accountSettings.tap()
-        return AccountSettingsPage(theApp:app)
+        return AccountSettingsPage(theApp: app)
     }
 }

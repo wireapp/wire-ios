@@ -19,7 +19,7 @@
 import XCTest
 
 class LoginPage: PageModel  {
-    
+
     func nextButton() -> XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Next"]
@@ -29,23 +29,22 @@ class LoginPage: PageModel  {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Create Personal Account"]
     }
-    
+
     func emailTextField() -> XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
-        let textField = elementsQuery.textFields["Email or SSO code"]
-        return textField
+        return elementsQuery.textFields["Email or SSO code"]
     }
-    
-    func typeEmailOrSSO(email:String) -> LoginPage {
+
+    func typeEmailOrSSO(email: String) -> LoginPage {
         let textField = emailTextField()
         textField.tap()
         textField.typeText(email)
         nextButton().tap()
         return self
     }
-    
+
     func useCreatePersonalAccountLink() -> RegistrationPage {
         createPersonalAccountLink().tap()
-        return RegistrationPage(theApp:app)
+        return RegistrationPage(theApp: app)
     }
 }

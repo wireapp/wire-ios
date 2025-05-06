@@ -19,27 +19,27 @@
 import XCTest
 
 class RegistrationPage: PageModel {
-    
+
     func nameNextButton() -> XCUIElement {
         let elementsQuery = nameField().buttons.matching(identifier: "ConfirmButton")
         return elementsQuery.firstMatch
     }
-    
+
     func passwordNextButton() -> XCUIElement {
         let elementsQuery = passwordField().buttons.matching(identifier: "RevealButton")
         return elementsQuery.firstMatch
     }
-    
+
     func nameField() -> XCUIElement {
         let elementsQuery = app.otherElements.textFields.matching(identifier: "NameField")
         return elementsQuery.firstMatch
     }
-    
+
     func passwordField() -> XCUIElement {
         let elementsQuery = app.otherElements.secureTextFields.matching(identifier: "PasswordField")
         return elementsQuery.firstMatch
     }
-    
+
     func usernameField() -> XCUIElement {
         let elementsQuery = app.textFields.matching(identifier: "UsernameField")
         return elementsQuery.firstMatch
@@ -49,53 +49,53 @@ class RegistrationPage: PageModel {
         let elementsQuery = usernameField().buttons
         return elementsQuery.firstMatch
     }
-    
+
     func newNextButton() -> XCUIElement {
         let elementsQuery = app.otherElements
         return elementsQuery.buttons["ConfirmButton"]
     }
-    
+
     func acceptButton() -> XCUIElement {
         let elementsQuery = app.otherElements
         return elementsQuery.buttons["Accept"]
     }
-    
+
     func verificationCodeInput() -> XCUIElement {
         let elementsQuery = app.textViews.matching(identifier: "VerificationCode")
         return elementsQuery.firstMatch
     }
-    
-    func enterVerificationCode(verificationCode:String) -> RegistrationPage {
+
+    func enterVerificationCode(verificationCode: String) -> RegistrationPage {
         let input = verificationCodeInput()
         input.tap()
         input.typeText(verificationCode)
         return self
     }
-    
-    func setName(name:String) -> RegistrationPage {
+
+    func setName(name: String) -> RegistrationPage {
         let nameInput = nameField()
         nameInput.tap()
         nameInput.typeText("Smoke Tester")
         nameNextButton().tap()
         return self
     }
-    
-    func setPassword(password:String) -> RegistrationPage {
+
+    func setPassword(password: String) -> RegistrationPage {
         let passwordInput = passwordField()
         passwordInput.tap()
         passwordInput.typeText(password)
         passwordNextButton().tap()
         return self
     }
-    
-    func setUsername(username:String) -> ConversationsPage {
+
+    func setUsername(username: String) -> ConversationsPage {
         let usernameInput = usernameField()
         usernameInput.tap()
         usernameInput.typeText(username)
         usernameConfirmButton().tap()
         return ConversationsPage(theApp: app)
     }
-    
+
     func confirmCreateAccount() -> RegistrationPage {
         let confirmButton = newNextButton()
         confirmButton.waitForExistence(timeout: 1)

@@ -23,18 +23,18 @@ class ConversationsPage: PageModel {
         let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
         return elementsQuery.firstMatch
     }
-    
+
     func isPresent() -> Bool {
-        return profileImage().exists
+        profileImage().exists
     }
-    
+
     func settingsButton() -> XCUIElement {
         let elementsQuery = app.buttons.matching(identifier: "bottomBarSettingsButton")
         return elementsQuery.firstMatch
     }
-    
+
     func openSettings() -> SettingsPage {
         settingsButton().tap()
-        return SettingsPage(theApp:app)
+        return SettingsPage(theApp: app)
     }
 }

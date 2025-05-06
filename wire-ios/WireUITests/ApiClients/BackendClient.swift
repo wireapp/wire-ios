@@ -19,50 +19,49 @@
 import Foundation
 
 class BackendClient {
-    func loginViaAPI(email:String, password:String) async throws -> String {
+    func loginViaAPI(email: String, password: String) async throws -> String {
         let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
         let url = URL(string: "\(backendURL)/v8/login")
         guard let requestUrl = url else { fatalError() }
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "POST"
-        let body:[String: Any] = ["email":"\(email)", "password":"\(password)"]
+        let body: [String: Any] = ["email": "\(email)", "password": "\(password)"]
         print(body)
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        let (responseData,response) = try await URLSession.shared.data(for: request)
-        
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+
         let pureResponse = response as! HTTPURLResponse
-        if(pureResponse.statusCode != 200) {
+        if pureResponse.statusCode != 200 {
             print("Error! got status code \(pureResponse.statusCode)")
             print("Response: \(pureResponse.description)")
-            throw(RuntimeError("Error \(pureResponse.description)"))
+            throw (RuntimeError("Error \(pureResponse.description)"))
         }
-        
-        let message:LoginMessage = try! JSONDecoder().decode(LoginMessage.self, from:responseData)
-        let access_code = message.access_token
-        return access_code
+
+        let message: LoginMessage = try! JSONDecoder().decode(LoginMessage.self, from: responseData)
+        return message.access_token
     }
-    
-    func deletePersonalUser(access_token:String, password:String) async throws {
+
+    func deletePersonalUser(access_token: String, password: String) async throws {
         let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
         let url = URL(string: "\(backendURL)/self")
         guard let requestUrl = url else { fatalError() }
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "DELETE"
-        let body:[String: Any] = ["password":"\(password)"]
+        let body: [String: Any] = ["password": "\(password)"]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("Bearer \(access_token)", forHTTPHeaderField: "Authorization")
-        let (responseData,response) = try await URLSession.shared.data(for: request)
+        let (responseData, response) = try await URLSession.shared.data(for: request)
         let pureResponse = response as! HTTPURLResponse
-        if(pureResponse.statusCode != 200) {
-            throw(RuntimeError("Error \(pureResponse.description)"))
+        if pureResponse.statusCode != 200 {
+            throw (RuntimeError("Error \(pureResponse.description)"))
         }
     }
 }
 
 struct LoginMessage: Decodable {
-    let access_token:String
+    let access_token: String
 }

@@ -19,11 +19,11 @@
 import Foundation
 
 class InbucketClient {
-    func getVerificationCode(email:String) async throws -> String {
+    func getVerificationCode(email: String) async throws -> String {
         let inbucketURL = "https://\(ProcessInfo.processInfo.environment["INBUCKET_URL"]!)"
         let inbucketUsername = ProcessInfo.processInfo.environment["INBUCKET_USERNAME"]!
         let inbucketPassword = ProcessInfo.processInfo.environment["INBUCKET_PASSWORD"]!
-        var verificationCode:String = ""
+        var verificationCode = ""
         let url = URL(string: "\(inbucketURL)/api/v1/mailbox/\(email)/latest")
         guard let requestUrl = url else { fatalError() }
         var request = URLRequest(url: requestUrl)
@@ -32,24 +32,24 @@ class InbucketClient {
         let loginData = loginString.data(using: String.Encoding.utf8)!
         let base64LoginString = loginData.base64EncodedString()
         request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
-        
-        var (inbucketData,response) = try await URLSession.shared.data(for: request)
+
+        var (inbucketData, response) = try await URLSession.shared.data(for: request)
         var pureResponse = response as! HTTPURLResponse
         while pureResponse.statusCode != 200 {
-            (inbucketData,response) = try await URLSession.shared.data(for: request)
+            (inbucketData, response) = try await URLSession.shared.data(for: request)
             pureResponse = response as! HTTPURLResponse
         }
 
         // Convert HTTP Response Data to a simple String
-        let message:InbucketMessage = try! JSONDecoder().decode(InbucketMessage.self, from:inbucketData)
-        let subject:String = message.subject
+        let message: InbucketMessage = try! JSONDecoder().decode(InbucketMessage.self, from: inbucketData)
+        let subject: String = message.subject
         verificationCode = String(subject.prefix(6))
-    
+
         print("Verification Code Found: \(verificationCode) for \(email)")
         return verificationCode
     }
 }
 
 struct InbucketMessage: Decodable {
-    let subject:String
+    let subject: String
 }

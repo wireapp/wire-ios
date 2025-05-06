@@ -23,26 +23,26 @@ class AccountSettingsPage: PageModel {
         let elementsQuery = app.textFields.matching(identifier: "NameField")
         return elementsQuery.firstMatch
     }
-    
+
     func usernameField() -> XCUIElement {
         let elementsQuery = app.staticTexts.matching(identifier: "UsernameField")
         return elementsQuery.firstMatch
     }
-    
+
     func emailField() -> XCUIElement {
         let elementsQuery = app.staticTexts.matching(identifier: "EmailField")
         return elementsQuery.firstMatch
     }
-    
+
     func getAccountName() -> String {
-        return nameField().value as! String
+        nameField().value as! String
     }
-    
+
     func getUsername() -> String {
-        return usernameField().label
+        usernameField().label
     }
-    
+
     func getEmail() -> String {
-        return emailField().label
+        emailField().label
     }
 }

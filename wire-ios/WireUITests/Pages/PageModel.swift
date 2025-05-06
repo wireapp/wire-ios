@@ -19,12 +19,12 @@
 import XCTest
 
 class PageModel {
-    var app:XCUIApplication
-    
-    init(theApp:XCUIApplication) {
-        app = theApp
+    var app: XCUIApplication
+
+    init(theApp: XCUIApplication) {
+        self.app = theApp
     }
-    
+
     func acceptPopup() -> PageModel {
         let button = app.otherElements.buttons.firstMatch
         button.tap()

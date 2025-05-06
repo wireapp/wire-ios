@@ -20,13 +20,13 @@ import XCTest
 
 final class PersonalUsersTests: XCTestCase {
     var app: XCUIApplication!
-    var context: Dictionary<String,Any> = [:]
+    var context: [String: Any] = [:]
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
     override func setUpWithError() throws {
-        // Delete app if it is still present, useful if we aren't resetting simulators between runs (eg, locally writing tests)
+        // Delete app, useful if we aren't resetting simulators between runs (locally writing tests)
         XCUIApplication().terminate()
-        let icon = self.springboard.icons["Wire"]
+        let icon = springboard.icons["Wire"]
         if icon.exists {
             icon.press(forDuration: 1.3)
 
@@ -50,25 +50,25 @@ final class PersonalUsersTests: XCTestCase {
 
         // In UI tests it is usually best to stop immediately when a failure occurs
         continueAfterFailure = false
-        
+
         context["app"] = app
     }
 
     override func tearDown() async throws {
-        /* TODO: Restore once WPB-17516 is fixed
-        let email = context["email"] as! String
-        let password = context["password"] as! String
-        let access_token = try? await BackendClient().loginViaAPI(email:email, password:password)
-        if(access_token != nil) {
-            try? await BackendClient().deletePersonalUser(access_token:access_token!, password:password)
-            puts("Cleaned up \(email)")
-        }*/
+//        TODO: Restore once WPB-17516 is fixed
+//        let email = context["email"] as! String
+//        let password = context["password"] as! String
+//        let access_token = try? await BackendClient().loginViaAPI(email:email, password:password)
+//        if(access_token != nil) {
+//            try? await BackendClient().deletePersonalUser(access_token:access_token!, password:password)
+//            puts("Cleaned up \(email)")
+//        }
     }
 
     @MainActor
     func test_register_asPersonalUser() async throws {
-        var loginPage = LoginPage(theApp:app)
-        let time:Int = Int(NSDate().timeIntervalSince1970 * 1000)
+        var loginPage = LoginPage(theApp: app)
+        let time = Int(NSDate().timeIntervalSince1970 * 1000)
         let username = "smoketester\(time)"
         let email = "\(username)@wire.engineering"
         let password = generateRandomPassword() // TODO: Make this auto generated
@@ -76,39 +76,39 @@ final class PersonalUsersTests: XCTestCase {
         context["username"] = username
         context["email"] = email
         context["password"] = password
-        
+
         let textField = emailTextField()
         XCTAssertTrue(textField.exists)
-        
+
         loginPage = loginPage.typeEmailOrSSO(email: email)
-        
+
         var registrationPage = loginPage.useCreatePersonalAccountLink()
         registrationPage.confirmCreateAccount()
         registrationPage.acceptButton().tap()
 
-        let verificationCode = try await InbucketClient().getVerificationCode(email:email)
+        let verificationCode = try await InbucketClient().getVerificationCode(email: email)
         registrationPage = registrationPage.enterVerificationCode(verificationCode: verificationCode)
 
         registrationPage = registrationPage.setName(name: name)
         registrationPage = registrationPage.setPassword(password: password)
-        
+
         registrationPage.acceptPopup()
-        
+
         let conversationsPage = registrationPage.setUsername(username: username)
-        
+
         XCTAssertTrue(profileButton().exists)
-        
+
         let settingsPage = conversationsPage.openSettings()
         let accountPage = settingsPage.openAccountSettings()
-        
+
         XCTAssertTrue(accountPage.getAccountName().elementsEqual(name))
         XCTAssertTrue(accountPage.getUsername().contains(username))
-        /* TODO: Restore once WPB-17516 is fixed
-        XCTAssertTrue(accountPage.getEmail().elementsEqual(email))*/
+//        TODO: Restore once WPB-17516 is fixed
+//        XCTAssertTrue(accountPage.getEmail().elementsEqual(email))*/
     }
 
     // MARK: - Helpers
-    
+
     // TODO: Figure out how to move to page object; expectation and waitForExpectation didn't work with simple copy
     func emailTextField() -> XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
@@ -118,7 +118,7 @@ final class PersonalUsersTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
         return textField
     }
-    
+
     // TODO: Figure out how to move to page object; expectation and waitForExpectation didn't work with simple copy
     func profileButton() -> XCUIElement {
         let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
@@ -128,7 +128,7 @@ final class PersonalUsersTests: XCTestCase {
         waitForExpectations(timeout: 10, handler: nil)
         return button
     }
-    
+
     // TODO: Look into maybe using a library for this
     // TODO: When working on one of the other critical flows, pull this out into a user builder helper of some kind
     func generateRandomPassword() -> String {
@@ -137,7 +137,7 @@ final class PersonalUsersTests: XCTestCase {
         let numbers = "0123456789"
         let specials = "!@#$%^&*()"
         var password = ""
-        for _ in 1...5 {
+        for _ in 1 ... 5 {
             password += randomCharacterFrom(array: lowercase)
         }
         password += randomCharacterFrom(array: uppercase)
@@ -145,13 +145,13 @@ final class PersonalUsersTests: XCTestCase {
         password += randomCharacterFrom(array: numbers)
         return password
     }
-    
-    func randomCharacterFrom(array:String) -> String {
-        let randomIndex = Int.random(in: 0..<array.count)
+
+    func randomCharacterFrom(array: String) -> String {
+        let randomIndex = Int.random(in: 0 ..< array.count)
         let character = array[array.index(array.startIndex, offsetBy: randomIndex)]
         return String(character)
     }
-    
+
 }
 
 struct RuntimeError: LocalizedError {
