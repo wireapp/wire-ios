@@ -595,7 +595,7 @@ public final class ZMUserSession: NSObject {
                 syncAgent: syncAgent,
                 notificationContext: notificationContext
             )
-            strategyDirectory.makeRemainingStategies(
+            strategyDirectory.makeClientRelatedStategies(
                 applicationStatusDirectory: applicationStatusDirectory,
                 syncContext: syncContext,
                 transportSession: transportSession,

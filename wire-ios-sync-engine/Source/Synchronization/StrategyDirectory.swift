@@ -354,7 +354,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         ]
     }
 
-    func makeRemainingStategies(
+    func makeClientRelatedStategies(
         applicationStatusDirectory: ApplicationStatusDirectory,
         syncContext: NSManagedObjectContext,
         transportSession: TransportSessionType,
