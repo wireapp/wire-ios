@@ -116,6 +116,7 @@ final class ConversationContentViewController: UIViewController {
     private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     private let logger: WireLogger
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     init(
         conversation: ZMConversation,
@@ -230,9 +231,6 @@ final class ConversationContentViewController: UIViewController {
         tableView.keyboardDismissMode = AutomationHelper.sharedHelper
             .disableInteractiveKeyboardDismissal ? .none : .interactive
 
-        tableView.backgroundColor = SemanticColors.View.backgroundConversationView
-        view.backgroundColor = SemanticColors.View.backgroundConversationView
-
         setupMentionsResultsView()
 
         NotificationCenter.default.addObserver(
@@ -248,6 +246,27 @@ final class ConversationContentViewController: UIViewController {
             name: ZMConversation.failedToSendMessageNotificationName,
             object: .none
         )
+        
+        
+        updateBackgroundColor(color: nil)
+        
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+                updateBackgroundColor(color: color)
+            }
+    }
+    
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        func set(color: UIColor) {
+            tableView.backgroundColor = color
+            view.backgroundColor = color
+        }
+        guard let color, true else {
+            set(color: SemanticColors.View.backgroundConversationView)
+            return
+        }
+        let uiColor = color.accentColor.uiColor
+        set(color: uiColor)
     }
 
     @objc
