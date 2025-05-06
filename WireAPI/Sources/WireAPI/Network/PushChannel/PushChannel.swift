@@ -102,7 +102,7 @@ public actor PushChannel: PushChannelProtocol {
     private func sendKeepAlivePing() async {
         do {
             WireLogger.pushChannel.debug("sending keep alive ping")
-            try await webSocket.write(Data())
+            try await webSocket.sendPing()
         } catch {
             WireLogger.pushChannel.error("failed to send keep alive ping: \(error)")
         }

@@ -33,7 +33,7 @@ final class PushChannelTests: XCTestCase {
         request = URLRequest(url: url)
         webSocket = MockWebSocketProtocol()
         webSocket.close_MockMethod = {}
-        webSocket.write_MockMethod = { _ in }
+        webSocket.sendPing_MockMethod = {}
         sut = PushChannel(
             webSocket: webSocket,
             keepAliveInterval: 0.5
@@ -148,8 +148,7 @@ final class PushChannelTests: XCTestCase {
         // Then keep alive pings are sent periodically (the timer
         // is not exact so we will we generous in our assertion of
         // at least 2 in 1.5 seconds).
-        XCTAssertGreaterThanOrEqual(webSocket.write_Invocations.count, 2)
-        XCTAssertTrue(webSocket.write_Invocations.allSatisfy { $0 == Data() })
+        XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
     }
 
 }

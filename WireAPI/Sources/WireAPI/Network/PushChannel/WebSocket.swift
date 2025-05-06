@@ -87,8 +87,16 @@ public actor WebSocket: WebSocketProtocol {
         continuation?.finish()
     }
 
-    public func write(_ data: Data) async throws {
-        try await connection.send(.data(data))
+    public func sendPing() async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+            connection.sendPing { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
     }
 
 }
