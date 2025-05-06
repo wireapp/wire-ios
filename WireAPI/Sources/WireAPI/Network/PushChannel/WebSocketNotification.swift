@@ -21,7 +21,7 @@ struct WebSocketNotification: Decodable {
 
     enum NotificationType: String, Decodable {
         case event
-        case notificationsMissed = "notifications-missed"
+        case notificationsMissed = "notifications.missed"
     }
 
     struct NotificationData: Decodable {
