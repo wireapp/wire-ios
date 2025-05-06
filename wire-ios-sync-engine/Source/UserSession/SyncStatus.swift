@@ -62,9 +62,9 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
     public var isLive: Bool {
-        managedObjectContext.performAndWait {
-            guard !isSyncV2Enabled else { return false }
-            return currentSyncPhase == .done && isPushChannelOpen
+        guard !isSyncV2Enabled else { return false }
+        return managedObjectContext.performAndWait {
+            currentSyncPhase == .done && isPushChannelOpen
         }
     }
 
