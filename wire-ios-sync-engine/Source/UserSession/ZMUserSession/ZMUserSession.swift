@@ -44,7 +44,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
 
-    private(set) var coreDataStack: CoreDataStack!
+    public private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
     public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {
@@ -1457,6 +1457,10 @@ extension ZMUserSession: ContextProvider {
 
     public var viewContext: NSManagedObjectContext {
         coreDataStack.viewContext
+    }
+
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        coreDataStack.newBackgroundContext()
     }
 
     public var syncContext: NSManagedObjectContext {

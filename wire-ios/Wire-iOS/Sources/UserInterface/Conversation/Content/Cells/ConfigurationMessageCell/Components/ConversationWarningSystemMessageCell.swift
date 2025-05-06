@@ -27,7 +27,7 @@ final class ConversationWarningSystemMessageCell<
     private typealias LabelColors = SemanticColors.Label
     private typealias IconColors = SemanticColors.Icon
 
-    struct Configuration {
+    struct Configuration: Equatable {
         let topText: String
         let bottomText: String
     }

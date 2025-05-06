@@ -325,6 +325,15 @@ public class MockConversationLike: ConversationLike {
 
     public init() {}
 
+    // MARK: - objectId
+
+    public var objectId: Any {
+        get { return underlyingObjectId }
+        set(value) { underlyingObjectId = value }
+    }
+
+    public var underlyingObjectId: Any!
+
     // MARK: - conversationType
 
     public var conversationType: ZMConversationType {
@@ -2408,6 +2417,24 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
         }
 
         mock(completionHandler)
+    }
+
+    // MARK: - newBackgroundContext
+
+    public var newBackgroundContext_Invocations: [Void] = []
+    public var newBackgroundContext_MockMethod: (() -> NSManagedObjectContext)?
+    public var newBackgroundContext_MockValue: NSManagedObjectContext?
+
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        newBackgroundContext_Invocations.append(())
+
+        if let mock = newBackgroundContext_MockMethod {
+            return mock()
+        } else if let mock = newBackgroundContext_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `newBackgroundContext`")
+        }
     }
 
 }
