@@ -29,10 +29,10 @@ final class APIServiceTests: XCTestCase {
     var backendURL: URL!
     var authenticationManager: MockAuthenticationManagerProtocol!
 
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
 
     override func setUp() async throws {
-        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         authenticationManager = MockAuthenticationManagerProtocol()

@@ -39,7 +39,7 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
             makeConversationTypeItem(),
             makeConversationMessageProtocolItem(),
             makeConversationMLSGroupIDItem()
-        ].compactMap { $0 }
+        ].compactMap(\.self)
 
         if DeveloperFlag.debugDuplicateObjects.isOn {
             items.append(makeDuplicateConversationItem())

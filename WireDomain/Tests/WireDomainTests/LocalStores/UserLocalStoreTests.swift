@@ -399,8 +399,7 @@ final class UserLocalStoreTests: XCTestCase {
         nonisolated(unsafe) static let pushToken = PushToken(
             deviceToken: deviceToken,
             appIdentifier: "com.wire",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
+            transportType: "APNS_VOIP"
         )
 
         static let defaultsTestSuiteName = UUID.mockID1.uuidString
