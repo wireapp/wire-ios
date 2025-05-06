@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public enum URLAction: Equatable {
 
@@ -95,14 +96,22 @@ extension URLAction {
 
         switch host {
         case URL.DeepLink.user:
-            if let uuidString = url.pathComponents.last,
-               let uuid = UUID(uuidString: uuidString) {
-                /// The link is expected to be of the form  `wire://user/{domain}/{userID}`
-                /// and url.pathComponents are ["/", {domain}, {userID}]
-                /// **Note:** we should still support the old format as `wire://user/{userID}`
-                let userDomain = url.pathComponents.dropFirst().dropLast().last
-                self = .openUserProfile(id: uuid, domain: userDomain)
+            /// The link is expected to be of the format  `wire://user/{domain}/{userID}`
+            /// and url.pathComponents are ["/", {domain}, {userID}]
+            ///
+            /// **Note:** to maintain backwards compatibility we should still support the legacy `wire://user/{userID}`
+            /// format and potentially `wire://user/{userID@domain}`
+            guard let lastComponent = url.pathComponents.last else {
+                throw DeepLinkRequestError.invalidUserLink
+            }
+
+            if let qualifiedID = QualifiedID(rawValue: lastComponent) {
+                self = .openUserProfile(id: qualifiedID.uuid, domain: qualifiedID.domain)
+            } else if let uuid = UUID(uuidString: lastComponent) {
+                let domain = url.pathComponents.dropFirst().dropLast().last
+                self = .openUserProfile(id: uuid, domain: domain)
             } else {
+                WireLogger.conversation.error("Invalid deep link for user profile: \(url)")
                 throw DeepLinkRequestError.invalidUserLink
             }
 
