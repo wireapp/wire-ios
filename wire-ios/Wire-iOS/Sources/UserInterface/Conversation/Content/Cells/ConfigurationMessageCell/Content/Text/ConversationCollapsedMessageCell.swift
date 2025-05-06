@@ -140,8 +140,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         let message = object.message
         if message.isText {
-            typeIcon.isHidden = !message.hasLinkPreview
-            if message.hasLinkPreview {
+            typeIcon.isHidden = !message.hasLinks
+            if message.hasLinks {
                 typeIcon.image = .init(resource: .link)
             }
             if let textMessageData = message.textMessageData {

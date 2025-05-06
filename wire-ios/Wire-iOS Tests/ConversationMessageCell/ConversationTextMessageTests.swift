@@ -77,10 +77,13 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message.backingTextMessageData.backingLinkPreview = article
         
         // THEN
-        verify(message: message, named: "Collapsed")
         
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
         verify(message: message)
+        
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        message.senderUser = userSession.selfUser
+        verify(message: message, named: "Collapsed")
     }
 
     func testTextWithLinkPreview() {
@@ -99,11 +102,13 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         
         // THEN
         
-        verify(message: message, named: "Collapsed")
-        
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
 
         verify(message: message)
+
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        message.senderUser = userSession.selfUser
+        verify(message: message, named: "Collapsed")
     }
 
     func testTextWithQuote() {
@@ -160,11 +165,13 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
         // THEN
         
-        verify(message: message, named: "Collapsed", waitForTextViewToLoad: true)
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
 
         verify(message: message, waitForTextViewToLoad: true)
         
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        message.senderUser = userSession.selfUser
+        verify(message: message, named: "Collapsed", waitForTextViewToLoad: true)
     }
 
     func testSoundCloudMediaPreviewAttachment() {
@@ -206,11 +213,9 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
                 originalRange: NSRange(location: 0, length: 58)
             )
         ]
-
-        // THEN
-        verify(message: message, named: "Collapsed", waitForTextViewToLoad: true)
+        
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
-
+        // THEN
         verify(message: message, waitForTextViewToLoad: true)
     }
 
@@ -239,9 +244,12 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
         // THEN
         
-        verify(message: message, named: "Collapsed")
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
         verify(message: message)
+        
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        message.senderUser = userSession.selfUser
+        verify(message: message, named: "Collapsed")
     }
 
     // MARK: - Helper Methods

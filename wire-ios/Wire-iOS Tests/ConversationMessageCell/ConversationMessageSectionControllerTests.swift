@@ -325,6 +325,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testSavingWasUncollapsed_FileMessage() throws {
+        // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
@@ -338,14 +339,15 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             expectation.fulfill()
         }
 
-        // uncollapse
+        // When: uncollapse
         sut.collapse()
+        // Then
         XCTAssertFalse(sut.isCollapsed)
         wait(for: [expectation])
     }
 
     func testResetWasUncollapsed_FileMessage() throws {
-        // Given
+        // Given already saved that was uncollapsed
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
@@ -353,7 +355,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [nonce]
         // When
         let sut = makeSUT(message: message)
-        // Then
+        // Then not collapsed
         XCTAssertFalse(sut.isCollapsed)
 
         // Given
@@ -364,7 +366,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         }
         // When collapse back
         sut.collapse()
-        // Then
+        // Then is collapsed and removed what was saved
         XCTAssertTrue(sut.isCollapsed)
         wait(for: [expectation])
     }
@@ -378,11 +380,12 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [nonce]
         // When
         let sut = makeSUT(message: message)
-        // when re-created expected to take into account that it was uncollapsed before and stay uncollapsed
+        // Then re-create expected to take into account that it was uncollapsed before and stay uncollapsed
         XCTAssertFalse(sut.isCollapsed)
     }
     
     func testNotSavingWasUncollapsed_TextMessage() throws {
+        // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let longText = """
         one
@@ -403,14 +406,16 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             expectation.fulfill()
         }
 
-        // uncollapse
+        // When uncollapse
         sut.collapse()
+        // Then not collapsed
         XCTAssertFalse(sut.isCollapsed)
         // And not saved
         wait(for: [expectation], timeout: 0)
     }
     
     func testSavingWasUncollapsed_TextMessageWithLink() throws {
+        // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(
             MockMessageFactory.textMessageWithLinkAttachment(withText: "onetwothreefour")
@@ -424,12 +429,120 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             expectation.fulfill()
         }
 
-        // uncollapse
+        // When uncollapse
         sut.collapse()
         // Then after re-created expected to take into account that it was uncollapsed before and stay uncollapsed
         XCTAssertFalse(sut.isCollapsed)
-        // Saved
+        // And saved
         wait(for: [expectation], timeout: 0)
+    }
+    
+    func testNotCollapsed_TextMessageWithLink_SentByOther() throws {
+        // Given
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        let message = try XCTUnwrap(
+            MockMessageFactory.textMessageWithLinkAttachment(withText: "onetwothreefour")
+        )
+        message.senderUser = MockUserType.createDefaultOtherUser()
+        // When
+        let sut = makeSUT(message: message)
+        // Then
+        XCTAssertFalse(sut.isCollapsed)
+    }
+    
+    func testRecreatedCellBecomesCollapsed_LinkAttachmentMessage() {
+        // Given
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        let message = MockMessageFactory.textMessage(withText: "www.example.com")
+        message.senderUser = mockSelfUser
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+        XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
+        
+        // When
+        message.linkAttachments = [LinkAttachment(
+            type: .youTubeVideo,
+            title: "Lagar mat med Fernando Di Luca",
+            permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
+            thumbnails: [],
+            originalRange: NSRange(location: 0, length: 5)
+        )]
+        
+        sut.recreateCellDescriptions(in: sut.context)
+        // Then
+        XCTAssertEqual(sut.cellDescriptionsForTesting.count, 1)
+        XCTAssertTrue(sut.cellDescriptionsForTesting.first?.instance is ConversationCollapsedMessageCellDescription)
+    }
+    
+    func testRecreatedCellNotBecomesCollapsed_LinkAttachmentMessage_FromOther() {
+        // Given
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        let message = MockMessageFactory.textMessage(withText: "www.example.com")
+        message.senderUser = MockUserType()
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+        XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
+        // When
+        message.linkAttachments = [LinkAttachment(
+            type: .youTubeVideo,
+            title: "Lagar mat med Fernando Di Luca",
+            permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
+            thumbnails: [],
+            originalRange: NSRange(location: 0, length: 5)
+        )]
+        
+        sut.recreateCellDescriptions(in: sut.context)
+        // Then
+        XCTAssertEqual(sut.cellDescriptionsForTesting.count, 4)
+    }
+    
+    func testRecreatedCellBecomesCollapsed_LinkPreviewMessage() {
+        // Given
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        let message = MockMessageFactory.textMessage(withText: "www.example.com")
+        message.senderUser = mockSelfUser
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+        XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
+        // When
+        let textData = MockTextMessageData()
+        let article = ArticleMetadata(
+            originalURLString: "http://foo.bar/baz",
+            permanentURLString: "http://foo.bar/baz",
+            resolvedURLString: "http://foo.bar/baz",
+            offset: 0
+        )
+        textData.backingLinkPreview = article
+        message.backingTextMessageData = textData
+        
+        sut.recreateCellDescriptions(in: sut.context)
+        // Then
+        XCTAssertEqual(sut.cellDescriptionsForTesting.count, 1)
+        XCTAssertTrue(sut.cellDescriptionsForTesting.first?.instance is ConversationCollapsedMessageCellDescription)
+    }
+    
+    func testRecreatedCellNotBecomesCollapsed_LinkPreviewMessage_FromOther() {
+        // Given
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        let message = MockMessageFactory.textMessage(withText: "www.example.com")
+        message.senderUser = MockUserType()
+        let sut = makeSUT(message: message)
+        XCTAssertFalse(sut.isCollapsed)
+        XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
+        // When
+        let textData = MockTextMessageData()
+        let article = ArticleMetadata(
+            originalURLString: "http://foo.bar/baz",
+            permanentURLString: "http://foo.bar/baz",
+            resolvedURLString: "http://foo.bar/baz",
+            offset: 0
+        )
+        textData.backingLinkPreview = article
+        message.backingTextMessageData = textData
+        
+        sut.recreateCellDescriptions(in: sut.context)
+        // Then
+        XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
     }
 
     private func makeSUT(message: MockMessage) -> ConversationMessageSectionController {
@@ -437,7 +550,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             isSameSenderAsPrevious: true,
             isTimestampInSameMinuteAsPreviousMessage: false
         )
-        // WHEN
+
         let section = ConversationMessageSectionController(
             message: message,
             context: context,

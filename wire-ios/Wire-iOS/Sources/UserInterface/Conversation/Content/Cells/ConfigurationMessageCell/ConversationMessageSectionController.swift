@@ -163,7 +163,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
         
-        if privateDefaults.wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) {
+        if privateDefaults.wasMessagedUncollapsedBefore(message) {
             return false
         }
 
@@ -247,7 +247,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addImageMessageCell() -> [AnyConversationMessageCellDescription] {
-        if needToAddCollapsedCell() {
+        if shouldCollapseCell() {
             return addCollapsedCell()
         }
         let conversationImageMessageCellDescription = ConversationImageMessageCellDescription(
@@ -257,15 +257,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
     }
 
-    func needToAddCollapsedCell() -> Bool {
+    func shouldCollapseCell() -> Bool {
         guard !isMessageWithCollapsedByDefault() else {
             return false
         }
         if isCollapsed {
             return true
         }
-        if collapseOwnMessagesEnabled, message.hasLinkPreview,
-            !privateDefaults.wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) {
+        if collapseOwnMessagesEnabled, message.isSentBySelfUser, message.hasLinks,
+           !privateDefaults.wasMessagedUncollapsedBefore(message) {
             return true
         }
         
@@ -283,14 +283,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addTextMessageCells() -> [AnyConversationMessageCellDescription] {
-        if needToAddCollapsedCell() {
+        if shouldCollapseCell() {
             return addCollapsedCell()
         }
         return ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
     }
 
     private func addLocationMessageCells() -> [AnyConversationMessageCellDescription] {
-        if needToAddCollapsedCell() {
+        if shouldCollapseCell() {
             return addCollapsedCell()
         }
 
@@ -301,7 +301,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addAudioMessageCell() -> [AnyConversationMessageCellDescription] {
-        if needToAddCollapsedCell() {
+        if shouldCollapseCell() {
             return addCollapsedCell()
         }
         let cellDescription = ConversationAudioMessageCellDescription(message: message)
@@ -309,7 +309,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addVideoMessageCell() -> [AnyConversationMessageCellDescription] {
-        if needToAddCollapsedCell() {
+        if shouldCollapseCell() {
             return addCollapsedCell()
         }
         let cellDescription = ConversationVideoMessageCellDescription(message: message)
@@ -317,7 +317,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func addFileMessageCell() -> [AnyConversationMessageCellDescription] {
-        guard !needToAddCollapsedCell() else {
+        guard !shouldCollapseCell() else {
             return addCollapsedCell()
         }
 
@@ -461,7 +461,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // for all messages that support collapsing and is collapsed
-        if needToAddCollapsedCell() {
+        if shouldCollapseCell() {
             // if message failed, always show footer with error message and retry button
             if message.deliveryState == .failedToSend {
                 return true
@@ -482,7 +482,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
-        if needToAddCollapsedCell() {
+        if shouldCollapseCell() {
             return false
         }
 

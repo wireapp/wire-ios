@@ -160,7 +160,7 @@ final class ConversationMessageActionController {
 
     private func wasUncollapsedBefore() -> Bool {
         privateDefaults?
-            .wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) ?? false
+            .wasMessagedUncollapsedBefore(message) ?? false
     }
 
     func canPerformAction(_ selector: Selector) -> Bool {

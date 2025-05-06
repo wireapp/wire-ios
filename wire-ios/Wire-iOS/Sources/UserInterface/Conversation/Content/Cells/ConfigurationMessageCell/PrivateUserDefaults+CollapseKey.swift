@@ -22,8 +22,9 @@ import WireDataModel
 
 extension PrivateUserDefaults where Key == CollapseKey {
 
-    func wasMessagedUncollapsedBefore(nonce: String?) -> Bool {
-        guard let nonce, let uncollapsedMessages = stringArray(forKey: .uncollapsedMessages) else {
+    func wasMessagedUncollapsedBefore(_ message: ZMConversationMessage) -> Bool {
+        guard let nonce = message.nonce?.uuidString,
+              let uncollapsedMessages = stringArray(forKey: .uncollapsedMessages) else {
             return false
         }
         return uncollapsedMessages.contains(nonce)
@@ -52,7 +53,7 @@ private extension ZMConversationMessage {
 
     var shouldSaveUncollapsed: Bool {
         if isText {
-            return hasLinkPreview
+            return hasLinks
         }
         return isCollapsingSupported
     }
