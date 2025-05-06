@@ -113,7 +113,7 @@ final class InputBar: UIView {
 
     let textView = MarkdownTextView(with: DownStyle.compact)
     private let leftAccessoryView = UIView()
-    let rightAccessoryStackView: UIStackView = {
+    private let rightAccessoryStackView: UIStackView = {
         let stackView = UIStackView()
 
         let rightInset = (stackView.conversationHorizontalMargins.left - rightIconSize) / 2
@@ -266,10 +266,8 @@ final class InputBar: UIView {
         )
     }
 
-    func addLeftAccessoryView(_ view: UIView) {
-        for subview in leftAccessoryView.subviews {
-            subview.removeFromSuperview()
-        }
+    func setLeftAccessoryView(_ view: UIView) {
+        leftAccessoryView.subviews.forEach { $0.removeFromSuperview() }
 
         view.translatesAutoresizingMaskIntoConstraints = false
         leftAccessoryView.addSubview(view)
@@ -277,6 +275,11 @@ final class InputBar: UIView {
             view.centerYAnchor.constraint(equalTo: leftAccessoryView.centerYAnchor),
             view.centerXAnchor.constraint(equalTo: leftAccessoryView.centerXAnchor)
         ])
+    }
+
+    func setRightAccessoryViews(_ views: [UIView]) {
+        rightAccessoryStackView.arrangedSubviews.forEach { rightAccessoryStackView.removeArrangedSubview($0) }
+        views.forEach { rightAccessoryStackView.addArrangedSubview($0) }
     }
 
     /// Update return key type when receiving a notification (from setting->toggle send key option)
@@ -339,11 +342,10 @@ final class InputBar: UIView {
             leftAccessoryView.heightAnchor.constraint(equalToConstant: 56),
             leftAccessoryViewWidthConstraint,
 
-            rightAccessoryStackView.trailingAnchor
-                .constraint(equalTo: rightAccessoryStackView.superview!.trailingAnchor),
-            rightAccessoryStackView.topAnchor.constraint(equalTo: rightAccessoryStackView.superview!.topAnchor),
+            rightAccessoryStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            rightAccessoryStackView.topAnchor.constraint(equalTo: topAnchor),
+            rightAccessoryStackView.heightAnchor.constraint(equalToConstant: 56),
             rightAccessoryViewWidthConstraint,
-            rightAccessoryStackView.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
 
             buttonContainer.topAnchor.constraint(equalTo: textView.bottomAnchor),
             textView.topAnchor.constraint(equalTo: textView.superview!.topAnchor),
