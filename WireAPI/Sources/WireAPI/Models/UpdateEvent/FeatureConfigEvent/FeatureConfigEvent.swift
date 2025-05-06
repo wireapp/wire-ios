@@ -20,7 +20,7 @@ import Foundation
 
 /// An event concerning feature configs.
 
-public enum FeatureConfigEvent: Equatable, Codable, Sendable {
+public enum FeatureConfigEvent: Equatable, Sendable {
 
     /// A feature config was updated.
 

@@ -21,7 +21,7 @@ import Foundation
 /// An event where a connection between the self user and
 /// another user was updated.
 
-public struct UserConnectionEvent: Equatable, Codable, Sendable {
+public struct UserConnectionEvent: Equatable, Sendable {
 
     /// The name of the other user.
 
