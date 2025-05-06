@@ -32,14 +32,7 @@
   ],
   "defaultOptions" : {
     "environmentVariableEntries" : [
-      {
-        "key" : "INBUCKET_USERNAME",
-        "value" : "$(INBUCKET_USERNAME)"
-      },
-      {
-        "key" : "INBUCKET_PASSWORD",
-        "value" : "$(INBUCKET_PASSWORD)"
-      }
+
     ],
     "language" : "en",
     "region" : "US",

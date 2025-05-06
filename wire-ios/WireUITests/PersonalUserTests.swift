@@ -26,18 +26,18 @@ final class PersonalUsersTests: XCTestCase {
     override func setUpWithError() throws {
         // Delete app, useful if we aren't resetting simulators between runs (locally writing tests)
         XCUIApplication().terminate()
-        let icon = springboard.icons["Wire"]
-        if icon.exists {
-            icon.press(forDuration: 1.3)
-
-            springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
-
-            // For some reason the following commands were unreliable when called once
-            springboard.buttons["Delete App"].tap()
-            springboard.buttons["Delete App"].tap()
-            springboard.buttons["Delete"].tap()
-            springboard.buttons["Delete"].tap()
-        }
+//        let icon = springboard.icons["Wire"]
+//        if icon.exists {
+//            icon.press(forDuration: 1.3)
+//
+//            springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
+//
+//            // For some reason the following commands were unreliable when called once
+//            springboard.buttons["Delete App"].tap()
+//            springboard.buttons["Delete App"].tap()
+//            springboard.buttons["Delete"].tap()
+//            springboard.buttons["Delete"].tap()
+//        }
 
         app = XCUIApplication()
         app.launchArguments = [
@@ -55,7 +55,7 @@ final class PersonalUsersTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-//        TODO: Restore once WPB-17516 is fixed
+//        TODO: Restore once [WPB-17516] is fixed
 //        let email = context["email"] as! String
 //        let password = context["password"] as! String
 //        let access_token = try? await BackendClient().loginViaAPI(email:email, password:password)
@@ -71,7 +71,7 @@ final class PersonalUsersTests: XCTestCase {
         let time = Int(NSDate().timeIntervalSince1970 * 1000)
         let username = "smoketester\(time)"
         let email = "\(username)@wire.engineering"
-        let password = generateRandomPassword() // TODO: Make this auto generated
+        let password = generateRandomPassword()
         let name = "Smoke Tester"
         context["username"] = username
         context["email"] = email
@@ -103,7 +103,7 @@ final class PersonalUsersTests: XCTestCase {
 
         XCTAssertTrue(accountPage.getAccountName().elementsEqual(name))
         XCTAssertTrue(accountPage.getUsername().contains(username))
-//        TODO: Restore once WPB-17516 is fixed
+//        TODO: Restore once [WPB-17516] is fixed
 //        XCTAssertTrue(accountPage.getEmail().elementsEqual(email))*/
     }
 
