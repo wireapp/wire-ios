@@ -18,23 +18,16 @@
 
 import XCTest
 
-class ConversationsPage: PageModel {
-    func profileImage() -> XCUIElement {
-        let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
-        return elementsQuery.firstMatch
+class SettingsPage: PageModel {
+    func accountSettingsMenu() -> XCUIElement {
+        let elementsQuery = app.cells
+        return elementsQuery["Account"]
     }
     
-    func isPresent() -> Bool {
-        return profileImage().exists
-    }
-    
-    func settingsButton() -> XCUIElement {
-        let elementsQuery = app.buttons.matching(identifier: "bottomBarSettingsButton")
-        return elementsQuery.firstMatch
-    }
-    
-    func openSettings() -> SettingsPage {
-        settingsButton().tap()
-        return SettingsPage(theApp:app)
+    func openAccountSettings() -> AccountSettingsPage {
+        let accountSettings = accountSettingsMenu()
+        accountSettings.waitForExistence(timeout: 1)
+        accountSettings.tap()
+        return AccountSettingsPage(theApp:app)
     }
 }

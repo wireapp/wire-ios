@@ -26,6 +26,7 @@ class BackendClient {
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "POST"
         let body:[String: Any] = ["email":"\(email)", "password":"\(password)"]
+        print(body)
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")

@@ -55,22 +55,24 @@ final class PersonalUsersTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        /* TODO: Restore once WPB-17516 is fixed
         let email = context["email"] as! String
         let password = context["password"] as! String
         let access_token = try? await BackendClient().loginViaAPI(email:email, password:password)
-        print("Received access_token \(access_token)")
-//        if(access_token != nil) {
-//            try? await BackendClient().deletePersonalUser(access_token:access_token!, password:password)
-//            puts("Cleaned up \(email)")
-//        }
+        if(access_token != nil) {
+            try? await BackendClient().deletePersonalUser(access_token:access_token!, password:password)
+            puts("Cleaned up \(email)")
+        }*/
     }
 
     @MainActor
     func test_register_asPersonalUser() async throws {
         var loginPage = LoginPage(theApp:app)
-        let username = "newUser16" // TODO: Make this auto generated and unique
+        let time:Int = Int(NSDate().timeIntervalSince1970 * 1000)
+        let username = "smoketester\(time)"
         let email = "\(username)@wire.engineering"
         let password = ProcessInfo.processInfo.environment["DEFAULT_PASSWORD"]! // TODO: Make this auto generated
+        let name = "Smoke Tester"
         context["username"] = username
         context["email"] = email
         context["password"] = password
@@ -81,21 +83,27 @@ final class PersonalUsersTests: XCTestCase {
         loginPage = loginPage.typeEmailOrSSO(email: email)
         
         var registrationPage = loginPage.useCreatePersonalAccountLink()
-
-        registrationPage.newNextButton().tap()
+        registrationPage.confirmCreateAccount()
 
         registrationPage.acceptButton().tap()
 
         let verificationCode = try await InbucketClient().getVerificationCode(email:email)
         registrationPage = registrationPage.enterVerificationCode(verificationCode: verificationCode)
 
-        registrationPage = registrationPage.setName(name: "Smoke Tester")
+        registrationPage = registrationPage.setName(name: name)
         registrationPage = registrationPage.setPassword(password: password)
         
         registrationPage = registrationPage.acceptPopup() as! RegistrationPage
         
         let conversationsPage = registrationPage.setUsername(username: username)
         XCTAssertTrue(profileButton().exists)
+        let settingsPage = conversationsPage.openSettings()
+        let accountPage = settingsPage.openAccountSettings()
+        
+        XCTAssertTrue(accountPage.getAccountName().elementsEqual(name))
+        XCTAssertTrue(accountPage.getUsername().contains(username))
+        /* TODO: Restore once WPB-17516 is fixed
+        XCTAssertTrue(accountPage.getEmail().elementsEqual(email))*/
     }
 
     // MARK: - Helpers

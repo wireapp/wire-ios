@@ -95,4 +95,11 @@ class RegistrationPage: PageModel {
         usernameConfirmButton().tap()
         return ConversationsPage(theApp: app)
     }
+    
+    func confirmCreateAccount() -> RegistrationPage {
+        let confirmButton = newNextButton()
+        confirmButton.waitForExistence(timeout: 1)
+        confirmButton.tap()
+        return self
+    }
 }
