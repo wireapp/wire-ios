@@ -89,7 +89,11 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         // this is needed to avoid loading from syncMOC on the main queue
         [moc performGroupedBlock:^{
             [self.transportSession configurePushChannelWithConsumer:self groupQueue:moc];
-            [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
+            if (isSyncV2Enabled) {
+                [self.transportSession.pushChannel setKeepOpen:false];
+            } else {
+                [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
+            }
         }];
     }
 
