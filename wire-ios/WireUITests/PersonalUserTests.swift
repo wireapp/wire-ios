@@ -21,8 +21,24 @@ import XCTest
 final class PersonalUsersTests: XCTestCase {
     var app: XCUIApplication!
     var context: Dictionary<String,Any> = [:]
+    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
     override func setUpWithError() throws {
+        // Delete app if it is still present, useful if we aren't resetting simulators between runs (eg, locally writing tests)
+        XCUIApplication().terminate()
+        let icon = self.springboard.icons["Wire"]
+        if icon.exists {
+            icon.press(forDuration: 1.3)
+
+            springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
+
+            // For some reason the following commands were unreliable when called once
+            springboard.buttons["Delete App"].tap()
+            springboard.buttons["Delete App"].tap()
+            springboard.buttons["Delete"].tap()
+            springboard.buttons["Delete"].tap()
+        }
+
         app = XCUIApplication()
         app.launchArguments = [
             "-BackendEnvironmentTypeOverrideKey staging",
@@ -32,7 +48,7 @@ final class PersonalUsersTests: XCTestCase {
 
         app.launch()
 
-        // In UI tests it is usually best to stop immediately when a failure occurs.
+        // In UI tests it is usually best to stop immediately when a failure occurs
         continueAfterFailure = false
         
         context["app"] = app
@@ -52,7 +68,7 @@ final class PersonalUsersTests: XCTestCase {
     @MainActor
     func test_register_asPersonalUser() async throws {
         var loginPage = LoginPage(theApp:app)
-        let username = "newUser14" // TODO: Make this auto generated and unique
+        let username = "newUser16" // TODO: Make this auto generated and unique
         let email = "\(username)@wire.engineering"
         let password = ProcessInfo.processInfo.environment["DEFAULT_PASSWORD"]! // TODO: Make this auto generated
         context["username"] = username
@@ -94,12 +110,13 @@ final class PersonalUsersTests: XCTestCase {
         return textField
     }
     
+    // TODO: Figure out how to move to page object; expectation and waitForExpectation didn't work with simple copy
     func profileButton() -> XCUIElement {
         let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
         let button = elementsQuery.firstMatch
         let exists = NSPredicate(format: "exists == 1")
         expectation(for: exists, evaluatedWith: button, handler: nil)
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         return button
     }
     
