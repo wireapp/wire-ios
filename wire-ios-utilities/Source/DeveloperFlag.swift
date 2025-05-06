@@ -31,7 +31,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
     case useWireAuthentication
-    case wireCellsAttachmentsPreviews
+    case wireCells
     case asyncStreamNotifications
     case showDetailedErrors
 
@@ -64,8 +64,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .useWireAuthentication:
             "Use the new WireAuthentication feature module"
 
-        case .wireCellsAttachmentsPreviews:
-            "Use the new WireCells previews for conversations attachments"
+        case .wireCells:
+            "Use the wire cells feature"
 
         case .asyncStreamNotifications:
             "Turn on to enable new sync with consumable notifications"
