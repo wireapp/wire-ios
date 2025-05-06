@@ -65,6 +65,99 @@ final class NewIncrementalSyncTests: XCTestCase {
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
                 continuation.yield(Scaffolding.event2)
+                continuation.finish(throwing: PushChannelError.missingEvents)
+                continuation.finish()
+            }
+        }
+        pushChannel.ackEventDeliveryTagMultiple_MockMethod = { (_, _) in }
+        pushChannelAPI.createNewPushChannelClientID_MockMethod = { _ in pushChannel }
+
+        // Some indices at which live events will be stored.
+        var indices = [Int64(10)]
+        store.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+
+        // Live envelopes are peristed and deleted one by one.
+        store.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        store.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
+
+        // Live events are decrypted.
+        decryptor.decryptEventsIn_MockMethod = { $0.events }
+
+        // Events are processed.
+        processor.processEvent_MockMethod = { _ in }
+
+        // Unread messages are set
+        store.calculateLastUnreadMessages_MockMethod = {}
+
+        // Database is saved.
+        databaseSaver.save_MockMethod = {}
+
+        // When
+        let token = try await sut.perform(acknowledgeFullSync: false)
+        try await token.task.value
+
+        // Then push channel was created.
+        XCTAssertEqual(
+            pushChannelAPI.createPushChannelClientID_Invocations,
+            [Scaffolding.selfClientID]
+        )
+
+        // Then push channel was opened.
+        XCTAssertEqual(pushChannel.open_Invocations.count, 1)
+
+
+        // Then live events were decrypted (duplicates skipped).
+        XCTAssertEqual(
+            decryptor.decryptEventsIn_Invocations,
+            [Scaffolding.event2]
+        )
+
+        // Then live events were stored.
+        XCTAssertEqual(store.indexOfLastEventEnvelope_Invocations.count, 1)
+
+        // Then live events were stored.
+        let storeInvocations = store.persistEventEnvelopeIndex_Invocations
+        try XCTAssertCount(storeInvocations, count: 4)
+        XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event2)
+        XCTAssertEqual(storeInvocations[0].index, 10)
+        
+        // Then ack of events done adter storing
+        XCTAssertEqual(pushChannel.ackDeliveryTagMultiple_Invocations.count, 4)
+        
+        
+        // Then all events were processed once.
+        XCTAssertEqual(
+            processor.processEvent_Invocations,
+            [
+                Scaffolding.event2,
+                Scaffolding.event3,
+                Scaffolding.event4,
+                Scaffolding.event5
+            ].flatMap(\.events)
+        )
+
+        // Then live events were deleted.
+        XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11, 12, 13, 14])
+
+        // Then unread messages are calculated once after processing pending events
+        // and once after processing each live event.
+        XCTAssertEqual(store.calculateLastUnreadMessages_Invocations.count, 4)
+
+        // Then the database was saved once after processing pending events
+        // and once after processing each live event.
+        XCTAssertEqual(databaseSaver.save_Invocations.count, 4)
+    }
+
+    
+    func test_perform_AcknowledgementFullSync() async throws {
+        // Mock
+        
+
+        // Some live events, some of which were already pulled.
+        let pushChannel = MockPushChannelProtocol()
+        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(Scaffolding.event2)
                 continuation.yield(Scaffolding.event3)
                 continuation.yield(Scaffolding.event4)
                 continuation.yield(Scaffolding.event5)
@@ -157,12 +250,6 @@ final class NewIncrementalSyncTests: XCTestCase {
 private enum Scaffolding {
 
     static let selfClientID = "selfClientID"
-
-    static let event1 = createEvent(
-        message: "hello",
-        timeIntervalSinceNow: -10,
-        deliveryTag: 1
-    )
 
     static let event2 = createEvent(
         message: "ciao",

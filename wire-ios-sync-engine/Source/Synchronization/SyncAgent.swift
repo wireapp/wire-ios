@@ -165,6 +165,8 @@ final class SyncAgent: NSObject {
                     delegate?.syncAgentDidStartIncrementalSync(self)
                     incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
                     delegate?.syncAgentDidFinishIncrementalSync(self)
+                    
+
                 }
             } catch NewIncrementalSync.Failure.needsInitialSync {
                 WireLogger.sync.debug("slow sync requested by sync v3")
