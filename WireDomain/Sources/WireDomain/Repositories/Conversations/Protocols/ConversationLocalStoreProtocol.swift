@@ -335,17 +335,6 @@ public protocol ConversationLocalStoreProtocol {
         in conversation: ZMConversation
     ) async
 
-    /// Sends a notification using the main context informing typing users
-    /// have been updated for a given conversation.
-    /// - Parameters:
-    ///     - conversationID: The conversation managed object ID.
-    ///     - usersID: The updated typing users managed object IDs.
-
-    func updateTypingUsers(
-        conversationID: NSManagedObjectID,
-        usersID: Set<NSManagedObjectID>
-    ) async
-
     /// Obtain permanent stored object IDs.
     /// - Parameters:
     ///     - user: The user to get the permanent managed object ID for.

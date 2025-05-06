@@ -559,32 +559,13 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) {
-        let onSelfClientInvalidated: () async -> Void = { [self] in
-            await syncContext.perform { [self] in
-                syncContext.tearDownCryptoStack()
-
-                let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
-                let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
-
-                clientRegistrationStatus.emailCredentials = nil
-                clientRegistrationStatus.cookieProvider.deleteKeychainItems()
-
-                let selfUser = ZMUser.selfUser(in: managedObjectContext)
-                let clientDeletedRemotelyError = NSError.userSessionError(
-                    code: .clientDeletedRemotely,
-                    userInfo: selfUser.loginCredentials.dictionaryRepresentation
-                )
-
-                didDeleteSelfUserClient(error: clientDeletedRemotelyError)
-
-                clientUpdateStatus.needsToVerifySelfClient = false
-            }
-        }
-
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
-            onSelfClientInvalidated: onSelfClientInvalidated,
-            onProcessedCallEvent: onProcessedCallEvent(callEventInfo:)
+            processorHandlers: .init(
+                onProcessedCallEvent: onProcessedCallEvent(callEventInfo:),
+                onSelfClientInvalidated: onSelfClientInvalidated,
+                onProcessedTypingUsers: onProcessedTypingUsers(typingUsersInfo:)
+            )
         )
 
         let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
@@ -626,6 +607,54 @@ public final class ZMUserSession: NSObject {
 
         // TODO: [WPB-17223] remove `resume` call from here
         syncAgent.resume()
+    }
+
+    func onProcessedTypingUsers(
+        typingUsersInfo: [ConversationTypingUsersInfo]
+    ) {
+
+        viewContext.performGroupedBlock { [viewContext] in
+            for typingUserInfo in typingUsersInfo {
+                let conversationID = typingUserInfo.conversationID
+                let usersID = typingUserInfo.users
+
+                if let conversation = viewContext.object(with: conversationID) as? ZMConversation {
+
+                    let users = usersID.compactMap {
+                        viewContext.object(with: $0) as? ZMUser
+                    }
+
+                    viewContext.typingUsers?.update(
+                        typingUsers: Set(users),
+                        in: conversation
+                    )
+
+                    conversation.notifyTyping(typingUsers: Set(users))
+                }
+            }
+        }
+    }
+
+    func onSelfClientInvalidated() async {
+        await syncContext.perform { [self] in
+            syncContext.tearDownCryptoStack()
+
+            let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
+            let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
+
+            clientRegistrationStatus.emailCredentials = nil
+            clientRegistrationStatus.cookieProvider.deleteKeychainItems()
+
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+            let clientDeletedRemotelyError = NSError.userSessionError(
+                code: .clientDeletedRemotely,
+                userInfo: selfUser.loginCredentials.dictionaryRepresentation
+            )
+
+            didDeleteSelfUserClient(error: clientDeletedRemotelyError)
+
+            clientUpdateStatus.needsToVerifySelfClient = false
+        }
     }
 
     func onProcessedCallEvent(callEventInfo: CallEventInfo) {
