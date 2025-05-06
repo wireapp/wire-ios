@@ -144,7 +144,7 @@ final class ConversationMessageActionController {
             guard let isCollapsed,
                   !isCollapsed,
                   isCollapsedWasUpdated || (
-                    message.isCollapsingSupported && wasUncollapsedBefore()
+                      message.isCollapsingSupported && wasUncollapsedBefore()
                   )
             else {
                 return false

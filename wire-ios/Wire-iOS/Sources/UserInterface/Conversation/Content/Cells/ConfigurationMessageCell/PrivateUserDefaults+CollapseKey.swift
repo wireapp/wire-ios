@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireFoundation
 import WireDataModel
+import WireFoundation
 
 extension PrivateUserDefaults where Key == CollapseKey {
 

@@ -162,13 +162,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         guard collapseOwnMessagesEnabled, message.isSentBySelfUser else {
             return false
         }
-        
+
         if privateDefaults.wasMessagedUncollapsedBefore(message) {
             return false
         }
 
         if message.isTextWithNoLinks {
-             
+
             guard let textMessage = message.textMessageData?.messageText else {
                 return false
             }
@@ -268,7 +268,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
            !privateDefaults.wasMessagedUncollapsedBefore(message) {
             return true
         }
-        
+
         return false
     }
 

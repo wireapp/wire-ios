@@ -25,7 +25,7 @@ public extension ZMConversationMessage {
     var isText: Bool {
         textMessageData != nil
     }
-    
+
     var isTextWithNoLinks: Bool {
         isText && !hasLinks
     }
@@ -67,7 +67,7 @@ public extension ZMConversationMessage {
     var isSystem: Bool {
         systemMessageData != nil
     }
-    
+
     // Checks if message has link preview or link attachment
     // Does not check if there is Markdown links
     var hasLinks: Bool {

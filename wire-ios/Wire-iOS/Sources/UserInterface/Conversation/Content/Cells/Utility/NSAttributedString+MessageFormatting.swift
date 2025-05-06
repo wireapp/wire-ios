@@ -129,7 +129,11 @@ extension NSAttributedString {
     }
 
     @objc
-    static func format(message: TextMessageData, isObfuscated: Bool, shouldRemoveTrailingLink: Bool = true) -> NSAttributedString {
+    static func format(
+        message: TextMessageData,
+        isObfuscated: Bool,
+        shouldRemoveTrailingLink: Bool = true
+    ) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 

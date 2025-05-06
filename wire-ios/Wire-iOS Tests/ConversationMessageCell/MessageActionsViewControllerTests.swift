@@ -254,7 +254,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // THEN
         XCTAssertEqual(sut.titles, ["Reply", "Details", "Download", "Delete", "Cancel"])
     }
-    
+
     func testMenuActionsForTextMessageWithPreview_hasCollapse() {
         // GIVEN
         let message = MockMessageFactory.linkMessage()
@@ -276,7 +276,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // THEN
         XCTAssertTrue(sut.titles.contains("Collapse"))
     }
-    
+
     func testMenuActionsForTextMessageWithLinkAttachments_hasCollapse() {
         // GIVEN
         let message = MockMessageFactory.textMessageWithLinkAttachment()

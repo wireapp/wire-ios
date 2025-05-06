@@ -19,9 +19,9 @@
 import Foundation
 import SwiftUI
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireSyncEngine
-import WireFoundation
 
 struct ConversationResult {
     var id: String
@@ -119,10 +119,11 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         accessTokenHandler?.processAccessTokenResponse(responseFailure)
         onDismiss?()
     }
-    
+
     private func clearCollapsedMessagesCache() {
         let defaults = PrivateUserDefaults<CollapseKey>(
-            userID: selfClient!.user!.remoteIdentifier)
+            userID: selfClient!.user!.remoteIdentifier
+        )
         defaults.removeObject(forKey: .uncollapsedMessages)
         onDismiss?()
     }

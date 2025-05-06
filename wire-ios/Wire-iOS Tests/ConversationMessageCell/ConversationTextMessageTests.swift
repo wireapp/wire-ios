@@ -75,12 +75,12 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         let article = ArticleMetadata(protocolBuffer: linkPreview)
         message = createMessage(withText: "http://www.example.com")
         message.backingTextMessageData.backingLinkPreview = article
-        
+
         // THEN
-        
+
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
         verify(message: message)
-        
+
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
         message.senderUser = userSession.selfUser
         verify(message: message, named: "Collapsed")
@@ -99,9 +99,9 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         let article = ArticleMetadata(protocolBuffer: linkPreview)
         message = createMessage(withText: "What do you think about this http://www.example.com")
         message.backingTextMessageData.backingLinkPreview = article
-        
+
         // THEN
-        
+
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
 
         verify(message: message)
@@ -145,7 +145,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message.backingTextMessageData.hasQuote = true
         message.backingTextMessageData.quoteMessage = quote
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
-        
+
         // THEN
         verify(message: message)
     }
@@ -164,11 +164,11 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         ]
 
         // THEN
-        
+
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
 
         verify(message: message, waitForTextViewToLoad: true)
-        
+
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
         message.senderUser = userSession.selfUser
         verify(message: message, named: "Collapsed", waitForTextViewToLoad: true)
@@ -213,7 +213,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
                 originalRange: NSRange(location: 0, length: 58)
             )
         ]
-        
+
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
         // THEN
         verify(message: message, waitForTextViewToLoad: true)
@@ -243,10 +243,10 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         ]
 
         // THEN
-        
+
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
         verify(message: message)
-        
+
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
         message.senderUser = userSession.selfUser
         verify(message: message, named: "Collapsed")

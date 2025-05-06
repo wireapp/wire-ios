@@ -383,7 +383,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Then re-create expected to take into account that it was uncollapsed before and stay uncollapsed
         XCTAssertFalse(sut.isCollapsed)
     }
-    
+
     func testNotSavingWasUncollapsed_TextMessage() throws {
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -413,7 +413,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // And not saved
         wait(for: [expectation], timeout: 0)
     }
-    
+
     func testSavingWasUncollapsed_TextMessageWithLink() throws {
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -436,7 +436,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // And saved
         wait(for: [expectation], timeout: 0)
     }
-    
+
     func testNotCollapsed_TextMessageWithLink_SentByOther() throws {
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -449,7 +449,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // Then
         XCTAssertFalse(sut.isCollapsed)
     }
-    
+
     func testRecreatedCellBecomesCollapsed_LinkAttachmentMessage() {
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -458,7 +458,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let sut = makeSUT(message: message)
         XCTAssertFalse(sut.isCollapsed)
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
-        
+
         // When
         message.linkAttachments = [LinkAttachment(
             type: .youTubeVideo,
@@ -467,13 +467,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             thumbnails: [],
             originalRange: NSRange(location: 0, length: 5)
         )]
-        
+
         sut.recreateCellDescriptions(in: sut.context)
         // Then
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 1)
         XCTAssertTrue(sut.cellDescriptionsForTesting.first?.instance is ConversationCollapsedMessageCellDescription)
     }
-    
+
     func testRecreatedCellNotBecomesCollapsed_LinkAttachmentMessage_FromOther() {
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -490,12 +490,12 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             thumbnails: [],
             originalRange: NSRange(location: 0, length: 5)
         )]
-        
+
         sut.recreateCellDescriptions(in: sut.context)
         // Then
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 4)
     }
-    
+
     func testRecreatedCellBecomesCollapsed_LinkPreviewMessage() {
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -514,13 +514,13 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         )
         textData.backingLinkPreview = article
         message.backingTextMessageData = textData
-        
+
         sut.recreateCellDescriptions(in: sut.context)
         // Then
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 1)
         XCTAssertTrue(sut.cellDescriptionsForTesting.first?.instance is ConversationCollapsedMessageCellDescription)
     }
-    
+
     func testRecreatedCellNotBecomesCollapsed_LinkPreviewMessage_FromOther() {
         // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
@@ -539,7 +539,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         )
         textData.backingLinkPreview = article
         message.backingTextMessageData = textData
-        
+
         sut.recreateCellDescriptions(in: sut.context)
         // Then
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
