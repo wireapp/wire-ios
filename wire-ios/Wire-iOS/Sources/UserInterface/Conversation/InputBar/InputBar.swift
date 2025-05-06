@@ -129,13 +129,21 @@ final class InputBar: UIView {
         return stackView
     }()
 
+    /// Container for the `upperContainer` & `attachmentsView` when visible.
     private let inputContainer: UIStackView = {
         let stackView = UIStackView()
-        stackView.spacing = 16
+        stackView.spacing = 0
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.distribution = .fill
         return stackView
+    }()
+
+    // TODO: [WPB-15842] For now this is just a placeholder but will become a collection view displaying attachments.
+    private let attachmentsView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .red
+        return view
     }()
 
     // Contains and clips the buttonInnerContainer
@@ -235,10 +243,14 @@ final class InputBar: UIView {
         buttonsView.clipsToBounds = true
         buttonContainer.clipsToBounds = true
 
-        // Upper container
+        // Input container
         addSubview(inputContainer)
         inputContainer.addArrangedSubview(upperContainer)
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
+
+        if DeveloperFlag.wireCells.isOn {
+            inputContainer.addArrangedSubview(attachmentsView)
+        }
 
         [buttonContainer, buttonRowSeparator].forEach(addSubview)
         buttonContainer.addSubview(buttonInnerContainer)
@@ -341,6 +353,7 @@ final class InputBar: UIView {
         [
             inputContainer,
             upperContainer,
+            attachmentsView,
             buttonContainer,
             textView,
             buttonRowSeparator,
@@ -351,6 +364,13 @@ final class InputBar: UIView {
             buttonInnerContainer
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
+        if DeveloperFlag.wireCells.isOn {
+            NSLayoutConstraint.activate([
+                attachmentsView.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
+                attachmentsView.heightAnchor.constraint(equalToConstant: 100)
+            ])
+        }
+
         let rightAccessoryViewWidthConstraint = rightAccessoryStackView.widthAnchor.constraint(equalToConstant: 0)
         rightAccessoryViewWidthConstraint.priority = .defaultHigh
 
@@ -360,13 +380,9 @@ final class InputBar: UIView {
             inputContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
             inputContainer.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
 
-//            upperContainer.topAnchor.constraint(equalTo: topAnchor),
-//            upperContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-//            upperContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
             upperContainer.heightAnchor.constraint(greaterThanOrEqualToConstant: 56),
             upperContainer.heightAnchor.constraint(lessThanOrEqualToConstant: 120),
             upperContainer.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
-//            upperContainer.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
 
             leftAccessoryView.topAnchor.constraint(equalTo: upperContainer.topAnchor),
             leftAccessoryView.leadingAnchor.constraint(equalTo: upperContainer.leadingAnchor),
@@ -380,7 +396,7 @@ final class InputBar: UIView {
 
             textView.topAnchor.constraint(equalTo: upperContainer.topAnchor),
             textView.leadingAnchor.constraint(equalTo: leftAccessoryView.trailingAnchor),
-//            textView.trailingAnchor.constraint(lessThanOrEqualTo: textView.superview!.trailingAnchor, constant: -16),
+            textView.trailingAnchor.constraint(lessThanOrEqualTo: upperContainer.trailingAnchor, constant: -16),
             textView.trailingAnchor.constraint(equalTo: rightAccessoryStackView.leadingAnchor),
             textView.bottomAnchor.constraint(equalTo: upperContainer.bottomAnchor),
 
