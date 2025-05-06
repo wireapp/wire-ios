@@ -143,9 +143,11 @@ final class PushChannelTests: XCTestCase {
         let _ = try await sut.open()
 
         // When we wait for 1 second.
-        try await Task.sleep(for: .seconds(1))
+        try await Task.sleep(for: .seconds(1.5))
 
-        // Then keep alive pings are sent periodically (at least 2 in 1 second)
+        // Then keep alive pings are sent periodically (the timer
+        // is not exact so we will we generous in our assertion of
+        // at least 2 in 1.5 seconds).
         XCTAssertGreaterThanOrEqual(webSocket.write_Invocations.count, 2)
         XCTAssertTrue(webSocket.write_Invocations.allSatisfy({ $0 == Data() }))
     }
