@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 public extension ZMLocalNotification {
 
@@ -338,9 +339,9 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         if let conversation,
            let senderUUID = event.senderUUID,
            conversation.isMessageSilenced(message, senderID: senderUUID) {
-            Logging.push
-                .safePublic(
-                    "Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced"
+            WireLogger.push
+                .info(
+                    "Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced"
                 )
             return false
         } else if conversation == nil {
