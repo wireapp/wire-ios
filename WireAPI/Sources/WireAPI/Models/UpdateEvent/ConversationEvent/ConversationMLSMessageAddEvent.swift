@@ -20,9 +20,9 @@ import Foundation
 
 /// An event where an mls message was received in a conversation.
 
-public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
+public struct ConversationMLSMessageAddEvent: Equatable, Sendable {
 
-    public struct DecryptedMessage: Equatable, Codable, Sendable {
+    public struct DecryptedMessage: Equatable, Sendable {
 
         public let message: String
 

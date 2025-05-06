@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a team was created.
 
-public struct TeamCreateEvent: Equatable, Codable, Sendable {
+public struct TeamCreateEvent: Equatable, Sendable {
 
     /// The team id.
 

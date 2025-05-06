@@ -21,7 +21,7 @@ import Foundation
 /// An event where one of the self user's persisted
 /// properties was deleted.
 
-public struct UserPropertiesDeleteEvent: Equatable, Codable, Sendable {
+public struct UserPropertiesDeleteEvent: Equatable, Sendable {
 
     /// The property key that was deleted.
 
