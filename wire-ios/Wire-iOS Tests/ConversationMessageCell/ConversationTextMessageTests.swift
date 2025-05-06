@@ -195,7 +195,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
                 verify(message: message, waitForTextViewToLoad: true)
             }
         #else
-            verify(message: message, named: "Collapsed", waitForTextViewToLoad: true, )
+            verify(message: message, named: "Collapsed", waitForTextViewToLoad: true)
             mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
             verify(message: message, waitForTextViewToLoad: true)
         #endif
