@@ -20,9 +20,8 @@ import Foundation
 import WireFoundation
 import WireLogging
 
-public final class NewPushChannel: PushChannelProtocol {
-
     public typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
+public final class NewPushChannel: NewPushChannelProtocol {
 
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()

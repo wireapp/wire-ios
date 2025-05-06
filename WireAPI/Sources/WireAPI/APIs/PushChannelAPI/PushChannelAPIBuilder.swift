@@ -23,16 +23,13 @@ import Foundation
 public struct PushChannelAPIBuilder {
 
     private let pushChannelService: PushChannelService
-    private let asyncStreamEnabled: Bool
 
     /// Create a new builder.
     ///
     /// - Parameter pushChannelService: A push channel service to execute requests.
-    /// - Parameter asyncStreamEnabled: True if async stream notifications should be used
     ///
-    public init(pushChannelService: PushChannelService, asyncStreamEnabled: Bool) {
+    public init(pushChannelService: PushChannelService) {
         self.pushChannelService = pushChannelService
-        self.asyncStreamEnabled = asyncStreamEnabled
     }
 
     /// Make a `PushChannelAPI`.
@@ -40,11 +37,30 @@ public struct PushChannelAPIBuilder {
     /// - Returns: A `PushChannelAPI`.
 
     public func makeAPI(for apiVersion: APIVersion) -> any PushChannelAPI {
-        if asyncStreamEnabled {
-            NewPushChannelAPIImpl(pushChannelService: pushChannelService, apiVersion: apiVersion)
-        } else {
-            PushChannelAPIImpl(pushChannelService: pushChannelService)
-        }
+        PushChannelAPIImpl(pushChannelService: pushChannelService)
+    }
+
+}
+
+
+public struct NewPushChannelAPIBuilder {
+
+    private let pushChannelService: PushChannelService
+
+    /// Create a new builder.
+    ///
+    /// - Parameter pushChannelService: A push channel service to execute requests.
+    ///
+    public init(pushChannelService: PushChannelService) {
+        self.pushChannelService = pushChannelService
+    }
+
+    /// Make a `PushChannelAPI`.
+    ///
+    /// - Returns: A `PushChannelAPI`.
+
+    public func makeAPI(for apiVersion: APIVersion) -> any NewPushChannelAPI {
+        NewPushChannelAPIImpl(pushChannelService: pushChannelService, apiVersion: apiVersion)
     }
 
 }

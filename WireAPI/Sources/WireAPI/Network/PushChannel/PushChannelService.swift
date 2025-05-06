@@ -21,13 +21,18 @@ import Foundation
 /// A service for creating push channel connections to a specific backend.
 public protocol PushChannelServiceProtocol {
 
-    /// Create a new push channel.
+    /// Create a new push channel (v1).
     ///
     /// - Parameter request: A request for a web socket connection.
-    /// - Parameter readWriteEnabled: A boolean value to allow sending data back to server
     /// - Returns: A push channel.
 
-    func createPushChannel(_ request: URLRequest, readWriteEnabled: Bool) async throws -> any PushChannelProtocol
+    func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol
+
+    /// Create a new push channel (v2).
+    ///
+    /// - Parameter request: A request for a web socket connection.
+    /// - Returns: A push channel.
+    func createNewPushChannel(_ request: URLRequest) async throws -> any NewPushChannelProtocol
 }
 
 /// A service for creating push channel connections to a specific backend.
@@ -45,15 +50,21 @@ public final class PushChannelService: PushChannelServiceProtocol {
         self.authenticationManager = authenticationManager
     }
 
-    public func createPushChannel(_ request: URLRequest, readWriteEnabled: Bool) async throws -> any PushChannelProtocol {
+    public func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol {
         var request = request
         let accessToken = try await authenticationManager.getValidAccessToken()
         request.setAccessToken(accessToken)
         let webSocket = try networkService.executeWebSocketRequest(request)
-        if readWriteEnabled {
-            return NewPushChannel(webSocket: webSocket)
-        } else {
-            return PushChannel(webSocket: webSocket)
-        }
+
+        return PushChannel(webSocket: webSocket)
+    }
+    
+    public func createNewPushChannel(_ request: URLRequest) async throws -> any NewPushChannelProtocol {
+        var request = request
+        let accessToken = try await authenticationManager.getValidAccessToken()
+        request.setAccessToken(accessToken)
+        let webSocket = try networkService.executeWebSocketRequest(request)
+
+        return NewPushChannel(webSocket: webSocket)
     }
 }

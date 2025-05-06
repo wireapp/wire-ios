@@ -117,10 +117,13 @@ public final class ClientSessionComponent {
     ).makeAPI(for: apiVersion)
 
     private lazy var pushChannelAPI = PushChannelAPIBuilder(
-        pushChannelService: pushChannelService,
-        asyncStreamEnabled: asyncStreamEnabled
+        pushChannelService: pushChannelService
     ).makeAPI(for: apiVersion)
 
+    private lazy var newPushChannelAPI = NewPushChannelAPIBuilder(
+        pushChannelService: pushChannelService
+    ).makeAPI(for: apiVersion)
+    
     private lazy var selfUserAPI = SelfUserAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
@@ -343,7 +346,7 @@ public final class ClientSessionComponent {
 
     public lazy var newIncrementalSync = NewIncrementalSync(
         selfClientID: selfClientID,
-        pushChannelAPI: pushChannelAPI,
+        pushChannelAPI: newPushChannelAPI,
         decryptor: updateEventDecryptor,
         store: updateEventsLocalStore,
         processor: updateEventProcessor,

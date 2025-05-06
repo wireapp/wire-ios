@@ -27,15 +27,17 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
     }
 
     private let selfClientID: String
-    private let pushChannelAPI: any PushChannelAPI
+    private let pushChannelAPI: any NewPushChannelAPI
     private let decryptor: any UpdateEventDecryptorProtocol
     private let store: any UpdateEventsLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
     private let logger = WireLogger.sync
+    
+    
     public init(
         selfClientID: String,
-        pushChannelAPI: any PushChannelAPI,
+        pushChannelAPI: any NewPushChannelAPI,
         decryptor: any UpdateEventDecryptorProtocol,
         store: any UpdateEventsLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,

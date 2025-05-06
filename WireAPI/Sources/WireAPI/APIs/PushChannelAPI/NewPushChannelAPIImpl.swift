@@ -17,7 +17,7 @@
 //
 
 
-final class NewPushChannelAPIImpl: PushChannelAPI, VersionedAPI {
+final class NewPushChannelAPIImpl: NewPushChannelAPI, VersionedAPI {
 
     let pushChannelService: any PushChannelServiceProtocol
     let apiVersion: APIVersion
@@ -27,7 +27,7 @@ final class NewPushChannelAPIImpl: PushChannelAPI, VersionedAPI {
         self.apiVersion = apiVersion
     }
 
-    func createPushChannel(clientID: String) async throws -> any PushChannelProtocol {
+    func createPushChannel(clientID: String) async throws -> any NewPushChannelProtocol {
         let path = "\(pathPrefix)/events"
 
         let request = try URLRequestBuilder(path: path)
@@ -35,7 +35,7 @@ final class NewPushChannelAPIImpl: PushChannelAPI, VersionedAPI {
             .withQueryItem(name: "client", value: clientID)
             .build()
 
-        return try await pushChannelService.createPushChannel(request, readWriteEnabled: true)
+        return try await pushChannelService.createNewPushChannel(request)
     }
 
 }

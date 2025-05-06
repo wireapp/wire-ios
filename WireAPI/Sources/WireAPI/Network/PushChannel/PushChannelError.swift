@@ -24,6 +24,12 @@ public enum PushChannelError: Error {
 
     case receivedInvalidMessage
 
+    /// The client was offline for a very long time and it has missed notifications
+    
     case missingEvents
+    
+    /// There was no event fetched for a while, so we're up to date
+    
+    case timeout
 
 }
