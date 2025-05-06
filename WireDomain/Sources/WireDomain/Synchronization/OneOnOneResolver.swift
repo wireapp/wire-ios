@@ -227,7 +227,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         userID: WireDataModel.QualifiedID
     ) async {
         await context.perform {
-            guard !mlsConversation.migratedToMLS else {
+            guard !(mlsConversation.migratedToMLS && user.oneOnOneConversation == mlsConversation) else {
                 return
             }
 
