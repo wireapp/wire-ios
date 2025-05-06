@@ -16,8 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-INBUCKET_USERNAME=op://Test Automation/BackendConnection staging/inbucketUsername
-INBUCKET_PASSWORD=op://Test Automation/BackendConnection staging/inbucketPassword
-INBUCKET_URL=op://Test Automation/BackendConnection staging/trimmedInbucketUrl
-BACKEND_URL=op://Test Automation/BackendConnection staging/trimmedBackendURL
-DEFAULT_PASSWORD=
+import XCTest
+
+class PageModel {
+    var app:XCUIApplication
+    
+    init(theApp:XCUIApplication) {
+        app = theApp
+    }
+    
+    func acceptPopup() -> PageModel {
+        let button = app.otherElements.buttons.firstMatch
+        button.tap()
+        return self
+    }
+}

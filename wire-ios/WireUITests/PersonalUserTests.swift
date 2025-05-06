@@ -42,53 +42,44 @@ final class PersonalUsersTests: XCTestCase {
         let email = context["email"] as! String
         let password = context["password"] as! String
         let access_token = try? await BackendClient().loginViaAPI(email:email, password:password)
-        if(access_token != nil) {
-            try? await BackendClient().deletePersonalUser(access_token:access_token!, password:password)
-            puts("Cleaned up \(email)")
-        }
+        print("Received access_token \(access_token)")
+//        if(access_token != nil) {
+//            try? await BackendClient().deletePersonalUser(access_token:access_token!, password:password)
+//            puts("Cleaned up \(email)")
+//        }
     }
 
     @MainActor
     func test_register_asPersonalUser() async throws {
-        let loginPage = LoginPage(theApp:app)
-        let email = "newUser08@wire.engineering" // TODO: Make this auto generated and unique
+        var loginPage = LoginPage(theApp:app)
+        let username = "newUser14" // TODO: Make this auto generated and unique
+        let email = "\(username)@wire.engineering"
+        let password = ProcessInfo.processInfo.environment["DEFAULT_PASSWORD"]! // TODO: Make this auto generated
+        context["username"] = username
         context["email"] = email
-        context["password"] = ProcessInfo.processInfo.environment["DEFAULT_PASSWORD"] // TODO: Make this auto generated
+        context["password"] = password
         
         let textField = emailTextField()
         XCTAssertTrue(textField.exists)
-        textField.tap()
-        textField.typeText(email)
+        
+        loginPage = loginPage.typeEmailOrSSO(email: email)
+        
+        var registrationPage = loginPage.useCreatePersonalAccountLink()
 
-        loginPage.nextButton().tap()
+        registrationPage.newNextButton().tap()
 
-        loginPage.createPersonalAccountLink().tap()
-
-        loginPage.newNextButton().tap()
-
-        loginPage.acceptButton().tap()
+        registrationPage.acceptButton().tap()
 
         let verificationCode = try await InbucketClient().getVerificationCode(email:email)
+        registrationPage = registrationPage.enterVerificationCode(verificationCode: verificationCode)
 
-        loginPage.verificationCodeInput().tap()
-        loginPage.verificationCodeInput().typeText(verificationCode)
+        registrationPage = registrationPage.setName(name: "Smoke Tester")
+        registrationPage = registrationPage.setPassword(password: password)
         
-        let registrationPage = RegistrationPage(theApp: app)
-
-        registrationPage.nameField().tap()
-        registrationPage.nameField().typeText("Smoke Tester")
-        registrationPage.nameNextButton().tap()
-
-        registrationPage.passwordField().tap()
-        registrationPage.passwordField().typeText(context["password"] as! String)
-        registrationPage.passwordNextButton().tap()
+        registrationPage = registrationPage.acceptPopup() as! RegistrationPage
         
-        registrationPage.allowButton().tap()
-
-        let fullScreenshot = XCUIScreen.main.screenshot()
-        let screenshot = XCTAttachment(screenshot: fullScreenshot)
-        screenshot.lifetime = .keepAlways
-        add(screenshot)
+        let conversationsPage = registrationPage.setUsername(username: username)
+        XCTAssertTrue(profileButton().exists)
     }
 
     // MARK: - Helpers
@@ -101,6 +92,15 @@ final class PersonalUsersTests: XCTestCase {
         expectation(for: exists, evaluatedWith: textField, handler: nil)
         waitForExpectations(timeout: 5, handler: nil)
         return textField
+    }
+    
+    func profileButton() -> XCUIElement {
+        let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
+        let button = elementsQuery.firstMatch
+        let exists = NSPredicate(format: "exists == 1")
+        expectation(for: exists, evaluatedWith: button, handler: nil)
+        waitForExpectations(timeout: 5, handler: nil)
+        return button
     }
     
 }

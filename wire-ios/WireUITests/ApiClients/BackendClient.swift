@@ -21,7 +21,7 @@ import Foundation
 class BackendClient {
     func loginViaAPI(email:String, password:String) async throws -> String {
         let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
-        let url = URL(string: "\(backendURL)/login")
+        let url = URL(string: "\(backendURL)/v8/login")
         guard let requestUrl = url else { fatalError() }
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "POST"
@@ -33,6 +33,8 @@ class BackendClient {
         
         let pureResponse = response as! HTTPURLResponse
         if(pureResponse.statusCode != 200) {
+            print("Error! got status code \(pureResponse.statusCode)")
+            print("Response: \(pureResponse.description)")
             throw(RuntimeError("Error \(pureResponse.description)"))
         }
         

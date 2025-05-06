@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-INBUCKET_USERNAME=op://Test Automation/BackendConnection staging/inbucketUsername
-INBUCKET_PASSWORD=op://Test Automation/BackendConnection staging/inbucketPassword
-INBUCKET_URL=op://Test Automation/BackendConnection staging/trimmedInbucketUrl
-BACKEND_URL=op://Test Automation/BackendConnection staging/trimmedBackendURL
-DEFAULT_PASSWORD=
+import XCTest
+
+class ConversationsPage: PageModel {
+    func profileImage() -> XCUIElement {
+        let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
+        return elementsQuery.firstMatch
+    }
+    
+    func isPresent() -> Bool {
+        return profileImage().exists
+    }
+}

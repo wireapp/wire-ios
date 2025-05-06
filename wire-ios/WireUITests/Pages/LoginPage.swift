@@ -18,35 +18,34 @@
 
 import XCTest
 
-class LoginPage  {
-    let app:XCUIApplication
+class LoginPage: PageModel  {
     
-    init(theApp:XCUIApplication) {
-        app = theApp
-    }
-    
-    func acceptButton() -> XCUIElement {
-        let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
-    }
-    
-    func verificationCodeInput() -> XCUIElement {
-        let elementsQuery = app.textViews.matching(identifier: "VerificationCode")
-        return elementsQuery.firstMatch
-    }
-
     func nextButton() -> XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Next"]
     }
 
-    func newNextButton() -> XCUIElement {
-        let elementsQuery = app.otherElements
-        return elementsQuery.buttons["ConfirmButton"]
-    }
-
     func createPersonalAccountLink() -> XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Create Personal Account"]
+    }
+    
+    func emailTextField() -> XCUIElement {
+        let elementsQuery = app.scrollViews.otherElements
+        let textField = elementsQuery.textFields["Email or SSO code"]
+        return textField
+    }
+    
+    func typeEmailOrSSO(email:String) -> LoginPage {
+        let textField = emailTextField()
+        textField.tap()
+        textField.typeText(email)
+        nextButton().tap()
+        return self
+    }
+    
+    func useCreatePersonalAccountLink() -> RegistrationPage {
+        createPersonalAccountLink().tap()
+        return RegistrationPage(theApp:app)
     }
 }
