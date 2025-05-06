@@ -588,18 +588,14 @@ public final class ZMUserSession: NSObject {
             onProcessedCallEvent: onProcessedCallEvent(callEventInfo:)
         )
 
-        let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
-            clientSessionComponent
-        } else {
-            // TODO: [WPB-17225] replace syncProvider here
-            clientSessionComponent
+        if asyncStreamEnabled {
+            journal[.skipPullingLastNotificationID] = true
         }
-
         let syncAgent = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastEventIDRepository,
             initialSyncProvider: clientSessionComponent,
-            incrementalSyncProvider: incrementalSyncProvider,
+            incrementalSyncProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent

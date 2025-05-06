@@ -53,4 +53,9 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
+    static let skipPullingLastNotificationID = Self(
+        "skipPullingLastNotificationID",
+        defaultValue: false
+    )
+
 }

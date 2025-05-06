@@ -112,7 +112,7 @@ final class SyncAgent: NSObject {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new initial sync")
-                try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: false)
+                try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: journal[.skipPullingLastNotificationID])
                 WireLogger.sync.debug("did finish new initial sync")
                 journal[.isInitialSyncRequired] = false
                 delegate?.syncAgentDidFinishInitialSync(self)
