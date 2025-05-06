@@ -345,37 +345,43 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     }
 
     func testResetWasUncollapsed_FileMessage() throws {
+        // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
         let nonce = message.nonce!.uuidString
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [nonce]
-        var sut = makeSUT(message: message)
+        // When
+        let sut = makeSUT(message: message)
+        // Then
         XCTAssertFalse(sut.isCollapsed)
 
+        // Given
         let expectation = XCTestExpectation()
         mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { value, _ in
             XCTAssertEqual(value as? [String], [])
             expectation.fulfill()
         }
-
-        // collapse back
+        // When collapse back
         sut.collapse()
+        // Then
         XCTAssertTrue(sut.isCollapsed)
         wait(for: [expectation])
     }
 
     func testWhenWasUncollapsedBefore_File() throws {
+        // Given
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let message = try XCTUnwrap(MockMessageFactory.fileTransferMessage())
         message.senderUser = mockSelfUser
         let nonce = message.nonce!.uuidString
         mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [nonce]
+        // When
         let sut = makeSUT(message: message)
         // when re-created expected to take into account that it was uncollapsed before and stay uncollapsed
         XCTAssertFalse(sut.isCollapsed)
     }
-
+    
     func testNotSavingWasUncollapsed_TextMessage() throws {
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
         let longText = """
@@ -388,7 +394,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             MockMessageFactory.textMessage(withText: longText)
         )
         message.senderUser = mockSelfUser
-        var sut = makeSUT(message: message)
+        let sut = makeSUT(message: message)
         XCTAssertTrue(sut.isCollapsed)
 
         let expectation = XCTestExpectation()
@@ -400,6 +406,29 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         // uncollapse
         sut.collapse()
         XCTAssertFalse(sut.isCollapsed)
+        // And not saved
+        wait(for: [expectation], timeout: 0)
+    }
+    
+    func testSavingWasUncollapsed_TextMessageWithLink() throws {
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        let message = try XCTUnwrap(
+            MockMessageFactory.textMessageWithLinkAttachment(withText: "onetwothreefour")
+        )
+        message.senderUser = mockSelfUser
+        let sut = makeSUT(message: message)
+        XCTAssertTrue(sut.isCollapsed)
+
+        let expectation = XCTestExpectation()
+        mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { _, _ in
+            expectation.fulfill()
+        }
+
+        // uncollapse
+        sut.collapse()
+        // Then after re-created expected to take into account that it was uncollapsed before and stay uncollapsed
+        XCTAssertFalse(sut.isCollapsed)
+        // Saved
         wait(for: [expectation], timeout: 0)
     }
 

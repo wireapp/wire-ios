@@ -162,12 +162,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         guard collapseOwnMessagesEnabled, message.isSentBySelfUser else {
             return false
         }
-
-        if !message.isText, privateDefaults.wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) {
+        
+        if privateDefaults.wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) {
             return false
         }
 
-        if message.isText {
+        if message.isTextWithNoLinks {
+             
             guard let textMessage = message.textMessageData?.messageText else {
                 return false
             }
@@ -257,7 +258,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func needToAddCollapsedCell() -> Bool {
-        !isMessageWithCollapsedByDefault() && isCollapsed
+        guard !isMessageWithCollapsedByDefault() else {
+            return false
+        }
+        if isCollapsed {
+            return true
+        }
+        if collapseOwnMessagesEnabled, message.hasLinkPreview,
+            !privateDefaults.wasMessagedUncollapsedBefore(nonce: message.nonce?.uuidString) {
+            return true
+        }
+        
+        return false
     }
 
     private func addCollapsedCell() -> [AnyConversationMessageCellDescription] {
@@ -449,7 +461,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // for all messages that support collapsing and is collapsed
-        if !isMessageWithCollapsedByDefault(), isCollapsed {
+        if needToAddCollapsedCell() {
             // if message failed, always show footer with error message and retry button
             if message.deliveryState == .failedToSend {
                 return true
@@ -470,7 +482,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
-        if !isMessageWithCollapsedByDefault() && isCollapsed {
+        if needToAddCollapsedCell() {
             return false
         }
 

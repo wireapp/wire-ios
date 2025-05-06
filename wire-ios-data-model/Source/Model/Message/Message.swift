@@ -25,6 +25,10 @@ public extension ZMConversationMessage {
     var isText: Bool {
         textMessageData != nil
     }
+    
+    var isTextWithNoLinks: Bool {
+        isText && !hasLinkPreview
+    }
 
     var isImage: Bool {
         imageMessageData != nil || (fileMessageData != nil && fileMessageData!.v3_isImage)
@@ -62,6 +66,10 @@ public extension ZMConversationMessage {
 
     var isSystem: Bool {
         systemMessageData != nil
+    }
+    
+    var hasLinkPreview: Bool {
+        textMessageData?.linkPreview != nil || linkAttachments?.first != nil
     }
 
     var isNormal: Bool {

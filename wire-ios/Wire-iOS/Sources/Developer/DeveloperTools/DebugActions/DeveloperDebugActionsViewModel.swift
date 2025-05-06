@@ -21,6 +21,7 @@ import SwiftUI
 import WireDataModel
 import WireLogging
 import WireSyncEngine
+import WireFoundation
 
 struct ConversationResult {
     var id: String
@@ -78,7 +79,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
             .init(title: "Delete domains in the database", action: deleteDomains),
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
-            .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie)
+            .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie),
+            .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -115,6 +117,13 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         )
 
         accessTokenHandler?.processAccessTokenResponse(responseFailure)
+        onDismiss?()
+    }
+    
+    private func clearCollapsedMessagesCache() {
+        let defaults = PrivateUserDefaults<CollapseKey>(
+            userID: selfClient!.user!.remoteIdentifier)
+        defaults.removeObject(forKey: .uncollapsedMessages)
         onDismiss?()
     }
 

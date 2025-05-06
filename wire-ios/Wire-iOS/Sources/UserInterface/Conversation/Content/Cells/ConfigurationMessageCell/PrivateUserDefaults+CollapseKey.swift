@@ -18,6 +18,7 @@
 
 import Foundation
 import WireFoundation
+import WireDataModel
 
 extension PrivateUserDefaults where Key == CollapseKey {
 
@@ -29,20 +30,30 @@ extension PrivateUserDefaults where Key == CollapseKey {
     }
 
     func removeWasUncollapsed(_ message: ConversationMessage) {
-        guard !message.isText,
+        guard message.shouldSaveUncollapsed,
               let nonce = message.nonce?.uuidString else { return }
         var uncollapsedMessages: [String] = stringArray(forKey: .uncollapsedMessages) ?? []
-        if let index = uncollapsedMessages.firstIndex(of: nonce) {
-            uncollapsedMessages.remove(at: index)
-        }
+        uncollapsedMessages.removeAll(where: { $0 == nonce })
         set(uncollapsedMessages, forKey: .uncollapsedMessages)
     }
 
     func saveWasUncollapsed(_ message: ConversationMessage) {
-        guard !message.isText,
+        guard message.shouldSaveUncollapsed,
               let nonce = message.nonce?.uuidString else { return }
         var uncollapsedMessages: [String] = stringArray(forKey: .uncollapsedMessages) ?? []
-        uncollapsedMessages.append(nonce)
+        if uncollapsedMessages.firstIndex(of: nonce) == nil {
+            uncollapsedMessages.append(nonce)
+        }
         set(uncollapsedMessages, forKey: .uncollapsedMessages)
+    }
+}
+
+private extension ZMConversationMessage {
+
+    var shouldSaveUncollapsed: Bool {
+        if isText {
+            return hasLinkPreview
+        }
+        return isCollapsingSupported
     }
 }

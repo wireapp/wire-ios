@@ -32,6 +32,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         super.setUp()
         UIColor.setAccentOverride(.red)
         message = createMessage()
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
     }
 
     // MARK: - tearDown
@@ -74,8 +75,11 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         let article = ArticleMetadata(protocolBuffer: linkPreview)
         message = createMessage(withText: "http://www.example.com")
         message.backingTextMessageData.backingLinkPreview = article
-
+        
         // THEN
+        verify(message: message, named: "Collapsed")
+        
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
         verify(message: message)
     }
 
@@ -92,8 +96,13 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         let article = ArticleMetadata(protocolBuffer: linkPreview)
         message = createMessage(withText: "What do you think about this http://www.example.com")
         message.backingTextMessageData.backingLinkPreview = article
-
+        
         // THEN
+        
+        verify(message: message, named: "Collapsed")
+        
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+
         verify(message: message)
     }
 
@@ -130,7 +139,8 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message.backingTextMessageData.backingLinkPreview = article
         message.backingTextMessageData.hasQuote = true
         message.backingTextMessageData.quoteMessage = quote
-
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+        
         // THEN
         verify(message: message)
     }
@@ -149,7 +159,12 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         ]
 
         // THEN
+        
+        verify(message: message, named: "Collapsed", waitForTextViewToLoad: true)
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+
         verify(message: message, waitForTextViewToLoad: true)
+        
     }
 
     func testSoundCloudMediaPreviewAttachment() {
@@ -173,6 +188,8 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
                 verify(message: message, waitForTextViewToLoad: true)
             }
         #else
+            verify(message: message, named: "Collapsed", waitForTextViewToLoad: true, )
+            mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
             verify(message: message, waitForTextViewToLoad: true)
         #endif
     }
@@ -191,6 +208,9 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         ]
 
         // THEN
+        verify(message: message, named: "Collapsed", waitForTextViewToLoad: true)
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+
         verify(message: message, waitForTextViewToLoad: true)
     }
 
@@ -218,6 +238,9 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         ]
 
         // THEN
+        
+        verify(message: message, named: "Collapsed")
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
         verify(message: message)
     }
 

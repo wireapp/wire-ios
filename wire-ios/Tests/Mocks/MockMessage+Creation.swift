@@ -208,6 +208,34 @@ enum MockMessageFactory {
             .messageText = shouldIncludeRichMedia ?
             "Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : text!
         message.backingTextMessageData = textMessageData
+        
+        return message
+    }
+    
+    static func textMessageWithLinkAttachment(
+        withText text: String? = "Just a random text message",
+        sender: UserType? = nil,
+        conversation: Conversation? = nil,
+        includingRichMedia shouldIncludeRichMedia: Bool = false
+    ) -> MockMessage {
+        let message: MockMessage = MockMessageFactory.messageTemplate(
+            sender: sender,
+            conversation: conversation
+        )
+
+        let textMessageData = MockTextMessageData()
+        textMessageData
+            .messageText = shouldIncludeRichMedia ?
+            "Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : text!
+        message.backingTextMessageData = textMessageData
+        
+        message.linkAttachments = [LinkAttachment(
+            type: .youTubeVideo,
+            title: "Lagar mat med Fernando Di Luca",
+            permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
+            thumbnails: [],
+            originalRange: NSRange(location: 0, length: 5)
+        )]
 
         return message
     }

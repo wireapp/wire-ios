@@ -140,12 +140,16 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         let message = object.message
         if message.isText {
-            typeIcon.isHidden = true
+            typeIcon.isHidden = !message.hasLinkPreview
+            if message.hasLinkPreview {
+                typeIcon.image = .init(resource: .link)
+            }
             if let textMessageData = message.textMessageData {
                 messageTextView.attributedText = NSAttributedString
                     .format(
                         message: textMessageData,
-                        isObfuscated: message.isObfuscated
+                        isObfuscated: message.isObfuscated,
+                        shouldRemoveTrailingLink: false
                     )
             }
         } else {

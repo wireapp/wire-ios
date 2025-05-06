@@ -129,7 +129,7 @@ extension NSAttributedString {
     }
 
     @objc
-    static func format(message: TextMessageData, isObfuscated: Bool) -> NSAttributedString {
+    static func format(message: TextMessageData, isObfuscated: Bool, shouldRemoveTrailingLink: Bool = true) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 
@@ -152,7 +152,7 @@ extension NSAttributedString {
         markdownText.highlight(mentions: mentionTextObjects)
 
         // Remove trailing link if we show a link preview
-        if let linkPreview = message.linkPreview {
+        if shouldRemoveTrailingLink, let linkPreview = message.linkPreview {
             markdownText.removeTrailingLink(for: linkPreview)
         }
 
