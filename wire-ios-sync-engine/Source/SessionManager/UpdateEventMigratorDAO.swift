@@ -19,6 +19,7 @@
 @preconcurrency import CoreData
 import Foundation
 import WireAPI
+import WireUpdateEventCoding
 
 // sourcery: AutoMockable
 protocol UpdateEventMigratorDAOProtocol {
@@ -36,7 +37,7 @@ protocol UpdateEventMigratorDAOProtocol {
 struct UpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
 
     private let context: NSManagedObjectContext
-    private let encoder = JSONEncoder()
+    private let encoder = StorableUpdateEventCoder()
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -138,7 +139,7 @@ actor ActorBasedUpdateEventMigratorDAO: UpdateEventMigratorDAOProtocol {
         contextExecutor.context
     }
 
-    private let encoder = JSONEncoder()
+    private let encoder = StorableUpdateEventCoder()
 
     init(container: NSPersistentContainer) {
         self.init(context: container.newBackgroundContext())

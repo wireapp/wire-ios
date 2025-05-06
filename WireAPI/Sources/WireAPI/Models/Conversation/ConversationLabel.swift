@@ -38,4 +38,16 @@ public struct ConversationLabel: Equatable, Codable, Sendable {
 
     public let conversationIDs: [UUID]
 
+    public init(
+        id: UUID,
+        name: String? = nil,
+        type: Int16,
+        conversationIDs: [UUID]
+    ) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.conversationIDs = conversationIDs
+    }
+
 }
