@@ -54,4 +54,20 @@ public struct ConversationMemberChange: Equatable, Codable, Sendable {
 
     public let archivedStatusReferenceDate: Date?
 
+    public init(
+        id: UserID,
+        newRoleName: String? = nil,
+        newMuteStatus: Int? = nil,
+        muteStatusReferenceDate: Date? = nil,
+        newArchivedStatus: Bool? = nil,
+        archivedStatusReferenceDate: Date? = nil
+    ) {
+        self.id = id
+        self.newRoleName = newRoleName
+        self.newMuteStatus = newMuteStatus
+        self.muteStatusReferenceDate = muteStatusReferenceDate
+        self.newArchivedStatus = newArchivedStatus
+        self.archivedStatusReferenceDate = archivedStatusReferenceDate
+    }
+
 }

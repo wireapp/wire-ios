@@ -48,7 +48,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         flowManager: FlowManagerType,
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
-        useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
@@ -66,7 +65,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             flowManager: flowManager,
             updateEventProcessor: updateEventProcessor,
             localNotificationDispatcher: localNotificationDispatcher,
-            useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: proteusProvider,
@@ -106,7 +104,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         flowManager: FlowManagerType,
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
-        useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
@@ -165,7 +162,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus,
                 operationStatus: applicationStatusDirectory.operationStatus,
-                useLegacyPushNotifications: useLegacyPushNotifications,
                 lastEventIDRepository: lastEventIDRepository
             ),
             FetchingClientRequestStrategy(
