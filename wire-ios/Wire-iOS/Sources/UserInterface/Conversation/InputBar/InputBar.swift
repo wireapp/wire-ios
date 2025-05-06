@@ -129,6 +129,15 @@ final class InputBar: UIView {
         return stackView
     }()
 
+    private let inputContainer: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 16
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        return stackView
+    }()
+
     // Contains and clips the buttonInnerContainer
     let buttonContainer = UIView()
 
@@ -227,7 +236,8 @@ final class InputBar: UIView {
         buttonContainer.clipsToBounds = true
 
         // Upper container
-        addSubview(upperContainer)
+        addSubview(inputContainer)
+        inputContainer.addArrangedSubview(upperContainer)
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
 
         [buttonContainer, buttonRowSeparator].forEach(addSubview)
@@ -329,6 +339,7 @@ final class InputBar: UIView {
 
     fileprivate func createConstraints() {
         [
+            inputContainer,
             upperContainer,
             buttonContainer,
             textView,
@@ -344,12 +355,18 @@ final class InputBar: UIView {
         rightAccessoryViewWidthConstraint.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-            upperContainer.topAnchor.constraint(equalTo: topAnchor),
-            upperContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            upperContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
+            inputContainer.topAnchor.constraint(equalTo: topAnchor),
+            inputContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            inputContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
+            inputContainer.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
+
+//            upperContainer.topAnchor.constraint(equalTo: topAnchor),
+//            upperContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            upperContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
             upperContainer.heightAnchor.constraint(greaterThanOrEqualToConstant: 56),
             upperContainer.heightAnchor.constraint(lessThanOrEqualToConstant: 120),
-            upperContainer.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
+            upperContainer.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
+//            upperContainer.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
 
             leftAccessoryView.topAnchor.constraint(equalTo: upperContainer.topAnchor),
             leftAccessoryView.leadingAnchor.constraint(equalTo: upperContainer.leadingAnchor),
