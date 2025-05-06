@@ -50,34 +50,45 @@ public final class NewPushChannel: NewPushChannelProtocol {
                 } else {
                     throw PushChannelError.missingEvents
                 }
+            case .string:
+                WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV3)
+                throw PushChannelError.receivedInvalidMessage
 
-            default:
+            @unknown default:
+                WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV3)
                 throw PushChannelError.receivedInvalidMessage
             }
         }
 
         // Materialize the mapped sequence into a stream first
         let baseStream = AsyncThrowingStream<NewPushChannel.Element, any Error> { continuation in
-            Task {
+            Task { [weak self] in
                 do {
                     for try await element in mappedSequence {
-                        continuation.yield(.event(element))
+                        let result = continuation.yield(.event(element))
+                        WireLogger.pushChannel.debug("Yield result: \(result)", attributes: .pushChannelV3)
+
                     }
+                    WireLogger.pushChannel.debug("finished sequence", attributes: .pushChannelV3)
                     continuation.finish()
+                    
                 } catch {
+                    WireLogger.pushChannel.debug("failed to get next web socket message: \(error)", attributes: .pushChannelV3)
                     continuation.finish(throwing: error)
+                    await self?.close()
                 }
             }
         }
 
-        return withIdleTimeout(baseStream, timeout: 5) { continuation in
+        return withIdleTimeout(baseStream, timeout: timeout, onTimeout: { continuation in
             WireLogger.pushChannel.debug("idle timeout occurred, we're up to date", attributes: .pushChannelV3)
-            continuation.yield(.upToDate)
-            Task { await self.close() }
-        }
+           let result = continuation.yield(.upToDate)
+            WireLogger.pushChannel.debug("Yield result: \(result)", attributes: .pushChannelV3)
+        })
     }
     
     public func ackEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
+        WireLogger.pushChannel.debug("ackEvent \(deliveryTag)", attributes: .pushChannelV3)
         let acknowledgement = EventAcknowledgmentNotification(
             deliveryTag: deliveryTag,
             multiple: multiple
@@ -87,6 +98,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
     }
     
     public func ackFullSync() async throws {
+        WireLogger.pushChannel.debug("ackFullSync", attributes: .pushChannelV3)
         let acknowledgement = FullSyncAcknowledgmentNotification()
         let data = try JSONEncoder().encode(acknowledgement)
         try await write(data: data)
@@ -124,7 +136,7 @@ private func withIdleTimeout<S: AsyncSequence>(
     timeout: TimeInterval,
     onTimeout: @escaping (_ continuation: AsyncThrowingStream<S.Element, any Error>.Continuation) -> Void
 ) -> AsyncThrowingStream<S.Element, any Error> {
-    AsyncThrowingStream { continuation in
+    AsyncThrowingStream { continuation  in
         let lastMessageTime = LastMessageTracker()
 
         // Processing task

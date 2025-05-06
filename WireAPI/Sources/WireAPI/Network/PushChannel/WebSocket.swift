@@ -46,7 +46,7 @@ public actor WebSocket: WebSocketProtocol {
                             continuation.yield(message)
                         } catch {
                             
-                            WireLogger.webSocket.error("\(String(describing: error)) - closeCode: \(connection.closeCode) - closeReason: \(String(describing: connection.closeReason)), debug: \(connection.networkInformation)")
+                            WireLogger.webSocket.error("error throwing \(String(describing: error)) - closeCode: \(connection.closeCode) - closeReason: \(String(describing: connection.closeReason)), debug: \(connection.networkInformation)")
                             continuation.finish(throwing: error)
                             isAlive = false
                         }
@@ -92,16 +92,18 @@ public actor WebSocket: WebSocketProtocol {
     }
 
     public func write(data: Data) async throws {
-        if !connection.isOpen {
+        WireLogger.webSocket.debug("write data")
+//        if !connection.isOpen {
             connection.resume()
-        }
+//        }
         try await connection.send(.data(data))
+        WireLogger.webSocket.debug("wrote data")
     }
 
     public func write(string: String) async throws {
-        if !connection.isOpen {
+//        if !connection.isOpen {
             connection.resume()
-        }
+//        }
         try await connection.send(.string(string))
     }
 

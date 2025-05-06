@@ -20,14 +20,13 @@ import Foundation
 import WireAPI
 import WireLogging
 
-/// IncrementalSync using new backend API async stream notifications
-public struct NewIncrementalSync: IncrementalSyncProtocol {
-    public enum Action {
-        case needsInitialSync
-        case notifySyncCompleted
-    }
+public protocol LiveSyncDelegate {
+    func didFinishSync(sync: NewIncrementalSync)
+    func didMissedEvents(sync: NewIncrementalSync)
+}
 
-    
+/// IncrementalSync using new backend API async stream notifications
+public struct NewIncrementalSync: LiveSyncProtocol {
     
     private let selfClientID: String
     private let pushChannelAPI: any NewPushChannelAPI
@@ -36,7 +35,7 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
     private let logger = WireLogger.sync
-    
+    var delegate: (any LiveSyncDelegate)?
     
     public init(
         selfClientID: String,
@@ -56,36 +55,36 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
     }
     
     public func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token {
-        logger.debug("performing incremental sync")
+        logger.debug("performing live sync v3")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
         if acknowledgeFullSync {
             try await pushChannel.ackFullSync()
         }
         
-        logger.debug("opening new push channel")
+        logger.debug("opening new push channel v3")
         let liveEventStream = try await pushChannel.open()
         
-        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel] in
-            logger.debug("handling live event stream")
+        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel, delegate] in
+            logger.debug("handling live event stream v3")
 
             do {
                 for try await var element in liveEventStream {
-                    logger.debug("received live event envelope")
+                    logger.debug("received live event envelope v3")
                     switch element {
                     case let .event(enveloppe):
-                        var enveloppe = enveloppe
+                        var envelope = enveloppe
                         do {
                             // Decrypt.
                             logger.debug(
-                                "decrypting live event envelope",
-                                attributes: [.eventEnvelopeID: enveloppe.id]
+                                "decrypting live event envelope  v3",
+                                attributes: [.eventEnvelopeID: envelope.id]
                             )
-                            enveloppe.events = try await decryptor.decryptEvents(in: enveloppe)
+                            envelope.events = try await decryptor.decryptEvents(in: envelope)
                         } catch {
                             logger.error(
-                                "failed to decrypt live event envelope: \(String(describing: error))",
-                                attributes: [.eventEnvelopeID: enveloppe.id]
+                                "failed to decrypt live event envelope  v3: \(String(describing: error))",
+                                attributes: [.eventEnvelopeID: envelope.id]
                             )
                             continue
                         }
@@ -94,39 +93,48 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                         do {
                             // Store.
                             logger.debug(
-                                "storing live event envelope",
-                                attributes: [.eventEnvelopeID: enveloppe.id]
+                                "storing live event envelope  v3",
+                                attributes: [.eventEnvelopeID: envelope.id]
                             )
                             index = try await store.indexOfLastEventEnvelope() + 1
-                            try await store.persistEventEnvelope(enveloppe, index: index)
-
-                            if let deliveryTag = enveloppe.deliveryTag {
+                            try await store.persistEventEnvelope(envelope, index: index)
+                        } catch {
+                            logger.error(
+                                "failed to store live event envelope v3: \(String(describing: error))",
+                                attributes: [.eventEnvelopeID: envelope.id]
+                            )
+                            continue
+                        }
+                        
+                        // ACK
+                        do {
+                            if let deliveryTag = envelope.deliveryTag {
                                 logger.debug(
-                                    "ack event envelope",
-                                    attributes: [.eventEnvelopeID: enveloppe.id]
+                                    "ack event envelope v3",
+                                    attributes: [.eventEnvelopeID: envelope.id]
                                 )
                                 try await pushChannel.ackEvent(deliveryTag: deliveryTag, multiple: false)
                             }
                         } catch {
                             logger.error(
-                                "failed to store live event envelope: \(String(describing: error))",
-                                attributes: [.eventEnvelopeID: enveloppe.id]
+                                "failed to ack live event envelope v3: \(String(describing: error))",
+                                attributes: [.eventEnvelopeID: envelope.id]
                             )
-                            continue
-                        }
 
+                        }
+                        
                         // Process.
-                        for event in enveloppe.events {
+                        for event in envelope.events {
                             do {
                                 logger.debug(
                                     "processing live event: \(event.name)",
-                                    attributes: [.eventEnvelopeID: enveloppe.id]
+                                    attributes: [.eventEnvelopeID: envelope.id]
                                 )
                                 try await processor.processEvent(event)
                             } catch {
                                 logger.error(
                                     "failed to process live event: \(String(describing: error))",
-                                    attributes: [.eventEnvelopeID: enveloppe.id]
+                                    attributes: [.eventEnvelopeID: envelope.id]
                                 )
                             }
                         }
@@ -135,13 +143,13 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                             // Delete.
                             logger.debug(
                                 "deleting live event envelope",
-                                attributes: [.eventEnvelopeID: enveloppe.id]
+                                attributes: [.eventEnvelopeID: envelope.id]
                             )
                             try await store.deleteEventEnvelope(atIndex: index)
                         } catch {
                             logger.error(
-                                "failed to delete live event envelope: \(String(describing: error))",
-                                attributes: [.eventEnvelopeID: enveloppe.id]
+                                "failed to delete live event envelope v3: \(String(describing: error))",
+                                attributes: [.eventEnvelopeID: envelope.id]
                             )
                         }
 
@@ -151,21 +159,22 @@ public struct NewIncrementalSync: IncrementalSyncProtocol {
                             // Save.
                             try await databaseSaver.save()
                         } catch {
-                            logger.error("failed to save database: \(String(describing: error))")
+                            logger.error("failed to save database v3: \(String(describing: error))")
                         }
 
                     case .upToDate:
-                        completion(.notifySyncCompleted)
+                        logger.debug("upToDate event v3")
+                        delegate?.didFinishSync(sync: self)
                     }
                   
                 }
             } catch PushChannelError.missingEvents {
-                completion(.needsInitialSync)
+                delegate?.didMissedEvents(sync: self)
             } catch {
                 logger.warn("v3 live event stream encountered error: \(String(describing: error))")
             }
 
-            logger.debug("live event stream did finish")
+            logger.debug("live event stream did finish v3")
         }
 
         return IncrementalSync.Token(task: task, closePushChannel: {

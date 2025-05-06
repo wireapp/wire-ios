@@ -21,11 +21,12 @@ import Foundation
 extension ClientSessionComponent: IncrementalSyncProvider {
 
     public func provideIncrementalSync() throws -> any IncrementalSyncProtocol {
-        if asyncStreamEnabled {
-            newIncrementalSync
-        } else {
-            incrementalSync
-        }
+        incrementalSync
+    }
+    
+    public func provideLiveSync(delegate: any LiveSyncDelegate) throws -> any LiveSyncProtocol {
+        newIncrementalSync.delegate = delegate
+        return newIncrementalSync
     }
 
 }
