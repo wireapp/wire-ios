@@ -22,9 +22,9 @@ import WireDomain
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
-class QuickSyncObserverTests {
+class IncrementalSyncObserverTests {
 
-    private lazy var sut = QuickSyncObserver(
+    private lazy var sut = IncrementalSyncObserver(
         syncAgent: syncAgent,
         notificationContext: notificationContext
     )

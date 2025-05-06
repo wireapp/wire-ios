@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol QuickSyncObserverInterface {
+public protocol IncrementalSyncObserverProtocol {
 
     func waitUntilCanSendMessage() async
 

@@ -178,7 +178,7 @@
 		16BBA1F42AF3952300CDF38A /* MessageSenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1F32AF3952300CDF38A /* MessageSenderTests.swift */; };
 		16BBA1F62AF3D41200CDF38A /* MessageDependencyResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1F52AF3D41200CDF38A /* MessageDependencyResolverTests.swift */; };
 		16BBA1F82AFC36DF00CDF38A /* QuickSyncCompletedNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1F72AFC36DF00CDF38A /* QuickSyncCompletedNotification.swift */; };
-		16BBA1FA2AFC3BAB00CDF38A /* QuickSyncObserverInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1F92AFC3BAB00CDF38A /* QuickSyncObserverInterface.swift */; };
+		16BBA1FA2AFC3BAB00CDF38A /* IncrementalSyncObserverProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1F92AFC3BAB00CDF38A /* IncrementalSyncObserverProtocol.swift */; };
 		16BBA1FE2AFC5E1600CDF38A /* DependentObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1FD2AFC5E1600CDF38A /* DependentObjects.swift */; };
 		16CC0833268DC32D00C0613C /* LinkPreviewUpdateRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC0832268DC32D00C0613C /* LinkPreviewUpdateRequestStrategyTests.swift */; };
 		16CC083B268E075100C0613C /* ClientMessageRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC083A268E075100C0613C /* ClientMessageRequestStrategyTests.swift */; };
@@ -689,7 +689,7 @@
 		16BBA1F32AF3952300CDF38A /* MessageSenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSenderTests.swift; sourceTree = "<group>"; };
 		16BBA1F52AF3D41200CDF38A /* MessageDependencyResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDependencyResolverTests.swift; sourceTree = "<group>"; };
 		16BBA1F72AFC36DF00CDF38A /* QuickSyncCompletedNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSyncCompletedNotification.swift; sourceTree = "<group>"; };
-		16BBA1F92AFC3BAB00CDF38A /* QuickSyncObserverInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSyncObserverInterface.swift; sourceTree = "<group>"; };
+		16BBA1F92AFC3BAB00CDF38A /* IncrementalSyncObserverProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncrementalSyncObserverProtocol.swift; sourceTree = "<group>"; };
 		16BBA1FD2AFC5E1600CDF38A /* DependentObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependentObjects.swift; sourceTree = "<group>"; };
 		16CC0832268DC32D00C0613C /* LinkPreviewUpdateRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreviewUpdateRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16CC083A268E075100C0613C /* ClientMessageRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientMessageRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -1033,7 +1033,7 @@
 			children = (
 				06474D4924AF683E002C695D /* Decoding */,
 				16BBA1F72AFC36DF00CDF38A /* QuickSyncCompletedNotification.swift */,
-				16BBA1F92AFC3BAB00CDF38A /* QuickSyncObserverInterface.swift */,
+				16BBA1F92AFC3BAB00CDF38A /* IncrementalSyncObserverProtocol.swift */,
 				E6E0CE882B70DDAB0004ED88 /* SynchronizationState.swift */,
 				E6E0CE862B70D2C60004ED88 /* SyncPhase.swift */,
 				161E05432665465A00DADC3D /* SyncProgress.swift */,
@@ -2439,7 +2439,7 @@
 				16A4893F268B0C82001F9127 /* ClientMessageRequestStrategy.swift in Sources */,
 				F18401BD2073BE0800E9F4CC /* LinkPreviewAssetUploadRequestStrategy.swift in Sources */,
 				F18401AA2073BE0800E9F4CC /* FetchingClientRequestStrategy.swift in Sources */,
-				16BBA1FA2AFC3BAB00CDF38A /* QuickSyncObserverInterface.swift in Sources */,
+				16BBA1FA2AFC3BAB00CDF38A /* IncrementalSyncObserverProtocol.swift in Sources */,
 				06A9FDD228B36FF500B3C730 /* UpdateAccessRolesAction.swift in Sources */,
 				63CC83B12859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift in Sources */,
 				EE4C5FBE27D2C5CD000C0D45 /* BundledMessageNotificationBuilder.swift in Sources */,

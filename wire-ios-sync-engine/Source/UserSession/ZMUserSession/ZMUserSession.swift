@@ -591,7 +591,7 @@ public final class ZMUserSession: NSObject {
         if
             let strategyDirectory = strategyDirectory as? StrategyDirectory,
             let localNotificationDispatcher {
-            let quickSyncObserver = QuickSyncObserver(
+            let incrementalSyncObserver = IncrementalSyncObserver(
                 syncAgent: syncAgent,
                 notificationContext: notificationContext
             )
@@ -601,7 +601,7 @@ public final class ZMUserSession: NSObject {
                 transportSession: transportSession,
                 pushMessageHandler: localNotificationDispatcher,
                 flowManager: flowManager,
-                quickSyncObserver: quickSyncObserver
+                incrementalSyncObserver: incrementalSyncObserver
             )
         }
 

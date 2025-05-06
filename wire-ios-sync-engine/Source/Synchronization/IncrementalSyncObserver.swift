@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import WireLogging
 
-final class QuickSyncObserver: QuickSyncObserverInterface {
+final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
 
     enum DecryptionState {
         case notStarted
@@ -126,7 +126,7 @@ final class QuickSyncObserver: QuickSyncObserverInterface {
         }
 
         WireLogger.messaging.info(
-            "Waiting for app to finish decrypting during quickSync before sending message",
+            "Waiting for app to finish decrypting during incremental sync before sending message",
             attributes: .safePublic
         )
 

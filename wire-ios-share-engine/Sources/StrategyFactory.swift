@@ -49,7 +49,7 @@ final class StrategyFactory {
             sessionEstablisher: sessionEstablisher,
             messageDependencyResolver: messageDependencyResolver,
             context: syncContext,
-            quickSyncObserver: NoOpQuickSyncObserver()
+            incrementalSyncObserver: NoOpIncrementalSyncObserver()
         )
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
@@ -155,7 +155,7 @@ final class StrategyFactory {
     }
 }
 
-private struct NoOpQuickSyncObserver: QuickSyncObserverInterface {
+private struct NoOpIncrementalSyncObserver: IncrementalSyncObserverProtocol {
 
     func waitUntilCanSendMessage() async {
         // There is no quick sync in the share extension, so no op
