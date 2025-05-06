@@ -87,4 +87,8 @@ public actor WebSocket: WebSocketProtocol {
         continuation?.finish()
     }
 
+    public func write(_ data: Data) async throws {
+         try await connection.send(.data(data))
+     }
+
 }
