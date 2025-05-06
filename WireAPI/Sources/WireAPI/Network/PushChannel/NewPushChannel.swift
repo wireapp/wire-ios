@@ -20,47 +20,64 @@ import Foundation
 import WireFoundation
 import WireLogging
 
-    public typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 public final class NewPushChannel: NewPushChannelProtocol {
 
+    public enum Element {
+        case upToDate
+        case event(UpdateEventEnvelope)
+    }
+    
+    public typealias Stream = AsyncThrowingStream<Element, any Error>
+    
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()
-
+    private let timeout: TimeInterval = 5
+    
     public init(webSocket: any WebSocketProtocol) {
         self.webSocket = webSocket
     }
-
-    public func open() async throws -> Stream {
+    
+    public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV3)
-        return try await webSocket.open().map { [weak self, decoder] message in
-            do {
-                switch message {
-                case let .data(data):
-                    WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV3)
-                    let envelope = try decoder.decode(WebSocketNotification.self, from: data)
-                    if envelope.type == .event {
-                        return envelope.toAPIModel()
-                    } else {
-                        throw PushChannelError.missingEvents
-                    }
 
-                case .string:
-                    WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV3)
-                    throw PushChannelError.receivedInvalidMessage
-
-                @unknown default:
-                    WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV3)
-                    throw PushChannelError.receivedInvalidMessage
+        let mappedSequence = try await webSocket.open().map { [decoder] message in
+            switch message {
+            case let .data(data):
+                WireLogger.pushChannel.debug("received web socket data, decoding..., \(String(data: data, encoding: .utf8))", attributes: .pushChannelV3)
+                let envelope = try decoder.decode(WebSocketNotification.self, from: data)
+                if envelope.type == .event {
+                    return envelope.toAPIModel()
+                } else {
+                    throw PushChannelError.missingEvents
                 }
-            } catch {
-                WireLogger.pushChannel.debug("failed to get next web socket message: \(error)", attributes: .pushChannelV3)
-                await self?.close()
-                throw error
-            }
-        }.toStream()
-    }
 
-    public func ack(deliveryTag: UInt64, multiple: Bool = false) async throws {
+            default:
+                throw PushChannelError.receivedInvalidMessage
+            }
+        }
+
+        // Materialize the mapped sequence into a stream first
+        let baseStream = AsyncThrowingStream<NewPushChannel.Element, any Error> { continuation in
+            Task {
+                do {
+                    for try await element in mappedSequence {
+                        continuation.yield(.event(element))
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+
+        return withIdleTimeout(baseStream, timeout: 5) { continuation in
+            WireLogger.pushChannel.debug("idle timeout occurred, we're up to date", attributes: .pushChannelV3)
+            continuation.yield(.upToDate)
+            Task { await self.close() }
+        }
+    }
+    
+    public func ackEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
         let acknowledgement = EventAcknowledgmentNotification(
             deliveryTag: deliveryTag,
             multiple: multiple
@@ -68,22 +85,82 @@ public final class NewPushChannel: NewPushChannelProtocol {
         let data = try JSONEncoder().encode(acknowledgement)
         try await write(data: data)
     }
-
+    
     public func ackFullSync() async throws {
         let acknowledgement = FullSyncAcknowledgmentNotification()
         let data = try JSONEncoder().encode(acknowledgement)
         try await write(data: data)
     }
-
+    
     public func close() async {
         WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV3)
         await webSocket.close()
     }
     
     // MARK: - Helpers
-
+    
     private func write(data: Data) async throws {
         WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV3)
         try await webSocket.write(data: data)
+    }
+}
+
+actor LastMessageTracker {
+    private var timestamp = Date()
+
+    func update() {
+        timestamp = Date()
+    }
+
+    func timeSinceLastMessage() -> TimeInterval {
+        Date().timeIntervalSince(timestamp)
+    }
+}
+
+
+/// Wraps any `AsyncSequence` with idle timeout enforcement.
+private func withIdleTimeout<S: AsyncSequence>(
+    _ sequence: S,
+    timeout: TimeInterval,
+    onTimeout: @escaping (_ continuation: AsyncThrowingStream<S.Element, any Error>.Continuation) -> Void
+) -> AsyncThrowingStream<S.Element, any Error> {
+    AsyncThrowingStream { continuation in
+        let lastMessageTime = LastMessageTracker()
+
+        // Processing task
+        let processingTask = Task {
+            do {
+                for try await value in sequence {
+                    await lastMessageTime.update()
+                    continuation.yield(value)
+                }
+                continuation.finish()
+            } catch {
+                continuation.finish(throwing: error)
+            }
+        }
+
+        // Watchdog task
+        let watchdogTask = Task {
+            do {
+                while !Task.isCancelled {
+                    try await Task.sleep(nanoseconds: 1_000_000_000)
+
+                    let elapsed = await lastMessageTime.timeSinceLastMessage()
+                    if elapsed > timeout {
+                        processingTask.cancel()
+                        onTimeout(continuation)
+                        break
+                    }
+                }
+            } catch {
+                // Cancelled = normal
+            }
+        }
+
+        continuation.onTermination = { _ in
+            processingTask.cancel()
+            watchdogTask.cancel()
+        }
     }
 }
