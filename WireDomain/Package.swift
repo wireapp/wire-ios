@@ -9,7 +9,8 @@ let package = Package(
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         .library(name: "WireDomainPackage", targets: ["WireDomainPackage"]),
-        .library(name: "WireDomainPackageSupport", targets: ["WireDomainPackageSupport"])
+        .library(name: "WireDomainPackageSupport", targets: ["WireDomainPackageSupport"]),
+        .library(name: "WireUpdateEventCoding", targets: ["WireUpdateEventCoding"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
@@ -39,6 +40,10 @@ let package = Package(
                 "WireDomainPackageSupport",
                 .product(name: "WireFoundationSupport", package: "WireFoundation")
             ]
+        ),
+        .target(
+            name: "WireUpdateEventCoding",
+            dependencies: ["WireAPI"]
         ),
     ]
 )
