@@ -2348,6 +2348,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var updatedGroups = [MLSGroupID]()
         mockMLSActionExecutor.mockUpdateKeyMaterial = { groupID in
             if groupID == group2 {
+                // Given one of the group fails
                 throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsStaleMessage)
             } else {
                 updatedGroups.append(groupID)
