@@ -391,7 +391,7 @@ extension SyncStatus {
         WireLogger.sync.info(
             message,
             attributes: .legacySyncDidFinishAttributes(
-                duration: String(syncTotalDuration),
+                duration: formattedDuration,
                 initialSync: isSlowSyncing
             )
         )
@@ -422,7 +422,7 @@ extension SyncStatus {
             message,
             attributes: .legacySyncPhaseDidCompleteAttributes(
                 phase.description,
-                duration: String(duration),
+                duration: formattedDuration,
                 initialSync: isSlowSyncing
             )
         )
