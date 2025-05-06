@@ -22,7 +22,7 @@ import WireLogging
 
 extension SessionManager: VoIPPushManagerDelegate {
 
-    public func processPendingCallEvents(accountID: UUID) {
+    public func processPendingCallEvents(accountID: UUID) async {
         WireLogger.calling.info("process pending call events preemptively")
 
         guard
@@ -40,29 +40,10 @@ extension SessionManager: VoIPPushManagerDelegate {
             return
         }
 
-        withSession(for: account) { session in
-            session.processPendingCallEvents {
-                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-            }
+        if let session = await withSession(for: account) {
+            await session.processPendingCallEvents()
         }
-    }
-
-    // MARK: Helpers
-
-    private func accountId(from dictionary: [AnyHashable: Any]) -> UUID? {
-        let pushChannelDataKey = "data"
-        let pushChannelUserIDKey = "user"
-
-        guard let userInfoData = dictionary[pushChannelDataKey] as? [String: Any] else {
-            Logging.push.safePublic("No data dictionary in notification userInfo payload")
-            return nil
-        }
-
-        guard let userIdString = userInfoData[pushChannelUserIDKey] as? String else {
-            return nil
-        }
-
-        return UUID(uuidString: userIdString)
+        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
     }
 }
 

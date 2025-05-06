@@ -27,11 +27,11 @@ class BackendEnvironmentTests: XCTestCase {
     var backendBundle: Bundle!
     var defaultsProd: UserDefaults!
     var defaultsCustom: UserDefaults!
-    private var mockDateProvider: MockCurrentDateProviding!
+    private var mockDateProvider: CurrentDateProvidingMock!
 
     override func setUpWithError() throws {
 
-        mockDateProvider = MockCurrentDateProviding()
+        mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
 
         continueAfterFailure = false

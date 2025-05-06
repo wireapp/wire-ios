@@ -45,7 +45,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private lazy var voIPPushManager: VoIPPushManager = .init(
         application: UIApplication.shared,
-        requiredPushTokenType: requiredPushTokenType,
         pushTokenService: pushTokenService
     )
 
@@ -393,7 +392,6 @@ private extension AppDelegate {
             environment: BackendEnvironment.shared,
             configuration: configuration,
             detector: jailbreakDetector,
-            requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
@@ -424,9 +422,4 @@ private extension AppDelegate {
         appRootRouter?.start(launchOptions: launchOptions)
     }
 
-    private var requiredPushTokenType: PushToken.TokenType {
-        // Previously VoIP push were available for iOS <15
-        // this forces transition to standard ones.
-        .standard
-    }
 }
