@@ -30,6 +30,16 @@ public extension LogAttributes {
         static let v2 = "v2"
         static let v3 = "v3"
     }
+    
+    // MARK: Notification Service Extension
+    
+    static let newNSE = [
+        LogAttributesKey.nse: "new"
+    ]
+    
+    static let legacyNSE = [
+        LogAttributesKey.nse: "legacy"
+    ]
 
     // MARK: - Legacy sync (V1)
 
