@@ -321,8 +321,8 @@ final class InputBar: UIView {
         rightAccessoryViewWidthConstraint.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-            leftAccessoryView.leadingAnchor.constraint(equalTo: leftAccessoryView.superview!.leadingAnchor),
-            leftAccessoryView.topAnchor.constraint(equalTo: leftAccessoryView.superview!.topAnchor),
+            leftAccessoryView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            leftAccessoryView.topAnchor.constraint(equalTo: topAnchor),
             leftAccessoryView.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
             leftAccessoryViewWidthConstraint,
 
