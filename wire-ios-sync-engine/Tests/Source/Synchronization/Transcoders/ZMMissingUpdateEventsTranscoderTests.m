@@ -76,7 +76,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                       syncStatus:self.mockSyncStatus
                                                                  operationStatus:self.mockOperationStatus
-                                                      useLegacyPushNotifications:NO
                                                            lastEventIDRepository:self.lastEventIDRepository];
 }
 
@@ -397,7 +396,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                                                           pushNotificationStatus:self.mockPushNotificationStatus
                                                                                                       syncStatus:self.mockSyncStatus
                                                                                                  operationStatus:self.mockOperationStatus
-                                                                                      useLegacyPushNotifications:NO
                                                                                            lastEventIDRepository:self.lastEventIDRepository];
 
     WaitForAllGroupsToBeEmpty(0.5);

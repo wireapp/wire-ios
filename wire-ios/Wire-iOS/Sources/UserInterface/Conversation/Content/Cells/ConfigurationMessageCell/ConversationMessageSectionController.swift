@@ -81,8 +81,14 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// The message that is being presented.
     var message: ConversationMessage {
-        didSet { updateDelegates() }
+        didSet {
+            updateDelegates()
+            changeObservers.removeAll()
+            startObservingChanges(for: message)
+        }
     }
+
+    var selfUser: any UserType
 
     /// The delegate for cells injected by the list adapter.
     weak var cellDelegate: ConversationMessageCellDelegate? {
@@ -117,6 +123,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     init(
         message: ConversationMessage,
         context: ConversationMessageContext,
+        selfUser: any UserType,
         selected: Bool = false,
         userSession: UserSession,
         useInvertedIndices: Bool,
@@ -125,6 +132,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     ) {
         self.message = message
         self.context = context
+        self.selfUser = selfUser
         self.selected = selected
         self.userSession = userSession
         self.useInvertedIndices = useInvertedIndices
@@ -145,7 +153,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private var collapseOwnMessagesEnabled: Bool {
-        guard let selfUserId = userSession.selfUser.remoteIdentifier else { return false }
+        guard let selfUserId = selfUser.remoteIdentifier else { return false }
         return PrivateUserDefaults<CollapseKey>(userID: selfUserId, storage: userDefaults)
             .bool(forKey: .collapseOwnMessages)
     }
@@ -167,9 +175,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 return false
             }
 
-            let margins = HorizontalMargins.conversationHorizontalMargins()
-
-            return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth - margins.right - margins.left)
+            return willTextExceedOneLine(text: textMessage, availableWidth: contentWidth)
         } else {
             return message.isSentBySelfUser && message.isCollapsingSupported
         }
@@ -249,6 +255,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func addCollapsedCell() -> [AnyConversationMessageCellDescription] {
         let cellDescriptions = ConversationCollapsedMessageCellDescription(
             message: message,
+            accentColor: (selfUser.zmAccentColor ?? .default).accentColor,
             collapseExpandAction: { [weak self] in
                 self?.handleCollapseExpand()
             }
@@ -260,7 +267,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if needToAddCollapsedCell() {
             return addCollapsedCell()
         }
-        return ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
+        return ConversationTextMessageCellDescription
+            .cells(
+                for: message,
+                searchQueries: context.searchQueries,
+                selfUser: selfUser,
+                userSession: userSession
+            )
     }
 
     private func addLocationMessageCells() -> [AnyConversationMessageCellDescription] {
@@ -303,7 +316,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         ConversationSystemMessageCellDescription.cells(
             for: message,
             isCollapsed: isCollapsed,
-            buttonAction: buttonAction
+            buttonAction: buttonAction,
+            selfUser: selfUser,
+            accentColor: (selfUser.zmAccentColor ?? .default).accentColor.uiColor,
+            userSession: userSession
         )
     }
 
@@ -324,7 +340,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 cells += ConversationTextMessageCellDescription.cells(
                     textMessageData: data,
                     message: message,
-                    searchQueries: context.searchQueries
+                    searchQueries: context.searchQueries,
+                    selfUser: selfUser,
+                    userSession: userSession
                 )
 
             case let .button(data):
@@ -372,13 +390,17 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             let description = BurstTimestampSenderMessageCellDescription(
                 message: message,
                 context: context,
-                accentColor: userSession.selfUser.accentColor
+                accentColor: selfUser.accentColor
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
         if isSenderVisible, let sender = message.senderUser {
-            let description = ConversationSenderMessageCellDescription(sender: sender, message: message)
+            let description = ConversationSenderMessageCellDescription(
+                sender: sender,
+                selfUser: selfUser,
+                message: message
+            )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
@@ -412,6 +434,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func updateDelegates() {
+        actionController?.message = message
         cellDescriptions.forEach { cellDescription in
             cellDescription.message = message
             cellDescription.actionController = actionController
@@ -538,7 +561,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     // MARK: - Changes
 
     private func startObservingChanges(for message: ZMConversationMessage) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         let observer = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
         changeObservers.append(observer)

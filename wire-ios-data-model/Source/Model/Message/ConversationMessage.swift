@@ -152,9 +152,6 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// The replies quoting this message.
     var replies: Set<ZMMessage> { get }
 
-    /// An in-memory identifier for tracking the message during its life cycle.
-    var objectIdentifier: String { get }
-
     /// The links attached to the message.
     var linkAttachments: [LinkAttachment]? { get set }
 
@@ -243,10 +240,6 @@ extension ZMMessage: ZMConversationMessage {
         confirmations
             .filter { $0.type == .read }
             .sortedAscendingPrependingNil(by: \.serverTimestamp)
-    }
-
-    public var objectIdentifier: String {
-        nonpersistedObjectIdentifer
     }
 
     public var causedSecurityLevelDegradation: Bool {

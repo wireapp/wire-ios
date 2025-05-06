@@ -24,7 +24,7 @@ import WireLogging
 
 public protocol VoIPPushManagerDelegate: AnyObject {
 
-    func processPendingCallEvents(accountID: UUID)
+    func processPendingCallEvents(accountID: UUID) async
 
 }
 
@@ -38,7 +38,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     public let callKitManager: CallKitManager
 
-    private let requiredPushTokenType: PushToken.TokenType
     private let pushTokenService: PushTokenServiceInterface
     private let registry: PKPushRegistry
 
@@ -50,17 +49,14 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     public init(
         application: ZMApplication,
-        requiredPushTokenType: PushToken.TokenType,
         pushTokenService: PushTokenServiceInterface
     ) {
         Self.logger.debug("init VoIPPushManager")
-        self.requiredPushTokenType = requiredPushTokenType
         self.pushTokenService = pushTokenService
 
         self.registry = PKPushRegistry(queue: Self.pushRegistryQueue)
         self.callKitManager = CallKitManager(
             application: application,
-            requiredPushTokenType: requiredPushTokenType,
             mediaManager: AVSMediaManager.sharedInstance()
         )
 
@@ -81,53 +77,30 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         didUpdate pushCredentials: PKPushCredentials,
         for type: PKPushType
     ) {
-        Self.logger.debug("did update push credentials")
-
-        // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
-
-        // We only want to store the voip token if required.
-        guard requiredPushTokenType == .voip else { return }
-
-        pushTokenService.storeLocalToken(.createVOIPToken(from: pushCredentials.token))
+        // do nothing
     }
 
     public func pushRegistry(
         _ registry: PKPushRegistry,
         didInvalidatePushTokenFor type: PKPushType
     ) {
-        Self.logger.debug("did invalidate push token")
-
-        // We're only interested in voIP tokens.
-        guard type == .voIP else { return }
-
-        // We don't want to delete a standard push token by accident.
-        guard requiredPushTokenType == .voip else { return }
-
-        pushTokenService.storeLocalToken(.none)
+        // do nothing
     }
 
     public func pushRegistry(
         _ registry: PKPushRegistry,
         didReceiveIncomingPushWith payload: PKPushPayload,
-        for type: PKPushType,
-        completion: @escaping () -> Void
-    ) {
+        for type: PKPushType
+    ) async {
         Self.logger.debug("did receive incoming push")
 
         // We're only interested in voIP tokens.
-        guard type == .voIP else { return completion() }
+        guard type == .voIP else { return }
 
-        processNSEPush(
-            payload: payload.dictionaryPayload,
-            completion: completion
-        )
+        await processNSEPush(payload: payload.dictionaryPayload)
     }
 
-    private func processNSEPush(
-        payload: [AnyHashable: Any],
-        completion: @escaping () -> Void
-    ) {
+    private func processNSEPush(payload: [AnyHashable: Any]) async {
         Self.logger.debug("process NSE push, payload: \(payload)")
 
         guard
@@ -152,7 +125,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         // See https://developer.apple.com/documentation/callkit/sending_end-to-end_encrypted_voip_calls
         if shouldRing {
             Self.logger.info("will report new incoming call")
-            callKitManager.reportIncomingCallPreemptively(
+            await callKitManager.reportIncomingCallPreemptively(
                 handle: handle,
                 callerName: callerName,
                 hasVideo: hasVideo
@@ -165,6 +138,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             )
         }
 
-        delegate?.processPendingCallEvents(accountID: accountID)
+        await delegate?.processPendingCallEvents(accountID: accountID)
     }
 }
