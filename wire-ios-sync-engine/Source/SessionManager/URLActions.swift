@@ -101,17 +101,36 @@ extension URLAction {
             ///
             /// **Note:** to maintain backwards compatibility we should still support the legacy `wire://user/{userID}`
             /// format and potentially `wire://user/{userID@domain}`
-            guard let lastComponent = url.pathComponents.last else {
-                throw DeepLinkRequestError.invalidUserLink
-            }
 
-            if let qualifiedID = QualifiedID(rawValue: lastComponent) {
-                self = .openUserProfile(id: qualifiedID.uuid, domain: qualifiedID.domain)
-            } else if let uuid = UUID(uuidString: lastComponent) {
-                let domain = url.pathComponents.dropFirst().dropLast().last
-                self = .openUserProfile(id: uuid, domain: domain)
-            } else {
-                WireLogger.conversation.error("Invalid deep link for user profile: \(url)")
+            let components = url.pathComponents.dropFirst()
+
+            switch components.count {
+            // Legacy format wire://user/{userID}`
+            case 1:
+                let startComponent = components[components.startIndex]
+                if let qualifiedID = QualifiedID(rawValue: startComponent) {
+                    self = .openUserProfile(id: qualifiedID.uuid, domain: qualifiedID.domain)
+                } else if let uuid = UUID(uuidString: startComponent) {
+                    self = .openUserProfile(id: uuid, domain: nil)
+                } else {
+                    WireLogger.conversation.error("Invalid user profile deep link format")
+                    throw DeepLinkRequestError.invalidUserLink
+                }
+
+            // New format `wire://user/{domain}/{userID}`
+            case 2:
+                let userDomain = components[components.startIndex]
+                let userIDString = components[components.startIndex + 1]
+
+                guard let uuid = UUID(uuidString: userIDString) else {
+                    WireLogger.conversation.error("Invalid UUID in user profile deep link")
+                    throw DeepLinkRequestError.invalidUserLink
+                }
+
+                self = .openUserProfile(id: uuid, domain: userDomain)
+
+            default:
+                WireLogger.conversation.error("Invalid user profile deep link format")
                 throw DeepLinkRequestError.invalidUserLink
             }
 
