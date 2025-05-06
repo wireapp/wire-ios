@@ -1044,7 +1044,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         setupInputBar()
 
         inputBar.rightAccessoryStackView.addArrangedSubview(sendButton)
-        inputBar.leftAccessoryView.addSubview(markdownButton)
+        inputBar.addLeftAccessoryView(markdownButton)
         inputBar.rightAccessoryStackView.insertArrangedSubview(ephemeralIndicatorButton, at: 0)
 
         view.addSubview(securityLevelView)

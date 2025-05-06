@@ -112,7 +112,7 @@ final class InputBar: UIView {
     private let textViewFont = FontSpec.normalRegularFont.font!
 
     let textView = MarkdownTextView(with: DownStyle.compact)
-    let leftAccessoryView = UIView()
+    private let leftAccessoryView = UIView()
     let rightAccessoryStackView: UIStackView = {
         let stackView = UIStackView()
 
@@ -266,6 +266,19 @@ final class InputBar: UIView {
         )
     }
 
+    func addLeftAccessoryView(_ view: UIView) {
+        for subview in leftAccessoryView.subviews {
+            subview.removeFromSuperview()
+        }
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        leftAccessoryView.addSubview(view)
+        NSLayoutConstraint.activate([
+            view.centerYAnchor.constraint(equalTo: leftAccessoryView.centerYAnchor),
+            view.centerXAnchor.constraint(equalTo: leftAccessoryView.centerXAnchor)
+        ])
+    }
+
     /// Update return key type when receiving a notification (from setting->toggle send key option)
     @objc
     private func sendButtonEnablingDidApplyChanges() {
@@ -323,7 +336,7 @@ final class InputBar: UIView {
         NSLayoutConstraint.activate([
             leftAccessoryView.leadingAnchor.constraint(equalTo: leadingAnchor),
             leftAccessoryView.topAnchor.constraint(equalTo: topAnchor),
-            leftAccessoryView.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
+            leftAccessoryView.heightAnchor.constraint(equalToConstant: 56),
             leftAccessoryViewWidthConstraint,
 
             rightAccessoryStackView.trailingAnchor
