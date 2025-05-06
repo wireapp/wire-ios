@@ -71,7 +71,7 @@ final class PersonalUsersTests: XCTestCase {
         let time:Int = Int(NSDate().timeIntervalSince1970 * 1000)
         let username = "smoketester\(time)"
         let email = "\(username)@wire.engineering"
-        let password = ProcessInfo.processInfo.environment["DEFAULT_PASSWORD"]! // TODO: Make this auto generated
+        let password = generateRandomPassword() // TODO: Make this auto generated
         let name = "Smoke Tester"
         context["username"] = username
         context["email"] = email
@@ -84,7 +84,6 @@ final class PersonalUsersTests: XCTestCase {
         
         var registrationPage = loginPage.useCreatePersonalAccountLink()
         registrationPage.confirmCreateAccount()
-
         registrationPage.acceptButton().tap()
 
         let verificationCode = try await InbucketClient().getVerificationCode(email:email)
@@ -93,10 +92,12 @@ final class PersonalUsersTests: XCTestCase {
         registrationPage = registrationPage.setName(name: name)
         registrationPage = registrationPage.setPassword(password: password)
         
-        registrationPage = registrationPage.acceptPopup() as! RegistrationPage
+        registrationPage.acceptPopup()
         
         let conversationsPage = registrationPage.setUsername(username: username)
+        
         XCTAssertTrue(profileButton().exists)
+        
         let settingsPage = conversationsPage.openSettings()
         let accountPage = settingsPage.openAccountSettings()
         
@@ -126,6 +127,29 @@ final class PersonalUsersTests: XCTestCase {
         expectation(for: exists, evaluatedWith: button, handler: nil)
         waitForExpectations(timeout: 10, handler: nil)
         return button
+    }
+    
+    // TODO: Look into maybe using a library for this
+    // TODO: When working on one of the other critical flows, pull this out into a user builder helper of some kind
+    func generateRandomPassword() -> String {
+        let lowercase = "abcdefghijklmnopqrstuvwxyz"
+        let uppercase = lowercase.uppercased()
+        let numbers = "0123456789"
+        let specials = "!@#$%^&*()"
+        var password = ""
+        for _ in 1...5 {
+            password += randomCharacterFrom(array: lowercase)
+        }
+        password += randomCharacterFrom(array: uppercase)
+        password += randomCharacterFrom(array: specials)
+        password += randomCharacterFrom(array: numbers)
+        return password
+    }
+    
+    func randomCharacterFrom(array:String) -> String {
+        let randomIndex = Int.random(in: 0..<array.count)
+        let character = array[array.index(array.startIndex, offsetBy: randomIndex)]
+        return String(character)
     }
     
 }
