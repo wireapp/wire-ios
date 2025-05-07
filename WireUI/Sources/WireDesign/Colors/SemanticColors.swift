@@ -171,12 +171,12 @@ public enum SemanticColors {
         
         // Conversation background based on primary color
         
-        public static let conversationBackgroundBlue = UIColor(light: .blue50Light, dark: .blue50Dark)
-        public static let conversationBackgroundGreen = UIColor(light: .green50Light, dark: .green50Dark)
-        public static let conversationBackgroundPurple = UIColor(light: .purple50Light, dark: .purple50Dark)
-        public static let conversationBackgroundAmber = UIColor(light: .amber50Light, dark: .amber50Dark)
-        public static let conversationBackgroundRed = UIColor(light: .red50Light, dark: .red50Dark)
-        public static let conversationBackgroundTurquoise = UIColor(light: .turquoise50Light, dark: .turquoise50Dark)
+        public static let conversationBackgroundBlue = UIColor(light: .blue50Light, dark: .blue900Dark)
+        public static let conversationBackgroundGreen = UIColor(light: .green50Light, dark: .green900Dark)
+        public static let conversationBackgroundPurple = UIColor(light: .purple50Light, dark: .purple900Dark)
+        public static let conversationBackgroundAmber = UIColor(light: .amber50Light, dark: .amber900Dark)
+        public static let conversationBackgroundRed = UIColor(light: .red50Light, dark: .red900Dark)
+        public static let conversationBackgroundTurquoise = UIColor(light: .turquoise50Light, dark: .turquoise900Dark)
     }
 
     public enum TabBar {
