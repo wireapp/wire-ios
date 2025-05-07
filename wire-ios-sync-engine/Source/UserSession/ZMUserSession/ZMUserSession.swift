@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireAnalytics
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireLogging
@@ -287,7 +288,6 @@ public final class ZMUserSession: NSObject {
 
         let keyRotator = E2EIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: conversationEventProcessor,
             context: syncContext,
             onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
             featureRepository: featureRepository
@@ -569,6 +569,8 @@ public final class ZMUserSession: NSObject {
             onAuthenticationFailure: onAuthenticationFailure
         )
 
+        coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
+
         let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
             clientSessionComponent
         } else {
@@ -579,6 +581,7 @@ public final class ZMUserSession: NSObject {
         let syncAgent = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: incrementalSyncProvider,
             legacySyncStatus: applicationStatusDirectory.syncStatus,

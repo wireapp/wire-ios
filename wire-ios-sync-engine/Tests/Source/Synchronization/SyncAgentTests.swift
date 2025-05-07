@@ -33,6 +33,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() {
         journal = Journal(
@@ -44,9 +45,11 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         initialSync = MockInitialSyncProtocol()
         incrementalSync = MockIncrementalSyncProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
+        coreCryptoProvider = MockCoreCryptoProviderProtocol()
         sut = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: self,
             incrementalSyncProvider: self,
             legacySyncStatus: legacySyncStatus,
