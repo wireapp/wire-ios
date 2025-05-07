@@ -18,17 +18,18 @@
 
 import Foundation
 
-protocol SyncAgentDelegate: AnyObject {
+// sourcery: AutoMockable
+public protocol IncrementalSyncObserverProtocol {
 
-    func syncAgentDidStartInitialSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishInitialSync(_ syncAgent: SyncAgent)
-    func syncAgentDidStartIncrementalSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool)
-    func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error)
+    func waitUntilCanSendMessage() async
 
-    func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishLegacyInitialSync(_ syncAgent: SyncAgent)
-    func syncAgentDidStartLegacyIncrementalSync(_ syncAgent: SyncAgent)
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool)
+}
 
+public extension Notification.Name {
+
+    /// Published before the first event is decrypted and stored.
+    static let didStartDecryptingEventsNotification = Self("EventProcessorDidStartDecryptingEventsNotification")
+
+    /// Published after the last event has been decrypted and stored.
+    static let didStopDecryptingEventsNotification = Self("EventProcessorDidFinishDecryptingEventsNotification")
 }
